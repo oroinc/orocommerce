@@ -5,6 +5,8 @@ oro:
                 max_possible_code_length_exceeded: |
                     Coupon codes must not be longer than {{ maxAllowedLength }} symbols, including prefix, suffix, and dashes. With the current settings, the coupon codes are {{ actualLength }} symbols longer.
                     Please adjust values of the Code Length, Code Prefix, Code Suffix, and/or Add Dashes Every X symbols fields to reduce the coupon code length to allowed maximum.
+                case_insensitive_duplicates_found: Case-insensitive coupon codes cannot be enabled due to existing duplicate codes with different letter cases.
+                case_insensitive_duplicate_found: A coupon code with the same characters but different casing already exists due to the enabled Case-Insensitive setting.
             valid_from:
                 type:
                     message: 'This value is not a valid date.'

@@ -231,7 +231,7 @@ class FrontendCouponHandlerTest extends WebTestCase
 
     public function testHandleCaseInsensitive(): void
     {
-        $configManager = self::getConfigManager();
+        $configManager = self::getConfigManager(null);
         self::assertFalse($configManager->get('oro_promotion.case_insensitive_coupon_search'));
         $configManager->set('oro_promotion.case_insensitive_coupon_search', true);
         $configManager->flush();

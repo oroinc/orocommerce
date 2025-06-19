@@ -1,0 +1,19 @@
+{%- block _rfp_request_view_information_quotes_widget -%}
+    {% if quotes | length %}
+        {% import '@OroUI/macros.html.twig' as UI %}
+        <tr class="customer-info-grid__notes">
+            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.request_quotes.label'|trans }}</td>
+            <td class="customer-info-grid__element-content">
+                {% set links = [] -%}
+                {% for quote in quotes -%}
+                    {% set links = links|merge([UI.entityViewLink(
+                        quote,
+                        'oro.frontend.sale.quote.title.label'|trans({'%id%': quote.id}),
+                        'oro_sale_quote_frontend_view'
+                    )]) -%}
+                {% endfor -%}
+                {{ links|join(', ')|raw }}
+            </td>
+        </tr>
+    {% endif %}
+{%- endblock -%}

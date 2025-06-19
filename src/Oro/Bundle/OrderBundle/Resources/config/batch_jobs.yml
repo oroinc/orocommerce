@@ -1,0 +1,27 @@
+connector:
+    name: oro_importexport
+    jobs:
+        external_order_import_from_json:
+            title: "External Order Import from JSON"
+            type: import
+            steps:
+                import:
+                    title: import
+                    class: Oro\Bundle\BatchBundle\Step\ItemStep
+                    services:
+                        reader: oro_importexport.reader.json
+                        processor: oro_importexport.processor.import_delegate
+                        writer: oro_order.importexport.writer.external_order_import
+                    parameters: ~
+        external_order_import_validation_from_json:
+            title: "External Order Import Validation from JSON"
+            type: import_validation
+            steps:
+                import_validation:
+                    title: import_validation
+                    class: Oro\Bundle\BatchBundle\Step\ItemStep
+                    services:
+                        reader: oro_importexport.reader.json
+                        processor: oro_importexport.processor.import_delegate
+                        writer: oro_order.importexport.writer.external_order_import.validation
+                    parameters: ~

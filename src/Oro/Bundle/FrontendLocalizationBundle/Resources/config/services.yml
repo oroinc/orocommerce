@@ -9,6 +9,7 @@ services:
             - '@oro_config.manager'
             - '@oro_website.manager'
             - '@oro_locale.manager.localization'
+            - '@oro_api.request_helper'
 
     Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager:
         alias: oro_frontend_localization.manager.user_localization

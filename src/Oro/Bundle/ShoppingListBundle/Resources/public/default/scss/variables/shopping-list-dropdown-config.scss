@@ -31,10 +31,10 @@ $shopping-list-widget-footer-template-columns: #{var(
 $shopping-list-widget-footer-grid-gap: spacing('sm') spacing('base') !default;
 
 $shopping-list-widget-footer-template-areas-stack: #{'"total" "."'} !default;
-$shopping-list-widget-footer-template-columns-stack: 1fr !default;
+$shopping-list-widget-footer-template-columns-stack: #{'1fr'} !default;
 
 $shopping-list-widget-footer-template-areas-columns: #{'"total total" ". ."'} !default;
-$shopping-list-widget-footer-template-columns-columns: 1fr 1fr !default;
+$shopping-list-widget-footer-template-columns-columns: #{'1fr 1fr'} !default;
 
-$shopping-list-widget-footer-template-areas-no-items: '.' !default;
-$shopping-list-widget-footer-template-columns-no-items: 1fr !default;
+$shopping-list-widget-footer-template-areas-no-items: #{'"."'} !default;
+$shopping-list-widget-footer-template-columns-no-items: #{'1fr'} !default;

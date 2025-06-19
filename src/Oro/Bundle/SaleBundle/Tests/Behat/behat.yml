@@ -463,6 +463,10 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="frontend-quotes-line-items-grid"]'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
 
+    RFQ Quote Grid:
+      selector: 'div[data-page-component-name="request-view-quotes-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
     Frontend Quote Grid Filters:
       selector: 'div[data-page-component-name="frontend-quotes-line-items-grid"] div.filter-box'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters

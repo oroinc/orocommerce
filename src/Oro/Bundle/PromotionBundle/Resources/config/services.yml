@@ -889,3 +889,34 @@ services:
             - !tagged_iterator oro_promotion.coupon_validator
         tags:
             - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest, priority: -150 }
+
+    Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\PromotionBundle\Entity\Coupon'
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]
+        tags:
+            - { name: doctrine.repository_service }
+
+    oro_promotion.validator.config_coupon_case_insensitive_option:
+        class: Oro\Bundle\PromotionBundle\Validator\Constraints\ConfigCouponCaseInsensitiveOptionValidator
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_promotion.validator.unique_case_insensitive_coupon_code:
+        class: Oro\Bundle\PromotionBundle\Validator\Constraints\UniqueCaseInsensitiveCouponCodeValidator
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_promotion.access_rule.frontend_organization_for_coupon_rule:
+        class: Oro\Bundle\OrganizationBundle\Acl\AccessRule\OrganizationAwareAccessRule
+        arguments:
+            - '@oro_organization.organization_restriction_provider'
+        tags:
+            - { name: oro_security.access_rule, entityClass: 'Oro\Bundle\PromotionBundle\Entity\Coupon', frontend: true}

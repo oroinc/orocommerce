@@ -67,7 +67,7 @@ class LoadProductUnitPrecisionDemoData extends AbstractFixture implements
         $this->productUnis = [];
     }
 
-    private function getProductBySku(EntityManagerInterface $manager, string $sku): ?Product
+    protected function getProductBySku(EntityManagerInterface $manager, string $sku): ?Product
     {
         if (!array_key_exists($sku, $this->products)) {
             $this->products[$sku] = $manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);

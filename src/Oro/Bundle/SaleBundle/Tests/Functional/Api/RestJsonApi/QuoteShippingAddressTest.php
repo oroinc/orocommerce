@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SameBundle\Tests\Functional\Api\RestJsonApi;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
@@ -8,6 +8,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
@@ -36,10 +37,30 @@ class QuoteShippingAddressTest extends RestJsonApiTestCase
     public function testGet(): void
     {
         $response = $this->get(
-            ['entity' => 'quoteshippingaddresses', 'id' => '<toString(@sale.quote.1.shipping_address->id)>']
+            ['entity' => 'quoteshippingaddresses', 'id' => '<toString(@sale.quote.1.shipping_address->id)>'],
+            ['meta' => 'title']
         );
 
         $this->assertResponseContains('get_quote_shipping_address.yml', $response);
+    }
+
+    public function testTryToCreateEmpty(): void
+    {
+        $response = $this->post(
+            ['entity' => 'quoteshippingaddresses'],
+            ['data' => ['type' => 'quoteshippingaddresses']],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'not blank constraint',
+                'detail' => 'This value should not be blank.',
+                'source' => ['pointer' => '/data/relationships/quote/data']
+            ],
+            $response
+        );
     }
 
     public function testCreateWithRequiredDataOnly(): void
@@ -567,6 +588,37 @@ class QuoteShippingAddressTest extends RestJsonApiTestCase
         );
     }
 
+    public function testTryToCreateForQuoteMarkedAsDeleted(): void
+    {
+        $response = $this->post(
+            ['entity' => 'quoteshippingaddresses'],
+            [
+                'data' => [
+                    'type' => 'quoteshippingaddresses',
+                    'relationships' => [
+                        'country' => [
+                            'data' => ['type' => 'countries', 'id' => '<toString(@country.US->iso2Code)>']
+                        ],
+                        'quote' => [
+                            'data' => ['type' => 'quotes', 'id' => '<toString(@sale.quote.2->id)>']
+                        ]
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access denied exception',
+                'detail' => 'The quote marked as deleted cannot be changed.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
+    }
+
     public function testTryToChangeQuote(): void
     {
         /** @var Quote $quote1 */
@@ -769,6 +821,41 @@ class QuoteShippingAddressTest extends RestJsonApiTestCase
             ]
         ]);
         $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testTryToUpdateForQuoteMarkedAsDeleted(): void
+    {
+        /** @var Quote $quote */
+        $quote = $this->getReference('sale.quote.2');
+        $address = new QuoteAddress();
+        $address->setCountry($this->getReference('country.US'));
+        $quote->setShippingAddress($address);
+        $this->getEntityManager()->flush();
+        $addressId = $address->getId();
+
+        $response = $this->patch(
+            ['entity' => 'quoteshippingaddresses', 'id' => (string)$addressId],
+            [
+                'data' => [
+                    'type' => 'quoteshippingaddresses',
+                    'id' => (string)$addressId,
+                    'attributes' => [
+                        'city' => 'UPDATED'
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access denied exception',
+                'detail' => 'The quote marked as deleted cannot be changed.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testDelete(): void

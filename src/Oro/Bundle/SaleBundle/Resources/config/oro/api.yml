@@ -21,8 +21,6 @@ api:
                         mapped: false
                 internalStatus:
                     property_path: internal_status
-                    form_options:
-                        mapped: false
                 paymentTerm:
                     property_path: payment_term_7c4f1e8e
                 pricesChanged:
@@ -48,9 +46,6 @@ api:
                                 mapped: false
             subresources:
                 customerStatus:
-                    actions:
-                        update_relationship: false
-                internalStatus:
                     actions:
                         update_relationship: false
                 shippingAddress:
@@ -104,6 +99,7 @@ api:
 
         Oro\Bundle\SaleBundle\Entity\QuoteProduct:
             documentation_resource: '@OroSaleBundle/Resources/doc/api/quote_product.md'
+            disable_meta_properties: [ title ]
             fields:
                 type:
                     exclude: true
@@ -138,6 +134,7 @@ api:
 
         Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
             documentation_resource: '@OroSaleBundle/Resources/doc/api/quote_product_offer.md'
+            disable_meta_properties: [ title ]
             fields:
                 priceType:
                     exclude: true
@@ -166,6 +163,7 @@ api:
 
         Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
             documentation_resource: '@OroSaleBundle/Resources/doc/api/quote_product_request.md'
+            disable_meta_properties: [ title ]
             fields:
                 value:
                     form_options:
@@ -195,3 +193,19 @@ api:
                 requestProductItem:
                     actions:
                         update_relationship: false
+
+        Oro\Bundle\RFPBundle\Entity\Request:
+            documentation_resource: '@OroSaleBundle/Resources/doc/api/rfq.md'
+            fields:
+                quotes:
+                    data_type: unidirectionalAssociation:request
+                    target_class: Oro\Bundle\SaleBundle\Entity\Quote
+                    target_type: to-many
+                    form_options:
+                        mapped: false
+            subresources:
+                quotes:
+                    actions:
+                        update_relationship: false
+                        add_relationship: false
+                        delete_relationship: false

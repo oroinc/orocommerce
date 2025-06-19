@@ -601,12 +601,25 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToCreateWithCreatedAtAndUpdatedAt(): void
+    public function testCreateWithCreatedAt(): void
     {
-        $createdAt = (new \DateTime('now - 10 day'))->format('Y-m-d\TH:i:s\Z');
-        $updatedAt = (new \DateTime('now - 9 day'))->format('Y-m-d\TH:i:s\Z');
+        $createdAt = (new \DateTime('now - 10 days'))->format('Y-m-d\TH:i:s\Z');
         $data = $this->getRequestData('create_order.yml');
         $data['data']['attributes']['createdAt'] = $createdAt;
+
+        $response = $this->post(['entity' => 'orders'], $data);
+
+        $orderId = (int)$this->getResourceId($response);
+
+        /** @var Order $order */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertEquals($createdAt, $order->getCreatedAt()->format('Y-m-d\TH:i:s\Z'));
+    }
+
+    public function testTryToCreateWithUpdatedAt(): void
+    {
+        $updatedAt = (new \DateTime('now - 9 days'))->format('Y-m-d\TH:i:s\Z');
+        $data = $this->getRequestData('create_order.yml');
         $data['data']['attributes']['updatedAt'] = $updatedAt;
 
         $response = $this->post(['entity' => 'orders'], $data);
@@ -615,8 +628,7 @@ class OrderTest extends RestJsonApiTestCase
 
         /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
-        // createdAt and updatedAt fields are read-only for orders
-        self::assertNotEquals($createdAt, $order->getCreatedAt()->format('Y-m-d\TH:i:s\Z'));
+        // updatedAt field is read-only for orders
         self::assertNotEquals($updatedAt, $order->getUpdatedAt()->format('Y-m-d\TH:i:s\Z'));
     }
 
@@ -1003,23 +1015,21 @@ class OrderTest extends RestJsonApiTestCase
         self::assertEquals('shipped', $updatedOrder->getShippingStatus()->getInternalId());
     }
 
-    public function testTryToUpdateCreatedAtAndUpdatedAt(): void
+    public function testUpdateCreatedAt(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
         $orderId = $order->getId();
-        $orderCreatedAt = $order->getCreatedAt()->format('Y-m-d\TH:i:s\Z');
-        $orderNewUpdatedAt = (new \DateTime('now - 9 day'))->format('Y-m-d\TH:i:s\Z');
+        $newCreatedAt = (new \DateTime('now - 9 days'))->format('Y-m-d\TH:i:s\Z');
 
         $response = $this->patch(
             ['entity' => 'orders', 'id' => $orderId],
             [
                 'data' => [
-                    'type'          => 'orders',
-                    'id'            => (string)$orderId,
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
                     'attributes' => [
-                        'createdAt' => (new \DateTime('now - 10 day'))->format('Y-m-d\TH:i:s\Z'),
-                        'updatedAt' => $orderNewUpdatedAt
+                        'createdAt' => $newCreatedAt
                     ]
                 ]
             ]
@@ -1027,10 +1037,10 @@ class OrderTest extends RestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'          => 'orders',
-                    'id'            => (string)$orderId,
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
                     'attributes' => [
-                        'createdAt' => $orderCreatedAt
+                        'createdAt' => $newCreatedAt
                     ]
                 ]
             ],
@@ -1039,8 +1049,32 @@ class OrderTest extends RestJsonApiTestCase
 
         /** @var Order $updatedOrder */
         $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
-        // createdAt and updatedAt fields are read-only for orders
-        self::assertEquals($orderCreatedAt, $updatedOrder->getCreatedAt()->format('Y-m-d\TH:i:s\Z'));
+        self::assertEquals($newCreatedAt, $updatedOrder->getCreatedAt()->format('Y-m-d\TH:i:s\Z'));
+    }
+
+    public function testTryToUpdateUpdatedAt(): void
+    {
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        $orderId = $order->getId();
+        $orderNewUpdatedAt = (new \DateTime('now - 9 days'))->format('Y-m-d\TH:i:s\Z');
+
+        $this->patch(
+            ['entity' => 'orders', 'id' => $orderId],
+            [
+                'data' => [
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
+                    'attributes' => [
+                        'updatedAt' => $orderNewUpdatedAt
+                    ]
+                ]
+            ]
+        );
+
+        /** @var Order $updatedOrder */
+        $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
+        // updatedAt field is read-only for orders
         self::assertNotEquals($orderNewUpdatedAt, $updatedOrder->getUpdatedAt()->format('Y-m-d\TH:i:s\Z'));
     }
 

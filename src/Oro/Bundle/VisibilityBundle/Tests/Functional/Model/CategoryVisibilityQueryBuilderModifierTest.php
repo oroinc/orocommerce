@@ -7,6 +7,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Bundle\VisibilityBundle\Model\CategoryVisibilityQueryBuilderModifier;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 
@@ -30,6 +31,7 @@ class CategoryVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->initClient();
 
         $this->loadFixtures([
+            LoadOrganization::class,
             LoadCategoryVisibilityData::class
         ]);
 
@@ -51,7 +53,8 @@ class CategoryVisibilityQueryBuilderModifierTest extends WebTestCase
 
     public function testNotVisibleForAnonymousFiltered()
     {
-        $this->categoryVisibilityQueryBuilderModifier->restrictForAnonymous($this->queryBuilder);
+        $organization = $this->getReference(LoadOrganization::ORGANIZATION);
+        $this->categoryVisibilityQueryBuilderModifier->restrictForAnonymous($this->queryBuilder, $organization);
 
         $expectedResult = [
             LoadCategoryData::FIRST_LEVEL,

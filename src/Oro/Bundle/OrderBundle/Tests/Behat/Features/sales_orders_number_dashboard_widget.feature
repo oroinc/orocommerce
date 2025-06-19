@@ -1,3 +1,4 @@
+@random-failed
 @feature-BB-21858
 Feature: Sales Orders Number dashboard widget
 

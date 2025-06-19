@@ -196,6 +196,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-quotes-grid, method: onBuildAfter }
 
+    oro_sale.event_listener.view_page.request_quotes:
+        class: Oro\Bundle\SaleBundle\EventListener\RequestQuotesViewPageListener
+        arguments:
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: entity_view.render.before, method: onBeforeViewRender }
+
     oro_sale.provider.quote_entity_name:
           class: Oro\Bundle\SaleBundle\Provider\QuoteEntityNameProvider
           arguments:
@@ -296,6 +303,14 @@ services:
           - '@oro_sale.provider.contact_info_user_provider'
         tags:
             - { name: layout.data_provider, alias: oro_sale_contact_info_widget_provider }
+
+    oro_sale.layout.data_provider.request_quotes:
+        class: Oro\Bundle\SaleBundle\Layout\DataProvider\RequestQuotesProvider
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_security.acl_helper'
+        tags:
+            - { name: layout.data_provider, alias: rfp_request_quotes }
 
     oro_sale.provider.contact_info_user_provider:
         class: 'Oro\Bundle\SaleBundle\Provider\ContactInfoProvider'

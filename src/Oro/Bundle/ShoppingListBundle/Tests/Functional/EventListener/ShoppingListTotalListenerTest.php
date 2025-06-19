@@ -13,6 +13,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadGuestShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadGuestShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 class ShoppingListTotalListenerTest extends WebTestCase
 {
@@ -41,11 +42,18 @@ class ShoppingListTotalListenerTest extends WebTestCase
 
     public function testOnCustomerGroupPriceListUpdate()
     {
+        $organization = $this->getReference(LoadOrganization::ORGANIZATION);
         $shoppingList = $this->getReference(LoadGuestShoppingLists::GUEST_SHOPPING_LIST_1);
         $shoppingListTotal = $this->createTotal($shoppingList);
         $website = $shoppingList->getWebsite();
 
-        $groupId = self::getConfigManager('global')->get('oro_customer.anonymous_customer_group');
+        // Use null to make sure that the data is taken from the configuration hierarchy for a specific organization.
+        $groupId = self::getConfigManager(null)->get(
+            'oro_customer.anonymous_customer_group',
+            false,
+            false,
+            $organization
+        );
 
         $event = new CustomerGroupCPLUpdateEvent([
             ['websiteId' => $website->getId(), 'customerGroups' => [100, 200, 300, $groupId]]

@@ -39,7 +39,6 @@ Feature: Address Validation - Edit Quote - Validate New Address And Save Suggest
     When I click "Address Validation Result Form First Suggested Address Radio"
     And I check "Save Address"
     And I click on "Use Selected Address Button"
-    And I wait for action
     Then I should see "Review Shipping Cost"
     When I click "Save" in modal window
     Then I should see "Quote #1 successfully updated" flash message

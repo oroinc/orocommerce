@@ -183,6 +183,7 @@ oro:
         external:
             label: Is External
             description: Indicates whether the order is loaded externally.
+            badge: External Order
         payment_term_7c4f1e8e:
             label: Payment Term
             description: Relationship with the payment term that was selected as a payment method.
@@ -609,6 +610,8 @@ oro:
                     tooltip: 'Enable the option to allow external systems to manage order statuses.'
                 enable_purchase_history:
                     title: 'Enable Purchase History'
+                enable_external_order_import:
+                    title: 'Enable JSON Order Import'
                 order_previously_purchased_period:
                     title: 'Display products purchased within (days)'
                     tooltip: 'Enter the number of days that the purchase history should cover.'
@@ -688,6 +691,11 @@ oro:
             orders_volume:
                 label: Sales Orders Volume, YTD
                 tooltip: The sales orders volume does not include sub-orders, and it does not take into account order status.
+
+        external_import:
+            label: External Order Import
+            columns_notice: The input file should be in JSON format.
+            button.label: JSON Orders
 
     frontend:
         order:

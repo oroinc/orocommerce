@@ -277,7 +277,7 @@ td.quote-lineitem-product-sku {
     .quote-lineitem-product-form {
         .quote-lineitem-product-sku-label {
             width: 70px;
-            word-break: break-word;
+            overflow-wrap: break-word;
         }
     }
 

@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
 use Oro\Bundle\EntityBundle\Tests\Functional\Environment\TestEntityNameResolverDataLoaderInterface;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TestEntityNameResolverDataLoader implements TestEntityNameResolverDataLoaderInterface
@@ -41,6 +42,20 @@ class TestEntityNameResolverDataLoader implements TestEntityNameResolverDataLoad
             return ['quote'];
         }
 
+
+        if (QuoteAddress::class === $entityClass) {
+            $quoteAddress = new QuoteAddress();
+            $quoteAddress->setOrganization($repository->getReference('organization'));
+            $quoteAddress->setFirstName('Jane');
+            $quoteAddress->setMiddleName('M');
+            $quoteAddress->setLastName('Doo');
+            $repository->setReference('quoteAddress', $quoteAddress);
+            $em->persist($quoteAddress);
+            $em->flush();
+
+            return ['quoteAddress'];
+        }
+
         return $this->innerDataLoader->loadEntity($em, $repository, $entityClass);
     }
 
@@ -63,6 +78,11 @@ class TestEntityNameResolverDataLoader implements TestEntityNameResolverDataLoad
                         ? substr($locale, \strlen('Localization '))
                         : $locale
                 );
+        }
+        if (QuoteAddress::class === $entityClass) {
+            return EntityNameProviderInterface::SHORT === $format
+                ? 'Jane'
+                : 'Jane M Doo';
         }
 
         return $this->innerDataLoader->getExpectedEntityName(

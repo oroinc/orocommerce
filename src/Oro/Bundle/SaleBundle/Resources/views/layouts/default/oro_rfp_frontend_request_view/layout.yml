@@ -1,0 +1,12 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+              themes: 'layout.html.twig'
+
+        - '@add':
+              id: rfp_request_view_information_quotes
+              parentId: rfp_request_view_information
+              blockType: rfp_request_information_quotes
+              prepend: true
+              options:
+                  quotes: '=data["rfp_request_quotes"].getQuotes(data["entity"])'

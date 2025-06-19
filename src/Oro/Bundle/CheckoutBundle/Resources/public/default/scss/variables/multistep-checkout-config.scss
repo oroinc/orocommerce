@@ -60,8 +60,8 @@ $multistep-checkout-tablet-base-sidebar-width: 58px !default;
 $multistep-checkout-tablet-expand-sidebar-width: $multistep-checkout-base-sidebar-width !default;
 
 $multistep-checkout-tablet-grid-template-columns: $multistep-checkout-tablet-base-sidebar-width minmax(0, 1fr) !default;
-$multistep-checkout-steps-tablet-box-shadow: 0px 0px 4px 0px rgba(5, 59, 66, .08),
-    0px 3px 12px 0px rgba(91, 126, 131, .14) !default;
+$multistep-checkout-steps-tablet-box-shadow: 0 0 4px 0 rgba(5, 59, 66, .08),
+    0 3px 12px 0 rgba(91, 126, 131, .14) !default;
 
 $multistep-checkout-tablet-steps-z-index: z('fixed') + 1 !default;
 

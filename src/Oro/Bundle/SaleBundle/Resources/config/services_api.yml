@@ -1,4 +1,144 @@
+parameters:
+    oro_sale.api.readonly_quote_statuses: ['deleted', 'cancelled', 'expired', 'declined']
+
 services:
+    oro_sale.api.configure_quote_internal_status_field:
+        class: Oro\Bundle\SaleBundle\Api\Processor\ConfigureQuoteInternalStatusField
+        arguments:
+            - '@oro_workflow.registry'
+        tags:
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\Quote, targetAction: update|create|update_relationship, priority: -250 }
+
+    oro_sale.api.deny_update_for_readonly_quote:
+        class: Oro\Bundle\SaleBundle\Api\Processor\DenyUpdateForReadonlyQuote
+        arguments:
+            - '%oro_sale.api.readonly_quote_statuses%'
+            - '@oro_workflow.registry'
+        tags:
+            - { name: oro.api.processor, action: update, group: data_security_check, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\Quote }
+
+    oro_sale.api.deny_change_relationship_for_readonly_quote:
+        class: Oro\Bundle\SaleBundle\Api\Processor\DenyChangeRelationshipForReadonlyQuote
+        arguments:
+            - '%oro_sale.api.readonly_quote_statuses%'
+            - '@oro_workflow.registry'
+        tags:
+            - { name: oro.api.processor, action: delete_relationship, group: data_security_check, requestType: '!frontend', parentClass: Oro\Bundle\SaleBundle\Entity\Quote }
+            - { name: oro.api.processor, action: add_relationship, group: data_security_check, requestType: '!frontend', parentClass: Oro\Bundle\SaleBundle\Entity\Quote }
+            - { name: oro.api.processor, action: update_relationship, group: data_security_check, requestType: '!frontend', parentClass: Oro\Bundle\SaleBundle\Entity\Quote }
+
+    oro_sale.api.deny_update_shipping_address_for_readonly_quote:
+        class: Oro\Bundle\SaleBundle\Api\Processor\DenyUpdateShippingAddressForReadonlyQuote
+        arguments:
+            - '%oro_sale.api.readonly_quote_statuses%'
+            - '@oro_workflow.registry'
+            - '@oro_api.doctrine_helper'
+            - true
+        tags:
+            - { name: oro.api.processor, action: create, group: data_security_check, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteAddress }
+            - { name: oro.api.processor, action: update, group: data_security_check, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteAddress }
+
+    oro_sale.api.deny_create_shipping_address_for_readonly_quote:
+        class: Oro\Bundle\SaleBundle\Api\Processor\DenyUpdateShippingAddressForReadonlyQuote
+        arguments:
+            - '%oro_sale.api.readonly_quote_statuses%'
+            - '@oro_workflow.registry'
+            - '@oro_api.doctrine_helper'
+            - false
+        tags:
+            - { name: oro.api.processor, action: create, group: transform_data, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteAddress, priority: -55 }
+            - { name: oro.api.processor, action: update, group: transform_data, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteAddress, priority: -55 }
+
+    oro_sale.api.deny_update_product_for_readonly_quote:
+        class: Oro\Bundle\SaleBundle\Api\Processor\DenyUpdateProductForReadonlyQuote
+        arguments:
+            - '%oro_sale.api.readonly_quote_statuses%'
+            - '@oro_workflow.registry'
+            - true
+        tags:
+            - { name: oro.api.processor, action: create, group: data_security_check, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteProduct }
+            - { name: oro.api.processor, action: update, group: data_security_check, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteProduct }
+
+    oro_sale.api.deny_create_product_for_readonly_quote:
+        class: Oro\Bundle\SaleBundle\Api\Processor\DenyUpdateProductForReadonlyQuote
+        arguments:
+            - '%oro_sale.api.readonly_quote_statuses%'
+            - '@oro_workflow.registry'
+            - false
+        tags:
+            - { name: oro.api.processor, action: create, group: transform_data, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteProduct, priority: -55 }
+            - { name: oro.api.processor, action: update, group: transform_data, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteProduct, priority: -55 }
+
+    oro_sale.api.deny_change_product_relationship_for_readonly_quote:
+        class: Oro\Bundle\SaleBundle\Api\Processor\DenyChangeProductRelationshipForReadonlyQuote
+        arguments:
+            - '%oro_sale.api.readonly_quote_statuses%'
+            - '@oro_workflow.registry'
+        tags:
+            - { name: oro.api.processor, action: delete_relationship, group: data_security_check, requestType: '!frontend', parentClass: Oro\Bundle\SaleBundle\Entity\QuoteProduct }
+            - { name: oro.api.processor, action: add_relationship, group: data_security_check, requestType: '!frontend', parentClass: Oro\Bundle\SaleBundle\Entity\QuoteProduct }
+            - { name: oro.api.processor, action: update_relationship, group: data_security_check, requestType: '!frontend', parentClass: Oro\Bundle\SaleBundle\Entity\QuoteProduct }
+
+    oro_sale.api.deny_update_product_request_for_readonly_quote:
+        class: Oro\Bundle\SaleBundle\Api\Processor\DenyUpdateProductRequestForReadonlyQuote
+        arguments:
+            - '%oro_sale.api.readonly_quote_statuses%'
+            - '@oro_workflow.registry'
+            - true
+        tags:
+            - { name: oro.api.processor, action: create, group: data_security_check, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteProductRequest }
+            - { name: oro.api.processor, action: update, group: data_security_check, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteProductRequest }
+
+    oro_sale.api.deny_create_product_request_for_readonly_quote:
+        class: Oro\Bundle\SaleBundle\Api\Processor\DenyUpdateProductRequestForReadonlyQuote
+        arguments:
+            - '%oro_sale.api.readonly_quote_statuses%'
+            - '@oro_workflow.registry'
+            - false
+        tags:
+            - { name: oro.api.processor, action: create, group: transform_data, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteProductRequest, priority: -55 }
+            - { name: oro.api.processor, action: update, group: transform_data, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteProductRequest, priority: -55 }
+
+    oro_sale.api.deny_change_product_request_relationship_for_readonly_quote:
+        class: Oro\Bundle\SaleBundle\Api\Processor\DenyChangeProductRequestRelationshipForReadonlyQuote
+        arguments:
+            - '%oro_sale.api.readonly_quote_statuses%'
+            - '@oro_workflow.registry'
+        tags:
+            - { name: oro.api.processor, action: delete_relationship, group: data_security_check, requestType: '!frontend', parentClass: Oro\Bundle\SaleBundle\Entity\QuoteProductRequest }
+            - { name: oro.api.processor, action: add_relationship, group: data_security_check, requestType: '!frontend', parentClass: Oro\Bundle\SaleBundle\Entity\QuoteProductRequest }
+            - { name: oro.api.processor, action: update_relationship, group: data_security_check, requestType: '!frontend', parentClass: Oro\Bundle\SaleBundle\Entity\QuoteProductRequest }
+
+    oro_sale.api.deny_update_product_offer_for_readonly_quote:
+        class: Oro\Bundle\SaleBundle\Api\Processor\DenyUpdateProductOfferForReadonlyQuote
+        arguments:
+            - '%oro_sale.api.readonly_quote_statuses%'
+            - '@oro_workflow.registry'
+            - true
+        tags:
+            - { name: oro.api.processor, action: create, group: data_security_check, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteProductOffer }
+            - { name: oro.api.processor, action: update, group: data_security_check, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteProductOffer }
+
+    oro_sale.api.deny_create_product_offer_for_readonly_quote:
+        class: Oro\Bundle\SaleBundle\Api\Processor\DenyUpdateProductOfferForReadonlyQuote
+        arguments:
+            - '%oro_sale.api.readonly_quote_statuses%'
+            - '@oro_workflow.registry'
+            - false
+        tags:
+            - { name: oro.api.processor, action: create, group: transform_data, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteProductOffer, priority: -55 }
+            - { name: oro.api.processor, action: update, group: transform_data, requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\QuoteProductOffer, priority: -55 }
+
+    oro_sale.api.deny_change_product_offer_relationship_for_readonly_quote:
+        class: Oro\Bundle\SaleBundle\Api\Processor\DenyChangeProductOfferRelationshipForReadonlyQuote
+        arguments:
+            - '%oro_sale.api.readonly_quote_statuses%'
+            - '@oro_workflow.registry'
+        tags:
+            - { name: oro.api.processor, action: delete_relationship, group: data_security_check, requestType: '!frontend', parentClass: Oro\Bundle\SaleBundle\Entity\QuoteProductOffer }
+            - { name: oro.api.processor, action: add_relationship, group: data_security_check, requestType: '!frontend', parentClass: Oro\Bundle\SaleBundle\Entity\QuoteProductOffer }
+            - { name: oro.api.processor, action: update_relationship, group: data_security_check, requestType: '!frontend', parentClass: Oro\Bundle\SaleBundle\Entity\QuoteProductOffer }
+
     oro_sale.api.set_default_website_to_quote:
         class: Oro\Bundle\WebsiteBundle\Api\Processor\SetDefaultWebsite
         arguments:

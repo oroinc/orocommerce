@@ -1,3 +1,4 @@
+@random-failed
 @ticket-BB-16582
 
 Feature: Product fields website search indexation

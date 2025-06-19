@@ -3,6 +3,7 @@
 namespace Oro\Bundle\FrontendLocalizationBundle\Manager;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ApiBundle\Request\ApiRequestHelper;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
@@ -11,6 +12,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -30,7 +32,8 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
         protected ManagerRegistry $doctrine,
         protected ConfigManager $configManager,
         protected WebsiteManager $websiteManager,
-        protected LocalizationManager $localizationManager
+        protected LocalizationManager $localizationManager,
+        private ApiRequestHelper $apiRequestHelper
     ) {
     }
 
@@ -82,7 +85,7 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
             if ($userSettings) {
                 $localization = $userSettings->getLocalization();
             }
-        } elseif (null !== $request && $request->hasSession() && $request->getSession()->isStarted()) {
+        } elseif (null !== $request && $request->hasSession() && !$this->isApiRequest($request)) {
             $localization = $enabledLocalizations[$this->getSessionLocalizationIdByWebsiteId($websiteId)] ?? null;
         }
 
@@ -142,6 +145,7 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
             $request = $this->requestStack->getCurrentRequest();
             if (null !== $request && $request->hasSession()) {
                 $request->getSession()->set(self::SESSION_LOCALIZATIONS, $sessionLocalizations);
+                $request->setLocale($localization->getLanguageCode());
             }
         }
     }
@@ -195,5 +199,15 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
         );
 
         return $localization ?: $this->localizationManager->getDefaultLocalization();
+    }
+
+    private function isApiRequest(?Request $request): bool
+    {
+        $pathInfo = $request?->getPathInfo() ?? '';
+        $route = $request?->attributes?->get('_route') ?? '';
+        $isOauth2Request = str_starts_with($route, 'oro_oauth2_server') || str_contains($pathInfo, '/oauth2-token');
+        $isApiRequest = $this->apiRequestHelper->isApiRequest($pathInfo);
+
+        return $isApiRequest || $isOauth2Request;
     }
 }

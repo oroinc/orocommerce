@@ -14,6 +14,9 @@ system_configuration:
         order_status_management:
             title: oro.order.system_configuration.groups.order_status_management.title
             icon: fa-cogs
+        order_external_order_import:
+            title: oro.order.external_import.label
+            icon: fa-download
 
     fields:
         oro_order.backend_product_visibility:
@@ -93,6 +96,11 @@ system_configuration:
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
             options:
                 label: oro.order.system_configuration.fields.enable_purchase_history.title
+        oro_order.enable_external_order_import:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.order.system_configuration.fields.enable_external_order_import.title
         oro_order.order_previously_purchased_period:
             data_type: integer
             type: Symfony\Component\Form\Extension\Core\Type\IntegerType
@@ -159,6 +167,11 @@ system_configuration:
                                     order_status_management:
                                         children:
                                             - oro_order.order_enable_external_status_management
+                            order_external_order_import:
+                                children:
+                                    order_external_order_import:
+                                        children:
+                                            - oro_order.enable_external_order_import
                     shipping:
                         children:
                             address_validation:

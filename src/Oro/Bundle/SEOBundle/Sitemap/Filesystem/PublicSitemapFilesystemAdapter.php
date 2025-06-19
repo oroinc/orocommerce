@@ -4,10 +4,12 @@ namespace Oro\Bundle\SEOBundle\Sitemap\Filesystem;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\GaufretteBundle\FileManager;
+use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationAwareTokenInterface;
 use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Provides functionality to move sitemap related files from a temporary private storage to a public storage.
@@ -16,28 +18,13 @@ class PublicSitemapFilesystemAdapter implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var FileManager */
-    private $fileManager;
-
-    /** @var FileManager */
-    private $tmpDataFileManager;
-
-    /** @var RobotsTxtFileManager */
-    private $robotsTxtFileManager;
-
-    /** @var ManagerRegistry */
-    private $doctrine;
-
     public function __construct(
-        FileManager $fileManager,
-        FileManager $tmpDataFileManager,
-        RobotsTxtFileManager $robotsTxtFileManager,
-        ManagerRegistry $doctrine
+        private FileManager $fileManager,
+        private FileManager $tmpDataFileManager,
+        private RobotsTxtFileManager $robotsTxtFileManager,
+        private ManagerRegistry $doctrine,
+        private TokenStorageInterface $tokenStorage
     ) {
-        $this->fileManager = $fileManager;
-        $this->tmpDataFileManager = $tmpDataFileManager;
-        $this->robotsTxtFileManager = $robotsTxtFileManager;
-        $this->doctrine = $doctrine;
     }
 
     /**
@@ -48,8 +35,16 @@ class PublicSitemapFilesystemAdapter implements LoggerAwareInterface
     public function moveSitemaps(array $websiteIds): void
     {
         try {
-            $this->fileManager->deleteAllFiles();
+            $isInOrganization = $this->isInOrganization();
+            if (!$isInOrganization) {
+                $this->fileManager->deleteAllFiles();
+            }
+
             foreach ($websiteIds as $websiteId) {
+                if ($isInOrganization) {
+                    $this->fileManager->deleteAllFiles($websiteId);
+                }
+
                 $this->moveSitemapFiles($websiteId);
                 $this->moveRobotsTxtFile($websiteId);
             }
@@ -115,5 +110,10 @@ class PublicSitemapFilesystemAdapter implements LoggerAwareInterface
                 );
             }
         }
+    }
+
+    private function isInOrganization(): bool
+    {
+        return $this->tokenStorage->getToken() instanceof OrganizationAwareTokenInterface;
     }
 }

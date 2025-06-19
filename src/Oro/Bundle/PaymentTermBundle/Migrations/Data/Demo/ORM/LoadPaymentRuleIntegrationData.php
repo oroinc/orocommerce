@@ -45,7 +45,7 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
 
         $channel = new Channel();
         $channel->setType(PaymentTermChannelType::TYPE);
-        $channel->setName((string)$label);
+        $channel->setName(sprintf('%s %s', $label->getString(), $this->getDefaultCurrency()));
         $channel->setEnabled(true);
         $channel->setOrganization($this->getOrganization($manager));
         $channel->setDefaultUserOwner($this->getMainUser($manager));
@@ -79,7 +79,7 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
         $manager->flush();
     }
 
-    private function getOrganization(ObjectManager $manager): Organization
+    protected function getOrganization(ObjectManager $manager): Organization
     {
         if ($this->hasReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION)) {
             return $this->getReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION);
@@ -104,7 +104,7 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
             ->generateIdentifier($channel);
     }
 
-    private function getDefaultCurrency(): string
+    protected function getDefaultCurrency(): string
     {
         /** @var ConfigManager $configManager * */
         $configManager = $this->container->get('oro_config.global');

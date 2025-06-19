@@ -20,6 +20,12 @@ Feature: Check product fields without permissions
       | Field Name | Color  |
       | Type       | Select |
     And click "Continue"
+    And I fill form with:
+      | Searchable           | Yes             |
+      | Filterable           | Yes             |
+      | Show on view         | Yes             |
+      | Add to Grid Settings | Yes and display |
+      | Show Grid Filter     | Yes             |
     And set Options with:
       | Label |
       | Black |

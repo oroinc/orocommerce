@@ -51,7 +51,7 @@ class OrderController extends AbstractController
         return [
             'entity' => $order,
             'totals' => $this->container->get(TotalProvider::class)
-                ->getTotalWithSubtotalsWithBaseCurrencyValues($order),
+                ->getTotalFromOrderWithSubtotalsWithBaseCurrencyValues($order),
         ];
     }
 
@@ -67,7 +67,7 @@ class OrderController extends AbstractController
         return [
             'entity' => $order,
             'totals' => $this->container->get(TotalProvider::class)
-                ->getTotalWithSubtotalsWithBaseCurrencyValues($order),
+                ->getTotalFromOrderWithSubtotalsWithBaseCurrencyValues($order),
         ];
     }
 
@@ -203,6 +203,10 @@ class OrderController extends AbstractController
     #[Acl(id: 'oro_order_update', type: 'entity', class: Order::class, permission: 'EDIT')]
     public function updateAction(Order $order, Request $request): array|RedirectResponse
     {
+        if ($order->isExternal()) {
+            throw $this->createAccessDeniedException();
+        }
+
         if ($order->getParent()) {
             return $this->redirectToRoute('oro_order_suborder_update', ['id' => $order->getId()]);
         }

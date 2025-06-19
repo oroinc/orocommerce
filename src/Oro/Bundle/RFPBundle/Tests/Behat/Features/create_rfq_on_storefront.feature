@@ -1,3 +1,4 @@
+@random-failed
 @regression
 @fixture-OroRFPBundle:RFQ_with_removed_unit.yml
 @ticket-BB-16463
@@ -73,8 +74,7 @@ Feature: Create RFQ on storefront
     Then I should not see "SKU123 - product1" in the "RFQ Products List" element
 
   Scenario: Create RFQ with hidden product on storefront
-    Given I continue as the Buyer
-    And I click "Account Dropdown"
+    Given I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click "New Quote"
     When I open select entity popup for field "Line Item Product" in form "Frontend Request Form"
@@ -107,8 +107,10 @@ Feature: Create RFQ on storefront
     Then click "Manage Visibility"
     And I select "Visible" from "Visibility to All"
     And I save and close form
+    And I should see "Product visibility has been saved" flash message
 
     When I continue as the Buyer
+    And I wait 3 seconds
     And I open select entity popup for field "Line Item Product" in form "Frontend Request Form"
     Then I should see following grid:
       | SKU    | Name     | Inventory Status |

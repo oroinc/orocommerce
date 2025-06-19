@@ -1,0 +1,14 @@
+[
+  {
+    "identifier": "1000ORD1005",
+    "billingAddress": {
+      "postalCode": "90001"
+    },
+    "shippingAddress": {
+      "postalCode": "90001"
+    },
+    "lineItems": [{
+      "comment": "Urgent"
+    }]
+  }
+]

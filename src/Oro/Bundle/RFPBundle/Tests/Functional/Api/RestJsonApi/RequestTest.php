@@ -4,8 +4,12 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class RequestTest extends RestJsonApiTestCase
 {
     #[\Override]
@@ -25,6 +29,40 @@ class RequestTest extends RestJsonApiTestCase
         self::assertResponseCount(LoadRequestData::NUM_REQUESTS, $response);
     }
 
+    public function testGetListFilteredAndSortedByCreatedAt(): void
+    {
+        /** @var \DateTime $startDate */
+        $startDate = $this->getReference(LoadRequestData::REQUEST1)->getCreatedAt();
+
+        $response = $this->cget(
+            ['entity' => 'rfqs'],
+            [
+                'page[size]' => 100,
+                'filter[createdAt][gte]' => $startDate->format('Y-m-d\TH:i:s\Z'),
+                'sort' => 'createdAt'
+            ]
+        );
+
+        self::assertResponseCount(LoadRequestData::NUM_REQUESTS, $response);
+    }
+
+    public function testGetListFilteredAndSortedByUpdatedAt(): void
+    {
+        /** @var \DateTime $startDate */
+        $startDate = $this->getReference(LoadRequestData::REQUEST1)->getUpdatedAt();
+
+        $response = $this->cget(
+            ['entity' => 'rfqs'],
+            [
+                'page[size]' => 100,
+                'filter[updatedAt][gte]' => $startDate->format('Y-m-d\TH:i:s\Z'),
+                'sort' => 'updatedAt'
+            ]
+        );
+
+        self::assertResponseCount(LoadRequestData::NUM_REQUESTS, $response);
+    }
+
     public function testGet(): void
     {
         $response = $this->get(
@@ -38,64 +76,7 @@ class RequestTest extends RestJsonApiTestCase
     {
         $response = $this->post(
             ['entity' => 'rfqs'],
-            [
-                'data' => [
-                    'type' => 'rfqs',
-                    'id' => 'new_request_id',
-                    'attributes' => [
-                        'company' => 'Oro',
-                        'firstName' => 'Ronald',
-                        'lastName' => 'Rivera',
-                        'email' => 'test@example.com'
-                    ],
-                    'relationships' => [
-                        'requestProducts' => [
-                            'data' => [
-                                ['type' => 'rfqproducts', 'id' => 'request_product_1']
-                            ]
-                        ]
-                    ]
-                ],
-                'included' => [
-                    [
-                        'type' => 'rfqproducts',
-                        'id' => 'request_product_1',
-                        'attributes' => [
-                            'comment' => 'Test'
-                        ],
-                        'relationships' => [
-                            'request' => [
-                                'data' => ['type' => 'rfqs', 'id' => 'new_request_id']
-                            ],
-                            'product' => [
-                                'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
-                            ],
-                            'requestProductItems' => [
-                                'data' => [
-                                    ['type' => 'rfqproductitems', 'id' => 'request_product_item_1']
-                                ]
-                            ]
-                        ]
-                    ],
-                    [
-                        'type' => 'rfqproductitems',
-                        'id' => 'request_product_item_1',
-                        'attributes' => [
-                            'quantity' => 10,
-                            'value' => 100,
-                            'currency' => 'USD'
-                        ],
-                        'relationships' => [
-                            'productUnit' => [
-                                'data' => ['type' => 'productunits', 'id' => '@product_unit.liter->code']
-                            ],
-                            'requestProduct' => [
-                                'data' => ['type' => 'rfqproducts', 'id' => 'request_product_1']
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+            'create_request.yml'
         );
 
         $this->assertResponseContains(
@@ -157,13 +138,54 @@ class RequestTest extends RestJsonApiTestCase
         );
     }
 
+    public function testTryToCreateWithRequestProductFromAnotherRequest(): void
+    {
+        /** @var Request $request1 */
+        $request1 = $this->getReference(LoadRequestData::REQUEST1);
+        /** @var RequestProduct $requestProduct1 */
+        $requestProduct1 = $request1->getRequestProducts()->first();
+
+        $response = $this->post(
+            ['entity' => 'rfqs'],
+            [
+                'data' => [
+                    'type' => 'rfqs',
+                    'attributes' => [
+                        'company' => 'Oro',
+                        'firstName' => 'Ronald',
+                        'lastName' => 'Rivera',
+                        'email' => 'test@example.com'
+                    ],
+                    'relationships' => [
+                        'requestProducts' => [
+                            'data' => [
+                                ['type' => 'rfqproducts', 'id' => (string)$requestProduct1->getId()]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'unchangeable field constraint',
+                'detail' => 'This field cannot be changed once set.',
+                'source' => ['pointer' => '/data/relationships/requestProducts/data/0']
+            ],
+            $response
+        );
+    }
+
     public function testUpdate(): void
     {
-        $requestEntityId = $this->getReference('rfp.request.1')->getId();
+        $entityId = $this->getReference(LoadRequestData::REQUEST1)->getId();
         $data = [
             'data' => [
                 'type' => 'rfqs',
-                'id' => (string)$requestEntityId,
+                'id' => (string)$entityId,
                 'attributes' => [
                     'firstName' => 'Ronald',
                     'lastName' => 'Rivera',
@@ -182,7 +204,7 @@ class RequestTest extends RestJsonApiTestCase
             ]
         ];
         $response = $this->patch(
-            ['entity' => 'rfqs', 'id' => (string)$requestEntityId],
+            ['entity' => 'rfqs', 'id' => (string)$entityId],
             $data
         );
 
@@ -194,13 +216,13 @@ class RequestTest extends RestJsonApiTestCase
 
     public function testTryToUpdateWhenCustomerUserDoesNotBelongsToCustomer(): void
     {
-        $requestEntityId = $this->getReference('rfp.request.3')->getId();
+        $entityId = $this->getReference('rfp.request.3')->getId();
         $response = $this->patch(
-            ['entity' => 'rfqs', 'id' => (string)$requestEntityId],
+            ['entity' => 'rfqs', 'id' => (string)$entityId],
             [
                 'data' => [
                     'type' => 'rfqs',
-                    'id' => (string)$requestEntityId,
+                    'id' => (string)$entityId,
                     'relationships' => [
                         'customer' => [
                             'data' => [
@@ -224,14 +246,57 @@ class RequestTest extends RestJsonApiTestCase
         );
     }
 
-    public function testDelete(): void
+    public function testTryToUseRequestProductFromAnotherRequest(): void
     {
-        $requestEntityId = $this->getReference('rfp.request.1')->getId();
-        $this->delete(
-            ['entity' => 'rfqs', 'id' => (string)$requestEntityId]
+        /** @var Request $request1 */
+        $request1 = $this->getReference(LoadRequestData::REQUEST1);
+        /** @var RequestProduct $requestProduct1 */
+        $requestProduct1 = $request1->getRequestProducts()->first();
+        $entityId = $request1->getId();
+
+        /** @var Request $request2 */
+        $request2 = $this->getReference(LoadRequestData::REQUEST2);
+        /** @var RequestProduct $requestProduct2 */
+        $requestProduct2 = $request2->getRequestProducts()->first();
+
+        $response = $this->patch(
+            ['entity' => 'rfqs', 'id' => (string)$entityId],
+            [
+                'data' => [
+                    'type' => 'rfqs',
+                    'id' => (string)$entityId,
+                    'relationships' => [
+                        'requestProducts' => [
+                            'data' => [
+                                ['type' => 'rfqproducts', 'id' => (string)$requestProduct1->getId()],
+                                ['type' => 'rfqproducts', 'id' => (string)$requestProduct2->getId()]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [],
+            false
         );
 
-        $deletedRequestEntity = $this->getEntityManager()->find(Request::class, $requestEntityId);
+        $this->assertResponseValidationError(
+            [
+                'title' => 'unchangeable field constraint',
+                'detail' => 'This field cannot be changed once set.',
+                'source' => ['pointer' => '/data/relationships/requestProducts/data/1']
+            ],
+            $response
+        );
+    }
+
+    public function testDelete(): void
+    {
+        $entityId = $this->getReference(LoadRequestData::REQUEST1)->getId();
+        $this->delete(
+            ['entity' => 'rfqs', 'id' => (string)$entityId]
+        );
+
+        $deletedRequestEntity = $this->getEntityManager()->find(Request::class, $entityId);
         self::assertTrue(null === $deletedRequestEntity);
     }
 }

@@ -1,6 +1,8 @@
 data:
     type: quoteshippingaddresses
     id: '<toString(@sale.quote.1.shipping_address->id)>'
+    meta:
+        title: John Doe
     attributes:
         phone: null
         label: null

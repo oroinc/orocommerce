@@ -181,23 +181,6 @@ Retrieve a record of country assigned to a specific address record.
 
 Retrieve the ID of country record assigned to a specific address record.
 
-#### update_relationship
-
-Replace country assigned to a specific address record.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "countries",
-    "id": "US"
-  }
-}
-```
-{@/request}
-
 ### region
 
 #### get_subresource
@@ -207,23 +190,6 @@ Retrieve a record of region assigned to a specific region record.
 #### get_relationship
 
 Retrieve IDs of region records assigned to a specific region record.
-
-#### update_relationship
-
-Replace region assigned to a specific region record.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "regions",
-    "id": "US-NY"
-  }
-}
-```
-{@/request}
 
 ### customerAddress
 

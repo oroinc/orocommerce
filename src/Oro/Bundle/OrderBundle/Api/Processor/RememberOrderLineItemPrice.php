@@ -8,7 +8,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Stores the submitted order line item price ("price" and "currency" fields) to the context
+ * Stores the submitted order line item price ("price" field) to the context
  * and sets a fake price to be sure the price value validation will pass.
  * The stored price is used by {@see FillOrderLineItemPrice} processor to validate
  * that it equals to a calculated price.
@@ -28,6 +28,5 @@ class RememberOrderLineItemPrice implements ProcessorInterface
             FillOrderLineItemPrice::setSubmittedPrice($context, $value, $currency);
         }
         $lineItem->setValue(0.0);
-        $lineItem->setCurrency(null);
     }
 }

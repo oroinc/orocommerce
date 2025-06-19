@@ -166,7 +166,6 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
             $unit = $units ? $units[array_rand($units)] : null;
 
             $orderLineItem = new OrderLineItem();
-            $orderLineItem->setFromExternalSource((bool)random_int(0, 1));
             $orderLineItem->setProduct($product);
             $orderLineItem->setProductName((string)$product->getName());
             $orderLineItem->setProductUnit($unit);

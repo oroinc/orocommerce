@@ -51,7 +51,7 @@
     .grid-body-cell-comment {
         width: 450px;
         max-width: 450px;
-        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 }
 
@@ -125,7 +125,7 @@
 
 .notes-widget {
     width: 280px;
-    word-wrap: break-word;
+    overflow-wrap: break-word;
 
     &-edit-btn,
     &-add-btn,
@@ -135,7 +135,7 @@
 }
 
 .notes-widget-preview {
-    word-wrap: break-word;
+    overflow-wrap: break-word;
     white-space: normal;
     margin-top: 6px;
 }
@@ -166,7 +166,7 @@
     }
 
     .order-line-item-type-product {
-        word-break: break-word;
+        overflow-wrap: break-word;
     }
 }
 

@@ -150,7 +150,6 @@ const SearchAutocompleteView = BaseView.extend({
             'aria-activedescendant': null
         });
         this.undoFocusStyle();
-        this.subview('backdrop').hide();
     },
 
     hideCombobox() {
@@ -282,13 +281,14 @@ const SearchAutocompleteView = BaseView.extend({
             this.$el.parent().after(this.$popup);
             this.$el.attr('aria-expanded', true);
 
-            this.subview('backdrop', new BackdropView({
-                container: this.$popup.parent(),
-                onClickCallback: () => {
-                    this.subview('backdrop').hide();
-                }
-            }));
-
+            if (!this.subview('backdrop')) {
+                this.subview('backdrop', new BackdropView({
+                    container: this.$popup.parent(),
+                    onClickCallback: () => {
+                        this.subview('backdrop').hide();
+                    }
+                }));
+            }
             this.subview('backdrop').show();
             this._calculateHeight();
 

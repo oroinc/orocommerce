@@ -10,6 +10,7 @@ class OrderStub extends Order
     private ?EnumOptionInterface $internalStatus = null;
     private ?EnumOptionInterface $status = null;
     private ?EnumOptionInterface $shippingStatus = null;
+    private array $serializedData = [];
 
     public function getInternalStatus(): ?EnumOptionInterface
     {
@@ -50,5 +51,17 @@ class OrderStub extends Order
     public function unsetWebsite()
     {
         $this->website = null;
+    }
+
+    public function getSerializedData(): array
+    {
+        return $this->serializedData;
+    }
+
+    public function setSerializedData(array $serializedData): self
+    {
+        $this->serializedData = $serializedData;
+
+        return $this;
     }
 }

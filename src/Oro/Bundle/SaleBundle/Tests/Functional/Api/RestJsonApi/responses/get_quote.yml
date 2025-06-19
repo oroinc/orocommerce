@@ -1,6 +1,8 @@
 data:
     type: quotes
     id: '<toString(@sale.quote.1->id)>'
+    meta:
+        title: '<("Quote #" . @sale.quote.1->id)>'
     attributes:
         identifier: sale.quote.1
         guestAccessId: '@sale.quote.1->guestAccessId'
@@ -56,6 +58,12 @@ data:
         attachments:
             data: []
         activityNotes:
-            data: []
+            data:
+                -
+                    type: notes
+                    id: '<toString(@note1->id)>'
+                -
+                    type: notes
+                    id: '<toString(@note2->id)>'
         activityEmails:
             data: []

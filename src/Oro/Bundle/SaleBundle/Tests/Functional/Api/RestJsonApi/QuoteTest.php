@@ -1,8 +1,11 @@
 <?php
 
-namespace Oro\Bundle\SameBundle\Tests\Functional\Api\RestJsonApi;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\Api\RestJsonApi;
 
+use Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\NoteBundle\Entity\Note;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
@@ -10,11 +13,14 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class QuoteTest extends RestJsonApiTestCase
 {
@@ -23,7 +29,26 @@ class QuoteTest extends RestJsonApiTestCase
     {
         parent::setUp();
 
-        $this->loadFixtures([LoadQuoteData::class, LoadRequestData::class]);
+        $this->loadFixtures([
+            LoadQuoteData::class,
+            LoadRequestData::class,
+            '@OroSaleBundle/Tests/Functional/Api/DataFixtures/quote_notes.yml'
+        ]);
+    }
+
+    private function getActivityNoteIds(int $quoteId): array
+    {
+        $rows = $this->getEntityManager()->createQueryBuilder()
+            ->from(Note::class, 't')
+            ->select('t.id')
+            ->join('t.' . ExtendHelper::buildAssociationName(Quote::class, ActivityScope::ASSOCIATION_KIND), 'c')
+            ->where('c.id = :targetEntityId')
+            ->setParameter('targetEntityId', $quoteId)
+            ->orderBy('t.id')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_column($rows, 'id');
     }
 
     public function testGetList(): void
@@ -36,13 +61,14 @@ class QuoteTest extends RestJsonApiTestCase
     public function testGet(): void
     {
         $response = $this->get(
-            ['entity' => 'quotes', 'id' => '<toString(@sale.quote.1->id)>']
+            ['entity' => 'quotes', 'id' => '<toString(@sale.quote.1->id)>'],
+            ['meta' => 'title']
         );
 
         $this->assertResponseContains('get_quote.yml', $response);
     }
 
-    public function testCreateWithRequiredDataOnly(): void
+    public function testCreateEmpty(): void
     {
         $defaultWebsiteId = $this->getReference('website')->getId();
 
@@ -121,6 +147,45 @@ class QuoteTest extends RestJsonApiTestCase
 
         self::assertNotEmpty($quote->getGuestAccessId());
         self::assertEquals($defaultWebsiteId, $quote->getWebsite()->getId());
+        self::assertEquals('draft', $quote->getInternalStatus()->getInternalId());
+    }
+
+    public function testTryToCreateWithInternalStatus(): void
+    {
+        $response = $this->post(
+            ['entity' => 'quotes'],
+            [
+                'data' => [
+                    'type' => 'quotes',
+                    'relationships' => [
+                        'internalStatus' => [
+                            'data' => ['type' => 'quoteinternalstatuses', 'id' => 'sent_to_customer']
+                        ]
+                    ]
+                ]
+            ]
+        );
+
+        $quoteId = (int)$this->getResourceId($response);
+        /** @var Quote $quote */
+        $quote = $this->getEntityManager()->find(Quote::class, $quoteId);
+        self::assertTrue(null !== $quote);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'quotes',
+                    'relationships' => [
+                        'internalStatus' => [
+                            'data' => ['type' => 'quoteinternalstatuses', 'id' => 'draft']
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+
+        self::assertEquals('draft', $quote->getInternalStatus()->getInternalId());
     }
 
     public function testTryToCreateWithShippingAddressFromAnotherQuote(): void
@@ -345,7 +410,7 @@ class QuoteTest extends RestJsonApiTestCase
 
     public function testTryToUseShippingAddressFromAnotherQuoteWhenUpdatedQuoteHasNoShippingAddress(): void
     {
-        $quoteId = $this->getReference('sale.quote.2')->getId();
+        $quoteId = $this->getReference('sale.quote.3')->getId();
 
         $response = $this->patch(
             ['entity' => 'quotes', 'id' => (string)$quoteId],
@@ -357,7 +422,7 @@ class QuoteTest extends RestJsonApiTestCase
                         'shippingAddress' => [
                             'data' => [
                                 'type' => 'quoteshippingaddresses',
-                                'id' => '<toString(@sale.quote.3.shipping_address->id)>'
+                                'id' => '<toString(@sale.quote.1.shipping_address->id)>'
                             ]
                         ]
                     ]
@@ -431,6 +496,74 @@ class QuoteTest extends RestJsonApiTestCase
         self::assertTrue(null === $quote->getShippingAddress());
         $address = $this->getEntityManager()->find(QuoteAddress::class, $addressId);
         self::assertTrue(null === $address);
+    }
+
+    public function testTryToUpdateInternalStatus(): void
+    {
+        $quoteId = $this->getReference('sale.quote.1')->getId();
+
+        $response = $this->patch(
+            ['entity' => 'quotes', 'id' => (string)$quoteId],
+            [
+                'data' => [
+                    'type' => 'quotes',
+                    'id' => (string)$quoteId,
+                    'relationships' => [
+                        'internalStatus' => [
+                            'data' => ['type' => 'quoteinternalstatuses', 'id' => 'sent_to_customer']
+                        ]
+                    ]
+                ]
+            ]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'quotes',
+                    'id' => (string)$quoteId,
+                    'relationships' => [
+                        'internalStatus' => [
+                            'data' => ['type' => 'quoteinternalstatuses', 'id' => 'draft']
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+
+        /** @var Quote $quote */
+        $quote = $this->getEntityManager()->find(Quote::class, $quoteId);
+        self::assertEquals('draft', $quote->getInternalStatus()->getInternalId());
+    }
+
+    public function testTryToUpdateMarkedAsDeleted(): void
+    {
+        $quoteId = $this->getReference('sale.quote.2')->getId();
+
+        $response = $this->patch(
+            ['entity' => 'quotes', 'id' => (string)$quoteId],
+            [
+                'data' => [
+                    'type' => 'quotes',
+                    'id' => (string)$quoteId,
+                    'attributes' => [
+                        'poNumber' => 'UPDATED'
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access denied exception',
+                'detail' => 'The quote marked as deleted cannot be changed.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testDelete(): void
@@ -690,6 +823,30 @@ class QuoteTest extends RestJsonApiTestCase
         self::assertCount(2, $quote->getAssignedCustomerUsers());
     }
 
+    public function testTryToUpdateAssignedCustomerUsersViaRelationshipMarkedAsDeleted(): void
+    {
+        $response = $this->patchRelationship(
+            ['entity' => 'quotes', 'id' => '<toString(@sale.quote.2->id)>', 'association' => 'assignedCustomerUsers'],
+            [
+                'data' => [
+                    ['type' => 'customerusers', 'id' => '<toString(@sale-customer1-user1@example.com->id)>'],
+                    ['type' => 'customerusers', 'id' => '<toString(@sale-customer1-user2@example.com->id)>']
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access denied exception',
+                'detail' => 'The quote marked as deleted cannot be changed.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
+    }
+
     public function testGetSubresourceForAssignedUsers(): void
     {
         $quoteId = $this->getReference('sale.quote.3')->getId();
@@ -781,5 +938,185 @@ class QuoteTest extends RestJsonApiTestCase
         /** @var Quote $quote */
         $quote = $this->getEntityManager()->find(Quote::class, $quoteId);
         self::assertCount(2, $quote->getAssignedUsers());
+    }
+
+    public function testGetSubresourceForInternalStatus(): void
+    {
+        $quoteId = $this->getReference('sale.quote.1')->getId();
+
+        $response = $this->getSubresource(
+            ['entity' => 'quotes', 'id' => (string)$quoteId, 'association' => 'internalStatus'],
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'quoteinternalstatuses',
+                    'id' => 'draft',
+                    'attributes' => [
+                        'name' => 'Draft'
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForInternalStatus(): void
+    {
+        $quoteId = $this->getReference('sale.quote.1')->getId();
+
+        $response = $this->getRelationship(
+            ['entity' => 'quotes', 'id' => (string)$quoteId, 'association' => 'internalStatus'],
+        );
+
+        $this->assertResponseContains(
+            ['data' => ['type' => 'quoteinternalstatuses', 'id' => 'draft']],
+            $response
+        );
+    }
+
+    public function testTryToUpdateInternalStatusViaRelationship(): void
+    {
+        $quoteId = $this->getReference('sale.quote.1')->getId();
+
+        $this->patchRelationship(
+            ['entity' => 'quotes', 'id' => (string)$quoteId, 'association' => 'internalStatus'],
+            [
+                'data' => [
+                    'type' => 'quoteinternalstatuses',
+                    'id' => 'sent_to_customer'
+                ]
+            ]
+        );
+
+        /** @var Quote $quote */
+        $quote = $this->getEntityManager()->find(Quote::class, $quoteId);
+        self::assertEquals('draft', $quote->getInternalStatus()->getInternalId());
+    }
+
+    public function testGetSubresourceForActivityNotes(): void
+    {
+        $quoteId = $this->getReference('sale.quote.1')->getId();
+
+        $response = $this->getSubresource(
+            ['entity' => 'quotes', 'id' => (string)$quoteId, 'association' => 'activityNotes'],
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type' => 'notes',
+                        'id' => '<toString(@note1->id)>',
+                        'attributes' => [
+                            'message' => 'Note 1'
+                        ]
+                    ],
+                    [
+                        'type' => 'notes',
+                        'id' => '<toString(@note2->id)>',
+                        'attributes' => [
+                            'message' => 'Note 2'
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForActivityNotes(): void
+    {
+        $quoteId = $this->getReference('sale.quote.1')->getId();
+
+        $response = $this->getRelationship(
+            ['entity' => 'quotes', 'id' => (string)$quoteId, 'association' => 'activityNotes'],
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'notes', 'id' => '<toString(@note1->id)>'],
+                    ['type' => 'notes', 'id' => '<toString(@note2->id)>']
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testUpdateActivityNotesViaRelationship(): void
+    {
+        $quoteId = $this->getReference('sale.quote.1')->getId();
+        $note1Id = $this->getReference('note1')->getId();
+        $note3Id = $this->getReference('note3')->getId();
+
+        $this->patchRelationship(
+            ['entity' => 'quotes', 'id' => (string)$quoteId, 'association' => 'activityNotes'],
+            [
+                'data' => [
+                    ['type' => 'notes', 'id' => (string)$note1Id],
+                    ['type' => 'notes', 'id' => (string)$note3Id]
+                ]
+            ]
+        );
+
+        self::assertEquals([$note1Id, $note3Id], $this->getActivityNoteIds($quoteId));
+    }
+
+    public function testRemoveActivityNotesViaRelationship(): void
+    {
+        $quoteId = $this->getReference('sale.quote.1')->getId();
+        $note1Id = $this->getReference('note1')->getId();
+        $note2Id = $this->getReference('note2')->getId();
+
+        $this->deleteRelationship(
+            ['entity' => 'quotes', 'id' => (string)$quoteId, 'association' => 'activityNotes'],
+            [
+                'data' => [
+                    ['type' => 'notes', 'id' => (string)$note1Id]
+                ]
+            ]
+        );
+
+        self::assertEquals([$note2Id], $this->getActivityNoteIds($quoteId));
+    }
+
+    public function testAddActivityNotesViaRelationship(): void
+    {
+        $quoteId = $this->getReference('sale.quote.1')->getId();
+        $note1Id = $this->getReference('note1')->getId();
+        $note2Id = $this->getReference('note2')->getId();
+        $note3Id = $this->getReference('note3')->getId();
+
+        $this->postRelationship(
+            ['entity' => 'quotes', 'id' => (string)$quoteId, 'association' => 'activityNotes'],
+            [
+                'data' => [
+                    ['type' => 'notes', 'id' => (string)$note3Id]
+                ]
+            ]
+        );
+
+        self::assertEquals([$note1Id, $note2Id, $note3Id], $this->getActivityNoteIds($quoteId));
+    }
+
+    public function testUpdateActivityNotesViaRelationshipMarkedAsDeleted(): void
+    {
+        $quoteId = $this->getReference('sale.quote.2')->getId();
+        $note2Id = $this->getReference('note2')->getId();
+        $note3Id = $this->getReference('note3')->getId();
+
+        $this->patchRelationship(
+            ['entity' => 'quotes', 'id' => (string)$quoteId, 'association' => 'activityNotes'],
+            [
+                'data' => [
+                    ['type' => 'notes', 'id' => (string)$note2Id],
+                    ['type' => 'notes', 'id' => (string)$note3Id]
+                ]
+            ]
+        );
+
+        self::assertEquals([$note2Id, $note3Id], $this->getActivityNoteIds($quoteId));
     }
 }

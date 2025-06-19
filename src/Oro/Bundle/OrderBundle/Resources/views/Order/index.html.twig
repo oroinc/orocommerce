@@ -6,6 +6,10 @@
 {% block navButtons %}
     {% import '@OroUI/macros.html.twig' as UI %}
 
+    {% include '@OroImportExport/ImportExport/buttons_from_configuration.html.twig' with {
+        'alias': 'oro_order'
+    } %}
+
     {% if is_granted('oro_order_create') and feature_resource_enabled('oro_order_create', 'routes') %}
         <div class="btn-group">
             {{ UI.addButton({

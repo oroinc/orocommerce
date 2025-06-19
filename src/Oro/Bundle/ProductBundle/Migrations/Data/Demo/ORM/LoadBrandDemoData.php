@@ -38,20 +38,9 @@ class LoadBrandDemoData extends AbstractFixture implements ContainerAwareInterfa
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
 
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/brands.csv');
-        if (is_array($filePath)) {
-            $filePath = current($filePath);
-        }
-
-        $handler = fopen($filePath, 'rb');
-        $headers = fgetcsv($handler, 1000, ',');
-
         $slugGenerator = $this->container->get('oro_entity_config.slug.generator');
         $loadedBrands = [];
-        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
-            $row = array_combine($headers, array_values($data));
-
+        foreach ($this->getBrands() as $row) {
             $name = new LocalizedFallbackValue();
             $name->setString($row['name']);
 
@@ -79,8 +68,6 @@ class LoadBrandDemoData extends AbstractFixture implements ContainerAwareInterfa
 
         $manager->flush();
 
-        fclose($handler);
-
         $this->createSlugs($loadedBrands, $manager);
     }
 
@@ -101,5 +88,30 @@ class LoadBrandDemoData extends AbstractFixture implements ContainerAwareInterfa
             $cache->flushAll();
         }
         $manager->flush();
+    }
+
+    private function getBrands(): \Iterator
+    {
+        $filePath = $this->getBrandsDataPath();
+
+        if (is_array($filePath)) {
+            $filePath = current($filePath);
+        }
+
+        $handler = fopen($filePath, 'r');
+        $headers = fgetcsv($handler, 1000, ',');
+
+        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+            yield array_combine($headers, array_values($data));
+        }
+
+        fclose($handler);
+    }
+
+    protected function getBrandsDataPath(): string
+    {
+        $locator = $this->container->get('file_locator');
+
+        return $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/brands.csv');
     }
 }

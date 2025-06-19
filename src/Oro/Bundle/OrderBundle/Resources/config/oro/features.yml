@@ -65,3 +65,7 @@ features:
         configuration:
             - oro_order.validate_shipping_addresses__backoffice_order_page
             - oro_order.validate_billing_addresses__backoffice_order_page
+
+    external_order_import:
+        label: oro.order.system_configuration.fields.enable_external_order_import.title
+        toggle: oro_order.enable_external_order_import

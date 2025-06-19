@@ -14,8 +14,8 @@
 [class*=' gjs-icon-'] {
     /* use !important to prevent issues with browser extensions that change fonts */
     // stylelint-disable-next-line declaration-no-important
-    font-family: '#{$icomoon-font-family}' !important;
-    speak: none;
+    font-family: '#{$icomoon-font-family}', sans-serif !important;
+    speak: never;
     font-style: normal;
     font-weight: font-weight('light');
     font-variant: normal;

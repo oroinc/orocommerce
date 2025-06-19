@@ -1,17 +1,21 @@
 <?php
 
-namespace Oro\Bundle\SameBundle\Tests\Functional\Api\RestJsonApi;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class QuoteProductTest extends RestJsonApiTestCase
 {
@@ -37,6 +41,37 @@ class QuoteProductTest extends RestJsonApiTestCase
         );
 
         $this->assertResponseContains('get_quote_product.yml', $response);
+    }
+
+    public function testTryToCreateEmpty(): void
+    {
+        $response = $this->post(
+            ['entity' => 'quoteproducts'],
+            ['data' => ['type' => 'quoteproducts']],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationErrors(
+            [
+                [
+                    'title' => 'not blank constraint',
+                    'detail' => 'This value should not be blank.',
+                    'source' => ['pointer' => '/data/relationships/quote/data']
+                ],
+                [
+                    'title' => 'quote product constraint',
+                    'detail' => 'Product cannot be empty.',
+                    'source' => ['pointer' => '/data/relationships/product/data']
+                ],
+                [
+                    'title' => 'count constraint',
+                    'detail' => 'Please add one or more offers.',
+                    'source' => ['pointer' => '/data/relationships/quoteProductOffers/data']
+                ]
+            ],
+            $response
+        );
     }
 
     public function testCreateWithRequiredDataOnly(): void
@@ -241,6 +276,27 @@ class QuoteProductTest extends RestJsonApiTestCase
                 'source' => ['pointer' => '/data/relationships/product/data']
             ],
             $response
+        );
+    }
+
+    public function testTryToCreateForQuoteMarkedAsDeleted(): void
+    {
+        $data = $this->getRequestData('create_quote_product_min.yml');
+        $data['data']['relationships']['quote']['data']['id'] = '<toString(@sale.quote.2->id)>';
+        $response = $this->post(
+            ['entity' => 'quoteproducts'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access denied exception',
+                'detail' => 'The quote marked as deleted cannot be changed.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
         );
     }
 
@@ -565,6 +621,43 @@ class QuoteProductTest extends RestJsonApiTestCase
         self::assertCount(1, $anotherQuoteProduct->getQuoteProductRequests());
     }
 
+    public function testTryToUpdateForQuoteMarkedAsDeleted(): void
+    {
+        /** @var Quote $quote */
+        $quote = $this->getReference('sale.quote.2');
+        $quoteProduct = new QuoteProduct();
+        $quoteProduct->setProduct($this->getReference('product-2'));
+        $quote->addQuoteProduct($quoteProduct);
+        $this->getEntityManager()->flush();
+        $quoteProductId = $quoteProduct->getId();
+
+        $response = $this->patch(
+            ['entity' => 'quoteproducts', 'id' => (string)$quoteProductId],
+            [
+                'data' => [
+                    'type' => 'quoteproducts',
+                    'id' => (string)$quoteProductId,
+                    'relationships' => [
+                        'product' => [
+                            'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
+                        ]
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access denied exception',
+                'detail' => 'The quote marked as deleted cannot be changed.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
+    }
+
     public function testDelete(): void
     {
         $quoteProductId = $this->getReference('sale.quote.1.product-1')->getId();
@@ -695,6 +788,39 @@ class QuoteProductTest extends RestJsonApiTestCase
         $updatedQuoteProduct = $this->getEntityManager()->find(QuoteProduct::class, $quoteProductId);
         self::assertEquals($productId, $updatedQuoteProduct->getProduct()->getId());
         self::assertEquals('product-2.names.default', $updatedQuoteProduct->getFreeFormProduct());
+    }
+
+    public function testTryToUpdateProductViaRelationshipForQuoteMarkedAsDeleted(): void
+    {
+        /** @var Quote $quote */
+        $quote = $this->getReference('sale.quote.2');
+        $quoteProduct = new QuoteProduct();
+        $quoteProduct->setProduct($this->getReference('product-1'));
+        $quote->addQuoteProduct($quoteProduct);
+        $quoteProductOffer = new QuoteProductOffer();
+        $quoteProductOffer->setQuantity(1.1);
+        $quoteProductOffer->setPrice(Price::create(1, 'USD'));
+        $quoteProductOffer->setProductUnit($this->getReference('product_unit.bottle'));
+        $quoteProduct->addQuoteProductOffer($quoteProductOffer);
+        $this->getEntityManager()->flush();
+        $quoteProductId = $quoteProduct->getId();
+        $productId = $this->getReference('product-2')->getId();
+
+        $response = $this->patchRelationship(
+            ['entity' => 'quoteproducts', 'id' => (string)$quoteProductId, 'association' => 'product'],
+            ['data' => ['type' => 'products', 'id' => (string)$productId]],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access denied exception',
+                'detail' => 'The quote marked as deleted cannot be changed.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testGetSubresourceForQuoteProductOffers(): void
