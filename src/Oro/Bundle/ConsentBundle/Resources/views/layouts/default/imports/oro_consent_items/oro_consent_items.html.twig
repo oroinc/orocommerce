@@ -45,7 +45,6 @@
 {% block __oro_consent_items__consent_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' checkbox-label' ~ requiredClass,
-        'for': 'consent-' ~ index
     }) %}
 
     <label {{ block('block_attributes') }}>
@@ -71,7 +70,6 @@
 {% block __oro_consent_items__checkbox_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'type': 'checkbox',
-        'id': 'consent-' ~ index,
         'name': 'consent-' ~ index,
         'data-role': 'consent-checkbox'
     }) %}

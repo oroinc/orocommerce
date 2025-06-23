@@ -10,14 +10,14 @@
 
 {% block __oro_rfp_frontend_request_edit__rfp_page_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' {{ class_prefix }}__title'
+        '~class': ' rfq__title'
     }) %}
     <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block __oro_rfp_frontend_request_edit__rfp_form_start_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' {{ class_prefix }}__form {{ class_prefix }}__form_register'
+        '~class': ' rfq__form rfq__form_register'
     }) %}
     {{ block('form_start_widget') }}
 {% endblock %}
@@ -66,7 +66,7 @@
             </span>
             {{ form_row(form.shipUntil, {
                 'attr': {
-                    'class': 'datepicker-input input'
+                    'class': 'datepicker-input'
                 },
                 'parentClass': '',
                 'datePickerOptions': {

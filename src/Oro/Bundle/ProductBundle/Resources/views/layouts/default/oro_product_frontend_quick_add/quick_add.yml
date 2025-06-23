@@ -35,3 +35,11 @@ layout:
             blockType: combined_buttons
             options:
                 buttons: '=data["buttons"].getAll()'
+        - '@add':
+            id: quick_add_form_submit
+            parentId: quick_add_form_buttons
+            blockType: button
+            prepend: false
+            options:
+                action: submit
+                text: 'oro.product.frontend.quick_add.submit'

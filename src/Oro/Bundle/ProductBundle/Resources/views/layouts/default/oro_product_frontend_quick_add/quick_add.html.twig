@@ -17,8 +17,8 @@
 
 {% block _quick_add_form_title_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' quick-order-add-form__title'
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' quick-order-add-form__title'
     }) %}
     <h2 {{ block('block_attributes') }}>
         {{ renderIcon.icon({name: 'file-text'}) }}
@@ -89,11 +89,20 @@
 {% endblock %}
 
 {% block _quick_add_form_combined_buttons_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " quick-order-add__buttons"}) %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' quick-order-add__buttons'
+    }) %}
 
     <div{{ block('block_attributes') }}>
         {% for button in buttons %}
-            {% include button.template with button.templateData|merge({aClass:'btn'}) %}
+            {% include button.template with button.templateData %}
         {% endfor %}
     </div>
+{% endblock %}
+
+{% block _quick_add_form_submit_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' hidden'
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
 {% endblock %}

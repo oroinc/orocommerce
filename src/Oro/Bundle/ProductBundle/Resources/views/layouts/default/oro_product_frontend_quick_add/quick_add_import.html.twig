@@ -1,6 +1,6 @@
 {% block _quick_add_import_form_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' quick-order-import'
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' quick-order-import'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -8,16 +8,16 @@
 {% endblock %}
 
 {% block _quick_add_import_form_start_widget %}
-    {% set attr = attr|merge({
-        'data-page-component-view': 'oroproduct/js/app/views/quick-add-import-form-view',
-        class: attr.class|default('') ~ ' quick-order-import__form'
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' quick-order-import__form',
+        'data-page-component-view': 'oroproduct/js/app/views/quick-add-import-form-view'
     }) %}
     {{ block('form_start_widget') }}
 {% endblock %}
 
 {% block _quick_add_import_form_container_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' quick-order-import__container'
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' quick-order-import__container'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -26,8 +26,8 @@
 
 {% block _quick_add_import_title_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' quick-order-import__title'
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' quick-order-import__title'
     }) %}
     <h2 {{ block('block_attributes') }}>
         {{ renderIcon.icon({name: 'link'}) }}
@@ -36,8 +36,8 @@
 {% endblock %}
 
 {% block _quick_add_import_description_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' quick-order-import__description'
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' quick-order-import__description'
     }) %}
     <p {{ block('block_attributes') }}>{{ text|trans|oro_html_sanitize }}</p>
 {% endblock %}
@@ -70,8 +70,8 @@
 {% endblock %}
 
 {% block _quick_add_import_form_submit_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' hidden '
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' hidden'
     }) %}
     {{ block_widget(block, {attr: attr}) }}
 {% endblock %}
