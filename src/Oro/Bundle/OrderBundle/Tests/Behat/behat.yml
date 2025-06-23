@@ -222,17 +222,29 @@ oro_behat_extension:
           Product2KitItem2Price:
             locator: '//tr[@data-content="oro_order_type[lineItems][1]"]//tr[contains(@class, "order-line-kit-item")][2]/td//input[@data-name="field__value"]'
             type: xpath
+          FreeProductSku:
+            locator: '//input[@name="oro_order_type[lineItems][0][productSku]"]'
+            type: xpath
           Quantity2:
             locator: '//input[@name="oro_order_type[lineItems][1][quantity]"]'
             type: xpath
           Price2:
             locator: '//input[@name="oro_order_type[lineItems][1][price][value]"]'
             type: xpath
+          FreeProduct0:
+            locator: '//input[contains(@id,"oro_order_type_lineItems_0_freeFormProduct-uid")]'
+            type: xpath
           FreeProduct3:
             locator: '//input[contains(@id,"oro_order_type_lineItems_2_freeFormProduct-uid")]'
             type: xpath
+          Quantity0:
+            locator: '//input[@name="oro_order_type[lineItems][0][quantity]"]'
+            type: xpath
           Quantity3:
             locator: '//input[@name="oro_order_type[lineItems][2][quantity]"]'
+            type: xpath
+          Price0:
+            locator: '//input[@name="oro_order_type[lineItems][0][price][value]"]'
             type: xpath
           Price3:
             locator: '//input[@name="oro_order_type[lineItems][2][price][value]"]'
@@ -243,6 +255,11 @@ oro_behat_extension:
           Do Not Ship Later Than:
             type: 'css'
             locator: 'input[name^="oro_order_type_shipUntil"]'
+
+    Free Form Entry 0:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//div[@class="order-line-item-type-product"]//a[text()="Free-form entry"]'
+        type: xpath
 
     Order Form Shipping Address Select:
       selector:

@@ -43,7 +43,7 @@ define(function(require) {
         /**
          * @property {Boolean}
          */
-        useDefaultAddress: null,
+        useDefaultAddress: true,
 
         /**
          * @property {Object}
@@ -106,7 +106,6 @@ define(function(require) {
                 return;
             }
 
-            this.useDefaultAddress = !isCustomerUserAddressSelected;
             this._toggleEditable(!isCustomerUserAddressSelected);
             this.$address.val(null).trigger('change');
         },
