@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\EventListener;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Entity\GuestCustomerUserManager;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\RFPBundle\DependencyInjection\Configuration;
@@ -42,6 +43,9 @@ class RFPListener
         if ($token instanceof AnonymousCustomerUserToken) {
             $this->setOwner($request);
             $this->setCustomerUser($request);
+            if ($token->getVisitor()) {
+                $this->setVisitor($token->getVisitor(), $request);
+            }
         }
     }
 
@@ -72,5 +76,10 @@ class RFPListener
             );
 
         $request->setCustomerUser($user);
+    }
+
+    private function setVisitor(CustomerVisitor $visitor, Request $request): void
+    {
+        $request->setVisitor($visitor);
     }
 }
