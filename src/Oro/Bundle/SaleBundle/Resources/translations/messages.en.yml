@@ -16,6 +16,9 @@ oro:
             guest_access_id:
                 label: Guest Access Id
                 description: Unique identifier that is used as a reference for the quote created by a visitor.
+            visitor:
+                label: 'Customer Visitor'
+                description: 'The storefront visitor who created the quote.'
             unique_guest_link:
                 label: Unique Guest Link
                 description: The URL to the storefront page that shows the quote created by a visitor.

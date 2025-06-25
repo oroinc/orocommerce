@@ -11,6 +11,7 @@ datagrids:
             query:
                 select:
                     - quote.id
+                    - quote.guestAccessId
                     - quote.qid
                     - CONCAT(quoteCustomerUser.firstName, ' ', quoteCustomerUser.lastName) as customerUserName
                     - quote.createdAt
