@@ -257,6 +257,7 @@ class RequestToQuoteDataStorageTest extends TestCase
             'assignedUsers' => $rfpRequestData['assignedUsers'],
             'assignedCustomerUsers' => $rfpRequestData['assignedCustomerUsers'],
             'website' => 1,
+            'visitor' => null
         ];
     }
 
