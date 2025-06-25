@@ -12,8 +12,8 @@ features:
             - oro_promotion_get_promotion_by_promotion
             - oro_promotion_get_promotion_by_applied_promotion
         configuration:
-            - oro_promotion.feature_enabled
             - oro_promotion.discount_strategy
+            - oro_promotion.case_insensitive_coupon_search
         operations:
             - oro_promotion_duplicate
             - oro_segment_edit_inside_promotion
