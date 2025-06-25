@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\ShippingMethod;
 
+// @codingStandardsIgnoreStart
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
-// @codingStandardsIgnoreStart
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactoryInterface;
-// @codingStandardsIgnoreEnd
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\FedexRateServiceRequestSettingsInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponse;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
@@ -18,6 +18,8 @@ use Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethod;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
+
+// @codingStandardsIgnoreEnd
 
 class FedexShippingMethodTest extends \PHPUnit\Framework\TestCase
 {
@@ -125,6 +127,10 @@ class FedexShippingMethodTest extends \PHPUnit\Framework\TestCase
 
         $method = $this->createShippingMethod($settings, []);
         $context = $this->createMock(ShippingContextInterface::class);
+
+        $context->expects(self::any())
+            ->method('getLineItems')
+            ->willReturn(new ArrayCollection([]));
 
         $this->rateServiceRequestSettingsFactory->expects(self::exactly(2))
             ->method('create')
