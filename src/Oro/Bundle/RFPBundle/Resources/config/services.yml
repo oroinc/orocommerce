@@ -163,6 +163,12 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.rfp-requests-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-requests-grid, method: onBuildBefore }
 
+    oro_rfp.datagrid.extension.requests_grid_extension:
+        class: 'Oro\Bundle\RFPBundle\Datagrid\Extension\FrontendRequestsGridExtension'
+        parent: oro_customer.datagrid.extension.abstract
+        tags:
+            - { name: oro_datagrid.extension }
+
     oro_rfp.event_listener.navigation:
         class: 'Oro\Bundle\RFPBundle\EventListener\NavigationListener'
         arguments:

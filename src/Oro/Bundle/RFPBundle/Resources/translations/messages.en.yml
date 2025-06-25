@@ -80,6 +80,9 @@ oro:
 
             message:
                 request_saved:          'Your Request For Quote successfully saved!'
+            visitor:
+                label: 'Customer Visitor'
+                description: 'The storefront visitor who created the request.'
 
         requestproduct:
             entity_label:               'Request Product'

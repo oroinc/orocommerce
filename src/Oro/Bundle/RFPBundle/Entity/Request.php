@@ -12,6 +12,8 @@ use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableInterface;
 use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EmailBundle\Entity\EmailOwnerInterface;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
@@ -74,7 +76,8 @@ class Request implements
     SoftDeleteableInterface,
     OrganizationAwareInterface,
     WebsiteAwareInterface,
-    ExtendEntityInterface
+    ExtendEntityInterface,
+    CustomerVisitorOwnerAwareInterface
 {
     use SoftDeleteableTrait;
     use DatesAwareTrait;
@@ -173,6 +176,10 @@ class Request implements
     #[ORM\JoinColumn(name: 'website_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?Website $website = null;
+
+    #[ORM\ManyToOne(targetEntity: CustomerVisitor::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'visitor_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?CustomerVisitor $visitor = null;
 
     /**
      * Constructor
@@ -614,5 +621,18 @@ class Request implements
     public function getEmailFields()
     {
         return ['email'];
+    }
+
+    #[\Override]
+    public function getVisitor()
+    {
+        return $this->visitor;
+    }
+
+    public function setVisitor(CustomerVisitor $visitor)
+    {
+        $this->visitor = $visitor;
+
+        return $this;
     }
 }

@@ -31,6 +31,7 @@ class RequestToQuoteDataStorage
                 'assignedUsers' => $this->getEntitiesIds($rfpRequest->getAssignedUsers()),
                 'assignedCustomerUsers' => $this->getEntitiesIds($rfpRequest->getAssignedCustomerUsers()),
                 'website' => $rfpRequest->getWebsite()?->getId(),
+                'visitor' => $rfpRequest->getVisitor()?->getId(),
             ],
         ];
 
