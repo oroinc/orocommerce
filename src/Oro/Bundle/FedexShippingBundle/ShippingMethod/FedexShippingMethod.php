@@ -3,6 +3,7 @@
 namespace Oro\Bundle\FedexShippingBundle\ShippingMethod;
 
 // @codingStandardsIgnoreStart
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
@@ -17,6 +18,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
+use Oro\Bundle\ShippingBundle\Model\Weight;
 
 // @codingStandardsIgnoreEnd
 
@@ -267,6 +269,9 @@ class FedexShippingMethod implements
     {
         $prices = [];
         $rulePrices = [];
+        $lineItems = $context->getLineItems();
+        $originalLineItemWeights = $this->getOriginalWeights($lineItems);
+
         foreach ($shippingServices as $service) {
             $ruleId = $service->getRule()->getId();
 
@@ -279,7 +284,39 @@ class FedexShippingMethod implements
             }
         }
 
+        $this->setLineItemsWeight($originalLineItemWeights, $lineItems);
+
         return $prices;
+    }
+
+    /**
+     * @param array<string, Weight> $lineItemWeights
+     * @param ShippingContextInterface $context
+     * @return void
+     */
+    private function setLineItemsWeight(array $lineItemWeights, Collection $lineItems): void
+    {
+        foreach ($lineItems as $lineItem) {
+            $checksum = $lineItem->getChecksum();
+            if (\array_key_exists($checksum, $lineItemWeights)) {
+                $lineItem->setWeight($lineItemWeights[$checksum]);
+            }
+        }
+    }
+
+    /**
+     * @param ShippingContextInterface $context
+     * @return array<string, Weight>
+     */
+    private function getOriginalWeights(Collection $lineItems): array
+    {
+        $lineItemWeights = [];
+
+        foreach ($lineItems as $lineItem) {
+            $lineItemWeights[$lineItem->getChecksum()] = $lineItem->getWeight();
+        }
+
+        return $lineItemWeights;
     }
 
     private function getPricesForRule(ShippingContextInterface $context, ShippingServiceRule $rule): array
