@@ -201,6 +201,7 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
             'assignedUsers' => $rfpRequestData['assignedUsers'],
             'assignedCustomerUsers' => $rfpRequestData['assignedCustomerUsers'],
             'website' => 1,
+            'visitor' => null
         ];
     }
 

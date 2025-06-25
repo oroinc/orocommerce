@@ -333,3 +333,16 @@ services:
             - '@doctrine'
         tags:
             - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\SaleBundle\Entity\Quote, event: prePersist}
+
+    oro_sale.datagrid.extension.qoute_grid_extension:
+        class: 'Oro\Bundle\SaleBundle\Datagrid\Extension\FrontendQuoteGridExtension'
+        parent: oro_customer.datagrid.extension.abstract
+        tags:
+            - { name: oro_datagrid.extension }
+
+    oro_sale.listener.datagird.frontend_guest_quote_grid_view_link:
+        class: 'Oro\Bundle\SaleBundle\EventListener\Datagrid\FrontendGuestQuoteGridViewLinkListener'
+        arguments:
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-quotes-grid, method: onBuildBefore }

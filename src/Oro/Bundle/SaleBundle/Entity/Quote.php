@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EmailBundle\Entity\EmailOwnerAwareInterface;
 use Oro\Bundle\EmailBundle\Entity\EmailOwnerInterface;
@@ -88,7 +90,8 @@ class Quote implements
     AllowUnlistedShippingMethodConfigurationInterface,
     OverriddenCostShippingMethodConfigurationInterface,
     WebsiteAwareInterface,
-    ExtendEntityInterface
+    ExtendEntityInterface,
+    CustomerVisitorOwnerAwareInterface
 {
     use AuditableUserAwareTrait;
     use AuditableFrontendCustomerUserAwareTrait;
@@ -369,6 +372,14 @@ class Quote implements
      * @ORM\OrderBy({"id" = "ASC"})
      */
     protected $demands;
+
+    /**
+     * @var CustomerVisitor|null
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerVisitor", cascade={"persist"})
+     * @ORM\JoinColumn(name="visitor_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected ?CustomerVisitor $visitor = null;
 
     /**
      * Constructor
@@ -977,6 +988,19 @@ class Quote implements
     public function getEmailOwner(): EmailOwnerInterface
     {
         return $this->customerUser;
+    }
+
+    #[\Override]
+    public function getVisitor()
+    {
+        return $this->visitor;
+    }
+
+    public function setVisitor(?CustomerVisitor $visitor)
+    {
+        $this->visitor = $visitor;
+
+        return $this;
     }
 
     private function generateGuestAccessId(): void

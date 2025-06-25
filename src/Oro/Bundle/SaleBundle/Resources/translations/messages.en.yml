@@ -17,6 +17,9 @@ oro:
             valid_until.label: 'Valid Until'
             quote_products.label: 'Quote Products'
             request.label: 'Request'
+            visitor:
+                label: 'Customer Visitor'
+                description: 'The storefront visitor who created the quote.'
             customer:
                 label: 'Customer'
                 quick_access_button:
