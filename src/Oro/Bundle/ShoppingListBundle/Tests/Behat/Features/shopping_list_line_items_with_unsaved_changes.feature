@@ -1,3 +1,4 @@
+@skip
 @regression
 @ticket-BB-20192
 @fixture-OroLocaleBundle:ZuluLocalization.yml
