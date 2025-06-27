@@ -11,6 +11,7 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * The provider of the scope and the scope criteria for the current storefront request.
@@ -104,7 +105,10 @@ class RequestWebContentScopeProvider
         }
 
         $criteria = null;
-        if ($this->matchedUrlDecisionMaker->matches($request->getPathInfo())) {
+
+        if ($this->matchedUrlDecisionMaker->matches($request->getPathInfo()) ||
+            $request->attributes->get('exception')?->getStatusCode() === Response::HTTP_NOT_FOUND
+        ) {
             $criteria = $this->scopeManager->getCriteria('web_content');
         }
         $request->attributes->set(self::REQUEST_CRITERIA_ATTRIBUTE, $criteria);
