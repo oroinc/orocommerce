@@ -18,28 +18,24 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\AttributeChangesListener;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
+final class AttributeChangesListenerTest extends TestCase
 {
-    private const FIELD_NAME = 'test_field';
+    private const string FIELD_NAME = 'test_field';
 
-    /** @var RequestStack */
-    private $requestStack;
+    private RequestStack $requestStack;
+    private ConfigManager&MockObject $configManager;
+    private MessageProducerInterface&MockObject $producer;
 
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
-
-    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $producer;
-
-    /** @var AttributeChangesListener */
-    private $listener;
+    private AttributeChangesListener $listener;
 
     #[\Override]
     protected function setUp(): void
@@ -51,7 +47,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         $this->configManager = $this->createMock(ConfigManager::class);
     }
 
-    public function testPostFlushUnsupportedModel()
+    public function testPostFlushUnsupportedModel(): void
     {
         $this->producer->expects(self::never())
             ->method(self::anything());
@@ -65,7 +61,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         self::assertTrue(isset($attributeChangeSet['searchable'][1]));
     }
 
-    public function testPostFlushUnsupportedModelEntityClass()
+    public function testPostFlushUnsupportedModelEntityClass(): void
     {
         $this->producer->expects(self::never())
             ->method(self::anything());
@@ -75,7 +71,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->postFlush(new PostFlushConfigEvent([$model], $this->configManager));
     }
 
-    public function testPostFlushWithoutRequest()
+    public function testPostFlushWithoutRequest(): void
     {
         $this->producer->expects(self::never())
             ->method('send');
@@ -83,7 +79,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->postFlush(new PostFlushConfigEvent([new FieldConfigModel()], $this->configManager));
     }
 
-    public function testPreFlushAfterImportAttribute()
+    public function testPreFlushAfterImportAttribute(): void
     {
         $fieldConfig = $this->createMock(FieldConfigId::class);
         $fieldConfig->expects(self::once())
@@ -107,7 +103,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->preFlush(new PreFlushConfigEvent($configs, $this->configManager));
     }
 
-    public function testPreFlushAfterImportAttributeWrongClass()
+    public function testPreFlushAfterImportAttributeWrongClass(): void
     {
         $fieldConfig = $this->createMock(\stdClass::class);
 
@@ -123,7 +119,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->preFlush(new PreFlushConfigEvent($configs, $this->configManager));
     }
 
-    public function testPreFlushAfterImportAttributeNotProduct()
+    public function testPreFlushAfterImportAttributeNotProduct(): void
     {
         $fieldConfig = $this->createMock(FieldConfigId::class);
         $fieldConfig->expects(self::once())
@@ -144,7 +140,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->preFlush(new PreFlushConfigEvent($configs, $this->configManager));
     }
 
-    public function testPreFlushAfterImportAttributeWithoutAttributeMarker()
+    public function testPreFlushAfterImportAttributeWithoutAttributeMarker(): void
     {
         $fieldConfig = $this->createMock(FieldConfigId::class);
         $fieldConfig->expects(self::once())
@@ -177,7 +173,9 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         array $attributeConfigValues = [],
         array $attributeChangeSet = [],
         array $frontendConfigValues = [],
-        array $frontendChangeSet = []
+        array $frontendChangeSet = [],
+        array $enumConfigValues = [],
+        array $enumChangeSet = []
     ): void {
         $this->requestStack->push(new Request());
 
@@ -187,7 +185,9 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
             $attributeConfigValues,
             $attributeChangeSet,
             $frontendConfigValues,
-            $frontendChangeSet
+            $frontendChangeSet,
+            $enumConfigValues,
+            $enumChangeSet
         );
 
         $model = $this->getFieldConfigModel(Product::class);
@@ -209,7 +209,9 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         array $attributeConfigValues = [],
         array $attributeChangeSet = [],
         array $frontendConfigValues = [],
-        array $frontendChangeSet = []
+        array $frontendChangeSet = [],
+        array $enumConfigValues = [],
+        array $enumChangeSet = []
     ): void {
         $fieldConfig = $this->createMock(FieldConfigId::class);
         $fieldConfig->expects(self::once())
@@ -238,7 +240,9 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
             $attributeConfigValues,
             $attributeChangeSet,
             $frontendConfigValues,
-            $frontendChangeSet
+            $frontendChangeSet,
+            $enumConfigValues,
+            $enumChangeSet
         );
 
         $model = $this->getFieldConfigModel(Product::class);
@@ -1154,6 +1158,79 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
             'frontendConfigValues' => ['is_displayable' => false],
             'frontendChangeSet' => ['is_displayable' => [true, false]]
         ];
+        // ----
+
+        yield 'state active and not changed, no any option enabled and enum not changed' => [
+            'expected' => self::never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => [],
+            'frontendChangeSet' => [],
+            'enumConfigValues' => ['options' => []],
+            'enumChangeSet' => ['options' => []],
+        ];
+
+        yield 'state active and not changed, sortable is enabled and enum not changed' => [
+            'expected' => self::never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['sortable' => true],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => [],
+            'frontendChangeSet' => [],
+            'enumConfigValues' => [],
+            'enumChangeSet' => [],
+        ];
+
+        yield 'state active and not changed, filterable is enabled and enum not changed' => [
+            'expected' => self::never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['filterable' => true],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => [],
+            'frontendChangeSet' => [],
+            'enumConfigValues' => [],
+            'enumChangeSet' => [],
+        ];
+
+        yield 'state active and not changed, searchable is enabled and enum not changed' => [
+            'expected' => self::never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['searchable' => true],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => [],
+            'frontendChangeSet' => [],
+            'enumConfigValues' => [],
+            'enumChangeSet' => [],
+        ];
+
+        yield 'state active and not changed, displayable is enabled and enum not changed' => [
+            'expected' => self::never(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => [],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => ['is_displayable' => false],
+            'frontendChangeSet' => [],
+            'enumConfigValues' => [],
+            'enumChangeSet' => [],
+        ];
+
+        yield 'state active and not changed, enum is changed' => [
+            'expected' => self::once(),
+            'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
+            'extendChangeSet' => [],
+            'attributeConfigValues' => ['sortable' => true],
+            'attributeChangeSet' => [],
+            'frontendConfigValues' => [],
+            'frontendChangeSet' => [],
+            'enumConfigValues' => ['options' => []],
+            'enumChangeSet' => ['options' => []],
+        ];
     }
 
     private function getFieldConfigModel(string $className): FieldConfigModel
@@ -1174,7 +1251,9 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         array $attributeConfigValues,
         array $attributeChangeSet,
         array $frontendConfigValues,
-        array $frontendChangeSet
+        array $frontendChangeSet,
+        array $enumConfigValues,
+        array $enumChangeSet
     ): void {
         $extendConfigId = $this->createMock(ConfigIdInterface::class);
         $extendConfig = new Config($extendConfigId, $extendConfigValues);
@@ -1188,6 +1267,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         $attributeConfigId = $this->createMock(ConfigIdInterface::class);
         $attributeConfig = new Config($attributeConfigId, $attributeConfigValues);
         $frontendConfig = new Config($attributeConfigId, $frontendConfigValues);
+        $enumConfig = new Config($attributeConfigId, $enumConfigValues);
 
         $attributeConfigProvider = $this->createMock(ConfigProvider::class);
         $attributeConfigProvider->expects(self::any())
@@ -1201,19 +1281,27 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
             ->with(Product::class, self::FIELD_NAME)
             ->willReturn($frontendConfig);
 
+        $enumConfigProvider = $this->createMock(ConfigProvider::class);
+        $enumConfigProvider->expects(self::any())
+            ->method('getConfig')
+            ->with(Product::class, self::FIELD_NAME)
+            ->willReturn($enumConfig);
+
         $this->configManager->expects(self::any())
             ->method('getProvider')
             ->willReturnMap([
                 ['extend', $extendConfigProvider],
                 ['attribute', $attributeConfigProvider],
-                ['frontend', $frontendConfigProvider]
+                ['frontend', $frontendConfigProvider],
+                ['enum', $enumConfigProvider]
             ]);
         $this->configManager->expects(self::any())
             ->method('getConfigChangeSet')
             ->willReturnMap([
                 [$extendConfig, $extendChangeSet],
                 [$attributeConfig, $attributeChangeSet],
-                [$frontendConfig, $frontendChangeSet]
+                [$frontendConfig, $frontendChangeSet],
+                [$enumConfig, $enumChangeSet]
             ]);
     }
 }

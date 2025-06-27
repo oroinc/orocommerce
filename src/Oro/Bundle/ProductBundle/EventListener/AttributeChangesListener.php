@@ -151,6 +151,8 @@ class AttributeChangesListener
      *  - sortable:     no => yes
      *  - visible:      no => yes
      * or when state of attribute changed and some of required parameters already enabled
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function isReindexRequiredInActiveState(
         ConfigManager $configManager,
@@ -160,6 +162,7 @@ class AttributeChangesListener
     ): bool {
         $attributeConfig = $configManager->getProvider('attribute')->getConfig($className, $fieldName);
         $frontendConfig = $configManager->getProvider('frontend')->getConfig($className, $fieldName);
+        $enumConfig = $configManager->getProvider('enum')->getConfig($className, $fieldName);
 
         $isSearchable = $attributeConfig->is('searchable');
         $isFilterable = $attributeConfig->is('filterable');
@@ -170,6 +173,7 @@ class AttributeChangesListener
 
         $attributeChangeSet = $configManager->getConfigChangeSet($attributeConfig);
         $frontendChangeSet = $configManager->getConfigChangeSet($frontendConfig);
+        $enumChangeSet = $configManager->getConfigChangeSet($enumConfig);
 
         $isAnyOptionChangedToEnabled = array_filter(
             [
@@ -181,7 +185,10 @@ class AttributeChangesListener
             ]
         );
 
-        if (($isStateChanged && $isAnyOptionEnabled) || (!$isStateChanged && $isAnyOptionChangedToEnabled)) {
+        if (($isStateChanged && $isAnyOptionEnabled) ||
+            (!$isStateChanged && $isAnyOptionChangedToEnabled) ||
+            ($isAnyOptionEnabled && $enumChangeSet)
+        ) {
             return true;
         }
 
