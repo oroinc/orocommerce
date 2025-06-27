@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Provider;
 
+use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -12,6 +13,7 @@ use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentScopeProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RequestWebContentScopeProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -208,6 +210,31 @@ class RequestWebContentScopeProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->provider->getScopeCriteria());
         $this->assertTrue($request->attributes->has('_web_content_criteria'));
         $this->assertNull($request->attributes->get('_web_content_criteria'));
+    }
+
+    public function testGetScopeCriteriaForNotFoundRequest(): void
+    {
+        $request = Request::create('/not-found');
+        $exception = new NotFoundHttpException('not-found');
+        $request->attributes->set('exception', $exception);
+        $criteria = new ScopeCriteria(['test1' => 1], $this->createMock(ClassMetadataFactory::class));
+
+        $this->requestStack->expects(self::once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+        $this->matchedUrlDecisionMaker->expects(self::once())
+            ->method('matches')
+            ->willReturn(false);
+        $this->scopeManager->expects(self::once())
+            ->method('getCriteria')
+            ->with('web_content')
+            ->willReturn($criteria);
+        $this->slugRepository->expects(self::never())
+            ->method('findMostSuitableUsedScope');
+
+        self::assertNotNull($this->provider->getScopeCriteria());
+        self::assertTrue($request->attributes->has('_web_content_criteria'));
+        self::assertEquals($criteria, $request->attributes->get('_web_content_criteria'));
     }
 
     public function testGetScopeCriteria()
