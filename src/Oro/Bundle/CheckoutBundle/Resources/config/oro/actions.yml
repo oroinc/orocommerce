@@ -546,6 +546,7 @@ action_groups:
                     '@empty': $.checkout.id
                 actions:
                     - '@create_entity':
+                        flush: true
                         attribute: $.source
                         class: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource'
                         data: $.sourceCriteria

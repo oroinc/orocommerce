@@ -1,6 +1,8 @@
 @ticket-BB-7459
+@ticket-BB-25830
 @automatically-ticket-tagged
 @fixture-OroSaleBundle:QuoteOrder.yml
+@fixture-OroSaleBundle:start_checkout_for_a_quote.yml
 Feature: Start checkout for a quote
   In order to provide customers with ability to quote products
   As customer
@@ -11,7 +13,35 @@ Feature: Start checkout for a quote
       | Admin | first_session  |
       | Buyer | second_session |
 
-  Scenario: FrontOffice scenario background
+  Scenario: Login as administrator
+    Given I proceed as the Admin
+    And I login as administrator
+
+  Scenario Outline: Add Multiple Files field to Contact Request entity
+    Given I go to System/Entities/Entity Management
+    And I filter Name as is equal to "<Entity>"
+    And I click View <Entity> in grid
+    When I click "Create Field"
+    And I fill form with:
+      | Field Name   | custom_multiple_files |
+      | Storage Type | Table column          |
+      | Type         | Multiple Files        |
+    And I click "Continue"
+    And I fill form with:
+      | Label          | Custom Multiple Files |
+      | File Size (MB) | 10                    |
+    And I save and close form
+    Then I should see "Field saved" flash message
+    Examples:
+      | Entity   |
+      | Checkout |
+      | Quote    |
+
+  Scenario: Update schema
+    Given I click update schema
+    Then I should see "Schema updated" flash message
+
+  Scenario: Create RFQ
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
     And I open page with shopping list Shopping List 1
@@ -21,10 +51,17 @@ Feature: Start checkout for a quote
       | PO Number | PONUMBER1 |
     And I click "Submit Request"
 
-  Scenario: BackOffice scenario background
+  Scenario: Create quote from RFQ
     Given I proceed as the Admin
-    And I login as administrator
-    And I create a quote from RFQ with PO Number "PONUMBER1"
+    And I go to Sales / Requests For Quote
+    When I click view "PONUMBER1" in grid
+    And I click "Create Quote"
+    And I fill "Quote Form" with:
+      | LineItemPrice    | 5                                            |
+      | Shipping Address | ORO, 801 Scenic Hwy, HAINES CITY FL US 33844 |
+    And I click on "Calculate Shipping"
+    And I save and close form
+    Then I should see "Quote has been saved" flash message
     And I click "Send to Customer"
     And I click "Send"
 

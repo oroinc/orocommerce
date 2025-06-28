@@ -1,0 +1,23 @@
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    amandaAddress1:
+        region: '@florida'
+        frontendOwner: '@amanda'
+        country: '@united_states'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: false
+        label: 'Address 1'
+        street: '801 Scenic Hwy'
+        city: 'Haines City'
+        postalCode: '33844'
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    amandaAddress1ShippingDefault:
+        address: '@amandaAddress1'
+        type: '@shippingType'
+        default: true
+    amandaAddress1BillingDefault:
+        address: '@amandaAddress1'
+        type: '@billingType'
+        default: true
