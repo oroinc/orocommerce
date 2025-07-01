@@ -47,7 +47,6 @@ class RecalculateOrderTotal extends AbstractFixture implements VersionedFixtureI
             ];
 
             $order->setSerializedData($serializedData);
-            $manager->persist($order);
             $counter++;
             if (($counter % self::BATCH_SIZE) === 0) {
                 $manager->flush();
