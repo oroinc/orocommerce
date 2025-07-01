@@ -330,20 +330,3 @@ Retrieve the image file of a specific product image record.
 #### get_relationship
 
 Retrieve the ID of the image file for a specific product image.
-
-#### update_relationship
-
-Replace the image file for a specific product image.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "files",
-    "id": "1"
-  }
-}
-```
-{@/request}
