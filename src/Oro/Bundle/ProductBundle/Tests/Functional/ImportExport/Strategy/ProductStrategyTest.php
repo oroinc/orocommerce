@@ -19,9 +19,12 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitForAdditionalOrganizationData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
+use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadSecondOrganizationWithBusinessUnit;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 
 /**
  * @dbIsolationPerTest
@@ -35,9 +38,11 @@ class ProductStrategyTest extends WebTestCase
     {
         $this->initClient();
         $this->loadFixtures([
+            LoadUser::class,
             LoadProductData::class,
             LoadOrganization::class,
             LoadBusinessUnit::class,
+            LoadSecondOrganizationWithBusinessUnit::class,
             LoadProductKitData::class,
             LoadProductKitForAdditionalOrganizationData::class
         ]);
@@ -288,6 +293,76 @@ class ProductStrategyTest extends WebTestCase
             'Error in row #0. Name Localization Name: Product default name is blank',
             $context->getErrors()
         );
+    }
+
+    public function testProcessWhenProductWithIncorrectOwner(): void
+    {
+        $context = new Context(['incremented_read' => true]);
+        $context->setValue('read_offset', 1);
+        $context->setValue('itemData', []);
+
+        $this->strategy->setImportExportContext($context);
+
+        $newProduct = $this->createProduct(
+            'PR-V3',
+            $this->createAttributeFamily('default_family'),
+            $this->getReference(LoadProductUnits::BOX),
+            $this->getInventoryStatus()
+        );
+
+        $user = $this->getReference(LoadUser::USER);
+        $secondOrganization = $this->getReference('second_organization');
+
+        $tokenAccessor = self::getContainer()->get('oro_security.token_accessor');
+        $tokenAccessor->setToken(
+            new UsernamePasswordOrganizationToken(
+                $user,
+                'main',
+                $user->getOrganization()
+            )
+        );
+        $this->strategy->setTokenAccessor($tokenAccessor);
+        $newProduct->setOrganization($secondOrganization);
+
+        $product = $this->strategy->process($newProduct);
+
+        self::assertFalse($product->getOwner() === $user->getOwner());
+        self::assertEquals($secondOrganization->getBusinessUnits()->first(), $product->getOwner());
+    }
+
+    public function testProcessWhenProductWithCorrectOwner(): void
+    {
+        $context = new Context(['incremented_read' => true]);
+        $context->setValue('read_offset', 1);
+        $context->setValue('itemData', []);
+
+        $this->strategy->setImportExportContext($context);
+
+        $newProduct = $this->createProduct(
+            'PR-V3',
+            $this->createAttributeFamily('default_family'),
+            $this->getReference(LoadProductUnits::BOX),
+            $this->getInventoryStatus()
+        );
+
+        $user = $this->getReference(LoadUser::USER);
+        $userOrganization = $user->getOrganization();
+
+        $tokenAccessor = self::getContainer()->get('oro_security.token_accessor');
+        $tokenAccessor->setToken(
+            new UsernamePasswordOrganizationToken(
+                $user,
+                'main',
+                $userOrganization
+            )
+        );
+        $this->strategy->setTokenAccessor($tokenAccessor);
+        $newProduct->setOrganization($userOrganization);
+
+        $product = $this->strategy->process($newProduct);
+
+        self::assertTrue($product->getOwner() === $user->getOwner());
+        self::assertEquals($userOrganization->getBusinessUnits()->first(), $product->getOwner());
     }
 
     private function getInventoryStatus(): EnumOptionInterface

@@ -18,3 +18,9 @@ services:
             - '@event_dispatcher'
         tags:
             - { name: console.command }
+
+    Oro\Bundle\ProductBundle\Command\RepairProductOwnersCommand:
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: console.command }
