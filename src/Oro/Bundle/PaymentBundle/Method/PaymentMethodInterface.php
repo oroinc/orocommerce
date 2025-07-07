@@ -21,6 +21,11 @@ interface PaymentMethodInterface
     const AUTHORIZE = 'authorize';
 
     /**
+     * Re-authorize the existing authorization hold.
+     */
+    const RE_AUTHORIZE = 're_authorize';
+
+    /**
      * Capture authorized amount, e.g complete
      */
     const CAPTURE = 'capture';

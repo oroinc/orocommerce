@@ -172,6 +172,36 @@ class PaymentTransactionProvider
     }
 
     /**
+     * Finds the payment transaction with specified action and parent transaction. Creates a new one if not found.
+     *
+     * @param string $action
+     * @param PaymentTransaction $parentPaymentTransaction
+     * @param array<string,mixed> $criteria
+     *
+     * @return PaymentTransaction
+     */
+    public function findOrCreateByPaymentTransaction(
+        string $action,
+        PaymentTransaction $parentPaymentTransaction,
+        array $criteria
+    ): PaymentTransaction {
+        $entity = $this->doctrineHelper->getEntityReference(
+            $parentPaymentTransaction->getEntityClass(),
+            $parentPaymentTransaction->getEntityIdentifier()
+        );
+        $paymentTransaction = $this->getPaymentTransaction($entity, ['action' => $action, ...$criteria]);
+
+        if (!$paymentTransaction) {
+            $paymentTransaction = $this->createPaymentTransactionByParentTransaction(
+                $action,
+                $parentPaymentTransaction
+            );
+        }
+
+        return $paymentTransaction;
+    }
+
+    /**
      * @throws \Throwable
      */
     public function savePaymentTransaction(PaymentTransaction $paymentTransaction): void

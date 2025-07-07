@@ -22,12 +22,14 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 #[ORM\Entity(repositoryClass: PaymentTransactionRepository::class)]
 #[ORM\Table(name: 'oro_payment_transaction')]
 #[ORM\UniqueConstraint(name: 'oro_pay_trans_access_uidx', columns: ['access_identifier', 'access_token'])]
 #[Config]
-class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterface
+class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterface, RequestLogsAwareInterface
 {
     use DatesAwareTrait;
     use UserAwareTrait;
@@ -110,6 +112,16 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
         mode: 'hidden'
     )]
     protected $response;
+
+    /**
+     * @var array
+     */
+    #[ORM\Column(name: 'webhook_request_logs', type: 'secure_array', nullable: true)]
+    #[ConfigField(
+        defaultValues: ['dataaudit' => ['auditable' => false], 'importexport' => ['excluded' => true]],
+        mode: 'hidden'
+    )]
+    protected $webhookRequestLogs;
 
     /**
      * @var array
@@ -257,6 +269,29 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
         return $this;
     }
 
+    public function getWebhookRequestLogs(): array
+    {
+        if (!$this->webhookRequestLogs) {
+            return [];
+        }
+
+        return $this->webhookRequestLogs;
+    }
+
+    public function setWebhookRequestLogs(?array $webhookRequestLogs = null): self
+    {
+        $this->webhookRequestLogs = $webhookRequestLogs;
+
+        return $this;
+    }
+
+    public function addWebhookRequestLog(array $webhookRequestLog): self
+    {
+        $this->webhookRequestLogs = array_merge($this->webhookRequestLogs ?? [], [$webhookRequestLog]);
+
+        return $this;
+    }
+
     /**
      * @return string
      */
@@ -276,10 +311,6 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
         return $this;
     }
 
-    /**
-     * @param PaymentTransaction $sourcePaymentTransaction
-     * @return PaymentTransaction
-     */
     public function setSourcePaymentTransaction(PaymentTransaction $sourcePaymentTransaction)
     {
         $this->sourcePaymentTransaction = $sourcePaymentTransaction;
@@ -428,6 +459,25 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
         return $this;
     }
 
+    public function getTransactionOption(string $name): mixed
+    {
+        return $this->transactionOptions[$name] ?? null;
+    }
+
+    public function addTransactionOption(string $name, mixed $value): self
+    {
+        $this->transactionOptions[$name] = $value;
+
+        return $this;
+    }
+
+    public function removeTransactionOption(string $name): self
+    {
+        unset($this->transactionOptions[$name]);
+
+        return $this;
+    }
+
     /**
      * @param string $accessIdentifier
      * @return PaymentTransaction
@@ -499,5 +549,45 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
         }
 
         return $this->reference === $this->sourcePaymentTransaction->getReference();
+    }
+
+    #[\Override]
+    public function getRequestLogs(): array
+    {
+        return $this->getRequest();
+    }
+
+    #[\Override]
+    public function setRequestLogs(?array $requestLogs = null): self
+    {
+        return $this->setRequest($requestLogs);
+    }
+
+    #[\Override]
+    public function addRequestLog(array $requestLog): self
+    {
+        $this->request = array_merge($this->request ?? [], [$requestLog]);
+
+        return $this;
+    }
+
+    #[\Override]
+    public function getResponseLogs(): array
+    {
+        return $this->getResponse();
+    }
+
+    #[\Override]
+    public function setResponseLogs(?array $responseLogs = null): self
+    {
+        return $this->setResponse($responseLogs);
+    }
+
+    #[\Override]
+    public function addResponseLog(array $responseLog): self
+    {
+        $this->response = array_merge($this->response ?? [], [$responseLog]);
+
+        return $this;
     }
 }

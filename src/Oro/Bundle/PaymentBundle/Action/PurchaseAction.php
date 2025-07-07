@@ -6,6 +6,8 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 /**
  * Create payment transaction and execute purchase.
@@ -22,6 +24,28 @@ class PurchaseAction extends AbstractPaymentMethodAction
     }
 
     #[\Override]
+    protected function configureOptionsResolver(OptionsResolver $resolver): void
+    {
+        parent::configureOptionsResolver($resolver);
+
+        $resolver
+            ->setRequired('paymentAction')
+            ->setAllowedTypes('paymentAction', ['string', PropertyPathInterface::class])
+            ->setDefault('paymentAction', PaymentMethodInterface::PURCHASE);
+    }
+
+    #[\Override]
+    protected function configureValuesResolver(OptionsResolver $resolver): void
+    {
+        parent::configureValuesResolver($resolver);
+
+        $resolver
+            ->setRequired('paymentAction')
+            ->setAllowedTypes('paymentAction', 'string')
+            ->setDefault('paymentAction', PaymentMethodInterface::PURCHASE);
+    }
+
+    #[\Override]
     protected function executeAction($context)
     {
         $options = $this->getOptions($context);
@@ -30,7 +54,7 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
         $paymentTransaction = $this->paymentTransactionProvider->createPaymentTransaction(
             $paymentMethod->getIdentifier(),
-            PaymentMethodInterface::PURCHASE,
+            $options['paymentAction'],
             $options['object']
         );
 

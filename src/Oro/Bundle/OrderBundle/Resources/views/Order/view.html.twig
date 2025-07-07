@@ -19,7 +19,7 @@
     {{ parent() }}
     {% if totals.total is defined %}
         <li>
-            <div class="label label-success">
+            <div class="label">
                 {{ 'oro.order.order_total.label'|trans }}:
                 <b>{{ totals.total.amount|oro_format_currency({'currency': totals.total.currency}) }}</b>
             </div>

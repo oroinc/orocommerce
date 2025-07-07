@@ -11,6 +11,7 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
 {
     /**
      * @var string Payment method group to filter the payment methods views by.
+     *  Leave empty to get all payment methods views.
      */
     private string $paymentMethodGroup = '';
 
@@ -35,14 +36,14 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
         $paymentMethodsViews = [];
         foreach ($this->innerProviders as $paymentMethodProvider) {
             foreach ($paymentMethodProvider->getPaymentMethodViews($identifiers) as $paymentMethodView) {
-                if ($this->paymentMethodGroup !== '' &&
-                    !$paymentMethodView instanceof PaymentMethodGroupAwareInterface) {
-                    continue;
-                }
+                if ($this->paymentMethodGroup !== '') {
+                    if (!$paymentMethodView instanceof PaymentMethodGroupAwareInterface) {
+                        continue;
+                    }
 
-                if ($paymentMethodView instanceof PaymentMethodGroupAwareInterface &&
-                    !$paymentMethodView->isApplicableForGroup($this->paymentMethodGroup)) {
-                    continue;
+                    if (!$paymentMethodView->isApplicableForGroup($this->paymentMethodGroup)) {
+                        continue;
+                    }
                 }
 
                 $paymentMethodsViews[] = $paymentMethodView;
@@ -64,14 +65,14 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
              * @var PaymentMethodViewInterface|PaymentMethodGroupAwareInterface $paymentMethodView
              */
             $paymentMethodView = $paymentMethodProvider->getPaymentMethodView($identifier);
-            if ($this->paymentMethodGroup !== '' &&
-                !$paymentMethodView instanceof PaymentMethodGroupAwareInterface) {
-                continue;
-            }
+            if ($this->paymentMethodGroup !== '') {
+                if (!$paymentMethodView instanceof PaymentMethodGroupAwareInterface) {
+                    continue;
+                }
 
-            if ($paymentMethodView instanceof PaymentMethodGroupAwareInterface &&
-                !$paymentMethodView->isApplicableForGroup($this->paymentMethodGroup)) {
-                continue;
+                if (!$paymentMethodView->isApplicableForGroup($this->paymentMethodGroup)) {
+                    continue;
+                }
             }
 
             return $paymentMethodView;
@@ -98,14 +99,15 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
              * @var PaymentMethodViewInterface|PaymentMethodGroupAwareInterface $paymentMethodView
              */
             $paymentMethodView = $paymentMethodViewProvider->getPaymentMethodView($identifier);
-            if ($this->paymentMethodGroup !== '' &&
-                !$paymentMethodView instanceof PaymentMethodGroupAwareInterface) {
-                continue;
-            }
 
-            if ($paymentMethodView instanceof PaymentMethodGroupAwareInterface &&
-                !$paymentMethodView->isApplicableForGroup($this->paymentMethodGroup)) {
-                continue;
+            if ($this->paymentMethodGroup !== '') {
+                if (!$paymentMethodView instanceof PaymentMethodGroupAwareInterface) {
+                    continue;
+                }
+
+                if (!$paymentMethodView->isApplicableForGroup($this->paymentMethodGroup)) {
+                    continue;
+                }
             }
 
             return true;

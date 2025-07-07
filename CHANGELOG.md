@@ -25,16 +25,6 @@ The current file describes significant changes in the code that may affect the u
 
 ## UNRELEASED
 
-### Changed
-
-#### CommerceBundle
-* Updated `Oro\Bundle\CommerceBundle\Layout\DataProvider\PurchaseVolumeChartDataProvider` by:
-  * replacing the `Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface` construct argument with `Oro\Bundle\PricingBundle\Manager\UserCurrencyManager`.
-  * removing the `Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface` construct argument.
-
-#### OrderBundle
-* Updated `Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository` by removing the required `$customerId` argument from the `getOrdersPurchaseVolume` and `getOrdersPurchaseVolumeQueryBuilder` methods.
-
 ### Added
 
 #### CommerceBundle
@@ -59,6 +49,37 @@ The current file describes significant changes in the code that may affect the u
   * `sellerContactEmail`;
   * `sellerWebsiteURL`;
   * `sellerTaxID`;
+
+#### OrderBundle
+* Added `\Oro\Bundle\OrderBundle\Provider\OrderEntityNameProvider` so that an order entity name can now be retrieved from `\Oro\Bundle\EntityBundle\Provider\EntityNameResolver`.
+
+#### PaymentBundle
+* Added `paymentAction` option to the `\Oro\Bundle\PaymentBundle\Action\PurchaseAction` allowing to pass the action name to perform, e.g. purchase/charge/authorize.
+* Added `\Oro\Bundle\PaymentBundle\Entity\PaymentTransaction::$webhookRequestLogs` field to store webhook request logs.
+* Added `\Oro\Bundle\PaymentBundle\Entity\RequestLogsAwareInterface` to mark entities that can store transaction request and response logs.
+* Added `\Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodGroupAwareProvider` that provides a filtered list of payment methods that are applicable for a specific payment method group.
+* Added the ability to refund `purchase` and `charge` payment transactions in `oro_payment_transaction_refund`.
+
+#### PricingBundle
+* Added `\Oro\Bundle\PricingBundle\Layout\DataProvider\TotalsProvider` layout data provider.
+
+#### SalesBundle
+* Added the support for `data-clear-if` and `data-clear-element` attributes in the `dependent-field-component.js`.
+
+### Changed
+
+#### CommerceBundle
+* Updated `Oro\Bundle\CommerceBundle\Layout\DataProvider\PurchaseVolumeChartDataProvider` by:
+    * replacing the `Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface` construct argument with `Oro\Bundle\PricingBundle\Manager\UserCurrencyManager`.
+    * removing the `Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface` construct argument.
+
+#### OrderBundle
+* Updated `Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository` by removing the required `$customerId` argument from the `getOrdersPurchaseVolume` and `getOrdersPurchaseVolumeQueryBuilder` methods.
+* Changed the order total amount label appearance on the order view back-office page.
+
+#### PaymentBundle
+* Implemented `\Oro\Bundle\PaymentBundle\Entity\RequestLogsAwareInterface` in `\Oro\Bundle\PaymentBundle\Entity\PaymentTransaction`.
+* Fixed the broken styling in the dialog of `oro_payment_transaction_cancel`.
 
 ## 6.1.0 (2025-03-31)
 [Show detailed list of changes](incompatibilities-6-1.md)

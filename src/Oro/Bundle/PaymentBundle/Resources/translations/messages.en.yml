@@ -162,6 +162,7 @@ oro:
             related_payment_transactions.label: Related Payment Transactions
             types:
                 authorize.label: Authorize
+                re_authorize.label: Re-Authorize
                 charge.label: Charge
                 validate.label: Validate
                 capture.label: Capture

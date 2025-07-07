@@ -1,6 +1,7 @@
 define(function(require) {
     'use strict';
 
+    const $ = require('jquery');
     const _ = require('underscore');
     const BaseComponent = require('oroui/js/app/components/base/component');
 
@@ -32,6 +33,13 @@ define(function(require) {
      *  value(s) of dependee, which are required to hide the dependent element. This option has higher priority
      *  than showing option, so if both "data-show-if" and "data-hide-if" are true, than the dependent element will be
      *  hidden.
+     *
+     *  - "data-clear-if" attribute is optional and should be filled with condition which represents the list of
+     *  value(s) of dependee, which are required to clear the dependent element. List of values must be divided with "&"
+     *  (conjunction operator) or "|" (disjunction operator) - it will be evaluated according to common logic expression
+     *  rules.
+     * - "data-clear-element" attribute is optional and should be used if it is needed to clear some form elements
+     *  in dependee element.
      *
      *  - "data-disable-element" - attribute is optional and should be used if need to additionally to disable
      *  some form elements in dependee element.
@@ -83,7 +91,7 @@ define(function(require) {
 
             if (this.$dependee.length) {
                 this.updateDependentFields = this.updateDependentFields.bind(this);
-                this.updateDependentFields();
+                this.updateDependentFields(null, true);
                 this.$dependee.on('change', this.updateDependentFields);
             }
 
@@ -144,6 +152,20 @@ define(function(require) {
         /**
          * @returns {string}
          */
+        getClearIf: function() {
+            return this.$el.data('clearIf');
+        },
+
+        /**
+         * @returns {string}
+         */
+        getClearElement: function() {
+            return this.$el.data('clearElement') || ':input';
+        },
+
+        /**
+         * @returns {string}
+         */
         getDisableElement: function() {
             return this.$el.data('disableElement');
         },
@@ -164,6 +186,12 @@ define(function(require) {
             }
 
             return condition;
+        },
+
+        evaluateClearCondition() {
+            const clearIf = this.getClearIf();
+
+            return typeof clearIf !== 'undefined' ? this.evaluateDisjunction(clearIf) : false;
         },
 
         /**
@@ -218,15 +246,57 @@ define(function(require) {
         },
 
         /**
-         * Show/hide dependent field based on condition.
+         * Updates dependent field based on condition.
+         *
+         * @param {jQuery.Event} [e]
+         * @param {boolean} [isInit]
          */
-        updateDependentFields: function() {
+        updateDependentFields: function(e, isInit) {
             if (this.evaluateCondition()) {
                 this.$el.closest(this.options.selectors.rowContainer).show();
                 this.setDisableState(false);
             } else {
                 this.$el.closest(this.options.selectors.rowContainer).hide();
                 this.setDisableState(true);
+            }
+
+            if (!isInit) {
+                this.clearOrRestoreElement(this.evaluateClearCondition());
+            }
+        },
+
+        clearOrRestoreElement(doClear) {
+            const clearElementSelector = this.getClearElement();
+            if (clearElementSelector) {
+                this.$el
+                    .closest(this.options.selectors.rowContainer)
+                    .find(clearElementSelector).each((index, element) => {
+                        const $el = $(element);
+
+                        if (doClear) {
+                            let value;
+                            if ($el.is(':checkbox')) {
+                                value = $el.prop('checked');
+                                $el.prop('checked', false);
+                            } else {
+                                value = $el.val();
+                                $el.val('');
+                            }
+
+                            $el.data('clearedValue', value);
+                        } else {
+                            const previousValue = $el.data('clearedValue');
+                            if (previousValue !== undefined) {
+                                if ($el.is(':checkbox')) {
+                                    $el.prop('checked', previousValue);
+                                } else {
+                                    $el.val(previousValue);
+                                }
+
+                                $el.removeData('clearedValue');
+                            }
+                        }
+                    });
             }
         },
 

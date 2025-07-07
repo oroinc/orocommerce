@@ -50,7 +50,6 @@ class ExtendEntityCacheWarmer implements CacheWarmerInterface
     protected function getClassNamesOfDeletedEntities(): array
     {
         return [
-            'Oro\Bundle\InvoiceBundle\Entity\Invoice',
             'Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem',
             'ACME\Bundle\WysiwygBundle\Entity\BlogPost',
             'ACME\Bundle\CollectOnDeliveryBundle\Entity\CollectOnDeliverySettings',

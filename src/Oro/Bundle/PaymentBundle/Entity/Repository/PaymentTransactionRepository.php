@@ -56,7 +56,7 @@ class PaymentTransactionRepository extends ServiceEntityRepository
 
     /**
      * @param PaymentTransaction $transaction
-     * @param string             $action
+     * @param string $action
      *
      * @return PaymentTransaction[]
      */
@@ -68,8 +68,17 @@ class PaymentTransactionRepository extends ServiceEntityRepository
             [
                 'sourcePaymentTransaction' => $transaction,
                 'action' => $action,
-                'successful' => true
+                'successful' => true,
             ]
         );
+    }
+
+    public function hasSuccessfulRelatedTransactionsByAction(PaymentTransaction $transaction, string $action): bool
+    {
+        return 0 < $this->count([
+                'sourcePaymentTransaction' => $transaction,
+                'action' => $action,
+                'successful' => true,
+            ]);
     }
 }

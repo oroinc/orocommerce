@@ -20,7 +20,7 @@ class PaymentTransactionRefundAction extends AbstractPaymentMethodAction
         parent::configureOptionsResolver($resolver);
 
         $resolver
-            ->remove(['object', 'amount', 'currency', 'paymentMethod'])
+            ->remove(['object', 'amount', 'currency'])
             ->setRequired([self::OPTION_PAYMENT_TRANSACTION])
             ->addAllowedTypes(
                 self::OPTION_PAYMENT_TRANSACTION,
@@ -34,7 +34,7 @@ class PaymentTransactionRefundAction extends AbstractPaymentMethodAction
         parent::configureValuesResolver($resolver);
 
         $resolver
-            ->remove(['object', 'amount', 'currency', 'paymentMethod'])
+            ->remove(['object', 'amount', 'currency'])
             ->setRequired([self::OPTION_PAYMENT_TRANSACTION])
             ->addAllowedTypes(self::OPTION_PAYMENT_TRANSACTION, PaymentTransaction::class);
     }

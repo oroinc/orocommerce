@@ -11,7 +11,7 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 class CompositePaymentMethodProvider implements PaymentMethodProviderInterface
 {
     /**
-     * @var string Payment method group to filter the payment methods by.
+     * @var string Payment method group to filter the payment methods by. Leave empty to get all payment methods.
      */
     private string $paymentMethodGroup = '';
 
@@ -36,13 +36,14 @@ class CompositePaymentMethodProvider implements PaymentMethodProviderInterface
         $paymentMethods = [];
         foreach ($this->innerProviders as $paymentMethodProvider) {
             foreach ($paymentMethodProvider->getPaymentMethods() as $identifier => $paymentMethod) {
-                if ($this->paymentMethodGroup !== '' && !$paymentMethod instanceof PaymentMethodGroupAwareInterface) {
-                    continue;
-                }
+                if ($this->paymentMethodGroup !== '') {
+                    if (!$paymentMethod instanceof PaymentMethodGroupAwareInterface) {
+                        continue;
+                    }
 
-                if ($paymentMethod instanceof PaymentMethodGroupAwareInterface &&
-                    !$paymentMethod->isApplicableForGroup($this->paymentMethodGroup)) {
-                    continue;
+                    if (!$paymentMethod->isApplicableForGroup($this->paymentMethodGroup)) {
+                        continue;
+                    }
                 }
 
                 $paymentMethods[$identifier] = $paymentMethod;
@@ -62,13 +63,14 @@ class CompositePaymentMethodProvider implements PaymentMethodProviderInterface
 
             /** @var PaymentMethodInterface|PaymentMethodGroupAwareInterface $paymentMethod $paymentMethod */
             $paymentMethod = $paymentMethodProvider->getPaymentMethod($identifier);
-            if ($this->paymentMethodGroup !== '' && !$paymentMethod instanceof PaymentMethodGroupAwareInterface) {
-                continue;
-            }
+            if ($this->paymentMethodGroup !== '') {
+                if (!$paymentMethod instanceof PaymentMethodGroupAwareInterface) {
+                    continue;
+                }
 
-            if ($paymentMethod instanceof PaymentMethodGroupAwareInterface &&
-                !$paymentMethod->isApplicableForGroup($this->paymentMethodGroup)) {
-                continue;
+                if (!$paymentMethod->isApplicableForGroup($this->paymentMethodGroup)) {
+                    continue;
+                }
             }
 
             return $paymentMethod;
@@ -93,13 +95,14 @@ class CompositePaymentMethodProvider implements PaymentMethodProviderInterface
 
             /** @var PaymentMethodInterface|PaymentMethodGroupAwareInterface $paymentMethod $paymentMethod */
             $paymentMethod = $paymentMethodProvider->getPaymentMethod($identifier);
-            if ($this->paymentMethodGroup !== '' && !$paymentMethod instanceof PaymentMethodGroupAwareInterface) {
-                continue;
-            }
+            if ($this->paymentMethodGroup !== '') {
+                if (!$paymentMethod instanceof PaymentMethodGroupAwareInterface) {
+                    continue;
+                }
 
-            if ($paymentMethod instanceof PaymentMethodGroupAwareInterface &&
-                !$paymentMethod->isApplicableForGroup($this->paymentMethodGroup)) {
-                continue;
+                if (!$paymentMethod->isApplicableForGroup($this->paymentMethodGroup)) {
+                    continue;
+                }
             }
 
             return true;

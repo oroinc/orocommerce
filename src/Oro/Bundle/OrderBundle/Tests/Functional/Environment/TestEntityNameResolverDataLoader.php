@@ -38,19 +38,9 @@ class TestEntityNameResolverDataLoader implements TestEntityNameResolverDataLoad
             $repository->setReference('order', $order);
             $em->persist($order);
 
-            $orderWithoutPoNumber = new Order();
-            $orderWithoutPoNumber->setOrganization($repository->getReference('organization'));
-            $orderWithoutPoNumber->setOwner($repository->getReference('user'));
-            $orderWithoutPoNumber->setIdentifier('ORD2');
-            $orderWithoutPoNumber->setCurrency('USD');
-            $orderWithoutPoNumber->setShippingMethod('test_shipping');
-            $orderWithoutPoNumber->setShippingMethodType('test_shipping_type');
-            $repository->setReference('orderWithoutPoNumber', $orderWithoutPoNumber);
-            $em->persist($orderWithoutPoNumber);
-
             $em->flush();
 
-            return ['order', 'orderWithoutPoNumber'];
+            return ['order'];
         }
 
         if (OrderAddress::class === $entityClass) {
@@ -78,13 +68,12 @@ class TestEntityNameResolverDataLoader implements TestEntityNameResolverDataLoad
         ?string $locale
     ): string {
         if (Order::class === $entityClass) {
+            $identifier = (string)$repository->getReference($entityReference)->getIdentifier();
             if (EntityNameProviderInterface::SHORT === $format) {
-                return (string)$repository->getReference($entityReference)->getId();
+                return $identifier;
             }
 
-            return 'orderWithoutPoNumber' === $entityReference
-                ? 'ORD2'
-                : 'ORD1';
+            return sprintf('Order #%s', $identifier);
         }
         if (OrderAddress::class === $entityClass) {
             return EntityNameProviderInterface::SHORT === $format

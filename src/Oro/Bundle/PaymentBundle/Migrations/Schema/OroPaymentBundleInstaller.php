@@ -18,7 +18,7 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_11';
+        return 'v6_1_3_0';
     }
 
     #[\Override]
@@ -61,6 +61,10 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('source_payment_transaction', 'integer', ['notnull' => false]);
         $table->addColumn('request', 'secure_array', ['notnull' => false, 'comment' => '(DC2Type:secure_array)']);
         $table->addColumn('response', 'secure_array', ['notnull' => false, 'comment' => '(DC2Type:secure_array)']);
+        $table->addColumn('webhook_request_logs', 'secure_array', [
+            'notnull' => false,
+            'comment' => '(DC2Type:secure_array)',
+        ]);
         $table->addColumn('transaction_options', 'secure_array', [
             'notnull' => false,
             'comment' => '(DC2Type:secure_array)'
