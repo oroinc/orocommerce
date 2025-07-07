@@ -69,9 +69,16 @@ abstract class AbstractLoadContentWidgetData extends AbstractLoadFrontendTheme i
                 $contentWidget->setOrganization($organization);
             }
 
-            $contentWidget->setDescription($row['description'] ?? null);
-            $contentWidget->setLayout($row['layout'] ?? null);
-            $contentWidget->setSettings($row['settings'] ?? []);
+
+            if (isset($row['description'])) {
+                $contentWidget->setDescription($row['description']);
+            }
+            if (isset($row['layout'])) {
+                $contentWidget->setLayout($row['layout']);
+            }
+            if (isset($row['settings'])) {
+                $contentWidget->setSettings(array_merge($row['settings'], $contentWidget->getSettings()));
+            }
 
             if (isset($row['label'])) {
                 $contentWidget->setDefaultLabel($row['label']);

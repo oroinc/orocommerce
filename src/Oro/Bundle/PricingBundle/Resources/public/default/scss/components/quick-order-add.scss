@@ -14,8 +14,10 @@
         width: 100%;
         text-align: right;
         background-color: transparent;
-        border-color: transparent;
-        font-size: 13px;
+        border: 0;
+        font-size: $input-font-size;
+        font-family: $input-font-family;
+        line-height: $input-line-height;
 
         + .theme-icon {
             display: none;

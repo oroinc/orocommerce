@@ -344,7 +344,7 @@ oro_behat_extension:
     Clear All Button:
       selector:
         type: xpath
-        locator: '//button[contains(text(), "Clear All Product Variants")]'
+        locator: '//button[contains(text(), "Clear All")]'
 
     One Dimensional Matrix Grid Form:
       selector:

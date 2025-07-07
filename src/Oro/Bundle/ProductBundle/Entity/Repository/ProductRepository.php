@@ -383,12 +383,7 @@ class ProductRepository extends ServiceEntityRepository
         return array_column($result, 'id');
     }
 
-    /**
-     * @param int[] $configurableProductIds
-     *
-     * @return array [variant id => [parent Product Id, ...], ...]
-     */
-    public function getVariantsMapping(array $configurableProductIds): array
+    public function getVariantIdsByConfigurableProductIds(array $configurableProductIds): array
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from(ProductVariantLink::class, 'pvl')
@@ -396,9 +391,19 @@ class ProductRepository extends ServiceEntityRepository
             ->where($qb->expr()->in('pvl.parentProduct', ':parentProduct'))
             ->setParameter('parentProduct', $configurableProductIds);
 
-        $mappingData = $qb->getQuery()->getArrayResult();
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @param int[] $configurableProductIds
+     *
+     * @return array [variant id => [parent Product Id, ...], ...]
+     */
+    public function getVariantsMapping(array $configurableProductIds): array
+    {
         $mapping = [];
-        foreach ($mappingData as $mappingRow) {
+
+        foreach ($this->getVariantIdsByConfigurableProductIds($configurableProductIds) as $mappingRow) {
             $mapping[$mappingRow['variantId']][] = $mappingRow['parentId'];
         }
 

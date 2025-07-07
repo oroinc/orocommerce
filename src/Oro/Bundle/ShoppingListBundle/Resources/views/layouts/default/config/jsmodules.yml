@@ -10,6 +10,7 @@ aliases:
     oro/datagrid/cell/shoppinglist-line-item-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-line-item-cell
     oro/datagrid/cell/shoppinglist-string-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-string-cell
     oro/datagrid/cell/shoppinglist-sku-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-sku-cell
+    oro/datagrid/cell/shoppinglist-inventory-status-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-inventory-status-cell
     oro/matrix-grid-order-widget$: oroshoppinglist/js/app/widget/matrix-grid-order-widget
     oro/product-kit-line-item-widget$: oroshoppinglist/js/app/widget/product-kit-line-item-widget
     oro/product-kit-in-shopping-lists-widget$: oroshoppinglist/js/app/widget/product-kit-in-shopping-lists-widget
@@ -43,6 +44,7 @@ dynamic-imports:
         - oro/datagrid/cell/shoppinglist-line-item-cell
         - oro/datagrid/cell/shoppinglist-string-cell
         - oro/datagrid/cell/shoppinglist-sku-cell
+        - oro/datagrid/cell/shoppinglist-inventory-status-cell
         - oroform/js/app/views/editor/related-id-relation-editor-view
         - oroform/js/app/views/editor/select-editor-view
         - oroshoppinglist/js/app/components/shopping-list-cell-popup-editor-component

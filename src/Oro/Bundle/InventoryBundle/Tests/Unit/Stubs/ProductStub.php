@@ -27,8 +27,10 @@ class ProductStub extends Product
     /**
      * @param string|object|null $inventoryStatus
      */
-    public function setInventoryStatus($inventoryStatus): void
+    public function setInventoryStatus($inventoryStatus): self
     {
         $this->inventoryStatus = $inventoryStatus;
+
+        return $this;
     }
 }

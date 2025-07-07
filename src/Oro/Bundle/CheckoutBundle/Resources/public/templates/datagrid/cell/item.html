@@ -63,7 +63,11 @@
                     <span class="highlighted-in-mobile break-all"><%- sku %></span>
                 <% } %>
                 <% if (obj.inventoryStatus && !obj.isConfigurable) { %>
-                    <%= oroshoppinglist.renderInventoryStatus({name: inventoryStatus, label: inventoryStatusLabel(inventoryStatus), isLowInventory: isLowInventory}) %>
+                    <% if (obj.inventoryLevelsMacros) { %>
+                        <%= inventoryLevelsMacros({...obj, rootClass: 'stretch'}) %>
+                    <% } else { %>
+                        <%= oroshoppinglist.renderInventoryStatus({name: inventoryStatus, label: inventoryStatusLabel(inventoryStatus), isLowInventory: isLowInventory}) %>
+                    <% } %>
                 <% } %>
             </div>
             <% } %>

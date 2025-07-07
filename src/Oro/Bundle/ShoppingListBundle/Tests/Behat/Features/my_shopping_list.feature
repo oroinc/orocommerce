@@ -271,29 +271,29 @@ Feature: My Shopping List
     And I should see "Assigned To: Amanda Cole"
     And I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit   | Price  | Subtotal                 |
-      | BB04 | Configurable Product 1 Red M Note 4 text    | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB05 | Configurable Product 1 Green L Note 5 text  | OUT OF STOCK | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB06 | Configurable Product 2 Blue S Note 6 text   | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB07 | Configurable Product 2 Red M Note 7 text    | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB08 | Configurable Product 3 Green L Note 8 text  | IN STOCK     | 5   | pieces | $17.00 | $85.00                   |
-      | BB09 | Configurable Product 3 Blue S Note 9 text   | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB10 | Configurable Product 3 Red M Note 10 text   | IN STOCK     | 7   | sets   | $19.00 | $133.00                  |
-      | BB11 | Configurable Product 2 Green L Note 11 text | OUT OF STOCK | 7   | sets   | $19.00 | $133.00                  |
-      | BB12 | Configurable Product 1 Blue S Note 12 text  | IN STOCK     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
-      | BB13 | Product 13 Note 13 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB14 | Product 14 Note 14 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB15 | Product 15 Note 15 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB16 | Product 16 Note 16 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB17 | Product 17 Note 17 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB18 | Product 18 Note 18 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | BB19 | Product 19 Note 19 text                     | OUT OF STOCK | 11  | sets   | $29.00 | $319.00                  |
-      | BB20 | Product 20 Note 20 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | CC21 | Product 21 Note 21 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC22 | Product 22 Note 22 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC23 | Product 23 Note 23 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC24 | Product 24 Note 24 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC25 | Product 25 Note 25 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC26 | Product 26 Note 26 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
+      | BB04 | Configurable Product 1 Red M Note 4 text    | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB05 | Configurable Product 1 Green L Note 5 text  | Out of Stock | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB06 | Configurable Product 2 Blue S Note 6 text   | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB07 | Configurable Product 2 Red M Note 7 text    | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB08 | Configurable Product 3 Green L Note 8 text  | In Stock     | 5   | pieces | $17.00 | $85.00                   |
+      | BB09 | Configurable Product 3 Blue S Note 9 text   | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB10 | Configurable Product 3 Red M Note 10 text   | In Stock     | 7   | sets   | $19.00 | $133.00                  |
+      | BB11 | Configurable Product 2 Green L Note 11 text | Out of Stock | 7   | sets   | $19.00 | $133.00                  |
+      | BB12 | Configurable Product 1 Blue S Note 12 text  | In Stock     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
+      | BB13 | Product 13 Note 13 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB14 | Product 14 Note 14 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB15 | Product 15 Note 15 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB16 | Product 16 Note 16 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB17 | Product 17 Note 17 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB18 | Product 18 Note 18 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | BB19 | Product 19 Note 19 text                     | Out of Stock | 11  | sets   | $29.00 | $319.00                  |
+      | BB20 | Product 20 Note 20 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | CC21 | Product 21 Note 21 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC22 | Product 22 Note 22 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC23 | Product 23 Note 23 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC24 | Product 24 Note 24 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC25 | Product 25 Note 25 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC26 | Product 26 Note 26 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
     And I should see "Summary 30 Items"
     And I should see "Subtotal $8,012.00"
     And I should see "Discount -$647.50"
@@ -303,109 +303,109 @@ Feature: My Shopping List
     When I click "Next"
     Then I should see following grid:
       | SKU  | Product                 | Availability | Qty | Unit   | Price  | Subtotal |
-      | CC31 | Product 31 Note 31 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
-      | CC32 | Product 32 Note 32 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
-      | CC33 | Product 33 Note 33 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
-      | CC34 | Product 34 Note 34 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
-      | CC35 | Product 35 Note 35 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
+      | CC31 | Product 31 Note 31 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
+      | CC32 | Product 32 Note 32 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
+      | CC33 | Product 33 Note 33 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
+      | CC34 | Product 34 Note 34 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
+      | CC35 | Product 35 Note 35 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
     And I scroll to top
 
   Scenario: Check SKU filter
     When I filter SKU as contains "CC3"
     Then I should see following grid:
       | SKU  | Product                 | Availability | Qty | Unit   | Price  | Subtotal |
-      | CC30 | Product 30 Note 30 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
-      | CC31 | Product 31 Note 31 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
-      | CC32 | Product 32 Note 32 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
-      | CC33 | Product 33 Note 33 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
-      | CC34 | Product 34 Note 34 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
-      | CC35 | Product 35 Note 35 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
+      | CC30 | Product 30 Note 30 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
+      | CC31 | Product 31 Note 31 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
+      | CC32 | Product 32 Note 32 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
+      | CC33 | Product 33 Note 33 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
+      | CC34 | Product 34 Note 34 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
+      | CC35 | Product 35 Note 35 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
     And I scroll to top
     When I reset grid
     And I filter SKU as contains "BB04"
     Then I should see following grid:
       | SKU  | Product                                  | Availability | Qty | Unit  | Price  | Subtotal              |
-      | BB04 | Configurable Product 1 Red M Note 4 text | IN STOCK     | 3   | items | $11.00 | $33.00 -$16.50 $16.50 |
+      | BB04 | Configurable Product 1 Red M Note 4 text | In Stock     | 3   | items | $11.00 | $33.00 -$16.50 $16.50 |
 
   Scenario: Sort by SKU
     Given I reset grid
     Then I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit   | Price  | Subtotal                 |
-      | BB04 | Configurable Product 1 Red M Note 4 text    | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB05 | Configurable Product 1 Green L Note 5 text  | OUT OF STOCK | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB06 | Configurable Product 2 Blue S Note 6 text   | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB07 | Configurable Product 2 Red M Note 7 text    | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB08 | Configurable Product 3 Green L Note 8 text  | IN STOCK     | 5   | pieces | $17.00 | $85.00                   |
-      | BB09 | Configurable Product 3 Blue S Note 9 text   | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB10 | Configurable Product 3 Red M Note 10 text   | IN STOCK     | 7   | sets   | $19.00 | $133.00                  |
-      | BB11 | Configurable Product 2 Green L Note 11 text | OUT OF STOCK | 7   | sets   | $19.00 | $133.00                  |
-      | BB12 | Configurable Product 1 Blue S Note 12 text  | IN STOCK     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
-      | BB13 | Product 13 Note 13 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB14 | Product 14 Note 14 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB15 | Product 15 Note 15 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB16 | Product 16 Note 16 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB17 | Product 17 Note 17 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB18 | Product 18 Note 18 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | BB19 | Product 19 Note 19 text                     | OUT OF STOCK | 11  | sets   | $29.00 | $319.00                  |
-      | BB20 | Product 20 Note 20 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | CC21 | Product 21 Note 21 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC22 | Product 22 Note 22 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC23 | Product 23 Note 23 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC24 | Product 24 Note 24 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC25 | Product 25 Note 25 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC26 | Product 26 Note 26 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
+      | BB04 | Configurable Product 1 Red M Note 4 text    | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB05 | Configurable Product 1 Green L Note 5 text  | Out of Stock | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB06 | Configurable Product 2 Blue S Note 6 text   | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB07 | Configurable Product 2 Red M Note 7 text    | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB08 | Configurable Product 3 Green L Note 8 text  | In Stock     | 5   | pieces | $17.00 | $85.00                   |
+      | BB09 | Configurable Product 3 Blue S Note 9 text   | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB10 | Configurable Product 3 Red M Note 10 text   | In Stock     | 7   | sets   | $19.00 | $133.00                  |
+      | BB11 | Configurable Product 2 Green L Note 11 text | Out of Stock | 7   | sets   | $19.00 | $133.00                  |
+      | BB12 | Configurable Product 1 Blue S Note 12 text  | In Stock     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
+      | BB13 | Product 13 Note 13 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB14 | Product 14 Note 14 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB15 | Product 15 Note 15 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB16 | Product 16 Note 16 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB17 | Product 17 Note 17 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB18 | Product 18 Note 18 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | BB19 | Product 19 Note 19 text                     | Out of Stock | 11  | sets   | $29.00 | $319.00                  |
+      | BB20 | Product 20 Note 20 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | CC21 | Product 21 Note 21 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC22 | Product 22 Note 22 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC23 | Product 23 Note 23 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC24 | Product 24 Note 24 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC25 | Product 25 Note 25 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC26 | Product 26 Note 26 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
     When I sort grid by "SKU"
     Then I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit   | Price  | Subtotal                 |
-      | BB04 | Configurable Product 1 Red M Note 4 text    | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB05 | Configurable Product 1 Green L Note 5 text  | OUT OF STOCK | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB06 | Configurable Product 2 Blue S Note 6 text   | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB07 | Configurable Product 2 Red M Note 7 text    | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB08 | Configurable Product 3 Green L Note 8 text  | IN STOCK     | 5   | pieces | $17.00 | $85.00                   |
-      | BB09 | Configurable Product 3 Blue S Note 9 text   | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB10 | Configurable Product 3 Red M Note 10 text   | IN STOCK     | 7   | sets   | $19.00 | $133.00                  |
-      | BB11 | Configurable Product 2 Green L Note 11 text | OUT OF STOCK | 7   | sets   | $19.00 | $133.00                  |
-      | BB12 | Configurable Product 1 Blue S Note 12 text  | IN STOCK     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
-      | BB13 | Product 13 Note 13 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB14 | Product 14 Note 14 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB15 | Product 15 Note 15 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB16 | Product 16 Note 16 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB17 | Product 17 Note 17 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB18 | Product 18 Note 18 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | BB19 | Product 19 Note 19 text                     | OUT OF STOCK | 11  | sets   | $29.00 | $319.00                  |
-      | BB20 | Product 20 Note 20 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | CC21 | Product 21 Note 21 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC22 | Product 22 Note 22 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC23 | Product 23 Note 23 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC24 | Product 24 Note 24 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC25 | Product 25 Note 25 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC26 | Product 26 Note 26 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
+      | BB04 | Configurable Product 1 Red M Note 4 text    | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB05 | Configurable Product 1 Green L Note 5 text  | Out of Stock | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB06 | Configurable Product 2 Blue S Note 6 text   | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB07 | Configurable Product 2 Red M Note 7 text    | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB08 | Configurable Product 3 Green L Note 8 text  | In Stock     | 5   | pieces | $17.00 | $85.00                   |
+      | BB09 | Configurable Product 3 Blue S Note 9 text   | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB10 | Configurable Product 3 Red M Note 10 text   | In Stock     | 7   | sets   | $19.00 | $133.00                  |
+      | BB11 | Configurable Product 2 Green L Note 11 text | Out of Stock | 7   | sets   | $19.00 | $133.00                  |
+      | BB12 | Configurable Product 1 Blue S Note 12 text  | In Stock     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
+      | BB13 | Product 13 Note 13 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB14 | Product 14 Note 14 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB15 | Product 15 Note 15 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB16 | Product 16 Note 16 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB17 | Product 17 Note 17 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB18 | Product 18 Note 18 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | BB19 | Product 19 Note 19 text                     | Out of Stock | 11  | sets   | $29.00 | $319.00                  |
+      | BB20 | Product 20 Note 20 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | CC21 | Product 21 Note 21 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC22 | Product 22 Note 22 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC23 | Product 23 Note 23 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC24 | Product 24 Note 24 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC25 | Product 25 Note 25 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC26 | Product 26 Note 26 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
     When I sort grid by "SKU" again
     Then I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit   | Price  | Subtotal                 |
-      | CC35 | Product 35 Note 35 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC34 | Product 34 Note 34 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC33 | Product 33 Note 33 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC32 | Product 32 Note 32 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC31 | Product 31 Note 31 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC30 | Product 30 Note 30 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC29 | Product 29 Note 29 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC26 | Product 26 Note 26 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC25 | Product 25 Note 25 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC24 | Product 24 Note 24 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC23 | Product 23 Note 23 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC22 | Product 22 Note 22 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC21 | Product 21 Note 21 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | BB20 | Product 20 Note 20 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | BB19 | Product 19 Note 19 text                     | OUT OF STOCK | 11  | sets   | $29.00 | $319.00                  |
-      | BB18 | Product 18 Note 18 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | BB17 | Product 17 Note 17 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB16 | Product 16 Note 16 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB15 | Product 15 Note 15 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB14 | Product 14 Note 14 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB13 | Product 13 Note 13 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB12 | Configurable Product 1 Blue S Note 12 text  | IN STOCK     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
-      | BB11 | Configurable Product 2 Green L Note 11 text | OUT OF STOCK | 7   | sets   | $19.00 | $133.00                  |
+      | CC35 | Product 35 Note 35 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC34 | Product 34 Note 34 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC33 | Product 33 Note 33 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC32 | Product 32 Note 32 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC31 | Product 31 Note 31 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC30 | Product 30 Note 30 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC29 | Product 29 Note 29 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC26 | Product 26 Note 26 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC25 | Product 25 Note 25 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC24 | Product 24 Note 24 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC23 | Product 23 Note 23 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC22 | Product 22 Note 22 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC21 | Product 21 Note 21 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | BB20 | Product 20 Note 20 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | BB19 | Product 19 Note 19 text                     | Out of Stock | 11  | sets   | $29.00 | $319.00                  |
+      | BB18 | Product 18 Note 18 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | BB17 | Product 17 Note 17 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB16 | Product 16 Note 16 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB15 | Product 15 Note 15 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB14 | Product 14 Note 14 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB13 | Product 13 Note 13 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB12 | Configurable Product 1 Blue S Note 12 text  | In Stock     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
+      | BB11 | Configurable Product 2 Green L Note 11 text | Out of Stock | 7   | sets   | $19.00 | $133.00                  |
 
   Scenario: Check Show All and Group Product Variants
     When I reset grid
@@ -413,198 +413,198 @@ Feature: My Shopping List
     And I click "Group Product Variants"
     Then I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit   | Price  | Subtotal                 |
-      | BB06 | Configurable Product 2 Blue S Note 6 text   | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB07 | Configurable Product 2 Red M Note 7 text    | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
+      | BB06 | Configurable Product 2 Blue S Note 6 text   | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB07 | Configurable Product 2 Red M Note 7 text    | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
       |      | Configurable Product 3                      |              | 10  | pieces |        | $170.00                  |
-      | BB08 | Green L Note 8 text                         | IN STOCK     | 5   | pieces | $17.00 | $85.00                   |
-      | BB09 | Blue S Note 9 text                          | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB10 | Configurable Product 3 Red M Note 10 text   | IN STOCK     | 7   | sets   | $19.00 | $133.00                  |
-      | BB11 | Configurable Product 2 Green L Note 11 text | OUT OF STOCK | 7   | sets   | $19.00 | $133.00                  |
+      | BB08 | Green L Note 8 text                         | In Stock     | 5   | pieces | $17.00 | $85.00                   |
+      | BB09 | Blue S Note 9 text                          | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB10 | Configurable Product 3 Red M Note 10 text   | In Stock     | 7   | sets   | $19.00 | $133.00                  |
+      | BB11 | Configurable Product 2 Green L Note 11 text | Out of Stock | 7   | sets   | $19.00 | $133.00                  |
       |      | Configurable Product 1                      |              | 13  | items  |        | $227.00 -$113.50 $113.50 |
-      | BB04 | Red M Note 4 text                           | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB05 | Green L Note 5 text                         | OUT OF STOCK | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB12 | Blue S Note 12 text                         | IN STOCK     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
-      | BB13 | Product 13 Note 13 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB14 | Product 14 Note 14 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB15 | Product 15 Note 15 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB16 | Product 16 Note 16 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB17 | Product 17 Note 17 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB18 | Product 18 Note 18 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | BB19 | Product 19 Note 19 text                     | OUT OF STOCK | 11  | sets   | $29.00 | $319.00                  |
-      | BB20 | Product 20 Note 20 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | CC21 | Product 21 Note 21 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC22 | Product 22 Note 22 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC23 | Product 23 Note 23 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC24 | Product 24 Note 24 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC25 | Product 25 Note 25 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC26 | Product 26 Note 26 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC29 | Product 29 Note 29 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC30 | Product 30 Note 30 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC31 | Product 31 Note 31 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC32 | Product 32 Note 32 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC33 | Product 33 Note 33 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC34 | Product 34 Note 34 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC35 | Product 35 Note 35 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
+      | BB04 | Red M Note 4 text                           | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB05 | Green L Note 5 text                         | Out of Stock | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB12 | Blue S Note 12 text                         | In Stock     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
+      | BB13 | Product 13 Note 13 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB14 | Product 14 Note 14 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB15 | Product 15 Note 15 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB16 | Product 16 Note 16 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB17 | Product 17 Note 17 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB18 | Product 18 Note 18 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | BB19 | Product 19 Note 19 text                     | Out of Stock | 11  | sets   | $29.00 | $319.00                  |
+      | BB20 | Product 20 Note 20 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | CC21 | Product 21 Note 21 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC22 | Product 22 Note 22 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC23 | Product 23 Note 23 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC24 | Product 24 Note 24 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC25 | Product 25 Note 25 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC26 | Product 26 Note 26 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC29 | Product 29 Note 29 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC30 | Product 30 Note 30 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC31 | Product 31 Note 31 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC32 | Product 32 Note 32 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC33 | Product 33 Note 33 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC34 | Product 34 Note 34 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC35 | Product 35 Note 35 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
     When I reload the page
     Then I should see "Ungroup Product Variants"
     And I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit   | Price  | Subtotal                 |
-      | BB06 | Configurable Product 2 Blue S Note 6 text   | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB07 | Configurable Product 2 Red M Note 7 text    | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
+      | BB06 | Configurable Product 2 Blue S Note 6 text   | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB07 | Configurable Product 2 Red M Note 7 text    | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
       |      | Configurable Product 3                      |              | 10  | pieces |        | $170.00                  |
-      | BB08 | Green L Note 8 text                         | IN STOCK     | 5   | pieces | $17.00 | $85.00                   |
-      | BB09 | Blue S Note 9 text                          | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB10 | Configurable Product 3 Red M Note 10 text   | IN STOCK     | 7   | sets   | $19.00 | $133.00                  |
-      | BB11 | Configurable Product 2 Green L Note 11 text | OUT OF STOCK | 7   | sets   | $19.00 | $133.00                  |
+      | BB08 | Green L Note 8 text                         | In Stock     | 5   | pieces | $17.00 | $85.00                   |
+      | BB09 | Blue S Note 9 text                          | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB10 | Configurable Product 3 Red M Note 10 text   | In Stock     | 7   | sets   | $19.00 | $133.00                  |
+      | BB11 | Configurable Product 2 Green L Note 11 text | Out of Stock | 7   | sets   | $19.00 | $133.00                  |
       |      | Configurable Product 1                      |              | 13  | items  |        | $227.00 -$113.50 $113.50 |
-      | BB04 | Red M Note 4 text                           | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB05 | Green L Note 5 text                         | OUT OF STOCK | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB12 | Blue S Note 12 text                         | IN STOCK     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
-      | BB13 | Product 13 Note 13 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB14 | Product 14 Note 14 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB15 | Product 15 Note 15 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB16 | Product 16 Note 16 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB17 | Product 17 Note 17 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB18 | Product 18 Note 18 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | BB19 | Product 19 Note 19 text                     | OUT OF STOCK | 11  | sets   | $29.00 | $319.00                  |
-      | BB20 | Product 20 Note 20 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | CC21 | Product 21 Note 21 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC22 | Product 22 Note 22 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC23 | Product 23 Note 23 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC24 | Product 24 Note 24 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC25 | Product 25 Note 25 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC26 | Product 26 Note 26 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC29 | Product 29 Note 29 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC30 | Product 30 Note 30 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC31 | Product 31 Note 31 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC32 | Product 32 Note 32 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC33 | Product 33 Note 33 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC34 | Product 34 Note 34 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC35 | Product 35 Note 35 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
+      | BB04 | Red M Note 4 text                           | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB05 | Green L Note 5 text                         | Out of Stock | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB12 | Blue S Note 12 text                         | In Stock     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
+      | BB13 | Product 13 Note 13 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB14 | Product 14 Note 14 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB15 | Product 15 Note 15 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB16 | Product 16 Note 16 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB17 | Product 17 Note 17 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB18 | Product 18 Note 18 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | BB19 | Product 19 Note 19 text                     | Out of Stock | 11  | sets   | $29.00 | $319.00                  |
+      | BB20 | Product 20 Note 20 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | CC21 | Product 21 Note 21 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC22 | Product 22 Note 22 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC23 | Product 23 Note 23 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC24 | Product 24 Note 24 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC25 | Product 25 Note 25 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC26 | Product 26 Note 26 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC29 | Product 29 Note 29 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC30 | Product 30 Note 30 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC31 | Product 31 Note 31 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC32 | Product 32 Note 32 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC33 | Product 33 Note 33 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC34 | Product 34 Note 34 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC35 | Product 35 Note 35 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
 
   Scenario: Check Show Less
     When I click "Show Less"
     Then I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit   | Price  | Subtotal                 |
-      | BB06 | Configurable Product 2 Blue S Note 6 text   | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB07 | Configurable Product 2 Red M Note 7 text    | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
+      | BB06 | Configurable Product 2 Blue S Note 6 text   | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB07 | Configurable Product 2 Red M Note 7 text    | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
       |      | Configurable Product 3                      |              | 10  | pieces |        | $170.00                  |
-      | BB08 | Green L Note 8 text                         | IN STOCK     | 5   | pieces | $17.00 | $85.00                   |
-      | BB09 | Blue S Note 9 text                          | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB10 | Configurable Product 3 Red M Note 10 text   | IN STOCK     | 7   | sets   | $19.00 | $133.00                  |
-      | BB11 | Configurable Product 2 Green L Note 11 text | OUT OF STOCK | 7   | sets   | $19.00 | $133.00                  |
+      | BB08 | Green L Note 8 text                         | In Stock     | 5   | pieces | $17.00 | $85.00                   |
+      | BB09 | Blue S Note 9 text                          | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB10 | Configurable Product 3 Red M Note 10 text   | In Stock     | 7   | sets   | $19.00 | $133.00                  |
+      | BB11 | Configurable Product 2 Green L Note 11 text | Out of Stock | 7   | sets   | $19.00 | $133.00                  |
       |      | Configurable Product 1                      |              | 13  | items  |        | $227.00 -$113.50 $113.50 |
-      | BB04 | Red M Note 4 text                           | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB05 | Green L Note 5 text                         | OUT OF STOCK | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB12 | Blue S Note 12 text                         | IN STOCK     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
-      | BB13 | Product 13 Note 13 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB14 | Product 14 Note 14 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB15 | Product 15 Note 15 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB16 | Product 16 Note 16 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB17 | Product 17 Note 17 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB18 | Product 18 Note 18 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | BB19 | Product 19 Note 19 text                     | OUT OF STOCK | 11  | sets   | $29.00 | $319.00                  |
-      | BB20 | Product 20 Note 20 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | CC21 | Product 21 Note 21 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC22 | Product 22 Note 22 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC23 | Product 23 Note 23 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC24 | Product 24 Note 24 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC25 | Product 25 Note 25 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC26 | Product 26 Note 26 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC29 | Product 29 Note 29 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC30 | Product 30 Note 30 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC31 | Product 31 Note 31 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC32 | Product 32 Note 32 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC33 | Product 33 Note 33 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
+      | BB04 | Red M Note 4 text                           | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB05 | Green L Note 5 text                         | Out of Stock | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB12 | Blue S Note 12 text                         | In Stock     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
+      | BB13 | Product 13 Note 13 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB14 | Product 14 Note 14 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB15 | Product 15 Note 15 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB16 | Product 16 Note 16 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB17 | Product 17 Note 17 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB18 | Product 18 Note 18 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | BB19 | Product 19 Note 19 text                     | Out of Stock | 11  | sets   | $29.00 | $319.00                  |
+      | BB20 | Product 20 Note 20 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | CC21 | Product 21 Note 21 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC22 | Product 22 Note 22 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC23 | Product 23 Note 23 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC24 | Product 24 Note 24 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC25 | Product 25 Note 25 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC26 | Product 26 Note 26 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC29 | Product 29 Note 29 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC30 | Product 30 Note 30 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC31 | Product 31 Note 31 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC32 | Product 32 Note 32 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC33 | Product 33 Note 33 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
     When I click "Next"
     Then I should see following grid:
       | SKU  | Product                 | Availability | Qty | Unit   | Price  | Subtotal |
-      | CC34 | Product 34 Note 34 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
-      | CC35 | Product 35 Note 35 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
+      | CC34 | Product 34 Note 34 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
+      | CC35 | Product 35 Note 35 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
 
   Scenario: Check Ungroup Product Variants
     When I click "Ungroup Product Variants"
     Then I should see following grid:
       | SKU  | Product                 | Availability | Qty | Unit   | Price  | Subtotal |
-      | CC31 | Product 31 Note 31 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
-      | CC32 | Product 32 Note 32 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
-      | CC33 | Product 33 Note 33 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
-      | CC34 | Product 34 Note 34 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
-      | CC35 | Product 35 Note 35 text | IN STOCK     | 13  | pieces | $31.00 | $403.00  |
+      | CC31 | Product 31 Note 31 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
+      | CC32 | Product 32 Note 32 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
+      | CC33 | Product 33 Note 33 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
+      | CC34 | Product 34 Note 34 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
+      | CC35 | Product 35 Note 35 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
     When I click "Prev"
     Then I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit   | Price  | Subtotal                 |
-      | BB04 | Configurable Product 1 Red M Note 4 text    | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB05 | Configurable Product 1 Green L Note 5 text  | OUT OF STOCK | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB06 | Configurable Product 2 Blue S Note 6 text   | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB07 | Configurable Product 2 Red M Note 7 text    | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB08 | Configurable Product 3 Green L Note 8 text  | IN STOCK     | 5   | pieces | $17.00 | $85.00                   |
-      | BB09 | Configurable Product 3 Blue S Note 9 text   | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB10 | Configurable Product 3 Red M Note 10 text   | IN STOCK     | 7   | sets   | $19.00 | $133.00                  |
-      | BB11 | Configurable Product 2 Green L Note 11 text | OUT OF STOCK | 7   | sets   | $19.00 | $133.00                  |
-      | BB12 | Configurable Product 1 Blue S Note 12 text  | IN STOCK     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
-      | BB13 | Product 13 Note 13 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB14 | Product 14 Note 14 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB15 | Product 15 Note 15 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB16 | Product 16 Note 16 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB17 | Product 17 Note 17 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB18 | Product 18 Note 18 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | BB19 | Product 19 Note 19 text                     | OUT OF STOCK | 11  | sets   | $29.00 | $319.00                  |
-      | BB20 | Product 20 Note 20 text                     | IN STOCK     | 11  | sets   | $29.00 | $319.00                  |
-      | CC21 | Product 21 Note 21 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC22 | Product 22 Note 22 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC23 | Product 23 Note 23 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC24 | Product 24 Note 24 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC25 | Product 25 Note 25 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
-      | CC26 | Product 26 Note 26 text                     | IN STOCK     | 13  | pieces | $31.00 | $403.00                  |
+      | BB04 | Configurable Product 1 Red M Note 4 text    | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB05 | Configurable Product 1 Green L Note 5 text  | Out of Stock | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB06 | Configurable Product 2 Blue S Note 6 text   | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB07 | Configurable Product 2 Red M Note 7 text    | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB08 | Configurable Product 3 Green L Note 8 text  | In Stock     | 5   | pieces | $17.00 | $85.00                   |
+      | BB09 | Configurable Product 3 Blue S Note 9 text   | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB10 | Configurable Product 3 Red M Note 10 text   | In Stock     | 7   | sets   | $19.00 | $133.00                  |
+      | BB11 | Configurable Product 2 Green L Note 11 text | Out of Stock | 7   | sets   | $19.00 | $133.00                  |
+      | BB12 | Configurable Product 1 Blue S Note 12 text  | In Stock     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
+      | BB13 | Product 13 Note 13 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB14 | Product 14 Note 14 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB15 | Product 15 Note 15 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB16 | Product 16 Note 16 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB17 | Product 17 Note 17 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB18 | Product 18 Note 18 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | BB19 | Product 19 Note 19 text                     | Out of Stock | 11  | sets   | $29.00 | $319.00                  |
+      | BB20 | Product 20 Note 20 text                     | In Stock     | 11  | sets   | $29.00 | $319.00                  |
+      | CC21 | Product 21 Note 21 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC22 | Product 22 Note 22 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC23 | Product 23 Note 23 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC24 | Product 24 Note 24 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC25 | Product 25 Note 25 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
+      | CC26 | Product 26 Note 26 text                     | In Stock     | 13  | pieces | $31.00 | $403.00                  |
 
   Scenario: Check Availability filter
     Given I scroll to top
     When I click "Group Product Variants"
-    And I check "OUT OF STOCK" in Availability filter
+    And I check "Out of Stock" in Availability filter
     Then I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit   | Price  | Subtotal                 |
       |      | Configurable Product 1                      |              | 13  | items  |        | $227.00 -$113.50 $113.50 |
-      | BB05 | Green L Note 5 text And 2 more              | OUT OF STOCK | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB07 | Configurable Product 2 Red M Note 7 text    | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
+      | BB05 | Green L Note 5 text And 2 more              | Out of Stock | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB07 | Configurable Product 2 Red M Note 7 text    | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
       |      | Configurable Product 3                      |              | 10  | pieces |        | $170.00                  |
-      | BB09 | Blue S Note 9 text And 1 more               | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB11 | Configurable Product 2 Green L Note 11 text | OUT OF STOCK | 7   | sets   | $19.00 | $133.00                  |
-      | BB13 | Product 13 Note 13 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB15 | Product 15 Note 15 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB17 | Product 17 Note 17 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB19 | Product 19 Note 19 text                     | OUT OF STOCK | 11  | sets   | $29.00 | $319.00                  |
+      | BB09 | Blue S Note 9 text And 1 more               | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB11 | Configurable Product 2 Green L Note 11 text | Out of Stock | 7   | sets   | $19.00 | $133.00                  |
+      | BB13 | Product 13 Note 13 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB15 | Product 15 Note 15 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB17 | Product 17 Note 17 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB19 | Product 19 Note 19 text                     | Out of Stock | 11  | sets   | $29.00 | $319.00                  |
     When click on "Add 2 More Variants"
     Then I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit   | Price  | Subtotal                 |
       |      | Configurable Product 1                      |              | 13  | items  |        | $227.00 -$113.50 $113.50 |
-      | BB04 | Red M Note 4 text                           | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB05 | Green L Note 5 text                         | OUT OF STOCK | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB12 | Blue S Note 12 text                         | IN STOCK     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
-      | BB07 | Configurable Product 2 Red M Note 7 text    | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
+      | BB04 | Red M Note 4 text                           | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB05 | Green L Note 5 text                         | Out of Stock | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB12 | Blue S Note 12 text                         | In Stock     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
+      | BB07 | Configurable Product 2 Red M Note 7 text    | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
       |      | Configurable Product 3                      |              | 10  | pieces |        | $170.00                  |
-      | BB09 | Blue S Note 9 text And 1 more               | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB11 | Configurable Product 2 Green L Note 11 text | OUT OF STOCK | 7   | sets   | $19.00 | $133.00                  |
-      | BB13 | Product 13 Note 13 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB15 | Product 15 Note 15 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB17 | Product 17 Note 17 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB19 | Product 19 Note 19 text                     | OUT OF STOCK | 11  | sets   | $29.00 | $319.00                  |
+      | BB09 | Blue S Note 9 text And 1 more               | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB11 | Configurable Product 2 Green L Note 11 text | Out of Stock | 7   | sets   | $19.00 | $133.00                  |
+      | BB13 | Product 13 Note 13 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB15 | Product 15 Note 15 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB17 | Product 17 Note 17 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB19 | Product 19 Note 19 text                     | Out of Stock | 11  | sets   | $29.00 | $319.00                  |
     When click on "Add 1 More Variants"
     Then I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit   | Price  | Subtotal                 |
       |      | Configurable Product 1                      |              | 13  | items  |        | $227.00 -$113.50 $113.50 |
-      | BB04 | Red M Note 4 text                           | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB05 | Green L Note 5 text                         | OUT OF STOCK | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB12 | Blue S Note 12 text                         | IN STOCK     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
-      | BB07 | Configurable Product 2 Red M Note 7 text    | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
+      | BB04 | Red M Note 4 text                           | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB05 | Green L Note 5 text                         | Out of Stock | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB12 | Blue S Note 12 text                         | In Stock     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
+      | BB07 | Configurable Product 2 Red M Note 7 text    | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
       |      | Configurable Product 3                      |              | 10  | pieces |        | $170.00                  |
-      | BB08 | Green L Note 8 text                         | IN STOCK     | 5   | pieces | $17.00 | $85.00                   |
-      | BB09 | Blue S Note 9 text                          | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB11 | Configurable Product 2 Green L Note 11 text | OUT OF STOCK | 7   | sets   | $19.00 | $133.00                  |
-      | BB13 | Product 13 Note 13 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB15 | Product 15 Note 15 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB17 | Product 17 Note 17 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB19 | Product 19 Note 19 text                     | OUT OF STOCK | 11  | sets   | $29.00 | $319.00                  |
+      | BB08 | Green L Note 8 text                         | In Stock     | 5   | pieces | $17.00 | $85.00                   |
+      | BB09 | Blue S Note 9 text                          | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB11 | Configurable Product 2 Green L Note 11 text | Out of Stock | 7   | sets   | $19.00 | $133.00                  |
+      | BB13 | Product 13 Note 13 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB15 | Product 15 Note 15 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB17 | Product 17 Note 17 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB19 | Product 19 Note 19 text                     | Out of Stock | 11  | sets   | $29.00 | $319.00                  |
     And I scroll to top
 
   Scenario: Check Quantity filter
@@ -612,20 +612,20 @@ Feature: My Shopping List
     When I filter Quantity as less than "10"
     Then I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit   | Price  | Subtotal                 |
-      | BB04 | Configurable Product 1 Red M Note 4 text    | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB05 | Configurable Product 1 Green L Note 5 text  | OUT OF STOCK | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB06 | Configurable Product 2 Blue S Note 6 text   | IN STOCK     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB07 | Configurable Product 2 Red M Note 7 text    | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB08 | Configurable Product 3 Green L Note 8 text  | IN STOCK     | 5   | pieces | $17.00 | $85.00                   |
-      | BB09 | Configurable Product 3 Blue S Note 9 text   | OUT OF STOCK | 5   | pieces | $17.00 | $85.00                   |
-      | BB10 | Configurable Product 3 Red M Note 10 text   | IN STOCK     | 7   | sets   | $19.00 | $133.00                  |
-      | BB11 | Configurable Product 2 Green L Note 11 text | OUT OF STOCK | 7   | sets   | $19.00 | $133.00                  |
-      | BB12 | Configurable Product 1 Blue S Note 12 text  | IN STOCK     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
-      | BB13 | Product 13 Note 13 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB14 | Product 14 Note 14 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB15 | Product 15 Note 15 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB16 | Product 16 Note 16 text                     | IN STOCK     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
-      | BB17 | Product 17 Note 17 text                     | OUT OF STOCK | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB04 | Configurable Product 1 Red M Note 4 text    | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB05 | Configurable Product 1 Green L Note 5 text  | Out of Stock | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB06 | Configurable Product 2 Blue S Note 6 text   | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB07 | Configurable Product 2 Red M Note 7 text    | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB08 | Configurable Product 3 Green L Note 8 text  | In Stock     | 5   | pieces | $17.00 | $85.00                   |
+      | BB09 | Configurable Product 3 Blue S Note 9 text   | Out of Stock | 5   | pieces | $17.00 | $85.00                   |
+      | BB10 | Configurable Product 3 Red M Note 10 text   | In Stock     | 7   | sets   | $19.00 | $133.00                  |
+      | BB11 | Configurable Product 2 Green L Note 11 text | Out of Stock | 7   | sets   | $19.00 | $133.00                  |
+      | BB12 | Configurable Product 1 Blue S Note 12 text  | In Stock     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
+      | BB13 | Product 13 Note 13 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB14 | Product 14 Note 14 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB15 | Product 15 Note 15 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB16 | Product 16 Note 16 text                     | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+      | BB17 | Product 17 Note 17 text                     | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
     And I scroll to top
 
   Scenario: Check Unit filter
@@ -633,11 +633,11 @@ Feature: My Shopping List
     When I check "set" in Unit filter
     Then I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit | Price  | Subtotal |
-      | BB10 | Configurable Product 3 Red M Note 10 text   | IN STOCK     | 7   | sets | $19.00 | $133.00  |
-      | BB11 | Configurable Product 2 Green L Note 11 text | OUT OF STOCK | 7   | sets | $19.00 | $133.00  |
-      | BB18 | Product 18 Note 18 text                     | IN STOCK     | 11  | sets | $29.00 | $319.00  |
-      | BB19 | Product 19 Note 19 text                     | OUT OF STOCK | 11  | sets | $29.00 | $319.00  |
-      | BB20 | Product 20 Note 20 text                     | IN STOCK     | 11  | sets | $29.00 | $319.00  |
+      | BB10 | Configurable Product 3 Red M Note 10 text   | In Stock     | 7   | sets | $19.00 | $133.00  |
+      | BB11 | Configurable Product 2 Green L Note 11 text | Out of Stock | 7   | sets | $19.00 | $133.00  |
+      | BB18 | Product 18 Note 18 text                     | In Stock     | 11  | sets | $29.00 | $319.00  |
+      | BB19 | Product 19 Note 19 text                     | Out of Stock | 11  | sets | $29.00 | $319.00  |
+      | BB20 | Product 20 Note 20 text                     | In Stock     | 11  | sets | $29.00 | $319.00  |
     And I scroll to top
 
   Scenario: Check Image preview for configurable row
@@ -693,9 +693,9 @@ Feature: My Shopping List
     Then I should see following grid with exact columns order:
       | SKU  | Product                | Availability | Qty Update All  | Price  | Subtotal                 |
       |      | Configurable Product 1 |              | 13 items        |        | $227.00 -$113.50 $113.50 |
-      | BB04 | Red M Note 4 text      | IN STOCK     | 3 ( item ) each | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB05 | Green L Note 5 text    | OUT OF STOCK | 3 item          | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB12 | Blue S Note 12 text    | IN STOCK     | 7 item          | $23.00 | $161.00 -$80.50 $80.50   |
+      | BB04 | Red M Note 4 text      | In Stock     | 3 ( item ) each | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB05 | Green L Note 5 text    | Out of Stock | 3 item          | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB12 | Blue S Note 12 text    | In Stock     | 7 item          | $23.00 | $161.00 -$80.50 $80.50   |
     When I click on "Shopping List Line Item 2 Quantity"
     Then the "Shopping List Line Item 2 Quantity Input" field element should contain "3"
     When I fill "Shopping List Line Item Form" with:
@@ -704,10 +704,10 @@ Feature: My Shopping List
     And I click on "Shopping List Line Item 2 Save Changes Button"
     Then I should see following grid containing rows:
       | SKU  | Product                                  | Availability | Qty Update All   | Price  | Subtotal               |
-      | BB04 | Configurable Product 1 Red M Note 4 text | IN STOCK     | 10 item ( each ) |        |                        |
+      | BB04 | Configurable Product 1 Red M Note 4 text | In Stock     | 10 item ( each ) |        |                        |
       |      | Configurable Product 1                   |              | 10 items         |        | $194.00 -$97.00 $97.00 |
-      | BB05 | Green L Note 5 text                      | OUT OF STOCK | 3 item           | $11.00 | $33.00 -$16.50 $16.50  |
-      | BB12 | Blue S Note 12 text                      | IN STOCK     | 7 item           | $23.00 | $161.00 -$80.50 $80.50 |
+      | BB05 | Green L Note 5 text                      | Out of Stock | 3 item           | $11.00 | $33.00 -$16.50 $16.50  |
+      | BB12 | Blue S Note 12 text                      | In Stock     | 7 item           | $23.00 | $161.00 -$80.50 $80.50 |
 
   Scenario: Update all with Group Product Variants
     When I set quantity for shopping list line item with sku "BB04" to "3"
@@ -717,9 +717,9 @@ Feature: My Shopping List
     Then I should see following grid containing rows:
       | SKU  | Product                | Availability | Qty Update All  | Price  | Subtotal                 |
       |      | Configurable Product 1 |              | 15 items        |        | $249.00 -$124.50 $124.50 |
-      | BB04 | Red M Note 4 text      | IN STOCK     | 3 ( item ) each | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB05 | Green L Note 5 text    | OUT OF STOCK | 5 item          | $11.00 | $55.00 -$27.50 $27.50    |
-      | BB12 | Blue S Note 12 text    | IN STOCK     | 7 item          | $23.00 | $161.00 -$80.50 $80.50   |
+      | BB04 | Red M Note 4 text      | In Stock     | 3 ( item ) each | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB05 | Green L Note 5 text    | Out of Stock | 5 item          | $11.00 | $55.00 -$27.50 $27.50    |
+      | BB12 | Blue S Note 12 text    | In Stock     | 7 item          | $23.00 | $161.00 -$80.50 $80.50   |
 
   Scenario: Change VIEW permission
     And I click "Account Dropdown"

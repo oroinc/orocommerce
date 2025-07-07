@@ -37,6 +37,13 @@
         }
     }
 
+    &__secondary-half {
+        &--last-list-view {
+            display: grid;
+            gap: spacing('base');
+        }
+    }
+
     &__container {
         &--list-view {
             display: grid;

@@ -79,7 +79,7 @@ Feature: Notes from shopping list are transferred to the checkout
     And I click "Create Order"
     Then I should see following grid:
       | Product                                                      |
-      | 400-Watt Bulb Work Light SKU123 IN STOCK SKU123 Product Note |
+      | 400-Watt Bulb Work Light SKU123 In Stock SKU123 Product Note |
     And I should not see a "Checkout Order Summary Notes" element
     And "Checkout Order Review Form" must contains values:
       | Notes | My shopping list notes |

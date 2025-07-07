@@ -201,6 +201,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
                 'sku' => $product->getSku(),
                 'defaultName.string' => 'product-1.names.en_CA',
                 'type' => $product->getType(),
+                'inventoryStatus' => $product->getInventoryStatus()->getInternalId(),
             ],
             $result
         );
@@ -231,6 +232,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         self::assertArrayHasKey('sku', $selectedData);
         self::assertArrayHasKey('name', $selectedData);
         self::assertArrayHasKey('type', $selectedData);
+        self::assertArrayHasKey('inventory_status', $selectedData);
 
         self::assertEquals(
             [
@@ -238,6 +240,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
                 'sku' => $selectedData['sku'],
                 'defaultName.string' => $selectedData['name'],
                 'type' => $selectedData['type'],
+                'inventoryStatus' => $selectedData['inventory_status'],
             ],
             $result
         );

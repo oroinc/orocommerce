@@ -112,6 +112,7 @@
 
     &__body {
         display: $search-autocomplete-product-body-display;
+        align-items: $search-autocomplete-product-body-align-items;
         gap: $search-autocomplete-product-body-gap;
         flex-wrap: $search-autocomplete-product-body-flex-wrap;
     }

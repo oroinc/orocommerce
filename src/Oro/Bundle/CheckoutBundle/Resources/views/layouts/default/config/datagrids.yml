@@ -270,7 +270,7 @@ datagrids:
                 inventory_statuses: "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses()"
             inventoryStatus:
                 label:         oro.checkout.order_summary.inventory_status_full
-                frontend_type: shoppinglist-html-template
+                frontend_type: shoppinglist-inventory-status
                 frontend_template: tpl-loader!orocheckout/templates/datagrid/cell/inventory_status.html
                 inventory_statuses: "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses()"
             quantity:

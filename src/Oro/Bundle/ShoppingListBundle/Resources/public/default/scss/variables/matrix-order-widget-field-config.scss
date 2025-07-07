@@ -1,6 +1,7 @@
 /* @theme: default; */
 
-$matrix-order-widget-field-min-width: 90px !default;
+$matrix-order-widget-field-min-width: 100px !default;
+$matrix-order-widget-field-max-width: 214px !default;
 $matrix-order-widget-field-line-height: $base-ui-element-line-height !default;
 
 $matrix-order-widget-field-inner-padding-block: spacing('md') !default;
@@ -10,3 +11,7 @@ $matrix-order-widget-field-inner-border-radius: 5px !default;
 $matrix-order-widget-field-inner-dark-background-color: get-color('neutral', 'grey2') !default;
 
 $matrix-order-widget-field-inner-valid-font-weight: font-weight('semi-bold') !default;
+
+$matrix-order-widget-field-price-font-size: $base-font-size--s !default;
+$matrix-order-widget-field-price-color: get-color('text', 'secondary') !default;
+$matrix-order-widget-field-price-offset-top: 2px !default;

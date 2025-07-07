@@ -4,3 +4,7 @@
     font-size: $sku-font-size;
     color: $sku-offset-color;
 }
+
+.sku.bar-separator:not(:has(+ .status-label))::after {
+    display: none;
+}

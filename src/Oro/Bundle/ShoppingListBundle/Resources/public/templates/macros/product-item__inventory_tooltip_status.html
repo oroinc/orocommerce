@@ -1,0 +1,10 @@
+<% let oroui = _.macros('oroui') %>
+<%= oroui.renderTooltipStatus({
+    label: label,
+    map: {
+        'prod_inventory_status.in_stock': 'success',
+        'prod_inventory_status.out_of_stock': 'destructive',
+        'prod_inventory_status.discontinued': 'destructive'
+    },
+    currentStatus: name
+}) %>
