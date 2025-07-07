@@ -57,6 +57,7 @@ class Configuration implements ConfigurationInterface
                     'value' => false,
                 ],
                 self::DEFAULT_GUEST_RFP_OWNER => ['type' => 'string', 'value' => null],
+                'enable_rfq_project_name' => ['type' => 'boolean', 'value' => false],
             ]
         );
 

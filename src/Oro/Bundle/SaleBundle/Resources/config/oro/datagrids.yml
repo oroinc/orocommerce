@@ -23,28 +23,6 @@ datagrids:
                 join:
                     left:
                         - { join: quote.owner, alias: quoteOwner }
-        columns:
-            qid:
-                label:         oro.sale.quote.qid.label
-            ownerName:
-                label:         oro.sale.quote.owner.label
-            expired:
-                label:         oro.sale.quote.expired.label
-                frontend_type: boolean
-            validUntil:
-                label:         oro.sale.quote.valid_until.label
-                frontend_type: datetime
-            poNumber:
-                label:         oro.sale.quote.po_number.label
-            shipUntil:
-                label:         oro.sale.quote.ship_until.label
-                frontend_type: date
-            createdAt:
-                label:         oro.ui.created_at
-                frontend_type: datetime
-            updatedAt:
-                label:         oro.ui.updated_at
-                frontend_type: datetime
         properties:
             id: ~
             view_link:
@@ -100,9 +78,29 @@ datagrids:
                 customerUserName:
                     data_name: customerUserName
         columns:
+            qid:
+                label:         oro.sale.quote.qid.label
             customerUserName:
                 label:         oro.sale.quote.customer_user.label
-                order:         1
+            ownerName:
+                label:         oro.sale.quote.owner.label
+            expired:
+                label:         oro.sale.quote.expired.label
+                frontend_type: boolean
+            validUntil:
+                label:         oro.sale.quote.valid_until.label
+                frontend_type: datetime
+            poNumber:
+                label:         oro.sale.quote.po_number.label
+            shipUntil:
+                label:         oro.sale.quote.ship_until.label
+                frontend_type: date
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
         filters:
             columns:
                 qid:
@@ -142,6 +140,28 @@ datagrids:
                         - quote.customerUser = :customer_user_id
             bind_parameters:
                 - customer_user_id
+        columns:
+            qid:
+                label:         oro.sale.quote.qid.label
+            ownerName:
+                label:         oro.sale.quote.owner.label
+            expired:
+                label:         oro.sale.quote.expired.label
+                frontend_type: boolean
+            validUntil:
+                label:         oro.sale.quote.valid_until.label
+                frontend_type: datetime
+            poNumber:
+                label:         oro.sale.quote.po_number.label
+            shipUntil:
+                label:         oro.sale.quote.ship_until.label
+                frontend_type: date
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
         filters:
             columns:
                 qid:
@@ -179,20 +199,39 @@ datagrids:
             bind_parameters:
                 - request_id
         columns:
+            qid:
+                label:         oro.sale.quote.qid.label
+            ownerName:
+                label:         oro.sale.quote.owner.label
             internal_status:
                 label: oro.sale.quote.internal_status.label
                 frontend_type: select
                 data_name: internal_status
                 choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('quote_internal_status')"
                 translatable_options: false
-                order: 4
             customer_status:
                 label: oro.sale.quote.customer_status.label
                 frontend_type: select
                 data_name: customer_status
                 choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('quote_customer_status')"
                 translatable_options: false
-                order: 5
+            expired:
+                label:         oro.sale.quote.expired.label
+                frontend_type: boolean
+            validUntil:
+                label:         oro.sale.quote.valid_until.label
+                frontend_type: datetime
+            poNumber:
+                label:         oro.sale.quote.po_number.label
+            shipUntil:
+                label:         oro.sale.quote.ship_until.label
+                frontend_type: date
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
         sorters:
             columns:
                 internal_status:
@@ -246,26 +285,43 @@ datagrids:
                         - { join: quote.customerUser, alias: quoteCustomerUser }
                         - { join: quote.customer, alias: quoteCustomer }
         columns:
+            qid:
+                label:         oro.sale.quote.qid.label
+            ownerName:
+                label:         oro.sale.quote.owner.label
             customerUserName:
                 label: oro.sale.quote.customer_user.label
-                order: 2
             customerName:
                 label: oro.sale.quote.customer.label
-                order: 3
             internal_status:
                 label: oro.sale.quote.internal_status.label
                 frontend_type: select
                 data_name: internal_status
                 choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('quote_internal_status')"
                 translatable_options: false
-                order: 4
             customer_status:
                 label: oro.sale.quote.customer_status.label
                 frontend_type: select
                 data_name: customer_status
                 choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('quote_customer_status')"
                 translatable_options: false
-                order: 5
+            expired:
+                label:         oro.sale.quote.expired.label
+                frontend_type: boolean
+            validUntil:
+                label:         oro.sale.quote.valid_until.label
+                frontend_type: datetime
+            poNumber:
+                label:         oro.sale.quote.po_number.label
+            shipUntil:
+                label:         oro.sale.quote.ship_until.label
+                frontend_type: date
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
         sorters:
             columns:
                 customerUserName:

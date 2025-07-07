@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
@@ -148,6 +149,32 @@ class QuoteTest extends RestJsonApiTestCase
         self::assertNotEmpty($quote->getGuestAccessId());
         self::assertEquals($defaultWebsiteId, $quote->getWebsite()->getId());
         self::assertEquals('draft', $quote->getInternalStatus()->getInternalId());
+    }
+
+    public function testCreateWithProjectName(): void
+    {
+        $data = $this->getRequestData('create_quote.yml');
+        $data['data']['attributes']['projectName'] = 'Some Project';
+        $response = $this->post(
+            ['entity' => 'quotes'],
+            $data
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'quotes',
+                    'attributes' => [
+                        'projectName' => 'Some Project'
+                    ]
+                ]
+            ],
+            $response
+        );
+
+        $quoteId = (int)$this->getResourceId($response);
+        $quote = $this->getEntityManager()->find(Quote::class, $quoteId);
+        self::assertEquals('Some Project', $quote->getProjectName());
     }
 
     public function testTryToCreateWithInternalStatus(): void

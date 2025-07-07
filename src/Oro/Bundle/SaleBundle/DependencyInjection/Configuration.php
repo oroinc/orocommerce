@@ -60,6 +60,7 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => true,
                 ],
+                'enable_quote_project_name' => ['type' => 'boolean', 'value' => false],
             ]
         );
 

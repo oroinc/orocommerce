@@ -68,6 +68,7 @@ class QuoteTest extends TestCase
             ['customer', new Customer()],
             ['organization', new Organization()],
             ['poNumber', '1'],
+            ['projectName', 'Test Project'],
             ['validUntil', $now, false],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],

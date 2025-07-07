@@ -65,6 +65,10 @@ class QuoteType extends AbstractType
 
         $builder
             ->add('qid', HiddenType::class)
+            ->add('projectName', TextType::class, [
+                'required' => false,
+                'label' => 'oro.sale.quote.project_name.label'
+            ])
             ->add('owner', UserSelectType::class, [
                 'label' => 'oro.sale.quote.owner.label',
                 'required' => true

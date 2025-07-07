@@ -38,6 +38,11 @@
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {{ form_row(form._token) }}
 
+    {% if oro_config_value('oro_rfp.enable_rfq_project_name') %}
+    <div class="grid-col-6 grid-col-mobile-landscape-12">
+        {{ form_row(form.projectName) }}
+    </div>
+    {% endif %}
     <div class="grid-col-6 grid-col-mobile-landscape-12">
         {{ form_row(form.firstName) }}
     </div>

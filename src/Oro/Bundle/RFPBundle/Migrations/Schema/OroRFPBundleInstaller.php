@@ -35,7 +35,7 @@ class OroRFPBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_15_1';
+        return 'v1_15_2';
     }
 
     #[\Override]
@@ -111,6 +111,7 @@ class OroRFPBundleInstaller implements
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('deleted_at', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
+        $table->addColumn('project_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'idx_oro_rfq_request_created_at');
         $table->addIndex(['updated_at'], 'idx_oro_rfq_request_updated_at');

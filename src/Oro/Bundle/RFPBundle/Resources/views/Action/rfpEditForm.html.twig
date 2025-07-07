@@ -26,6 +26,7 @@
             'title': 'oro.rfp.sections.general'|trans,
             'subblocks': [{
                 'data': [
+                    oro_config_value('oro_rfp.enable_rfq_project_name') ? form_row(form.request.projectName) : '',
                     form_row(form.request.firstName),
                     form_row(form.request.lastName),
                     form_row(form.request.email),

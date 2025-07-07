@@ -55,6 +55,7 @@ class RequestToOrderDataStorage
             $data['customer'] = $request->getCustomer()->getId();
         }
 
+        $data['projectName'] = $request->getProjectName();
         $data['shipUntil'] = $request->getShipUntil();
         $data['poNumber'] = $request->getPoNumber();
         $data['customerNotes'] = $request->getNote();

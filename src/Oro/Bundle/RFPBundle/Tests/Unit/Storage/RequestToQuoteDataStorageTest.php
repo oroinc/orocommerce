@@ -21,8 +21,7 @@ use PHPUnit\Framework\TestCase;
 
 class RequestToQuoteDataStorageTest extends TestCase
 {
-    private ProductDataStorage|MockObject $storage;
-
+    private ProductDataStorage&MockObject $storage;
     private RequestToQuoteDataStorage $requestDataStorage;
 
     #[\Override]
@@ -65,6 +64,7 @@ class RequestToQuoteDataStorageTest extends TestCase
             'assignedUsers' => [1, 3, 7],
             'assignedCustomerUsers' => [2, 5],
             'website' => 1,
+            'projectName' => 'Test Project',
             'requestProductData' => [
                 'productId' => 1,
                 'productSku' => 'testSku',
@@ -183,6 +183,7 @@ class RequestToQuoteDataStorageTest extends TestCase
         ReflectionUtil::setId($website, $rfpRequestData['website']);
 
         $rfpRequest = new RFPRequest();
+        $rfpRequest->setProjectName('Test Project');
         $rfpRequest->setCustomer($customer);
         $rfpRequest->setCustomerUser($customerUser);
         $rfpRequest->setWebsite($website);
@@ -252,6 +253,7 @@ class RequestToQuoteDataStorageTest extends TestCase
             'customer' => $rfpRequestData['customerId'],
             'customerUser' => $rfpRequestData['customerUserId'],
             'request' => null,
+            'projectName' => 'Test Project',
             'poNumber' => null,
             'shipUntil' => null,
             'assignedUsers' => $rfpRequestData['assignedUsers'],

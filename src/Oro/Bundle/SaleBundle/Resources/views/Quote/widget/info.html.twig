@@ -28,7 +28,11 @@
 
             {{ UI.renderProperty('oro.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A'|trans) }}
             {% if entity.request %}
-                {{ UI.renderHtmlProperty('oro.sale.quote.request.label'|trans, UI.entityViewLink(entity.request, entity.request, 'oro_rfp_request_view')) }}
+                {% set requestIdSuffix = '' %}
+                {% if entity.request.projectName and oro_config_value('oro_rfp.enable_rfq_project_name') %}
+                    {% set requestIdSuffix = 'oro.rfp.navigation.project_name_suffix'|trans({'%project_name%': entity.request.projectName}) %}
+                {% endif %}
+                {{ UI.renderHtmlProperty('oro.sale.quote.request.label'|trans, UI.entityViewLink(entity.request, 'oro.rfp.navigation.view'|trans({'%id%': entity.request.id ~ requestIdSuffix}), 'oro_rfp_request_view')) }}
             {% endif %}
             {% set poNumber = entity.poNumber %}
             {{ UI.renderProperty('oro.sale.quote.po_number.label'|trans, poNumber|default('N/A'|trans), null, null, {'dir': poNumber ? 'ltr' : null}) }}

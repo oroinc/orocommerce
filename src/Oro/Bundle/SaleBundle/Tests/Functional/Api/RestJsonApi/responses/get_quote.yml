@@ -7,6 +7,7 @@ data:
         identifier: sale.quote.1
         guestAccessId: '@sale.quote.1->guestAccessId'
         poNumber: PO_SALE.QUOTE.1
+        projectName: Project 1
         shipUntil: '@sale.quote.1->shipUntil->format("Y-m-d")'
         validUntil: '@sale.quote.1->validUntil->format("Y-m-d\TH:i:s\Z")'
         expired: false

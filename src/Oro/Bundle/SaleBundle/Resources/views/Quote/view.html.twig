@@ -1,15 +1,18 @@
 {% extends '@OroUI/actions/view.html.twig' %}
 
-{% oro_title_set({params : {'%id%': entity.qid }}) %}
+{% set qidSuffix = '' %}
+{% if entity.projectName and oro_config_value('oro_sale.enable_quote_project_name') %}
+    {% set qidSuffix = 'oro.sale.navigation.project_name_suffix'|trans({'%project_name%': entity.projectName}) %}
+{% endif %}
+
+{% oro_title_set({params : {'%id%': entity.qid ~ qidSuffix}}) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('oro_sale_quote_index'),
         'indexLabel': 'oro.sale.quote.entity_plural_label'|trans,
-        'entityTitle': 'oro.sale.navigation.view'|trans({
-            '%id%': entity.qid|default('N/A'|trans)
-        })
+        'entityTitle': 'oro.sale.navigation.view'|trans({'%id%': entity.qid|default('N/A'|trans) ~ qidSuffix})
     } %}
     {{ parent() }}
 {% endblock pageHeader %}

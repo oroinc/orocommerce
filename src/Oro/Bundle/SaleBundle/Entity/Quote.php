@@ -222,13 +222,14 @@ class Quote implements
     #[ORM\OrderBy(['id' => Criteria::ASC])]
     protected ?Collection $demands = null;
 
+    #[ORM\Column(name: 'project_name', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $projectName = null;
+
     #[ORM\ManyToOne(targetEntity: CustomerVisitor::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'visitor_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
     protected ?CustomerVisitor $visitor = null;
 
-    /**
-     * Constructor
-     */
     public function __construct()
     {
         $this->quoteProducts = new ArrayCollection();
@@ -836,6 +837,18 @@ class Quote implements
     public function getEmailOwner(): EmailOwnerInterface
     {
         return $this->customerUser;
+    }
+
+    public function setProjectName(?string $projectName): static
+    {
+        $this->projectName = $projectName;
+
+        return $this;
+    }
+
+    public function getProjectName(): ?string
+    {
+        return $this->projectName;
     }
 
     #[\Override]

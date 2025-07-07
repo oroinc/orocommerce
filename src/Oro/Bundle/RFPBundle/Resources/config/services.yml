@@ -178,6 +178,48 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-request-line-items-grid, method: onResultAfter }
 
+    oro_rfp.listener.config.project_name:
+        class: Oro\Bundle\RFPBundle\EventListener\ProjectNameConfigListener
+        arguments:
+            - '@oro_security.token_accessor'
+            - '@oro_website.website.provider'
+            - '@?oro_config.website'
+            - '@oro_config.manager.memory_cache'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.get.oro_rfp.enable_rfq_project_name, method: loadConfig }
+
+    oro_rfp.listener.datagrid.project_name:
+        class: Oro\Bundle\RFPBundle\EventListener\Datagrid\ProjectNameDatagridListener
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.rfp-requests-grid, method: onBuildBefore, priority: -10 }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-view-rfq-grid, method: onBuildBefore, priority: -10 }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-user-view-rfq-grid, method: onBuildBefore, priority: -10 }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.rfp-requests-for-context-grid, method: onBuildBefore, priority: -10 }
+
+    oro_rfp.listener.datagrid.project_name.frontend:
+        class: Oro\Bundle\RFPBundle\EventListener\Datagrid\ProjectNameFrontendDatagridListener
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-requests-grid, method: onBuildBefore, priority: -10 }
+
+    oro_rfp.listener.search.project_name:
+        class: Oro\Bundle\RFPBundle\EventListener\Search\ProjectNameSearchListener
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_search.search_mapping_collect, method: collectEntityMapEvent }
+
+    oro_rfp.listener.config.change_rfq_project_name_config_option:
+        class: Oro\Bundle\RFPBundle\EventListener\ChangeProjectNameConfigurationListener
+        arguments:
+            - '@oro_search.provider.search_mapping'
+            - '@oro_search.async.indexer'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
     oro_rfp.listener.datagrid_request_product_items_loader:
         class: 'Oro\Bundle\RFPBundle\EventListener\DatagridRequestProductItemsLoaderListener'
         arguments:

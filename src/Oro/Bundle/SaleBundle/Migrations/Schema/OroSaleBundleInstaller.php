@@ -38,7 +38,7 @@ class OroSaleBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_22_1';
+        return 'v1_22_2';
     }
 
     #[\Override]
@@ -153,6 +153,7 @@ class OroSaleBundleInstaller implements
             'comment' => '(DC2Type:money)'
         ]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn('project_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['shipping_address_id'], 'UNIQ_4F66B6F64D4CFF2B');
     }

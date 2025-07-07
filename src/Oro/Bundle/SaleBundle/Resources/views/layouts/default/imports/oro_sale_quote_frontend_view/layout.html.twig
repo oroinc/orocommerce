@@ -71,6 +71,12 @@
                             </td>
                         </tr>
                         {% endif %}
+                        {% if quote.projectName and oro_config_value('oro_sale.enable_quote_project_name') %}
+                        <tr class="customer-info-grid__row">
+                            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.project_name.label'|trans }}</td>
+                            <td class="customer-info-grid__element-content">{{ quote.projectName }}</td>
+                        </tr>
+                        {% endif %}
                         <tr class="customer-info-grid__row">
                             <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
                             <td class="customer-info-grid__element-content"><bdo dir="ltr">{{ quote.poNumber|default('N/A'|trans) }}</bdo></td>
