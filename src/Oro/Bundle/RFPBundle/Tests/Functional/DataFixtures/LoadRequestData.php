@@ -63,6 +63,7 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
             'ship_until' => true,
         ],
         self::REQUEST2 => [
+            'project_name' => 'Project 1',
             'first_name' => self::FIRST_NAME,
             'last_name' => self::LAST_NAME,
             'email' => self::EMAIL,
@@ -273,6 +274,10 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
 
             if (isset($rawRequest['po_number'])) {
                 $request->setPoNumber($rawRequest['po_number']);
+            }
+
+            if (isset($rawRequest['project_name'])) {
+                $request->setProjectName($rawRequest['project_name']);
             }
 
             if (isset($rawRequest['deleted'])) {

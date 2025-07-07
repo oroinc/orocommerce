@@ -23,6 +23,9 @@ Oro\Bundle\RFPBundle\Entity\Request:
         poNumber:
             -   Length:
                     max: 255
+        projectName:
+            -   Length:
+                    max: 255
         shipUntil:
             -   Type:
                     type: DateTimeInterface

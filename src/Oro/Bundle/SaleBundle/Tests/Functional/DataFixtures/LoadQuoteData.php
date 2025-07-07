@@ -63,6 +63,7 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
     public static array $items = [
         self::QUOTE1 => [
             'qid' => self::QUOTE1,
+            'project_name' => 'Project 1',
             'internal_status' => 'draft',
             'customer_status' => 'open',
             'products' => [
@@ -345,6 +346,9 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
             }
             if (!empty($item['customer'])) {
                 $quote->setCustomer($this->getReference($item['customer']));
+            }
+            if (!empty($item['project_name'])) {
+                $quote->setProjectName($item['project_name']);
             }
 
             if (!empty($item['customerUser'])) {

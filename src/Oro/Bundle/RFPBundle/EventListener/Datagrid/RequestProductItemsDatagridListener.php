@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\RFPBundle\EventListener;
+namespace Oro\Bundle\RFPBundle\EventListener\Datagrid;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
@@ -8,16 +8,16 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 
 /**
- * Sets `requestProductItems` to each record of the datagrid showing {@see RequestProduct} records.
+ * Sets "requestProductItems" to each record of the datagrid showing {@see RequestProduct} records.
  */
-class DatagridRequestProductItemsLoaderListener
+class RequestProductItemsDatagridListener
 {
     public function __construct(
-        private ManagerRegistry $doctrine
+        private readonly ManagerRegistry $doctrine
     ) {
     }
 
-    public function onResultAfter(OrmResultAfter $event)
+    public function onResultAfter(OrmResultAfter $event): void
     {
         $records = $event->getRecords();
 

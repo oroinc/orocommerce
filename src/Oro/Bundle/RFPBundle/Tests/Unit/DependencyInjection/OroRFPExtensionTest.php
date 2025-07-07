@@ -42,6 +42,7 @@ class OroRFPExtensionTest extends \PHPUnit\Framework\TestCase
                         ],
                         'guest_rfp' => ['value' => false, 'scope' => 'app'],
                         'default_guest_rfp_owner' => ['value' => null, 'scope' => 'app'],
+                        'enable_rfq_project_name' => ['value' => true, 'scope' => 'app'],
                     ]
                 ]
             ],

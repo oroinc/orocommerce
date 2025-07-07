@@ -55,10 +55,6 @@ class RequestControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString(
-            sprintf('%s %s - Requests For Quote - Sales', LoadRequestData::FIRST_NAME, LoadRequestData::LAST_NAME),
-            $result->getContent()
-        );
 
         $this->assertContainsRequestData(
             LoadRequestData::FIRST_NAME,

@@ -50,6 +50,9 @@ oro:
             po_number:
                 label:                  'PO Number'
                 description:            The purchase order number provided in the RFQ.
+            project_name:
+                label:                  'Project Name'
+                description:            The project name associated with the RFQ.
             ship_until:
                 label:                  'Do Not Ship Later Than'
                 description:            The date and time before which the order based on the RFQ must be shipped.
@@ -278,6 +281,10 @@ oro:
                 default_guest_rfp_owner:
                     title: 'Default guest RFQ owner'
                     tooltip: 'Select the default owner of all guest RFQs.'
+                enable_rfq_project_name:
+                    label: 'Enable RFQ Project Name'
+                    tooltip: 'Select the option to enable the project name management for RFQs on the storefront. For the backoffice the project name is enabled automatically when it is enabled for an organization or for at least one website within an organization.'
+
         message:
             requestproductitem.unit.removed: '{title} - removed'
 
@@ -309,6 +316,10 @@ oro:
 
         widget:
             cancel_title: 'Cancel RFQ'
+
+        navigation:
+            view: 'RFQ #%id%'
+            project_name_suffix: ': %project_name%'
 
         frontend:
             request:
@@ -363,6 +374,7 @@ oro:
                 customer_status.label: 'Status'
                 is_draft.label: 'Draft'
                 po_number.label: 'PO Number'
+                project_name.label: 'Project Name'
                 ship_until.label: 'Ship by'
                 created_at.label: 'Created at'
                 customer_user.label: 'Created by'
@@ -416,4 +428,5 @@ oro:
             toolbar-actions:
                 btn:
                     print: 'Print RFQ'
+
 oro.order.orderlineitem.offers.label: 'Requested QTY and price'

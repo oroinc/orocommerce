@@ -115,6 +115,13 @@ system_configuration:
             priority: 50
             options:
                 label: oro.sale.system_configuration.fields.quote_frontend_feature_enabled.label
+        oro_sale.enable_quote_project_name:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 40
+            options:
+                label: oro.sale.system_configuration.fields.enable_quote_project_name.label
+                tooltip: oro.sale.system_configuration.fields.enable_quote_project_name.tooltip
 
         oro_sale.validate_shipping_addresses__backoffice_quote_page:
             data_type: boolean
@@ -149,6 +156,7 @@ system_configuration:
                                     general_quote:
                                         children:
                                             - oro_sale.quote_frontend_feature_enabled
+                                            - oro_sale.enable_quote_project_name
                                     guest_quote:
                                         children:
                                             - oro_sale.enable_guest_quote

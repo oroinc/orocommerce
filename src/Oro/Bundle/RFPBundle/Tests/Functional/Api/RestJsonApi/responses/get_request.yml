@@ -11,6 +11,7 @@ data:
         note: rfp.request.2
         cancellationReason: null
         poNumber: CA1234USD
+        projectName: Project 1
         shipUntil: '@rfp.request.2->shipUntil->format("Y-m-d")'
         deletedAt: null
         createdAt: '@rfp.request.2->createdAt->format("Y-m-d\TH:i:s\Z")'

@@ -81,6 +81,12 @@ system_configuration:
             priority: 10
             options:
                 label: oro.rfp.system_configuration.fields.frontend_feature_enabled.label
+        oro_rfp.enable_rfq_project_name:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.rfp.system_configuration.fields.enable_rfq_project_name.label
+                tooltip: oro.rfp.system_configuration.fields.enable_rfq_project_name.tooltip
         oro_rfp.guest_rfp:
             data_type: boolean
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
@@ -112,6 +118,7 @@ system_configuration:
                                         children:
                                             - oro_rfp.feature_enabled
                                             - oro_rfp.frontend_feature_enabled
+                                            - oro_rfp.enable_rfq_project_name
                                     rfp_notifications:
                                         children:
                                             - oro_rfp.notify_assigned_sales_reps_of_the_customer
