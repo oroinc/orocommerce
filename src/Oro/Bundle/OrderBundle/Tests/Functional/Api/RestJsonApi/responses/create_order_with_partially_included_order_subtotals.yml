@@ -104,7 +104,36 @@ included:
             label: 'Shipping Tax'
             amount: '0.0000'
             currency: null
-            data: []
+            data:
+                items:
+                    -
+                        unit:
+                            includingTax: '10'
+                            excludingTax: '10'
+                            taxAmount: '0'
+                            adjustment: '0'
+                            currency: 'USD'
+                        row:
+                            includingTax: '10'
+                            excludingTax: '10'
+                            taxAmount: '0'
+                            adjustment: '0'
+                            currency: 'USD'
+                        taxes: []
+                    -
+                        unit:
+                            includingTax: '10.59'
+                            excludingTax: '10.59'
+                            taxAmount: '0'
+                            adjustment: '0'
+                            currency: 'USD'
+                        row:
+                            includingTax: '63.54'
+                            excludingTax: '63.54'
+                            taxAmount: '0'
+                            adjustment: '0'
+                            currency: 'USD'
+                        taxes: []
     -
         type: ordersubtotals
         id: 'tax-6'
@@ -112,4 +141,33 @@ included:
             label: 'Tax'
             amount: '0.0000'
             currency: 'USD'
-            data: []
+            data:
+                items:
+                    -
+                        unit:
+                            includingTax: '10'
+                            excludingTax: '10'
+                            taxAmount: '0'
+                            adjustment: '0'
+                            currency: 'USD'
+                        row:
+                            includingTax: '10'
+                            excludingTax: '10'
+                            taxAmount: '0'
+                            adjustment: '0'
+                            currency: 'USD'
+                        taxes: []
+                    -
+                        unit:
+                            includingTax: '10.59'
+                            excludingTax: '10.59'
+                            taxAmount: '0'
+                            adjustment: '0'
+                            currency: 'USD'
+                        row:
+                            includingTax: '63.54'
+                            excludingTax: '63.54'
+                            taxAmount: '0'
+                            adjustment: '0'
+                            currency: 'USD'
+                        taxes: []

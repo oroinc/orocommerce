@@ -30,7 +30,9 @@ data:
             testToManyId: []
         unitPrecisions:
             - { unit: '@item->code', precision: 0, conversionRate: 1, default: true }
-        prices: []
+        prices:
+            - { price: '1.9900', currencyId: USD, quantity: '1', unit: '@item->code' }
+            - { price: '1.0100', currencyId: USD, quantity: '10', unit: '@item->code' }
         lowInventory: true
         upcoming: true
         availabilityDate: '2119-10-20T10:20:30Z'

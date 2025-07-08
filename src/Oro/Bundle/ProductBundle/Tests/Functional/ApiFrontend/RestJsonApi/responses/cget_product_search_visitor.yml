@@ -40,7 +40,8 @@ data:
             unitPrecisions:
                 - { unit: '@item->code', precision: 0, default: true }
                 - { unit: '@set->code', precision: 1, default: false }
-            minimalPrices: []
+            minimalPrices:
+                - { price: '11.0000', currencyId: USD, unit: '@item->code' }
         relationships:
             product:
                 data:
@@ -66,7 +67,8 @@ data:
             newArrival: false
             unitPrecisions:
                 - { unit: '@item->code', precision: 1, default: true }
-            minimalPrices: []
+            minimalPrices:
+                - { price: '10.0000', currencyId: USD, unit: '@item->code' }
         relationships:
             product:
                 data:
@@ -92,7 +94,6 @@ data:
             shortDescription: 'Configurable Product 1 Short Description'
             unitPrecisions:
                 - { unit: '@item->code', precision: 0, default: true }
-            images: []
             minimalPrices: []
         relationships:
             inventoryStatus:
@@ -115,7 +116,6 @@ data:
             shortDescription: 'Configurable Product 2 Short Description'
             unitPrecisions:
                 - { unit: '@item->code', precision: 0, default: true }
-            images: []
             minimalPrices: []
         relationships:
             product:
@@ -142,7 +142,6 @@ data:
             shortDescription: 'Configurable Product 3 Short Description'
             unitPrecisions:
                 - { unit: '@item->code', precision: 0, default: true }
-            images: []
             minimalPrices: []
         relationships:
             product:
