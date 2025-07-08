@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadBuyerCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductImageForBuyerTest extends FrontendRestJsonApiTestCase
 {
@@ -16,6 +17,36 @@ class ProductImageForBuyerTest extends FrontendRestJsonApiTestCase
             LoadBuyerCustomerUserData::class,
             '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product.yml'
         ]);
+    }
+
+    #[\Override]
+    protected function assertResponseContains(
+        array|string $expectedContent,
+        Response $response,
+        bool $ignoreOrder = false
+    ): void {
+        $data = $this->getResponseData($expectedContent);
+        $additionalData = [];
+        if (isset($data['data'])) {
+            if (array_is_list($data['data'])) {
+                foreach ($data['data'] as $i => $item) {
+                    if ('productimages' === $item['type'] && isset($item['attributes']['files'])) {
+                        $additionalData['data'][$i]['attributes']['files'] = $item['attributes']['files'];
+                        unset($data['data'][$i]['attributes']['files']);
+                    }
+                }
+            } else {
+                $item = $data['data'];
+                if ('productimages' === $item['type'] && isset($item['attributes']['files'])) {
+                    $additionalData['data']['attributes']['files'] = $item['attributes']['files'];
+                    unset($data['data']['attributes']['files']);
+                }
+            }
+        }
+        parent::assertResponseContains($data, $response, $ignoreOrder);
+        if ($additionalData) {
+            self::assertArrayContains($additionalData, self::jsonToArray($response->getContent()));
+        }
     }
 
     private static function updateExpectedData(array $expectedData, array $replace): array

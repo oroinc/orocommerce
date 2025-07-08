@@ -277,6 +277,7 @@ class CheckoutTest extends FrontendRestJsonApiTestCase
                     'attributes' => [
                         'totals' => [
                             ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '100.5000'],
+                            ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-20.0500'],
                             ['subtotalType' => 'shipping_cost', 'description' => 'Shipping', 'amount' => '10.0000']
                         ]
                     ]

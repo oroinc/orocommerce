@@ -12,7 +12,6 @@ data:
         name: 'Product 1'
         shortDescription: null
         description: null
-        productAttributes: {  }
         unitPrecisions:
             -
                 unit: item
