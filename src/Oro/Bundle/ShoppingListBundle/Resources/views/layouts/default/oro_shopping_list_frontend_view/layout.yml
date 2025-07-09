@@ -19,6 +19,13 @@ layout:
 
         - '@appendOption':
             id: datagrid
+            optionName: grid_render_parameters.themeOptions
+            optionValue:
+                singleUnitMode: '=data["oro_product_single_unit_mode"].isSingleUnitMode()'
+                singleUnitModeCodeVisible: '=data["oro_product_single_unit_mode"].isSingleUnitModeCodeVisible()'
+
+        - '@appendOption':
+            id: datagrid
             optionName: grid_render_parameters.cssClass
             optionValue: 'responsive-shopping-list-grid-desktop-alignment responsive-shopping-list-grid-tablet-alignment responsive-shopping-list-grid-view'
 

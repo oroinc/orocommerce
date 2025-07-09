@@ -90,10 +90,16 @@ define(function(require) {
             return units;
         },
 
-        updateSelect: function(model, $el, silent = false) {
+        updateSelect: function(model, $el, silent = false, singleUnitMode = false) {
             const options = [];
             const oldValue = $el.val();
-            const units = this.getUnitsLabel(model);
+            let units = this.getUnitsLabel(model);
+            if (singleUnitMode) {
+                const unitsEntries = Object.entries(units);
+                if (unitsEntries.length) {
+                    units = Object.fromEntries([unitsEntries[0]]);
+                }
+            }
             if (!_.isEmpty(units)) {
                 _.each(units, function(label, value) {
                     options.push(this.generateSelectOption(value, label));

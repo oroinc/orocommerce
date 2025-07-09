@@ -97,9 +97,8 @@ Feature: Product frontend single unit mode
       | Price | Total: $30.00 |
     And I should see that the "Product Kit Line Item Totals Form Unit" element has a selected unit "set"
     And I should see that the "Product Kit Line Item Totals Form Unit" element has available units:
-      | each |
       | set  |
-    And I should see that the "Product Kit Line Item Totals Form Unit" element has a product unit selector of type "toggle"
+    And I should see that the "Product Kit Line Item Totals Form Unit" element has a product unit selector of type "single"
 
   Scenario: Create new product kit with Single Unit mode
     Given I proceed as the Admin

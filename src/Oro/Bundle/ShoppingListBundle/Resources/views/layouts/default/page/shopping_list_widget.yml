@@ -29,12 +29,18 @@ layout:
                         productLineItemsPricesByShoppingList: '=data["shopping_list_limit_provider"].isOnlyOneEnabled() ? data["oro_shopping_list_products"].getProductLineItemPricesForShoppingLists(shoppingLists) : []'
                 main_menu_shopping_lists_dropdown_item:
                     blockType: shopping_list_dropdown_item
+                    options:
+                        vars:
+                            singleUnitModeCodeVisible: '=data["oro_product_single_unit_mode"].isSingleUnitModeCodeVisible()'
                 main_menu_shopping_lists_dropdown_item_image:
                     blockType: block
                 main_menu_shopping_lists_dropdown_item_product_base:
                     blockType: container
                 main_menu_shopping_lists_dropdown_item_product_base_total:
                     blockType: block
+                    options:
+                        vars:
+                            singleUnitModeCodeVisible: '=data["oro_product_single_unit_mode"].isSingleUnitModeCodeVisible()'
                 main_menu_shopping_lists_dropdown_item_product_base_title:
                     blockType: block
                 main_menu_shopping_lists_dropdown_item_product_base_sku:

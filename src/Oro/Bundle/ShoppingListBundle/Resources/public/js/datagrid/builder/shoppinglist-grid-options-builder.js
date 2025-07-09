@@ -16,6 +16,13 @@ const shoppinglistGridOptionsBuilder = {
 
         options.metadata.options.model = ShoppingListModel;
 
+        if (options.themeOptions.singleUnitMode && !options.themeOptions.singleUnitModeCodeVisible) {
+            const unitColumn = options.metadata.columns.find(column => column.name === 'unit');
+            if (unitColumn) {
+                unitColumn.renderable = false;
+            }
+        }
+
         deferred.resolve();
     },
 
