@@ -194,7 +194,7 @@ datagrids:
                     - MAX(lineItem.id) as sortId
                     - >
                         UPPER(
-                            CASE WHEN MAX(product.type) = 'kit'
+                            CASE WHEN MAX(CASE WHEN product.type = 'kit' THEN 1 ELSE 0 END) = 1
                             THEN
                                 CONCAT_WS(
                                     '',
