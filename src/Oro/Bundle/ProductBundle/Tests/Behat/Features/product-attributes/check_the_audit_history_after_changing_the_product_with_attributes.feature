@@ -1,5 +1,4 @@
 @random-failed
-@regression
 @ticket-BAP-20385
 @ticket-BAP-20920
 @fixture-OroProductBundle:single_product.yml
