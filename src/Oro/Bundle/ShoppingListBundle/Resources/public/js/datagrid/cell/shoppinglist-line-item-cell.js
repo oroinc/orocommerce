@@ -22,7 +22,17 @@ const ShoppinglistLineItemCell = HtmlTemplateCell.extend({
      */
     useInputStepper: true,
 
+    defaultGridThemeOptions: {
+        singleUnitMode: false,
+        singleUnitModeCodeVisible: false
+    },
+
     constructor: function ShoppinglistLineItemCell(options) {
+        this.gridThemeOptions = _.defaults(
+            _.pick(options.themeOptions, Object.keys(this.defaultGridThemeOptions)),
+            this.defaultGridThemeOptions
+        );
+
         ShoppinglistLineItemCell.__super__.constructor.call(this, options);
 
         this.useInputStepper = Boolean(options?.themeOptions?.useInputStepper ?? this.useInputStepper);
@@ -54,10 +64,11 @@ const ShoppinglistLineItemCell = HtmlTemplateCell.extend({
     },
 
     getTemplateData() {
-        const data = ShoppinglistLineItemCell.__super__.getTemplateData.call(this);
-
-        data.useInputStepper = this.useInputStepper;
-        return data;
+        return {
+            ...ShoppinglistLineItemCell.__super__.getTemplateData.call(this),
+            useInputStepper: this.useInputStepper,
+            gridThemeOptions: this.gridThemeOptions
+        };
     },
 
     render() {

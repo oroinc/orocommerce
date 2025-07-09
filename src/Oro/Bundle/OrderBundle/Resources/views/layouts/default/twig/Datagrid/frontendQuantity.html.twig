@@ -1,4 +1,10 @@
-{% if oro_is_unit_code_visible(record.getValue('productUnitCode')) %}
+{% set singleUnitMode = oro_config_value('oro_product.single_unit_mode') %}
+{% set singleUnitModeCodeVisible = oro_config_value('oro_product.single_unit_mode_show_code') %}
+
+{% if
+    oro_is_unit_code_visible(record.getValue('productUnitCode')) and
+    ((singleUnitMode and singleUnitModeCodeVisible) or not singleUnitMode)
+%}
     {{ record.getValue('quantity')|oro_format_product_unit_code(record.getValue('productUnitCode')) }}
 {% else %}
     {{ record.getValue('quantity') }}

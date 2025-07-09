@@ -23,6 +23,11 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
      */
     useInputStepper: true,
 
+    defaultGridThemeOptions: {
+        singleUnitMode: false,
+        singleUnitModeCodeVisible: false
+    },
+
     constructor: function ShoppinglistLineItemEditorView(...args) {
         ShoppinglistLineItemEditorView.__super__.constructor.apply(this, args);
     },
@@ -32,6 +37,11 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
     },
 
     initialize(options) {
+        this.gridThemeOptions = _.defaults(
+            _.pick(options.themeOptions, Object.keys(this.defaultGridThemeOptions)),
+            this.defaultGridThemeOptions
+        );
+
         this.formatter = new NumberFormatter(options);
 
         this.updateUnitList(this.model.get('unit'));
@@ -73,6 +83,7 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
 
     getTemplateData() {
         return {
+            gridThemeOptions: this.gridThemeOptions,
             useInputStepper: this.useInputStepper,
             data: this.model.toJSON()
         };
@@ -166,7 +177,11 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
             $el = $el.filter(':checked');
         }
 
-        return $el.val();
+        if ($el.length) {
+            return $el.val();
+        }
+
+        return this.model.get('unitCode');
     },
 
     updateUnitList(currentUnit) {

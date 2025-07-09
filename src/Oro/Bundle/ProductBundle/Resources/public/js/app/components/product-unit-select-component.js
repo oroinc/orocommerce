@@ -58,27 +58,17 @@ define(function(require) {
             const $select = this.options._sourceElement.find('select');
 
             unitsUtil.markAsSelectUnit($select);
-            unitsUtil.updateSelect(model, $select);
+            unitsUtil.updateSelect(model, $select, false, this.options.singleUnitMode);
 
             const productUnits = _.keys(model.get('product_units'));
             if (this.isProductApplySingleUnitMode(productUnits)) {
-                if (this.options.singleUnitModeCodeVisible) {
-                    const $label = `<span class="unit-label">${productUnits[0]}</span>`;
-
-                    unitsUtil.markAsSingleUnit($label);
-                    $select.parent().append($label);
-                }
                 $select.inputWidget('dispose');
                 $select.addClass('no-input-widget').hide();
             }
         },
 
         isProductApplySingleUnitMode: function(productUnits) {
-            if (this.options.singleUnitMode && productUnits.length === 1) {
-                return productUnits[0] === this.options.configDefaultUnit;
-            }
-
-            return false;
+            return this.options.singleUnitMode || productUnits.length === 1;
         },
 
         /**
@@ -92,7 +82,9 @@ define(function(require) {
                 return false;
             }
 
-            const units = unitsUtil.getUnitsLabel(productModel);
+            const units = this.options.singleUnitMode ? {
+                [productModel.get('unit')]: unitsUtil.getUnitLabel(productModel, productModel.get('unit'))
+            } : unitsUtil.getUnitsLabel(productModel);
 
             return unitsUtil.displayUnitsAsGroup(units);
         }

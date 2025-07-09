@@ -37,15 +37,14 @@
 
 {% block _line_item_form_fields_unit_widget %}
     {% if not is_configurable_product_type(product.type) %}
-        {% if form.unit.vars.choices|length > 1 %}
+        {% if not singleUnitMode and form.unit.vars.choices|length > 1 %}
             <div class="product-view-line-item__choice simple-placeholder"
                  data-page-component-module="oroproduct/js/app/components/product-unit-select-component"
                  data-page-component-options="{{ {
-                'singleUnitMode': singleUnitMode,
-                'singleUnitModeCodeVisible': singleUnitModeCodeVisible,
-                'configDefaultUnit': defaultUnitCode
-                }|json_encode }}
-            ">
+                    singleUnitMode: singleUnitMode,
+                    singleUnitModeCodeVisible: singleUnitModeCodeVisible,
+                    configDefaultUnit: defaultUnitCode
+                 }|json_encode }}">
                 {{ form_widget(form.unit, {attr: {
                     'form': form.vars.id,
                     'class': 'invisible'
@@ -54,7 +53,9 @@
         {% else %}
             <div class="product-view-line-item__unit">
                 <input form="{{ form.vars.id }}" type="hidden" name="{{ form.unit.vars.full_name }}" value="{{ product.primaryUnitPrecision.unit.code }}" data-name="{{ form.unit.vars.attr['data-name'] }}" data-unit-precisions="{{ form.unit.vars.attr['data-unit-precisions'] }}" />
-                <span data-role="unit-label" data-toggle-type="single">{{- product.primaryUnitPrecision.unit.code|oro_format_product_unit_label -}}</span>
+                {% if singleUnitModeCodeVisible %}
+                    <span data-role="unit-label" data-toggle-type="single">{{- product.primaryUnitPrecision.unit.code|oro_format_product_unit_label -}}</span>
+                {% endif %}
             </div>
         {% endif %}
     {% endif %}

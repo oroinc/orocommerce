@@ -16,6 +16,16 @@
                 width: $edit-mode-cell-stepper-width;
                 min-width: $edit-mode-cell-stepper-width;
             }
+
+            &:has(.single-unit-mode) {
+                width: 270px;
+                min-width: 270px;
+            }
+
+            &:has(.single-unit-mode-code-visible) {
+                width: 310px;
+                min-width: 310px;
+            }
         }
     }
 
@@ -29,6 +39,16 @@
             &:has(.form-quantity-row) {
                 width: $edit-mode-cell-stepper-width;
                 min-width: $edit-mode-cell-stepper-width;
+            }
+
+            &:has(.single-unit-mode) {
+                width: $edit-mode-cell-stepper-single-unit-width;
+                min-width: $edit-mode-cell-stepper-single-unit-width;
+            }
+
+            &:has(.single-unit-mode-code-visible) {
+                width: $edit-mode-cell-stepper-single-unit-visible-width;
+                min-width: $edit-mode-cell-stepper-single-unit-visible-width;
             }
         }
     }

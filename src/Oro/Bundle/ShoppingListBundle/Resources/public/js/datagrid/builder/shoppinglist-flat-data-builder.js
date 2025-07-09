@@ -6,11 +6,17 @@ import quantityHelper from 'oroproduct/js/app/quantity-helper';
 import ShoppingListRow from 'oroshoppinglist/js/datagrid/row/shopping-list-row';
 import {isHighlight, isError, messageModel} from './utils';
 
-export const flattenData = data => {
+export const flattenData = (data, options) => {
     const errorColumn = shoppingListFlatDataBuilder.errorColumn;
     return data.reduce((flatData, rawData) => {
         const {subData, ...item} = rawData;
         const itemClassName = [];
+
+        if (options.themeOptions) {
+            item.themeOptions = _.pick(options.themeOptions,
+                value => ['string', 'boolean', 'number'].includes(typeof value)
+            );
+        }
 
         item.productUID = _.uniqueId('');
 
@@ -65,6 +71,10 @@ export const flattenData = data => {
                 const className = ['sub-row'];
 
                 subItem.productUID = _.uniqueId('');
+
+                if (item.themeOptions) {
+                    subItem.themeOptions = item.themeOptions;
+                }
 
                 if (subItem.units && subItem.units[item.unit]) {
                     precisions.push(subItem.units[item.unit].precision);
@@ -181,7 +191,7 @@ const shoppingListFlatDataBuilder = {
                 if (parseResponseModels) {
                     resp = parseResponseModels(resp);
                 }
-                return 'data' in resp ? flattenData(resp.data) : resp;
+                return 'data' in resp ? flattenData(resp.data, options) : resp;
             },
             parseResponseOptions: (resp = {}) => {
                 if (parseResponseOptions) {
@@ -207,7 +217,7 @@ const shoppingListFlatDataBuilder = {
         );
 
         this.setErrorColumn(options.metadata.columns);
-        options.data.data = flattenData(options.data.data);
+        options.data.data = flattenData(options.data.data, options);
 
         options.themeOptions = {
             ...options.themeOptions,

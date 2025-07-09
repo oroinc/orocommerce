@@ -25,6 +25,13 @@ layout:
 
         - '@appendOption':
             id: __datagrid
+            optionName: grid_render_parameters.themeOptions
+            optionValue:
+                singleUnitMode: '=data["oro_product_single_unit_mode"].isSingleUnitMode()'
+                singleUnitModeCodeVisible: '=data["oro_product_single_unit_mode"].isSingleUnitModeCodeVisible()'
+
+        - '@appendOption':
+            id: __datagrid
             optionName: grid_parameters
             optionValue:
                 checkout_id: '=data["checkout"].getId()'
