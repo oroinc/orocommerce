@@ -176,6 +176,12 @@
             width: $checkout-submit-btn-tablet-small-width;
         }
     }
+
+    .summary-collapse-content .order-review-options {
+        .label {
+            font-size: $base-font-size--xs;
+        }
+    }
 }
 
 @include breakpoint('mobile-big') {
