@@ -35,6 +35,11 @@ api:
                     data_type: objects
                     property_path: _
                     depends_on: [ types.type, image.id, image.filename, image.originalFilename, image.parentEntityClass ]
+                # declare excluded field for "image" entity property
+                # to be able to use "image" property in "depends_on" option
+                _image:
+                    property_path: image
+                    exclude: true
             filters:
                 fields:
                     types:
@@ -57,6 +62,8 @@ api:
                 isEnabled:
                     exclude: true
                 code:
+                    exclude: true
+                image:
                     exclude: true
                 name:
                     data_type: localizedFallbackValue:labels

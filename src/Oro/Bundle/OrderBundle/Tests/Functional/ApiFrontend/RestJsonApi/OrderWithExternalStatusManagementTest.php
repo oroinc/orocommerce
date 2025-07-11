@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
+use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadOrderDocuments;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentOrderStatuses;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentTransactions;
@@ -25,6 +27,7 @@ class OrderWithExternalStatusManagementTest extends FrontendRestJsonApiTestCase
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
             '@OroOrderBundle/Tests/Functional/ApiFrontend/DataFixtures/orders.yml',
+            LoadOrderDocuments::class,
             LoadShippingMethods::class,
             LoadPaymentOrderStatuses::class,
             LoadPaymentTransactions::class,
@@ -47,6 +50,24 @@ class OrderWithExternalStatusManagementTest extends FrontendRestJsonApiTestCase
         self::getContainer()->get('oro_payment_term.provider.payment_term_association')
             ->setPaymentTerm($this->getReference('customer'), $this->getReference('payment_term_net_10'));
         $this->getEntityManager()->flush();
+    }
+
+    #[\Override]
+    protected function getResponseData(array|string $expectedContent): array
+    {
+        $expectedData = parent::getResponseData($expectedContent);
+        array_walk_recursive(
+            $expectedData,
+            function (&$val) {
+                if (is_string($val) && str_starts_with($val, '{fileUrl:') && str_ends_with($val, '}')) {
+                    /** @var AttachmentManager $attachmentManager */
+                    $attachmentManager = self::getContainer()->get('oro_attachment.manager');
+                    $val = $attachmentManager->getFileUrl($this->getReference(substr($val, 9, -1)));
+                }
+            }
+        );
+
+        return $expectedData;
     }
 
     public function testGetList(): void

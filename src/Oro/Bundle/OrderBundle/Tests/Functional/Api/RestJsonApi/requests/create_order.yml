@@ -36,6 +36,13 @@ data:
             data:
                 type: orderstatuses
                 id: open
+        documents:
+            data:
+                -
+                    type: files
+                    id: document_1
+                    meta:
+                        sortOrder: 1
 included:
     -
         type: orderlineitems
@@ -107,3 +114,10 @@ included:
                 data:
                     type: productunits
                     id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: files
+        id: document_1
+        attributes:
+            mimeType: text/plain
+            originalFilename: document_1.txt
+            content: ZmlsZV9hCg==

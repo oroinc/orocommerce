@@ -93,6 +93,18 @@ data:
                     -
                         type: ordersubtotals
                         id: '<(implode("-", [@simple_order->id, "tax-6"]))>'
+            documents:
+                data:
+                    -
+                        type: files
+                        id: '<toString(@file1->id)>'
+                        meta:
+                            sortOrder: 1
+                    -
+                        type: files
+                        id: '<toString(@file2->id)>'
+                        meta:
+                            sortOrder: 2
     -
         type: orders
         id: '<toString(@simple_order2->id)>'
@@ -180,6 +192,8 @@ data:
                     -
                         type: ordersubtotals
                         id: '<(implode("-", [@simple_order2->id, "tax-6"]))>'
+            documents:
+                data: []
     -
         type: orders
         id: '<toString(@simple_order3->id)>'
@@ -267,6 +281,8 @@ data:
                     -
                         type: ordersubtotals
                         id: '<(implode("-", [@simple_order3->id, "tax-6"]))>'
+            documents:
+                data: []
     -
         type: orders
         id: '<toString(@simple_order4->id)>'
@@ -328,6 +344,8 @@ data:
                      id: '<toString(@simple_order4->customer->id)>'
             orderSubtotals:
                 data: []
+            documents:
+                data: []
     -
         type: orders
         id: '<toString(@simple_order5->id)>'
@@ -388,6 +406,8 @@ data:
                      type: customers
                      id: '<toString(@simple_order5->customer->id)>'
             orderSubtotals:
+                data: []
+            documents:
                 data: []
     -
         type: orders
@@ -452,6 +472,8 @@ data:
                      id: '<toString(@simple_order6->customer->id)>'
             orderSubtotals:
                 data: []
+            documents:
+                data: []
     -
         type: orders
         id: '<toString(@my_order->id)>'
@@ -512,4 +534,6 @@ data:
                      type: customers
                      id: '<toString(@my_order->customer->id)>'
             orderSubtotals:
+                data: []
+            documents:
                 data: []

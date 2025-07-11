@@ -33,6 +33,16 @@ data:
                 type: 'order'
                 description: 'Amount Discount'
                 amount: '158.5890'
+        documents:
+            -
+                mimeType: text/plain
+                url: '{fileUrl:file2}'
+            -
+                mimeType: text/plain
+                url: '{fileUrl:file1}'
+            -
+                mimeType: text/plain
+                url: '{fileUrl:file3}'
         shippingTrackings:
             -
                 method: 'method 1'

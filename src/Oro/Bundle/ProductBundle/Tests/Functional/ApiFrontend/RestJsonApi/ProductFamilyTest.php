@@ -44,6 +44,13 @@ class ProductFamilyTest extends FrontendRestJsonApiTestCase
         );
 
         $this->assertResponseContains('get_product_family.yml', $response);
+
+        $responseContent = self::jsonToArray($response->getContent());
+        self::assertArrayNotHasKey('entityClass', $responseContent['data']['attributes']);
+        self::assertArrayNotHasKey('isEnabled', $responseContent['data']['attributes']);
+        self::assertArrayNotHasKey('code', $responseContent['data']['attributes']);
+        self::assertArrayNotHasKey('image', $responseContent['data']['attributes']);
+        self::assertArrayNotHasKey('relationships', $responseContent['data']);
     }
 
     public function testTryToGetNotProductFamily()

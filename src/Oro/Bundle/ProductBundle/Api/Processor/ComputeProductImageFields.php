@@ -41,10 +41,11 @@ class ComputeProductImageFields implements ProcessorInterface
 
         $entityTypesFieldName = $context->getResultFieldName(self::TYPES_FIELD);
         $entityTypesConfig = $context->getConfig()->getField($entityTypesFieldName)->getTargetEntity();
-        $idFieldName = $context->getResultFieldName('id', $entityTypesConfig);
         $typeFieldName = $context->getResultFieldName('type', $entityTypesConfig);
-        $imageFieldName = $context->getResultFieldName('image', $entityTypesConfig);
-        $filenameFieldName = $context->getResultFieldName('filename', $entityTypesConfig);
+        $imageFieldName = $context->getResultFieldName('image');
+        $imageConfig = $context->getConfig()->getField($imageFieldName)->getTargetEntity();
+        $imageIdFieldName = $context->getResultFieldName('id', $imageConfig);
+        $imageFilenameFieldName = $context->getResultFieldName('filename', $imageConfig);
         $isWebpEnabled = $this->attachmentManager->isWebpEnabledIfSupported();
 
         foreach ($data as $key => $item) {
@@ -59,8 +60,8 @@ class ComputeProductImageFields implements ProcessorInterface
             if ($isFilesFieldRequested) {
                 $image = $item[$imageFieldName];
                 $data[$key][self::FILES_FIELD] = $this->getImageUrls(
-                    $image[$idFieldName],
-                    $image[$filenameFieldName],
+                    $image[$imageIdFieldName],
+                    $image[$imageFilenameFieldName],
                     $types,
                     $isWebpEnabled
                 );

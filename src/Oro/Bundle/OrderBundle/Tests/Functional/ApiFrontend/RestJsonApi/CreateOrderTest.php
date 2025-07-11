@@ -738,4 +738,28 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             $response
         );
     }
+
+    public function testTryToCreateWithDocuments(): void
+    {
+        $data = $this->getRequestData('create_order.yml');
+        $data['data']['attributes']['documents'] = [
+            ['mimeType' => 'text/plain', 'url' => 'some_file.txt']
+        ];
+
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data
+        );
+
+        $orderId = (int)$this->getResourceId($response);
+
+        $responseContent = $this->getResponseData('create_order.yml');
+        $responseContent['data']['attributes']['documents'] = [];
+        $responseContent = $this->updateResponseContent($responseContent, $response);
+        $this->assertResponseContains($responseContent, $response);
+
+        /** @var Order $order */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertCount(0, $order->getDocuments());
+    }
 }

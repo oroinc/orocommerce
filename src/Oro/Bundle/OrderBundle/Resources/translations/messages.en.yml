@@ -190,6 +190,10 @@ oro:
         payment_term_7c4f1e8e:
             label:                        'Payment term'
             description:                  Relationship with the payment term that was selected as a payment method.
+        documents:
+            label: Customer Documents
+            storefront_label: Documents
+            description: Customer related documents. These files will be visible to the customer on the storefront.
 
         shipping_tracking:
             entity_label:         Shipping Tracking
