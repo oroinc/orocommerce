@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\ProductBundle\Command;
 
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
@@ -25,7 +26,12 @@ class ResizeAllProductImagesCommand extends Command
     protected static $defaultName = 'product:image:resize-all';
 
     private DoctrineHelper $doctrineHelper;
+
+    private CacheManager $cacheManager;
+
     private EventDispatcherInterface $eventDispatcher;
+
+    protected array $noImagesPath = [];
 
     public function __construct(DoctrineHelper $doctrineHelper, EventDispatcherInterface $eventDispatcher)
     {
@@ -88,6 +94,8 @@ HELP
             $entitiesProcessed++;
         }
 
+        $this->removeNoImagesCache($output);
+
         $output->writeln(sprintf('%d product image(s) queued for resize.', $entitiesProcessed));
 
         return 0;
@@ -122,5 +130,32 @@ HELP
     protected function getDimensionsOption(InputInterface $input): ?array
     {
         return $input->getOption('dimension');
+    }
+
+    public function addNoImagePath($path): void
+    {
+        $this->noImagesPath[] = $path;
+    }
+
+    /**
+     * We need to align default no cache image with custom no image for using or not using watermark
+     * Custom no image creates as usual product image and all rules implements for this image as for product
+     * Default no image generates during first page loading, and we are not generating it by command,
+     * so after resize command started, we remove all cached no image, and it will regenerates while first
+     * page loading according to the rules (e.g. watermark)
+     */
+    protected function removeNoImagesCache(OutputInterface $output): void
+    {
+        if (!empty($this->noImagesPath)) {
+            $noImagesWebpPaths = array_map(fn (string $path) => sprintf('%s.webp', $path), $this->noImagesPath);
+            $this->cacheManager->remove($this->noImagesPath);
+            $this->cacheManager->remove($noImagesWebpPaths);
+            $output->writeln('Default no_image images were removed.');
+        }
+    }
+
+    public function setCacheManager(CacheManager $cacheManager): void
+    {
+        $this->cacheManager = $cacheManager;
     }
 }
