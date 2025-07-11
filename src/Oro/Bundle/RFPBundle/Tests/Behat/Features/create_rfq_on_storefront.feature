@@ -1,4 +1,4 @@
-@regression
+@random-failed
 @fixture-OroRFPBundle:RFQ_with_removed_unit.yml
 @ticket-BB-16463
 @ticket-BB-21064

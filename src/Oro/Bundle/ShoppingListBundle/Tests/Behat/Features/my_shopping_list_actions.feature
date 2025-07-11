@@ -1,4 +1,4 @@
-@regression
+@random-failed
 @ticket-BB-19469
 @ticket-BB-21750
 @fix-BB-24936
