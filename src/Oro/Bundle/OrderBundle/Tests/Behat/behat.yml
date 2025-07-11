@@ -571,6 +571,22 @@ oro_behat_extension:
           Validate Billing Addresses on the Order Page: 'address_validation[oro_order___validate_billing_addresses__backoffice_order_page][value]'
           Validate Billing Addresses on the Order Page Use Default: 'address_validation[oro_order___validate_billing_addresses__backoffice_order_page][use_parent_scope_value]'
 
+    Order Customer Documents Form:
+      selector: 'form[id^="oro_order_type"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Documents File 1: 'oro_order_type[documents][0][file][file]'
+          Documents File 2: 'oro_order_type[documents][1][file][file]'
+          Documents File 3: 'oro_order_type[documents][2][file][file]'
+          Documents File Sort Order 1: 'oro_order_type[documents][0][sortOrder]'
+          Documents File Sort Order 2: 'oro_order_type[documents][1][sortOrder]'
+          Documents File Sort Order 3: 'oro_order_type[documents][2][sortOrder]'
+
+    Order Customer Documents Grid:
+      selector: 'div[data-page-component-name="attachment-files-grid:documents"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   pages:
     OrderFrontendView:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderFrontendViewPage

@@ -296,6 +296,10 @@ class ProductImageTest extends FrontendRestJsonApiTestCase
             ['{fileId}' => (string)$fileId]
         );
         $this->assertResponseContains($expectedData, $response);
+
+        $responseContent = self::jsonToArray($response->getContent());
+        self::assertArrayNotHasKey('image', $responseContent['data']['attributes']);
+        self::assertArrayNotHasKey('image', $responseContent['data']['relationships']);
     }
 
     public function testGetAndWebpDisabled()

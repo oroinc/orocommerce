@@ -3,11 +3,13 @@
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
+use Oro\Bundle\OrderBundle\Tests\Functional\Api\DataFixtures\LoadOrderDocuments;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -34,7 +36,8 @@ class OrderTest extends RestJsonApiTestCase
         parent::setUp();
 
         $this->loadFixtures([
-            '@OroOrderBundle/Tests/Functional/DataFixtures/order_line_items.yml'
+            '@OroOrderBundle/Tests/Functional/DataFixtures/order_line_items.yml',
+            LoadOrderDocuments::class
         ]);
 
         $this->getOptionalListenerManager()
@@ -570,6 +573,8 @@ class OrderTest extends RestJsonApiTestCase
         /** @var OrderProductKitItemLineItem $kitItemLineItem */
         $kitItemLineItem = $productKitLineItem->getKitItemLineItems()->first();
         self::assertSame(10.59, $kitItemLineItem->getValue());
+
+        self::assertCount(1, $order->getDocuments());
     }
 
     public function testTryToCreateWithoutValueForHitItemLineItem(): void
@@ -1698,6 +1703,62 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
+    public function testUpdateDocuments(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+        $file1Id = $this->getReference('file1')->getId();
+        $file2Id = $this->getReference('file2')->getId();
+
+        $data = [
+            'data' => [
+                'type' => 'orders',
+                'id' => (string)$orderId,
+                'relationships' => [
+                    'documents' => [
+                        'data' => [
+                            ['type' => 'files', 'id' => 'new_file', 'meta' => ['sortOrder' => 1]],
+                            ['type' => 'files', 'id' => '<toString(@file1->id)>', 'meta' => ['sortOrder' => 2]]
+                        ]
+                    ]
+                ]
+            ],
+            'included' => [
+                [
+                    'type' => 'files',
+                    'id' => 'new_file',
+                    'attributes' => [
+                        'mimeType' => 'text/plain',
+                        'originalFilename' => 'new_document.txt',
+                        'content' => 'ZmlsZV9hCg=='
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => 'orders', 'id' => (string)$orderId],
+            $data
+        );
+
+        $expectedData = $data;
+        $expectedData['data']['relationships']['documents']['data'][0]['id'] = 'new';
+        $expectedData['included'][0]['id'] = 'new';
+        $expectedData = $this->updateResponseContent($expectedData, $response);
+        $this->assertResponseContains($expectedData, $response);
+
+        /** @var Order $order */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertCount(2, $order->getDocuments());
+        $documents = [];
+        foreach ($order->getDocuments() as $item) {
+            $documents[$item->getSortOrder()] = $item->getFile()->getId();
+        }
+        ksort($documents);
+        self::assertSame([(int)$expectedData['included'][0]['id'], $file1Id], array_values($documents));
+
+        self::assertTrue(null !== $this->getEntityManager()->find(File::class, $file1Id));
+        self::assertTrue(null === $this->getEntityManager()->find(File::class, $file2Id));
+    }
+
     public function testDeleteLineItemFromOrder(): void
     {
         $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
@@ -1723,17 +1784,43 @@ class OrderTest extends RestJsonApiTestCase
         self::assertNull($order->getTotalDiscounts());
     }
 
+    public function testDelete(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+
+        $entitiesToBeDeleted = [];
+        $entitiesToBeDeleted[] = [Order::class, $orderId];
+        $entitiesToBeDeleted[] = [File::class, $this->getReference('file1')->getId()];
+        $entitiesToBeDeleted[] = [File::class, $this->getReference('file2')->getId()];
+
+        $this->delete(
+            ['entity' => 'orders', 'id' => (string)$orderId]
+        );
+
+        foreach ($entitiesToBeDeleted as [$entityClass, $entityId]) {
+            $entity = $this->getEntityManager()->find($entityClass, $entityId);
+            self::assertTrue(null === $entity, $entityClass);
+        }
+    }
+
     public function testDeleteList(): void
     {
         $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+
+        $entitiesToBeDeleted = [];
+        $entitiesToBeDeleted[] = [Order::class, $orderId];
+        $entitiesToBeDeleted[] = [File::class, $this->getReference('file1')->getId()];
+        $entitiesToBeDeleted[] = [File::class, $this->getReference('file2')->getId()];
 
         $this->cdelete(
             ['entity' => 'orders'],
             ['filter' => ['id' => (string)$orderId]]
         );
 
-        $order = $this->getEntityManager()->find(Order::class, $orderId);
-        self::assertTrue(null === $order);
+        foreach ($entitiesToBeDeleted as [$entityClass, $entityId]) {
+            $entity = $this->getEntityManager()->find($entityClass, $entityId);
+            self::assertTrue(null === $entity, $entityClass);
+        }
     }
 
     public function testCreateWhenValidateEqualsToTrue(): void
@@ -2069,5 +2156,104 @@ class OrderTest extends RestJsonApiTestCase
             ],
             $response
         );
+    }
+
+    public function testGetSubresourceForDocuments(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+        $response = $this->getSubresource(
+            ['entity' => 'orders', 'id' => (string)$orderId, 'association' => 'documents'],
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type' => 'files',
+                        'id' => '<toString(@file1->id)>',
+                        'meta' => ['sortOrder' => 1],
+                        'attributes' => [
+                            'originalFilename' => 'file_1.txt'
+                        ]
+                    ],
+                    [
+                        'type' => 'files',
+                        'id' => '<toString(@file2->id)>',
+                        'meta' => ['sortOrder' => 2],
+                        'attributes' => [
+                            'originalFilename' => 'file_2.txt'
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForDocuments(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+        $response = $this->getRelationship(
+            ['entity' => 'orders', 'id' => (string)$orderId, 'association' => 'documents'],
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'files', 'id' => '<toString(@file1->id)>', 'meta' => ['sortOrder' => 1]],
+                    ['type' => 'files', 'id' => '<toString(@file2->id)>', 'meta' => ['sortOrder' => 2]]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testTryToUpdateDocumentsViaRelationship(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+        $response = $this->patchRelationship(
+            ['entity' => 'orders', 'id' => (string)$orderId, 'association' => 'documents'],
+            [
+                'data' => [
+                    ['type' => 'files', 'id' => '<toString(@file1->id)>'],
+                    ['type' => 'files', 'id' => '<toString(@file2->id)>']
+                ]
+            ],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToRemoveDocumentsViaRelationship(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+        $response = $this->deleteRelationship(
+            ['entity' => 'orders', 'id' => (string)$orderId, 'association' => 'documents'],
+            [
+                'data' => [
+                    ['type' => 'files', 'id' => '<toString(@file1->id)>']
+                ]
+            ],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToAddDocumentsViaRelationship(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+        $response = $this->postRelationship(
+            ['entity' => 'orders', 'id' => (string)$orderId, 'association' => 'documents'],
+            [
+                'data' => [
+                    ['type' => 'files', 'id' => '<toString(@file1->id)>']
+                ]
+            ],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 }

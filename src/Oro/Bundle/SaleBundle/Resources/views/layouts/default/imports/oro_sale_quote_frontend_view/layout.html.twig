@@ -120,6 +120,18 @@
                             </tr>
                         {% endif %}
 
+                        {% if quote.documents.isEmpty == false %}
+                            <tr class="customer-info-grid__row">
+                                <td class="customer-info-grid__element-label">{{ 'oro.sale.quote.documents.storefront_label'|trans }}</td>
+                                <td class="customer-info-grid__element-content">
+                                    {%- for item in quote.documents.toArray()|sort((a, b) => a.sortOrder <=> b.sortOrder) -%}
+                                        {{- oro_file_view(item.file, {showIcon: false}) -}}
+                                        {%- if not loop.last %}, {% endif -%}
+                                    {%- endfor -%}
+                                </td>
+                            </tr>
+                        {% endif %}
+
                         {{ block_widget(block) }}
                     </tbody>
                 </table>

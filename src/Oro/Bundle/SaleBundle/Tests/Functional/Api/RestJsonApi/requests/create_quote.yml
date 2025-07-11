@@ -54,6 +54,13 @@ data:
             data: []
         activityEmails:
             data: []
+        documents:
+            data:
+                -
+                    type: files
+                    id: document_1
+                    meta:
+                        sortOrder: 1
 included:
     -
         type: quoteproducts
@@ -109,3 +116,10 @@ included:
                 data:
                     type: regions
                     id: '<toString(@region.US-NY->combinedCode)>'
+    -
+        type: files
+        id: document_1
+        attributes:
+            mimeType: text/plain
+            originalFilename: document_1.txt
+            content: ZmlsZV9hCg==

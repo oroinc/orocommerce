@@ -18,7 +18,7 @@ Retrieve a collection of product image records.
 
 ### mimeType
 
-A media type and subtype of the image.
+The media type of the image.
 
 ### files
 

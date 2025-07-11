@@ -38,7 +38,7 @@ class OroSaleBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_24';
+        return 'v1_25';
     }
 
     #[\Override]
@@ -442,6 +442,16 @@ class OroSaleBundleInstaller implements
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'application/vnd.ms-powerpoint',
                 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            ],
+            2
+        );
+        $this->attachmentExtension->addMultiFileRelation(
+            $schema,
+            'oro_sale_quote',
+            'documents',
+            [
+                'attachment' => ['file_applications' => ['default', 'commerce']],
+                'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM]
             ],
             2
         );

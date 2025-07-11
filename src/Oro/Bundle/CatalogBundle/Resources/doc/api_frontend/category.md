@@ -56,7 +56,7 @@ Each element of the array is an object with the following properties:
 
 **type** is a string that contains the type of the image. Possible values of the image types are `small` and `large`.
 
-Example of data: **\[{"mimeType:"image/jpeg", "url": "/path/to/image.jpeg", "type": "small"}, {"mimeType:"image/jpeg", "url": "/path/to/image.jpeg", "type": "large"}\]**
+Example of data: **\[{"mimeType": "image/jpeg", "url": "/path/to/image.jpeg", "type": "small"}, {"mimeType": "image/jpeg", "url": "/path/to/image.jpeg", "type": "large"}\]**
 
 ### categoryPath
 

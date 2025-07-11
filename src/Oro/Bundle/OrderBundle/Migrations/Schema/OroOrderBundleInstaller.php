@@ -9,6 +9,7 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -44,7 +45,7 @@ class OroOrderBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_25';
+        return 'v1_26';
     }
 
     #[\Override]
@@ -180,6 +181,16 @@ class OroOrderBundleInstaller implements
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', $table->getName());
         $this->attachmentExtension->addAttachmentAssociation($schema, $table->getName());
         $this->activityExtension->addActivityAssociation($schema, 'oro_email', $table->getName());
+        $this->attachmentExtension->addMultiFileRelation(
+            $schema,
+            'oro_order',
+            'documents',
+            [
+                'attachment' => ['file_applications' => ['default', 'commerce']],
+                'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM]
+            ],
+            2
+        );
 
         if ($this->platform instanceof PostgreSqlPlatform) {
             $queries->addPostQuery(new SqlMigrationQuery(

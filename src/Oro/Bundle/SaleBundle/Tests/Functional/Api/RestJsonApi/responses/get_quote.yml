@@ -68,3 +68,15 @@ data:
                     id: '<toString(@note2->id)>'
         activityEmails:
             data: []
+        documents:
+            data:
+                -
+                    type: files
+                    id: '<toString(@file1->id)>'
+                    meta:
+                        sortOrder: 1
+                -
+                    type: files
+                    id: '<toString(@file2->id)>'
+                    meta:
+                        sortOrder: 2
