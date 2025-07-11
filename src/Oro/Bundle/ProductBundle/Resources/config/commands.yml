@@ -16,6 +16,11 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@event_dispatcher'
+            - '@liip_imagine.cache.manager'
+        calls:
+            - [ addNoImagePath, [ '/bundles/oroproduct/images/no_image.png' ] ]
+            - [ addNoImagePath, [ '/bundles/orocms/images/no_image.png' ] ]
+            - [ addNoImagePath, [ '/bundles/orocatalog/images/no_image.png' ] ]
         tags:
             - { name: console.command }
 
