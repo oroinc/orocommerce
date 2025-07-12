@@ -231,7 +231,7 @@ Retrieve records of an order fulfillment officers assigned to a specific request
 
 #### get_relationship
 
-Retrieve IDs of an order fulfillment officers records assigned to a specific request record.
+Retrieve the IDs of an order fulfillment officers records assigned to a specific request record.
 
 #### update_relationship
 
@@ -310,7 +310,7 @@ Retrieve records of customer users that will receive the order delivery assigned
 
 #### get_relationship
 
-Retrieve IDs of customer users that will receive the order delivery records assigned to a specific request record.
+Retrieve the IDs of customer users that will receive the order delivery records assigned to a specific request record.
 
 #### update_relationship
 
@@ -389,7 +389,7 @@ Retrieve records of additional notes assigned to a specific request record.
 
 #### get_relationship
 
-Retrieve IDs of additional note records assigned to a specific request record.
+Retrieve the IDs of additional note records assigned to a specific request record.
 
 #### update_relationship
 
@@ -468,7 +468,7 @@ Retrieve a record of request product assigned to a specific request record.
 
 #### get_relationship
 
-Retrieve IDs of request product records assigned to a specific request record.
+Retrieve the IDs of request product records assigned to a specific request record.
 
 #### update_relationship
 

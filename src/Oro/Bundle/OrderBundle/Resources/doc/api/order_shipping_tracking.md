@@ -143,7 +143,7 @@ Retrieve a record of shipping tracking assigned to a specific orders record.
 
 #### get_relationship
 
-Retrieve IDs of shipping tracking records assigned to a specific orders record.
+Retrieve the IDs of shipping tracking records assigned to a specific orders record.
 
 #### update_relationship
 

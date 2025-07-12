@@ -22,4 +22,4 @@ Retrieve records of quotes created from a specific request record.
 
 #### get_relationship
 
-Retrieve IDs of quotes created from a specific request record.
+Retrieve the IDs of quotes created from a specific request record.

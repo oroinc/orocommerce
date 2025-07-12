@@ -78,8 +78,8 @@ Retrieve the IDs of the child category records assigned to a specific category r
 
 #### get_subresource
 
-Retrieve the list of visible categories in the path from master catalog root to the specific category.
+Retrieve a list of visible categories in the path from master catalog root to a specific category.
 
 #### get_relationship
 
-Retrieve the IDs of visible categories in the path from master catalog root to the specific category.
+Retrieve the IDs of visible categories in the path from master catalog root to a specific category.
