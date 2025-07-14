@@ -122,7 +122,7 @@ oro:
             documents:
                 label: Customer Documents
                 storefront_label: Documents
-                description: Customer related documents. These files will be visible to the customer on the storefront.
+                description: Customer related documents. These files will be visible to the customer in the storefront.
 
             sections:
                 general: 'General'
