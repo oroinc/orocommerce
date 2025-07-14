@@ -18,32 +18,18 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTestCase
 {
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
-
-    /** @var SlugEntityGenerator|\PHPUnit\Framework\MockObject\MockObject */
-    private $generator;
-
-    /** @var UrlStorageCache|\PHPUnit\Framework\MockObject\MockObject */
-    private $urlStorageCache;
-
-    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityManager;
-
-    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $redirectRepository;
-
-    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $sluggableRepository;
-
-    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $slugRepository;
-
-    /** @var ClassMetadataFactory|\PHPUnit\Framework\MockObject\MockObject */
-    private $metadataFactory;
+    private ConfigManager&MockObject $configManager;
+    private SlugEntityGenerator&MockObject $generator;
+    private UrlStorageCache&MockObject $urlStorageCache;
+    private EntityManagerInterface&MockObject $entityManager;
+    private EntityRepository&MockObject $redirectRepository;
+    private EntityRepository&MockObject $sluggableRepository;
+    private EntityRepository&MockObject $slugRepository;
+    private ClassMetadataFactory&MockObject $metadataFactory;
 
     #[\Override]
     protected function setUp(): void
@@ -75,7 +61,7 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     #[\Override]
-    public function testOnPostLoad()
+    public function testOnPostLoad(): void
     {
         $sluggable1 = $this->getEntity(SluggableEntityStub::class, ['id' => 1]);
         $sluggable2 = $this->getEntity(
@@ -86,7 +72,6 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
             ]
         );
 
-        /* @var Slug $slug1 */
         $slug1 = $this->getEntity(
             Slug::class,
             [
@@ -177,9 +162,8 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
         $this->listener->onPostLoad($this->event);
     }
 
-    public function testOnPostLoadWithDisabledDirectUrls()
+    public function testOnPostLoadWithDisabledDirectUrls(): void
     {
-        /* @var Slug $slug1 */
         $slug1 = $this->getEntity(
             Slug::class,
             [
@@ -255,7 +239,7 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
     }
 
     #[\Override]
-    public function testOnPostLoadWithNoDemoFixtures()
+    public function testOnPostLoadWithNoDemoFixtures(): void
     {
         $this->event->expects($this->once())
             ->method('isDemoFixtures')

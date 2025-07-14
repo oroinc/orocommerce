@@ -8,17 +8,13 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PlatformBundle\Tests\Unit\EventListener\DemoDataFixturesListenerTestCase;
 use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;
 use Oro\Bundle\VisibilityBundle\EventListener\ChangeVisibilityDemoDataFixturesListener;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ChangeVisibilityDemoDataFixturesListenerTest extends DemoDataFixturesListenerTestCase
 {
-    /** @var CustomerPartialUpdateDriverInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $partialUpdateDriver;
-
-    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $objectManager;
-
-    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityRepository;
+    private CustomerPartialUpdateDriverInterface&MockObject $partialUpdateDriver;
+    private ObjectManager&MockObject $objectManager;
+    private EntityRepository&MockObject $entityRepository;
 
     #[\Override]
     protected function setUp(): void
@@ -39,7 +35,7 @@ class ChangeVisibilityDemoDataFixturesListenerTest extends DemoDataFixturesListe
         );
     }
 
-    public function testOnPostLoadForNotDemoFixtures()
+    public function testOnPostLoadForNotDemoFixtures(): void
     {
         $this->event->expects($this->once())
             ->method('isDemoFixtures')
@@ -67,7 +63,7 @@ class ChangeVisibilityDemoDataFixturesListenerTest extends DemoDataFixturesListe
     }
 
     #[\Override]
-    public function testOnPostLoad()
+    public function testOnPostLoad(): void
     {
         $customer1 = $this->getEntity(Customer::class, ['id' => 1]);
         $customer2 = $this->getEntity(Customer::class, ['id' => 2]);
