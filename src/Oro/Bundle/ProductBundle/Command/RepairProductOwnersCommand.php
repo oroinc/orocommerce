@@ -87,7 +87,7 @@ class RepairProductOwnersCommand extends Command
         if (count($successProducts) > 0) {
             $output->writeln(
                 sprintf(
-                    '<info>Owner upadted for products: %s</info>',
+                    '<info>Owner updated for products: %s</info>',
                     implode(', ', $successProducts)
                 )
             );
@@ -96,7 +96,7 @@ class RepairProductOwnersCommand extends Command
         if (count($failureProducts) > 0) {
             $output->writeln(
                 sprintf(
-                    '<warning>Owner not upadted for products(no business units in product organization): %s</warning>',
+                    '<warning>Owner not updated for products(no business units in product organization): %s</warning>',
                     implode(', ', $failureProducts)
                 )
             );
