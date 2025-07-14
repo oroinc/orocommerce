@@ -53,7 +53,7 @@ class RepairProductOwnersCommandTest extends WebTestCase
         $em->flush();
 
         $output = self::runCommand(RepairProductOwnersCommand::getDefaultName());
-        self::assertEquals(sprintf('Owner upadted for products: %s', $product->getSku()), $output);
+        self::assertEquals(sprintf('Owner updated for products: %s', $product->getSku()), $output);
 
         $product = $em->find(Product::class, $product->getId());
         self::assertEquals($secondOrganizationBusinessUnit, $product->getOwner());
@@ -76,7 +76,7 @@ class RepairProductOwnersCommandTest extends WebTestCase
         $output = self::runCommand(RepairProductOwnersCommand::getDefaultName());
         self::assertEquals(
             sprintf(
-                '<warning>Owner not upadted for products(no business units in product organization): %s</warning>',
+                '<warning>Owner not updated for products(no business units in product organization): %s</warning>',
                 $product->getSku()
             ),
             $output
