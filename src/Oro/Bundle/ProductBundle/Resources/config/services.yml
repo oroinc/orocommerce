@@ -2448,3 +2448,8 @@ services:
             - '@translator'
         tags:
             - { name: form.type, alias: oro_product_type_inventory_switcher_filter }
+
+    oro_product.event_listener.product_page_template:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductPageTemplateListener
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\Product, event: prePersist }
