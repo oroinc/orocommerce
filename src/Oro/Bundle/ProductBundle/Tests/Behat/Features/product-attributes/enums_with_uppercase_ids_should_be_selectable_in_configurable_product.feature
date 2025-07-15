@@ -88,8 +88,8 @@ Feature: Enums with uppercase IDs should be selectable in configurable product
     And click "View Details" for "CNFA" product
     Then I should see an "Configurable Product Form" element
     And "Configurable Product Form" must contains values:
-      | Color | Black |
-    When I fill "Configurable Product Form" with:
       | Color | White |
+    When I fill "Configurable Product Form" with:
+      | Color | Black |
     And I click "Add to Shopping List"
     Then I should see 'Product has been added to "Shopping List"' flash message

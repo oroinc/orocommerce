@@ -120,19 +120,33 @@ data:
         taxCode:
             data: null
         manageInventory:
-            data: null
+            data:
+                type: entityfieldfallbackvalues
+                id: new
         highlightLowInventory:
-            data: null
+            data:
+                type: entityfieldfallbackvalues
+                id: new
         inventoryThreshold:
-            data: null
+            data:
+                type: entityfieldfallbackvalues
+                id: new
         lowInventoryThreshold:
-            data: null
+            data:
+                type: entityfieldfallbackvalues
+                id: new
         minimumQuantityToOrder:
-            data: null
+            data:
+                type: entityfieldfallbackvalues
+                id: new
         maximumQuantityToOrder:
-            data: null
+            data:
+                type: entityfieldfallbackvalues
+                id: new
         decrementQuantity:
-            data: null
+            data:
+                type: entityfieldfallbackvalues
+                id: new
         metaKeywords:
             data:
                 -
@@ -148,9 +162,13 @@ data:
                     type: localizedfallbackvalues
                     id: 'new'
         backOrder:
-            data: null
+            data:
+                type: entityfieldfallbackvalues
+                id: new
         isUpcoming:
-            data: null
+            data:
+                type: entityfieldfallbackvalues
+                id: new
         metaTitles:
             data:
                 -
@@ -577,23 +595,39 @@ included:
             category:
                 data: null
             pageTemplate:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             taxCode:
                 data: null
             manageInventory:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             highlightLowInventory:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             inventoryThreshold:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             lowInventoryThreshold:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             minimumQuantityToOrder:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             maximumQuantityToOrder:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             decrementQuantity:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             metaKeywords:
                 data:
                     -
@@ -609,9 +643,13 @@ included:
                         type: localizedfallbackvalues
                         id: 'new'
             backOrder:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             isUpcoming:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             metaTitles:
                 data:
                     -
@@ -803,23 +841,39 @@ included:
             category:
                 data: null
             pageTemplate:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             taxCode:
                 data: null
             manageInventory:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             highlightLowInventory:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             inventoryThreshold:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             lowInventoryThreshold:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             minimumQuantityToOrder:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             maximumQuantityToOrder:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             decrementQuantity:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             metaKeywords:
                 data:
                     -
@@ -835,9 +889,13 @@ included:
                         type: localizedfallbackvalues
                         id: 'new'
             backOrder:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             isUpcoming:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             metaTitles:
                 data:
                     -
@@ -1029,23 +1087,39 @@ included:
             category:
                 data: null
             pageTemplate:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             taxCode:
                 data: null
             manageInventory:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             highlightLowInventory:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             inventoryThreshold:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             lowInventoryThreshold:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             minimumQuantityToOrder:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             maximumQuantityToOrder:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             decrementQuantity:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             metaKeywords:
                 data:
                     -
@@ -1061,9 +1135,13 @@ included:
                         type: localizedfallbackvalues
                         id: 'new'
             backOrder:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             isUpcoming:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: 'new'
             metaTitles:
                 data:
                     -

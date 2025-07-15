@@ -90,6 +90,11 @@ final class ProductVariantAvailabilityProviderTest extends TestCase
             ->method('getQuery')
             ->willReturn($this->query);
 
+        $this->qb->expects($this->any())
+            ->method('orderBy')
+            ->with('p.id', 'DESC')
+            ->willReturnSelf();
+
         $this->availabilityProvider = new ProductVariantAvailabilityProvider(
             $doctrine,
             $this->customFieldProvider,
@@ -621,6 +626,9 @@ final class ProductVariantAvailabilityProviderTest extends TestCase
                     ->method('getResult')
                     ->willReturn($filteredProducts);
                 $qbAvailableSimpleProducts = $this->createMock(QueryBuilder::class);
+                $qbAvailableSimpleProducts->expects($this->any())
+                    ->method('orderBy')
+                    ->willReturnSelf();
                 $qbAvailableSimpleProducts->expects($this->any())
                     ->method('getQuery')
                     ->willReturn($queryAvailableSimpleProducts);

@@ -190,6 +190,11 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(@class, "oro-tabs")]/div/ul/li/a[contains(text(), "Up-sell Products")]'
 
+    Attributes Group Products View Tab:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "oro-tabs")]/div/ul/li/a[contains(text(), "Test group")]'
+
     ProductForm Step One:
       selector: 'form[name="oro_product_step_one"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

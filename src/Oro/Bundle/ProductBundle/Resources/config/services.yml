@@ -2413,3 +2413,8 @@ services:
             - '@oro_organization.organization_restriction_provider'
         tags:
             - { name: oro_platform.usage_stats_provider, priority: 100 }
+
+    oro_product.event_listener.product_page_template:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductPageTemplateListener
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\Product, event: prePersist }

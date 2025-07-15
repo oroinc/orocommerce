@@ -76,6 +76,6 @@ Feature: Entity Field Fallback Values rendering
 
     And I should see following grid containing rows:
       | SKU  | Upcoming | MQTO | Low Inventory Threshold |
-      | SKU3 | No       |      | 0                       |
+      | SKU3 | No       |      | 30                      |
       | SKU2 | Yes      | 100  | 30                      |
       | SKU1 | No       | 0    | 50                      |

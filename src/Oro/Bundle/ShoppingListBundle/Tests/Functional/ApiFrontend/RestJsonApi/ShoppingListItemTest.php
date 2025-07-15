@@ -664,11 +664,18 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title' => 'expression constraint',
-                'detail' => 'Quantity must be greater than 0',
-                'source' => ['pointer' => '/data/attributes/quantity'],
+                [
+                    'title' => 'quantity to order constraint',
+                    'detail' => 'You cannot order less than 0 units',
+                    'source' => ['pointer' => '/data/attributes/quantity']
+                ],
+                [
+                    'title' => 'expression constraint',
+                    'detail' => 'Quantity must be greater than 0',
+                    'source' => ['pointer' => '/data/attributes/quantity']
+                ],
             ],
             $response
         );

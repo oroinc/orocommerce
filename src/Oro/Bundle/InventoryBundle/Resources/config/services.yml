@@ -237,3 +237,10 @@ services:
         arguments:
             - '@oro_entity_extend.enum_value_provider'
             - '@doctrine'
+
+    oro_inventory.event_listener.product_entity_fallback_field:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductEntityFallbackFieldEventListener'
+        arguments:
+            - '@property_accessor'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\Product', event: prePersist }

@@ -40,11 +40,11 @@ Feature: Product attribute select
       | Filterable | Yes |
       | Sortable   | Yes |
     And I set Options with:
-      | Label          |
-      | TestValueOne   |
-      | TestValueTwo   |
-      | 0.5            |
-      | 5              |
+      | Label        |
+      | TestValueOne |
+      | TestValueTwo |
+      | 0.5          |
+      | 5            |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
@@ -128,8 +128,8 @@ Feature: Product attribute select
     And I click "Grid Settings"
     Then number of records should be 1
     And I should see following grid:
-      | SKU       | NAME     | SelectField    |
-      | SKU123    | Product1 | 5              |
+      | SKU    | NAME     | SelectField |
+      | SKU123 | Product1 | 5           |
 
   Scenario: Set configurable products view as no matrix form
     When I go to System/Configuration
@@ -147,9 +147,9 @@ Feature: Product attribute select
     And I click "Product Conf"
     Then I should see an "Configurable Product Form" element
     And "Configurable Product Form" must contains values:
-      | SelectField    | 5     |
+      | SelectField | 5 |
     When I fill "Configurable Product Form" with:
-      | SelectField    | 5     |
+      | SelectField | 5 |
     And I click "Add to Shopping List"
     Then I should see 'Product has been added to "Shopping List"' flash message
 
@@ -170,9 +170,9 @@ Feature: Product attribute select
     And I click "Grid Settings"
     Then number of records should be 2
     And I should see following grid:
-      | SKU       | NAME     | SelectField    |
-      | SKU123    | Product1 | 5              |
-      | SKU456    | Product2 | 0.5            |
+      | SKU    | NAME     | SelectField |
+      | SKU123 | Product1 | 5           |
+      | SKU456 | Product2 | 0.5         |
 
   Scenario: Check configurable product in frontstore after changing product variants
     Given I proceed as the Buyer
@@ -207,16 +207,17 @@ Feature: Product attribute select
     And I click "Grid Settings"
     Then number of records should be 2
     And I should see following grid:
-      | SKU       | NAME     | SelectField    |
-      | SKU123    | Product1 | TestValueTwo   |
-      | SKU456    | Product2 | TestValueOne   |
+      | SKU    | NAME     | SelectField  |
+      | SKU123 | Product1 | TestValueTwo |
+      | SKU456 | Product2 | TestValueOne |
 
   Scenario: Confirm configurable product show it's variants and attribute correctly
     Given I proceed as the Buyer
     When I reload the page
     Then I should see an "Configurable Product Form" element
+    And I wait for action
     And "Configurable Product Form" must contains values:
-      | SelectField    | TestValueTwo   | TestValueOne     |
+      | SelectField | TestValueOne | TestValueTwo |
 
   Scenario: Update product family and remove new attribute from it
     Given I proceed as the Admin

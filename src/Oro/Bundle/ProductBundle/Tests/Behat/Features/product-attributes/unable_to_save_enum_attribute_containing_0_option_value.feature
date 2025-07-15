@@ -66,4 +66,4 @@ Feature: Unable to save enum attribute containing '0' option value
     And click "View Details" for "1GB83" product
     Then I should see an "Configurable Product Form" element
     And "Configurable Product Form" must contains values:
-      | Width | 0 |
+      | Width | 1 |
