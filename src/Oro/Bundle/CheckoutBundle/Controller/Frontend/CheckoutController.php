@@ -36,6 +36,24 @@ class CheckoutController extends AbstractController
     )]
     public function checkoutAction(Request $request, Checkout $checkout): array|Response
     {
+        if ($checkout->isCompleted()) {
+            // show "Thank You For Your Purchase!" page for a completed checkout
+            // regardless of how the checkout was completed,
+            // via a workflow (even if this workflow is deactivated now)
+            // or via the storefront API (where any workflow is not used)
+            $workflowItem = new WorkflowItem();
+            $workflowItem->getData()->set('order', $checkout->getOrder());
+
+            return [
+                'workflowStepName' => 'order_created',
+                'workflowName' => '',
+                'data' => [
+                    'checkout' => $checkout,
+                    'workflowItem' => $workflowItem
+                ]
+            ];
+        }
+
         $this->disableGarbageCollector();
 
         $event = new CheckoutRequestEvent($request, $checkout);
