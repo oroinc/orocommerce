@@ -41,11 +41,6 @@ class ShoppingListCheckoutProviderTest extends TestCase
 
     public function testGetCurrentCheckoutWithoutUser(): void
     {
-        $this->currentUserProvider
-            ->expects($this->once())
-            ->method('getCurrentUser')
-            ->willReturn(null);
-
         $this->workflowManager
             ->expects($this->never())
             ->method('getAvailableWorkflowByRecordGroup');

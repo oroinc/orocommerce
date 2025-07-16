@@ -8,6 +8,7 @@ use Oro\Bundle\CheckoutBundle\EventListener\ProcessCheckoutOnSourceChange;
 use Oro\Bundle\CheckoutBundle\Provider\ShoppingListCheckoutProvider;
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ActualizeCheckout;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -46,13 +47,17 @@ class ProcessCheckoutOnSourceChangeTest extends TestCase
 
     public function testOnInteractiveLogin(): void
     {
+        $customer = new Customer();
         $customerUser = new CustomerUser();
+        $customerUser->setCustomer($customer);
 
         $visitorShoppingList = new ShoppingList();
         $visitorCheckoutSource = new CheckoutSourceStub();
         $visitorCheckout = (new Checkout())->setSource($visitorCheckoutSource);
 
         $currentShoppingList = new ShoppingList();
+        $currentShoppingList->setCustomerUser($customerUser);
+
         $currentCheckout = new Checkout();
 
         $this->featureChecker->expects($this->once())

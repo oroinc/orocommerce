@@ -75,6 +75,9 @@ class ProcessCheckoutOnSourceChange implements LoggerAwareInterface
 
     private function actualizeCheckout(Checkout $checkout): void
     {
+        $customerUser = $this->currentShoppingList->getCustomerUser();
+        $checkout->setCustomerUser($customerUser);
+        $checkout->setCustomer($customerUser->getCustomer());
         $checkout->getSource()->setShoppingList($this->currentShoppingList);
         $this->actualizeCheckout->execute($checkout, ['shoppingList' => $this->currentShoppingList], null);
     }
