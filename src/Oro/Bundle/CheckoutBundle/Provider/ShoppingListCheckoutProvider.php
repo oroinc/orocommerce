@@ -26,7 +26,7 @@ class ShoppingListCheckoutProvider
 
     public function getCheckout(ShoppingList $shoppingList): ?Checkout
     {
-        $customerUser = $this->currentUserProvider->getCurrentUser();
+        $customerUser = $shoppingList->getCustomerUser() ?? $this->currentUserProvider->getCurrentUser();
         if (!$customerUser instanceof CustomerUser) {
             return null;
         }

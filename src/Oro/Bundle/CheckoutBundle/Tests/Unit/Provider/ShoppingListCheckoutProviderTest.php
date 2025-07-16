@@ -7,6 +7,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\Provider\ShoppingListCheckoutProvider;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Layout\DataProvider\CurrentUserProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -38,11 +39,6 @@ class ShoppingListCheckoutProviderTest extends TestCase
 
     public function testGetCurrentCheckoutWithoutUser(): void
     {
-        $this->currentUserProvider
-            ->expects($this->once())
-            ->method('getCurrentUser')
-            ->willReturn(null);
-
         $this->managerRegistry
             ->expects($this->never())
             ->method('getRepository');
@@ -53,12 +49,6 @@ class ShoppingListCheckoutProviderTest extends TestCase
 
     public function testGetCurrentCheckoutWithoutAvailableWorkflow(): void
     {
-        $customerUser = new CustomerUser();
-        $this->currentUserProvider
-            ->expects($this->once())
-            ->method('getCurrentUser')
-            ->willReturn($customerUser);
-
         $workflowDefinitionRepository = $this->createMock(WorkflowDefinitionRepository::class);
         $workflowDefinitionRepository
             ->expects($this->once())
@@ -74,17 +64,21 @@ class ShoppingListCheckoutProviderTest extends TestCase
             ->expects($this->never())
             ->method('getUserCurrency');
 
+        $customer = new Customer();
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer($customer);
+
         $shoppingList = new ShoppingList();
+        $shoppingList->setCustomerUser($customerUser);
+
         $this->assertNull($this->currentCheckoutProvider->getCheckout($shoppingList));
     }
 
     public function testGetCurrentCheckout(): void
     {
+        $customer = new Customer();
         $customerUser = new CustomerUser();
-        $this->currentUserProvider
-            ->expects($this->once())
-            ->method('getCurrentUser')
-            ->willReturn($customerUser);
+        $customerUser->setCustomer($customer);
 
         $workflowDefinition = $this->createMock(WorkflowDefinition::class);
         $workflowDefinition
@@ -115,6 +109,7 @@ class ShoppingListCheckoutProviderTest extends TestCase
 
         $checkout = new Checkout();
         $shoppingList = new ShoppingList();
+        $shoppingList->setCustomerUser($customerUser);
         $checkoutRepository = $this->createMock(CheckoutRepository::class);
         $checkoutRepository
             ->expects($this->once())
