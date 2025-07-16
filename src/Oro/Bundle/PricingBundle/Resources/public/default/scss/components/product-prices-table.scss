@@ -5,22 +5,24 @@
     border-collapse: collapse;
 
     &__th {
-        text-transform: $product-prices-table-th-text-transform;
+        padding-bottom: $product-prices-table-th-padding-bottom;
+
+        border-bottom: $product-prices-table-border-bottom;
         color: $product-prices-table-th-color;
+        text-transform: $product-prices-table-th-text-transform;
         font-weight: $product-prices-table-th-font-weight;
         line-height: $product-prices-table-th-line-height;
         letter-spacing: $product-prices-table-th-letter-spacing;
-        padding-bottom: $product-prices-table-th-padding-bottom;
     }
 
     &__td {
-        color: $product-prices-table-td-color;
-        font-size: $product-prices-table-td-font-size;
-
         padding: $product-prices-table-td-padding;
-
-        border-bottom: $product-prices-table-border-bottom;
         min-width: $product-prices-table-min-width;
+
+        color: $product-prices-table-td-color;
+        border-bottom: $product-prices-table-border-bottom;
+
+        font-size: $product-prices-table-td-font-size;
 
         &:first-child {
             min-width: $product-prices-table-first-min-width;
@@ -28,7 +30,7 @@
         }
 
         tr:first-child & {
-            padding-top: 0;
+            padding-top: $product-prices-table-td-first-padding;
         }
 
         tr:last-child & {

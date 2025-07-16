@@ -70,8 +70,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "Search Button"
     And click "View Details" for "CNFB" product
     Then I should see an "Matrix Grid Form" element
-    And I should see an "Default Page Prices" element
-    And I should see "Item 1+ $12.00" in the "Default Page Prices" element
+    And I should not see an "Default Page Prices" element
 
   Scenario: Check clear all button and totals container
     Then type "CNFB" in "search"

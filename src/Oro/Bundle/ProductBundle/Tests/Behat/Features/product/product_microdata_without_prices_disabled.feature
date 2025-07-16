@@ -36,16 +36,16 @@ Feature: Product microdata without prices disabled
 
     When click "View Details" for "PSKU1" product
     Then "Product Details" should contains microdata:
-      | Product Type Microdata Declaration  |
+      | Product Type Microdata Declaration |
+      | SchemaOrg Description              |
+
+    And "Product Details" should not contains microdata:
       | Product Price Microdata Declaration |
-      | SchemaOrg Description               |
       | SchemaOrg Price Currency            |
       | SchemaOrg Price                     |
     And "Product Details" should contains "SchemaOrg Description" with attributes:
       | content | Product Description1 |
-    And "Product Details" should contains microdata elements with text:
-      | SchemaOrg Price Currency | USD   |
-      | SchemaOrg Price          | 10.00 |
+
     # Because product without brand association, just ensure that element not rendered
     And "Product Details" should not contains microdata:
       | Product Brand Microdata Declaration |

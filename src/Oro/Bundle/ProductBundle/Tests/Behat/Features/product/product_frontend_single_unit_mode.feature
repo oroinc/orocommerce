@@ -51,8 +51,7 @@ Feature: Product frontend single unit mode
     Given I type "PSKU2" in "search"
     When I click "Search Button"
     And I click "View Details" for "PSKU2" product
-    Then I should see an "Default Page Prices" element
-    And I should see "Each 1+ $20.00" in the "Default Page Prices" element
+    Then I should not see an "Default Page Prices" element
 
   Scenario: Enable "Wide Template" view mode for product units
     Given I proceed as the Admin
