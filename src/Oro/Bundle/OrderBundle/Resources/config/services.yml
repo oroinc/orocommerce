@@ -826,3 +826,10 @@ services:
             - 'parentProductNames'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.order-line-items-grid-frontend, method: onResultAfter }
+
+    oro_order.provider.order_entity_name:
+        class: Oro\Bundle\OrderBundle\Provider\OrderEntityNameProvider
+        arguments:
+            - '@translator'
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }

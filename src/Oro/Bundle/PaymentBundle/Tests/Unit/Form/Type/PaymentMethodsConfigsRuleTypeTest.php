@@ -122,6 +122,13 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
             ->willReturn([$firstPaymentMethod, $secondPaymentMethod]);
 
         $this->compositePaymentMethodViewProvider->expects(self::any())
+            ->method('hasPaymentMethodView')
+            ->willReturnMap([
+                ['identifier1', true],
+                ['identifier2', true],
+            ]);
+
+        $this->compositePaymentMethodViewProvider->expects(self::any())
             ->method('getPaymentMethodView')
             ->willReturnMap([
                 ['identifier1', $firstPaymentMethodView],

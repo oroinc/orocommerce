@@ -20,6 +20,9 @@ oro:
         entity_plural_label: Orders
         entity_grid_all_view_label: All %entity_plural_label%
         entity_frontend_grid_all_view_label: All Past Orders
+        entity_name:
+            full: 'Order #%order_identifier%'
+            short: '%order_identifier%'
         entity_description: Orders contain information about buyers’ shopping lists submitted for purchase and the collected information about billing and shipping addresses, payment methods, etc.
         id.label: ID
         identifier:

@@ -67,7 +67,12 @@ services:
     oro_commerce.emailtemplate.variable_provider.seller_info:
         class: Oro\Bundle\CommerceBundle\Provider\SellerInfoVariablesProvider
         arguments:
+            - '@oro_commerce.provider.seller_info'
             - '@translator'
-            - '@oro_config.manager'
         tags:
             - { name: oro_email.emailtemplate.variable_provider, scope: system }
+
+    oro_commerce.provider.seller_info:
+        class: Oro\Bundle\CommerceBundle\Provider\SellerInfoProvider
+        arguments:
+            - '@oro_config.manager'

@@ -23,6 +23,43 @@ The current file describes significant changes in the code that may affect the u
 - [1.2.0](#120-2017-06-01)
 - [1.1.0](#110-2017-03-31)
 
+## UNRELEASED
+
+### Added
+
+#### OrderBundle
+* Added `\Oro\Bundle\OrderBundle\Provider\OrderEntityNameProvider` so that an order entity name can now be retrieved from `\Oro\Bundle\EntityBundle\Provider\EntityNameResolver`.
+
+#### PaymentBundle
+* Added `paymentAction` option to the `\Oro\Bundle\PaymentBundle\Action\PurchaseAction` allowing to pass the action name to perform, e.g. purchase/charge/authorize.
+* Added `\Oro\Bundle\PaymentBundle\Entity\PaymentTransaction::$webhookRequestLogs` field to store webhook request logs.
+* Added `\Oro\Bundle\PaymentBundle\Entity\RequestLogsAwareInterface` to mark entities that can store transaction request and response logs.
+* Added `\Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodGroupAwareProvider` that provides a filtered list of payment methods that are applicable for a specific payment method group.
+* Added the ability to refund `purchase` and `charge` payment transactions in `oro_payment_transaction_refund`.
+
+#### PricingBundle
+* Added `\Oro\Bundle\PricingBundle\Layout\DataProvider\TotalsProvider` layout data provider.
+
+#### SalesBundle
+* Added the support for `data-clear-if` and `data-clear-element` attributes in the `dependent-field-component.js`.
+
+### Changed
+
+#### OrderBundle
+* Changed the order total amount label appearance on the order view back-office page.
+
+#### PaymentBundle
+* Implemented `\Oro\Bundle\PaymentBundle\Entity\RequestLogsAwareInterface` in `\Oro\Bundle\PaymentBundle\Entity\PaymentTransaction`.
+* Renamed the `$.paymentMethodAction` to `$.authorizePaymentMethodAction` attribute in `oro_payment_transaction_capture`.
+* Renamed the `$.paymentMethodAction` to `$.authorizePaymentMethodAction` attribute in `oro_payment_transaction_cancel`.
+* Renamed the `$.cancelAction` to `$.cancelPaymentMethodAction` attribute in `oro_payment_transaction_cancel`.
+* Renamed the `$.paymentMethodAction` to `$.refundPaymentMethodAction` attribute in `oro_payment_transaction_refund`.
+* Renamed the `$.refundAction` to `$.refundPaymentMethodAction` attribute in `oro_payment_transaction_refund`.
+* Fixed the broken styling in the dialog of `oro_payment_transaction_cancel`.
+
+### Removed
+
+
 ## 6.1.0 (2025-03-31)
 [Show detailed list of changes](incompatibilities-6-1.md)
 

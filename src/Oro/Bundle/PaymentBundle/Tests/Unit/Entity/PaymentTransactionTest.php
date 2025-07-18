@@ -10,6 +10,9 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class PaymentTransactionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
@@ -24,6 +27,7 @@ class PaymentTransactionTest extends \PHPUnit\Framework\TestCase
             ['entityIdentifier', 1],
             ['request', ['request', 'data'], []],
             ['response', ['response', 'data'], []],
+            ['webhookRequestLogs', ['webhookRequest', 'data'], []],
             ['paymentMethod', 'paymentMethod'],
             ['active', true],
             ['amount', '1000'],
@@ -111,5 +115,62 @@ class PaymentTransactionTest extends \PHPUnit\Framework\TestCase
             ->setSourcePaymentTransaction($sourcePaymentTransaction);
 
         $this->assertTrue($paymentTransaction->isClone());
+    }
+
+    public function testAddRequestLog(): void
+    {
+        $paymentTransaction = $this->createPaymentTransaction();
+        self::assertEquals([], $paymentTransaction->getRequest());
+
+        $paymentTransaction->addRequestLog(['sample_key1' => 'sample_value1']);
+        self::assertEquals([['sample_key1' => 'sample_value1']], $paymentTransaction->getRequest());
+
+        $paymentTransaction->addRequestLog(['sample_key2' => 'sample_value2']);
+        self::assertEquals(
+            [['sample_key1' => 'sample_value1'], ['sample_key2' => 'sample_value2']],
+            $paymentTransaction->getRequest()
+        );
+    }
+
+    public function testAddResponseLog(): void
+    {
+        $paymentTransaction = $this->createPaymentTransaction();
+        self::assertEquals([], $paymentTransaction->getResponse());
+
+        $paymentTransaction->addResponseLog(['sample_key1' => 'sample_value1']);
+        self::assertEquals([['sample_key1' => 'sample_value1']], $paymentTransaction->getResponse());
+
+        $paymentTransaction->addResponseLog(['sample_key2' => 'sample_value2']);
+        self::assertEquals(
+            [['sample_key1' => 'sample_value1'], ['sample_key2' => 'sample_value2']],
+            $paymentTransaction->getResponse()
+        );
+    }
+
+    public function testAddWebhookRequestLog(): void
+    {
+        $paymentTransaction = $this->createPaymentTransaction();
+        self::assertEquals([], $paymentTransaction->getWebhookRequestLogs());
+
+        $paymentTransaction->addWebhookRequestLog(['sample_key1' => 'sample_value1']);
+        self::assertEquals([['sample_key1' => 'sample_value1']], $paymentTransaction->getWebhookRequestLogs());
+
+        $paymentTransaction->addWebhookRequestLog(['sample_key2' => 'sample_value2']);
+        self::assertEquals(
+            [['sample_key1' => 'sample_value1'], ['sample_key2' => 'sample_value2']],
+            $paymentTransaction->getWebhookRequestLogs()
+        );
+    }
+
+    public function testTransactionOptionAccessors(): void
+    {
+        $paymentTransaction = $this->createPaymentTransaction();
+        self::assertNull($paymentTransaction->getTransactionOption('sample_key'));
+
+        $paymentTransaction->addTransactionOption('sample_key', 'sample_value');
+        self::assertEquals('sample_value', $paymentTransaction->getTransactionOption('sample_key'));
+
+        $paymentTransaction->removeTransactionOption('sample_key');
+        self::assertNull($paymentTransaction->getTransactionOption('sample_key'));
     }
 }

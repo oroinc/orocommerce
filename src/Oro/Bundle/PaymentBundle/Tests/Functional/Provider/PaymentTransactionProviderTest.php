@@ -10,6 +10,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData
 use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\ReflectionUtil;
@@ -168,6 +169,59 @@ class PaymentTransactionProviderTest extends WebTestCase
         $paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
         $this->assertEquals(LoadCustomerUserData::EMAIL, $paymentTransaction->getFrontendOwner()->getEmail());
+    }
+
+    public function testFindOrCreateByPaymentTransactionWhenNotExists(): void
+    {
+        /** @var PaymentTransactionProvider $paymentTransactionProvider */
+        $paymentTransactionProvider = self::getContainer()->get('oro_payment.provider.payment_transaction');
+        /** @var PaymentTransaction $parentPaymentTransaction */
+        $parentPaymentTransaction = $this->getReference(LoadPaymentTransactionData::AUTHORIZE_TRANSACTION);
+
+        $expectedPaymentTransaction = $paymentTransactionProvider->createPaymentTransactionByParentTransaction(
+            PaymentMethodInterface::CANCEL,
+            $parentPaymentTransaction
+        );
+
+        $paymentTransaction = $paymentTransactionProvider->findOrCreateByPaymentTransaction(
+            PaymentMethodInterface::CANCEL,
+            $parentPaymentTransaction,
+            ['reference' => uniqid('ref_', true)]
+        );
+
+        $expectedPaymentTransaction->setAccessIdentifier($paymentTransaction->getAccessIdentifier());
+        $expectedPaymentTransaction->setAccessToken($paymentTransaction->getAccessToken());
+
+        self::assertEquals(
+            $expectedPaymentTransaction,
+            $paymentTransaction
+        );
+    }
+
+    public function testFindOrCreateByPaymentTransactionWhenExists(): void
+    {
+        /** @var PaymentTransactionProvider $paymentTransactionProvider */
+        $paymentTransactionProvider = self::getContainer()->get('oro_payment.provider.payment_transaction');
+        /** @var PaymentTransaction $parentPaymentTransaction */
+        $parentPaymentTransaction = $this->getReference(LoadPaymentTransactionData::AUTHORIZE_TRANSACTION);
+
+        // Prepares the existing transaction.
+        $paymentTransaction = $paymentTransactionProvider->createPaymentTransactionByParentTransaction(
+            PaymentMethodInterface::CANCEL,
+            $parentPaymentTransaction
+        );
+        $reference = uniqid('ref_', true);
+        $paymentTransaction->setReference($reference);
+        $paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
+
+        self::assertSame(
+            $paymentTransaction,
+            $paymentTransactionProvider->findOrCreateByPaymentTransaction(
+                PaymentMethodInterface::CANCEL,
+                $parentPaymentTransaction,
+                ['reference' => $reference]
+            )
+        );
     }
 
     public function testTransactionSaveDatabaseException()

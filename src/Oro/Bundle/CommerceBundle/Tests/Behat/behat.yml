@@ -13,6 +13,8 @@ oro_behat_extension:
         - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\CustomerBundle\Tests\Behat\Context\ACLContext
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
+        - Oro\Bundle\SearchBundle\Tests\Behat\Context\SearchContext
       paths:
         - '@OroCommerceBundle/Tests/Behat/Features'
 

@@ -115,7 +115,7 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
             ->addAllowedTypes('object', 'object')
             ->addAllowedTypes('amount', 'float')
             ->addAllowedTypes('currency', 'string')
-            ->addAllowedTypes('paymentMethod', ['string', PaymentMethodInterface::class])
+            ->addAllowedTypes('paymentMethod', 'string')
             ->addAllowedTypes('paymentMethodInstance', [PaymentMethodInterface::class])
             ->addAllowedTypes('transactionOptions', 'array')
             ->setAllowedTypes('attribute', ['null', 'Symfony\Component\PropertyAccess\PropertyPathInterface'])

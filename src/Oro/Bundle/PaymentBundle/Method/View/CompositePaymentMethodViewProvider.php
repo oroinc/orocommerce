@@ -2,18 +2,11 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\View;
 
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodGroupAwareInterface;
-
 /**
  * The registry of payment method view providers.
  */
 class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInterface
 {
-    /**
-     * @var string Payment method group to filter the payment methods views by.
-     */
-    private string $paymentMethodGroup = '';
-
     /**
      * @param iterable<PaymentMethodViewProviderInterface> $innerProviders
      */
@@ -21,94 +14,40 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
     {
     }
 
-    /**
-     * @param string $paymentMethodGroup Payment method group to filter the payment methods views by.
-     */
-    public function setPaymentMethodGroup(string $paymentMethodGroup): void
-    {
-        $this->paymentMethodGroup = $paymentMethodGroup;
-    }
-
     #[\Override]
     public function getPaymentMethodViews(array $identifiers): array
     {
-        $paymentMethodsViews = [];
-        foreach ($this->innerProviders as $paymentMethodProvider) {
-            foreach ($paymentMethodProvider->getPaymentMethodViews($identifiers) as $paymentMethodView) {
-                if ($this->paymentMethodGroup !== '' &&
-                    !$paymentMethodView instanceof PaymentMethodGroupAwareInterface) {
-                    continue;
+        $paymentMethodViews = [];
+        foreach ($identifiers as $identifier) {
+            foreach ($this->innerProviders as $paymentMethodViewProvider) {
+                if ($paymentMethodViewProvider->hasPaymentMethodView($identifier)) {
+                    $paymentMethodViews[] = $paymentMethodViewProvider->getPaymentMethodView($identifier);
                 }
-
-                if ($paymentMethodView instanceof PaymentMethodGroupAwareInterface &&
-                    !$paymentMethodView->isApplicableForGroup($this->paymentMethodGroup)) {
-                    continue;
-                }
-
-                $paymentMethodsViews[] = $paymentMethodView;
             }
         }
 
-        return $paymentMethodsViews;
+        return $paymentMethodViews;
     }
 
     #[\Override]
     public function getPaymentMethodView($identifier): PaymentMethodViewInterface
     {
-        foreach ($this->innerProviders as $paymentMethodProvider) {
-            if (!$paymentMethodProvider->hasPaymentMethodView($identifier)) {
-                continue;
+        foreach ($this->innerProviders as $paymentMethodViewProvider) {
+            if ($paymentMethodViewProvider->hasPaymentMethodView($identifier)) {
+                return $paymentMethodViewProvider->getPaymentMethodView($identifier);
             }
-
-            /**
-             * @var PaymentMethodViewInterface|PaymentMethodGroupAwareInterface $paymentMethodView
-             */
-            $paymentMethodView = $paymentMethodProvider->getPaymentMethodView($identifier);
-            if ($this->paymentMethodGroup !== '' &&
-                !$paymentMethodView instanceof PaymentMethodGroupAwareInterface) {
-                continue;
-            }
-
-            if ($paymentMethodView instanceof PaymentMethodGroupAwareInterface &&
-                !$paymentMethodView->isApplicableForGroup($this->paymentMethodGroup)) {
-                continue;
-            }
-
-            return $paymentMethodView;
         }
 
-        throw new \InvalidArgumentException(
-            sprintf(
-                'There is no payment method view for "%s" identifier that is applicable for "%s" payment method group.',
-                $identifier,
-                $this->paymentMethodGroup
-            )
-        );
+        throw new \InvalidArgumentException('There is no payment method view for "'.$identifier.'"');
     }
 
     #[\Override]
     public function hasPaymentMethodView($identifier): bool
     {
         foreach ($this->innerProviders as $paymentMethodViewProvider) {
-            if (!$paymentMethodViewProvider->hasPaymentMethodView($identifier)) {
-                continue;
+            if ($paymentMethodViewProvider->hasPaymentMethodView($identifier)) {
+                return true;
             }
-
-            /**
-             * @var PaymentMethodViewInterface|PaymentMethodGroupAwareInterface $paymentMethodView
-             */
-            $paymentMethodView = $paymentMethodViewProvider->getPaymentMethodView($identifier);
-            if ($this->paymentMethodGroup !== '' &&
-                !$paymentMethodView instanceof PaymentMethodGroupAwareInterface) {
-                continue;
-            }
-
-            if ($paymentMethodView instanceof PaymentMethodGroupAwareInterface &&
-                !$paymentMethodView->isApplicableForGroup($this->paymentMethodGroup)) {
-                continue;
-            }
-
-            return true;
         }
 
         return false;

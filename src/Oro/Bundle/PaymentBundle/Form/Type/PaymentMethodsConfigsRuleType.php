@@ -24,6 +24,7 @@ use Symfony\Component\Validator\Constraint;
 class PaymentMethodsConfigsRuleType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_payment_methods_configs_rule';
+    const DEFAULT_PAYMENT_METHOD_GROUP = 'default';
 
     /**
      * @var PaymentMethodProviderInterface
@@ -88,7 +89,7 @@ class PaymentMethodsConfigsRuleType extends AbstractType
         $resolver
             ->define('payment_method_group')
             ->allowedTypes('string')
-            ->default('');
+            ->default(self::DEFAULT_PAYMENT_METHOD_GROUP);
     }
 
     #[\Override]
@@ -112,6 +113,10 @@ class PaymentMethodsConfigsRuleType extends AbstractType
             }
 
             $identifier = $paymentMethod->getIdentifier();
+            if (!$this->methodViewProvider->hasPaymentMethodView($identifier)) {
+                continue;
+            }
+
             $label = $this->methodViewProvider
                 ->getPaymentMethodView($identifier)
                 ->getAdminLabel();

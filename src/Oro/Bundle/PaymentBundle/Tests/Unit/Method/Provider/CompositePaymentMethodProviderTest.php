@@ -7,37 +7,37 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\Provider;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Tests\Unit\Stub\PaymentMethodGroupAwareStub;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class CompositePaymentMethodProviderTest extends TestCase
 {
-    /** @var iterable<PaymentMethodProviderInterface> */
-    private iterable $innerProviders;
+    private MockObject&PaymentMethodProviderInterface $innerProvider1;
+
+    private MockObject&PaymentMethodProviderInterface $innerProvider2;
 
     private CompositePaymentMethodProvider $compositeProvider;
 
     protected function setUp(): void
     {
-        $this->innerProviders = [
-            $this->createMock(PaymentMethodProviderInterface::class),
-            $this->createMock(PaymentMethodProviderInterface::class),
-        ];
-        $this->compositeProvider = new CompositePaymentMethodProvider($this->innerProviders);
+        $this->innerProvider1 = $this->createMock(PaymentMethodProviderInterface::class);
+        $this->innerProvider2 = $this->createMock(PaymentMethodProviderInterface::class);
+
+        $this->compositeProvider = new CompositePaymentMethodProvider([$this->innerProvider1, $this->innerProvider2]);
     }
 
-    public function testGetPaymentMethodsWithoutGroup(): void
+    public function testGetPaymentMethods(): void
     {
         $paymentMethodIdentifier1 = 'method1';
         $paymentMethodIdentifier2 = 'method2';
         $paymentMethod1 = $this->createMock(PaymentMethodInterface::class);
         $paymentMethod2 = $this->createMock(PaymentMethodInterface::class);
 
-        $this->innerProviders[0]
+        $this->innerProvider1
             ->method('getPaymentMethods')
             ->willReturn([$paymentMethodIdentifier1 => $paymentMethod1]);
 
-        $this->innerProviders[1]
+        $this->innerProvider2
             ->method('getPaymentMethods')
             ->willReturn([$paymentMethodIdentifier2 => $paymentMethod2]);
 
@@ -48,66 +48,21 @@ final class CompositePaymentMethodProviderTest extends TestCase
         self::assertArrayHasKey($paymentMethodIdentifier2, $result);
     }
 
-    public function testGetPaymentMethodsWithGroup(): void
-    {
-        $this->compositeProvider->setPaymentMethodGroup('group1');
-
-        $paymentMethodIdentifier1 = 'method1';
-        $paymentMethodIdentifier2 = 'method2';
-        $paymentMethod1 = new PaymentMethodGroupAwareStub($paymentMethodIdentifier1, 'group1');
-        $paymentMethod2 = $this->createMock(PaymentMethodInterface::class);
-
-        $this->innerProviders[0]
-            ->method('getPaymentMethods')
-            ->willReturn([$paymentMethodIdentifier1 => $paymentMethod1]);
-
-        $this->innerProviders[1]
-            ->method('getPaymentMethods')
-            ->willReturn([$paymentMethodIdentifier2 => $paymentMethod2]);
-
-        $result = $this->compositeProvider->getPaymentMethods();
-
-        self::assertCount(1, $result);
-        self::assertArrayHasKey($paymentMethodIdentifier1, $result);
-    }
-
-    public function testGetPaymentMethodWithoutGroup(): void
+    public function testGetPaymentMethod(): void
     {
         $paymentMethodIdentifier = 'method1';
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
 
-        $this->innerProviders[0]
+        $this->innerProvider1
             ->method('hasPaymentMethod')
             ->with($paymentMethodIdentifier)
             ->willReturn(true);
 
-        $this->innerProviders[0]
+        $this->innerProvider1
             ->method('getPaymentMethod')
             ->with($paymentMethodIdentifier)
             ->willReturn($paymentMethod);
 
-        $result = $this->compositeProvider->getPaymentMethod($paymentMethodIdentifier);
-
-        self::assertSame($paymentMethod, $result);
-    }
-
-    public function testGetPaymentMethodWithGroup(): void
-    {
-        $paymentMethodIdentifier = 'method1';
-        $paymentMethodGroup = 'group1';
-        $paymentMethod = new PaymentMethodGroupAwareStub($paymentMethodIdentifier, $paymentMethodGroup);
-
-        $this->innerProviders[0]
-            ->method('hasPaymentMethod')
-            ->with($paymentMethodIdentifier)
-            ->willReturn(true);
-
-        $this->innerProviders[0]
-            ->method('getPaymentMethod')
-            ->with($paymentMethodIdentifier)
-            ->willReturn($paymentMethod);
-
-        $this->compositeProvider->setPaymentMethodGroup($paymentMethodGroup);
         $result = $this->compositeProvider->getPaymentMethod($paymentMethodIdentifier);
 
         self::assertSame($paymentMethod, $result);
@@ -117,16 +72,16 @@ final class CompositePaymentMethodProviderTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'There is no payment method for "method1" identifier that is applicable for "" payment method group.'
+            'There is no payment method for "method1" identifier'
         );
 
         $paymentMethodIdentifier = 'method1';
-        $this->innerProviders[0]
+        $this->innerProvider1
             ->method('hasPaymentMethod')
             ->with($paymentMethodIdentifier)
             ->willReturn(false);
 
-        $this->innerProviders[1]
+        $this->innerProvider2
             ->method('hasPaymentMethod')
             ->with($paymentMethodIdentifier)
             ->willReturn(false);
@@ -134,39 +89,15 @@ final class CompositePaymentMethodProviderTest extends TestCase
         $this->compositeProvider->getPaymentMethod($paymentMethodIdentifier);
     }
 
-    public function testGetPaymentMethodThrowsExceptionWhenMethodNotApplicableForGroup(): void
+    public function testHasPaymentMethod(): void
     {
         $paymentMethodIdentifier = 'method1';
-        $paymentMethod = new PaymentMethodGroupAwareStub($paymentMethodIdentifier, 'group2');
-
-        $this->innerProviders[0]
+        $this->innerProvider1
             ->method('hasPaymentMethod')
             ->with($paymentMethodIdentifier)
             ->willReturn(true);
 
-        $this->innerProviders[0]
-            ->method('getPaymentMethod')
-            ->with($paymentMethodIdentifier)
-            ->willReturn($paymentMethod);
-
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'There is no payment method for "method1" identifier that is applicable for "group1" payment method group.'
-        );
-
-        $this->compositeProvider->setPaymentMethodGroup('group1');
-        $this->compositeProvider->getPaymentMethod($paymentMethodIdentifier);
-    }
-
-    public function testHasPaymentMethodWithoutGroup(): void
-    {
-        $paymentMethodIdentifier = 'method1';
-        $this->innerProviders[0]
-            ->method('hasPaymentMethod')
-            ->with($paymentMethodIdentifier)
-            ->willReturn(true);
-
-        $this->innerProviders[0]
+        $this->innerProvider1
             ->method('getPaymentMethod')
             ->with($paymentMethodIdentifier)
             ->willReturn($this->createMock(PaymentMethodInterface::class));
@@ -174,54 +105,15 @@ final class CompositePaymentMethodProviderTest extends TestCase
         self::assertTrue($this->compositeProvider->hasPaymentMethod($paymentMethodIdentifier));
     }
 
-    public function testHasPaymentMethodWithGroup(): void
-    {
-        $paymentMethodIdentifier = 'method1';
-        $paymentMethodGroup = 'group1';
-        $paymentMethod = new PaymentMethodGroupAwareStub($paymentMethodIdentifier, $paymentMethodGroup);
-
-        $this->innerProviders[0]
-            ->method('hasPaymentMethod')
-            ->with($paymentMethodIdentifier)
-            ->willReturn(true);
-
-        $this->innerProviders[0]
-            ->method('getPaymentMethod')
-            ->with($paymentMethodIdentifier)
-            ->willReturn($paymentMethod);
-
-        $this->compositeProvider->setPaymentMethodGroup($paymentMethodGroup);
-        self::assertTrue($this->compositeProvider->hasPaymentMethod($paymentMethodIdentifier));
-    }
-
-    public function testHasPaymentMethodReturnsFalseWhenMethodNotApplicableForGroup(): void
-    {
-        $paymentMethodIdentifier = 'method1';
-        $paymentMethod = new PaymentMethodGroupAwareStub($paymentMethodIdentifier, 'group2');
-
-        $this->innerProviders[0]
-            ->method('hasPaymentMethod')
-            ->with($paymentMethodIdentifier)
-            ->willReturn(true);
-
-        $this->innerProviders[0]
-            ->method('getPaymentMethod')
-            ->with($paymentMethodIdentifier)
-            ->willReturn($paymentMethod);
-
-        $this->compositeProvider->setPaymentMethodGroup('group1');
-        self::assertFalse($this->compositeProvider->hasPaymentMethod($paymentMethodIdentifier));
-    }
-
     public function testHasPaymentMethodReturnsFalseWhenMethodNotFound(): void
     {
         $paymentMethodIdentifier = 'method1';
-        $this->innerProviders[0]
+        $this->innerProvider1
             ->method('hasPaymentMethod')
             ->with($paymentMethodIdentifier)
             ->willReturn(false);
 
-        $this->innerProviders[1]
+        $this->innerProvider2
             ->method('hasPaymentMethod')
             ->with($paymentMethodIdentifier)
             ->willReturn(false);
