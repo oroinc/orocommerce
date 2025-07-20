@@ -24,29 +24,23 @@ class HandleProductLatestPurchasesFilters implements ProcessorInterface
         $hasCustomerUserFilter = $filterValues->getOne('customerUser') !== null;
 
         if (!$hasCustomerFilter && !$hasHierarchicalCustomerFilter && !$hasCustomerUserFilter) {
-            $context->addError(
-                Error::createValidationError(
-                    Constraint::FILTER,
-                    'Either the "customer" or "hierarchicalCustomer" or "customerUser" filter must be provided.'
-                )
-            );
+            $context->addError(Error::createValidationError(
+                Constraint::FILTER,
+                'Either the "customer" or "hierarchicalCustomer" or "customerUser" filter must be provided.'
+            ));
         }
         if ($hasCustomerFilter && $hasHierarchicalCustomerFilter) {
-            $context->addError(
-                Error::createValidationError(
-                    Constraint::FILTER,
-                    'The "customer" and "hierarchicalCustomer" filters cannot be used together.'
-                )
-            );
+            $context->addError(Error::createValidationError(
+                Constraint::FILTER,
+                'The "customer" and "hierarchicalCustomer" filters cannot be used together.'
+            ));
         }
 
         if (!$filterValues->getOne('product')) {
-            $context->addError(
-                Error::createValidationError(
-                    Constraint::FILTER,
-                    'The "product" filter is required.'
-                )
-            );
+            $context->addError(Error::createValidationError(
+                Constraint::FILTER,
+                'The "product" filter is required.'
+            ));
         }
     }
 }

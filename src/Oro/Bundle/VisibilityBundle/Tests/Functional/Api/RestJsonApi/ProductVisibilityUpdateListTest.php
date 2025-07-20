@@ -16,9 +16,10 @@ class ProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->getOptionalListenerManager()->enableListener('oro_visibility.entity_listener.product_visibility_change');
+        $this->getOptionalListenerManager()
+            ->enableListener('oro_visibility.entity_listener.product_visibility_change');
         $this->loadFixtures([
-            '@OroVisibilityBundle/Tests/Functional/Api/DataFixtures/product_visibilities.yml',
+            '@OroVisibilityBundle/Tests/Functional/Api/DataFixtures/product_visibilities.yml'
         ]);
     }
 
@@ -40,38 +41,32 @@ class ProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestCase
         $responseContent = [
             'data' => [
                 [
-                    'type'          => 'productvisibilities',
-                    'id'            => '<toString(@product-4->id)>',
-                    'attributes'    => [
-                        'visibility' => 'visible',
+                    'type' => 'productvisibilities',
+                    'id' => '<toString(@product-4->id)>',
+                    'attributes' => [
+                        'visibility' => 'visible'
                     ],
                     'relationships' => [
                         'product' => [
-                            'data' => [
-                                'type' => 'products',
-                                'id'   => '<toString(@product-4->id)>',
-                            ],
-                        ],
-                    ],
+                            'data' => ['type' => 'products', 'id' => '<toString(@product-4->id)>']
+                        ]
+                    ]
                 ],
                 [
-                    'type'          => 'productvisibilities',
-                    'id'            => '<toString(@product-5->id)>',
-                    'attributes'    => [
-                        'visibility' => 'hidden',
+                    'type' => 'productvisibilities',
+                    'id' => '<toString(@product-5->id)>',
+                    'attributes' => [
+                        'visibility' => 'hidden'
                     ],
                     'relationships' => [
                         'product' => [
-                            'data' => [
-                                'type' => 'products',
-                                'id'   => '<toString(@product-5->id)>',
-                            ],
-                        ],
-                    ],
+                            'data' => ['type' => 'products', 'id' => '<toString(@product-5->id)>']
+                        ]
+                    ]
                 ],
             ],
         ];
-        $this->assertResponseContains($responseContent, $response);
+        $this->assertResponseContains($responseContent, $response, true);
     }
 
     public function testUpdateEntities(): void
@@ -82,22 +77,22 @@ class ProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestCase
         $data = [
             'data' => [
                 [
-                    'meta'       => ['update' => true],
-                    'type'       => 'productvisibilities',
-                    'id'         => (string)$visibility1->getProduct()->getId(),
+                    'meta' => ['update' => true],
+                    'type' => 'productvisibilities',
+                    'id' => (string)$visibility1->getProduct()->getId(),
                     'attributes' => [
-                        'visibility' => 'hidden',
-                    ],
+                        'visibility' => 'hidden'
+                    ]
                 ],
                 [
-                    'meta'       => ['update' => true],
-                    'type'       => 'productvisibilities',
-                    'id'         => (string)$visibility2->getProduct()->getId(),
+                    'meta' => ['update' => true],
+                    'type' => 'productvisibilities',
+                    'id' => (string)$visibility2->getProduct()->getId(),
                     'attributes' => [
-                        'visibility' => 'visible',
-                    ],
-                ],
-            ],
+                        'visibility' => 'visible'
+                    ]
+                ]
+            ]
         ];
         $this->processUpdateList(ProductVisibility::class, $data);
 
@@ -109,7 +104,7 @@ class ProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestCase
         foreach ($expectedData['data'] as $key => $item) {
             unset($expectedData['data'][$key]['meta']);
         }
-        $this->assertResponseContains($expectedData, $response);
+        $this->assertResponseContains($expectedData, $response, true);
     }
 
     public function testCreateAndUpdateEntities(): void
@@ -119,28 +114,25 @@ class ProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestCase
         $data = [
             'data' => [
                 [
-                    'meta'       => ['update' => true],
-                    'type'       => 'productvisibilities',
-                    'id'         => '<toString(@product-1->id)>',
+                    'meta' => ['update' => true],
+                    'type' => 'productvisibilities',
+                    'id' => '<toString(@product-1->id)>',
                     'attributes' => [
-                        'visibility' => 'hidden',
-                    ],
+                        'visibility' => 'hidden'
+                    ]
                 ],
                 [
-                    'type'          => 'productvisibilities',
-                    'attributes'    => [
-                        'visibility' => 'visible',
+                    'type' => 'productvisibilities',
+                    'attributes' => [
+                        'visibility' => 'visible'
                     ],
                     'relationships' => [
                         'product' => [
-                            'data' => [
-                                'type' => 'products',
-                                'id'   => '<toString(@product-4->id)>',
-                            ],
-                        ],
-                    ],
-                ],
-            ],
+                            'data' => ['type' => 'products', 'id' => '<toString(@product-4->id)>']
+                        ]
+                    ]
+                ]
+            ]
         ];
         $this->processUpdateList(ProductVisibility::class, $data);
 
@@ -150,34 +142,28 @@ class ProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestCase
         );
         $expectedData['data'][1]['id'] = (string)$product2Id;
         unset($expectedData['data'][1]['meta']);
-        $this->assertResponseContains($expectedData, $response);
+        $this->assertResponseContains($expectedData, $response, true);
     }
 
     public function testTryToCreateEntitiesWithIncludes(): void
     {
         $data = [
-            'data'     => [
+            'data' => [
                 [
-                    'type'          => 'productvisibilities',
-                    'attributes'    => [
-                        'visibility' => 'visible',
+                    'type' => 'productvisibilities',
+                    'attributes' => [
+                        'visibility' => 'visible'
                     ],
                     'relationships' => [
                         'product' => [
-                            'data' => [
-                                'type' => 'products',
-                                'id'   => 'new_product',
-                            ],
-                        ],
-                    ],
-                ],
+                            'data' => ['type' => 'products', 'id' => 'new_product']
+                        ]
+                    ]
+                ]
             ],
             'included' => [
-                [
-                    'type' => 'products',
-                    'id'   => 'new_product',
-                ],
-            ],
+                ['type' => 'products', 'id' => 'new_product']
+            ]
         ];
         $operationId = $this->processUpdateList(
             ProductVisibility::class,
@@ -187,9 +173,9 @@ class ProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestCase
 
         $this->assertAsyncOperationError(
             [
-                'id'     => $operationId . '-1-1',
+                'id' => $operationId . '-1-1',
                 'status' => 400,
-                'title'  => 'request data constraint',
+                'title' => 'request data constraint',
                 'detail' => 'The included data are not supported for this resource type.',
                 'source' => ['pointer' => '/included']
             ],

@@ -13,9 +13,7 @@ class OrderLineItemCustomerFiltersTest extends RestJsonApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loadFixtures([
-            LoadOrderLineItemCustomerFiltersData::class
-        ]);
+        $this->loadFixtures([LoadOrderLineItemCustomerFiltersData::class]);
     }
 
     /**
@@ -33,13 +31,15 @@ class OrderLineItemCustomerFiltersTest extends RestJsonApiTestCase
             [$filterKey => $filterValue]
         );
 
-        $expectedData = array_map(fn ($id) => ['type' => 'orderlineitems', 'id' => $id], $expectedIds);
-
-        $this->assertResponseContains(
-            ['data' => $expectedData],
-            $response
+        $expectedData = array_map(
+            function ($id) {
+                return ['type' => 'orderlineitems', 'id' => $id];
+            },
+            $expectedIds
         );
-        static::assertResponseCount(count($expectedIds), $response);
+
+        $this->assertResponseContains(['data' => $expectedData], $response);
+        self::assertResponseCount(count($expectedIds), $response);
     }
 
     public function customerFilterDataProvider(): array
@@ -50,54 +50,54 @@ class OrderLineItemCustomerFiltersTest extends RestJsonApiTestCase
                 'filterKey' => 'filter[customer]',
                 'expectedIds' => [
                     '<toString(@line_item_customer_1_product_1->id)>',
-                    '<toString(@line_item_customer_1_product_2->id)>',
-                ],
+                    '<toString(@line_item_customer_1_product_2->id)>'
+                ]
             ],
             'Filter by customer 2 of level 2 with default eq' => [
                 'customerRefs' => [LoadCustomers::CUSTOMER_LEVEL_1_DOT_2],
                 'filterKey' => 'filter[customer]',
                 'expectedIds' => [
                     '<toString(@line_item_customer_2_product_1->id)>',
-                    '<toString(@line_item_customer_2_product_2->id)>',
-                ],
+                    '<toString(@line_item_customer_2_product_2->id)>'
+                ]
             ],
             'Filter by both customers of level 2 with default eq' => [
                 'customerRefs' => [
                     LoadCustomers::CUSTOMER_LEVEL_1_DOT_1,
-                    LoadCustomers::CUSTOMER_LEVEL_1_DOT_2,
+                    LoadCustomers::CUSTOMER_LEVEL_1_DOT_2
                 ],
                 'filterKey' => 'filter[customer]',
                 'expectedIds' => [
                     '<toString(@line_item_customer_1_product_1->id)>',
                     '<toString(@line_item_customer_1_product_2->id)>',
                     '<toString(@line_item_customer_2_product_1->id)>',
-                    '<toString(@line_item_customer_2_product_2->id)>',
-                ],
+                    '<toString(@line_item_customer_2_product_2->id)>'
+                ]
             ],
             'Filter by customer 1 of level 2 with neq' => [
                 'customerRefs' => [LoadCustomers::CUSTOMER_LEVEL_1_DOT_1],
                 'filterKey' => 'filter[customer][neq]',
                 'expectedIds' => [
                     '<toString(@line_item_customer_2_product_1->id)>',
-                    '<toString(@line_item_customer_2_product_2->id)>',
-                ],
+                    '<toString(@line_item_customer_2_product_2->id)>'
+                ]
             ],
             'Filter by customer 2 of level 2 with neq' => [
                 'customerRefs' => [LoadCustomers::CUSTOMER_LEVEL_1_DOT_2],
                 'filterKey' => 'filter[customer][neq]',
                 'expectedIds' => [
                     '<toString(@line_item_customer_1_product_1->id)>',
-                    '<toString(@line_item_customer_1_product_2->id)>',
-                ],
+                    '<toString(@line_item_customer_1_product_2->id)>'
+                ]
             ],
             'Filter by both customers of level 2 with neq' => [
                 'customerRefs' => [
                     LoadCustomers::CUSTOMER_LEVEL_1_DOT_1,
-                    LoadCustomers::CUSTOMER_LEVEL_1_DOT_2,
+                    LoadCustomers::CUSTOMER_LEVEL_1_DOT_2
                 ],
                 'filterKey' => 'filter[customer][neq]',
-                'expectedIds' => [],
-            ],
+                'expectedIds' => []
+            ]
         ];
     }
 
@@ -119,13 +119,15 @@ class OrderLineItemCustomerFiltersTest extends RestJsonApiTestCase
             [$filterKey => $filterValue]
         );
 
-        $expectedData = array_map(fn ($id) => ['type' => 'orderlineitems', 'id' => $id], $expectedIds);
-
-        $this->assertResponseContains(
-            ['data' => $expectedData],
-            $response
+        $expectedData = array_map(
+            function ($id) {
+                return ['type' => 'orderlineitems', 'id' => $id];
+            },
+            $expectedIds
         );
-        static::assertResponseCount(count($expectedIds), $response);
+
+        $this->assertResponseContains(['data' => $expectedData], $response);
+        self::assertResponseCount(count($expectedIds), $response);
     }
 
     public function customerUserFilterDataProvider(): array
@@ -136,45 +138,45 @@ class OrderLineItemCustomerFiltersTest extends RestJsonApiTestCase
                 'filterKey' => 'filter[customerUser]',
                 'expectedIds' => [
                     '<toString(@line_item_customer_1_product_1->id)>',
-                    '<toString(@line_item_customer_1_product_2->id)>',
-                ],
+                    '<toString(@line_item_customer_1_product_2->id)>'
+                ]
             ],
             'Filter by customer user 2 with default eq' => [
                 'customerUserRefs' => [LoadCustomerUserData::GROUP2_EMAIL],
                 'filterKey' => 'filter[customerUser]',
                 'expectedIds' => [
                     '<toString(@line_item_customer_2_product_1->id)>',
-                    '<toString(@line_item_customer_2_product_2->id)>',
-                ],
+                    '<toString(@line_item_customer_2_product_2->id)>'
+                ]
             ],
             'Filter by both customer users with default eq' => [
                 'customerUserRefs' => [
                     LoadCustomerUserData::LEVEL_1_1_EMAIL,
-                    LoadCustomerUserData::GROUP2_EMAIL,
+                    LoadCustomerUserData::GROUP2_EMAIL
                 ],
                 'filterKey' => 'filter[customerUser]',
                 'expectedIds' => [
                     '<toString(@line_item_customer_1_product_1->id)>',
                     '<toString(@line_item_customer_1_product_2->id)>',
                     '<toString(@line_item_customer_2_product_1->id)>',
-                    '<toString(@line_item_customer_2_product_2->id)>',
-                ],
+                    '<toString(@line_item_customer_2_product_2->id)>'
+                ]
             ],
             'Filter by customer user 1 with neq' => [
                 'customerUserRefs' => [LoadCustomerUserData::LEVEL_1_1_EMAIL],
                 'filterKey' => 'filter[customerUser][neq]',
                 'expectedIds' => [
                     '<toString(@line_item_customer_2_product_1->id)>',
-                    '<toString(@line_item_customer_2_product_2->id)>',
-                ],
+                    '<toString(@line_item_customer_2_product_2->id)>'
+                ]
             ],
             'Filter by customer user 2 with neq' => [
                 'customerUserRefs' => [LoadCustomerUserData::GROUP2_EMAIL],
                 'filterKey' => 'filter[customerUser][neq]',
                 'expectedIds' => [
                     '<toString(@line_item_customer_1_product_1->id)>',
-                    '<toString(@line_item_customer_1_product_2->id)>',
-                ],
+                    '<toString(@line_item_customer_1_product_2->id)>'
+                ]
             ],
             'Filter by both customer users with neq' => [
                 'customerUserRefs' => [
@@ -182,8 +184,8 @@ class OrderLineItemCustomerFiltersTest extends RestJsonApiTestCase
                     LoadCustomerUserData::GROUP2_EMAIL,
                 ],
                 'filterKey' => 'filter[customerUser][neq]',
-                'expectedIds' => [],
-            ],
+                'expectedIds' => []
+            ]
         ];
     }
 }
