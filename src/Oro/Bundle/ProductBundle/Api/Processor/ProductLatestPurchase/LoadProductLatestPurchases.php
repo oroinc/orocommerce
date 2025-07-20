@@ -40,21 +40,25 @@ class LoadProductLatestPurchases implements ProcessorInterface
     public function process(ContextInterface $context): void
     {
         /** @var ListContext $context */
+
         $criteria = $context->getCriteria();
+        if (null === $criteria) {
+            return;
+        }
 
         $latestIdentifiers = $this->getLatestIdentifiers($criteria);
         if (empty($latestIdentifiers)) {
             $context->setResult([]);
+
             return;
         }
 
         $results = $this->getPurchaseDetails($criteria, $latestIdentifiers);
 
         $data = $this->mapToApiModel($criteria, $results);
-        usort(
-            $data,
-            static fn (ProductLatestPurchase $a, ProductLatestPurchase $b) => strcmp($a->getId(), $b->getId())
-        );
+        usort($data, static function (ProductLatestPurchase $a, ProductLatestPurchase $b) {
+            return strcmp($a->getId(), $b->getId());
+        });
 
         $context->setResult($data);
     }
@@ -67,8 +71,8 @@ class LoadProductLatestPurchases implements ProcessorInterface
 
         foreach ($comparisons as $comparison) {
             if ($comparison->getField() === $field) {
-                if (!in_array($comparison->getOperator(), [Comparison::EQ, Comparison::IN], true)) {
-                    throw new \InvalidArgumentException(sprintf(
+                if (!\in_array($comparison->getOperator(), [Comparison::EQ, Comparison::IN], true)) {
+                    throw new \InvalidArgumentException(\sprintf(
                         'The "%s" operator is not supported for the "%s" filter.',
                         $comparison->getOperator(),
                         $field
@@ -76,7 +80,8 @@ class LoadProductLatestPurchases implements ProcessorInterface
                 }
 
                 $values = $comparison->getValue()->getValue();
-                return is_array($values) ? $values : [$values];
+
+                return \is_array($values) ? $values : [$values];
             }
         }
 
@@ -85,7 +90,8 @@ class LoadProductLatestPurchases implements ProcessorInterface
 
     /**
      * @param int[] $customerIds
-     * @return array<int,int[]>
+     *
+     * @return array<int, int[]>
      */
     private function getCustomerTree(array $customerIds): array
     {
@@ -115,21 +121,20 @@ class LoadProductLatestPurchases implements ProcessorInterface
     private function getLatestIdentifiers(Criteria $criteria): array
     {
         $em = $this->doctrineHelper->getEntityManager(OrderLineItem::class);
-        /** @var QueryBuilder $qb */
         $qb = $em->createQueryBuilder();
 
         $groupByFields = $this->getGroupByFields($criteria);
 
         $formatFields = array_map(function (string $field) {
-            return !in_array($field, ['oi.productUnitCode', 'oi.currency']) ? "IDENTITY(%s)" : '%s';
+            return !\in_array($field, ['oi.productUnitCode', 'oi.currency']) ? 'IDENTITY(%s)' : '%s';
         }, $groupByFields);
 
-        $qb->select(
-            "CONCAT_WS('_',
-                " . QueryBuilderUtil::sprintf(implode(',', $formatFields), ...$groupByFields) . ",
-                MAX(o.createdAt)
-            ) as latestIdentifier"
-        )
+        $qb
+            ->select(
+                'CONCAT_WS(\'_\', '
+                . QueryBuilderUtil::sprintf(implode(',', $formatFields), ...$groupByFields)
+                . ', MAX(o.createdAt)) as latestIdentifier'
+            )
             ->from(OrderLineItem::class, 'oi')
             ->innerJoin('oi.orders', 'o');
 
@@ -145,38 +150,32 @@ class LoadProductLatestPurchases implements ProcessorInterface
 
     private function getPurchaseDetails(Criteria $criteria, array $latestIdentifiers): array
     {
-        $em = $this->doctrineHelper->getEntityManager(OrderLineItem::class);
-        $qb = $em->createQueryBuilder();
-
         $groupByFields = $this->getGroupByFields($criteria);
         $formatFields = array_map(function (string $field) {
-            return !in_array($field, ['oi.productUnitCode', 'oi.currency']) ? "IDENTITY(%s)" : '%s';
+            return !\in_array($field, ['oi.productUnitCode', 'oi.currency']) ? 'IDENTITY(%s)' : '%s';
         }, $groupByFields);
 
         $groupByFields[] = 'o.createdAt';
         $formatFields[] = '%s';
 
-        $qb->select(
-            'IDENTITY(o.website) as websiteId',
-            'IDENTITY(o.customer) as customerId',
-            'IDENTITY(o.customerUser) as customerUserId',
-            'IDENTITY(oi.product) as productId',
-            'oi.productUnitCode as unit',
-            'oi.currency as currency',
-            'MIN(oi.value) as price',
-            'o.createdAt as purchasedAt'
-        )
-            ->from(OrderLineItem::class, 'oi')
-            ->innerJoin('oi.orders', 'o')
-            ->where(
-                $qb->expr()->in(
-                    "CONCAT_WS('_', " .
-                    QueryBuilderUtil::sprintf(implode(',', $formatFields), ...$groupByFields) .
-                    ")",
-                    ":latestIdentifiers"
-                )
+        $qb = $this->doctrineHelper->createQueryBuilder(OrderLineItem::class, 'oi');
+        $qb
+            ->select(
+                'IDENTITY(o.website) as websiteId',
+                'IDENTITY(o.customer) as customerId',
+                'IDENTITY(o.customerUser) as customerUserId',
+                'IDENTITY(oi.product) as productId',
+                'oi.productUnitCode as unit',
+                'oi.currency as currency',
+                'MIN(oi.value) as price',
+                'o.createdAt as purchasedAt'
             )
-            ->setParameter("latestIdentifiers", $latestIdentifiers);
+            ->innerJoin('oi.orders', 'o')
+            ->where($qb->expr()->in(
+                'CONCAT_WS(\'_\', ' . QueryBuilderUtil::sprintf(implode(',', $formatFields), ...$groupByFields) . ')',
+                ':latestIdentifiers'
+            ))
+            ->setParameter('latestIdentifiers', $latestIdentifiers);
 
         $this->applyCriteriaToQueryBuilder($criteria, $qb);
         $qb->groupBy('oi.product, o.customer, o.customerUser, o.website, o.createdAt, oi.productUnitCode, oi.currency');
@@ -195,7 +194,7 @@ class LoadProductLatestPurchases implements ProcessorInterface
             $value = $comparison->getValue()->getValue();
 
             if (!isset(self::FIELD_MAPPING[$field])) {
-                throw new \InvalidArgumentException(sprintf(
+                throw new \InvalidArgumentException(\sprintf(
                     'Field "%s" is not mapped to a query alias.',
                     $field
                 ));
@@ -215,20 +214,19 @@ class LoadProductLatestPurchases implements ProcessorInterface
                         ->setParameter($field, $value);
                     break;
                 default:
-                    throw new \InvalidArgumentException(
-                        sprintf(
-                            'Unsupported operator "%s" for field "%s".',
-                            $comparison->getOperator(),
-                            $field
-                        )
-                    );
+                    throw new \InvalidArgumentException(\sprintf(
+                        'Unsupported operator "%s" for field "%s".',
+                        $comparison->getOperator(),
+                        $field
+                    ));
             }
         }
     }
 
     /**
-     * @param Criteria $criteria
+     * @param Criteria                                  $criteria
      * @param array<int,array<string,string|int|float>> $results
+     *
      * @return array<ProductLatestPurchase>
      */
     private function mapToApiModel(Criteria $criteria, array $results): array
@@ -243,9 +241,10 @@ class LoadProductLatestPurchases implements ProcessorInterface
     }
 
     /**
-     * @param Criteria $criteria
+     * @param Criteria                                  $criteria
      * @param array<int,array<string,string|int|float>> $results
-     * @param array<int,int[]> $customerTree
+     * @param array<int,int[]>                          $customerTree
+     *
      * @return array<int,array<string,string|int|float>>
      */
     private function filterResults(Criteria $criteria, array $results, array $customerTree): array
@@ -276,7 +275,9 @@ class LoadProductLatestPurchases implements ProcessorInterface
         }
 
         foreach ($groupedResults as $rows) {
-            usort($rows, static fn ($a, $b) => $b['purchasedAt'] <=> $a['purchasedAt']);
+            usort($rows, static function (array $a, array $b) {
+                return $b['purchasedAt'] <=> $a['purchasedAt'];
+            });
             $filteredResults[] = $rows[0];
         }
 
@@ -285,6 +286,7 @@ class LoadProductLatestPurchases implements ProcessorInterface
 
     /**
      * @param array<int,int[]> $customerTree
+     *
      * @return int[]
      */
     private function getRootCustomers(array $customerTree): array
@@ -297,7 +299,7 @@ class LoadProductLatestPurchases implements ProcessorInterface
     private function resolveRootCustomerId(int $customerId, array $customerTree): int
     {
         foreach ($customerTree as $parentId => $children) {
-            if ($customerId === $parentId || in_array($customerId, $children)) {
+            if ($customerId === $parentId || \in_array($customerId, $children, true)) {
                 return $parentId;
             }
         }
@@ -331,21 +333,24 @@ class LoadProductLatestPurchases implements ProcessorInterface
 
     /**
      * @param array<int,array<string,string|int|float>> $filteredResults
+     *
      * @return array<ProductLatestPurchase>
      */
     private function mapFilteredResultsToApiModel(array $filteredResults): array
     {
         return array_map(
-            static fn ($row) => new ProductLatestPurchase(
-                $row['websiteId'],
-                $row['customerId'],
-                $row['customerUserId'],
-                $row['productId'],
-                $row['unit'],
-                $row['currency'],
-                $row['price'],
-                $row['purchasedAt']
-            ),
+            static function (array $row) {
+                return new ProductLatestPurchase(
+                    $row['websiteId'],
+                    $row['customerId'],
+                    $row['customerUserId'],
+                    $row['productId'],
+                    $row['unit'],
+                    $row['currency'],
+                    $row['price'],
+                    $row['purchasedAt']
+                );
+            },
             $filteredResults
         );
     }

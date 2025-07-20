@@ -16,9 +16,10 @@ class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateList
     protected function setUp(): void
     {
         parent::setUp();
-        $this->getOptionalListenerManager()->enableListener('oro_visibility.entity_listener.product_visibility_change');
+        $this->getOptionalListenerManager()
+            ->enableListener('oro_visibility.entity_listener.product_visibility_change');
         $this->loadFixtures([
-            '@OroVisibilityBundle/Tests/Functional/Api/DataFixtures/customer_group_product_visibilities.yml',
+            '@OroVisibilityBundle/Tests/Functional/Api/DataFixtures/customer_group_product_visibilities.yml'
         ]);
     }
 
@@ -34,7 +35,7 @@ class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateList
             ['filter[product][eq]' => '@product-4->id']
         );
 
-        $this->assertResponseContains('update_list_create_customer_group_product_visibilities.yml', $response);
+        $this->assertResponseContains('update_list_create_customer_group_product_visibilities.yml', $response, true);
     }
 
     public function testUpdateEntities(): void
@@ -44,21 +45,21 @@ class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateList
         $data = [
             'data' => [
                 [
-                    'meta'       => ['update' => true],
-                    'type'       => 'customergroupproductvisibilities',
-                    'id'         => $visibility1ApiId,
+                    'meta' => ['update' => true],
+                    'type' => 'customergroupproductvisibilities',
+                    'id' => $visibility1ApiId,
                     'attributes' => [
-                        'visibility' => 'hidden',
-                    ],
+                        'visibility' => 'hidden'
+                    ]
                 ],
                 [
-                    'meta'       => ['update' => true],
-                    'type'       => 'customergroupproductvisibilities',
-                    'id'         => $visibility2ApiId,
+                    'meta' => ['update' => true],
+                    'type' => 'customergroupproductvisibilities',
+                    'id' => $visibility2ApiId,
                     'attributes' => [
-                        'visibility' => 'visible',
-                    ],
-                ],
+                        'visibility' => 'visible'
+                    ]
+                ]
             ],
         ];
         $this->processUpdateList(CustomerGroupProductVisibility::class, $data);
@@ -71,7 +72,7 @@ class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateList
         foreach ($expectedData['data'] as $key => $item) {
             unset($expectedData['data'][$key]['meta']);
         }
-        $this->assertResponseContains($expectedData, $response);
+        $this->assertResponseContains($expectedData, $response, true);
     }
 
     public function testCreateAndUpdateEntities(): void
@@ -82,33 +83,27 @@ class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateList
         $data = [
             'data' => [
                 [
-                    'meta'       => ['update' => true],
-                    'type'       => 'customergroupproductvisibilities',
-                    'id'         => $visibility1ApiId,
+                    'meta' => ['update' => true],
+                    'type' => 'customergroupproductvisibilities',
+                    'id' => $visibility1ApiId,
                     'attributes' => [
-                        'visibility' => 'hidden',
-                    ],
+                        'visibility' => 'hidden'
+                    ]
                 ],
                 [
-                    'type'          => 'customergroupproductvisibilities',
-                    'attributes'    => [
-                        'visibility' => 'visible',
+                    'type' => 'customergroupproductvisibilities',
+                    'attributes' => [
+                        'visibility' => 'visible'
                     ],
                     'relationships' => [
-                        'product'       => [
-                            'data' => [
-                                'type' => 'products',
-                                'id'   => '<toString(@product-4->id)>',
-                            ],
+                        'product' => [
+                            'data' => ['type' => 'products', 'id' => '<toString(@product-4->id)>']
                         ],
                         'customerGroup' => [
-                            'data' => [
-                                'type' => 'customergroups',
-                                'id'   => '<toString(@customer_group.group3->id)>',
-                            ],
-                        ],
-                    ],
-                ],
+                            'data' => ['type' => 'customergroups', 'id' => '<toString(@customer_group.group3->id)>']
+                        ]
+                    ]
+                ]
             ],
         ];
         $this->processUpdateList(CustomerGroupProductVisibility::class, $data);
@@ -119,43 +114,37 @@ class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateList
         );
         $expectedData['data'][1]['id'] = $visibility2ApiId;
         unset($expectedData['data'][1]['meta']);
-        $this->assertResponseContains($expectedData, $response);
+        $this->assertResponseContains($expectedData, $response, true);
     }
 
     public function testTryToCreateEntitiesWithIncludes(): void
     {
         $data = [
-            'data'     => [
+            'data' => [
                 [
-                    'type'          => 'customergroupproductvisibilities',
-                    'attributes'    => [
-                        'visibility' => 'visible',
+                    'type' => 'customergroupproductvisibilities',
+                    'attributes' => [
+                        'visibility' => 'visible'
                     ],
                     'relationships' => [
-                        'product'       => [
-                            'data' => [
-                                'type' => 'products',
-                                'id'   => '<toString(@product-4->id)>',
-                            ],
+                        'product' => [
+                            'data' => ['type' => 'products', 'id' => '<toString(@product-4->id)>']
                         ],
                         'customerGroup' => [
-                            'data' => [
-                                'type' => 'customergroups',
-                                'id'   => 'new_customer_group',
-                            ],
-                        ],
-                    ],
-                ],
+                            'data' => ['type' => 'customergroups', 'id' => 'new_customer_group']
+                        ]
+                    ]
+                ]
             ],
             'included' => [
                 [
-                    'type'       => 'customergroups',
-                    'id'         => 'new_customer_group',
+                    'type' => 'customergroups',
+                    'id' => 'new_customer_group',
                     'attributes' => [
-                        'name' => 'New Customer Group',
-                    ],
-                ],
-            ],
+                        'name' => 'New Customer Group'
+                    ]
+                ]
+            ]
         ];
         $operationId = $this->processUpdateList(
             CustomerGroupProductVisibility::class,
@@ -165,9 +154,9 @@ class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateList
 
         $this->assertAsyncOperationError(
             [
-                'id'     => $operationId . '-1-1',
+                'id' => $operationId . '-1-1',
                 'status' => 400,
-                'title'  => 'request data constraint',
+                'title' => 'request data constraint',
                 'detail' => 'The included data are not supported for this resource type.',
                 'source' => ['pointer' => '/included']
             ],
