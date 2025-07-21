@@ -168,7 +168,7 @@ layout:
                             organization: '=data["order"].getOrganization()'
                         label: 'oro.order.shipping_method.label'
                         additional_block_prefixes: ['order_info_column_element']
-                        
+
                 order_shipping_status:
                     blockType: text
                     options:
@@ -229,6 +229,15 @@ layout:
                         total: '=data["totals"].total'
                         subtotals: '=data["totals"].subtotals'
 
+                order_documents:
+                    blockType: multi_file
+                    options:
+                        value: '=data["order"].getDocuments()'
+                        visible: '=!data["order"].getDocuments().isEmpty()'
+                        showIcon: false
+                        label: 'oro.order.documents.storefront_label'
+                        additional_block_prefixes: ['order_info_column_element']
+
             tree:
                 page_content:
                     order_view_page:
@@ -242,6 +251,7 @@ layout:
                                         order_shipping_status: ~
                                         order_shipping_tracking: ~
                                         order_ship_until: ~
+                                        order_documents: ~
                                     order_info_column_right:
                                         order_po_number: ~
                                         order_billing_address: ~

@@ -79,4 +79,35 @@ class PaymentTransactionRepositoryTest extends WebTestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider hasSuccessfulRelatedTransactionsByActionDataProvider
+     */
+    public function hasSuccessfulRelatedTransactionsByAction(
+        string $sourceTransactionReference,
+        bool $expected
+    ): void {
+        $authorizationTransaction = $this->getReference($sourceTransactionReference);
+
+        $hasTransactions = $this->repository->hasSuccessfulRelatedTransactionsByAction(
+            $authorizationTransaction,
+            PaymentMethodInterface::CHARGE
+        );
+
+        self::assertSame($expected, $hasTransactions);
+    }
+
+    public function hasSuccessfulRelatedTransactionsByActionDataProvider(): array
+    {
+        return [
+            [
+                'sourceTransactionReference' => LoadPaymentTransactionData::CHARGED_AUTHORIZE_TRANSACTION,
+                'expected' => true,
+            ],
+            [
+                'sourceTransactionReference' => LoadPaymentTransactionData::AUTHORIZE_TRANSACTION,
+                'expected' => false,
+            ],
+        ];
+    }
 }

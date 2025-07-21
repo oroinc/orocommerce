@@ -131,7 +131,7 @@ Retrieve item records assigned to a specific shopping list record.
 
 #### get_relationship
 
-Retrieve IDs of item records assigned to a specific shopping list record.
+Retrieve the IDs of item records assigned to a specific shopping list record.
 
 #### add_subresource
 

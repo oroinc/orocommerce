@@ -54,6 +54,15 @@ Feature: Quotes Grid Frontend
     Then I should not see an "Fullscreen Popup" element
     And I reset "AllQuotes" grid
 
+  Scenario: Check Quote Project Name filter
+    Given number of records in "AllQuotes" should be 13
+    When I filter "Project Name" as contains "Project 1"
+    Then I should see following grid:
+      | Quote # |
+      | Quote1  |
+    And number of records in "AllQuotes" should be 1
+    And I reset "AllQuotes" grid
+
   Scenario: Check PO Number filter
     Given number of records in "AllQuotes" should be 13
     When I filter PO Number as contains "PO10"
@@ -273,20 +282,20 @@ Feature: Quotes Grid Frontend
       | Quote13 | PO13      | Amanda Cole |
     When I reset "AllQuotes" grid
     Then I should see following grid with exact columns order:
-      | Quote # | PO Number |
-      | Quote1  | PO1       |
-      | Quote2  | PO2       |
-      | Quote3  | PO3       |
-      | Quote4  | PO4       |
-      | Quote5  | PO5       |
-      | Quote6  | PO6       |
-      | Quote7  | PO7       |
-      | Quote8  | PO8       |
-      | Quote9  | PO9       |
-      | Quote10 | PO10      |
-      | Quote11 | PO11      |
-      | Quote12 | PO12      |
-      | Quote13 | PO13      |
+      | Quote # | Project Name | PO Number |
+      | Quote1  | Project 1    | PO1       |
+      | Quote2  |              | PO2       |
+      | Quote3  |              | PO3       |
+      | Quote4  |              | PO4       |
+      | Quote5  |              | PO5       |
+      | Quote6  |              | PO6       |
+      | Quote7  |              | PO7       |
+      | Quote8  |              | PO8       |
+      | Quote9  |              | PO9       |
+      | Quote10 |              | PO10      |
+      | Quote11 |              | PO11      |
+      | Quote12 |              | PO12      |
+      | Quote13 |              | PO13      |
 
   Scenario: Check Grid View is Saved and Restored Properly
     Given I hide all columns in "AllQuotes" frontend grid except Quote #
@@ -300,8 +309,8 @@ Feature: Quotes Grid Frontend
     Then I should see "View has been successfully created" flash message
     When I reset "AllQuotes" grid
     Then I should see following grid with exact columns order:
-      | Quote # | PO Number | Ship By |
-      | Quote1  | PO1       |         |
+      | Quote # | Project Name | PO Number | Ship By |
+      | Quote1  | Project 1    | PO1       |         |
     And I reload the page
     When I switch to "gridview1" grid view in "AllQuotes" frontend grid
     Then I should see following grid with exact columns order:
@@ -319,17 +328,17 @@ Feature: Quotes Grid Frontend
     And I confirm deletion
     Then I should see "View has been successfully deleted" flash message
     And I should see following grid with exact columns order:
-      | Quote # | PO Number |
-      | Quote1  | PO1       |
-      | Quote2  | PO2       |
-      | Quote3  | PO3       |
-      | Quote4  | PO4       |
-      | Quote5  | PO5       |
-      | Quote6  | PO6       |
-      | Quote7  | PO7       |
-      | Quote8  | PO8       |
-      | Quote9  | PO9       |
-      | Quote10 | PO10      |
-      | Quote11 | PO11      |
-      | Quote12 | PO12      |
-      | Quote13 | PO13      |
+      | Quote # | Project Name | PO Number |
+      | Quote1  | Project 1    | PO1       |
+      | Quote2  |              | PO2       |
+      | Quote3  |              | PO3       |
+      | Quote4  |              | PO4       |
+      | Quote5  |              | PO5       |
+      | Quote6  |              | PO6       |
+      | Quote7  |              | PO7       |
+      | Quote8  |              | PO8       |
+      | Quote9  |              | PO9       |
+      | Quote10 |              | PO10      |
+      | Quote11 |              | PO11      |
+      | Quote12 |              | PO12      |
+      | Quote13 |              | PO13      |

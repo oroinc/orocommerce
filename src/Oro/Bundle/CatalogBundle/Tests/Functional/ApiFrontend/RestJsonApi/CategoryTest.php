@@ -70,6 +70,12 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         );
 
         $this->assertResponseContains('get_category.yml', $response);
+
+        $responseContent = self::jsonToArray($response->getContent());
+        self::assertArrayNotHasKey('smallImage', $responseContent['data']['attributes']);
+        self::assertArrayNotHasKey('smallImage', $responseContent['data']['relationships']);
+        self::assertArrayNotHasKey('largeImage', $responseContent['data']['attributes']);
+        self::assertArrayNotHasKey('largeImage', $responseContent['data']['relationships']);
     }
 
     public function testTryToGetInvisibleCategory()

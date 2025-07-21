@@ -54,6 +54,7 @@
             'subblocks': [{
                 'title': '',
                 'data': [
+                    oro_config_value('oro_rfp.enable_rfq_project_name') ? form_row(form.projectName) : '',
                     form_row(form.firstName),
                     form_row(form.lastName),
                     form_row(form.email),

@@ -54,11 +54,18 @@ class ComputeOrderPromotionDiscounts implements ProcessorInterface
     {
         $amount = 0.0;
         $appliedPromotionsFieldName = $context->getResultFieldName('appliedPromotions');
+        $appliedPromotionsConfig = $context->getConfig()->getField($appliedPromotionsFieldName)->getTargetEntity();
+        $typeFieldName = $context->getResultFieldName('type', $appliedPromotionsConfig);
+        $appliedDiscountsFieldName = $context->getResultFieldName('appliedDiscounts', $appliedPromotionsConfig);
+        $amountFieldName = $context->getResultFieldName(
+            'amount',
+            $appliedPromotionsConfig->getField($appliedDiscountsFieldName)->getTargetEntity()
+        );
         foreach ($order[$appliedPromotionsFieldName] as $appliedPromotion) {
-            if (ShippingDiscount::NAME === $appliedPromotion['type']) {
+            if (ShippingDiscount::NAME === $appliedPromotion[$typeFieldName]) {
                 continue;
             }
-            $amount += $this->getDiscountsSum($appliedPromotion);
+            $amount += $this->getDiscountsSum($appliedPromotion, $appliedDiscountsFieldName, $amountFieldName);
         }
 
         return $amount;
@@ -71,21 +78,31 @@ class ComputeOrderPromotionDiscounts implements ProcessorInterface
     {
         $amount = 0.0;
         $appliedPromotionsFieldName = $context->getResultFieldName('appliedPromotions');
+        $appliedPromotionsConfig = $context->getConfig()->getField($appliedPromotionsFieldName)->getTargetEntity();
+        $typeFieldName = $context->getResultFieldName('type', $appliedPromotionsConfig);
+        $appliedDiscountsFieldName = $context->getResultFieldName('appliedDiscounts', $appliedPromotionsConfig);
+        $amountFieldName = $context->getResultFieldName(
+            'amount',
+            $appliedPromotionsConfig->getField($appliedDiscountsFieldName)->getTargetEntity()
+        );
         foreach ($order[$appliedPromotionsFieldName] as $appliedPromotion) {
-            if (ShippingDiscount::NAME !== $appliedPromotion['type']) {
+            if (ShippingDiscount::NAME !== $appliedPromotion[$typeFieldName]) {
                 continue;
             }
-            $amount += $this->getDiscountsSum($appliedPromotion);
+            $amount += $this->getDiscountsSum($appliedPromotion, $appliedDiscountsFieldName, $amountFieldName);
         }
 
         return $amount;
     }
 
-    private function getDiscountsSum(array $appliedPromotion): float
-    {
+    private function getDiscountsSum(
+        array $appliedPromotion,
+        string $appliedDiscountsFieldName,
+        string $amountFieldName
+    ): float {
         $amount = 0.0;
-        foreach ($appliedPromotion['appliedDiscounts'] as $appliedDiscount) {
-            $amount += $appliedDiscount['amount'];
+        foreach ($appliedPromotion[$appliedDiscountsFieldName] as $appliedDiscount) {
+            $amount += $appliedDiscount[$amountFieldName];
         }
 
         return $amount;

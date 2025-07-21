@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\RFPBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\EventListener\Datagrid;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
@@ -9,20 +9,21 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\RFPBundle\Entity\Repository\RequestProductItemRepository;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
-use Oro\Bundle\RFPBundle\EventListener\DatagridRequestProductItemsLoaderListener;
+use Oro\Bundle\RFPBundle\EventListener\Datagrid\RequestProductItemsDatagridListener;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class DatagridRequestProductItemsLoaderListenerTest extends TestCase
+class RequestProductItemsDatagridListenerTest extends TestCase
 {
-    private DatagridRequestProductItemsLoaderListener $listener;
-    private MockObject|ManagerRegistry $doctrine;
+    private ManagerRegistry&MockObject $doctrine;
+    private RequestProductItemsDatagridListener $listener;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
-        $this->listener = new DatagridRequestProductItemsLoaderListener($this->doctrine);
+
+        $this->listener = new RequestProductItemsDatagridListener($this->doctrine);
     }
 
     public function testOnResultAfter(): void

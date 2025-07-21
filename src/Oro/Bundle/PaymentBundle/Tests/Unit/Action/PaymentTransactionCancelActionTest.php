@@ -194,7 +194,6 @@ class PaymentTransactionCancelActionTest extends \PHPUnit\Framework\TestCase
             [['object' => 'someValue']],
             [['amount' => 'someAmount']],
             [['currency' => 'someCurrency']],
-            [['paymentMethod' => 'somePaymentMethod']],
         ];
     }
 

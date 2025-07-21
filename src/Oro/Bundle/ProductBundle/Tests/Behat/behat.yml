@@ -192,6 +192,11 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(@class, "oro-tabs")]/div/ul/li/a[contains(text(), "Up-sell Products")]'
 
+    Attributes Group Products View Tab:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "oro-tabs")]/div/ul/li/a[contains(text(), "Test group")]'
+
     ProductForm Step One:
       selector: 'form[name="oro_product_step_one"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -2092,6 +2097,12 @@ oro_behat_extension:
 
     Inventory Status Switcher:
       selector: 'div[data-inventory-filter-template]'
+
+    Inventory Status Drag And Drop First Option:
+      selector: 'div[data-content="oro_entity_config_type[enum][enum_options][0]"] .ui-sortable-handle'
+
+    Inventory Status Drag And Drop Second Option:
+      selector: 'div[data-content="oro_entity_config_type[enum][enum_options][1]"] .ui-sortable-handle'
 
   pages:
     Product View:

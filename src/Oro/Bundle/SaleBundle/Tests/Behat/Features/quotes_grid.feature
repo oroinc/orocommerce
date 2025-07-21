@@ -19,6 +19,15 @@ Feature: Quotes Grid
     And records in grid should be 2
     And I reset "Quote #" filter
 
+  Scenario: Check Project Name filter
+    Given records in grid should be 20
+    When I filter Project Name as Contains "Project 1"
+    Then I should see following grid:
+      | Quote # |
+      | Quote1  |
+    And records in grid should be 1
+    And I reset Project Name filter
+
   Scenario: Check Owner filter
     Given records in grid should be 20
     When I filter Owner as Contains "charlie"
@@ -376,9 +385,9 @@ Feature: Quotes Grid
       | Quote2  | John Doe | Draft |
     When I reset "All Quotes Grid" grid
     Then I should see following grid with exact columns order:
-      | Quote # | Owner    | Customer User | Customer         |
-      | Quote1  | John Doe | Test1 Test1   | WithCustomerUser |
-      | Quote10 | John Doe | Test1 Test1   | WithCustomerUser |
+      | Quote # | Project Name | Owner    | Customer User | Customer         |
+      | Quote1  | Project 1    | John Doe | Test1 Test1   | WithCustomerUser |
+      | Quote10 |              | John Doe | Test1 Test1   | WithCustomerUser |
 
   Scenario: Check Grid View is Saved and Restored Properly
     Given I hide all columns in grid except Quote #
@@ -392,9 +401,9 @@ Feature: Quotes Grid
     Then I should see "View has been successfully created" flash message
     And I reset "All Quotes Grid" grid
     Then I should see following grid with exact columns order:
-      | Quote # | Owner    | Customer User | Customer         |
-      | Quote1  | John Doe | Test1 Test1   | WithCustomerUser |
-      | Quote10 | John Doe | Test1 Test1   | WithCustomerUser |
+      | Quote # | Project Name | Owner    | Customer User | Customer         |
+      | Quote1  | Project 1    | John Doe | Test1 Test1   | WithCustomerUser |
+      | Quote10 |              | John Doe | Test1 Test1   | WithCustomerUser |
     When I click grid view list
     And I click "gridview1"
     Then I should see following grid with exact columns order:
@@ -413,6 +422,6 @@ Feature: Quotes Grid
     And I confirm deletion
     Then I should see "View has been successfully deleted" flash message
     And I should see following grid with exact columns order:
-      | Quote # | Owner    | Customer User | Customer         |
-      | Quote1  | John Doe | Test1 Test1   | WithCustomerUser |
-      | Quote10 | John Doe | Test1 Test1   | WithCustomerUser |
+      | Quote # | Project Name | Owner    | Customer User | Customer         |
+      | Quote1  | Project 1    | John Doe | Test1 Test1   | WithCustomerUser |
+      | Quote10 |              | John Doe | Test1 Test1   | WithCustomerUser |

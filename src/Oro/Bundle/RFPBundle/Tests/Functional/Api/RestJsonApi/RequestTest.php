@@ -95,6 +95,32 @@ class RequestTest extends RestJsonApiTestCase
         );
     }
 
+    public function testCreateWithProjectName(): void
+    {
+        $data = $this->getRequestData('create_request.yml');
+        $data['data']['attributes']['projectName'] = 'Some Project';
+        $response = $this->post(
+            ['entity' => 'rfqs'],
+            $data
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'rfqs',
+                    'attributes' => [
+                        'projectName' => 'Some Project'
+                    ]
+                ]
+            ],
+            $response
+        );
+
+        $entityId = (int)$this->getResourceId($response);
+        $entity = $this->getEntityManager()->find(Request::class, $entityId);
+        self::assertEquals('Some Project', $entity->getProjectName());
+    }
+
     public function testTryToCreateWhenCustomerUserDoesNotBelongsToCustomer(): void
     {
         $response = $this->post(

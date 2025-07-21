@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\ImportExport\Strategy;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\BatchBundle\Item\Support\ClosableInterface;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
@@ -161,7 +162,14 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
             return;
         }
 
-        $this->owner = $user->getOwner()->getId();
+        /** @var ArrayCollection $businesUnits */
+        $businesUnits = $entity->getOrganization()?->getBusinessUnits();
+
+        if ($businesUnits && !$businesUnits->contains($user->getOwner())) {
+            $this->owner = $businesUnits->first()->getId();
+        } else {
+            $this->owner = $user->getOwner()->getId();
+        }
 
         $entity->setOwner($this->doctrineHelper->getEntityReference(BusinessUnit::class, $this->owner));
     }

@@ -35,7 +35,7 @@ class OroRFPBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_15';
+        return 'v1_17';
     }
 
     #[\Override]
@@ -95,6 +95,7 @@ class OroRFPBundleInstaller implements
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
+        $table->addColumn('visitor_id', 'integer', ['notnull' => false]);
         $table->addColumn('customer_id', 'integer', ['notnull' => false]);
         $table->addColumn('cancellation_reason', 'text', ['notnull' => false]);
         $table->addColumn('first_name', 'string', ['length' => 255]);
@@ -110,6 +111,7 @@ class OroRFPBundleInstaller implements
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('deleted_at', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
+        $table->addColumn('project_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'idx_oro_rfq_request_created_at');
         $table->addIndex(['updated_at'], 'idx_oro_rfq_request_updated_at');
@@ -299,6 +301,12 @@ class OroRFPBundleInstaller implements
             ['website_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_visitor'),
+            ['visitor_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 

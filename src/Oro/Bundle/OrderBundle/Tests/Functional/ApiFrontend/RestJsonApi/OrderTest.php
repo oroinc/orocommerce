@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
+use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
+use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadOrderDocuments;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentOrderStatuses;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentTransactions;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadShippingMethods;
@@ -14,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class OrderTest extends FrontendRestJsonApiTestCase
 {
@@ -24,10 +27,29 @@ class OrderTest extends FrontendRestJsonApiTestCase
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
             '@OroOrderBundle/Tests/Functional/ApiFrontend/DataFixtures/orders.yml',
+            LoadOrderDocuments::class,
             LoadShippingMethods::class,
             LoadPaymentOrderStatuses::class,
             LoadPaymentTransactions::class
         ]);
+    }
+
+    #[\Override]
+    protected function getResponseData(array|string $expectedContent): array
+    {
+        $expectedData = parent::getResponseData($expectedContent);
+        array_walk_recursive(
+            $expectedData,
+            function (&$val) {
+                if (is_string($val) && str_starts_with($val, '{fileUrl:') && str_ends_with($val, '}')) {
+                    /** @var AttachmentManager $attachmentManager */
+                    $attachmentManager = self::getContainer()->get('oro_attachment.manager');
+                    $val = $attachmentManager->getFileUrl($this->getReference(substr($val, 9, -1)));
+                }
+            }
+        );
+
+        return $expectedData;
     }
 
     public function testGetList(): void

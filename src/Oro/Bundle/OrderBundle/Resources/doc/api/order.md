@@ -358,7 +358,7 @@ Retrieve records of discount assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve IDs of discount records assigned to a specific order record.
+Retrieve the IDs of discount records assigned to a specific order record.
 
 #### update_relationship
 
@@ -425,7 +425,7 @@ Retrieve a record of line item assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve IDs of line item records assigned to a specific order record.
+Retrieve the IDs of line item records assigned to a specific order record.
 
 #### update_relationship
 
@@ -573,7 +573,7 @@ Retrieve a record of shipping tracking assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve IDs of shipping tracking records assigned to a specific order record.
+Retrieve the IDs of shipping tracking records assigned to a specific order record.
 
 #### update_relationship
 
@@ -721,7 +721,7 @@ Retrieve a record of suborders assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve IDs of suborders records assigned to a specific order record.
+Retrieve the IDs of suborders records assigned to a specific order record.
 
 #### update_relationship
 

@@ -10,7 +10,7 @@ namespace Oro\Bundle\PaymentBundle\Method;
 interface PaymentMethodGroupAwareInterface
 {
     /**
-     * @param string $groupName Payment method group, e.g. storefront_checkout.
+     * @param string $groupName Payment method group, e.g. oro_checkout_storefront_single_page.
      *
      * @return bool True if applicable for the specified payment method group.
      */

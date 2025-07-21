@@ -16,6 +16,9 @@ oro:
             guest_access_id:
                 label: Guest Access Id
                 description: Unique identifier that is used as a reference for the quote created by a visitor.
+            visitor:
+                label: 'Customer Visitor'
+                description: 'The storefront visitor who created the quote.'
             unique_guest_link:
                 label: Unique Guest Link
                 description: The URL to the storefront page that shows the quote created by a visitor.
@@ -72,6 +75,9 @@ oro:
             po_number:
                 label: PO Number
                 description: The purchase order number provided in the quote.
+            project_name:
+                label: Project Name
+                description: The project name associated with the quote.
             ship_until:
                 label: Ship by
                 description: The date and time before which the order based on the quote should be shipped.
@@ -113,6 +119,10 @@ oro:
             payment_term_7c4f1e8e:
                 label: Payment Term
                 description: Relationship with the payment term that was selected as a payment method.
+            documents:
+                label: Customer Documents
+                storefront_label: Documents
+                description: Customer related documents. These files will be visible to the customer in the storefront.
 
             sections:
                 general: 'General'
@@ -209,6 +219,9 @@ oro:
                 contact_info_manual_text.label: 'Enter Contact Info'
                 guest_contact_info_text.label: 'Guest Contact'
                 enable_guest_quote.label: 'Enable Guest Quote'
+                enable_quote_project_name:
+                    label: 'Enable Quote Project Name'
+                    tooltip: 'Select the option to enable the project name management for quotes on the storefront. For the backoffice the project name is enabled automatically when it is enabled for an organization or for at least one website within an organization.'
                 quote_frontend_feature_enabled.label: 'Enable Quote (Store Front)'
 
         privilege:
@@ -530,6 +543,7 @@ oro:
 
         navigation:
             view: 'Quote #%id%'
+            project_name_suffix: ': %project_name%'
 
         security:
             permission:
@@ -594,6 +608,7 @@ oro:
                 customer_status.label: 'Status'
                 valid_until.label: 'Valid Until'
                 po_number.label: 'PO Number'
+                project_name.label: 'Project Name'
                 ship_until.label: 'Ship by'
                 ship_estimate.label: 'Shipping Estimate'
                 assigned_customer_users.label: 'Assigned To'

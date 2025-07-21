@@ -71,6 +71,12 @@
                             </td>
                         </tr>
                         {% endif %}
+                        {% if quote.projectName and oro_config_value('oro_sale.enable_quote_project_name') %}
+                        <tr class="customer-info-grid__row">
+                            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.project_name.label'|trans }}</td>
+                            <td class="customer-info-grid__element-content">{{ quote.projectName }}</td>
+                        </tr>
+                        {% endif %}
                         <tr class="customer-info-grid__row">
                             <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
                             <td class="customer-info-grid__element-content"><bdo dir="ltr">{{ quote.poNumber|default('N/A'|trans) }}</bdo></td>
@@ -111,6 +117,18 @@
                             <tr class="customer-info-grid__row">
                                 <td class="customer-info-grid__element-label">{{ 'oro.paymentterm.entity_label'|trans }}</td>
                                 <td class="customer-info-grid__element-content">{{ paymentTerm.label|escape }}</td>
+                            </tr>
+                        {% endif %}
+
+                        {% if quote.documents.isEmpty == false %}
+                            <tr class="customer-info-grid__row">
+                                <td class="customer-info-grid__element-label">{{ 'oro.sale.quote.documents.storefront_label'|trans }}</td>
+                                <td class="customer-info-grid__element-content">
+                                    {%- for item in quote.documents.toArray()|sort((a, b) => a.sortOrder <=> b.sortOrder) -%}
+                                        {{- oro_file_view(item.file, {showIcon: false}) -}}
+                                        {%- if not loop.last %}, {% endif -%}
+                                    {%- endfor -%}
+                                </td>
                             </tr>
                         {% endif %}
 

@@ -71,6 +71,22 @@
         }
     }
 
+    &:has(.single-unit-mode) {
+        .grid-header-cell-quantity {
+            .grid-header-cell__label-container {
+                min-width: $edit-mode-cell-stepper-input-width / 2 + $input-padding-y;
+            }
+        }
+    }
+
+    &:has(.single-unit-mode-code-visible) {
+        .grid-header-cell-quantity {
+            .grid-header-cell__label-container {
+                min-width: $edit-mode-cell-stepper-input-width / 2 + $input-padding-y;
+            }
+        }
+    }
+
     &:has(.unit-select-root .toggle-container),
     &:has(.unit-select-root .select) {
         .single-unit {

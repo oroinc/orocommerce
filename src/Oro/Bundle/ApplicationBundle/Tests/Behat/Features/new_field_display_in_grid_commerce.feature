@@ -43,6 +43,7 @@ Feature: New Field Display in Grid (Commerce)
       | ShoppingList               | TestField | OroShoppingListBundle  |
       | Promotion                  | TestField | OroPromotionBundle     |
       | ShippingMethodsConfigsRule | TestField | OroShippingBundle      |
+      | DigitalAsset               | TestField | OroDigitalAssetBundle  |
 
   Scenario: Update schema
     When I click update schema
@@ -75,3 +76,4 @@ Feature: New Field Display in Grid (Commerce)
       | ShoppingList               | TestField | OroShoppingListBundle  |
       | Promotion                  | TestField | OroPromotionBundle     |
       | ShippingMethodsConfigsRule | TestField | OroShippingBundle      |
+      | DigitalAsset               | TestField | OroDigitalAssetBundle  |

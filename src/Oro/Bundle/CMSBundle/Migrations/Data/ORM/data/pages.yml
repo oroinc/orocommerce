@@ -32,7 +32,7 @@ about:
                 <div class="grid grid-row-gap-mobile-big-32">
                     <div class="grid-col-5 grid-col-tablet-big-6 grid-col-mobile-big-12">
                         <div class="grid grid-columns-1 grid-row-gap-16">
-                            <h1>H1. We Are the Leading RV & Gear Seller in the US</h1>
+                            <h1>H1. We Are the Leading RV &amp; Gear Seller in the US</h1>
                             <p> Are you considering buying a recreational vehicle (RV) to spend weekends outdoors with your family? We offer you a wide choice of options, from small campers to motorhomes. You can also find all the necessary RV accessories, inside and outside, to make your holiday trips the most enjoyable experience. If you’re happy, we’re happy!</p>
                             <div class="grid grid-responsive-content">
                                 <div class="grid-col-mobile-12">
@@ -79,7 +79,7 @@ about:
                             <img src="/bundles/orocms/images/landing-page/2_1920.webp" alt="Image" loading="lazy">
                         </picture>
                         <figcaption>
-                            <p class="h1">RV & GEAR SELLER</p>
+                            <p class="h1">RV &amp; GEAR SELLER</p>
                             <p class="h5">Reduce the complexity of your custom projects with the features of our out-of-the-box B2B eCommerce solutions</p>
                         </figcaption>
                     </figure>
@@ -279,11 +279,11 @@ about:
                         <table class="table-styled">
                             <thead>
                                 <tr>
-                                    <th>RV Class</th>
-                                    <th>RV Type</th>
-                                    <th>Max Length <sub>ft</sub></th>
-                                    <th>Max Dry Weight <sup>lbs</sup></th>
-                                    <th>Max Sleep Number</th>
+                                    <th scope="col">RV Class</th>
+                                    <th scope="col">RV Type</th>
+                                    <th scope="col">Max Length <sub>ft</sub></th>
+                                    <th scope="col">Max Dry Weight <sup>lbs</sup></th>
+                                    <th scope="col">Max Sleep Number</th>
                                 </tr>
                             </thead>
     

@@ -2,14 +2,19 @@
 {% import '@OroUI/macros.html.twig' as UI %}
 {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
-{% oro_title_set({params : {"%title%": entity.__toString()}}) %}
+{% set idSuffix = '' %}
+{% if entity.projectName and oro_config_value('oro_rfp.enable_rfq_project_name') %}
+    {% set idSuffix = 'oro.rfp.navigation.project_name_suffix'|trans({'%project_name%': entity.projectName}) %}
+{% endif %}
+
+{% oro_title_set({params : {"%title%": entity.id ~ idSuffix}}) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('oro_rfp_request_index'),
         'indexLabel': 'oro.rfp.request.entity_plural_label'|trans,
-        'entityTitle': 'oro.rfp.request.id.label'|trans ~ entity.id
+        'entityTitle': 'oro.rfp.navigation.view'|trans({'%id%': entity.id ~ idSuffix})
     } %}
     {{ parent() }}
 {% endblock pageHeader %}

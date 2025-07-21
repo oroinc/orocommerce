@@ -90,6 +90,26 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($newUser, $request->getOwner());
     }
 
+    public function testPrePersistSetVisitor()
+    {
+        $token = $this->createAnonymousToken();
+        $request = new Request();
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $newUser = new User();
+        $newUser->setFirstName('first_name');
+        $this->defaultUserProvider->expects($this->once())
+            ->method('getDefaultUser')
+            ->with('oro_rfp.default_guest_rfp_owner')
+            ->willReturn($newUser);
+
+        $this->listener->prePersist($request);
+        $this->assertSame($request->getVisitor(), $token->getVisitor());
+    }
+
     public function testPrePersistCreatesNewCustomerUser()
     {
         $token = $this->createAnonymousToken();

@@ -222,6 +222,103 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function testExecuteWithPaymentAction(): void
+    {
+        $context = [];
+        $options = [
+            'object' => new \stdClass(),
+            'amount' => 100.0,
+            'currency' => 'USD',
+            'attribute' => new PropertyPath('test'),
+            'paymentAction' => PaymentMethodInterface::CHARGE,
+            'paymentMethod' => self::PAYMENT_METHOD,
+            'transactionOptions' => [
+                'testOption' => 'testOption',
+            ],
+        ];
+
+        $responseValue = self::returnValue(['testResponse' => 'testResponse']);
+
+        $this->action->initialize($options);
+
+        $this->contextAccessor->expects(self::any())
+            ->method('getValue')
+            ->willReturnArgument(1);
+
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setAction(PaymentMethodInterface::CHARGE)
+            ->setPaymentMethod($options['paymentMethod']);
+
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $paymentMethod
+            ->method('getIdentifier')
+            ->willReturn($options['paymentMethod']);
+        $paymentMethod->expects(self::once())
+            ->method('execute')
+            ->with(PaymentMethodInterface::CHARGE, $paymentTransaction)
+            ->will($responseValue);
+        $paymentMethod->expects(self::once())
+            ->method('supports')
+            ->with(PaymentMethodInterface::VALIDATE)
+            ->willReturn(false);
+
+        $this->paymentTransactionProvider->expects(self::once())
+            ->method('createPaymentTransaction')
+            ->with($options['paymentMethod'], PaymentMethodInterface::CHARGE, $options['object'])
+            ->willReturn($paymentTransaction);
+
+        $this->mockPaymentMethodProvider($paymentMethod, $options['paymentMethod']);
+
+        $this->paymentTransactionProvider->expects(self::once())
+            ->method('savePaymentTransaction')
+            ->with($paymentTransaction)
+            ->willReturnCallback(function (PaymentTransaction $paymentTransaction) use ($options) {
+                self::assertEquals($options['amount'], $paymentTransaction->getAmount());
+                self::assertEquals($options['currency'], $paymentTransaction->getCurrency());
+                if (!empty($options['transactionOptions'])) {
+                    self::assertEquals(
+                        $options['transactionOptions'],
+                        $paymentTransaction->getTransactionOptions()
+                    );
+                }
+            });
+
+        $this->router->expects(self::exactly(2))
+            ->method('generate')
+            ->withConsecutive(
+                [
+                    'oro_payment_callback_error',
+                    [
+                        'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    ],
+                    RouterInterface::ABSOLUTE_URL,
+                ],
+                [
+                    'oro_payment_callback_return',
+                    [
+                        'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    ],
+                    RouterInterface::ABSOLUTE_URL,
+                ]
+            )
+            ->willReturnArgument(0);
+
+        $expected = [
+            'paymentMethod' => self::PAYMENT_METHOD,
+            'errorUrl' => 'oro_payment_callback_error',
+            'returnUrl' => 'oro_payment_callback_return',
+            'testResponse' => 'testResponse',
+            'paymentMethodSupportsValidation' => false,
+            'testOption' => 'testOption',
+        ];
+        $this->contextAccessor->expects(self::once())
+            ->method('setValue')
+            ->with($context, $options['attribute'], $expected);
+
+        $this->action->execute($context);
+    }
+
     public function testSourcePaymentTransactionNotFound()
     {
         $this->expectException(\RuntimeException::class);

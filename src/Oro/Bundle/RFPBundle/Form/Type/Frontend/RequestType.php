@@ -50,6 +50,10 @@ class RequestType extends AbstractType
                 'required' => false,
                 'label' => 'oro.rfp.request.po_number.label',
             ])
+            ->add('projectName', TextType::class, [
+                'required' => false,
+                'label' => 'oro.rfp.request.project_name.label',
+            ])
             ->add('shipUntil', OroDateType::class, [
                 'required' => false,
                 'label' => 'oro.rfp.request.ship_until.label',

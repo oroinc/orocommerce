@@ -1,7 +1,12 @@
 <% let oroui = _.macros('oroui') %>
 <% let oroshoppinglist = _.macros('oroshoppinglist') %>
 <% let oroproduct = _.macros('oroproduct') %>
-<div class="grid-body-cell-quantity-content" data-role="cell-quantity-root">
+<div class="grid-body-cell-quantity-content
+    <% if (gridThemeOptions.singleUnitMode === true) { %>
+        single-unit-mode
+        <% if (gridThemeOptions.singleUnitModeCodeVisible === true) { %>single-unit-mode-code-visible<% } %>
+    <% } %>
+    " data-role="cell-quantity-root">
     <% if (obj.isConfigurable) { %>
         <% if (quantity) { %>
             <div class="line-item-configurable">
@@ -13,7 +18,9 @@
         <div class="line-item-container line-item-kit-container label-on-tablet-start" data-label="<%- _metadata.label %>:">
             <% var formattedQuantity = oroshoppinglist.quantityHelper.formatQuantity(quantity, precision) %>
             <span class="line-item-container__qty"><%- quantity %></span>
-            <span class="line-item-container__unit"><%- _.__('oro.product.product_unit.' + unit + '.value.label_long', {count: formattedQuantity}, quantity) %></span>
+            <% if (!gridThemeOptions.singleUnitMode || (gridThemeOptions.singleUnitMode && gridThemeOptions.singleUnitModeCodeVisible)) { %>
+                <span class="line-item-container__unit"><%- _.__('oro.product.product_unit.' + unit + '.value.label_long', {count: formattedQuantity}, quantity) %></span>
+            <% } %>
         </div>
     <% } else { %>
         <div class="line-item-container">
@@ -45,6 +52,7 @@
                 name: _.uniqueId('unitCode'),
                 units: units,
                 unit: unitCode,
+                gridThemeOptions: obj.gridThemeOptions,
                 singleMode: {
                     displayInput: false
                 },

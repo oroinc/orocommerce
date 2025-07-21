@@ -4,6 +4,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\NoteBundle\Entity\Note;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
@@ -12,6 +13,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use Oro\Bundle\SaleBundle\Tests\Functional\Api\DataFixtures\LoadQuoteDocuments;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -19,6 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
@@ -32,6 +35,7 @@ class QuoteTest extends RestJsonApiTestCase
         $this->loadFixtures([
             LoadQuoteData::class,
             LoadRequestData::class,
+            LoadQuoteDocuments::class,
             '@OroSaleBundle/Tests/Functional/Api/DataFixtures/quote_notes.yml'
         ]);
     }
@@ -119,6 +123,8 @@ class QuoteTest extends RestJsonApiTestCase
         self::assertCount(1, $quoteProduct->getQuoteProductRequests());
         /** @var QuoteProductRequest $request */
         $request = $quoteProduct->getQuoteProductRequests()->first();
+        /** @var File $document */
+        $document = $quote->getDocuments()->first()->getFile();
 
         $expectedData = $data;
         $expectedData['data']['id'] = (string)$quoteId;
@@ -143,11 +149,39 @@ class QuoteTest extends RestJsonApiTestCase
         $expectedData['data']['relationships']['shippingAddress']['data']['id'] =
             (string)$shippingAddress->getId();
         $expectedData['included'][3]['id'] = (string)$shippingAddress->getId();
+        $expectedData['data']['relationships']['documents']['data'][0]['id'] = (string)$document->getId();
+        $expectedData['included'][4]['id'] = (string)$document->getId();
         $this->assertResponseContains($expectedData, $response);
 
         self::assertNotEmpty($quote->getGuestAccessId());
         self::assertEquals($defaultWebsiteId, $quote->getWebsite()->getId());
         self::assertEquals('draft', $quote->getInternalStatus()->getInternalId());
+    }
+
+    public function testCreateWithProjectName(): void
+    {
+        $data = $this->getRequestData('create_quote.yml');
+        $data['data']['attributes']['projectName'] = 'Some Project';
+        $response = $this->post(
+            ['entity' => 'quotes'],
+            $data
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'quotes',
+                    'attributes' => [
+                        'projectName' => 'Some Project'
+                    ]
+                ]
+            ],
+            $response
+        );
+
+        $quoteId = (int)$this->getResourceId($response);
+        $quote = $this->getEntityManager()->find(Quote::class, $quoteId);
+        self::assertEquals('Some Project', $quote->getProjectName());
     }
 
     public function testTryToCreateWithInternalStatus(): void
@@ -250,6 +284,8 @@ class QuoteTest extends RestJsonApiTestCase
         self::assertCount(1, $quoteProduct->getQuoteProductRequests());
         /** @var QuoteProductRequest $request */
         $request = $quoteProduct->getQuoteProductRequests()->first();
+        /** @var File $document */
+        $document = $quote->getDocuments()->first()->getFile();
 
         $expectedData = $data;
         $expectedData['data']['id'] = (string)$quoteId;
@@ -274,6 +310,8 @@ class QuoteTest extends RestJsonApiTestCase
         $expectedData['data']['relationships']['shippingAddress']['data']['id'] =
             (string)$shippingAddress->getId();
         $expectedData['included'][3]['id'] = (string)$shippingAddress->getId();
+        $expectedData['data']['relationships']['documents']['data'][0]['id'] = (string)$document->getId();
+        $expectedData['included'][4]['id'] = (string)$document->getId();
         $this->assertResponseContains($expectedData, $response);
     }
 
@@ -566,6 +604,62 @@ class QuoteTest extends RestJsonApiTestCase
         );
     }
 
+    public function testUpdateDocuments(): void
+    {
+        $quoteId = $this->getReference('sale.quote.1')->getId();
+        $file1Id = $this->getReference('file1')->getId();
+        $file2Id = $this->getReference('file2')->getId();
+
+        $data = [
+            'data' => [
+                'type' => 'quotes',
+                'id' => (string)$quoteId,
+                'relationships' => [
+                    'documents' => [
+                        'data' => [
+                            ['type' => 'files', 'id' => 'new_file', 'meta' => ['sortOrder' => 1]],
+                            ['type' => 'files', 'id' => '<toString(@file1->id)>', 'meta' => ['sortOrder' => 2]]
+                        ]
+                    ]
+                ]
+            ],
+            'included' => [
+                [
+                    'type' => 'files',
+                    'id' => 'new_file',
+                    'attributes' => [
+                        'mimeType' => 'text/plain',
+                        'originalFilename' => 'new_document.txt',
+                        'content' => 'ZmlsZV9hCg=='
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => 'quotes', 'id' => (string)$quoteId],
+            $data
+        );
+
+        $expectedData = $data;
+        $expectedData['data']['relationships']['documents']['data'][0]['id'] = 'new';
+        $expectedData['included'][0]['id'] = 'new';
+        $expectedData = $this->updateResponseContent($expectedData, $response);
+        $this->assertResponseContains($expectedData, $response);
+
+        /** @var Quote $quote */
+        $quote = $this->getEntityManager()->find(Quote::class, $quoteId);
+        self::assertCount(2, $quote->getDocuments());
+        $documents = [];
+        foreach ($quote->getDocuments() as $item) {
+            $documents[$item->getSortOrder()] = $item->getFile()->getId();
+        }
+        ksort($documents);
+        self::assertSame([(int)$expectedData['included'][0]['id'], $file1Id], array_values($documents));
+
+        self::assertTrue(null !== $this->getEntityManager()->find(File::class, $file1Id));
+        self::assertTrue(null === $this->getEntityManager()->find(File::class, $file2Id));
+    }
+
     public function testDelete(): void
     {
         /** @var Quote $quote */
@@ -580,6 +674,8 @@ class QuoteTest extends RestJsonApiTestCase
                 $entitiesToBeDeleted[] = [QuoteProductOffer::class, $offer->getId()];
             }
         }
+        $entitiesToBeDeleted[] = [File::class, $this->getReference('file1')->getId()];
+        $entitiesToBeDeleted[] = [File::class, $this->getReference('file2')->getId()];
 
         $this->delete(
             ['entity' => 'quotes', 'id' => (string)$quote->getId()]
@@ -605,6 +701,8 @@ class QuoteTest extends RestJsonApiTestCase
                 $entitiesToBeDeleted[] = [QuoteProductOffer::class, $offer->getId()];
             }
         }
+        $entitiesToBeDeleted[] = [File::class, $this->getReference('file1')->getId()];
+        $entitiesToBeDeleted[] = [File::class, $this->getReference('file2')->getId()];
 
         $this->cdelete(
             ['entity' => 'quotes'],
@@ -1118,5 +1216,99 @@ class QuoteTest extends RestJsonApiTestCase
         );
 
         self::assertEquals([$note2Id, $note3Id], $this->getActivityNoteIds($quoteId));
+    }
+
+    public function testGetSubresourceForDocuments(): void
+    {
+        $response = $this->getSubresource(
+            ['entity' => 'quotes', 'id' => '<toString(@sale.quote.1->id)>', 'association' => 'documents'],
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type' => 'files',
+                        'id' => '<toString(@file1->id)>',
+                        'meta' => ['sortOrder' => 1],
+                        'attributes' => [
+                            'originalFilename' => 'file_1.txt'
+                        ]
+                    ],
+                    [
+                        'type' => 'files',
+                        'id' => '<toString(@file2->id)>',
+                        'meta' => ['sortOrder' => 2],
+                        'attributes' => [
+                            'originalFilename' => 'file_2.txt'
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForDocuments(): void
+    {
+        $response = $this->getRelationship(
+            ['entity' => 'quotes', 'id' => '<toString(@sale.quote.1->id)>', 'association' => 'documents'],
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'files', 'id' => '<toString(@file1->id)>', 'meta' => ['sortOrder' => 1]],
+                    ['type' => 'files', 'id' => '<toString(@file2->id)>', 'meta' => ['sortOrder' => 2]]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testTryToUpdateDocumentsViaRelationship(): void
+    {
+        $response = $this->patchRelationship(
+            ['entity' => 'quotes', 'id' => '<toString(@sale.quote.1->id)>', 'association' => 'documents'],
+            [
+                'data' => [
+                    ['type' => 'files', 'id' => '<toString(@file1->id)>'],
+                    ['type' => 'files', 'id' => '<toString(@file2->id)>']
+                ]
+            ],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToRemoveDocumentsViaRelationship(): void
+    {
+        $response = $this->deleteRelationship(
+            ['entity' => 'quotes', 'id' => '<toString(@sale.quote.1->id)>', 'association' => 'documents'],
+            [
+                'data' => [
+                    ['type' => 'files', 'id' => '<toString(@file1->id)>']
+                ]
+            ],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToAddDocumentsViaRelationship(): void
+    {
+        $response = $this->postRelationship(
+            ['entity' => 'quotes', 'id' => '<toString(@sale.quote.1->id)>', 'association' => 'documents'],
+            [
+                'data' => [
+                    ['type' => 'files', 'id' => '<toString(@file1->id)>']
+                ]
+            ],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 }

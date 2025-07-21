@@ -250,15 +250,11 @@ Feature: Product View Page Templates
 
     When I operate as the Buyer
     And I reload the page
-    Then I should see next rows in "Default Page Prices" table in the exact order
-      | QTY | Item   |
-      | 1+  | $10.00 |
+    Then I should not see an "Default Page Prices" element
     When I fill "Product Shopping List Form" with:
       | Unit | set |
     When I click on empty space
-    Then I should see next rows in "Default Page Prices" table in the exact order
-      | QTY | Set     |
-      | 1+  | $445.50 |
+    Then I should not see an "Default Page Prices" element
 
     When I operate as the Admin
     And I go to System / Theme Configurations

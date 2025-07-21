@@ -116,6 +116,9 @@
             }|json_encode }}"
             class="control-group-container"
         >
+            {% if oro_config_value('oro_sale.enable_quote_project_name') %}
+                {{ form_row(form.projectName) }}
+            {% endif %}
             {{ form_row(form.owner) }}
             {{ ownerSelectors }}
             {{ form_row(form.validUntil) }}

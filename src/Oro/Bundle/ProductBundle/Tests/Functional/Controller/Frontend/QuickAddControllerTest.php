@@ -41,7 +41,7 @@ class QuickAddControllerTest extends WebTestCase
 
         self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $form = $crawler->filter('form[name="oro_product_quick_add_import_from_file"] input[type="submit"]')->form();
+        $form = $crawler->filter('form[name="oro_product_quick_add_import_from_file"] button[type="submit"]')->form();
 
         if (file_exists($file)) {
             $form['oro_product_quick_add_import_from_file[file]']->upload($file);

@@ -177,7 +177,7 @@ Retrieve a record of kit item assigned to a specific checkout product kit item l
 
 #### get_relationship
 
-Retrieve an ID of kit item record assigned to a specific checkout product kit item line item record.
+Retrieve the ID of kit item record assigned to a specific checkout product kit item line item record.
 
 ### lineItem
 
@@ -187,7 +187,7 @@ Retrieve a record of line item assigned to a specific checkout product kit item 
 
 #### get_relationship
 
-Retrieve an ID of line item record assigned to a specific checkout product kit item line item record.
+Retrieve the ID of line item record assigned to a specific checkout product kit item line item record.
 
 ### product
 
@@ -197,7 +197,7 @@ Retrieve a record of product assigned to a specific checkout product kit item li
 
 #### get_relationship
 
-Retrieve an ID of product record assigned to a specific checkout product kit item line item record.
+Retrieve the ID of product record assigned to a specific checkout product kit item line item record.
 
 ### productUnit
 
@@ -207,4 +207,4 @@ Retrieve a record of product unit assigned to a specific checkout product kit it
 
 #### get_relationship
 
-Retrieve an ID of product unit record assigned to a specific checkout product kit item line item record.
+Retrieve the ID of product unit record assigned to a specific checkout product kit item line item record.

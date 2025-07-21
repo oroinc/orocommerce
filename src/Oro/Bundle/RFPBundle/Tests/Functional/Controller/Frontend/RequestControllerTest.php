@@ -48,17 +48,6 @@ class RequestControllerTest extends WebTestCase
         ]);
     }
 
-    public function testGridForAnonymousUsers(): void
-    {
-        $this->markTestSkipped('Authentication of anonymous users is not supported.');
-        $response = $this->client->requestFrontendGrid(
-            ['gridName' => 'frontend-requests-grid'],
-            [],
-            true,
-        );
-        self::assertSame($response->getStatusCode(), 401);
-    }
-
     public function testIndexNotFoundForAnonymousUsers(): void
     {
         $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
@@ -235,6 +224,7 @@ class RequestControllerTest extends WebTestCase
                     'columns' => [
                         'id',
                         'poNumber',
+                        'projectName',
                         'shipUntil',
                         'createdAt',
                         'update_aria_label',
@@ -266,6 +256,7 @@ class RequestControllerTest extends WebTestCase
                     'columns' => [
                         'id',
                         'poNumber',
+                        'projectName',
                         'shipUntil',
                         'createdAt',
                         'update_aria_label',
@@ -296,6 +287,7 @@ class RequestControllerTest extends WebTestCase
                     'columns' => [
                         'id',
                         'poNumber',
+                        'projectName',
                         'shipUntil',
                         'createdAt',
                         'customerUserName',
@@ -324,6 +316,7 @@ class RequestControllerTest extends WebTestCase
                     'columns' => [
                         'id',
                         'poNumber',
+                        'projectName',
                         'shipUntil',
                         'createdAt',
                         'update_aria_label',
@@ -352,6 +345,7 @@ class RequestControllerTest extends WebTestCase
                     'columns' => [
                         'id',
                         'poNumber',
+                        'projectName',
                         'shipUntil',
                         'createdAt',
                         'update_aria_label',
@@ -380,6 +374,7 @@ class RequestControllerTest extends WebTestCase
                     'columns' => [
                         'id',
                         'poNumber',
+                        'projectName',
                         'shipUntil',
                         'createdAt',
                         'update_aria_label',
@@ -441,7 +436,7 @@ class RequestControllerTest extends WebTestCase
                     'login' => LoadUserData::ACCOUNT1_USER1,
                 ],
                 'expected' => [
-                    'columnsCount' => 8,
+                    'columnsCount' => 9,
                 ],
             ],
             'customer1 user3 (CustomerUser:VIEW_LOCAL)' => [
@@ -450,7 +445,7 @@ class RequestControllerTest extends WebTestCase
                     'login' => LoadUserData::ACCOUNT1_USER2,
                 ],
                 'expected' => [
-                    'columnsCount' => 9,
+                    'columnsCount' => 10,
                     'hideButtonEdit' => true,
                 ],
             ],

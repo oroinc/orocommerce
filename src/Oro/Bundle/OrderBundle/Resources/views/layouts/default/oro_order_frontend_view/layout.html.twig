@@ -110,25 +110,27 @@
     <div class="summary-widget__inner">
         <div class="summary-widget__summary">
             <table class="summary-table">
-                <tr>
-                    <th class="summary-table__summary" scope="row">{{ 'oro.pricing.frontend.summary'|trans }}</th>
-                    <td></td>
-                </tr>
-                {% for subtotal in subtotals %}
+                <tbody>
                     <tr>
-                        <th>{{ subtotal.label }}</th>
-                        <td>{{ subtotal.signedAmount|oro_format_currency({'currency': subtotal.currency}) }}</td>
+                        <th class="summary-table__summary" scope="row">{{ 'oro.pricing.frontend.summary'|trans }}</th>
+                        <td></td>
                     </tr>
-                {% endfor %}
-                <tr aria-hidden="true" class="summary-table__presentation">
-                    <td colspan="2">
-                        <hr class="summary-table__divider">
-                    </td>
-                </tr>
-                <tr class="summary-table__total-row">
-                    <th class="summary-table__total">{{ total.label }}</th>
-                    <td class="summary-table__total"><span class="summary-table__total-price">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
-                </tr>
+                    {% for subtotal in subtotals %}
+                        <tr>
+                            <th scope="row">{{ subtotal.label }}</th>
+                            <td>{{ subtotal.signedAmount|oro_format_currency({'currency': subtotal.currency}) }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr aria-hidden="true" class="summary-table__presentation">
+                        <td colspan="2">
+                            <hr class="summary-table__divider">
+                        </td>
+                    </tr>
+                    <tr class="summary-table__total-row">
+                        <th class="summary-table__total" scope="row">{{ total.label }}</th>
+                        <td class="summary-table__total"><span class="summary-table__total-price">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
@@ -144,7 +146,7 @@
     {% set text %}
         {% if text is not empty %}
             {% for paymentMethod in text %}
-                {{ get_payment_method_label(paymentMethod) }}{% if not loop.last %},{% endif %}
+                {{ get_payment_method_label(paymentMethod) }}{% if not loop.last %}, {% endif %}
             {% endfor %}
         {% else %}
             {{ 'oro.ui.empty'|trans }}
@@ -169,7 +171,8 @@
     {% set text %}
         {% if text is not empty %}
             {% for suborder in text %}
-                {{ UI.entityViewLink(suborder, suborder.identifier, 'oro_order_frontend_view') }}{%- if not loop.last -%},{%- endif -%}
+                {{ UI.entityViewLink(suborder, suborder.identifier, 'oro_order_frontend_view') }}
+                {%- if not loop.last -%}, {%- endif -%}
             {% endfor %}
         {% else %}
             {{ 'oro.ui.empty'|trans }}
@@ -233,12 +236,11 @@
                         data-check-overflow="true"
                         data-trigger-icon-hide="chevron-down"
                         data-trigger-icon-show="chevron-up"
-                        data-check-overflow="true"
                         data-toggle="false">
                         {{ text|nl2br }}
                     </div>
 
-                    <button class="btn btn--flat btn--size-small collapse-toggle customer-info-grid__view-more" data-toggle="collapse" data-target="#collapse-order-view-more" aria-controls="collapse-order-view-more">
+                    <button type="button" class="btn btn--flat btn--size-small collapse-toggle customer-info-grid__view-more" data-toggle="collapse" data-target="#collapse-order-view-more" aria-controls="collapse-order-view-more">
                             <span class="trigger-icon" data-icon>
                                 {{ renderIcon.icon({name: 'chevron-down'}) }}
                             </span>

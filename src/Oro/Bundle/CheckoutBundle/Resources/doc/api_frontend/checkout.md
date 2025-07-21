@@ -464,7 +464,7 @@ Retrieve line item records assigned to a specific checkout record.
 
 #### get_relationship
 
-Retrieve IDs of line item records assigned to a specific checkout record.
+Retrieve the IDs of line item records assigned to a specific checkout record.
 
 #### update_relationship
 
@@ -531,7 +531,7 @@ Retrieve line item group records to which line items from a specific checkout re
 
 #### get_relationship
 
-Retrieve IDs of line item group records to which line items from a specific checkout record belong.
+Retrieve the IDs of line item group records to which line items from a specific checkout record belong.
 
 ### order
 
@@ -541,7 +541,7 @@ Retrieve order record created during the checkout for a specific checkout record
 
 #### get_relationship
 
-Retrieve IDs of order record created during the checkout for a specific checkout record.
+Retrieve the IDs of order record created during the checkout for a specific checkout record.
 
 ### source
 

@@ -1,4 +1,3 @@
-@regression
 @random-failed
 @feature-BB-9570
 @fixture-OroOrderBundle:previously-purchased.yml

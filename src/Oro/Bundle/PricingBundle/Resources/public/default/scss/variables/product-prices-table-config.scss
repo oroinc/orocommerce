@@ -10,6 +10,7 @@ $product-prices-table-th-line-height: 1.43 !default;
 $product-prices-table-td-color: get-var-color('text', 'primary') !default;
 $product-prices-table-td-font-size: $base-font-size--s !default;
 $product-prices-table-td-padding: 6px 0 6px 90px !default;
+$product-prices-table-td-first-padding: 6px !default;
 $product-prices-table-border-bottom: 1px solid get-var-color('neutral', 'grey2') !default;
 $product-prices-table-min-width: 178px !default;
 $product-prices-table-first-min-width: 44px !default;

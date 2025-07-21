@@ -34,3 +34,10 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_price_unit_visibility }
 
+    oro_pricing.layout.data_provider.totals:
+        class: 'Oro\Bundle\PricingBundle\Layout\DataProvider\TotalsProvider'
+        arguments:
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+        tags:
+            - { name: layout.data_provider, alias: oro_pricing_totals }
+

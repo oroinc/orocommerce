@@ -11,6 +11,8 @@ use Extend\Entity\Autocomplete\OroSaleBundle_Entity_Quote;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EmailBundle\Entity\EmailOwnerAwareInterface;
 use Oro\Bundle\EmailBundle\Entity\EmailOwnerInterface;
@@ -84,7 +86,8 @@ class Quote implements
     AllowUnlistedShippingMethodConfigurationInterface,
     OverriddenCostShippingMethodConfigurationInterface,
     WebsiteAwareInterface,
-    ExtendEntityInterface
+    ExtendEntityInterface,
+    CustomerVisitorOwnerAwareInterface
 {
     use AuditableUserAwareTrait;
     use AuditableFrontendCustomerUserAwareTrait;
@@ -219,9 +222,14 @@ class Quote implements
     #[ORM\OrderBy(['id' => Criteria::ASC])]
     protected ?Collection $demands = null;
 
-    /**
-     * Constructor
-     */
+    #[ORM\Column(name: 'project_name', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $projectName = null;
+
+    #[ORM\ManyToOne(targetEntity: CustomerVisitor::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'visitor_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?CustomerVisitor $visitor = null;
+
     public function __construct()
     {
         $this->quoteProducts = new ArrayCollection();
@@ -829,6 +837,31 @@ class Quote implements
     public function getEmailOwner(): EmailOwnerInterface
     {
         return $this->customerUser;
+    }
+
+    public function setProjectName(?string $projectName): static
+    {
+        $this->projectName = $projectName;
+
+        return $this;
+    }
+
+    public function getProjectName(): ?string
+    {
+        return $this->projectName;
+    }
+
+    #[\Override]
+    public function getVisitor()
+    {
+        return $this->visitor;
+    }
+
+    public function setVisitor(?CustomerVisitor $visitor)
+    {
+        $this->visitor = $visitor;
+
+        return $this;
     }
 
     private function generateGuestAccessId(): void

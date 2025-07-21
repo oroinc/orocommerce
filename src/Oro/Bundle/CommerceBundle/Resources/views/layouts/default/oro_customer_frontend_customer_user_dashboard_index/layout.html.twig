@@ -40,6 +40,7 @@
 {% block _dashboard_scorecards_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " grid-col-12 dashboard-scorecards-container ",
+        'aria-label': 'oro.customer.frontend.dashboard.scorecard_nav.title'|trans,
         'data-page-component-module': "oroui/js/app/components/viewport-component",
         'data-page-component-options': {
             viewport: 'mobile-landscape-min',

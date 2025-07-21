@@ -93,6 +93,7 @@ class QuoteControllerTest extends WebTestCase
         $defaultColumns = [
             'customer_status',
             'id',
+            'projectName',
             'qid',
             'createdAt',
             'validUntil',

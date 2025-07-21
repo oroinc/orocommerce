@@ -71,27 +71,47 @@ data:
             category:
                 data: null
             pageTemplate:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: '<toString(@product_kit1->pageTemplate->id)>'
             taxCode:
                 data: null
             manageInventory:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: '<toString(@product_kit1->manageInventory->id)>'
             highlightLowInventory:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: '<toString(@product_kit1->highlightLowInventory->id)>'
             inventoryThreshold:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: '<toString(@product_kit1->inventoryThreshold->id)>'
             lowInventoryThreshold:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: '<toString(@product_kit1->lowInventoryThreshold->id)>'
             minimumQuantityToOrder:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: '<toString(@product_kit1->minimumQuantityToOrder->id)>'
             maximumQuantityToOrder:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: '<toString(@product_kit1->maximumQuantityToOrder->id)>'
             decrementQuantity:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: '<toString(@product_kit1->decrementQuantity->id)>'
             backOrder:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: '<toString(@product_kit1->backOrder->id)>'
             isUpcoming:
-                data: null
+                data:
+                    type: entityfieldfallbackvalues
+                    id: '<toString(@product_kit1->isUpcoming->id)>'
             metaTitles:
                 data: []
             metaDescriptions:

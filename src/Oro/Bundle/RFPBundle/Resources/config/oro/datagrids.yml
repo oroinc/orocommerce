@@ -16,21 +16,6 @@ datagrids:
                     - request.updatedAt
                 from:
                     - { table: 'Oro\Bundle\RFPBundle\Entity\Request', alias: request }
-        columns:
-            id:
-                label:         oro.rfp.request.id.label
-            poNumber:
-                label:         oro.rfp.request.po_number.label
-                cellClassName: 'direction-ltr'
-            shipUntil:
-                label:         oro.rfp.request.ship_until.label
-                frontend_type: date
-            createdAt:
-                label:         oro.ui.created_at
-                frontend_type: datetime
-            updatedAt:
-                label:         oro.ui.updated_at
-                frontend_type: datetime
         properties:
             view_link:
                 type:   url
@@ -74,9 +59,22 @@ datagrids:
             bind_parameters:
                 - customer_id
         columns:
+            id:
+                label:         oro.rfp.request.id.label
             customerUserName:
                 label:         oro.rfp.request.customer_user.label
-                order:         1
+            poNumber:
+                label:         oro.rfp.request.po_number.label
+                cellClassName: 'direction-ltr'
+            shipUntil:
+                label:         oro.rfp.request.ship_until.label
+                frontend_type: date
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
         sorters:
             columns:
                 customerUserName:
@@ -111,6 +109,21 @@ datagrids:
                         - request.customerUser = :customer_user_id
             bind_parameters:
                 - customer_user_id
+        columns:
+            id:
+                label:         oro.rfp.request.id.label
+            poNumber:
+                label:         oro.rfp.request.po_number.label
+                cellClassName: 'direction-ltr'
+            shipUntil:
+                label:         oro.rfp.request.ship_until.label
+                frontend_type: date
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
         filters:
             columns:
                 id:
@@ -150,46 +163,44 @@ datagrids:
             hints:
                 - HINT_TRANSLATABLE
         columns:
+            id:
+                label:         oro.rfp.request.id.label
+            poNumber:
+                label:         oro.rfp.request.po_number.label
+                cellClassName: 'direction-ltr'
+            shipUntil:
+                label:         oro.rfp.request.ship_until.label
+                frontend_type: date
             firstName:
                 label:         oro.rfp.request.first_name.label
-                order:         1
                 renderable:    false
             lastName:
                 label:         oro.rfp.request.last_name.label
-                order:         2
                 renderable:    false
             email:
                 label:         oro.rfp.request.email.label
-                order:         3
                 renderable:    false
             phone:
                 label:         oro.rfp.request.phone.label
-                order:         4
                 renderable:    false
             company:
                 label:         oro.rfp.request.company.label
-                order:         5
                 renderable:    false
             role:
                 label:         oro.rfp.request.role.label
-                order:         6
                 renderable:    false
             customerUserName:
                 label:         oro.rfp.request.customer_user.label
-                order:         7
             customerName:
                 label:         oro.rfp.request.customer.label
-                order:         8
             internal_status:
                 label:         oro.rfp.request.internal_status.label
                 frontend_type: select
                 data_name: internal_status
                 choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('rfp_internal_status')"
                 translatable_options: false
-                order:         9
             customer_status:
                 label:         oro.rfp.request.customer_status.label
-                order:         10
                 renderable:    false
                 frontend_type: select
                 data_name: customer_status
@@ -199,6 +210,9 @@ datagrids:
                 label:         oro.ui.created_at
                 frontend_type: datetime
                 renderable:    false
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
         sorters:
             columns:
                 firstName:
@@ -226,6 +240,18 @@ datagrids:
                 id:
                     type:      number
                     data_name: request.id
+                poNumber:
+                    type:      string
+                    data_name: request.poNumber
+                shipUntil:
+                    type:      date
+                    data_name: request.shipUntil
+                createdAt:
+                    type:      datetime
+                    data_name: request.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: request.updatedAt
                 firstName:
                     type:      string
                     data_name: request.firstName
@@ -258,18 +284,6 @@ datagrids:
                     type:      enum
                     data_name: customer_status
                     enum_code: rfp_customer_status
-                poNumber:
-                    type:      string
-                    data_name: request.poNumber
-                shipUntil:
-                    type:      date
-                    data_name: request.shipUntil
-                createdAt:
-                    type:      datetime
-                    data_name: request.createdAt
-                updatedAt:
-                    type:      datetime
-                    data_name: request.updatedAt
 
     rfp-requests-for-context-grid:
         acl_resource: oro_rfp_request_view

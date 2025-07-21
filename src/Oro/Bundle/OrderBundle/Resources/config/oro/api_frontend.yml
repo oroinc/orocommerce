@@ -111,6 +111,7 @@ api:
                         mapped: false
                 status: ~
                 shippingStatus: ~
+                documents: ~
             filters:
                 fields:
                     identifier:

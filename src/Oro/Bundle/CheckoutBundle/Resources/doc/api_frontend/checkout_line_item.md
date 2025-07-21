@@ -262,7 +262,7 @@ Retrieve a list of checkout product kit item line item records assigned to a spe
 
 #### get_relationship
 
-Retrieve IDs of checkout product kit item line item records assigned to a specific line item record.
+Retrieve the IDs of checkout product kit item line item records assigned to a specific line item record.
 
 ### group
 

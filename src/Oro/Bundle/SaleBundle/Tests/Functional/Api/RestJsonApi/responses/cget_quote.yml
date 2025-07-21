@@ -6,6 +6,7 @@ data:
             identifier: sale.quote.1
             guestAccessId: '@sale.quote.1->guestAccessId'
             poNumber: PO_SALE.QUOTE.1
+            projectName: Project 1
             shipUntil: '@sale.quote.1->shipUntil->format("Y-m-d")'
             validUntil: '@sale.quote.1->validUntil->format("Y-m-d\TH:i:s\Z")'
             expired: false
@@ -66,6 +67,18 @@ data:
                         id: '<toString(@note2->id)>'
             activityEmails:
                 data: []
+            documents:
+                data:
+                    -
+                        type: files
+                        id: '<toString(@file1->id)>'
+                        meta:
+                            sortOrder: 1
+                    -
+                        type: files
+                        id: '<toString(@file2->id)>'
+                        meta:
+                            sortOrder: 2
     -
         type: quotes
         id: '<toString(@sale.quote.2->id)>'
@@ -123,6 +136,8 @@ data:
                         type: notes
                         id: '<toString(@note2->id)>'
             activityEmails:
+                data: []
+            documents:
                 data: []
     -
         type: quotes
@@ -192,6 +207,8 @@ data:
                 data: []
             activityEmails:
                 data: []
+            documents:
+                data: []
     -
         type: quotes
         id: '<toString(@sale.quote.4->id)>'
@@ -248,6 +265,8 @@ data:
             activityNotes:
                 data: []
             activityEmails:
+                data: []
+            documents:
                 data: []
     -
         type: quotes
@@ -308,6 +327,8 @@ data:
                 data: []
             activityEmails:
                 data: []
+            documents:
+                data: []
     -
         type: quotes
         id: '<toString(@sale.quote.6->id)>'
@@ -364,6 +385,8 @@ data:
             activityNotes:
                 data: []
             activityEmails:
+                data: []
+            documents:
                 data: []
     -
         type: quotes
@@ -422,6 +445,8 @@ data:
                 data: []
             activityEmails:
                 data: []
+            documents:
+                data: []
     -
         type: quotes
         id: '<toString(@sale.quote.8->id)>'
@@ -478,6 +503,8 @@ data:
             activityNotes:
                 data: []
             activityEmails:
+                data: []
+            documents:
                 data: []
     -
         type: quotes
@@ -538,6 +565,8 @@ data:
                 data: []
             activityEmails:
                 data: []
+            documents:
+                data: []
     -
         type: quotes
         id: '<toString(@sale.quote.10->id)>'
@@ -594,4 +623,6 @@ data:
             activityNotes:
                 data: []
             activityEmails:
+                data: []
+            documents:
                 data: []

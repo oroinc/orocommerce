@@ -35,6 +35,7 @@ class OroSaleExtensionTest extends \PHPUnit\Framework\TestCase
                         'enable_guest_quote' => ['value' => false, 'scope' => 'app'],
                         'quote_frontend_feature_enabled' => ['value' => true, 'scope' => 'app'],
                         'validate_shipping_addresses__backoffice_quote_page' => ['value' => true, 'scope' => 'app'],
+                        'enable_quote_project_name' => ['value' => true, 'scope' => 'app'],
                     ]
                 ]
             ],

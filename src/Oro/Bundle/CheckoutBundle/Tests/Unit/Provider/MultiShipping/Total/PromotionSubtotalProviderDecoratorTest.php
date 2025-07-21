@@ -137,7 +137,7 @@ class PromotionSubtotalProviderDecoratorTest extends \PHPUnit\Framework\TestCase
             ->method('getSubtotal')
             ->willReturn($baseSubtotals);
 
-        $subtotals = $this->subtotalProvider->getSubtotal(new \StdClass());
+        $subtotals = $this->subtotalProvider->getSubtotal(new \stdClass());
         $this->assertCount(2, $subtotals);
         $this->assertArrayHasKey(SubtotalProvider::ORDER_DISCOUNT_SUBTOTAL, $subtotals);
         $this->assertArrayHasKey(SubtotalProvider::SHIPPING_DISCOUNT_SUBTOTAL, $subtotals);

@@ -56,7 +56,7 @@ Each element of the array is an object with the following properties:
 
 **type** is a string that contains the type of the image. Possible values of the image types are `small` and `large`.
 
-Example of data: **\[{"mimeType:"image/jpeg", "url": "/path/to/image.jpeg", "type": "small"}, {"mimeType:"image/jpeg", "url": "/path/to/image.jpeg", "type": "large"}\]**
+Example of data: **\[{"mimeType": "image/jpeg", "url": "/path/to/image.jpeg", "type": "small"}, {"mimeType": "image/jpeg", "url": "/path/to/image.jpeg", "type": "large"}\]**
 
 ### categoryPath
 
@@ -78,8 +78,8 @@ Retrieve the IDs of the child category records assigned to a specific category r
 
 #### get_subresource
 
-Retrieve the list of visible categories in the path from master catalog root to the specific category.
+Retrieve a list of visible categories in the path from master catalog root to a specific category.
 
 #### get_relationship
 
-Retrieve the IDs of visible categories in the path from master catalog root to the specific category.
+Retrieve the IDs of visible categories in the path from master catalog root to a specific category.

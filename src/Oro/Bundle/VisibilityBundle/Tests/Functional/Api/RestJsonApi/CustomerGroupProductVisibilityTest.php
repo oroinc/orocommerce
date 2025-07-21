@@ -24,7 +24,8 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->getOptionalListenerManager()->enableListener('oro_visibility.entity_listener.product_visibility_change');
+        $this->getOptionalListenerManager()
+            ->enableListener('oro_visibility.entity_listener.product_visibility_change');
         $this->loadFixtures([
             '@OroVisibilityBundle/Tests/Functional/Api/DataFixtures/customer_group_product_visibilities.yml'
         ]);
@@ -45,7 +46,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
             ['entity' => 'customergroupproductvisibilities']
         );
 
-        $this->assertResponseContains('cget_customer_group_product_visibility.yml', $response);
+        $this->assertResponseContains('cget_customer_group_product_visibility.yml', $response, true);
     }
 
     public function testTryToGetListSortById(): void
@@ -59,9 +60,9 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'sort constraint',
+                'title' => 'sort constraint',
                 'detail' => 'Sorting by "id" field is not supported.',
-                'source' => ['parameter' => 'sort'],
+                'source' => ['parameter' => 'sort']
             ],
             $response
         );
@@ -79,17 +80,17 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
                 'data' => [
                     [
                         'type' => 'customergroupproductvisibilities',
-                        'id'   => '<(implode("-", [@product-1->id, @customer_group.group1->id]))>',
+                        'id' => '<(implode("-", [@product-1->id, @customer_group.group1->id]))>'
                     ],
                     [
                         'type' => 'customergroupproductvisibilities',
-                        'id'   => '<(implode("-", [@product-2->id, @customer_group.group2->id]))>',
+                        'id' => '<(implode("-", [@product-2->id, @customer_group.group2->id]))>'
                     ],
                     [
                         'type' => 'customergroupproductvisibilities',
-                        'id'   => '<(implode("-", [@product-3->id, @customer_group.group3->id]))>',
-                    ],
-                ],
+                        'id' => '<(implode("-", [@product-3->id, @customer_group.group3->id]))>'
+                    ]
+                ]
             ],
             $response
         );
@@ -107,17 +108,17 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
                 'data' => [
                     [
                         'type' => 'customergroupproductvisibilities',
-                        'id'   => '<(implode("-", [@product-3->id, @customer_group.group3->id]))>',
+                        'id' => '<(implode("-", [@product-3->id, @customer_group.group3->id]))>'
                     ],
                     [
                         'type' => 'customergroupproductvisibilities',
-                        'id'   => '<(implode("-", [@product-2->id, @customer_group.group2->id]))>',
+                        'id' => '<(implode("-", [@product-2->id, @customer_group.group2->id]))>'
                     ],
                     [
                         'type' => 'customergroupproductvisibilities',
-                        'id'   => '<(implode("-", [@product-1->id, @customer_group.group1->id]))>',
-                    ],
-                ],
+                        'id' => '<(implode("-", [@product-1->id, @customer_group.group1->id]))>'
+                    ]
+                ]
             ],
             $response
         );
@@ -135,18 +136,17 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
                 'data' => [
                     [
                         'type' => 'customergroupproductvisibilities',
-                        'id'   => '<(implode("-", [@product-1->id, @customer_group.group1->id]))>',
+                        'id' => '<(implode("-", [@product-1->id, @customer_group.group1->id]))>'
                     ],
                     [
                         'type' => 'customergroupproductvisibilities',
-                        'id'   => '<(implode("-", [@product-2->id, @customer_group.group2->id]))>',
+                        'id' => '<(implode("-", [@product-2->id, @customer_group.group2->id]))>'
                     ],
                     [
                         'type' => 'customergroupproductvisibilities',
-                        'id'   => '<(implode("-", [@product-3->id, @customer_group.group3->id]))>',
-                    ],
-
-                ],
+                        'id' => '<(implode("-", [@product-3->id, @customer_group.group3->id]))>'
+                    ]
+                ]
             ],
             $response
         );
@@ -164,17 +164,17 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
                 'data' => [
                     [
                         'type' => 'customergroupproductvisibilities',
-                        'id'   => '<(implode("-", [@product-3->id, @customer_group.group3->id]))>',
+                        'id' => '<(implode("-", [@product-3->id, @customer_group.group3->id]))>'
                     ],
                     [
                         'type' => 'customergroupproductvisibilities',
-                        'id'   => '<(implode("-", [@product-2->id, @customer_group.group2->id]))>',
+                        'id' => '<(implode("-", [@product-2->id, @customer_group.group2->id]))>'
                     ],
                     [
                         'type' => 'customergroupproductvisibilities',
-                        'id'   => '<(implode("-", [@product-1->id, @customer_group.group1->id]))>',
-                    ],
-                ],
+                        'id' => '<(implode("-", [@product-1->id, @customer_group.group1->id]))>'
+                    ]
+                ]
             ],
             $response
         );
@@ -194,9 +194,9 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
                 'data' => [
                     [
                         'type' => 'customergroupproductvisibilities',
-                        'id'   => '<(implode("-", [@product-1->id, @customer_group.group1->id]))>',
-                    ],
-                ],
+                        'id' => '<(implode("-", [@product-1->id, @customer_group.group1->id]))>'
+                    ]
+                ]
             ],
             $response
         );
@@ -214,9 +214,9 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
                 'data' => [
                     [
                         'type' => 'customergroupproductvisibilities',
-                        'id'   => '<(implode("-", [@product-1->id, @customer_group.group1->id]))>',
-                    ],
-                ],
+                        'id' => '<(implode("-", [@product-1->id, @customer_group.group1->id]))>'
+                    ]
+                ]
             ],
             $response
         );
@@ -234,9 +234,9 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
                 'data' => [
                     [
                         'type' => 'customergroupproductvisibilities',
-                        'id'   => '<(implode("-", [@product-1->id, @customer_group.group1->id]))>',
-                    ],
-                ],
+                        'id' => '<(implode("-", [@product-1->id, @customer_group.group1->id]))>'
+                    ]
+                ]
             ],
             $response
         );
@@ -246,25 +246,19 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
     {
         $requestData = [
             'data' => [
-                'type'          => 'customergroupproductvisibilities',
-                'attributes'    => [
-                    'visibility' => 'visible',
+                'type' => 'customergroupproductvisibilities',
+                'attributes' => [
+                    'visibility' => 'visible'
                 ],
                 'relationships' => [
-                    'product'       => [
-                        'data' => [
-                            'type' => 'products',
-                            'id'   => '<toString(@product-4->id)>',
-                        ],
+                    'product' => [
+                        'data' => ['type' => 'products', 'id' => '<toString(@product-4->id)>']
                     ],
                     'customerGroup' => [
-                        'data' => [
-                            'type' => 'customergroups',
-                            'id'   => '<toString(@customer_group.anonymous->id)>',
-                        ],
-                    ],
-                ],
-            ],
+                        'data' => ['type' => 'customergroups', 'id' => '<toString(@customer_group.anonymous->id)>']
+                    ]
+                ]
+            ]
         ];
 
         $response = $this->post(
@@ -277,18 +271,15 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         $responseContent = $this->updateResponseContent($responseContent, $response);
         $this->assertResponseContains($responseContent, $response);
 
-        $visibility = $this->getEntityManager()->getRepository(CustomerGroupProductVisibility::class)->findOneBy(
-            [
-                'product' => $this->getReference('product-4')->getId(),
-            ]
-        );
+        $visibility = $this->getEntityManager()->getRepository(CustomerGroupProductVisibility::class)
+            ->findOneBy(['product' => $this->getReference('product-4')->getId()]);
         self::assertMessagesSent(
             ResolveProductVisibilityTopic::getName(),
             [
                 [
                     'entity_class_name' => CustomerGroupProductVisibility::class,
-                    'id'                => $visibility->getId(),
-                ],
+                    'id' => $visibility->getId()
+                ]
             ]
         );
     }
@@ -297,25 +288,19 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
     {
         $requestData = [
             'data' => [
-                'type'          => 'customergroupproductvisibilities',
-                'attributes'    => [
-                    'visibility' => 'visible',
+                'type' => 'customergroupproductvisibilities',
+                'attributes' => [
+                    'visibility' => 'visible'
                 ],
                 'relationships' => [
-                    'product'       => [
-                        'data' => [
-                            'type' => 'products',
-                            'id'   => '<toString(@product-1->id)>',
-                        ],
+                    'product' => [
+                        'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                     ],
                     'customerGroup' => [
-                        'data' => [
-                            'type' => 'customergroups',
-                            'id'   => '<toString(@customer_group.group1->id)>',
-                        ],
-                    ],
-                ],
-            ],
+                        'data' => ['type' => 'customergroups', 'id' => '<toString(@customer_group.group1->id)>']
+                    ]
+                ]
+            ]
         ];
 
         $response = $this->post(
@@ -327,8 +312,8 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'conflict constraint',
-                'detail' => 'The visibility entity already exists.',
+                'title' => 'conflict constraint',
+                'detail' => 'The visibility entity already exists.'
             ],
             $response,
             Response::HTTP_CONFLICT
@@ -339,28 +324,22 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
     {
         $requestData = [
             'data' => [
-                'type'          => 'customergroupproductvisibilities',
-                'attributes'    => [
-                    'visibility' => 'visible',
+                'type' => 'customergroupproductvisibilities',
+                'attributes' => [
+                    'visibility' => 'visible'
                 ],
                 'relationships' => [
-                    'product'       => [
-                        'data' => [
-                            'type' => 'products',
-                            'id'   => 'new_product',
-                        ],
+                    'product' => [
+                        'data' => ['type' => 'products', 'id' => 'new_product']
                     ],
                     'customerGroup' => [
-                        'data' => [
-                            'type' => 'customergroups',
-                            'id'   => '<toString(@customer_group.group1->id)>',
-                        ],
-                    ],
-                ],
+                        'data' => ['type' => 'customergroups', 'id' => '<toString(@customer_group.group1->id)>']
+                    ]
+                ]
             ],
             'included' => [
-                ['type' => 'products', 'id' => 'new_product'],
-            ],
+                ['type' => 'products', 'id' => 'new_product']
+            ]
         ];
 
         $response = $this->post(
@@ -372,7 +351,7 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'request data constraint',
+                'title' => 'request data constraint',
                 'detail' => 'The included data are not supported for this resource type.',
                 'source' => ['pointer' => '/included']
             ],
@@ -385,12 +364,12 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         $visibilityId = $this->getId('product-1', 'customer_group.group1');
         $requestData = [
             'data' => [
-                'type'       => 'customergroupproductvisibilities',
-                'id'         => $visibilityId,
+                'type' => 'customergroupproductvisibilities',
+                'id' => $visibilityId,
                 'attributes' => [
-                    'visibility' => 'hidden',
-                ],
-            ],
+                    'visibility' => 'hidden'
+                ]
+            ]
         ];
 
         $response = $this->patch(
@@ -406,8 +385,8 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
             [
                 [
                     'entity_class_name' => CustomerGroupProductVisibility::class,
-                    'id'                => $this->getReference('visibility_1')->getId(),
-                ],
+                    'id' => $this->getReference('visibility_1')->getId()
+                ]
             ]
         );
     }
@@ -416,25 +395,19 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
     {
         $requestData = [
             'data' => [
-                'type'          => 'customergroupproductvisibilities',
-                'attributes'    => [
-                    'visibility' => 'wrong',
+                'type' => 'customergroupproductvisibilities',
+                'attributes' => [
+                    'visibility' => 'wrong'
                 ],
                 'relationships' => [
-                    'product'       => [
-                        'data' => [
-                            'type' => 'products',
-                            'id'   => '<toString(@product-5->id)>',
-                        ],
+                    'product' => [
+                        'data' => ['type' => 'products', 'id' => '<toString(@product-5->id)>']
                     ],
                     'customerGroup' => [
-                        'data' => [
-                            'type' => 'customergroups',
-                            'id'   => '<toString(@customer_group.anonymous->id)>',
-                        ],
-                    ],
-                ],
-            ],
+                        'data' => ['type' => 'customergroups', 'id' => '<toString(@customer_group.anonymous->id)>']
+                    ]
+                ]
+            ]
         ];
 
         $response = $this->post(
@@ -446,9 +419,9 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'visibility type constraint',
+                'title' => 'visibility type constraint',
                 'detail' => 'The value should be one of current_product, hidden, visible.',
-                'source' => ['pointer' => '/data/attributes/visibility'],
+                'source' => ['pointer' => '/data/attributes/visibility']
             ],
             $response
         );
@@ -458,19 +431,16 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
     {
         $requestData = [
             'data' => [
-                'type'          => 'customergroupproductvisibilities',
-                'attributes'    => [
-                    'visibility' => 'visible',
+                'type' => 'customergroupproductvisibilities',
+                'attributes' => [
+                    'visibility' => 'visible'
                 ],
                 'relationships' => [
                     'customerGroup' => [
-                        'data' => [
-                            'type' => 'customergroups',
-                            'id'   => '<toString(@customer_group.anonymous->id)>',
-                        ],
-                    ],
-                ],
-            ],
+                        'data' => ['type' => 'customergroups', 'id' => '<toString(@customer_group.anonymous->id)>']
+                    ]
+                ]
+            ]
         ];
 
         $response = $this->post(
@@ -482,9 +452,9 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'not null constraint',
+                'title' => 'not null constraint',
                 'detail' => 'This value should not be null.',
-                'source' => ['pointer' => '/data/relationships/product/data'],
+                'source' => ['pointer' => '/data/relationships/product/data']
             ],
             $response
         );
@@ -494,19 +464,16 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
     {
         $requestData = [
             'data' => [
-                'type'          => 'customergroupproductvisibilities',
-                'attributes'    => [
-                    'visibility' => 'visible',
+                'type' => 'customergroupproductvisibilities',
+                'attributes' => [
+                    'visibility' => 'visible'
                 ],
                 'relationships' => [
                     'product' => [
-                        'data' => [
-                            'type' => 'products',
-                            'id'   => '<toString(@product-5->id)>',
-                        ],
-                    ],
-                ],
-            ],
+                        'data' => ['type' => 'products', 'id' => '<toString(@product-5->id)>']
+                    ]
+                ]
+            ]
         ];
 
         $response = $this->post(
@@ -518,9 +485,9 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'not null constraint',
+                'title' => 'not null constraint',
                 'detail' => 'This value should not be null.',
-                'source' => ['pointer' => '/data/relationships/customerGroup/data'],
+                'source' => ['pointer' => '/data/relationships/customerGroup/data']
             ],
             $response
         );
@@ -530,22 +497,16 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
     {
         $requestData = [
             'data' => [
-                'type'          => 'customergroupproductvisibilities',
+                'type' => 'customergroupproductvisibilities',
                 'relationships' => [
-                    'product'       => [
-                        'data' => [
-                            'type' => 'products',
-                            'id'   => '<toString(@product-5->id)>',
-                        ],
+                    'product' => [
+                        'data' => ['type' => 'products', 'id' => '<toString(@product-5->id)>']
                     ],
                     'customerGroup' => [
-                        'data' => [
-                            'type' => 'customergroups',
-                            'id'   => '<toString(@customer_group.anonymous->id)>',
-                        ],
-                    ],
-                ],
-            ],
+                        'data' => ['type' => 'customergroups', 'id' => '<toString(@customer_group.anonymous->id)>']
+                    ]
+                ]
+            ]
         ];
 
         $response = $this->post(
@@ -557,9 +518,9 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'visibility type constraint',
+                'title' => 'visibility type constraint',
                 'detail' => 'The value should be one of current_product, hidden, visible.',
-                'source' => ['pointer' => '/data/attributes/visibility'],
+                'source' => ['pointer' => '/data/attributes/visibility']
             ],
             $response
         );
@@ -570,17 +531,14 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         $visibilityId = $this->getId('product-1', 'customer_group.group1');
         $requestData = [
             'data' => [
-                'type'          => 'customergroupproductvisibilities',
-                'id'            => $visibilityId,
+                'type' => 'customergroupproductvisibilities',
+                'id' => $visibilityId,
                 'relationships' => [
                     'product' => [
-                        'data' => [
-                            'type' => 'products',
-                            'id'   => '<toString(@product-2->id)>',
-                        ],
-                    ],
-                ],
-            ],
+                        'data' => ['type' => 'products', 'id' => '<toString(@product-2->id)>']
+                    ]
+                ]
+            ]
         ];
 
         $response = $this->patch(
@@ -591,17 +549,14 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'          => 'customergroupproductvisibilities',
-                    'id'            => $visibilityId,
+                    'type' => 'customergroupproductvisibilities',
+                    'id' => $visibilityId,
                     'relationships' => [
                         'product' => [
-                            'data' => [
-                                'type' => 'products',
-                                'id'   => '<toString(@product-1->id)>',
-                            ],
-                        ],
-                    ],
-                ],
+                            'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
+                        ]
+                    ]
+                ]
             ],
             $response
         );
@@ -612,17 +567,14 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         $visibilityId = $this->getId('product-1', 'customer_group.group1');
         $requestData = [
             'data' => [
-                'type'          => 'customergroupproductvisibilities',
-                'id'            => $visibilityId,
+                'type' => 'customergroupproductvisibilities',
+                'id' => $visibilityId,
                 'relationships' => [
                     'customerGroup' => [
-                        'data' => [
-                            'type' => 'customergroups',
-                            'id'   => '<toString(@customer_group.anonymous->id)>',
-                        ],
-                    ],
-                ],
-            ],
+                        'data' => ['type' => 'customergroups', 'id' => '<toString(@customer_group.anonymous->id)>']
+                    ]
+                ]
+            ]
         ];
 
         $response = $this->patch(
@@ -633,17 +585,14 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'          => 'customergroupproductvisibilities',
-                    'id'            => $visibilityId,
+                    'type' => 'customergroupproductvisibilities',
+                    'id' => $visibilityId,
                     'relationships' => [
                         'customerGroup' => [
-                            'data' => [
-                                'type' => 'customergroups',
-                                'id'   => '<toString(@customer_group.group1->id)>',
-                            ],
-                        ],
-                    ],
-                ],
+                            'data' => ['type' => 'customergroups', 'id' => '<toString(@customer_group.group1->id)>']
+                        ]
+                    ]
+                ]
             ],
             $response
         );
@@ -658,10 +607,9 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
         $visibilityApiId = $productId . '-' . $scope->getCustomerGroup()->getId();
         $visibilityId = $visibility->getId();
 
-        $this->delete([
-            'entity' => 'customergroupproductvisibilities',
-            'id'     => $visibilityApiId,
-        ]);
+        $this->delete(
+            ['entity' => 'customergroupproductvisibilities', 'id' => $visibilityApiId]
+        );
 
         self::assertNull(
             $this->getEntityManager()->find(CustomerGroupProductVisibility::class, $visibilityId)
@@ -673,9 +621,9 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
                 [
                     'entity_class_name' => CustomerGroupProductVisibility::class,
                     'target_class_name' => Product::class,
-                    'target_id'         => $productId,
-                    'scope_id'          => $scope->getId(),
-                ],
+                    'target_id' => $productId,
+                    'scope_id' => $scope->getId()
+                ]
             ]
         );
     }

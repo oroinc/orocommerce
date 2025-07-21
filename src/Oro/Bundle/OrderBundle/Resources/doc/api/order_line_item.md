@@ -308,7 +308,7 @@ Retrieve a list of order product kit item line item records assigned to a specif
 
 #### get_relationship
 
-Retrieve IDs of order product kit item line item records assigned to a specific line item record.
+Retrieve the IDs of order product kit item line item records assigned to a specific line item record.
 
 #### update_relationship
 

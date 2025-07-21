@@ -171,8 +171,8 @@ data:
         attributes:
             updatedAt: '@product3_image3->updatedAt->format("Y-m-d\TH:i:s\Z")'
             mimeType: image/jpeg
-            types: {  }
-            files: {  }
+            types: []
+            files: []
         relationships:
             product:
                 data:

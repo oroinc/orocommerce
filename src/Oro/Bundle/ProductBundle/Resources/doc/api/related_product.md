@@ -10,7 +10,7 @@ Retrieve a relationship between the main product and one of its related products
 
 ### get_list
 
-Retrieve collections of related product relationships. An item in the collection is a relationship between the main product and one of its related products.
+Retrieve a collection of related product relationships. An item in the collection is a relationship between the main product and one of its related products.
 
 **Definition:** In the product details, related products (like accessories, additional services, and similar products) may be shown to the buyer and sales manager in the Related Items section, alongside with the up-sell and cross-sell products.
 

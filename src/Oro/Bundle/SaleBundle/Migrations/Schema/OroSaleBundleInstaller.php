@@ -38,7 +38,7 @@ class OroSaleBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_22';
+        return 'v1_25';
     }
 
     #[\Override]
@@ -122,6 +122,7 @@ class OroSaleBundleInstaller implements
         $table = $schema->createTable('oro_sale_quote');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('guest_access_id', 'guid', ['notnull' => false]);
+        $table->addColumn('visitor_id', 'integer', ['notnull' => false]);
         $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('request_id', 'integer', ['notnull' => false]);
@@ -152,6 +153,7 @@ class OroSaleBundleInstaller implements
             'comment' => '(DC2Type:money)'
         ]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn('project_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['shipping_address_id'], 'UNIQ_4F66B6F64D4CFF2B');
     }
@@ -341,6 +343,12 @@ class OroSaleBundleInstaller implements
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_visitor'),
+            ['visitor_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
     }
 
     /**
@@ -434,6 +442,16 @@ class OroSaleBundleInstaller implements
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'application/vnd.ms-powerpoint',
                 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            ],
+            2
+        );
+        $this->attachmentExtension->addMultiFileRelation(
+            $schema,
+            'oro_sale_quote',
+            'documents',
+            [
+                'attachment' => ['file_applications' => ['default', 'commerce']],
+                'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM]
             ],
             2
         );

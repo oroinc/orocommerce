@@ -11,7 +11,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     const ROOT_NODE = 'oro_rfp';
-    const DEFAULT_GUEST_RFP_OWNER = 'default_guest_rfp_owner';
 
     #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
@@ -52,11 +51,9 @@ class Configuration implements ConfigurationInterface
                         ),
                     ]
                 ],
-                'guest_rfp' => [
-                    'type' => 'boolean',
-                    'value' => false,
-                ],
-                self::DEFAULT_GUEST_RFP_OWNER => ['type' => 'string', 'value' => null],
+                'guest_rfp' => ['type' => 'boolean', 'value' => false],
+                'default_guest_rfp_owner' => ['type' => 'string', 'value' => null],
+                'enable_rfq_project_name' => ['type' => 'boolean', 'value' => true],
             ]
         );
 

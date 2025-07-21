@@ -22,7 +22,11 @@ data:
         totalExcludingTax: '11.8500'
         totalTaxAmount: '0.5800'
         paymentTerm: '@payment_term_net_10->label'
-        discounts: []
+        discounts:
+            -
+                type: 'promotion.order'
+                description: 'Discount'
+                amount: '10.0000'
         shippingTrackings: []
     relationships:
         billingAddress:

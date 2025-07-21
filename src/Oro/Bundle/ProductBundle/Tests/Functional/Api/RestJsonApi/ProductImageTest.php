@@ -9,6 +9,7 @@ use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
@@ -23,6 +24,47 @@ class ProductImageTest extends RestJsonApiTestCase
     {
         parent::setUp();
         $this->loadFixtures([LoadProductData::class]);
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    #[\Override]
+    protected function assertResponseContains(
+        array|string $expectedContent,
+        Response $response,
+        bool $ignoreOrder = false
+    ): void {
+        $data = $this->getResponseData($expectedContent);
+        $additionalData = [];
+        if (isset($data['data'])) {
+            if (array_is_list($data['data'])) {
+                foreach ($data['data'] as $i => $item) {
+                    if ('files' === $item['type'] && isset($item['attributes']['filePath'])) {
+                        $additionalData['data'][$i]['attributes']['filePath'] = $item['attributes']['filePath'];
+                        unset($data['data'][$i]['attributes']['filePath']);
+                    }
+                }
+            } else {
+                $item = $data['data'];
+                if ('files' === $item['type'] && isset($item['attributes']['filePath'])) {
+                    $additionalData['data']['attributes']['filePath'] = $item['attributes']['filePath'];
+                    unset($data['data']['attributes']['filePath']);
+                }
+            }
+        }
+        if (isset($data['included'])) {
+            foreach ($data['included'] as $i => $item) {
+                if ('files' === $item['type'] && isset($item['attributes']['filePath'])) {
+                    $additionalData['included'][$i]['attributes']['filePath'] = $item['attributes']['filePath'];
+                    unset($data['included'][$i]['attributes']['filePath']);
+                }
+            }
+        }
+        parent::assertResponseContains($data, $response, $ignoreOrder);
+        if ($additionalData) {
+            self::assertArrayContains($additionalData, self::jsonToArray($response->getContent()));
+        }
     }
 
     private static function updateExpectedData(array $expectedData, array $replace): array

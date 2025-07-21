@@ -31,49 +31,57 @@
         flatData: flatData,
         uniqueUnits: uniqueUnits
     }) %}
-
-    {% if flatData|length %}
-        <div class="product-prices"
-             data-page-component-view="oropricing/js/app/views/list-item-product-prices-view"
-             data-page-component-options="{{ {
-                 showValuePrice: false,
-                 showListedPrice: false,
-                 showHint: false,
-                 modelAttr: {
-                     prices: productPrices,
-                 }
-             }|json_encode }}"
-        >
-            <div class="scrollable-container styled-scrollbar horizontal-scrolling"
-                 data-page-component-view="orofrontend/js/app/views/scroll-shadow-view"
-                 data-page-component-options="{{ {
-                     scrollOffsets: {
-                         'left': 'th:first'
-                     }
-                 }|json_encode }}"
-                 data-scroll-target=""
-            >
-                {{ block_widget(block) }}
-            </div>
-        </div>
-    {% endif %}
+    {{ block_widget(block) }}
 {% endblock %}
 
 {% block __oro_product_price_table__product_price_multi_unit_table_widget %}
-    <table class="product-prices-table stick-first-row">
-        <thead class="product-prices-table__thead">
-            <tr>
-                <th class="product-prices-table__th text-left" scope="col">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>
-                {% for unit in uniqueUnits %}
-                    <th class="product-prices-table__th text-right" scope="col">
-                        {% set showCurrencySymbol = currencies is defined and currencies|length > 1 %}
-                        {{- (showCurrencySymbol ? oro_currency_symbol(unit.currency) ~ ', ' : '') ~ unit.formatted_unit -}}
-                    </th>
-                {% endfor %}
-            </tr>
-        </thead>
-        {{ block_widget(block) }}
-    </table>
+    {# Do not show tier prices table if there is only one unit and one tier #}
+    {% set displayTiers = uniqueUnits|length > 1 or flatData|length > 1 %}
+    {% if flatData|length == 1 %}
+        {# Show if one row has multiple unit prices
+           Qty Item   Set
+           1+  $17.96 $10.50
+        #}
+        {% set displayTiers = flatData|first.units|default([])|length > 1 %}
+    {% endif %}
+    <div class="product-prices"
+         data-page-component-view="oropricing/js/app/views/list-item-product-prices-view"
+         data-page-component-options="{{ {
+             showValuePrice: false,
+             showListedPrice: false,
+             showHint: false,
+             modelAttr: {
+                 prices: productPrices,
+             }
+         }|json_encode }}"
+    >
+        {% if displayTiers %}
+            <div class="scrollable-container styled-scrollbar horizontal-scrolling"
+                     data-page-component-view="orofrontend/js/app/views/scroll-shadow-view"
+                     data-page-component-options="{{ {
+                         scrollOffsets: {
+                             'left': 'th:first'
+                         }
+                     }|json_encode }}"
+                     data-scroll-target=""
+                >
+                    <table class="product-prices-table stick-first-row">
+                        <thead class="product-prices-table__thead">
+                        <tr>
+                            <th class="product-prices-table__th text-left" scope="col">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>
+                            {% for unit in uniqueUnits %}
+                                <th class="product-prices-table__th text-right" scope="col">
+                                    {% set showCurrencySymbol = currencies is defined and currencies|length > 1 %}
+                                    {{- (showCurrencySymbol ? oro_currency_symbol(unit.currency) ~ ', ' : '') ~ unit.formatted_unit -}}
+                                </th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        {{ block_widget(block) }}
+                    </table>
+                </div>
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block __oro_product_price_table__product_price_multi_unit_table_body_widget %}
@@ -130,11 +138,47 @@
 {% block __oro_product_price_table__product_price_single_unit_table_widget %}
     {% set avaliablePrices = productPrices|filter(price => price.formatted_unit is defined) %}
     {% if avaliablePrices|length %}
-        <div data-page-component-view="oropricing/js/app/views/price-single-unit-table-view"
+        {% set units = {} %}
+        {% set displayTiers = false %}
+        {% for price in avaliablePrices %}
+            {% set unit = price.unit %}
+            {% set units = units|merge({ (unit): (units[unit] is defined ? units[unit] + 1 : 1) }) %}
+        {% endfor %}
+        {% for val in units %}
+            {# Do not show tier prices table if there is only one unit and one tier #}
+            {% if val != 1 %}
+                {% set displayTiers = true %}
+            {% endif %}
+        {% endfor %}
+        <div class="product-prices"
+             data-page-component-view="oropricing/js/app/views/list-item-product-prices-view"
              data-page-component-options="{{ {
-                 'prices': avaliablePrices,
-                 'showCurrencySymbol': currencies is defined and currencies|length > 1
+                 showValuePrice: false,
+                 showListedPrice: false,
+                 showHint: false,
+                 modelAttr: {
+                     prices: productPrices,
+                 }
              }|json_encode }}"
-        ></div>
+        >
+        {% if displayTiers %}
+            <div class="scrollable-container styled-scrollbar horizontal-scrolling"
+                     data-page-component-view="orofrontend/js/app/views/scroll-shadow-view"
+                     data-page-component-options="{{ {
+                         scrollOffsets: {
+                             'left': 'th:first'
+                         }
+                     }|json_encode }}"
+                     data-scroll-target=""
+                >
+                    <div data-page-component-view="oropricing/js/app/views/price-single-unit-table-view"
+                         data-page-component-options="{{ {
+                             'prices': avaliablePrices,
+                             'showCurrencySymbol': currencies is defined and currencies|length > 1
+                         }|json_encode }}"
+                    ></div>
+                </div>
+        {% endif %}
+        </div>
     {% endif %}
 {% endblock %}

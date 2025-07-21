@@ -455,7 +455,7 @@ Retrieve line item records assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve IDs of line item records assigned to a specific order record.
+Retrieve the IDs of line item records assigned to a specific order record.
 
 ### shippingAddress
 
@@ -495,7 +495,7 @@ Retrieve a record of suborder assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve IDs of suborders records assigned to a specific order record.
+Retrieve the IDs of suborders records assigned to a specific order record.
 
 ### status
 

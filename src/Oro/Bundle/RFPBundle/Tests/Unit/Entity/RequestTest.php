@@ -48,6 +48,8 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ['company', 'JohnDow Inc.'],
             ['role', 'cto'],
             ['note', 'test_request_notes'],
+            ['poNumber', '1'],
+            ['projectName', 'Test Project'],
             ['createdAt', $date, false],
             ['updatedAt', $date, false],
             ['website', new Website()],

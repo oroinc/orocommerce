@@ -212,7 +212,7 @@ Retrieve a record of region assigned to a specific region record.
 
 #### get_relationship
 
-Retrieve IDs of region records assigned to a specific region record.
+Retrieve the IDs of region records assigned to a specific region record.
 
 ### customerAddress
 

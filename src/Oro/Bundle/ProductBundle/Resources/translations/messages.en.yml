@@ -861,6 +861,7 @@ oro:
                 description: Quick add products to order, RFQ or shopping cart
                 clear: Clear All
                 form_title: 'Products List'
+                submit: 'Submit'
                 copy_paste:
                     title: 'Paste Your Order'
                     description: 'Copy and paste your order with the item number, quantity (and optionally units), separated by spaces, semicolons or commas.'

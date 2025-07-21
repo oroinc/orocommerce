@@ -1,0 +1,61 @@
+search:
+    Oro\Bundle\SaleBundle\Entity\Quote:
+        alias:                          oro_sale_quote
+        route:
+            name:                       oro_sale_quote_view
+            parameters:
+                id:                     id
+        search_template:                '@OroSale/Quote/searchResult.html.twig'
+        fields:
+            -
+                name:                   email
+                target_type:            text
+                target_fields:          [email]
+            -
+                name:                   poNumber
+                target_type:            text
+                target_fields:          [poNumber]
+            -
+                name:                   request
+                relation_type:          many-to-one
+                relation_fields:
+                    -
+                        name:           firstName
+                        target_type:    text
+                        target_fields:  [requestFirstName]
+                    -
+                        name:           lastName
+                        target_type:    text
+                        target_fields:  [requestLastName]
+                    -
+                        name:           email
+                        target_type:    text
+                        target_fields:  [requestEmail]
+                    -
+                        name:           phone
+                        target_type:    text
+                        target_fields:  [requestPhone]
+                    -
+                        name:           company
+                        target_type:    text
+                        target_fields:  [requestCompany]
+                    -
+                        name:           role
+                        target_type:    text
+                        target_fields:  [requestRole]
+            -
+                name:                   customer_status
+                relation_type:          many-to-one
+                relation_fields:
+                    -
+                        name:           name
+                        target_type:    text
+                        target_fields:  [customerStatus]
+            -
+                name:                   internal_status
+                relation_type:          many-to-one
+                relation_fields:
+                    -
+                        name:           name
+                        target_type:    text
+                        target_fields:  [internalStatus]

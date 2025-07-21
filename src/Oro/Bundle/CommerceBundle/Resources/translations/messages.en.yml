@@ -74,6 +74,8 @@ oro:
                 page:
                     title: 'Welcome,  %userName%!'
                 view_all: 'View All'
+                scorecard_nav:
+                    title: 'Scorecard'
                 widgets:
                     purchase_volume_chart:
                         title: 'Purchase Volume'

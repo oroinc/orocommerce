@@ -239,7 +239,7 @@ Retrieve records of an order fulfillment officers assigned to a specific quote r
 
 #### get_relationship
 
-Retrieve IDs of an order fulfillment officers records assigned to a specific quote record.
+Retrieve the IDs of an order fulfillment officers records assigned to a specific quote record.
 
 #### update_relationship
 
@@ -318,7 +318,7 @@ Retrieve records of customer users that will receive the order delivery assigned
 
 #### get_relationship
 
-Retrieve IDs of customer users that will receive the order delivery records assigned to a specific quote record.
+Retrieve the IDs of customer users that will receive the order delivery records assigned to a specific quote record.
 
 #### update_relationship
 
@@ -397,7 +397,7 @@ Retrieve records of quoted products assigned to a specific quote record.
 
 #### get_relationship
 
-Retrieve IDs of quoted products records assigned to a specific quote record.
+Retrieve the IDs of quoted products records assigned to a specific quote record.
 
 #### update_relationship
 
@@ -698,7 +698,7 @@ Retrieve a record of website assigned to a specific quote record.
 
 #### get_relationship
 
-Retrieve IDs of website records assigned to a specific quote record.
+Retrieve the IDs of website records assigned to a specific quote record.
 
 #### update_relationship
 
@@ -730,7 +730,7 @@ The quote customer status reflects the step of its management in the front store
 
 ### get_list
 
-Retrieve a specific quote customer status record.
+Retrieve a collection of quote customer status records.
 
 The quote customer status reflects the step of its management in the front store.
 
@@ -747,6 +747,6 @@ The quote internal status reflects the step of its backoffice management.
 
 ### get_list
 
-Retrieve a specific quote internal status record.
+Retrieve a collection of quote internal status record.
 
 The quote internal status reflects the step of its backoffice management.

@@ -22,30 +22,13 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
 {
     use EntityTrait;
 
-    /** @var CombinedPriceListsBuilderFacade|MockObject */
-    private $combinedPriceListsBuilderFacade;
-
-    /** @var ProductPriceBuilder|MockObject */
-    private $priceBuilder;
-
-    /** @var PriceListProductAssignmentBuilder|MockObject */
-    private $assignmentBuilder;
-
-    /** @var ObjectManager|MockObject */
-    private $objectManager;
-
-    /** @var PriceListRepository|MockObject */
-    private $priceListRepository;
-
-    /**
-     * @var CombinedPriceListAssociationsProvider|MockObject
-     */
-    private $associationsProvider;
-
-    /**
-     * @var CombinedPriceListProvider|MockObject
-     */
-    private $combinedPriceListProvider;
+    private CombinedPriceListsBuilderFacade&MockObject $combinedPriceListsBuilderFacade;
+    private ProductPriceBuilder&MockObject $priceBuilder;
+    private PriceListProductAssignmentBuilder&MockObject $assignmentBuilder;
+    private ObjectManager&MockObject $objectManager;
+    private PriceListRepository&MockObject $priceListRepository;
+    private CombinedPriceListAssociationsProvider&MockObject $associationsProvider;
+    private CombinedPriceListProvider&MockObject $combinedPriceListProvider;
 
     #[\Override]
     protected function setUp(): void
@@ -75,7 +58,7 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
     }
 
     #[\Override]
-    public function testOnPostLoad()
+    public function testOnPostLoad(): void
     {
         $this->event->expects($this->once())
             ->method('isDemoFixtures')
@@ -143,7 +126,7 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
     }
 
     #[\Override]
-    public function testOnPostLoadWithNoDemoFixtures()
+    public function testOnPostLoadWithNoDemoFixtures(): void
     {
         $this->event->expects($this->once())
             ->method('isDemoFixtures')

@@ -15,8 +15,11 @@ operations:
                 component: oroui/js/standart-confirmation
         preactions:
             -   '@assign_constant_value':
-                    attribute: $.paymentMethodAction
+                    attribute: $.authorizePaymentMethodAction
                     value: Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::AUTHORIZE
+            -   '@assign_constant_value':
+                    attribute: $.capturePaymentMethodAction
+                    value: Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::CAPTURE
             -   '@call_service_method':
                     service: oro_payment.payment_method.composite_provider
                     method: hasPaymentMethod
@@ -31,8 +34,21 @@ operations:
                     attribute: $.paymentMethod
             -   '@call_method':
                     conditions:
+                        '@equal': [ $.hasPaymentMethod, true ]
+                    attribute: $.isActionSupported
+                    object: $.paymentMethod
+                    method: supports
+                    method_parameters:
+                        - $.capturePaymentMethodAction
+            -   '@get_class_name':
+                    conditions:
+                        '@equal': [ $.hasPaymentMethod, true ]
+                    attribute: $.paymentMethodClass
+                    object: $.paymentMethod
+            -   '@call_method':
+                    conditions:
                         '@instanceof': [ $.paymentMethod, Oro\Bundle\PaymentBundle\Method\Action\CaptureActionInterface ]
-                    attribute: $.paymentMethodAction
+                    attribute: $.authorizePaymentMethodAction
                     object: $.paymentMethod
                     method: getSourceAction
                     method_parameters: [ ]
@@ -49,9 +65,10 @@ operations:
         preconditions:
             '@and':
                 -   '@acl_granted': [ 'CHARGE_AUTHORIZED_PAYMENTS', $.entity ]
-                -   '@equal': [ $.data.action, $.paymentMethodAction ]
+                -   '@equal': [ $.data.action, $.authorizePaymentMethodAction ]
                 -   '@equal': [ $.data.active, true ]
                 -   '@equal': [ $.data.successful, true ]
+                -   '@equal': [ $.isActionSupported, true ]
                 -   '@not_empty': $.paymentMethod
                 -   '@not':
                         -   '@payment_transaction_was_charged':
@@ -105,10 +122,10 @@ operations:
                             -   NotBlank: ~
         preactions:
             -   '@assign_constant_value':
-                    attribute: $.paymentMethodAction
+                    attribute: $.authorizePaymentMethodAction
                     value: Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::AUTHORIZE
             -   '@assign_constant_value':
-                    attribute: $.cancelAction
+                    attribute: $.cancelPaymentMethodAction
                     value: Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::CANCEL
             -   '@call_service_method':
                     service: oro_payment.payment_method.composite_provider
@@ -123,11 +140,18 @@ operations:
                     method_parameters: [ $.data.paymentMethod ]
                     attribute: $.paymentMethod
             -   '@call_method':
+                    conditions:
+                        '@equal': [ $.hasPaymentMethod, true ]
                     attribute: $.isActionSupported
                     object: $.paymentMethod
                     method: supports
                     method_parameters:
-                        - $.cancelAction
+                        - $.cancelPaymentMethodAction
+            -   '@get_class_name':
+                    conditions:
+                        '@equal': [ $.hasPaymentMethod, true ]
+                    attribute: $.paymentMethodClass
+                    object: $.paymentMethod
             -   '@call_service_method':
                     service: oro_locale.formatter.number
                     method: formatCurrency
@@ -142,7 +166,7 @@ operations:
         preconditions:
             '@and':
                 -   '@acl_granted': [ 'CANCEL_PAYMENTS', $.entity ]
-                -   '@equal': [ $.data.action, $.paymentMethodAction ]
+                -   '@equal': [ $.data.action, $.authorizePaymentMethodAction ]
                 -   '@equal': [ $.data.active, true ]
                 -   '@equal': [ $.data.successful, true ]
                 -   '@equal': [ $.isActionSupported, true ]
@@ -212,10 +236,16 @@ operations:
                 cancelText: oro.payment.payment_transaction.refund.button.resetText
         preactions:
             -   '@assign_constant_value':
-                    attribute: $.paymentMethodAction
+                    attribute: $.purchasePaymentMethodAction
+                    value: Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::PURCHASE
+            -   '@assign_constant_value':
+                    attribute: $.chargePaymentMethodAction
+                    value: Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::CHARGE
+            -   '@assign_constant_value':
+                    attribute: $.capturePaymentMethodAction
                     value: Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::CAPTURE
             -   '@assign_constant_value':
-                    attribute: $.refundAction
+                    attribute: $.refundPaymentMethodAction
                     value: Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::REFUND
             -   '@call_service_method':
                     service: oro_payment.payment_method.composite_provider
@@ -230,11 +260,18 @@ operations:
                     method_parameters: [ $.data.paymentMethod ]
                     attribute: $.paymentMethod
             -   '@call_method':
+                    conditions:
+                        '@equal': [ $.hasPaymentMethod, true ]
                     attribute: $.isActionSupported
                     object: $.paymentMethod
                     method: supports
                     method_parameters:
-                        - $.refundAction
+                        - $.refundPaymentMethodAction
+            -   '@get_class_name':
+                    conditions:
+                        '@equal': [ $.hasPaymentMethod, true ]
+                    attribute: $.paymentMethodClass
+                    object: $.paymentMethod
             -   '@call_service_method':
                     service: oro_locale.formatter.number
                     method: formatCurrency
@@ -249,7 +286,10 @@ operations:
         preconditions:
             '@and':
                 -   '@acl_granted': [ 'REFUND_PAYMENTS', $.entity ]
-                -   '@equal': [ $.data.action, $.paymentMethodAction ]
+                -   '@or':
+                    -   '@equal': [ $.data.action, $.purchasePaymentMethodAction ]
+                    -   '@equal': [ $.data.action, $.chargePaymentMethodAction ]
+                    -   '@equal': [ $.data.action, $.capturePaymentMethodAction ]
                 -   '@equal': [ $.data.active, false ]
                 -   '@equal': [ $.data.successful, true ]
                 -   '@equal': [ $.isActionSupported, true ]

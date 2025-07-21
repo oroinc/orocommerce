@@ -74,11 +74,11 @@ Filter child nodes for a node with the specified ID. The child nodes are returne
 
 #### get_subresource
 
-Retrieve the list of nodes in the path from the root to the specific node.
+Retrieve a list of nodes in the path from the root to a specific node.
 
 #### get_relationship
 
-Retrieve the IDs of nodes in the path from the root to the specific node.
+Retrieve the IDs of nodes in the path from the root to a specific node.
 
 ### parent
 

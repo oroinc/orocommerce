@@ -7,13 +7,8 @@ use Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductLatest
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
- *
- * @dbIsolationPerTest
  */
 class ProductLatestPurchaseTest extends RestJsonApiTestCase
 {
@@ -21,29 +16,26 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loadFixtures([
-            LoadProductLatestPurchasesData::class
-        ]);
+        $this->loadFixtures([LoadProductLatestPurchasesData::class]);
     }
 
     public function testTryToGetListWithoutRequiredFilters(): void
     {
-        // @codingStandardsIgnoreStart
         $response = $this->cget(['entity' => 'latestpurchases'], [], [], false);
         $this->assertResponseValidationErrors(
             [
                 [
                     'title' => 'filter constraint',
-                    'detail' => 'Either the "customer" or "hierarchicalCustomer" or "customerUser" filter must be provided.',
+                    'detail' => 'Either the "customer" or "hierarchicalCustomer"'
+                        . ' or "customerUser" filter must be provided.'
                 ],
                 [
                     'title' => 'filter constraint',
-                    'detail' => 'The "product" filter is required.',
+                    'detail' => 'The "product" filter is required.'
                 ]
             ],
             $response
         );
-        // @codingStandardsIgnoreEnd
     }
 
     public function testTryToGetListWithCustomerAndHierarchicalCustomerFilters(): void
@@ -58,7 +50,7 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title' => 'filter constraint',
-                'detail' => 'The "customer" and "hierarchicalCustomer" filters cannot be used together.',
+                'detail' => 'The "customer" and "hierarchicalCustomer" filters cannot be used together.'
             ],
             $response
         );
@@ -131,28 +123,26 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             ['filter' => $filter]
         );
 
-        $this->assertResponseContains(
-            $expectedResponse,
-            $response
-        );
+        $this->assertResponseContains($expectedResponse, $response, true);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function productLatestPurchasesDataProvider(): array
     {
-        // @codingStandardsIgnoreStart
         return [
             'filter by customer 1.1 and product 1' => [
                 'filter' => [
                     'customer' => '<toString(@customer.level_1.1->id)>',
-                    'product' => [
-                        '<toString(@product-1->id)>'
-                    ]
+                    'product' => '<toString(@product-1->id)>'
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '35.0000',
                                 'currency' => 'EUR',
@@ -160,28 +150,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ]
@@ -191,15 +169,14 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             'filter by customerUser 1.1 and product 1' => [
                 'filter' => [
                     'customerUser' => '<toString(@second_customer.user_at_test.com->id)>',
-                    'product' => [
-                        '<toString(@product-1->id)>'
-                    ]
+                    'product' => '<toString(@product-1->id)>'
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '35.0000',
                                 'currency' => 'EUR',
@@ -207,28 +184,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ]
@@ -238,17 +203,15 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             'filter by customer 1.1 and product 1 and unit "bottle"' => [
                 'filter' => [
                     'customer' => '<toString(@customer.level_1.1->id)>',
-                    'product' => [
-                        '<toString(@product-1->id)>'
-                    ],
-                    'unit' => ['<toString(@product_unit.bottle)>']
+                    'product' => '<toString(@product-1->id)>',
+                    'unit' => '<toString(@product_unit.bottle)>'
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' =>
-                                '<(implode("-", [@US->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-1->id, "bottle-USD"]))>',
+                            'id' => '<(implode("-", [@US->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-1->id, "bottle-USD"]))>',
                             'attributes' => [
                                 'price' => '20.0000',
                                 'currency' => 'USD',
@@ -256,28 +219,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'bottle'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'bottle']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@US->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
                                 ]
                             ]
                         ]
@@ -287,16 +238,15 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             'filter by customerUser 1.1 and product 1 and currency "EUR"' => [
                 'filter' => [
                     'customerUser' => '<toString(@second_customer.user_at_test.com->id)>',
-                    'product' => [
-                        '<toString(@product-1->id)>'
-                    ],
-                    'currency' => ['EUR']
+                    'product' => '<toString(@product-1->id)>',
+                    'currency' => 'EUR'
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '35.0000',
                                 'currency' => 'EUR',
@@ -304,28 +254,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ]
@@ -335,17 +273,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             'filter by customer 1.1 and product 1 and website "US"' => [
                 'filter' => [
                     'customer' => '<toString(@customer.level_1.1->id)>',
-                    'product' => [
-                        '<toString(@product-1->id)>'
-                    ],
-                    'website' => ['<toString(@US->id)>']
+                    'product' => '<toString(@product-1->id)>',
+                    'website' => '<toString(@US->id)>'
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
                             'id' =>
-                                '<(implode("-", [@US->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-1->id, "bottle-USD"]))>',
+                                '<(implode("-", [@US->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-1->id, "bottle-USD"]))>',
                             'attributes' => [
                                 'price' => '20.0000',
                                 'currency' => 'USD',
@@ -353,28 +290,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'bottle'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'bottle']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@US->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
                                 ]
                             ]
                         ]
@@ -384,17 +309,15 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             'filter by customerUser 1.1 and product 1 and website "US"' => [
                 'filter' => [
                     'customerUser' => '<toString(@second_customer.user_at_test.com->id)>',
-                    'product' => [
-                        '<toString(@product-1->id)>'
-                    ],
-                    'website' => ['<toString(@US->id)>']
+                    'product' => '<toString(@product-1->id)>',
+                    'website' => '<toString(@US->id)>'
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' =>
-                                '<(implode("-", [@US->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-1->id, "bottle-USD"]))>',
+                            'id' => '<(implode("-", [@US->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-1->id, "bottle-USD"]))>',
                             'attributes' => [
                                 'price' => '20.0000',
                                 'currency' => 'USD',
@@ -402,28 +325,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'bottle'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'bottle']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@US->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
                                 ]
                             ]
                         ]
@@ -433,15 +344,15 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             'filter by customer 1.1 and product 2 and unit ["bottle", "liter"]' => [
                 'filter' => [
                     'customer' => '<toString(@customer.level_1.1->id)>',
-                    'product' => ['<toString(@product-2->id)>'],
+                    'product' => '<toString(@product-2->id)>',
                     'unit' => ['<toString(@product_unit.bottle)>', '<toString(@product_unit.liter)>']
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' =>
-                                '<(implode("-", [@US->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-2->id, "bottle-USD"]))>',
+                            'id' => '<(implode("-", [@US->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-2->id, "bottle-USD"]))>',
                             'attributes' => [
                                 'price' => '25.0000',
                                 'currency' => 'USD',
@@ -449,34 +360,23 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-2->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-2->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'bottle'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'bottle']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@US->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
                                 ]
                             ]
                         ],
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-2->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-2->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '33.0000',
                                 'currency' => 'EUR',
@@ -484,28 +384,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-2->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-2->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ]
@@ -515,15 +403,15 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             'filter by customerUser 1.1 and product 2 and unit ["bottle", "liter"]' => [
                 'filter' => [
                     'customerUser' => '<toString(@second_customer.user_at_test.com->id)>',
-                    'product' => ['<toString(@product-2->id)>'],
+                    'product' => '<toString(@product-2->id)>',
                     'unit' => ['<toString(@product_unit.bottle)>', '<toString(@product_unit.liter)>']
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' =>
-                                '<(implode("-", [@US->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-2->id, "bottle-USD"]))>',
+                            'id' => '<(implode("-", [@US->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-2->id, "bottle-USD"]))>',
                             'attributes' => [
                                 'price' => '25.0000',
                                 'currency' => 'USD',
@@ -531,34 +419,23 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-2->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-2->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'bottle'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'bottle']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@US->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
                                 ]
                             ]
                         ],
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-2->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-2->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '33.0000',
                                 'currency' => 'EUR',
@@ -566,28 +443,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-2->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-2->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ]
@@ -597,15 +462,15 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             'filter by customer 1.1 and product 2 and currency ["USD", "EUR"]' => [
                 'filter' => [
                     'customer' => '<toString(@customer.level_1.1->id)>',
-                    'product' => ['<toString(@product-2->id)>'],
+                    'product' => '<toString(@product-2->id)>',
                     'currency' => ['USD', 'EUR']
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' =>
-                                '<(implode("-", [@US->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-2->id, "bottle-USD"]))>',
+                            'id' => '<(implode("-", [@US->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-2->id, "bottle-USD"]))>',
                             'attributes' => [
                                 'price' => '25.0000',
                                 'currency' => 'USD',
@@ -613,34 +478,23 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-2->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-2->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'bottle'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'bottle']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@US->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
                                 ]
                             ]
                         ],
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-2->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-2->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '33.0000',
                                 'currency' => 'EUR',
@@ -648,28 +502,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-2->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-2->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ]
@@ -679,15 +521,15 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             'filter by customerUser 1.1 and product 2 and currency ["USD", "EUR"]' => [
                 'filter' => [
                     'customerUser' => '<toString(@second_customer.user_at_test.com->id)>',
-                    'product' => ['<toString(@product-2->id)>'],
+                    'product' => '<toString(@product-2->id)>',
                     'currency' => ['USD', 'EUR']
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' =>
-                                '<(implode("-", [@US->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-2->id, "bottle-USD"]))>',
+                            'id' => '<(implode("-", [@US->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-2->id, "bottle-USD"]))>',
                             'attributes' => [
                                 'price' => '25.0000',
                                 'currency' => 'USD',
@@ -695,34 +537,23 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-2->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-2->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'bottle'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'bottle']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@US->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
                                 ]
                             ]
                         ],
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-2->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-2->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '33.0000',
                                 'currency' => 'EUR',
@@ -730,28 +561,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-2->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-2->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ]
@@ -761,15 +580,15 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             'filter by customer 1.1 and product 2 and website ["US", "CA"]' => [
                 'filter' => [
                     'customer' => '<toString(@customer.level_1.1->id)>',
-                    'product' => ['<toString(@product-2->id)>'],
+                    'product' => '<toString(@product-2->id)>',
                     'website' => ['<toString(@US->id)>', '<toString(@CA->id)>']
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' =>
-                                '<(implode("-", [@US->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-2->id, "bottle-USD"]))>',
+                            'id' => '<(implode("-", [@US->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-2->id, "bottle-USD"]))>',
                             'attributes' => [
                                 'price' => '25.0000',
                                 'currency' => 'USD',
@@ -777,34 +596,23 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-2->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-2->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'bottle'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'bottle']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@US->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
                                 ]
                             ]
                         ],
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-2->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-2->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '33.0000',
                                 'currency' => 'EUR',
@@ -812,28 +620,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-2->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-2->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ]
@@ -843,16 +639,14 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             'filter by customer [1.1, 1.2] and product 1' => [
                 'filter' => [
                     'customer' => ['<toString(@customer.level_1.1->id)>', '<toString(@customer.level_1.2->id)>'],
-                    'product' => [
-                        '<toString(@product-1->id)>'
-                    ]
+                    'product' => '<toString(@product-1->id)>'
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' =>
-                                '<(implode("-", [@US->id, @customer.level_1.2->id, @customer.level_1.2_at_test.com->id, @product-1->id, "bottle-USD"]))>',
+                            'id' => '<(implode("-", [@US->id, @customer.level_1.2->id,'
+                                . ' @customer.level_1.2_at_test.com->id, @product-1->id, "bottle-USD"]))>',
                             'attributes' => [
                                 'price' => '22.0000',
                                 'currency' => 'USD',
@@ -860,34 +654,23 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'bottle'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'bottle']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.2->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.2->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@US->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
                                 ]
                             ]
                         ],
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '35.0000',
                                 'currency' => 'EUR',
@@ -895,28 +678,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ]
@@ -925,17 +696,18 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             ],
             'filter by customerUser [1.1, 1.2] and product 1' => [
                 'filter' => [
-                    'customerUser' => ['<toString(@customer.level_1.2_at_test.com->id)>', '<toString(@second_customer.user_at_test.com->id)>'],
-                    'product' => [
-                        '<toString(@product-1->id)>'
-                    ]
+                    'customerUser' => [
+                        '<toString(@customer.level_1.2_at_test.com->id)>',
+                        '<toString(@second_customer.user_at_test.com->id)>'
+                    ],
+                    'product' => '<toString(@product-1->id)>'
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' =>
-                                '<(implode("-", [@US->id, @customer.level_1.2->id, @customer.level_1.2_at_test.com->id, @product-1->id, "bottle-USD"]))>',
+                            'id' => '<(implode("-", [@US->id, @customer.level_1.2->id,'
+                                . ' @customer.level_1.2_at_test.com->id, @product-1->id, "bottle-USD"]))>',
                             'attributes' => [
                                 'price' => '22.0000',
                                 'currency' => 'USD',
@@ -943,34 +715,23 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'bottle'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'bottle']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.2->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.2->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@US->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
                                 ]
                             ]
                         ],
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '35.0000',
                                 'currency' => 'EUR',
@@ -978,28 +739,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ]
@@ -1009,16 +758,15 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             'filter by customer [1.1, 1.2] and product 1 and unit "liter"' => [
                 'filter' => [
                     'customer' => ['<toString(@customer.level_1.1->id)>', '<toString(@customer.level_1.2->id)>'],
-                    'product' => [
-                        '<toString(@product-1->id)>'
-                    ],
-                    'unit' => ['<toString(@product_unit.liter)>']
+                    'product' => '<toString(@product-1->id)>',
+                    'unit' => '<toString(@product_unit.liter)>'
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '35.0000',
                                 'currency' => 'EUR',
@@ -1026,34 +774,23 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ],
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.2->id, @customer.level_1.2_at_test.com->id, @product-1->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.2->id,'
+                                . ' @customer.level_1.2_at_test.com->id, @product-1->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '32.0000',
                                 'currency' => 'EUR',
@@ -1061,28 +798,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.2->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.2->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ]
@@ -1091,17 +816,19 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             ],
             'filter by customerUser [1.1, 1.2] and product 1 and currency "EUR"' => [
                 'filter' => [
-                    'customerUser' => ['<toString(@customer.level_1.2_at_test.com->id)>', '<toString(@second_customer.user_at_test.com->id)>'],
-                    'product' => [
-                        '<toString(@product-1->id)>'
+                    'customerUser' => [
+                        '<toString(@customer.level_1.2_at_test.com->id)>',
+                        '<toString(@second_customer.user_at_test.com->id)>'
                     ],
-                    'currency' => ['EUR']
+                    'product' => '<toString(@product-1->id)>',
+                    'currency' => 'EUR'
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '35.0000',
                                 'currency' => 'EUR',
@@ -1109,34 +836,23 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ],
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.2->id, @customer.level_1.2_at_test.com->id, @product-1->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.2->id,'
+                                . ' @customer.level_1.2_at_test.com->id, @product-1->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '32.0000',
                                 'currency' => 'EUR',
@@ -1144,28 +860,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.2->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.2->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ]
@@ -1175,16 +879,15 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
             'filter by customer [1.1, 1.2] and product 1 and website "CA"' => [
                 'filter' => [
                     'customer' => ['<toString(@customer.level_1.1->id)>', '<toString(@customer.level_1.2->id)>'],
-                    'product' => [
-                        '<toString(@product-1->id)>'
-                    ],
+                    'product' => '<toString(@product-1->id)>',
                     'website' => '<toString(@CA->id)>'
                 ],
                 'expectedResponse' => [
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '35.0000',
                                 'currency' => 'EUR',
@@ -1192,34 +895,23 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ],
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.2->id, @customer.level_1.2_at_test.com->id, @product-1->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.2->id,'
+                                . ' @customer.level_1.2_at_test.com->id, @product-1->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '32.0000',
                                 'currency' => 'EUR',
@@ -1227,28 +919,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.2->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.2->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ]
@@ -1264,8 +944,8 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' =>
-                                '<(implode("-", [@US->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-2->id, "bottle-USD"]))>',
+                            'id' => '<(implode("-", [@US->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-2->id, "bottle-USD"]))>',
                             'attributes' => [
                                 'price' => '25.0000',
                                 'currency' => 'USD',
@@ -1273,35 +953,23 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-2->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-2->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'bottle'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'bottle']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@US->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
                                 ]
                             ]
                         ],
                         [
                             'type' => 'latestpurchases',
-                            'id' =>
-                                '<(implode("-", [@US->id, @customer.level_1.2->id, @customer.level_1.2_at_test.com->id, @product-1->id, "bottle-USD"]))>',
+                            'id' => '<(implode("-", [@US->id, @customer.level_1.2->id,'
+                                . ' @customer.level_1.2_at_test.com->id, @product-1->id, "bottle-USD"]))>',
                             'attributes' => [
                                 'price' => '22.0000',
                                 'currency' => 'USD',
@@ -1309,35 +977,23 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'bottle'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'bottle']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.2->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.2->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@US->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
                                 ]
                             ]
                         ],
                         [
                             'type' => 'latestpurchases',
-                            'id' =>
-                                '<(implode("-", [@US->id, @customer.level_1.2->id, @customer.level_1.2_at_test.com->id, @product-2->id, "bottle-USD"]))>',
+                            'id' => '<(implode("-", [@US->id, @customer.level_1.2->id,'
+                                . ' @customer.level_1.2_at_test.com->id, @product-2->id, "bottle-USD"]))>',
                             'attributes' => [
                                 'price' => '24.0000',
                                 'currency' => 'USD',
@@ -1345,34 +1001,23 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-2->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-2->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'bottle'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'bottle']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.2->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.2->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@US->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
                                 ]
                             ]
                         ],
                         [
                             'type' => 'latestpurchases',
-                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id, @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
+                            'id' => '<(implode("-", [@CA->id, @customer.level_1.1->id,'
+                                . ' @second_customer.user_at_test.com->id, @product-1->id, "liter-EUR"]))>',
                             'attributes' => [
                                 'price' => '35.0000',
                                 'currency' => 'EUR',
@@ -1380,28 +1025,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'liter'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'liter']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.1->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@CA->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@CA->id)>']
                                 ]
                             ]
                         ]
@@ -1414,8 +1047,7 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                     'product' => ['<toString(@product-1->id)>', '<toString(@product-2->id)>']
                 ],
                 'expectedResponse' => [
-                    'data' => [
-                    ]
+                    'data' => []
                 ]
             ],
             'filter by hierarchicalCustomer 1 and product [1, 2]' => [
@@ -1427,8 +1059,8 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                     'data' => [
                         [
                             'type' => 'latestpurchases',
-                            'id' =>
-                                '<(implode("-", [@US->id, @customer.level_1.2->id, @customer.level_1.2_at_test.com->id, @product-1->id, "bottle-USD"]))>',
+                            'id' => '<(implode("-", [@US->id, @customer.level_1.2->id,'
+                                . ' @customer.level_1.2_at_test.com->id, @product-1->id, "bottle-USD"]))>',
                             'attributes' => [
                                 'price' => '22.0000',
                                 'currency' => 'USD',
@@ -1436,35 +1068,23 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-1->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'bottle'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'bottle']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.2->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.2->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@US->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
                                 ]
                             ]
                         ],
                         [
                             'type' => 'latestpurchases',
-                            'id' =>
-                                '<(implode("-", [@US->id, @customer.level_1.2->id, @customer.level_1.2_at_test.com->id, @product-2->id, "bottle-USD"]))>',
+                            'id' => '<(implode("-", [@US->id, @customer.level_1.2->id,'
+                                . ' @customer.level_1.2_at_test.com->id, @product-2->id, "bottle-USD"]))>',
                             'attributes' => [
                                 'price' => '24.0000',
                                 'currency' => 'USD',
@@ -1472,28 +1092,16 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                             ],
                             'relationships' => [
                                 'product' => [
-                                    'data' => [
-                                        'type' => 'products',
-                                        'id' => '<toString(@product-2->id)>'
-                                    ]
+                                    'data' => ['type' => 'products', 'id' => '<toString(@product-2->id)>']
                                 ],
                                 'unit' => [
-                                    'data' => [
-                                        'type' => 'productunits',
-                                        'id' => 'bottle'
-                                    ]
+                                    'data' => ['type' => 'productunits', 'id' => 'bottle']
                                 ],
                                 'customer' => [
-                                    'data' => [
-                                        'type' => 'customers',
-                                        'id' => '<toString(@customer.level_1.2->id)>'
-                                    ]
+                                    'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.2->id)>']
                                 ],
                                 'website' => [
-                                    'data' => [
-                                        'type' => 'websites',
-                                        'id' => '<toString(@US->id)>'
-                                    ]
+                                    'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
                                 ]
                             ]
                         ]
@@ -1501,7 +1109,6 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
                 ]
             ],
         ];
-        // @codingStandardsIgnoreEnd
     }
 
     public function testTryToGet(): void

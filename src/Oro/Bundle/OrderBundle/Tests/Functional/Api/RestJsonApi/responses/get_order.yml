@@ -90,3 +90,15 @@ data:
                 -
                     type: ordersubtotals
                     id: '<(implode("-", [@simple_order->id, "tax-6"]))>'
+        documents:
+            data:
+                -
+                    type: files
+                    id: '<toString(@file1->id)>'
+                    meta:
+                        sortOrder: 1
+                -
+                    type: files
+                    id: '<toString(@file2->id)>'
+                    meta:
+                        sortOrder: 2

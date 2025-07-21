@@ -482,6 +482,20 @@ oro_behat_extension:
           Validate Shipping Addresses on the Quote Page: 'address_validation[oro_sale___validate_shipping_addresses__backoffice_quote_page][value]'
           Validate Shipping Addresses on the Quote Page Use Default: 'address_validation[oro_sale___validate_shipping_addresses__backoffice_quote_page][use_parent_scope_value]'
 
+    Quote Customer Documents Form:
+      selector: 'form[id^="oro_sale_quote"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Quote File 1: 'oro_sale_quote[documents][0][file][file]'
+          Quote File 2: 'oro_sale_quote[documents][1][file][file]'
+          Quote File Sort Order 1: 'oro_sale_quote[documents][0][sortOrder]'
+          Quote File Sort Order 2: 'oro_sale_quote[documents][1][sortOrder]'
+
+    Quote Customer Documents Grid:
+      selector: 'div[data-page-component-name="attachment-files-grid:documents"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   pages:
     Quote Create:
       class: Oro\Bundle\SaleBundle\Tests\Behat\Page\QuoteCreate

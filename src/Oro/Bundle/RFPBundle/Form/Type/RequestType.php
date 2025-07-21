@@ -13,6 +13,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * The form type for Request entity.
+ */
 class RequestType extends AbstractType
 {
     const NAME = 'oro_rfp_request';
@@ -69,6 +72,10 @@ class RequestType extends AbstractType
             ->add('poNumber', TextType::class, [
                 'required' => false,
                 'label' => 'oro.rfp.request.po_number.label'
+            ])
+            ->add('projectName', TextType::class, [
+                'required' => false,
+                'label' => 'oro.rfp.request.project_name.label'
             ])
             ->add('shipUntil', OroDateType::class, [
                 'required' => false,

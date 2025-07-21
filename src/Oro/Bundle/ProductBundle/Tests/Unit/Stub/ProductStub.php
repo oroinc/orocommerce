@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Stub;
 
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\FallbackTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -88,6 +89,18 @@ class ProductStub extends Product
     public function setUnitPrecisions(Collection $collection): self
     {
         $this->unitPrecisions = $collection;
+
+        return $this;
+    }
+
+    public function getPageTemplate(): ?EntityFieldFallbackValue
+    {
+        return $this->get('pageTemplate');
+    }
+
+    public function setPageTemplate(?EntityFieldFallbackValue $pageTemplate): self
+    {
+        $this->set('pageTemplate', $pageTemplate);
 
         return $this;
     }

@@ -1390,7 +1390,7 @@ Retrieve the attribute family configured for a specific product.
 
 #### get_relationship
 
-Retrieve an ID of the attribute family that a specific product record belongs to.
+Retrieve the ID of the attribute family that a specific product record belongs to.
 
 #### update_relationship
 
@@ -1417,7 +1417,7 @@ Retrieve a record of the fallback entity value for backOrder for a specific prod
 
 #### get_relationship
 
-Retrieve an ID of the backOrder flag.
+Retrieve the ID of the backOrder flag.
 
 #### update_relationship
 
@@ -1444,7 +1444,7 @@ Retrieve the brand for a specific product.
 
 #### get_relationship
 
-Retrieve an ID of the brand of the product.
+Retrieve the ID of the brand of the product.
 
 #### update_relationship
 
@@ -1471,7 +1471,7 @@ Retrieve a record of the fallback entity value for decrementQuantity flag for a 
 
 #### get_relationship
 
-Retrieve an ID of the decrementQuantity flag for a specific product.
+Retrieve the ID of the decrementQuantity flag for a specific product.
 
 #### update_relationship
 
@@ -1498,7 +1498,7 @@ Retrieve a record of the fallback entity value for inventoryThreshold for a spec
 
 #### get_relationship
 
-Retrieve an ID of the inventoryThreshold for a specific product.
+Retrieve the ID of the inventoryThreshold for a specific product.
 
 #### update_relationship
 
@@ -1525,7 +1525,7 @@ Retrieve the service records that store flag if this product will be available l
 
 #### get_relationship
 
-Retrieve an ID of the isUpcoming fallback entity for a specific product.
+Retrieve the ID of the isUpcoming fallback entity for a specific product.
 
 #### update_relationship
 
@@ -1552,7 +1552,7 @@ Retrieve the fallback value for lowInventoryThreshold for a specific product.
 
 #### get_relationship
 
-Retrieve an ID of the lowInventoryThreshold for a specific product.
+Retrieve the ID of the lowInventoryThreshold for a specific product.
 
 #### update_relationship
 
@@ -1579,7 +1579,7 @@ Retrieve a record of the fallback entity value for inventory_status flag for a s
 
 #### get_relationship
 
-Retrieve an ID of the inventory_status flag for a specific product.
+Retrieve the ID of the inventory_status flag for a specific product.
 
 #### update_relationship
 
@@ -1606,7 +1606,7 @@ Retrieve a record of the fallback entity value for manageInventory flag for a sp
 
 #### get_relationship
 
-Retrieve an ID of the manageInventory flag for a specific product.
+Retrieve the ID of the manageInventory flag for a specific product.
 
 #### update_relationship
 
@@ -1633,7 +1633,7 @@ Retrieve the fallback value for highlightLowInventory flag for a specific produc
 
 #### get_relationship
 
-Retrieve an ID of the highlightLowInventory flag for a specific product.
+Retrieve the ID of the highlightLowInventory flag for a specific product.
 
 #### update_relationship
 
@@ -1660,7 +1660,7 @@ Retrieve a record of the fallback entity value for maximumQuantityToOrder for a 
 
 #### get_relationship
 
-Retrieve an ID of the maximumQuantityToOrder for a specific product.
+Retrieve the ID of the maximumQuantityToOrder for a specific product.
 
 #### update_relationship
 
@@ -1687,7 +1687,7 @@ Retrieve a record of the fallback entity value for minimumQuantityToOrder for a 
 
 #### get_relationship
 
-Retrieve an ID of the minimumQuantityToOrder for a specific product.
+Retrieve the ID of the minimumQuantityToOrder for a specific product.
 
 #### update_relationship
 
@@ -1714,7 +1714,7 @@ Retrieve a record of the fallback entity value for pageTemplate for a specific p
 
 #### get_relationship
 
-Retrieve an ID of the pageTemplate value used for a specific product.
+Retrieve the ID of the pageTemplate value used for a specific product.
 
 #### update_relationship
 
@@ -2606,7 +2606,7 @@ Retrieve the default variant for a specific product.
 
 #### get_relationship
 
-Retrieve an ID of the default variant of the product.
+Retrieve the ID of the default variant of the product.
 
 #### update_relationship
 

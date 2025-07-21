@@ -38,7 +38,6 @@ layout:
                 quick_add_import_form_submit:
                     blockType: button
                     options:
-                        type: input
                         action: submit
                         text: 'oro.product.frontend.quick_add.import_from_file.continue.label'
             tree:

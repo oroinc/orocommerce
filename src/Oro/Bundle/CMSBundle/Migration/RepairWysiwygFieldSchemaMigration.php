@@ -42,9 +42,11 @@ class RepairWysiwygFieldSchemaMigration implements Migration
     public function up(Schema $schema, QueryBag $queries): void
     {
         $classTableName = $this->extendExtension->getTableNameByEntityClass($this->className);
-        $classTable = $schema->getTable($classTableName);
+        if ($schema->hasTable($classTableName)) {
+            $classTable = $schema->getTable($classTableName);
 
-        $this->configureColumns($classTable, $this->fieldName, $this->fieldOptions);
+            $this->configureColumns($classTable, $this->fieldName, $this->fieldOptions);
+        }
     }
 
     /**
