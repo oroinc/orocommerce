@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerInterface;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
@@ -169,5 +170,30 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
             $expectedField,
             $this->configurableProductProvider->getVariantFieldsValuesForLineItem($lineItem, true)
         );
+    }
+
+    public function testThatVariantIdsReturnedForConfigurableProduct(): void
+    {
+        $variantProduct = $this->getEntity(Product::class, ['id' => 3]);
+
+        $variantLink = $this->getEntity(ProductVariantLink::class, [
+            'id' => 1,
+            'product' => $variantProduct
+        ]);
+
+        $configurableProduct = $this->getEntity(
+            Product::class,
+            [
+                'id' => 1,
+                'type' => 'configurable',
+                'variantLinks' => [
+                    $variantLink
+                ]
+            ]
+        );
+
+        $ids = $this->configurableProductProvider->getProductVariantIds($configurableProduct);
+
+        self::assertEquals([3], $ids);
     }
 }

@@ -130,7 +130,6 @@
 
         &.has-message-row {
             position: relative;
-            z-index: z('base');
 
             &:not(.notification-row) {
                 border-bottom: none;

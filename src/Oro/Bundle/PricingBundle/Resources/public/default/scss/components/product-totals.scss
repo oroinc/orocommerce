@@ -3,6 +3,7 @@
 .product-totals {
     display: $product-totals-display;
     align-items: $product-totals-align-items;
+    justify-content: $product-totals-justify-content;
     flex-wrap: $product-totals-flex-wrap;
     gap: $product-totals-gap;
 
@@ -22,6 +23,7 @@
         align-items: $product-totals-align-items;
         flex-wrap: $product-totals-flex-wrap;
         justify-content: $product-totals-justify-content;
+        margin-left: $product-totals-controls-offset;
         gap: $product-totals-gap;
     }
 

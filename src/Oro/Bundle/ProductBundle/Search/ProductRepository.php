@@ -106,6 +106,7 @@ class ProductRepository extends WebsiteSearchRepository
             ->addSelect('sku')
             ->addSelect('type')
             ->addSelect('names_LOCALIZATION_ID as name')
+            ->addSelect('text.inv_status as inventory_status')
             ->addSelect('integer.system_entity_id as product_id')
             ->addWhere(Criteria::expr()->in('sku_uppercase', $upperCaseSkus));
 
@@ -173,6 +174,7 @@ class ProductRepository extends WebsiteSearchRepository
             ->addSelect('sku')
             ->addSelect('integer.system_entity_id as product_id')
             ->addSelect('type')
+            ->addSelect('text.inv_status as inventory_status')
             ->addSelect('names_LOCALIZATION_ID as name')
             ->getCriteria()
             ->andWhere(

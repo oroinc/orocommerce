@@ -64,6 +64,17 @@ class ConfigurableProductProvider
         return $variantFieldNames;
     }
 
+    public function getProductVariantIds(Product $configurableProduct): array
+    {
+        $ids = [];
+
+        foreach ($configurableProduct->getVariantLinks() as $variantLink) {
+            $ids[] = $variantLink->getProduct()->getId();
+        }
+
+        return $ids;
+    }
+
     /**
      * @param ProductHolderInterface|mixed $lineItem
      *

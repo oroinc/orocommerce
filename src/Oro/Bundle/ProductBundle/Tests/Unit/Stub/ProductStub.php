@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Stub;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\LocaleBundle\Entity\FallbackTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -103,5 +104,10 @@ class ProductStub extends Product
         $this->set('pageTemplate', $pageTemplate);
 
         return $this;
+    }
+
+    public function getInventoryStatus(): ?EnumOptionInterface
+    {
+        return $this->get('inventoryStatus');
     }
 }

@@ -285,6 +285,7 @@ oro_behat_extension:
           PrimaryPrecision: 'oro_product[primaryUnitPrecision][precision]'
           AdditionalUnit: 'oro_product[additionalUnitPrecisions][0][unit]'
           AdditionalPrecision: 'oro_product[additionalUnitPrecisions][0][precision]'
+          AdditionalUnitSecondRow: "oro_product[additionalUnitPrecisions][1][unit]"
           Page Template: 'oro_product[pageTemplate][scalarValue]'
           Page Template Use Fallback: 'oro_product[pageTemplate][useFallback]'
           Managed Inventory Use Fallback: 'oro_product[manageInventory][useFallback]'
@@ -1091,10 +1092,13 @@ oro_behat_extension:
       selector: '.product-view__upsell-products .embedded-list__item'
 
     Related Products Slider:
-      selector: '.product-view__related-products .embedded-list-slider'
+      selector: '.product-view__related-products .embedded-list'
 
     Up-sell Products Slider:
-      selector: '.product-view__upsell-products .embedded-list-slider'
+      selector: '.product-view__upsell-products .embedded-list'
+
+    Similar Products Slider:
+      selector: '.product-view__similar-products .embedded-list'
 
     ProductRelatedItem:
       selector: '.product-item'
@@ -2097,6 +2101,9 @@ oro_behat_extension:
 
     Inventory Status Switcher:
       selector: 'div[data-inventory-filter-template]'
+
+    Embedded Products:
+      selector: '.embedded-products'
 
     Inventory Status Drag And Drop First Option:
       selector: 'div[data-content="oro_entity_config_type[enum][enum_options][0]"] .ui-sortable-handle'

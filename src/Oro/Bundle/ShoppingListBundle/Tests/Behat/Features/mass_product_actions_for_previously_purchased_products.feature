@@ -50,5 +50,5 @@ Feature: Mass Product Actions for Previously purchased products
     And I click "New Shopping List" on shopping list widget
     Then I should see following grid containing rows:
       | SKU   | Product   | Availability | Qty Update All |
-      | PSKU1 | Product 1 | IN STOCK     | 10 item        |
-      | PSKU2 | Product 2 | IN STOCK     | 15 item        |
+      | PSKU1 | Product 1 | In Stock     | 10 item        |
+      | PSKU2 | Product 2 | In Stock     | 15 item        |

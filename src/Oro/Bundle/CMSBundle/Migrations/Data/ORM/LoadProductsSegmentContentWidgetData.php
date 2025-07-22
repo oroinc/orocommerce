@@ -36,7 +36,7 @@ class LoadProductsSegmentContentWidgetData extends AbstractLoadContentWidgetData
     protected function updateContentWidget(ObjectManager $manager, ContentWidget $contentWidget, array $row): void
     {
         $settings = $contentWidget->getSettings();
-        if (isset($settings['segment'])) {
+        if (isset($settings['segment']) && !is_int($settings['segment'])) {
             $segment = $this->getSegment($manager, $settings['segment']);
             $settings['segment'] = $segment?->getId() ?? $settings['segment'];
 

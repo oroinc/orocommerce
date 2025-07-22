@@ -8,6 +8,7 @@ define(function(require) {
     const numeral = require('numeral');
     const $ = require('jquery');
     const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
 
     const BaseProductMatrixView = BaseView.extend({
         autoRender: false,
@@ -129,6 +130,10 @@ define(function(require) {
             const rows = this.total.rows;
 
             const cell = cells[indexKey] = this.getTotal(cells, indexKey);
+
+            cell.$cell = $cell;
+            cell.productId = productId;
+
             const column = columns[index.column] = this.getTotal(columns, index.column);
             column.precision = this.getLineMaxPrecision('column', index);
 
@@ -261,6 +266,7 @@ define(function(require) {
             );
 
             _.each(_.pick(this.total, 'rows', 'columns'), this.renderSubTotals, this);
+            _.each(this.total.cells, cell => this.renderCellPrices(cell));
         },
 
         /**
@@ -281,6 +287,21 @@ define(function(require) {
                     .toggleClass('valid', total.price > 0)
                     .text(NumberFormatter.formatCurrency(total.price, total.currency));
             }, this);
+        },
+
+        /**
+         *  Displays a price for cell based on a quantity
+         * @param {Object} cell
+         */
+        renderCellPrices(cell) {
+            const price = PricesHelper.findPrice(
+                this.prices[cell.productId],
+                this.model.get('unit'),
+                Math.max(Number(cell.quantity), 1)
+            );
+
+            cell.$cell.next('[data-cell-price]')
+                .text(price ? price.formatted_price : __('oro.pricing.price.not_available'));
         },
 
         /**

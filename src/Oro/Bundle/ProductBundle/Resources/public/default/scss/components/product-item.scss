@@ -223,6 +223,11 @@
     &__secondary-half {
         &--last-gallery-view {
             margin-top: auto;
+
+            &:has(.inventory-level-root) {
+                display: grid;
+                gap: spacing('base') 0;
+            }
         }
     }
 

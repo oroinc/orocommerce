@@ -15,6 +15,13 @@
     .product-add-to-shopping-list-container {
         display: block;
     }
+
+    &--no-image-view {
+        .add-product-from-view-component:has(.inventory-level-root) {
+            display: grid;
+            row-gap: spacing('md');
+        }
+    }
 }
 
 @include breakpoint('desktop') {

@@ -5,7 +5,8 @@ placeholders:
                 product_sidebar_prices_config_selector: ~
         oro_product_quick_add_additional_fields:
             items:
-                quick_add_subtotal: ~
+                quick_add_subtotal:
+                    order: 20
         oro_product_quick_add_collection_after:
             items:
                 price_templates: ~

@@ -94,10 +94,10 @@ Feature: Product kits add from in shopping list dialog
     And Buyer is on "Product Kit Shopping List" shopping list
     Then I should see following grid:
       | SKU               | Product                                       | Availability | Qty | Unit   | Price   | Subtotal |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2   | pieces | $134.00 | $268.00  |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | In Stock     | 2   | pieces | $134.00 | $268.00  |
       | simple-product-03 | Barcode Scanner: Product 3                    |              | 2   | pieces | $31.00  |          |
       | simple-product-02 | Base Unit: Product 2                          |              | 2   | pieces | $31.00  |          |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | IN STOCK     | 1   | piece  | $41.00  | $41.00   |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | In Stock     | 1   | piece  | $41.00  | $41.00   |
       | simple-product-01 | Base Unit: Product 1                          |              | 1   | piece  | $31.00  |          |
     And I should see "Summary 2 Items"
     And I should see "Subtotal $309.00"
@@ -108,10 +108,10 @@ Feature: Product kits add from in shopping list dialog
     And click "Edit"
     Then I should see following grid:
       | SKU               | Product                                       | Availability | Qty Update All | Price   | Subtotal |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2 piece        | $134.00 | $268.00  |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | In Stock     | 2 piece        | $134.00 | $268.00  |
       | simple-product-03 | Barcode Scanner: Product 3                    |              | 2 pieces       | $31.00  |          |
       | simple-product-02 | Base Unit: Product 2                          |              | 2 pieces       | $31.00  |          |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | IN STOCK     | 1 piece        | $41.00  | $41.00   |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | In Stock     | 1 piece        | $41.00  | $41.00   |
       | simple-product-01 | Base Unit: Product 1                          |              | 1 piece        | $31.00  |          |
     And I should see "Summary 2 Items"
     And I should see "Subtotal $309.00"

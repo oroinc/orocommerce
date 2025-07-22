@@ -85,8 +85,8 @@ Feature: Shopping List Line Items Single Unit Mode
     And I click view "Shopping List 5" in grid
     And I should see following grid:
       | Sku | Product  | Availability | Qty |       | Price | Subtotal |
-      | AA1 | Product1 | IN STOCK     | 5   | sets  |       |          |
-      | AA1 | Product1 | IN STOCK     | 4   | items |       |          |
+      | AA1 | Product1 | In Stock     | 5   | sets  |       |          |
+      | AA1 | Product1 | In Stock     | 4   | items |       |          |
 
   Scenario: Disable Show Single Unit
     Given I proceed as the Admin
@@ -99,5 +99,5 @@ Feature: Shopping List Line Items Single Unit Mode
     And I reload the page
     And I should see following grid:
       | Sku | Product  | Availability | Qty | Price | Subtotal |
-      | AA1 | Product1 | IN STOCK     | 5   |       |          |
-      | AA1 | Product1 | IN STOCK     | 4   |       |          |
+      | AA1 | Product1 | In Stock     | 5   |       |          |
+      | AA1 | Product1 | In Stock     | 4   |       |          |

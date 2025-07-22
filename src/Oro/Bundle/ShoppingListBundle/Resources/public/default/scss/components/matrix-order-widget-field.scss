@@ -1,8 +1,12 @@
 /* @theme: default; */
 
 .matrix-order-widget-field {
+    position: relative;
     min-width: $matrix-order-widget-field-min-width;
+    max-width: $matrix-order-widget-field-max-width;
     line-height: $matrix-order-widget-field-line-height;
+
+    @include clearfix();
 
     &__inner {
         padding-block: $matrix-order-widget-field-inner-padding-block;
@@ -16,5 +20,14 @@
         &.valid {
             font-weight: $matrix-order-widget-field-inner-valid-font-weight;
         }
+    }
+
+    &__price {
+        display: flex;
+        min-height: $matrix-order-widget-field-price-font-size * $base-line-height;
+        padding-top: $matrix-order-widget-field-price-offset-top;
+
+        font-size: $matrix-order-widget-field-price-font-size;
+        color: $matrix-order-widget-field-price-color;
     }
 }
