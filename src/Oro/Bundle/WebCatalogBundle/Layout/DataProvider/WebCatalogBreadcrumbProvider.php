@@ -93,7 +93,7 @@ class WebCatalogBreadcrumbProvider
         $slug = $contextUrlAttributes[0]['_used_slug'] ?? null;
         if ($slug) {
             $contentVariant = $this->getContentVariantRepository()->findVariantBySlug($slug);
-            $breadcrumbs = $this->getItemsByContentVariant($contentVariant, $request);
+            $breadcrumbs = $this->getItemsByContentVariant($contentVariant, $request, false);
         }
 
         return $breadcrumbs;
@@ -107,12 +107,16 @@ class WebCatalogBreadcrumbProvider
      *
      * @return array
      */
-    private function getItemsByContentVariant(?ContentNodeAwareInterface $contentVariant, Request $request)
-    {
+    private function getItemsByContentVariant(
+        ?ContentNodeAwareInterface $contentVariant,
+        Request $request,
+        $removeLastItem = true
+    ) {
         $breadcrumbs = [];
 
         if ($contentVariant) {
             $contentNode = $contentVariant->getNode();
+            /** @var ContentNode[] $path */
             $path = $this->getContentNodeRepository()->getPath($contentNode);
             if (is_array($path)) {
                 foreach ($path as $breadcrumb) {
@@ -124,7 +128,9 @@ class WebCatalogBreadcrumbProvider
                     ];
                 }
 
-                array_pop($breadcrumbs);
+                if ($removeLastItem) {
+                    array_pop($breadcrumbs);
+                }
             }
         }
 
