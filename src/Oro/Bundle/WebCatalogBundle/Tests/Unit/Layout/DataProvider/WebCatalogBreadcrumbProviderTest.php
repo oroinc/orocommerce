@@ -277,7 +277,14 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
         $categoryId = 1;
         $result = $this->breadcrumbDataProvider->getItemsForProduct($categoryId, $currentPageTitle);
 
-        $this->assertEquals([], $result);
+        $expectedBreadcrumbs = [
+            [
+                'label' => $nodeTitle,
+                'url' => $nodeUrl,
+            ],
+        ];
+
+        $this->assertEquals($expectedBreadcrumbs, $result);
     }
 
     public function testGetItemsForProductWithoutContextAttributes()

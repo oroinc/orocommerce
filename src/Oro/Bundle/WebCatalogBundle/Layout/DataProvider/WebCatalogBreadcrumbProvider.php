@@ -34,6 +34,8 @@ class WebCatalogBreadcrumbProvider
     /** @var CategoryBreadcrumbProvider */
     private $categoryBreadcrumbProvider;
 
+    private bool $removeLastItem = true;
+
     public function __construct(
         ManagerRegistry $doctrine,
         LocalizationHelper $localizationHelper,
@@ -93,6 +95,7 @@ class WebCatalogBreadcrumbProvider
         $slug = $contextUrlAttributes[0]['_used_slug'] ?? null;
         if ($slug) {
             $contentVariant = $this->getContentVariantRepository()->findVariantBySlug($slug);
+            $this->removeLastItem = false;
             $breadcrumbs = $this->getItemsByContentVariant($contentVariant, $request);
         }
 
@@ -124,7 +127,9 @@ class WebCatalogBreadcrumbProvider
                     ];
                 }
 
-                array_pop($breadcrumbs);
+                if ($this->removeLastItem) {
+                    array_pop($breadcrumbs);
+                }
             }
         }
 

@@ -259,4 +259,23 @@ JS;
             return true;
         }, 5);
     }
+
+
+    /**
+     * Checks, that breadcrumbs contain specified text in the storefront
+     * Example: Given I should see "Customers / Accounts" in breadcrumbs in the storefront
+     *
+     * @Given /^(?:|I )should see "(?P<text>(?:[^"]|\\")*)" in breadcrumbs in the storefront$/
+     */
+    public function iShouldSeeTextInBreadcrumbs($text)
+    {
+        $breadcrumbContainer = $this->elementFactory->createElement('Frontstore Breadcrumb Container');
+        $actualText = $breadcrumbContainer->getText();
+        $normalizedText = preg_replace('/\s?\//', '', $text);
+
+        self::assertTrue(
+            strcasecmp($actualText, $normalizedText) === 0,
+            sprintf('Text "%s" does not match to actual breadcrumbs "%s"', $text, $actualText)
+        );
+    }
 }
