@@ -159,4 +159,21 @@ class CommerceMainContext extends OroFeatureContext implements
             static::assertStringContainsString($this->fixStepArgument($row[0]), $activeTab->getText());
         }
     }
+
+    /**
+     * Checks, that breadcrumbs contain specified text in the storefront
+     * Example: Given I should see "Customers / Accounts" in breadcrumbs in the storefront
+     *
+     * @Given /^(?:|I )should see "(?P<text>(?:[^"]|\\")*)" in breadcrumbs in the storefront$/
+     */
+    public function iShouldSeeTextInBreadcrumbs(string $text): void
+    {
+        $breadcrumbContainer = $this->elementFactory->createElement('Frontstore Breadcrumb Container');
+        $actualText = $breadcrumbContainer->getText();
+
+        self::assertTrue(
+            strcasecmp($actualText, $text) === 0,
+            sprintf('Text "%s" does not match to actual breadcrumbs "%s"', $text, $actualText)
+        );
+    }
 }

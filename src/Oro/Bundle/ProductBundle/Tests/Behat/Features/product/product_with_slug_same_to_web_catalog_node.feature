@@ -75,6 +75,6 @@ Feature: Product with slug same to web catalog node
     And should see "Test Product"
     And click "View Details" for "Test Product" product
     Then the url should match "/test-1/_item/test-1"
-    And I should see "Home page / Test Node / Test Product"
+    And I should see "Home page / Test Node / Test Product" in breadcrumbs in the storefront
     And I should see "Is Featured: No"
     And I should not see "View Details"

@@ -550,3 +550,6 @@ oro_behat_extension:
       selector:
         locator: '//div/button[@title="Add to New Front Shopping List"]'
         type: xpath
+
+    Frontstore Breadcrumb Container:
+      selector: 'ol.breadcrumbs'
