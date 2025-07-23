@@ -214,6 +214,10 @@ JS;
         $mainMenuTrigger = $this->createElement('Main Menu Button');
         if ($mainMenuTrigger->isValid() && $mainMenuTrigger->isVisible()) {
             $this->spin(function () use ($mainMenuTrigger) {
+                if ($mainMenuTrigger->hasClass('side-panel-menu-opened')) {
+                    return true;
+                }
+
                 $mainMenuTrigger->click();
                 return $mainMenuTrigger->hasClass('side-panel-menu-opened');
             });
@@ -254,5 +258,23 @@ JS;
 
             return true;
         }, 5);
+    }
+
+    /**
+     * Checks, that breadcrumbs contain specified text in the storefront
+     * Example: Given I should see "Customers / Accounts" in breadcrumbs in the storefront
+     *
+     * @Given /^(?:|I )should see "(?P<text>(?:[^"]|\\")*)" in breadcrumbs in the storefront$/
+     */
+    public function iShouldSeeTextInBreadcrumbs(string $text): void
+    {
+        $breadcrumbContainer = $this->elementFactory->createElement('Frontstore Breadcrumb Container');
+        $actualText = $breadcrumbContainer->getText();
+        $normalizedText = preg_replace('/\s?\//', '', $text);
+
+        self::assertTrue(
+            strcasecmp($actualText, $normalizedText) === 0,
+            sprintf('Text "%s" does not match to actual breadcrumbs "%s"', $text, $actualText)
+        );
     }
 }

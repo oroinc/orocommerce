@@ -43,11 +43,12 @@ Feature: Web catalog breadcrumbs trimming based on configuration
     And I am on the homepage
     When I click on "Main Menu Button"
     And I click on "HeadlampsInMainMenu"
-    Then I should see that "Breadcrumbs" contains "Headlamps"
+    Then I should see "Lighting Products / Headlamps" in breadcrumbs in the storefront
     When I click "View Details" for "PSKU1" product
     Then I should see that "Breadcrumbs" contains "Lighting Products Headlamps 220 Lumen Rechargeable Headlamp"
+    Then I should see "Lighting Products / Headlamps / 220 Lumen Rechargeable Headlamp" in breadcrumbs in the storefront
     When I click "Lighting Products"
-    Then I should see that "Breadcrumbs" contains "Lighting Products"
+    Then I should see "Lighting Products" in breadcrumbs in the storefront
 
   Scenario: Administrator enables config option to exclude last breadcrumb on product pages
     Given I proceed as the Admin
@@ -68,6 +69,6 @@ Feature: Web catalog breadcrumbs trimming based on configuration
     Then I should see that "Breadcrumbs" does not contain "Lighting Products"
     When I click on "Main Menu Button"
     And I click on "HeadlampsInMainMenu"
-    Then I should see that "Breadcrumbs" does not contain "Headlamps"
+    Then I should see "Lighting Products" in breadcrumbs in the storefront
     When I click "View Details" for "PSKU1" product
-    Then I should see that "Breadcrumbs" does not contain "Lighting Products Headlamps 220 Lumen Rechargeable Headlamp"
+    Then I should see "Lighting Products / Headlamps" in breadcrumbs in the storefront

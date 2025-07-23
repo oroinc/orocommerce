@@ -548,3 +548,6 @@ oro_behat_extension:
 
     Add to New Front Shopping List:
       selector: 'div button:contains("Add to New Front Shopping List")'
+
+    Frontstore Breadcrumb Container:
+      selector: 'ol.breadcrumbs'
