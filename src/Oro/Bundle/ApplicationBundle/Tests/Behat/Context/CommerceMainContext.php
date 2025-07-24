@@ -266,7 +266,7 @@ JS;
      *
      * @Given /^(?:|I )should see "(?P<text>(?:[^"]|\\")*)" in breadcrumbs in the storefront$/
      */
-    public function iShouldSeeTextInBreadcrumbs($text)
+    public function iShouldSeeTextInBreadcrumbs(string $text): void
     {
         $breadcrumbContainer = $this->elementFactory->createElement('Frontstore Breadcrumb Container');
         $actualText = $breadcrumbContainer->getText();
