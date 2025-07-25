@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Oro\Bundle\VisibilityBundle\Command;
 
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,11 +13,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Rebuilds the product visibility cache.
  */
+#[AsCommand(
+    name: 'product:visibility:cache:build',
+    description: 'Rebuilds the product visibility cache.'
+)]
 class VisibilityCacheBuildCommand extends Command
 {
-    /** @var string */
-    protected static $defaultName = 'product:visibility:cache:build';
-
     private CacheBuilderInterface $cacheBuilder;
 
     public function __construct(CacheBuilderInterface $cacheBuilder)
@@ -24,13 +26,6 @@ class VisibilityCacheBuildCommand extends Command
         $this->cacheBuilder = $cacheBuilder;
 
         parent::__construct();
-    }
-
-    /** @noinspection PhpMissingParentCallCommonInspection */
-    #[\Override]
-    protected function configure()
-    {
-        $this->setDescription('Rebuilds the product visibility cache.');
     }
 
     /**

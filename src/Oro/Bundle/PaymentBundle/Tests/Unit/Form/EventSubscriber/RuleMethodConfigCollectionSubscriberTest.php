@@ -26,7 +26,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator;
+use Symfony\Component\Validator\Constraints\ExpressionSyntaxValidator;
 
 class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
 {
@@ -144,7 +144,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
     {
         return [
             'oro_rule.validator_constraints.expression_language_syntax_validator' =>
-                $this->createMock(ExpressionLanguageSyntaxValidator::class),
+                $this->createMock(ExpressionSyntaxValidator::class),
         ];
     }
 }

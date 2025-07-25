@@ -1,26 +1,26 @@
 oro_promotion_ajax:
     resource:     "@OroPromotionBundle/Controller/AjaxPromotionController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /promotion/ajax
 
 oro_promotion:
     resource:     "@OroPromotionBundle/Controller/PromotionController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /promotion
 
 oro_promotion_coupon:
     resource:     "@OroPromotionBundle/Controller/CouponController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /promotion/coupon
 
 oro_promotion_coupon_ajax:
     resource:     "@OroPromotionBundle/Controller/AjaxCouponController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /promotion/coupon/ajax
 
 oro_promotion_frontend_coupon_ajax:
     resource:     "@OroPromotionBundle/Controller/Frontend/AjaxCouponController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /promotion/coupon/ajax
     options:
         frontend: true

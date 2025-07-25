@@ -62,9 +62,11 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
         return $this->quantity;
     }
 
-    public function setQuantity(float $quantity): void
+    public function setQuantity(float $quantity): self
     {
         $this->quantity = $quantity;
+
+        return $this;
     }
 
     #[\Override]
@@ -78,9 +80,11 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
         return $this->organization;
     }
 
-    public function setOrganization(?string $organization): void
+    public function setOrganization(?string $organization): self
     {
         $this->organization = $organization;
+
+        return $this;
     }
 
     #[\Override]
@@ -89,9 +93,11 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
         return $this->product;
     }
 
-    public function setProduct(Product $product): void
+    public function setProduct(Product $product): self
     {
         $this->product = $product;
+
+        return $this;
     }
 
     public function getUnit(): ?string
@@ -99,12 +105,14 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
         return $this->unit;
     }
 
-    public function setUnit(?string $unit): void
+    public function setUnit(?string $unit): self
     {
         $this->unit = $unit;
+
+        return $this;
     }
 
-    public function addError(string $errorMessage, array $additionalParameters = [], string $propertyPath = ''): void
+    public function addError(string $errorMessage, array $additionalParameters = [], string $propertyPath = ''): self
     {
         $this->errors[] = [
             'message' => $errorMessage,
@@ -114,6 +122,8 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
             ]),
             'propertyPath' => $propertyPath ?? '',
         ];
+
+        return $this;
     }
 
     /**
@@ -129,9 +139,11 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
         return !empty($this->errors);
     }
 
-    public function addAdditionalField(QuickAddField $field): void
+    public function addAdditionalField(QuickAddField $field): self
     {
         $this->additionalFields[$field->getName()] = $field;
+
+        return $this;
     }
 
     /**

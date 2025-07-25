@@ -6,7 +6,7 @@ use Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderInterface;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Controller for getting mass actions for datagrid

@@ -583,4 +583,28 @@ class ProductRepositoryTest extends WebTestCase
         $result = $this->getRepository()->getProductNamesByProductIds($productIds);
         $this->assertEquals($expected, $result);
     }
+
+    public function testGetVariantIdsByConfigurableProductIds()
+    {
+        $product1 = $this->getProduct(LoadProductData::PRODUCT_1);
+        $product2 = $this->getProduct(LoadProductData::PRODUCT_2);
+        $product3 = $this->getProduct(LoadProductData::PRODUCT_3);
+        $product8 = $this->getProduct(LoadProductData::PRODUCT_8);
+        $product9 = $this->getProduct(LoadProductData::PRODUCT_9);
+
+        $this->prepareConfigurableVariants();
+
+        $result = $this->getRepository()->getVariantIdsByConfigurableProductIds([
+            $product8->getId(),
+            $product9->getId()
+        ]);
+
+        $expected = [
+            ['parentId' => $product8->getId(), 'variantId' => $product1->getId()],
+            ['parentId' => $product8->getId(), 'variantId' => $product2->getId()],
+            ['parentId' => $product9->getId(), 'variantId' => $product3->getId()],
+        ];
+
+        $this->assertEquals($expected, $result);
+    }
 }

@@ -1,4 +1,4 @@
 oro_fixed_product_shipping_product_shipping_cost:
     resource:     "@OroFixedProductShippingBundle/Controller/ProductShippingCostController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /fixed-product-shipping/product-shipping-cost

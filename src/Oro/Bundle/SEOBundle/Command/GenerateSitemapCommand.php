@@ -8,6 +8,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
 use Oro\Bundle\SEOBundle\Async\SitemapGenerationScheduler;
 use Oro\Bundle\SEOBundle\EventListener\UpdateCronDefinitionConfigListener;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,11 +16,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Schedules generation of sitemap files.
  */
+#[AsCommand(
+    name: 'oro:cron:sitemap:generate',
+    description: 'Schedules generation of sitemap files.'
+)]
 class GenerateSitemapCommand extends Command implements CronCommandScheduleDefinitionInterface
 {
-    /** @var string */
-    protected static $defaultName = 'oro:cron:sitemap:generate';
-
     private SitemapGenerationScheduler $sitemapGenerationScheduler;
     private ConfigManager $configManager;
 
@@ -34,7 +36,7 @@ class GenerateSitemapCommand extends Command implements CronCommandScheduleDefin
     #[\Override]
     protected function configure()
     {
-        $this->setDescription('Schedules generation of sitemap files.')
+        $this
             ->setHelp(
                 <<<'HELP'
 The <info>%command.name%</info> command schedules generation of sitemap files.

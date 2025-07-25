@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Command;
 
 use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
 use Oro\Bundle\WebsiteSearchBundle\Manager\SearchResultHistoryManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,11 +12,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Actualize Search Terms report.
  */
+#[AsCommand(
+    name: 'oro:website-search:actualize-search-term-report',
+    description: 'Actualize Search Terms report.'
+)]
 class ActualizeSearchTermReportCronCommand extends Command implements CronCommandScheduleDefinitionInterface
 {
-    /** @var string */
-    protected static $defaultName = 'oro:website-search:actualize-search-term-report';
-
     private SearchResultHistoryManagerInterface $manager;
 
     public function __construct(SearchResultHistoryManagerInterface $manager)
@@ -35,7 +37,7 @@ class ActualizeSearchTermReportCronCommand extends Command implements CronComman
     #[\Override]
     protected function configure()
     {
-        $this->setDescription('Actualize Search Terms report.')
+        $this
             ->setHelp(
                 <<<'HELP'
 The <info>%command.name%</info> command actualizes Search Terms report.

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 
-use Oro\Bundle\PricingBundle\Command\RemoveUnusedCombinedPriceListsCommand;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -38,7 +37,7 @@ class RemoveUnusedCombinedPriceListsCommandTest extends WebTestCase
         $em->flush();
 
         // Check that command execution do nothing if there are not CPLs scheduled for removal
-        $this->runCommand(RemoveUnusedCombinedPriceListsCommand::getDefaultName());
+        $this->runCommand('oro:cron:price-lists:remove-unused');
         $this->assertNotNull($repo->findOneBy(['name' => 'test_cpl']));
 
         // Run GC to schedule CPL for removal
@@ -46,7 +45,7 @@ class RemoveUnusedCombinedPriceListsCommandTest extends WebTestCase
         $gc->setGcOffsetMinutes(0);
 
         // Check that command execution actually removed CPLs scheduled for removal
-        $this->runCommand(RemoveUnusedCombinedPriceListsCommand::getDefaultName());
+        $this->runCommand('oro:cron:price-lists:remove-unused');
         $this->assertNull($repo->findOneBy(['name' => 'test_cpl']));
     }
 }

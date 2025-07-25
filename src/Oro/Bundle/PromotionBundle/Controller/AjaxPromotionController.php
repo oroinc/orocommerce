@@ -10,7 +10,7 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Serves promotion actions.

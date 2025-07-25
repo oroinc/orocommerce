@@ -15,6 +15,8 @@ oro_behat_extension:
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
         - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
         - Oro\Bundle\SearchBundle\Tests\Behat\Context\SearchContext
+        - Oro\Bundle\EntityExtendBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\PinbarContext
       paths:
         - '@OroCommerceBundle/Tests/Behat/Features'
 

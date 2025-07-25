@@ -344,7 +344,7 @@ oro_behat_extension:
     Clear All Button:
       selector:
         type: xpath
-        locator: '//button[contains(text(), "Clear All Product Variants")]'
+        locator: '//button[contains(text(), "Clear All")]'
 
     One Dimensional Matrix Grid Form:
       selector:
@@ -585,3 +585,6 @@ oro_behat_extension:
 
     Add to New Front Shopping List:
       selector: 'div button:contains("Add to New Front Shopping List")'
+
+    Frontstore Breadcrumb Container:
+      selector: 'ol.breadcrumbs'

@@ -88,7 +88,7 @@ Feature: Product kits add from product view page
     Given Buyer is on "Product Kit Shopping List" shopping list
     Then I should see following grid:
       | SKU               | Product                                       | Availability | Qty | Unit   | Price   | Subtotal |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2   | pieces | $134.00 | $268.00  |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | In Stock     | 2   | pieces | $134.00 | $268.00  |
       | simple-product-03 | Barcode Scanner: Product 3                    |              | 2   | pieces | $31.00  |          |
       | simple-product-02 | Base Unit: Product 2                          |              | 2   | pieces | $31.00  |          |
     And I should see "Summary 1 Item"
@@ -100,7 +100,7 @@ Feature: Product kits add from product view page
     And click "Edit"
     Then I should see following grid:
       | SKU               | Product                                       | Availability | Qty Update All | Price   | Subtotal |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2 piece        | $134.00 | $268.00  |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | In Stock     | 2 piece        | $134.00 | $268.00  |
       | simple-product-03 | Barcode Scanner: Product 3                    |              | 2 pieces       | $31.00  |          |
       | simple-product-02 | Base Unit: Product 2                          |              | 2 pieces       | $31.00  |          |
     And I should see "Summary 1 Item"

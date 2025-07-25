@@ -290,7 +290,7 @@ oro:
                 subtotal.label: 'Subtotal:'
 
                 item.label: 'Item #:'
-                qty.label: 'QTY'
+                qty.label: 'QTY #'
 
                 not_have_available: 'You do not have available Shopping Lists'
                 empty: 'Your Shopping List Is Empty'
@@ -350,7 +350,7 @@ oro:
                 not_available: 'N/A'
                 close: 'Close'
                 clear:
-                    text: 'Clear All Product Variants'
+                    text: 'Clear All'
                     tooltip: 'Clear all entered values in the matrix'
             lineitem:
                 product:

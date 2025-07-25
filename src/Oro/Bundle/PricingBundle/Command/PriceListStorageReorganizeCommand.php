@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Oro\Bundle\PricingBundle\Command;
 
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -13,11 +14,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Reorganizes price list database tables to use or forgo sharding.
  */
+#[AsCommand(
+    name: 'oro:price-lists:pl-storage-reorganize',
+    description: 'Reorganizes price list database tables to use or forgo sharding.'
+)]
 class PriceListStorageReorganizeCommand extends Command
 {
-    /** @var string */
-    protected static $defaultName = 'oro:price-lists:pl-storage-reorganize';
-
     private ShardManager $shardManager;
 
     public function __construct(ShardManager $shardManager)
@@ -34,7 +36,6 @@ class PriceListStorageReorganizeCommand extends Command
         $this
             ->addArgument('entity-alias')
             ->addOption('strategy', null, InputOption::VALUE_REQUIRED, 'Can be "base" or "sharding"')
-            ->setDescription('Reorganizes price list database tables to use or forgo sharding.')
             ->setHelp(
                 // @codingStandardsIgnoreStart
                 <<<'HELP'

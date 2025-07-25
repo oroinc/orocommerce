@@ -22,6 +22,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\MultipleChoice;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductTemplate;
+use Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductUnitSelector;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
@@ -705,6 +706,31 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         self::assertTrue($unitSelector->isVisible());
         self::assertEquals($selectorType, $unitSelector->getSelectorType());
+    }
+
+    /**
+     * Example: I set product unit selector as "each" for product with SKU "SKU1"
+     * @When /^(?:|I )set product unit selector as "(?P<selectorType>[^"]*)" for product with SKU "(?P<SKU>[^"]*)"$/
+    */
+    public function setProductUnitForProduct($selectorType, $sku): void
+    {
+        $productItem = $this->findProductItem($sku);
+
+        self::assertTrue($productItem->isVisible());
+
+        /**
+         * @var ProductUnitSelector $unitSelector
+         */
+        $unitSelector = $productItem->getElement('ProductUnitSelector');
+
+        $availableValues = $unitSelector->getValues();
+
+        static::assertTrue(
+            in_array($selectorType, $availableValues),
+            sprintf('Product unit %s is not available', $selectorType)
+        );
+
+        $unitSelector->setValue($selectorType);
     }
 
     /**

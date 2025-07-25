@@ -12,6 +12,7 @@ use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendDbIdentifierNameGenerator;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,12 +20,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Clears old data in shopping list database table.
  */
+#[AsCommand(
+    name: 'oro:cron:shopping-list:clear-expired',
+    description: 'Clears old data in shopping list database tables.'
+)]
 class ClearExpiredShoppingListsCommand extends Command implements CronCommandScheduleDefinitionInterface
 {
     private const CHUNK_SIZE = 10000;
-
-    /** @var string */
-    protected static $defaultName = 'oro:cron:shopping-list:clear-expired';
 
     private ManagerRegistry $doctrine;
     private ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator;
@@ -46,7 +48,7 @@ class ClearExpiredShoppingListsCommand extends Command implements CronCommandSch
     #[\Override]
     protected function configure()
     {
-        $this->setDescription('Clears old data in shopping list database tables.')
+        $this
             ->setHelp(
                 <<<'HELP'
 The <info>%command.name%</info> command clears old data in shopping list database tables for customer visitors with

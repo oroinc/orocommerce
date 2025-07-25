@@ -1,4 +1,4 @@
 oro_inventory_product:
     resource:     "@OroInventoryBundle/Controller/InventoryLevelController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /inventory/inventory-level

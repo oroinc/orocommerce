@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Command;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -14,10 +15,13 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Command for repairing products owners during to it`s organization
  * to bypass errors caused by product owned to business unit from other organization
  */
+#[AsCommand(
+    name: 'oro:product:repair-owners',
+    description: 'Repairing products owners during to it`s organization ' .
+        'to bypass errors caused by product owned to business unit from other organization.'
+)]
 class RepairProductOwnersCommand extends Command
 {
-    protected static $defaultName = 'oro:product:repair-owners';
-
     private const BATCH_SIZE = 100;
 
     public function __construct(
@@ -29,11 +33,7 @@ class RepairProductOwnersCommand extends Command
     #[\Override]
     protected function configure()
     {
-        $this->addOption(name: 'batch-size', mode: InputOption::VALUE_OPTIONAL, default: self::BATCH_SIZE)
-            ->setDescription(
-                'Repairing products owners during to it`s organization ' .
-                'to bypass errors caused by product owned to business unit from other organization.'
-            );
+        $this->addOption(name: 'batch-size', mode: InputOption::VALUE_OPTIONAL, default: self::BATCH_SIZE);
     }
 
     #[\Override]

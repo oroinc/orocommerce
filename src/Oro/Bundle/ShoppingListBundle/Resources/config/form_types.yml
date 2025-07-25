@@ -37,3 +37,11 @@ services:
             - '@oro_product.form.data_transformer.product_to_id'
         tags:
             - { name: form.type }
+
+    oro_shopping_list.form.type.matrix_column:
+        class: 'Oro\Bundle\ShoppingListBundle\Form\Type\MatrixColumnType'
+        arguments:
+            - '@oro_rfp.provider.product_rfp_availability'
+            - '@oro_config.manager'
+        tags:
+            - { name: form.type }

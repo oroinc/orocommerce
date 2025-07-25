@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Controller;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Controller for product kit items.

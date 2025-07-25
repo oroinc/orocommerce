@@ -61,6 +61,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
                     'sku'                => $selectedData['sku'],
                     'defaultName.string' => $selectedData['name'],
                     'type'               => $selectedData['type'],
+                    'inventoryStatus'    => $selectedData['inventory_status'],
                 ];
             }
         } elseif ($item instanceof Product) {
@@ -68,6 +69,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
                 'sku'                => $item->getSku(),
                 'defaultName.string' => (string)$this->localizationHelper->getLocalizedValue($item->getNames()),
                 'type'               => $item->getType(),
+                'inventoryStatus'    => $item->getInventoryStatus()->getInternalId(),
             ];
         } else {
             throw new InvalidArgumentException('Given item could not be converted');

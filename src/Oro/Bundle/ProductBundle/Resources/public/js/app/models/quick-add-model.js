@@ -22,6 +22,9 @@ const QuickAddModel = BaseModel.extend({
             unit_label: null,
             unit_placeholder: __('oro.product.frontend.quick_add.form.unit.default'),
 
+            inventoryStatus: null,
+            inventoryStatusLabel: null,
+
             errors: []
         };
     },

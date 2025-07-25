@@ -6,7 +6,7 @@ services:
         class: Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator
         arguments:
             - !service
-                class: Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator
+                class: Symfony\Component\Validator\Constraints\ExpressionSyntaxValidator
                 arguments:
                     - '@oro_rule.expression_language'
         tags:

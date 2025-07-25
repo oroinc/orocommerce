@@ -6,7 +6,7 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Landing page frontend controller.

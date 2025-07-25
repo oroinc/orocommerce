@@ -1,79 +1,79 @@
 oro_product:
     resource:     "@OroProductBundle/Controller/ProductController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /product
 
 oro_product_kit_item:
     resource:     "@OroProductBundle/Controller/ProductKitItemController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /product-kit-item
 
 oro_product_unit_ajax:
     resource:     "@OroProductBundle/Controller/AjaxProductUnitController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /product-unit
 
 oro_product_grid_count_ajax:
     resource:     "@OroProductBundle/Controller/AjaxGetProductsCountController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /product-grid
 
 
 oro_product_product_collection_content_variant:
     resource:     "@OroProductBundle/Controller/ProductCollectionContentVariantController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /product-collection-content-variant/
 
 oro_product_frontend_product:
     resource: "@OroProductBundle/Controller/Frontend/ProductController.php"
-    type: annotation
+    type: attribute
     prefix: /product
     options:
         frontend: true
 
 oro_product_frontend_brand:
     resource: "@OroProductBundle/Controller/Frontend/BrandController.php"
-    type: annotation
+    type: attribute
     prefix: /brand
     options:
         frontend: true
 
 oro_product_frontend_product_ajax:
     resource: "@OroProductBundle/Controller/Frontend/AjaxProductController.php"
-    type: annotation
+    type: attribute
     prefix: /product
     options:
         frontend: true
 
 oro_product_frontend_unit_ajax:
     resource:     "@OroProductBundle/Controller/Frontend/AjaxProductUnitController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /product-unit
     options:
         frontend: true
 
 oro_product_frontend_variant_ajax:
     resource:     "@OroProductBundle/Controller/Frontend/AjaxProductVariantController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /product-variant
     options:
         frontend: true
 
 oro_product_frontend_quick_add:
     resource:     "@OroProductBundle/Controller/Frontend/QuickAddController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /customer/product/quick-add
     options:
         frontend: true
 
 oro_brand:
     resource:     "@OroProductBundle/Controller/BrandController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /brand
 
 oro_product_frontend_export:
     resource: "@OroProductBundle/Controller/Frontend/ExportController.php"
-    type: annotation
+    type: attribute
     prefix: /export/products
     options:
         frontend: true

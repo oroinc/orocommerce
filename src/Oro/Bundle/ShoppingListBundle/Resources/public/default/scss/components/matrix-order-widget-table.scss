@@ -17,7 +17,6 @@
             z-index: $matrix-order-widget-table-head-cell-z-index;
 
             &:first-child {
-                border-inline-end: $matrix-order-widget-table-head-cell-first-child-border-inline-end;
                 padding-inline: $matrix-order-widget-table-head-cell-first-child-padding-inline;
                 inset-inline-start: $matrix-order-widget-table-head-cell-first-child-inset-inline-start;
                 z-index: $matrix-order-widget-table-head-cell-first-child-z-index;
@@ -45,7 +44,6 @@
             font-weight: $matrix-order-widget-table-body-head-font-weight;
             text-align: $matrix-order-widget-table-body-head-text-align;
             color: $matrix-order-widget-table-body-head-color;
-            border-inline-end: $matrix-order-widget-table-body-head-border-inline-end;
             padding-block-end: $matrix-order-widget-table-body-head-padding-block-end;
             padding-inline: $matrix-order-widget-table-body-head-padding-inline;
             position: $matrix-order-widget-table-body-head-position;
@@ -82,7 +80,6 @@
             font-weight: $matrix-order-widget-table-footer-head-font-weight;
             text-align: $matrix-order-widget-table-footer-head-text-align;
             color: $matrix-order-widget-table-footer-head-color;
-            border-inline-end: $matrix-order-widget-table-footer-head-border-inline-end;
             padding-block: $matrix-order-widget-table-footer-head-padding-block;
             padding-inline: $matrix-order-widget-table-footer-head-padding-inline;
             position: $matrix-order-widget-table-footer-head-position;
@@ -120,6 +117,22 @@
                 font-weight: $matrix-order-widget-table-footer-total-valid-font-weight;
                 color: $matrix-order-widget-table-footer-total-valid-color;
             }
+        }
+    }
+}
+
+.scroll-shadow-initialized.horizontal-scrolling {
+    .matrix-order-widget-table {
+        &__head-cell:first-child {
+            border-inline-end: $matrix-order-widget-table-head-cell-first-child-border-inline-end;
+        }
+
+        &__body-head:first-child {
+            border-inline-end: $matrix-order-widget-table-body-head-border-inline-end;
+        }
+
+        &__footer-head:first-child {
+            border-inline-end: $matrix-order-widget-table-footer-head-border-inline-end;
         }
     }
 }

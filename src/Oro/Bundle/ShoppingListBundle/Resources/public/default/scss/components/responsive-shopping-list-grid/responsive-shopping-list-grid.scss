@@ -73,6 +73,11 @@
     .grid-body-cell-inventoryStatus {
         width: $responsive-shopping-grid-body-cell-inventory-width;
         min-width: $responsive-shopping-grid-body-cell-inventory-width;
+
+        .inventory-level {
+            width: max-content;
+            max-width: $responsive-shopping-grid-body-cell-inventory-level-max-width;
+        }
     }
 
     .grid-body-cell-item {
@@ -263,6 +268,10 @@
         &.product-kit-general-error {
             border-bottom: $responsive-shopping-grid-row-border-mobile;
         }
+    }
+
+    .inventory-level-root {
+        width: 100%;
     }
 }
 

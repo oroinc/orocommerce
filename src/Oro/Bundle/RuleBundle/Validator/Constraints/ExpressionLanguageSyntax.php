@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\RuleBundle\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraints\ExpressionLanguageSyntax as SymfonyExpressionLanguageSyntax;
+use Symfony\Component\Validator\Constraints\ExpressionSyntax;
 
 /**
  * Validation constraint for expression language syntax.
  */
-class ExpressionLanguageSyntax extends SymfonyExpressionLanguageSyntax
+class ExpressionLanguageSyntax extends ExpressionSyntax
 {
     public $message = 'oro.rule.expression_language_syntax';
 

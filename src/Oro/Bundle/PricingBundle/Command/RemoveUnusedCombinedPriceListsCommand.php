@@ -7,6 +7,7 @@ namespace Oro\Bundle\PricingBundle\Command;
 use Oro\Bundle\CronBundle\Command\CronCommandActivationInterface;
 use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,13 +15,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Prepares and activates combined price lists based on their schedules.
  */
+#[AsCommand(
+    name: 'oro:cron:price-lists:remove-unused',
+    description: 'Removes unused combined price lists scheduled for removal'
+)]
 class RemoveUnusedCombinedPriceListsCommand extends Command implements
     CronCommandScheduleDefinitionInterface,
     CronCommandActivationInterface
 {
-    /** @var string */
-    protected static $defaultName = 'oro:cron:price-lists:remove-unused';
-
     private CombinedPriceListGarbageCollector $garbageCollector;
 
     public function __construct(
@@ -34,7 +36,7 @@ class RemoveUnusedCombinedPriceListsCommand extends Command implements
     #[\Override]
     protected function configure()
     {
-        $this->setDescription('Removes unused combined price lists scheduled for removal')
+        $this
             ->setHelp(
                 <<<'HELP'
 The <info>%command.name%</info> removes unused combined price lists scheduled for removal.

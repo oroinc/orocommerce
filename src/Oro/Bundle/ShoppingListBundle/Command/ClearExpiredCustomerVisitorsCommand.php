@@ -12,6 +12,7 @@ use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendDbIdentifierNameGenerator;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,12 +20,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Clears old data in customer visitor database table.
  */
+#[AsCommand(
+    name: 'oro:cron:customer-visitors:clear-expired',
+    description: 'Clears old data in customer visitor database table.'
+)]
 class ClearExpiredCustomerVisitorsCommand extends Command implements CronCommandScheduleDefinitionInterface
 {
     private const CHUNK_SIZE = 10000;
-
-    /** @var string */
-    protected static $defaultName = 'oro:cron:customer-visitors:clear-expired';
 
     private ManagerRegistry $doctrine;
     private ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator;
@@ -45,7 +47,7 @@ class ClearExpiredCustomerVisitorsCommand extends Command implements CronCommand
     #[\Override]
     protected function configure()
     {
-        $this->setDescription('Clears old data in customer visitor database table.')
+        $this
             ->setHelp(
                 <<<'HELP'
 The <info>%command.name%</info> command clears old data in customer visitor database table for customer visitors with

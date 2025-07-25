@@ -36,8 +36,8 @@ Feature: Resubmit RFQ with Product Kits
     When I click "BackToListBtn"
     Then I should see following grid:
       | Status    | Created by  | PO Number |
-      | CANCELLED | Amanda Cole | PO013     |
-      | SUBMITTED | Amanda Cole | PO013     |
+      | Cancelled | Amanda Cole | PO013     |
+      | Submitted | Amanda Cole | PO013     |
 
   Scenario: Check resubmitted Request
     When I click view Submitted in grid

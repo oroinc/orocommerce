@@ -9,6 +9,7 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,14 +19,15 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Schedules the (re)build of resized versions of all product images.
  */
+#[AsCommand(
+    name: 'product:image:resize-all',
+    description: 'Schedules the (re)build of resized versions of all product images.'
+)]
 class ResizeAllProductImagesCommand extends Command
 {
     private const BATCH_SIZE = 1000;
 
     protected array $noImagesPath = [];
-
-    /** @var string */
-    protected static $defaultName = 'product:image:resize-all';
 
     public function __construct(
         private DoctrineHelper $doctrineHelper,
@@ -48,7 +50,6 @@ class ResizeAllProductImagesCommand extends Command
                 'Resize to given dimension(s)',
                 []
             )
-            ->setDescription('Schedules the (re)build of resized versions of all product images.')
             ->setHelp(
                 <<<'HELP'
 The <info>%command.name%</info> command schedules the (re)build of resized versions of all product images.

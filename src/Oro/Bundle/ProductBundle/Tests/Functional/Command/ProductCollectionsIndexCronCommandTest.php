@@ -11,7 +11,6 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Async\Topic\ReindexProductCollectionBySegmentTopic;
-use Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\EventListener\ProductCollectionsScheduleConfigurationListener;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadContentVariantSegmentsWithRelationsData;
@@ -66,7 +65,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         );
         $configManager->flush();
 
-        self::runCommand(ProductCollectionsIndexCronCommand::getDefaultName(), []);
+        self::runCommand('oro:cron:product-collections:index', []);
 
         $isFullReindex = false === $isPartialConfig;
         $rootJob = $this->getRootJob($isFullReindex);
@@ -137,7 +136,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         );
         $configManager->flush();
 
-        self::runCommand(ProductCollectionsIndexCronCommand::getDefaultName(), ['--partial-reindex']);
+        self::runCommand('oro:cron:product-collections:index', ['--partial-reindex']);
 
         $rootJob = $this->getRootJob(false);
         $this->assertRootJobContainsDependentJob($rootJob);
@@ -192,7 +191,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
 
         self::getMessageCollector()->clear();
 
-        $response = self::runCommand(ProductCollectionsIndexCronCommand::getDefaultName(), []);
+        $response = self::runCommand('oro:cron:product-collections:index', []);
         self::assertEquals($expectedResponse, $response);
         self::assertMessagesEmpty(ReindexProductCollectionBySegmentTopic::NAME);
     }
@@ -215,7 +214,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
 
     public function testCommandWhenWebCatalogIsNotUsed()
     {
-        self::runCommand(ProductCollectionsIndexCronCommand::getDefaultName(), []);
+        self::runCommand('oro:cron:product-collections:index', []);
 
         self::assertMessagesEmpty(ReindexProductCollectionBySegmentTopic::NAME);
     }
@@ -225,7 +224,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         /** @var EntityRepository $repo */
         $repo = $this->getContainer()->get('doctrine')->getRepository(Schedule::class);
         /** @var Schedule $commandSchedule */
-        $commandSchedule = $repo->findOneBy(['command' => ProductCollectionsIndexCronCommand::getDefaultName()]);
+        $commandSchedule = $repo->findOneBy(['command' => 'oro:cron:product-collections:index']);
         self::assertNotEmpty($commandSchedule);
         self::assertSame(Configuration::DEFAULT_CRON_SCHEDULE, $commandSchedule->getDefinition());
 
@@ -234,7 +233,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         $configManager->flush();
         self::runCommand('oro:cron:definitions:load', []);
 
-        $commandSchedule = $repo->findOneBy(['command' => ProductCollectionsIndexCronCommand::getDefaultName()]);
+        $commandSchedule = $repo->findOneBy(['command' => 'oro:cron:product-collections:index']);
         self::assertSame('0 0 0 0 *', $commandSchedule->getDefinition());
     }
 

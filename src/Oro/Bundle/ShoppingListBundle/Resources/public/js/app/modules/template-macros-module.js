@@ -36,6 +36,15 @@ macros('oroshoppinglist', {
     renderInventoryStatus: require('tpl-loader!oroshoppinglist/templates/macros/product-item__inventory_status.html'),
 
     /**
+     * Renders inventory status as tooltip for product item
+     *
+     * @param {string} name
+     * @param {string} label
+     */
+    renderInventoryTooltipStatus:
+        require('tpl-loader!oroshoppinglist/templates/macros/product-item__inventory_tooltip_status.html'),
+
+    /**
      * Renders notes for product item
      *
      * @param {string} notes

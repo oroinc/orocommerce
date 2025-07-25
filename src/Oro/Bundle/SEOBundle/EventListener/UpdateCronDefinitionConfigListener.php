@@ -27,12 +27,12 @@ class UpdateCronDefinitionConfigListener
     {
         if ($event->isChanged(self::CONFIG_FIELD)) {
             $this->deferredScheduler->removeSchedule(
-                GenerateSitemapCommand::getDefaultName(),
+                'oro:cron:sitemap:generate',
                 [],
                 $event->getOldValue(self::CONFIG_FIELD)
             );
             $this->deferredScheduler->addSchedule(
-                GenerateSitemapCommand::getDefaultName(),
+                'oro:cron:sitemap:generate',
                 [],
                 $event->getNewValue(self::CONFIG_FIELD)
             );

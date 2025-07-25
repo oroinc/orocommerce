@@ -1,4 +1,4 @@
 oro_payment_term:
     resource:     "@OroPaymentTermBundle/Controller/PaymentTermController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /payment/term

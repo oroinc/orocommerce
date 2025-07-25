@@ -100,20 +100,23 @@
 
 {% block _matrix_collection_widget_table_tbody_body_cell_content %}
     <div class="{{ class_prefix }}-field">
-        {% if cell.vars.productId == null %}
-            <div class="{{ class_prefix }}-field__inner">
-                {{- 'oro.frontend.shoppinglist.matrix_grid_order.not_available'|trans -}}
-            </div>
-        {% else %}
+        {% if cell.vars.isEditable %}
             {{ form_widget(cell, {
                 'attr': {
                     'data-product-id': cell.vars.productId,
+                    'data-inventory-status': cell.vars.value.product.inventoryStatus.id|default(null),
+                    'data-inventory-status-label': oro_inventory_status_label(cell.vars.value.product)|default(null),
                     'data-index': {
                         'row': rowIndex,
                         'column': cellIndex
                     }|json_encode
                 }
             }) }}
+            <span class="{{ class_prefix }}-field__price" data-cell-price></span>
+        {% else %}
+            <div class="{{ class_prefix }}-field__inner">
+                {{- 'oro.frontend.shoppinglist.matrix_grid_order.not_available'|trans -}}
+            </div>
         {% endif %}
     </div>
 {% endblock %}
@@ -186,20 +189,23 @@
 {% block _matrix_collection_widget_oneflow_cell %}
     <div class="{{ class_prefix }}-oneflow__cell">
         <div class="{{ class_prefix }}-field">
-            {% if cell.vars.productId == null %}
-                <div class="{{ class_prefix }}-field__inner {{ class_prefix }}-field__inner--dark">
-                    {{- 'oro.frontend.shoppinglist.matrix_grid_order.not_available'|trans -}}
-                </div>
-            {% else %}
+            {% if cell.vars.isEditable %}
                 {{ form_widget(cell, {
                     'attr': {
                         'data-product-id': cell.vars.productId,
+                        'data-inventory-status': cell.vars.value.product.inventoryStatus.id|default(null),
+                        'data-inventory-status-label': oro_inventory_status_label(cell.vars.value.product)|default(null),
                         'data-index': {
                             'row': rowIndex,
                             'column': cellIndex
                         }|json_encode
                     }
                 }) }}
+                <span class="{{ class_prefix }}-field__price" data-cell-price></span>
+            {% else %}
+                <div class="{{ class_prefix }}-field__inner {{ class_prefix }}-field__inner--dark">
+                    {{- 'oro.frontend.shoppinglist.matrix_grid_order.not_available'|trans -}}
+                </div>
             {% endif %}
         </div>
     </div>
