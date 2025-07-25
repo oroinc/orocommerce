@@ -4,7 +4,6 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\CronBundle\Entity\Manager\DeferredScheduler;
-use Oro\Bundle\SEOBundle\Command\GenerateSitemapCommand;
 use Oro\Bundle\SEOBundle\EventListener\UpdateCronDefinitionConfigListener;
 
 class UpdateCronDefinitionConfigListenerTest extends \PHPUnit\Framework\TestCase
@@ -46,10 +45,10 @@ class UpdateCronDefinitionConfigListenerTest extends \PHPUnit\Framework\TestCase
         );
         $this->deferredScheduler->expects($this->once())
             ->method('removeSchedule')
-            ->with(GenerateSitemapCommand::getDefaultName(), [], $oldValue);
+            ->with('oro:cron:sitemap:generate', [], $oldValue);
         $this->deferredScheduler->expects($this->once())
             ->method('addSchedule')
-            ->with(GenerateSitemapCommand::getDefaultName(), [], $newValue);
+            ->with('oro:cron:sitemap:generate', [], $newValue);
         $this->deferredScheduler->expects($this->once())
             ->method('flush');
         $this->listener->onUpdateAfter($event);

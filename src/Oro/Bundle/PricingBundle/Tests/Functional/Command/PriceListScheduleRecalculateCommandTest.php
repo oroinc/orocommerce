@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic;
-use Oro\Bundle\PricingBundle\Command\PriceListScheduleRecalculateCommand;
 use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadDependentPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadDependentPriceLists;
@@ -71,7 +70,7 @@ class PriceListScheduleRecalculateCommandTest extends WebTestCase
             $params[] = '--price-list=' . $this->getReference($priceListName)->getId();
         }
 
-        $result = $this->runCommand(PriceListScheduleRecalculateCommand::getDefaultName(), $params);
+        $result = $this->runCommand('oro:price-lists:schedule-recalculate', $params);
         foreach ($expectedConsoleMessages as $message) {
             $this->assertStringContainsString($message, $result);
         }

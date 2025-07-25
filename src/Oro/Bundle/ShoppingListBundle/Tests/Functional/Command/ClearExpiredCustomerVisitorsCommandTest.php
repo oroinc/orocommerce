@@ -5,8 +5,6 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Command;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerVisitors;
-use Oro\Bundle\ShoppingListBundle\Command\ClearExpiredCustomerVisitorsCommand;
-use Oro\Bundle\ShoppingListBundle\Command\ClearExpiredShoppingListsCommand;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadGuestShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -30,7 +28,7 @@ class ClearExpiredCustomerVisitorsCommandTest extends WebTestCase
 
     public function testShouldNotClearExpiredVisitorsWithExistShoppingLists()
     {
-        $result = $this->runCommand(ClearExpiredCustomerVisitorsCommand::getDefaultName());
+        $result = $this->runCommand('oro:cron:customer-visitors:clear-expired');
         static::assertStringContainsString('Clear expired customer visitors completed', $result);
 
         $customerVisitorExpired = $this->getReference(LoadCustomerVisitors::CUSTOMER_VISITOR_EXPIRED);
@@ -43,10 +41,10 @@ class ClearExpiredCustomerVisitorsCommandTest extends WebTestCase
 
     public function testShouldClearExpiredVisitorsWithoutShoppingLists()
     {
-        $result = $this->runCommand(ClearExpiredShoppingListsCommand::getDefaultName());
+        $result = $this->runCommand('oro:cron:shopping-list:clear-expired');
         static::assertStringContainsString('Clear expired guest shopping lists completed', $result);
 
-        $result = $this->runCommand(ClearExpiredCustomerVisitorsCommand::getDefaultName());
+        $result = $this->runCommand('oro:cron:customer-visitors:clear-expired');
         static::assertStringContainsString('Clear expired customer visitors completed', $result);
 
         $customerVisitorExpired = $this->getReference(LoadCustomerVisitors::CUSTOMER_VISITOR_EXPIRED);

@@ -1,13 +1,13 @@
 oro_payment_callback:
     resource:     "@OroPaymentBundle/Controller/Frontend/CallbackController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /payment/callback
     options:
         frontend: true
 
 oro_payment_methods_configs_rule:
     resource:     "@OroPaymentBundle/Controller/PaymentMethodsConfigsRuleController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /paymentrule
 
 

@@ -6,7 +6,6 @@ use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
-use Oro\Bundle\PricingBundle\Command\CombinedPriceListScheduleCommand;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
@@ -105,7 +104,7 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
 
         $this->assertCustomerGroupActiveCPL($website, $customerGroup, '1_2_3', false);
 
-        $this->runCommand(CombinedPriceListScheduleCommand::getDefaultName());
+        $this->runCommand('oro:cron:price-lists:schedule');
 
         $priceList2 = $this->getReference(LoadPriceLists::PRICE_LIST_2);
         $priceList3 = $this->getReference(LoadPriceLists::PRICE_LIST_3);

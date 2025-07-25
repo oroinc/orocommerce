@@ -15,6 +15,7 @@ use Oro\Bundle\PricingBundle\Model\CombinedPriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Provider\DependentPriceListProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,11 +24,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Schedules re-calculation and re-combination of combined price lists and product prices.
  */
+#[AsCommand(
+    name: 'oro:price-lists:schedule-recalculate',
+    description: 'Recalculates combined price lists and product prices.'
+)]
 class PriceListScheduleRecalculateCommand extends Command
 {
-    /** @var string */
-    protected static $defaultName = 'oro:price-lists:schedule-recalculate';
-
     private ManagerRegistry $registry;
     private DependentPriceListProvider $dependentPriceListProvider;
     private CombinedPriceListRelationTriggerHandler $cplRelationTriggerHandler;
@@ -83,7 +85,6 @@ class PriceListScheduleRecalculateCommand extends Command
                 InputOption::VALUE_NONE,
                 'Recalculate prices for dependent price lists included in the price-list option'
             )
-            ->setDescription('Recalculates combined price lists and product prices.')
             ->setHelp(
                 // @codingStandardsIgnoreStart
                 <<<'HELP'

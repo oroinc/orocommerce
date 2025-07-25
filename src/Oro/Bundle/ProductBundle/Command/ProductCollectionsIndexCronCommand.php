@@ -13,6 +13,7 @@ use Oro\Bundle\ProductBundle\Handler\AsyncReindexProductCollectionHandlerInterfa
 use Oro\Bundle\ProductBundle\Helper\ProductCollectionSegmentHelper;
 use Oro\Bundle\ProductBundle\Model\SegmentMessageFactory;
 use Oro\Bundle\ProductBundle\Provider\CronSegmentsProvider;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,11 +21,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Schedules indexation of product collections.
  */
+#[AsCommand(
+    name: 'oro:cron:product-collections:index',
+    description: 'Schedules indexation of product collections.'
+)]
 class ProductCollectionsIndexCronCommand extends Command implements CronCommandScheduleDefinitionInterface
 {
-    /** @var string */
-    protected static $defaultName = 'oro:cron:product-collections:index';
-
     private AsyncReindexProductCollectionHandlerInterface $collectionIndexationHandler;
     private SegmentMessageFactory $messageFactory;
     private CronSegmentsProvider $segmentProvider;
@@ -52,7 +54,6 @@ class ProductCollectionsIndexCronCommand extends Command implements CronCommandS
     protected function configure()
     {
         $this->addOption('partial-reindex', null, null, 'Perform indexation only for added or removed products')
-            ->setDescription('Schedules indexation of product collections.')
             ->setHelp(
                 <<<'HELP'
 The <info>%command.name%</info> command schedules indexation of product collections.

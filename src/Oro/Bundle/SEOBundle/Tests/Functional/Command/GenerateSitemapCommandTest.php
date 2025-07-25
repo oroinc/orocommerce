@@ -7,7 +7,6 @@ use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CronBundle\Entity\Schedule;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapTopic;
-use Oro\Bundle\SEOBundle\Command\GenerateSitemapCommand;
 use Oro\Bundle\SEOBundle\DependencyInjection\Configuration;
 use Oro\Bundle\SEOBundle\EventListener\UpdateCronDefinitionConfigListener;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -25,7 +24,7 @@ class GenerateSitemapCommandTest extends WebTestCase
 
     public function testCommand(): void
     {
-        self::runCommand(GenerateSitemapCommand::getDefaultName());
+        self::runCommand('oro:cron:sitemap:generate');
 
         self::assertMessageSent(GenerateSitemapTopic::getName(), []);
     }
@@ -35,7 +34,7 @@ class GenerateSitemapCommandTest extends WebTestCase
         /** @var EntityRepository $repo */
         $repo = self::getContainer()->get('doctrine')->getRepository(Schedule::class);
         /** @var Schedule $commandSchedule */
-        $commandSchedule = $repo->findOneBy(['command' => GenerateSitemapCommand::getDefaultName()]);
+        $commandSchedule = $repo->findOneBy(['command' => 'oro:cron:sitemap:generate']);
         self::assertNotEmpty($commandSchedule);
         self::assertSame(Configuration::DEFAULT_CRON_DEFINITION, $commandSchedule->getDefinition());
 
@@ -44,7 +43,7 @@ class GenerateSitemapCommandTest extends WebTestCase
         $configManager->flush();
         self::runCommand('oro:cron:definitions:load', []);
 
-        $commandSchedule = $repo->findOneBy(['command' => GenerateSitemapCommand::getDefaultName()]);
+        $commandSchedule = $repo->findOneBy(['command' => 'oro:cron:sitemap:generate']);
         self::assertSame('0 0 0 0 *', $commandSchedule->getDefinition());
     }
 }

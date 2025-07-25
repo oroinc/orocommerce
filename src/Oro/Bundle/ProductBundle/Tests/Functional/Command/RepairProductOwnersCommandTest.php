@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Command;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\ProductBundle\Command\RepairProductOwnersCommand;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -32,7 +31,7 @@ class RepairProductOwnersCommandTest extends WebTestCase
         $managerRegistry = self::getContainer()->get('doctrine');
         $em = $managerRegistry->getManagerForClass(Product::class);
 
-        $output = self::runCommand(RepairProductOwnersCommand::getDefaultName());
+        $output = self::runCommand('oro:product:repair-owners');
         self::assertEmpty($output);
 
         $product = $em->find(Product::class, $product->getId());
@@ -52,7 +51,7 @@ class RepairProductOwnersCommandTest extends WebTestCase
         $em->persist($product);
         $em->flush();
 
-        $output = self::runCommand(RepairProductOwnersCommand::getDefaultName());
+        $output = self::runCommand('oro:product:repair-owners');
         self::assertEquals(sprintf('Owner updated for products: %s', $product->getSku()), $output);
 
         $product = $em->find(Product::class, $product->getId());
@@ -73,7 +72,7 @@ class RepairProductOwnersCommandTest extends WebTestCase
         $em->persist($product);
         $em->flush();
 
-        $output = self::runCommand(RepairProductOwnersCommand::getDefaultName());
+        $output = self::runCommand('oro:product:repair-owners');
         self::assertEquals(
             sprintf(
                 '<warning>Owner not updated for products(no business units in product organization): %s</warning>',

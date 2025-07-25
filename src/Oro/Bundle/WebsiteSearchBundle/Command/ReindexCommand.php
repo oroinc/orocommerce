@@ -7,6 +7,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Command;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -16,11 +17,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Rebuilds the storefront search index.
  */
+#[AsCommand(
+    name: 'oro:website-search:reindex',
+    description: 'Rebuilds the storefront search index.'
+)]
 class ReindexCommand extends Command
 {
-    /** @var string */
-    protected static $defaultName = 'oro:website-search:reindex';
-
     private ManagerRegistry $doctrine;
     private EventDispatcherInterface $eventDispatcher;
     private SearchMappingProvider $searchMappingProvider;
@@ -57,7 +59,6 @@ class ReindexCommand extends Command
                 ),
                 []
             )
-            ->setDescription('Rebuilds the storefront search index.')
             ->setHelp(
                 // @codingStandardsIgnoreStart
                 <<<'HELP'

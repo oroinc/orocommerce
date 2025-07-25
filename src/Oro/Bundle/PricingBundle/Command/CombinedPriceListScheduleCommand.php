@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListBuildActivity;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,13 +21,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Prepares and activates combined price lists based on their schedules.
  */
+#[AsCommand(
+    name: 'oro:cron:price-lists:schedule',
+    description: 'Prepares and activates combined price lists based on their schedules.'
+)]
 class CombinedPriceListScheduleCommand extends Command implements
     CronCommandScheduleDefinitionInterface,
     CronCommandActivationInterface
 {
-    /** @var string */
-    protected static $defaultName = 'oro:cron:price-lists:schedule';
-
     private ManagerRegistry $doctrine;
     private ConfigManager $configManager;
     private CombinedPriceListScheduleResolver $priceListScheduleResolver;
@@ -53,7 +55,7 @@ class CombinedPriceListScheduleCommand extends Command implements
     #[\Override]
     protected function configure()
     {
-        $this->setDescription('Prepares and activates combined price lists based on their schedules.')
+        $this
             ->setHelp(
                 <<<'HELP'
 The <info>%command.name%</info> command prepares and activates combined price lists

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
-use Oro\Bundle\PricingBundle\Command\RemoveDuplicatePricesCommand;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPricesWithDuplicates;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -21,7 +20,7 @@ class RemoveDuplicatePricesCommandTest extends WebTestCase
         /** @var CombinedPriceListGarbageCollector $gc */
         $gc = $this->getContainer()->get('oro_pricing.builder.combined_price_list_garbage_collector');
         self::assertTrue($gc->hasDuplicatePrices());
-        $this->runCommand(RemoveDuplicatePricesCommand::getDefaultName());
+        $this->runCommand('oro:cron:prices:gc');
         self::assertFalse($gc->hasDuplicatePrices());
     }
 }

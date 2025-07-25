@@ -28,7 +28,7 @@ use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator;
+use Symfony\Component\Validator\Constraints\ExpressionSyntaxValidator;
 
 class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
 {
@@ -194,7 +194,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
     protected function getValidators(): array
     {
         return [
-            ExpressionLanguageSyntaxValidator::class => $this->createMock(ExpressionLanguageSyntaxValidator::class),
+            ExpressionSyntaxValidator::class => $this->createMock(ExpressionSyntaxValidator::class),
         ];
     }
 

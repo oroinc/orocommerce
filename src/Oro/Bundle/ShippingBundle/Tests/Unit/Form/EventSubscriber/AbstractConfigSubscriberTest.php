@@ -37,7 +37,7 @@ use Symfony\Component\Asset\Packages as AssetHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator;
+use Symfony\Component\Validator\Constraints\ExpressionSyntaxValidator;
 
 abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
 {
@@ -117,7 +117,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
         return [
             $enabledTypeConfigsValidationGroup->validatedBy() => new EnabledTypeConfigsValidationGroupValidator(),
             $shippingRuleEnable->validatedBy() => $this->createMock(ShippingRuleEnableValidator::class),
-            $expressionLanguageSyntax->validatedBy() => $this->createMock(ExpressionLanguageSyntaxValidator::class),
+            $expressionLanguageSyntax->validatedBy() => $this->createMock(ExpressionSyntaxValidator::class),
         ];
     }
 

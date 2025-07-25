@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Command\VisibilityCacheBuildCommand;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved;
@@ -51,7 +50,7 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
         $this->assertEquals(0, $this->getCustomerProductVisibilityResolvedCount());
 
         // Run command and check result messages
-        $result = $this->runCommand(VisibilityCacheBuildCommand::getDefaultName(), $params);
+        $result = $this->runCommand('product:visibility:cache:build', $params);
         foreach ($expectedMessages as $message) {
             self::assertStringContainsString($message, $result);
         }

@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\CronBundle\Entity\Manager\DeferredScheduler;
-use Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand;
 use Oro\Bundle\ProductBundle\EventListener\ProductCollectionsScheduleConfigurationListener;
 
 class ProductCollectionsScheduleConfigurationListenerTest extends \PHPUnit\Framework\TestCase
@@ -46,10 +45,10 @@ class ProductCollectionsScheduleConfigurationListenerTest extends \PHPUnit\Frame
         );
         $this->deferredScheduler->expects(self::once())
             ->method('removeSchedule')
-            ->with(ProductCollectionsIndexCronCommand::getDefaultName(), [], $oldValue);
+            ->with('oro:cron:product-collections:index', [], $oldValue);
         $this->deferredScheduler->expects(self::once())
             ->method('addSchedule')
-            ->with(ProductCollectionsIndexCronCommand::getDefaultName(), [], $newValue);
+            ->with('oro:cron:product-collections:index', [], $newValue);
         $this->deferredScheduler->expects(self::once())
             ->method('flush');
         $this->listener->onUpdateAfter($event);

@@ -1,26 +1,26 @@
 oro_tax_product_tax_code:
     resource:     "@OroTaxBundle/Controller/ProductTaxCodeController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /tax/product
 
 oro_tax_customer_tax_code:
     resource:     "@OroTaxBundle/Controller/CustomerTaxCodeController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /tax/customer
 
 oro_tax:
     resource:     "@OroTaxBundle/Controller/TaxController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /tax
 
 oro_tax_rule:
     resource:     "@OroTaxBundle/Controller/TaxRuleController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /tax/rule
 
 oro_tax_jurisdiction:
     resource:     "@OroTaxBundle/Controller/TaxJurisdictionController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /tax/jurisdiction
 
 

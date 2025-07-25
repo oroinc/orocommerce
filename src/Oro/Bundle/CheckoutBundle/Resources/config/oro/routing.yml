@@ -1,20 +1,20 @@
 oro_checkout:
     resource:     "@OroCheckoutBundle/Controller/Frontend/CheckoutController.php"
-    type:         annotation
+    type:         attribute
     prefix:       customer/checkout
     options:
         frontend: true
 
 oro_checkout_ajax:
     resource:     "@OroCheckoutBundle/Controller/Frontend/AjaxCheckoutController.php"
-    type:         annotation
+    type:         attribute
     prefix:       customer/checkout
     options:
         frontend: true
 
 oro_open_orders:
     resource:     "@OroCheckoutBundle/Controller/Frontend/OpenOrdersController.php"
-    type:         annotation
+    type:         attribute
     prefix:       customer/open-orders
     options:
         frontend: true

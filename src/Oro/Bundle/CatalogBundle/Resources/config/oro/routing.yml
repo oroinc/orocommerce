@@ -1,26 +1,26 @@
 oro_catalog_category:
     resource:     "@OroCatalogBundle/Controller/CategoryController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /catalog/category
 
 oro_catalog_product:
     resource:     "@OroCatalogBundle/Controller/ProductController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /catalog/product
 
 oro_catalog_ajax:
     resource:     "@OroCatalogBundle/Controller/AjaxCatalogController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /catalog/ajax
 
 oro_catalog_frontend_product:
     resource: "@OroCatalogBundle/Controller/Frontend/ProductController.php"
-    type: annotation
+    type: attribute
     prefix: /catalog
     options:
         frontend: true
 
 oro_catalog_category_product:
     resource:     "@OroCatalogBundle/Controller/CategoryProductsController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /catalog/category-products

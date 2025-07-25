@@ -3,17 +3,17 @@
 namespace Oro\Bundle\RuleBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator;
-use Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator as SymfonyExpressionLanguageValidator;
+use Symfony\Component\Validator\Constraints\ExpressionSyntaxValidator;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ExpressionLanguageSyntaxValidatorTest extends ConstraintValidatorTestCase
 {
-    private SymfonyExpressionLanguageValidator|\PHPUnit\Framework\MockObject\MockObject $innerValidator;
+    private ExpressionSyntaxValidator|\PHPUnit\Framework\MockObject\MockObject $innerValidator;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->innerValidator = $this->createMock(SymfonyExpressionLanguageValidator::class);
+        $this->innerValidator = $this->createMock(ExpressionSyntaxValidator::class);
 
         parent::setUp();
     }

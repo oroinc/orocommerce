@@ -1,37 +1,37 @@
 oro_rfp_request:
     resource:     "@OroRFPBundle/Controller/RequestController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /rfp/request
 
 oro_rfp_frontend:
     resource: "@OroRFPBundle/Controller/Frontend/RequestController.php"
-    type: annotation
+    type: attribute
     prefix: /customer/rfp
     options:
         frontend: true
 
 oro_rfp_frontend_product_kit_configuration:
     resource: "@OroRFPBundle/Controller/Frontend/RequestProductKitConfigurationDialogController.php"
-    type: annotation
+    type: attribute
     prefix: /customer/rfp/product-kit/configuration
     options:
         frontend: true
 
 oro_rfp_frontend_product_kit_configuration_price:
     resource: "@OroRFPBundle/Controller/Frontend/RequestProductKitConfigurationPriceController.php"
-    type: annotation
+    type: attribute
     prefix: /customer/rfp/product-kit/price
     options:
         frontend: true
 
 oro_rfp_frontend_product_tier_prices:
     resource: "@OroRFPBundle/Controller/Frontend/RequestProductTierPricesController.php"
-    type: annotation
+    type: attribute
     prefix: /customer/rfp/product/tier-prices
     options:
         frontend: true
 
 oro_rfp_request_product_kit_item_line_item_ajax:
     resource: "@OroRFPBundle/Controller/AjaxRequestProductKitItemLineItemController.php"
-    type: annotation
+    type: attribute
     prefix: /rfp/requestproductkititemlineitem

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RuleBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator as SymfonyExpressionLanguageValidator;
+use Symfony\Component\Validator\Constraints\ExpressionSyntaxValidator;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -15,9 +15,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class ExpressionLanguageSyntaxValidator extends ConstraintValidator
 {
-    private SymfonyExpressionLanguageValidator $innerExpressionLanguageValidator;
+    private ExpressionSyntaxValidator $innerExpressionLanguageValidator;
 
-    public function __construct(SymfonyExpressionLanguageValidator $innerExpressionLanguageValidator)
+    public function __construct(ExpressionSyntaxValidator $innerExpressionLanguageValidator)
     {
         $this->innerExpressionLanguageValidator = $innerExpressionLanguageValidator;
     }

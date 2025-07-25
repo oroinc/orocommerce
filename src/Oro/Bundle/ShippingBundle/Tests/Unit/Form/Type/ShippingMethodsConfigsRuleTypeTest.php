@@ -34,7 +34,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Packages as AssetHelper;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator;
+use Symfony\Component\Validator\Constraints\ExpressionSyntaxValidator;
 
 class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
 {
@@ -178,7 +178,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             'oro_shipping_enabled_type_config_validation_group_validator' =>
                 new EnabledTypeConfigsValidationGroupValidator(),
             ShippingRuleEnableValidator::class => $this->createMock(ShippingRuleEnableValidator::class),
-            ExpressionLanguageSyntaxValidator::class => $this->createMock(ExpressionLanguageSyntaxValidator::class),
+            ExpressionSyntaxValidator::class => $this->createMock(ExpressionSyntaxValidator::class),
         ];
     }
 

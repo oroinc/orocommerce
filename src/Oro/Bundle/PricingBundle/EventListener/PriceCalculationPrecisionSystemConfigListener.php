@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\PricingBundle\Cache\RuleCache;
-use Oro\Bundle\PricingBundle\Command\PriceListScheduleRecalculateCommand;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -57,7 +56,7 @@ class PriceCalculationPrecisionSystemConfigListener
         $message = sprintf(
             '%s <code>php bin/console %s --all</code>',
             $this->translator->trans(self::NOTICE_TEXT_TRANS_KEY),
-            PriceListScheduleRecalculateCommand::getDefaultName()
+            'oro:price-lists:schedule-recalculate'
         );
         $request = $this->requestStack->getCurrentRequest();
         if (null !== $request && $request->hasSession()) {

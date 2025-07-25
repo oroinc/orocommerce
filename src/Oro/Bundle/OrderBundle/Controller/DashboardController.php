@@ -4,7 +4,7 @@ namespace Oro\Bundle\OrderBundle\Controller;
 
 use Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartWidgetProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Handles dashboard actions logic.

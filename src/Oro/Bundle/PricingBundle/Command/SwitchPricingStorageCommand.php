@@ -6,6 +6,7 @@ namespace Oro\Bundle\PricingBundle\Command;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Model\PricingStorageSwitchHandlerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,14 +16,15 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 /**
  * Switches pricing storage type.
  */
+#[AsCommand(
+    name: 'oro:price-lists:switch-pricing-storage',
+    description: 'Switches pricing storage type.'
+)]
 class SwitchPricingStorageCommand extends Command
 {
     private const STORAGE_FLAT = 'flat';
     private const STORAGE_COMBINED = 'combined';
     private const SUPPORTED_STORAGES = [self::STORAGE_FLAT, self::STORAGE_COMBINED];
-
-    /** @var string */
-    protected static $defaultName = 'oro:price-lists:switch-pricing-storage';
 
     private ConfigManager $configManager;
     private PricingStorageSwitchHandlerInterface $pricingStorageSwitchHandler;
@@ -46,7 +48,6 @@ class SwitchPricingStorageCommand extends Command
                 InputArgument::REQUIRED,
                 'Storage type (' . \implode(', ', self::SUPPORTED_STORAGES) . ')'
             )
-            ->setDescription('Switches pricing storage type.')
             ->setHelp(
                 <<<'HELP'
 The <info>%command.name%</info> command switches pricing store type.

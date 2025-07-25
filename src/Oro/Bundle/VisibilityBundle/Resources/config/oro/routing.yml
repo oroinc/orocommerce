@@ -1,4 +1,4 @@
 oro_customer_product_visibility:
     resource: "@OroVisibilityBundle/Controller/ProductVisibilityController.php"
-    type: annotation
+    type: attribute
     prefix: /product/visibility

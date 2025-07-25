@@ -1,30 +1,30 @@
 oro_order:
     resource:     "@OroOrderBundle/Controller/OrderController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /order
 
 oro_order_frontend:
     resource:     "@OroOrderBundle/Controller/Frontend/OrderController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /customer/order
     options:
         frontend: true
 
 oro_order_ajax:
     resource:     "@OroOrderBundle/Controller/AjaxOrderController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /order
 
 oro_order_products_frontend:
      resource:     "@OroOrderBundle/Controller/Frontend/ProductsController.php"
-     type:         annotation
+     type:         attribute
      prefix:       /customer/order/products
      options:
         frontend: true
 
 oro_order_dashboard:
     resource:     "@OroOrderBundle/Controller/DashboardController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /order/dashboard
 
 oro_order_address_validation_billing_address:

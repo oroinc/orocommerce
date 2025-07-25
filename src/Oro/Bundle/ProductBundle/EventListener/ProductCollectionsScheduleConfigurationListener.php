@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\CronBundle\Entity\Manager\DeferredScheduler;
-use Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 
 /**
@@ -29,12 +28,12 @@ class ProductCollectionsScheduleConfigurationListener
     {
         if ($event->isChanged(self::CONFIG_FIELD)) {
             $this->deferredScheduler->removeSchedule(
-                ProductCollectionsIndexCronCommand::getDefaultName(),
+                'oro:cron:product-collections:index',
                 [],
                 $event->getOldValue(self::CONFIG_FIELD)
             );
             $this->deferredScheduler->addSchedule(
-                ProductCollectionsIndexCronCommand::getDefaultName(),
+                'oro:cron:product-collections:index',
                 [],
                 $event->getNewValue(self::CONFIG_FIELD)
             );
