@@ -69,7 +69,7 @@ services:
     oro_promotion.rule_filtration.multi_shipping_promotions_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\MultiShippingFiltrationService
         decorates: oro_promotion.rule_filtration.service
-        decoration_priority: 5
+        decoration_priority: 6
         arguments:
             - '@.inner'
 

@@ -94,7 +94,6 @@ class MultiShippingFiltrationService extends AbstractSkippableFiltrationService
             $lineItemContext[ContextDataConverterInterface::SHIPPING_COST] = $sourceLineItem->getShippingCost();
             $lineItemContext[ContextDataConverterInterface::LINE_ITEMS] = [$lineItem];
             $lineItemContext[ContextDataConverterInterface::SUBTOTAL] = $lineItem->getSubtotal();
-            unset($lineItemContext[ContextDataConverterInterface::APPLIED_COUPONS]);
 
             /** @var PromotionDataInterface[] $lineItemRuleOwners */
             $lineItemRuleOwners = $this->baseFiltrationService->getFilteredRuleOwners(
