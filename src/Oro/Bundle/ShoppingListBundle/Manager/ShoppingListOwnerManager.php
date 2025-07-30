@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\AccessRule\AclAccessRule;
 use Oro\Bundle\SecurityBundle\AccessRule\AvailableOwnerAccessRule;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\SecurityBundle\Owner\OwnerChecker;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -33,11 +34,21 @@ class ShoppingListOwnerManager
      */
     protected $configProvider;
 
+    /**
+     * @var OwnerChecker
+     */
+    protected $ownerChecker;
+
     public function __construct(AclHelper $aclHelper, ManagerRegistry $registry, ConfigProvider $configProvider)
     {
         $this->aclHelper = $aclHelper;
         $this->registry = $registry;
         $this->configProvider = $configProvider;
+    }
+
+    public function setOwnerChecker(OwnerChecker $ownerChecker): void
+    {
+        $this->ownerChecker = $ownerChecker;
     }
 
     /**
@@ -54,12 +65,16 @@ class ShoppingListOwnerManager
         if ($user === $shoppingList->getCustomerUser()) {
             return;
         }
-        if ($this->isUserAssignable($ownerId)) {
-            $this->assignLineItems($shoppingList, $user);
-            $shoppingList->setCustomerUser($user);
 
+        $currentOwner = $shoppingList->getOwner();
+        $shoppingList->setCustomerUser($user);
+        if ($this->ownerChecker->isOwnerCanBeSet($shoppingList)) {
+            $this->assignLineItems($shoppingList, $user);
             $this->registry->getManagerForClass(ShoppingList::class)->flush();
         } else {
+            // Revert owner to prevent possible unwanted owner change.
+            $shoppingList->setOwner($currentOwner);
+
             throw new AccessDeniedException();
         }
     }

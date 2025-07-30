@@ -1,4 +1,4 @@
-#Consider this workflow is reused in standart and single page checkout workflows
+#Consider this workflow is reused in standard and single page checkout workflows
 workflows:
     b2b_flow_checkout:
         transition_definitions:
@@ -121,6 +121,9 @@ workflows:
                    '@and':
                        - '@equal': [$isAllowed, true]
                        - '@not_empty': $.result.shoppingList
+                       - '@or':
+                           - '@blank': $.result.shoppingList.customer # Customer is empty for Guest
+                           - '@not_blank': $.result.shoppingList.customerUser # Customer user is required for non-guest
                        - '@has_elements': $.result.shoppingList.lineItems
                        - '@equal': [$.result.extendableConditionShoppingListStart, true]
 

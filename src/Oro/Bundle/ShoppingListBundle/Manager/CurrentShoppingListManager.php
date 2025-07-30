@@ -166,7 +166,7 @@ class CurrentShoppingListManager
         $shoppingLists = [];
         $currentShoppingList = $this->getCurrentShoppingList();
         if (null !== $currentShoppingList) {
-            if ($currentShoppingList->getCustomerUser()->getId() !== $customerUserId) {
+            if ($currentShoppingList->getCustomerUser()?->getId() !== $customerUserId) {
                 $currentShoppingList = null;
             }
 

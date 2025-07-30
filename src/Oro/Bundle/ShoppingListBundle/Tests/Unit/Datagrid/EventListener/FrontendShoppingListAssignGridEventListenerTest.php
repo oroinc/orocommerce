@@ -3,9 +3,8 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRepository;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerRepository;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
@@ -46,22 +45,16 @@ class FrontendShoppingListAssignGridEventListenerTest extends \PHPUnit\Framework
         $config = DatagridConfiguration::createNamed('test-grid', []);
         $config->offsetSetByPath(OrmQueryConfiguration::FROM_PATH, [['alias' => 'entity']]);
 
-        $repository = $this->createMock(CustomerUserRepository::class);
+        $repository = $this->createMock(CustomerRepository::class);
         $repository->expects($this->once())
-            ->method('getAssignableCustomerUserIds')
+            ->method('getAssignableCustomerIds')
             ->with($this->aclHelper, ShoppingList::class)
             ->willReturn([42]);
 
-        $manager = $this->createMock(ObjectManager::class);
-        $manager->expects($this->once())
-            ->method('getRepository')
-            ->with(CustomerUser::class)
-            ->willReturn($repository);
-
         $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(CustomerUser::class)
-            ->willReturn($manager);
+            ->method('getRepository')
+            ->with(Customer::class)
+            ->willReturn($repository);
 
         $this->listener->onBuildBefore(new BuildBefore($datagrid, $config));
 
@@ -77,12 +70,12 @@ class FrontendShoppingListAssignGridEventListenerTest extends \PHPUnit\Framework
                         ],
                         'where' => [
                             'and' => [
-                                'entity.id IN (:customer_user_ids)',
+                                'IDENTITY(entity.customer) IN (:customer_ids)',
                             ],
                         ],
                     ],
                     'bind_parameters' => [
-                        'customer_user_ids',
+                        'customer_ids',
                     ],
                 ]
             ],
@@ -90,7 +83,7 @@ class FrontendShoppingListAssignGridEventListenerTest extends \PHPUnit\Framework
         );
 
         $this->assertEquals(
-            ['customer_user_ids' => [42]],
+            ['customer_ids' => [42]],
             $params->all()
         );
     }

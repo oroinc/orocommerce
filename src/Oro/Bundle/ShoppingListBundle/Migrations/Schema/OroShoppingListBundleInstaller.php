@@ -30,7 +30,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
      */
     public function getMigrationVersion()
     {
-        return 'v1_10';
+        return 'v1_10_1';
     }
 
     /**
@@ -161,7 +161,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
             $schema->getTable('oro_customer_user'),
             ['customer_user_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_customer'),
@@ -199,7 +199,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
             $schema->getTable('oro_customer_user'),
             ['customer_user_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_shopping_list'),
