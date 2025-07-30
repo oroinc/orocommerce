@@ -360,6 +360,7 @@ datagrids:
             hiddenLineItems: null
         source:
             type: orm
+            skip_acl_apply: true # Access to line items is checked by the ShoppingListLineItemsAccessListener based on the Shopping List access
             query:
                 select:
                     - COALESCE(parentProduct.type, product.type) as type

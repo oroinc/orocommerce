@@ -1,11 +1,13 @@
 @regression
-@fixture-OroShoppingListBundle:ShoppingListRule.yml
+@fixture-OroShoppingListBundle:ShoppingListWidgetPopupFixture.yml
 Feature: Check shopping list popup
 
   Scenario: Change shipping list units in popup
     Given I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Shopping List Add"
-    Then I click "Shopping List Edit"
+    And I type "SKU2" in "search"
+    And I click "Search Button"
+    When I click "Shopping List Add"
+    And I click "Shopping List Edit"
     And I should see "Choose list"
     And I fill "Shopping List Form" with:
       | List      | Shopping List |

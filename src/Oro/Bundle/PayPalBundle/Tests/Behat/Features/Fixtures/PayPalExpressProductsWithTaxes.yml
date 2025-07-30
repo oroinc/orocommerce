@@ -56,7 +56,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
   shoppinglist:
     label: 'List 1'
+    customer: '@amanda->customer'
     customerUser: '@amanda'
+    owner: '@admin'
     organization: '@organization'
     website: '@website1'
 
@@ -67,6 +69,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     unit: '@item'
     customerUser: '@amanda'
     shoppingList: '@shoppinglist'
+    owner: '@admin'
     organization: '@organization'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:

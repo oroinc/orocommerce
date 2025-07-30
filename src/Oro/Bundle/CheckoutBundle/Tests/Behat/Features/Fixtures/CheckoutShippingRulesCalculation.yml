@@ -52,7 +52,9 @@ Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist:
         label: 'List 1'
+        customer: '@amanda->customer'
         customerUser: '@amanda'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
 
@@ -63,6 +65,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@each'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist'
+        owner: '@admin'
         organization: '@organization'
     lineitem2:
         product: '@product2'
@@ -70,6 +73,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@each'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist'
+        owner: '@admin'
         organization: '@organization'
     lineitem3:
         product: '@product3'
@@ -77,6 +81,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@each'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist'
+        owner: '@admin'
         organization: '@organization'
 
 Oro\Bundle\RuleBundle\Entity\Rule:

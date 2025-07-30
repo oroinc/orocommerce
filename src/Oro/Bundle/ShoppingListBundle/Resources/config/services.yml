@@ -79,7 +79,9 @@ services:
         arguments:
             - "@oro_security.acl_helper"
             - "@doctrine"
-            - "@oro_entity_config.provider.ownership"
+            - '@oro_entity_config.provider.ownership'
+        calls:
+            - ['setOwnerChecker', ['@oro_security.owner.checker']]
 
     oro_shopping_list.placeholder.filter:
         class: 'Oro\Bundle\ShoppingListBundle\Placeholder\PlaceholderFilter'
@@ -673,6 +675,15 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-edit-grid, method: onResultAfter, priority: 128 }
 
+    oro_shopping_list.datagrid.shopping_list_line_items_access_listener:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendLineItemsGrid\ShoppingListLineItemsAccessListener
+        arguments:
+            - '@security.authorization_checker'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-list-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-list-edit-grid, method: onBuildBefore }
+
     oro_shopping_list.datagrid.event_listener.frontend-customer-user-shopping-lists-base-grid:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendShoppingListsGridEventListener
         arguments:
@@ -681,6 +692,15 @@ services:
             - '@oro_pricing.user_currency_manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-lists-base-grid, method: onBuildBefore }
+
+    oro_shopping_list.datagrid.event_listener.frontend_shopping_list_access_grid:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendShoppingListAccessListener
+        arguments:
+            - '@oro_customer.security.customer_user_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-lists-base-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-list-select-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-lists-grid, method: onBuildBefore }
 
     oro_shopping_list.datagrid.event_listener.frontend_customer_user_shopping_list_assign_grid:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendShoppingListAssignGridEventListener

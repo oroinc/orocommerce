@@ -224,7 +224,9 @@ Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
   shoppinglist{1..6}:
     label: 'List <current()>'
+    customer: '@amanda->customer'
     customerUser: '@amanda'
+    owner: '@admin'
     organization: '@organization'
     website: '@website1'
 
@@ -235,6 +237,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     unit: '@piece'
     customerUser: '@amanda'
     shoppingList: '@shoppinglist<current()>'
+    owner: '@admin'
     organization: '@organization'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:

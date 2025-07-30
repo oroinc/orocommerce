@@ -5,12 +5,16 @@ include:
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglistForCheckoutWithParentCustomer:
         label: 'CheckoutWithParentCustomer'
+        customer: '@amanda->customer'
         customerUser: '@amanda'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
     shoppinglistForCheckoutWithChildCustomer:
         label: 'CheckoutWithChildCustomer'
+        customer: '@ruth->customer'
         customerUser: '@ruth'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
 

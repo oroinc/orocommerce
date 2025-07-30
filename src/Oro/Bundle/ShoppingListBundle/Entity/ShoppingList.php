@@ -53,11 +53,13 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *              "owner_type"="USER",
  *              "owner_field_name"="owner",
  *              "owner_column_name"="user_owner_id",
+ *              "organization_field_name" = "organization",
+ *              "organization_column_name" = "organization_id",
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="customerUser",
  *              "frontend_owner_column_name"="customer_user_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
+ *              "frontend_customer_field_name" = "customer",
+ *              "frontend_customer_column_name" = "customer_id"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -178,7 +180,7 @@ class ShoppingList implements
      * persist.
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
-     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

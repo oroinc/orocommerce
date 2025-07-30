@@ -86,12 +86,16 @@ Oro\Bundle\ProductBundle\Entity\Product:
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppingList1AmandaRCole:
         label: 'Shopping List Amanda'
+        customer: '@CustomerUser_AmandaRCole->customer'
         customerUser: '@CustomerUser_AmandaRCole'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
     shoppingList1Nancy:
         label: 'Shopping List Nancy'
+        customer: '@nancy->customer'
         customerUser: '@nancy'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
 
@@ -102,6 +106,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         customerUser: '@CustomerUser_AmandaRCole'
         shoppingList: '@shoppingList1AmandaRCole'
+        owner: '@admin'
         organization: '@organization'
 
     shoppingList1NancyLineItemProduct1:
@@ -110,4 +115,5 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         customerUser: '@nancy'
         shoppingList: '@shoppingList1Nancy'
+        owner: '@admin'
         organization: '@organization'

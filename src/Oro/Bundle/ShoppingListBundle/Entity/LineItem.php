@@ -203,7 +203,7 @@ class LineItem implements
      * @var CustomerUser|null
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
-     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
