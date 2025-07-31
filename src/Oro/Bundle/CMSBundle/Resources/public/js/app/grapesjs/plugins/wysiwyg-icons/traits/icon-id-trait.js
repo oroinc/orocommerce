@@ -20,7 +20,7 @@ export default function iconIdTraitInit({editor}) {
         },
 
         onUpdate({trait}) {
-            this.icons.setValue(trait.getValue());
+            this.icons?.setValue(trait.getValue());
         },
 
         init() {

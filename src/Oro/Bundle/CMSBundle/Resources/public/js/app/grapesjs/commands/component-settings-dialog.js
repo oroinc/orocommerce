@@ -12,7 +12,9 @@ export default {
             component,
             dialogOptions: {
                 modal: true,
-                close: () => Commands.stop('component:settings-dialog')
+                close: () => Commands.stop('component:settings-dialog', {
+                    dialogClose: true
+                })
             }
         });
 
@@ -24,7 +26,11 @@ export default {
         return this.settingsDialog;
     },
 
-    stop() {
+    stop(editor, sender, {dialogClose} = {}) {
+        if (dialogClose) {
+            return;
+        }
+
         this.settingsDialog.remove();
     }
 };

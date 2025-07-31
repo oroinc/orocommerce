@@ -1,0 +1,33 @@
+/* stylelint-disable */
+
+@use 'gjs_vars';
+
+$gjs-is-prefix: '.#{gjs_vars.$app-prefix}is__';
+
+@function gjs-is($name) {
+  @return '#{$gjs-is-prefix}#{$name}';
+}
+
+@function darken-color($color, $percentage) {
+  @return color-mix(in srgb, $color, black $percentage);
+}
+
+@function lighten-color($color, $percentage) {
+  @return color-mix(in srgb, $color, white $percentage);
+}
+
+@mixin user-select($v) {
+  user-select: $v;
+}
+
+@mixin opacity($v) {
+  opacity: $v;
+}
+
+@mixin appearance($v) {
+  appearance: $v;
+}
+
+@mixin transform($v) {
+  transform: $v;
+}

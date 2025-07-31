@@ -594,6 +594,12 @@ oro.cms:
             cancel_text: '⨯'
         settings:
             label: 'Settings'
+            sw_visibility:
+                label: 'Show component outlines'
+                info: 'Toggle visibility of outlines around components on the editor canvas'
+            show_offsets_setting:
+                label: 'Show spacing'
+                info: 'Display margins and padding'
         create_link_dialog:
             href: 'Href'
             text: 'Text'

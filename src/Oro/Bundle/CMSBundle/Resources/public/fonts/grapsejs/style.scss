@@ -27,6 +27,30 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.gjs-icon-f-b1 {
+    &::before {
+        content: $gjs-icon-f-b1;
+    }
+}
+
+.gjs-icon-f-b2 {
+    &::before {
+        content: $gjs-icon-f-b2;
+    }
+}
+
+.gjs-icon-f-b3 {
+    &::before {
+        content: $gjs-icon-f-b3;
+    }
+}
+
+.gjs-icon-f-b37 {
+    &::before {
+        content: $gjs-icon-f-b37;
+    }
+}
+
 .gjs-icon-flex-al-str {
     &::before {
         content: $gjs-icon-flex-al-str;

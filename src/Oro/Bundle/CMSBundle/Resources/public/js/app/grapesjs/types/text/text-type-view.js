@@ -147,7 +147,7 @@ export default (BaseTypeView, {editor} = {}) => {
             });
 
             model.remove();
-            model.getView().$el.remove();
+            model.view.$el.remove();
 
             this.editor.select([child], {
                 wrapping: true
@@ -257,13 +257,11 @@ export default (BaseTypeView, {editor} = {}) => {
          * Merge content from the DOM to the model
          * @param opts
          */
-        syncContent(opts = {}) {
+        async syncContent({force, content = __('oro.cms.wysiwyg.component.text.content'), ...opts} = {}) {
             const {model, rteEnabled, willRemoved, em} = this;
-            if ((!rteEnabled && !opts.force) || willRemoved) {
+            if ((!rteEnabled && !force) || willRemoved) {
                 return;
             }
-
-            const content = this.getContent() || __('oro.cms.wysiwyg.component.text.content');
 
             em.get('UndoManager').skip(() => model.components().resetFromString(
                 `<div data-type="temporary-container">${content}</div>`,

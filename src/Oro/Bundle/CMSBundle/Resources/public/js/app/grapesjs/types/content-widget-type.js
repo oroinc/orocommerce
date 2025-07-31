@@ -38,11 +38,6 @@ const ContentWidgetType = BaseType.extend({
 
     commandName: null,
 
-    editorEvents: {
-        'component:selected': 'onSelect',
-        'component:deselected': 'onDeselect'
-    },
-
     modelProps: {
         defaults: {
             tagName: 'div',
@@ -209,18 +204,6 @@ const ContentWidgetType = BaseType.extend({
                 });
             }
         });
-    },
-
-    onSelect(model) {
-        if (this.isOwnModel(model)) {
-            this.editor.RichTextEditor.actionbar.hidden = true;
-        }
-    },
-
-    onDeselect(model) {
-        if (this.isOwnModel(model)) {
-            this.editor.RichTextEditor.actionbar.hidden = false;
-        }
     },
 
     isComponent(el) {

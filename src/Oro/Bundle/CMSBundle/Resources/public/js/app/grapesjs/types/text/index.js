@@ -15,7 +15,7 @@ const TextType = BaseType.extend({
         label: __('oro.cms.wysiwyg.component.text.label'),
         category: 'Basic',
         attributes: {
-            'class': 'gjs-fonts gjs-f-text'
+            'class': 'fa fa-font'
         },
         order: 5
     },

@@ -1,22 +1,12 @@
 import BaseType from 'orocms/js/app/grapesjs/types/base-type';
 import openDigitalAssetsCommand from 'orocms/js/app/grapesjs/modules/open-digital-assets-command';
 import TypeView from './image-type-view';
+import TypeModel from './image-type-model';
 
 const ImageTypeBuilder = BaseType.extend({
     parentType: 'image',
 
-    modelProps: {
-        defaults: {
-            tagName: 'img',
-            alt: '',
-            previewMetadata: {}
-        },
-
-        removed() {
-            const picture = this.closestType('picture');
-            picture && picture.remove();
-        }
-    },
+    TypeModel,
 
     TypeView,
 

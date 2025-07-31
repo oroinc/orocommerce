@@ -431,7 +431,7 @@ define(function(require) {
                     height: iframe.clientHeight
                 });
 
-                this.builder.trigger('change:canvasOffset');
+                this.builder.trigger('canvas:refresh');
             });
         },
 

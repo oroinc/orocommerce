@@ -49,7 +49,9 @@ describe('orocms/js/app/grapesjs/plugins/components/component-restriction', () =
         it('check prepare allow tags', () => {
             expect(componentRestriction.allowTags).toEqual([
                 ['table', ['cellspacing', 'cellpadding', 'border', 'align', 'width', 'id', 'style', 'class']],
-                ['div', ['data-title', 'data-type', 'data-image', 'id', 'style', 'class']]
+                ['div', ['data-title', 'data-type', 'data-image', 'id', 'style', 'class']],
+                ['head', ['id', 'style', 'class']],
+                ['body', ['id', 'style', 'class']]
             ]);
         });
 

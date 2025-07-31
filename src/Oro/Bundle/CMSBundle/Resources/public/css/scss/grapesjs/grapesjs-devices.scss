@@ -1,13 +1,15 @@
 /* @theme: admin.oro; */
 
-.#{$app-prefix} {
+@use '../grapesjs-original/gjs_vars';
+
+.#{gjs_vars.$app-prefix} {
     &cv-canvas {
         transition: $devices-transition;
 
         &.desktop {
             box-shadow: 0 0 0 2px $primary-750;
             margin: 2px;
-            width: calc(77% - 18px);
+            width: calc(calc(100% - var(--gjs-left-width)) - 18px);
         }
 
         &:not(.desktop) {
@@ -29,7 +31,7 @@
     }
 
     &canvas-device-decorator {
-        width: calc(77% - 14px);
+        width: calc(calc(100% - var(--gjs-left-width)) - 14px);
         min-height: calc(100% - 40px);
 
         background-image: $canvas-pattern;

@@ -1,0 +1,36 @@
+/* stylelint-disable */
+
+@use 'gjs_vars';
+
+.#{gjs_vars.$cm-prefix}editor-c {
+  float: left;
+  box-sizing: border-box;
+  width: 50%;
+
+  .CodeMirror {
+    height: 450px;
+  }
+}
+.#{gjs_vars.$cm-prefix}editor {
+  font-size: 12px;
+
+  &##{gjs_vars.$cm-prefix}htmlmixed {
+    padding-right: 10px;
+    border-right: 1px solid var(--gjs-main-dark-color);
+    ##{gjs_vars.$cm-prefix}title {
+      color: #a97d44;
+    }
+  }
+  &##{gjs_vars.$cm-prefix}css {
+    padding-left: 10px;
+    ##{gjs_vars.$cm-prefix}title {
+      color: #ddca7e;
+    }
+  }
+  ##{gjs_vars.$cm-prefix}title {
+    background-color: var(--gjs-main-dark-color);
+    font-size: 12px;
+    padding: 5px 10px 3px;
+    text-align: right;
+  }
+}

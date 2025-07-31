@@ -46,9 +46,10 @@ export default (BaseTypeModel, {editor}) => {
             this.syncContent();
         },
 
-        syncContent() {
+        async syncContent() {
             this.view.syncContent({
-                force: true
+                force: true,
+                content: await this.view.getContent()
             });
         },
 

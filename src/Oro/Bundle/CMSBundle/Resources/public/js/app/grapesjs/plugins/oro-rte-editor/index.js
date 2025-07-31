@@ -78,7 +78,7 @@ const GrapesjsRteEditor = BaseClass.extend({
                 el.contentEditable = true;
 
                 rte = self.view = new RteCollectionView({
-                    el: RichTextEditor.actionbar,
+                    container: RichTextEditor.toolbar,
                     editableEl: el,
                     $editableEl: $(el),
                     editor: self.editor,
@@ -110,11 +110,19 @@ const GrapesjsRteEditor = BaseClass.extend({
                 selectElementContents(el, rte.doc);
                 rte.updateActiveActions();
 
-                self.editor.trigger('change:canvasOffset');
+                self.editor.trigger('canvas:refresh');
             },
 
             toggleVisibility(hidden = true) {
-                self.view.$el.parent().css('visibility', hidden ? 'hidden' : '');
+                self.view.$el.css('visibility', hidden ? 'hidden' : '');
+            },
+
+            getContent(el, rte) {
+                if (rte) {
+                    return rte.getContent();
+                }
+
+                return el.innerHTML;
             }
         });
     },
@@ -215,6 +223,10 @@ export default editor => {
 
     editor.on('component:mount', component => {
         const parent = component.parent();
+
+        if (!parent) {
+            return;
+        }
 
         const [origin, ...duplicates] = parent
             .components()

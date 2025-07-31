@@ -1,13 +1,15 @@
 /* @theme: admin.oro; */
 
-.#{$app-prefix} {
+@use '../grapesjs-original/gjs_vars';
+
+.#{gjs_vars.$app-prefix} {
     &pn-views {
         box-shadow: none;
         padding: 0;
         border-bottom: none;
 
-        .#{$pn-prefix}buttons {
-            .#{$pn-prefix}btn {
+        .#{gjs_vars.$pn-prefix}buttons {
+            .#{gjs_vars.$pn-prefix}btn {
                 display: flex;
                 align-items: center;
 
@@ -37,7 +39,7 @@
                     border-radius: 0 $border-radius $border-radius 0;
                 }
 
-                &.#{$pn-prefix}active {
+                &.#{gjs_vars.$pn-prefix}active {
                     background-color: $secondary-secondary-4;
                     color: $primary-inverse;
                 }

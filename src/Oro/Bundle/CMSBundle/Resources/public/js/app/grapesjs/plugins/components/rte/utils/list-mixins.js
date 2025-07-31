@@ -270,7 +270,7 @@ export default class ListMixin {
                 focusCursor(rte, prev.firstChild, true);
             }
             node.remove();
-            editor.trigger('change:canvasOffset');
+            editor.trigger('canvas:refresh');
         };
 
         if (container.nodeType === Node.TEXT_NODE) {
@@ -318,7 +318,7 @@ export default class ListMixin {
             }
         }
 
-        editor.trigger('change:canvasOffset');
+        editor.trigger('canvas:refresh');
         event.preventDefault();
     }
 
@@ -370,7 +370,7 @@ export default class ListMixin {
                 referenceNode.remove();
             }
 
-            editor.trigger('change:canvasOffset');
+            editor.trigger('canvas:refresh');
             cursor();
         };
 
@@ -391,7 +391,7 @@ export default class ListMixin {
             }
             reference.append(list);
             this.mergeLists(list);
-            editor.trigger('change:canvasOffset');
+            editor.trigger('canvas:refresh');
             cursor();
         };
 
@@ -412,7 +412,7 @@ export default class ListMixin {
                 if (isBlockFormatted(container) || isTag(container, 'span')) {
                     removeSubList();
                     cursor();
-                    editor.trigger('change:canvasOffset');
+                    editor.trigger('canvas:refresh');
                     return;
                 }
 
@@ -444,7 +444,7 @@ export default class ListMixin {
                     node.remove();
                 }
 
-                editor.trigger('change:canvasOffset');
+                editor.trigger('canvas:refresh');
                 cursor();
 
                 return;
@@ -456,7 +456,7 @@ export default class ListMixin {
                 if (isBlockFormatted(container) || isTag(container, 'span')) {
                     createSubList();
                     cursor();
-                    editor.trigger('change:canvasOffset');
+                    editor.trigger('canvas:refresh');
                     return;
                 }
 
@@ -478,7 +478,7 @@ export default class ListMixin {
                 }
                 reference.append(list);
                 this.mergeLists(list);
-                editor.trigger('change:canvasOffset');
+                editor.trigger('canvas:refresh');
                 cursor();
             }
         }
@@ -491,7 +491,7 @@ export default class ListMixin {
         if (foundOlList) {
             this.changeListType(foundOlList, this.listType.toLowerCase());
             cursor();
-            editor.trigger('change:canvasOffset');
+            editor.trigger('canvas:refresh');
             return;
         }
 
@@ -499,20 +499,20 @@ export default class ListMixin {
             const parentNode = findClosestFormattingBlock(container);
             if (parentNode) {
                 this.insertNodeToList(parentNode);
-                editor.trigger('change:canvasOffset');
+                editor.trigger('canvas:refresh');
                 cursor();
                 return;
             }
 
             rte.exec(this.execCommandName);
             this.mergeLists(findParentTag(container, this.listType.toLowerCase()));
-            editor.trigger('change:canvasOffset');
+            editor.trigger('canvas:refresh');
         };
 
         if (selection.type === 'Caret') {
             if (isList) {
                 this.extractNodesFromList(container);
-                editor.trigger('change:canvasOffset');
+                editor.trigger('canvas:refresh');
                 cursor();
                 return;
             } else {
@@ -525,7 +525,7 @@ export default class ListMixin {
         if (selection.type === 'Range') {
             if (isList) {
                 this.extractNodesFromList(container);
-                editor.trigger('change:canvasOffset');
+                editor.trigger('canvas:refresh');
                 cursor();
                 return;
             } else {
@@ -536,7 +536,7 @@ export default class ListMixin {
                 if (isBlockFormatted(container) || isTag(container, 'span')) {
                     this.insertNodeToList(container);
                     cursor();
-                    editor.trigger('change:canvasOffset');
+                    editor.trigger('canvas:refresh');
                     return;
                 }
 
@@ -544,7 +544,7 @@ export default class ListMixin {
                     const [nodes, parent] = formattingNodeSliceToNodes(container);
                     this.insertNodesToList(nodes, parent);
                     cursor();
-                    editor.trigger('change:canvasOffset');
+                    editor.trigger('canvas:refresh');
                     return;
                 }
 
@@ -559,7 +559,7 @@ export default class ListMixin {
             }
         }
 
-        editor.trigger('change:canvasOffset');
+        editor.trigger('canvas:refresh');
     }
 
     isTag(node, tagName) {

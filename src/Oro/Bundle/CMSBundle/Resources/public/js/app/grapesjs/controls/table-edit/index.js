@@ -4,7 +4,7 @@ import actions from './actions';
 import template from 'tpl-loader!orocms/templates/controls/table-edit-template.html';
 import TableModify from './table-modify';
 
-const eventsUp = 'change:canvasOffset frame:scroll component:update';
+const eventsUp = 'canvas:refresh frame:scroll component:update';
 
 const TableEditView = BaseView.extend({
     optionNames: BaseView.prototype.optionNames.concat(['table', 'selected']),
