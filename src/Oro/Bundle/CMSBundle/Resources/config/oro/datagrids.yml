@@ -404,6 +404,7 @@ datagrids:
             slug:
                 type: localized_value
                 data_name: slugPrototypes
+                allow_empty: true
         sorters:
             columns:
                 createdAt:

@@ -14,10 +14,36 @@ Feature: Landing Page Drafts
       | Admin | first_session  |
       | Buyer | second_session |
 
-  Scenario: Create Draft from View Landing Page
+  Scenario: Create Draft from View Landing Page without slug
     Given I proceed as the Admin
     And I login as administrator
     And I go to Marketing/ Landing Pages
+    And I click "Create Landing Page"
+    When I fill in Landing Page Titles field with "ACME Page"
+    Then I should see URL Slug field filled with "acme-page"
+    And uncheck "Create a URL slug"
+    When I fill in WYSIWYG "CMS Page Content" with "Acme content"
+    And I save and close form
+    Then I should see "Page has been saved" flash message
+    When I click "Create draft"
+    Then I should see "UiWindow" with elements:
+      | Title        | Action Confirmation                                                                                                                                    |
+      | Content      | Only the changes from the following fields will be transferred to a draft: metaDescriptions, metaTitles, metaKeywords, slugPrototypes, titles, content |
+      | okButton     | Yes                                                                                                                                                    |
+      | cancelButton | Cancel                                                                                                                                                 |
+    When I click "Yes" in confirmation dialogue
+    Then I should not see following page actions:
+      | Save As draft |
+    When I fill in Landing Page Titles field with "ACME Page Draft"
+    And I save and close form
+    Then I should see "Draft has been saved" flash message
+    And I reload the page
+    And I should see Landing Page with:
+      | Title | ACME Page Draft |
+      | Slugs | N/A             |
+
+  Scenario: Create Draft from View Landing Page
+    Given I go to Marketing/ Landing Pages
     And I click "Create Landing Page"
     When I fill in Landing Page Titles field with "Test page"
     Then I should see URL Slug field filled with "test-page"
@@ -134,7 +160,7 @@ Feature: Landing Page Drafts
     And I click "Yes" in confirmation dialogue
     And I reload the page
     Then I should see Landing Page with:
-      | Title | New Title    |
+      | Title | New Title           |
       | Slugs | [/new-landing-page] |
     And I should see available page actions:
       | Create draft |
@@ -212,8 +238,8 @@ Feature: Landing Page Drafts
     Given I go to System/ User Management/ Organizations
     When click "edit" on first row in grid
     And I fill form with:
-      | Name          | Oro  |
-      | Global Access | Yes  |
+      | Name          | Oro |
+      | Global Access | Yes |
     And save and close form
     Then I should see "Organization saved" flash message
 
