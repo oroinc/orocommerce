@@ -89,12 +89,7 @@ const ContentTemplatesPanelView = BaseView.extend({
     renderBlocks(dataBlocks = []) {
         const {Blocks} = this.editor;
 
-        return Blocks.render.call({
-            ...Blocks,
-            categories: {
-                categories: this.collection
-            }
-        }, dataBlocks, {
+        return Blocks.render(dataBlocks, {
             external: true
         });
     },

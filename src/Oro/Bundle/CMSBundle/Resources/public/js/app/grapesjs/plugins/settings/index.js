@@ -1,7 +1,9 @@
+import __ from 'orotranslation/js/translator';
 import GrapesJS from 'grapesjs';
 import SettingsView from './settings-view';
 
-export default GrapesJS.plugins.add('wysiwyg-settings', editor => {
+export default GrapesJS.plugins.add('wysiwyg-settings', (editor, {editorView} = {}) => {
+    const state = editorView.getState();
     const {Panels, Commands} = editor;
 
     const settingsPanel = Panels.addPanel({
@@ -51,12 +53,37 @@ export default GrapesJS.plugins.add('wysiwyg-settings', editor => {
         command: 'sw-visibility',
         context: 'sw-visibility',
         data: {
-            label: 'Show components outline',
-            info: 'Show/Hide outline around components on editor canvas'
+            label: __('oro.cms.wysiwyg.settings.sw_visibility.label'),
+            info: __('oro.cms.wysiwyg.settings.sw_visibility.info')
         },
         attributes: {
             id: 'sw-visibility',
             title: 'View components'
+        }
+    });
+
+    const showOffsetCommand = 'show-offset-command';
+
+    Commands.add(showOffsetCommand, {
+        run() {
+            state.set('showOffsets', true);
+        },
+        stop() {
+            state.set('showOffsets', false);
+        }
+    });
+
+    Panels.addButton('settings', {
+        active: state.get('showOffsets'),
+        id: 'show-offsets-setting',
+        className: 'gjs-pn-btn--switch',
+        command: showOffsetCommand,
+        data: {
+            label: __('oro.cms.wysiwyg.settings.show_offsets_setting.label'),
+            info: __('oro.cms.wysiwyg.settings.show_offsets_setting.info')
+        },
+        attributes: {
+            id: 'show-offsets-setting'
         }
     });
 });

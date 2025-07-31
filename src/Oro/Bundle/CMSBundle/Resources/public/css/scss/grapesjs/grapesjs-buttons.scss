@@ -1,6 +1,8 @@
 /* @theme: admin.oro; */
 
-.#{$app-prefix} {
+@use '~grapesjs/src/styles/scss/gjs_vars';
+
+.#{gjs_vars.$app-prefix} {
     &pn-btn {
         display: flex;
         align-content: center;
@@ -16,7 +18,7 @@
         }
 
         &.fa-square-o {
-            &.#{$pn-prefix}active {
+            &.#{gjs_vars.$pn-prefix}active {
                 &::before {
                     content: $fa-var-check-square;
                 }
@@ -60,7 +62,7 @@
                 box-shadow: $checkbox-box-shadow-focus;
             }
 
-            &.#{$app-prefix}pn-active {
+            &.#{gjs_vars.$app-prefix}pn-active {
                 background-color: $checkbox-background-checked;
                 border-color: $checkbox-border-color-checked;
 
@@ -105,7 +107,7 @@
         display: none;
     }
 
-    .#{$app-prefix}block-label {
+    .#{gjs_vars.$app-prefix}block-label {
         background-color: rgba($primary-inverse, .8);
         position: absolute;
         bottom: 0;
@@ -118,7 +120,7 @@
         color: $primary-400;
     }
 
-    .#{$app-prefix}block__media {
+    .#{gjs_vars.$app-prefix}block__media {
         margin-bottom: 0;
 
         img {
@@ -147,12 +149,12 @@
         height: 100%;
         position: relative;
 
-        .#{$app-prefix}blocks-c {
+        .#{gjs_vars.$app-prefix}blocks-c {
             padding: 12px 8px 0;
             gap: 12px;
         }
 
-        .#{$app-prefix}block {
+        .#{gjs_vars.$app-prefix}block {
             margin: 0;
             padding: 2px;
             height: 120px;

@@ -164,7 +164,6 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
 
             const result = [{
                 tagName: 'blockquote',
-                attributes: {},
                 classes: ['quote'],
                 type: 'quote',
                 textComponent: true,
@@ -416,12 +415,10 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                 }]
             }, {
                 tagName: 'div',
-                attributes: {},
                 classes: ['frontpage-news-container'],
                 origin: true,
                 components: [{
                     tagName: 'div',
-                    attributes: {},
                     classes: ['frontpage-news-left'],
                     origin: true,
                     components: [{
@@ -438,7 +435,6 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     }]
                 }, {
                     tagName: 'div',
-                    attributes: {},
                     classes: ['frontpage-news-right'],
                     type: 'text',
                     origin: true,
@@ -815,7 +811,6 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             const result = [
                 {
                     tagName: 'div',
-                    attributes: {},
                     type: 'text',
                     origin: true,
                     test: {
@@ -839,7 +834,6 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             const result = [
                 {
                     tagName: 'div',
-                    attributes: {},
                     type: 'text',
                     test: ['value1', 'value2'],
                     origin: true,
@@ -936,7 +930,6 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                         components: [{
                             type: 'link-button',
                             tagName: 'a',
-                            attributes: {},
                             classes: ['btn'],
                             origin: true,
                             components: [{
@@ -968,7 +961,6 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     [{
                         type: 'link-button',
                         tagName: 'a',
-                        attributes: {},
                         classes: ['btn'],
                         origin: true,
                         components: [{
@@ -987,7 +979,6 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     }, {
                         type: 'link-button',
                         tagName: 'a',
-                        attributes: {},
                         classes: ['btn'],
                         origin: true,
                         components: [{
@@ -1010,7 +1001,6 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     [{
                         type: 'div-block',
                         classes: ['block'],
-                        attributes: {},
                         tagName: 'div',
                         origin: true,
                         components: [{

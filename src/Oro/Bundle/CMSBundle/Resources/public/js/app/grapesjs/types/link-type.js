@@ -49,8 +49,10 @@ const LinkType = BaseType.extend({
                         }
                     }
 
-                    editor.selectRemove(editor.getSelected());
-                    editor.selectAdd($link[0]);
+                    if ($link[0].__cashData.model) {
+                        editor.selectRemove(editor.getSelected());
+                        editor.selectAdd($link[0].__cashData.model);
+                    }
 
                     const component = editor.getSelected();
 
@@ -133,6 +135,7 @@ const LinkType = BaseType.extend({
             delete attrs.onmousedown;
             delete attrs[this.tempAttr];
             delete attrs['text'];
+            delete attrs['__p'];
 
             return _.mapObject(attrs, value => _.escape(value));
         }

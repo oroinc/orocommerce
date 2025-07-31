@@ -16,6 +16,8 @@ const RteCollectionView = BaseCollectionView.extend({
 
     template,
 
+    className: 'gjs-rte-actionbar',
+
     /**
      * @inheritdoc
      */
@@ -171,14 +173,23 @@ const RteCollectionView = BaseCollectionView.extend({
             return;
         }
 
-        this.spansToRemove.forEach(span => span.replaceWith(...span.childNodes));
+        this.normalize();
+
         this.spansToSave = [];
         this.spansToRemove = [];
-        this.editableEl.normalize();
 
         RteCollectionView.__super__.dispose.call(this);
+    },
 
-        this.editor.trigger('rte:disable');
+    normalize() {
+        this.spansToRemove.forEach(span => span.replaceWith(...span.childNodes));
+        this.editableEl.normalize();
+    },
+
+    getContent() {
+        this.normalize();
+
+        return this.editableEl.innerHTML;
     },
 
     /**

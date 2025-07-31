@@ -1,8 +1,26 @@
 /* @theme: admin.oro; */
 
 /* stylelint-disable selector-class-pattern */
+@use '~grapesjs/src/styles/scss/gjs_vars';
 
-.#{$app-prefix} {
+:root {
+    --gjs-left-width: #{$leftWidth};
+    --gjs-primary-color: #{$primaryColor};
+    --gjs-secondary-color: #{$secondaryColor};
+    --gjs-tertiary-color: #{$tertiaryColor};
+    --gjs-quaternary-color: #{$quaternaryColor};
+    --gjs-font-size: #{$base-font-size};
+    --gjs-color-warn: #{$colorWarn};
+    --gjs-font-color: #{$fontColor};
+    --gjs-main-lhl-color: #{$mainLhlColor};
+    --gjs-main-lh-color: #{$mainLhColor};
+    --gjs-color-blue: #{$colorBlue};
+    --gjs-main-font: #{$font-family-sans-serif};
+    --gjs-padding-elem-classmanager: #{$paddElClm};
+    --gjs-arrow-color: #{$arrowColor};
+}
+
+.#{gjs_vars.$app-prefix} {
     &editor-cont {
         transition: height .5s;
 
@@ -22,10 +40,10 @@
     &cv-canvas {
         background-color: $canvas-bg-color;
         padding: 8px;
-        width: calc(77% - 14px);
+        width: calc(calc(100% - var(--gjs-left-width)) - 14px);
 
-        ##{$app-prefix}tools,
-        .#{$app-prefix}tools {
+        ##{gjs_vars.$app-prefix}tools,
+        .#{gjs_vars.$app-prefix}tools {
             z-index: 2;
 
             /* rtl:begin:ignore */
@@ -37,11 +55,11 @@
     }
 
     &clm-tags {
-        ##{$app-prefix}clm-up {
+        ##{gjs_vars.$app-prefix}clm-up {
             margin-top: 0;
         }
 
-        ##{$app-prefix}clm-states {
+        ##{gjs_vars.$app-prefix}clm-states {
             height: 30px;
         }
     }
@@ -54,7 +72,7 @@
     &pn-panel {
         padding: 0;
 
-        &.#{$pn-prefix}options {
+        &.#{gjs_vars.$pn-prefix}options {
             padding-right: 7px;
             display: flex;
             align-items: center;
@@ -91,7 +109,7 @@
     &pn-commands,
     &pn-options,
     &pn-devices-c {
-        .#{$pn-prefix}btn,
+        .#{gjs_vars.$pn-prefix}btn,
         .btn {
             background-color: $button-bg-color;
             color: $button-color;
@@ -102,7 +120,7 @@
                 background-color: $secondary-secondary-6;
             }
 
-            &.#{$pn-prefix}active,
+            &.#{gjs_vars.$pn-prefix}active,
             &[aria-expanded="true"] {
                 background-color: $secondary-secondary-4;
                 color: $neutral-white;
@@ -116,11 +134,11 @@
         display: none;
         min-width: 250px;
 
-        .#{$pn-prefix}views-container & {
+        .#{gjs_vars.$pn-prefix}views-container & {
             display: block;
         }
 
-        .#{$pn-prefix}buttons {
+        .#{gjs_vars.$pn-prefix}buttons {
             display: grid;
             grid-template-columns: 1fr 32px;
             grid-gap: 8px;
@@ -144,28 +162,28 @@
         color: $primary-200;
         font-weight: font-weight('medium');
 
-        &.#{$app-prefix}color-warn {
+        &.#{gjs_vars.$app-prefix}color-warn {
             color: $primary-200;
         }
 
-        &.#{$app-prefix}four-color {
+        &.#{gjs_vars.$app-prefix}four-color {
             color: $warning-darken;
         }
     }
 
     &sm-composite,
     &sm-stack {
-        > .#{$app-prefix}sm-label {
+        > .#{gjs_vars.$app-prefix}sm-label {
             font-weight: font-weight('bold');
         }
     }
 
     &sm-sector {
-        ##{$app-prefix}sm-caret {
+        ##{gjs_vars.$app-prefix}sm-caret {
             font-size: $base-font-size--m;
         }
 
-        .#{$app-prefix}sm-title {
+        .#{gjs_vars.$app-prefix}sm-title {
             .fa {
                 min-width: 18px;
             }
@@ -183,14 +201,14 @@
             vertical-align: inherit;
         }
 
-        &.#{$app-prefix}sm-open,
-        &.#{$app-prefix}open {
+        &.#{gjs_vars.$app-prefix}sm-open,
+        &.#{gjs_vars.$app-prefix}open {
             border-bottom: none;
         }
 
-        .#{$app-prefix}sm-sector-title,
-        .#{$app-prefix}sm-title,
-        .#{$app-prefix}title {
+        .#{gjs_vars.$app-prefix}sm-sector-title,
+        .#{gjs_vars.$app-prefix}sm-title,
+        .#{gjs_vars.$app-prefix}title {
             font-weight: font-weight('semi-bold');
             padding: 6px 14px 5px;
             letter-spacing: normal;
@@ -201,7 +219,7 @@
             border-radius: 4px;
         }
 
-        .#{$app-prefix}sm-sector-caret {
+        .#{gjs_vars.$app-prefix}sm-sector-caret {
             width: 22px;
             height: 22px;
             min-width: 22px;
@@ -209,22 +227,22 @@
             margin-right: -8px;
         }
 
-        .#{$sm-prefix}field.#{$sm-prefix}composite {
+        .#{gjs_vars.$sm-prefix}field.#{gjs_vars.$sm-prefix}composite {
             border: none;
             background: $primary-900;
             border-radius: 4px;
         }
 
-        .#{$sm-prefix}btn {
+        .#{gjs_vars.$sm-prefix}btn {
             background-color: $secondary;
             color: $primary-inverse;
 
             text-shadow: none;
         }
 
-        .#{$sm-prefix}property {
-            .#{$sm-prefix}layer {
-                ##{$sm-prefix}close-layer {
+        .#{gjs_vars.$sm-prefix}property {
+            .#{gjs_vars.$sm-prefix}layer {
+                ##{gjs_vars.$sm-prefix}close-layer {
                     line-height: 0;
                     top: 10px;
                 }
@@ -232,9 +250,21 @@
         }
     }
 
+    &blocks-c {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+        padding-top: 10px;
+    }
+
+    &block {
+        width: auto;
+        margin: 0;
+    }
+
     &wide-blocks {
-        .#{$app-prefix}block {
-            width: 100%;
+        .#{gjs_vars.$app-prefix}blocks-c {
+            grid-template-columns: 1fr;
         }
     }
 
@@ -270,7 +300,7 @@
         box-shadow: $grapejs-shadow;
         animation: none;
 
-        .#{$app-prefix}btn-prim {
+        .#{gjs_vars.$app-prefix}btn-prim {
             // Positions that button should be above CodeMirror container
             position: relative;
             display: inline-flex;
@@ -326,7 +356,7 @@
             }
         }
 
-        .#{$rte-prefix}action {
+        .#{gjs_vars.$rte-prefix}action {
             order: 1;
             border-right: none;
             padding: 0;
@@ -344,8 +374,9 @@
             }
 
             &:hover,
-            &.#{$rte-prefix}active {
+            &.#{gjs_vars.$rte-prefix}active {
                 color: $primary-inverse;
+                background-color: $mainLhColor;
 
                 svg {
                     fill: $primary-inverse;
@@ -362,11 +393,11 @@
                 max-width: 120px;
             }
 
-            .#{$rte-prefix}select2 {
+            .#{gjs_vars.$rte-prefix}select2 {
                 text-align: left;
             }
 
-            &.#{$rte-prefix}disabled {
+            &.#{gjs_vars.$rte-prefix}disabled {
                 color: $primary-700;
                 cursor: default;
 
@@ -385,7 +416,7 @@
     &am-highlight {
         color: $primary-inverse;
 
-        .#{$app-prefix}am-close {
+        .#{gjs_vars.$app-prefix}am-close {
             top: -10px;
         }
     }
@@ -421,7 +452,7 @@
     /* rtl:end:ignore */
 }
 
-.#{$rte-prefix}select2 {
+.#{gjs_vars.$rte-prefix}select2 {
     &-dropdown {
         // Override inline styles
         // stylelint-disable-next-line declaration-no-important
@@ -465,17 +496,17 @@
     }
 }
 
-.#{$app-prefix}select option,
-.#{$app-prefix}field-select option,
-.#{$clm-prefix}select option,
-.#{$sm-prefix}select option,
-.#{$app-prefix}fields option,
-.#{$sm-prefix}unit option {
+.#{gjs_vars.$app-prefix}select option,
+.#{gjs_vars.$app-prefix}field-select option,
+.#{gjs_vars.$clm-prefix}select option,
+.#{gjs_vars.$sm-prefix}select option,
+.#{gjs_vars.$app-prefix}fields option,
+.#{gjs_vars.$sm-prefix}unit option {
     background-color: $primaryColor;
     color: $fontColor;
 }
 
-.#{$app-prefix}dashed {
+.#{gjs_vars.$app-prefix}dashed {
     *[data-highlightable] {
         padding: 10px;
 
@@ -569,19 +600,19 @@
 
 .grapesjs {
     // Custom scrollbars for Chrome
-    &.#{$app-prefix}editor-cont ::-webkit-scrollbar-track {
+    &.#{gjs_vars.$app-prefix}editor-cont ::-webkit-scrollbar-track {
         background: $grapesjs-scrollbar-track-background;
     }
 
-    &.#{$app-prefix}editor-cont ::-webkit-scrollbar-thumb {
+    &.#{gjs_vars.$app-prefix}editor-cont ::-webkit-scrollbar-thumb {
         background-color: $grapesjs-scrollbar-thumb-background;
     }
 
-    &.#{$app-prefix}editor-cont .CodeMirror ::-webkit-scrollbar-track {
+    &.#{gjs_vars.$app-prefix}editor-cont .CodeMirror ::-webkit-scrollbar-track {
         background: $codemirror-scrollbar-track-background;
     }
 
-    &.#{$app-prefix}editor-cont .CodeMirror ::-webkit-scrollbar-thumb {
+    &.#{gjs_vars.$app-prefix}editor-cont .CodeMirror ::-webkit-scrollbar-thumb {
         background: $codemirror-scrollbar-thumb-background;
     }
 
@@ -630,6 +661,14 @@
     }
 }
 
-.#{$trt-prefix}trait {
+.#{gjs_vars.$trt-prefix}trait {
     font-weight: font-weight('medium');
+}
+
+@media (max-width: 1279px) {
+    .#{gjs_vars.$app-prefix} {
+        &blocks-c {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
 }

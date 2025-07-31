@@ -105,7 +105,7 @@ describe('orocms/js/app/grapesjs/types/content-block-type', () => {
             it('check "toHTML"', () => {
                 expect(contentBlockComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<div class="content-block content-placeholder" id="test">{{ content_block(&quot;content-block-alias-default&quot;) }}</div>'
+                    '<div id="test" class="content-block content-placeholder">{{ content_block("content-block-alias-default") }}</div>'
                 );
             });
 
@@ -120,7 +120,7 @@ describe('orocms/js/app/grapesjs/types/content-block-type', () => {
 
                 expect(contentBlockComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<div data-title="Content block title" id="test" class="content-block content-placeholder">{{ content_block(&quot;content-block-alias&quot;) }}</div>'
+                    '<div data-title="Content block title" id="test" class="content-block content-placeholder">{{ content_block("content-block-alias") }}</div>'
                 );
             });
         });

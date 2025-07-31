@@ -42,7 +42,7 @@ export default {
         this.sender = sender;
         this.$container = $(editor.getContainer());
         this.enable();
-        editor.trigger('change:canvasOffset');
+        editor.trigger('canvas:refresh');
     },
 
     stop(editor, sender) {
@@ -53,7 +53,7 @@ export default {
         this.disable();
 
         if (editor) {
-            editor.trigger('change:canvasOffset');
+            editor.trigger('canvas:refresh');
         }
     }
 };

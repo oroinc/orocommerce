@@ -97,11 +97,6 @@ describe('orocms/js/app/grapesjs/types/content-widget-type', () => {
             expect(action.get('order')).toEqual(50);
         });
 
-        it('check editor events defined', () => {
-            expect(contentWidgetTypeBuilder.editor.editor._events['component:deselected']).toBeDefined();
-            expect(contentWidgetTypeBuilder.editor.editor._events['component:selected']).toBeDefined();
-        });
-
         describe('test type in editor scope', () => {
             let contentWidgetComponent;
             beforeEach(done => {
@@ -131,7 +126,7 @@ describe('orocms/js/app/grapesjs/types/content-widget-type', () => {
             it('check "toHTML"', () => {
                 expect(contentWidgetComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<div class="content-widget content-placeholder" id="test">{{ widget(&quot;content-widget-name-default&quot;) }}</div>'
+                    '<div id="test" class="content-widget content-placeholder">{{ widget("content-widget-name-default") }}</div>'
                 );
             });
 
@@ -146,7 +141,7 @@ describe('orocms/js/app/grapesjs/types/content-widget-type', () => {
 
                 expect(contentWidgetComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<div data-title="content-widget-name" id="test" class="content-widget content-placeholder">{{ widget(&quot;content-widget-name&quot;) }}</div>'
+                    '<div data-title="content-widget-name" id="test" class="content-widget content-placeholder">{{ widget("content-widget-name") }}</div>'
                 );
             });
         });

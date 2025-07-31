@@ -21,18 +21,15 @@ export default GrapesJS.plugins.add('sorter-hints', editor => {
     editor.on('block:drag:start component:drag:start', onDragBlockStart);
     editor.on('block:drag:stop component:drag:end', onDragBlockEnd);
 
-    const CustomSorter = editor.Utils.Sorter.extend({
+    class CustomSorter extends editor.Utils.Sorter {
         findPosition(dims, posX, posY) {
-            const res = CustomSorter.__super__.findPosition.call(this, dims, posX, posY);
+            const res = super.findPosition(dims, posX, posY);
 
             if (this.targetModel?.is('columns')) {
                 const foundIndex = dims.findIndex(dim => {
                     const {top, left, width, height} = dim;
-                    if ((posX > left && posX < (left + width)) &&
-                        (posY > top && (posY < (top + height)))) {
-                        return true;
-                    }
-                    return false;
+                    return (posX > left && posX < (left + width)) &&
+                           (posY > top && (posY < (top + height)));
                 });
 
                 if (foundIndex !== -1) {
@@ -47,7 +44,7 @@ export default GrapesJS.plugins.add('sorter-hints', editor => {
             }
 
             return res;
-        },
+        }
 
         movePlaceholder(plh, dims, pos, trgDim) {
             if (this.targetModel?.is('columns')) {
@@ -56,24 +53,25 @@ export default GrapesJS.plugins.add('sorter-hints', editor => {
                     return dim;
                 });
             }
-            CustomSorter.__super__.movePlaceholder.call(this, plh, dims, pos, trgDim);
-        },
+            super.movePlaceholder(this, plh, dims, pos, trgDim);
+        }
 
         selectTargetModel(model, source) {
             if (!editor.getModel().get(PERMITTED_PROP)) {
                 return;
             }
 
-            CustomSorter.__super__.selectTargetModel.call(this, model, source);
-        },
+            super.selectTargetModel(this, model, source);
+        }
 
         onMove(event) {
-            CustomSorter.__super__.onMove.call(this, event);
+            super.onMove(this, event);
+
             if (!editor.getModel().get(PERMITTED_PROP)) {
                 this.plh.style.display = 'none';
             }
         }
-    });
+    }
 
     editor.Utils.Sorter = CustomSorter;
 });

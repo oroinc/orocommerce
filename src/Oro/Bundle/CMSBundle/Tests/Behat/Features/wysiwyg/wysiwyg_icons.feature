@@ -84,16 +84,16 @@ Feature: WYSIWYG icons
       | icon         | 2 |
     And I move "SelectedComponent" to "FirstColumn" in editor canvas
     And I check wysiwyg content in "CMS Page Content":
-      | 2 | <div class="grid-col">{{ widget_icon("eye", {"id":"icon-id-clock"}) }}         |
-      | 6 | <div class="grid-col">{{ widget_icon("add-note", {"id":"icon-id-add-note"}) }} |
-      | 8 | <div class="grid-col">{{ widget_icon("add-note", {"id":"icon-id-cloned-1"}) }} |
+      | 2 | <div class="grid-col">{{ widget_icon("eye", {"id":"icon-id-clock"}) }}{{ widget_icon("add-note", {"id":"icon-id-cloned-1"}) }} |
+      | 4 | <div class="grid-col">{{ widget_icon("globe", {"id":"icon-id-globe","title":"icon-id-title"}) }}                               |
+      | 6 | <div class="grid-col">{{ widget_icon("add-note", {"id":"icon-id-add-note"}) }}                                                 |
     Then I select component in canvas by tree:
       | columns      | 1 |
-      | columns-item | 4 |
-      | icon         | 1 |
+      | columns-item | 1 |
+      | icon         | 2 |
     And I select "copy" icon in traits
     And I check wysiwyg content in "CMS Page Content":
-      | 8 | <div class="grid-col">{{ widget_icon("copy", {"id":"icon-id-cloned-1"}) }} |
+      | 2 | <div class="grid-col">{{ widget_icon("eye", {"id":"icon-id-clock"}) }}{{ widget_icon("copy", {"id":"icon-id-cloned-1"}) }} |
 
   Scenario: Import icons
     When I import content "<div>{{ widget_icon(\"eye\", {\"id\":\"icon-id-clock\"}) }}{{ widget_icon(\"not-valid\", {\"id\":\"invalid\"}) }}</div>" to "CMS Page Content" WYSIWYG editor

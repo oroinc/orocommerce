@@ -12,6 +12,8 @@
  */
 // eslint-disable-next-line no-unused-vars
 function dragAndDrop(sourcePath, destinationPath, sourceContextNodePath, destinationContextNodePath) {
+    const EVENT_THRESHOLD = 40;
+
     /**
      * @param {String} xpathExpression
      * @param {Node} [contextNode]
@@ -32,13 +34,48 @@ function dragAndDrop(sourcePath, destinationPath, sourceContextNodePath, destina
     /**
      * @param {String} type
      * @param {DataTransfer} [dataTransfer]
-     * @returns {CustomEvent}
+     * @param {HTMLElement} el
+     * @returns {DragEvent}
      */
-    function createCustomEvent(type, dataTransfer) {
-        const event = new CustomEvent(type, {bubbles: true, cancelable: true, detail: null});
+    function createDragEvent(type, dataTransfer, el) {
+        const opts = {};
+
+        if (el) {
+            const {x, y, width, height} = el.getBoundingClientRect();
+            Object.assign(opts, {
+                clientX: x + width / 2,
+                clientY: y + height / 2
+            });
+        }
+
+        const event = new DragEvent(type, {bubbles: true, cancelable: true, detail: null, ...opts});
         event.dataTransfer = dataTransfer || new DataTransfer();
 
         return event;
+    }
+
+    /**
+     * @param {String} type
+     * @param {HTMLElement} el
+     * @returns {MouseEvent}
+     */
+    function createMouseEvent(type, el) {
+        const {x, y, width, height} = el.getBoundingClientRect();
+        return new MouseEvent(type, {
+            bubbles: true,
+            cancelable: true,
+            detail: null,
+            clientX: x + width / 2,
+            clientY: y + height / 2
+        });
+    }
+
+    function createDispatcher() {
+        let timeout = 0;
+        return cb => {
+            setTimeout(cb, timeout);
+            timeout += EVENT_THRESHOLD;
+        };
     }
 
     const EVENT_TYPES = {
@@ -46,7 +83,8 @@ function dragAndDrop(sourcePath, destinationPath, sourceContextNodePath, destina
         DRAG_ENTER: 'dragenter',
         DRAG_OVER: 'dragover',
         DRAG_END: 'dragend',
-        DROP: 'drop'
+        DROP: 'drop',
+        MOUSEMOVE: 'mousemove'
     };
 
     const sourceContextNode = findByXpath(sourceContextNodePath || '/');
@@ -54,11 +92,26 @@ function dragAndDrop(sourcePath, destinationPath, sourceContextNodePath, destina
     const destinationContextNode = findByXpath(destinationContextNodePath || sourceContextNodePath || '/');
     const destinationNode = findByXpath(destinationPath, destinationContextNode);
 
-    const event = createCustomEvent(EVENT_TYPES.DRAG_START);
-    sourceNode.dispatchEvent(event);
+    const event = createDragEvent(EVENT_TYPES.DRAG_START, null, sourceNode);
 
-    destinationNode.dispatchEvent(createCustomEvent(EVENT_TYPES.DRAG_ENTER, event.dataTransfer));
-    destinationNode.dispatchEvent(createCustomEvent(EVENT_TYPES.DRAG_OVER, event.dataTransfer));
-    destinationNode.dispatchEvent(createCustomEvent(EVENT_TYPES.DROP, event.dataTransfer));
-    sourceNode.dispatchEvent(createCustomEvent(EVENT_TYPES.DRAG_END, event.dataTransfer));
+    const dispatcher = createDispatcher();
+
+    dispatcher(() => sourceNode.dispatchEvent(event));
+    dispatcher(() => destinationNode.dispatchEvent(createDragEvent(
+        EVENT_TYPES.DRAG_ENTER,
+        event.dataTransfer,
+        destinationNode
+    )));
+    dispatcher(() => destinationNode.dispatchEvent(createMouseEvent(EVENT_TYPES.MOUSEMOVE, destinationNode)));
+    dispatcher(() => destinationNode.dispatchEvent(createDragEvent(
+        EVENT_TYPES.DRAG_OVER,
+        event.dataTransfer,
+        destinationNode
+    )));
+    dispatcher(() => destinationNode.dispatchEvent(createDragEvent(
+        EVENT_TYPES.DROP,
+        event.dataTransfer,
+        destinationNode
+    )));
+    dispatcher(() => sourceNode.dispatchEvent(createDragEvent(EVENT_TYPES.DRAG_END, event.dataTransfer, sourceNode)));
 }

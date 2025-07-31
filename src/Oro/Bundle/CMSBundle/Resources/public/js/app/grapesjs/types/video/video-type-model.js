@@ -145,13 +145,13 @@ export default (BaseTypeModel, {editor}) => {
 
         getYoutubeSrc() {
             let url = VideoTypeModel.__super__.getYoutubeSrc.call(this);
-            url += this.get('autoplay') ? '&mute=1' : '';
+            url += this.get('autoplay') && !url.includes('&mute=1') ? '&mute=1' : '';
             return url;
         },
 
         getVimeoSrc() {
             let url = VideoTypeModel.__super__.getVimeoSrc.call(this);
-            url += this.get('autoplay') ? '&muted=1' : '';
+            url += this.get('autoplay') && !url.includes('&muted=1') ? '&muted=1' : '';
             return url;
         }
     });

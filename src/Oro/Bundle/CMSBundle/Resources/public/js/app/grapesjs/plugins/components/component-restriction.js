@@ -269,6 +269,9 @@ define(function(require) {
          */
         _prepareAllowTagsCollection(tags) {
             tags = tags.slice();
+            // Allow head and body tags for proper WYSIWYG canvas rendering.
+            // These are required for internal editor functionality.
+            tags.push('head', 'body');
             const attrsRegexp = /(?:\[)(.*?)(?:\])/;
             const globalRest = tags[0].match(attrsRegexp);
             const globalAttr = globalRest ? globalRest[1].split('|') : [];

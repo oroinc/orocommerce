@@ -595,6 +595,7 @@ Feature: WYSIWYG check RTE UI
     And I click "Undo Editor"
     And I click "Undo Editor"
     And I click "Undo Editor"
+    And I click "Undo Editor"
     And I check wysiwyg content in "CMS Page Content":
       | 1 | <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit |
       | 2 | </div>                                                       |

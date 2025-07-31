@@ -65,14 +65,14 @@ Feature: WYSIWYG custom code
     And I add "<div class=\"test\"><blockquote>Test content</blockquote></div>" to dialog code editor with Save
     And I check wysiwyg content in "CMS Page Content":
       | 1 | <pre>                                                                                                        |
-      | 2 | <code>&lt;div class=&quot;test&quot;&gt;&lt;blockquote&gt;Test content&lt;/blockquote&gt;&lt;/div&gt;</code> |
+      | 2 | <code>&lt;div class="test"&gt;&lt;blockquote&gt;Test content&lt;/blockquote&gt;&lt;/div&gt;</code> |
       | 3 | </pre>                                                                                                       |
     And I select component in canvas by tree:
       | code | 1 |
     And I click on "Clone" action for selected component
     And I check wysiwyg content in "CMS Page Content":
       | 4 | <pre>                                                                                                        |
-      | 5 | <code>&lt;div class=&quot;test&quot;&gt;&lt;blockquote&gt;Test content&lt;/blockquote&gt;&lt;/div&gt;</code> |
+      | 5 | <code>&lt;div class="test"&gt;&lt;blockquote&gt;Test content&lt;/blockquote&gt;&lt;/div&gt;</code> |
       | 6 | </pre>                                                                                                       |
     And I select component in canvas by tree:
       | code | 2 |

@@ -27,7 +27,11 @@ export default GrapesJS.plugins.add('grapesjs-import', function(editor, options 
 
             return sender.importDialogView;
         },
-        stop(editor, sender) {
+        stop(editor, sender, {dialogClose} = {}) {
+            if (dialogClose) {
+                return;
+            }
+
             sender.importDialogView.closeDialog();
         }
     });

@@ -228,7 +228,9 @@ const ImportDialogView = BaseView.extend({
                 minWidth: 856,
                 dialogClass: 'ui-dialog--import-template',
                 close: () => {
-                    this.editor.Commands.stop(this.commandId);
+                    this.editor.Commands.stop(this.commandId, {
+                        dialogClose: true
+                    });
                 }
             },
             ...dialogOptions
@@ -293,6 +295,10 @@ const ImportDialogView = BaseView.extend({
     },
 
     closeDialog() {
+        if (!this.dialog) {
+            return;
+        }
+
         this.dialog.remove();
         delete this.dialog;
 
@@ -546,7 +552,7 @@ const ImportDialogView = BaseView.extend({
      * Adjust height code editor
      */
     adjustHeight() {
-        if (!this.dialog) {
+        if (!this.dialog || this.dialog.disposed) {
             return;
         }
         const height = this.$el.find('.validation-failed').height() || 0;

@@ -1,61 +1,30 @@
 /* @theme: admin.oro; */
 
-.#{$app-prefix} {
-    &layer {
-        background: none;
-        &.#{$app-prefix}hovered {
-            .#{$app-prefix}layer-title {
-                background-color: $neutral-grey-3;
-            }
-        }
+@use '~grapesjs/src/styles/scss/gjs_vars';
 
-        &.#{$app-prefix}selected {
-            .#{$app-prefix}layer-title {
-                background-color: $secondary-secondary-6;
-            }
-        }
+.#{gjs_vars.$app-prefix}layer {
+    background: none;
+    gap: $content-padding-small;
 
-        .#{$app-prefix}layer-title {
-            background-color: $neutral-grey-1;
-            border: 1px solid $neutral-grey-3;
-            font-weight: font-weight('semi-bold');
-            margin-bottom: 8px;
-            border-radius: 4px;
-        }
+    &:not(:last-of-type) {
+        margin-bottom: $content-padding-small;
+    }
 
-        &-vis {
-            svg {
-                width: 13px;
-            }
-        }
+    &-item {
+        background-color: $neutral-grey-1;
+        border: 1px solid $neutral-grey-3;
+        border-radius: 4px;
+    }
 
-        &-title-inn {
-            display: block;
-        }
+    &.#{gjs_vars.$app-prefix}hovered &-item {
+        background-color: $neutral-grey-3;
+    }
 
-        &-caret {
-            left: -8px;
+    &.#{gjs_vars.$app-prefix}selected &-item {
+        background-color: $secondary-secondary-6;
+    }
 
-            &.#{$app-prefix}layer-open {
-                top: 4px;
-            }
-
-            svg {
-                width: 15px;
-            }
-        }
-
-        &-move {
-            padding: 9px 10px 7px 5px;
-        }
-
-        &-name {
-            padding: 5px 7px;
-            overflow: visible;
-        }
-
-        &-count {
-            top: 7px;
-        }
+    .#{gjs_vars.$app-prefix}layer-title {
+        font-weight: font-weight('semi-bold');
     }
 }
