@@ -5,9 +5,10 @@ data:
         attributes:
             quantity: 1
             sortOrder: 1
-            price: '115.9000'
             currency: USD
             priceFixed: false
+            price: '115.9000'
+            subTotal: '115.9000'
         relationships:
             lineItem:
                 data:
@@ -31,9 +32,10 @@ data:
         attributes:
             quantity: 1
             sortOrder: 2
-            price: '12.5900'
             currency: USD
             priceFixed: false
+            price: '12.5900'
+            subTotal: '12.5900'
         relationships:
             lineItem:
                 data:
@@ -57,9 +59,10 @@ data:
         attributes:
             quantity: 1
             sortOrder: 1
-            price: '100.5000'
             currency: USD
             priceFixed: false
+            price: '100.5000'
+            subTotal: '100.5000'
         relationships:
             lineItem:
                 data:

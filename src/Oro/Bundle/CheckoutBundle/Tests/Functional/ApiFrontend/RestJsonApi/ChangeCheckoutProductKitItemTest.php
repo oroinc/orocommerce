@@ -37,10 +37,36 @@ class ChangeCheckoutProductKitItemTest extends FrontendRestJsonApiTestCase
                 'type' => 'checkouts',
                 'id' => '<toString(@checkout.in_progress->id)>',
                 'attributes' => [
-                    'totalValue' => '300.1200',
+                    'totalValue' => '1114.1700',
                     'totals' => [
-                        ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '344.5800'],
-                        ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-44.4600']
+                        ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '1249.0800'],
+                        ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-134.9100']
+                    ]
+                ]
+            ]
+        ];
+        $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testCreateWithReadonlySubTotal(): void
+    {
+        $data = $this->getRequestData('create_checkout_kit_item_line_item_min.yml');
+        $data['data']['attributes']['subTotal'] = '123.123';
+        $response = $this->post(
+            ['entity' => 'checkoutproductkititemlineitems'],
+            array_merge(['filters' => 'include=lineItem.checkout&fields[checkouts]=totalValue,totals'], $data)
+        );
+        $expectedData = $data;
+        $expectedData['data']['attributes']['subTotal'] = '12.5900';
+        $expectedData['included'] = [
+            [
+                'type' => 'checkouts',
+                'id' => '<toString(@checkout.in_progress->id)>',
+                'attributes' => [
+                    'totalValue' => '1114.1700',
+                    'totals' => [
+                        ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '1249.0800'],
+                        ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-134.9100']
                     ]
                 ]
             ]
@@ -72,10 +98,10 @@ class ChangeCheckoutProductKitItemTest extends FrontendRestJsonApiTestCase
             'type' => 'checkouts',
             'id' => '<toString(@checkout.in_progress->id)>',
             'attributes' => [
-                'totalValue' => '393.1000',
+                'totalValue' => '1207.1500',
                 'totals' => [
-                    ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '447.8900'],
-                    ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-54.7900']
+                    ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '1352.3900'],
+                    ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-145.2400']
                 ]
             ]
         ];
@@ -83,39 +109,35 @@ class ChangeCheckoutProductKitItemTest extends FrontendRestJsonApiTestCase
         self::assertSame(2.0, $kitItem->getQuantity());
     }
 
-    public function testUpdateFromAnotherCustomerUser(): void
+    public function testTryToUpdateReadonlySubTotal(): void
     {
         $kitItemId = $this->getReference('checkout.in_progress.line_item.2.kit_item.1')->getId();
-        $data = [
-            'data' => [
-                'type' => 'checkoutproductkititemlineitems',
-                'id' => (string)$kitItemId,
-                'attributes' => [
-                    'quantity' => 2
-                ]
-            ]
-        ];
+
         $response = $this->patch(
             ['entity' => 'checkoutproductkititemlineitems', 'id' => (string)$kitItemId],
-            array_merge(['filters' => 'include=lineItem.checkout&fields[checkouts]=totalValue,totals'], $data)
-        );
-
-        /** @var CheckoutProductKitItemLineItem $kitItem */
-        $kitItem = $this->getEntityManager()->find(CheckoutProductKitItemLineItem::class, $kitItemId);
-        $expectedData = $data;
-        $expectedData['included'][] = [
-            'type' => 'checkouts',
-            'id' => '<toString(@checkout.in_progress->id)>',
-            'attributes' => [
-                'totalValue' => '393.1000',
-                'totals' => [
-                    ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '447.8900'],
-                    ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-54.7900']
+            [
+                'data' => [
+                    'type' => 'checkoutproductkititemlineitems',
+                    'id' => (string)$kitItemId,
+                    'attributes' => [
+                        'subTotal' => '123.123'
+                    ]
                 ]
             ]
-        ];
-        $this->assertResponseContains($expectedData, $response);
-        self::assertSame(2.0, $kitItem->getQuantity());
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'checkoutproductkititemlineitems',
+                    'id' => (string)$kitItemId,
+                    'attributes' => [
+                        'subTotal' => '115.9000'
+                    ]
+                ]
+            ],
+            $response
+        );
     }
 
     public function testTryToUpdateFromAnotherDepartment(): void

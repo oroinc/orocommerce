@@ -3,21 +3,22 @@
 namespace Oro\Bundle\ShoppingListBundle\Api\Processor;
 
 use Doctrine\ORM\Query;
+use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
 use Oro\Bundle\ApiBundle\Request\ValueTransformer;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\ProductKit\ProductLineItemPrice\ProductKitLineItemPrice;
 use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Computes values for "currency" and "value" fields for a shopping list kit item.
+ * Computes values for "currency", "value" and "subTotal" fields for a shopping list kit items.
  */
 class ComputeShoppingListProductKitItemLineItemPrice implements ProcessorInterface
 {
@@ -34,68 +35,104 @@ class ComputeShoppingListProductKitItemLineItemPrice implements ProcessorInterfa
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $data = $context->getData();
+        $config = $context->getConfig();
         $valueFieldName = $context->getResultFieldName('value');
         $currencyFieldName = $context->getResultFieldName('currency');
-        $isValueFieldRequested = $context->isFieldRequested($valueFieldName, $data);
-        $isCurrencyFieldRequested = $context->isFieldRequested($currencyFieldName, $data);
-        if (!$isValueFieldRequested && !$isCurrencyFieldRequested) {
+        $subtotalFieldName = $context->getResultFieldName('subTotal', $config);
+        $isValueFieldRequested = $context->isFieldRequested($valueFieldName);
+        $isCurrencyFieldRequested = $context->isFieldRequested($currencyFieldName);
+        $isSubtotalFieldRequested = $context->isFieldRequested($subtotalFieldName);
+        if (!$isValueFieldRequested && !$isCurrencyFieldRequested && !$isSubtotalFieldRequested) {
             return;
         }
 
-        $productPrice = $this->getProductPrice(
-            $data[$context->getResultFieldName('id')],
-            $this->getKitItemId($data, $context)
-        );
-        if ($isValueFieldRequested) {
-            $data[$valueFieldName] = $this->valueTransformer->transformFieldValue(
-                $productPrice?->getValue(),
-                $context->getConfig()->getField($valueFieldName)->toArray(true),
-                $context->getNormalizationContext()
-            );
-        }
-        if ($isCurrencyFieldRequested) {
-            $data[$currencyFieldName] = $productPrice?->getCurrency();
+        $data = $context->getData();
+        $dataMap = $this->getDataMap($data, $context->getResultFieldName('id', $config));
+        $productPrices = $this->getProductPrices(array_keys($dataMap));
+        $normalizationContext = $context->getNormalizationContext();
+        foreach ($dataMap as $id => $key) {
+            $productPrice = $productPrices[$id] ?? null;
+            if ($isValueFieldRequested) {
+                $data[$key][$valueFieldName] = $this->normalizeValue(
+                    $productPrice?->getPrice()?->getValue(),
+                    $config->getField($valueFieldName),
+                    $normalizationContext
+                );
+            }
+            if ($isCurrencyFieldRequested) {
+                $data[$key][$currencyFieldName] = $productPrice?->getPrice()?->getCurrency();
+            }
+            if ($isSubtotalFieldRequested) {
+                $data[$key][$subtotalFieldName] = $this->normalizeValue(
+                    $productPrice?->getSubtotal(),
+                    $config->getField($subtotalFieldName),
+                    $normalizationContext
+                );
+            }
         }
         $context->setData($data);
     }
 
-    private function getProductPrice(int $kitItemLineItemId, int $kitItemId): ?Price
+    private function getDataMap(array $data, string $idFieldName): array
     {
-        $productLineItemPrice = $this->getProductLineItemPrice($kitItemLineItemId);
-        if (!$productLineItemPrice instanceof ProductKitLineItemPrice) {
-            return null;
+        $dataMap = [];
+        foreach ($data as $key => $item) {
+            $dataMap[$item[$idFieldName]] = $key;
         }
 
-        $kitItemLineItemPrices = $productLineItemPrice->getKitItemLineItemPrices();
-        if (!isset($kitItemLineItemPrices[$kitItemId])) {
-            return null;
-        }
-
-        return $kitItemLineItemPrices[$kitItemId]->getPrice();
+        return $dataMap;
     }
 
-    private function getProductLineItemPrice(int $kitItemLineItemId): ?ProductLineItemPrice
+    /**
+     * @return array<int, ?ProductLineItemPrice> [line item id => price, ...]
+     */
+    private function getProductPrices(array $kitItemLineItemIds): array
     {
-        $lineItem = $this->getLineItem($kitItemLineItemId);
-        if (null === $lineItem) {
-            return null;
+        $result = [];
+        $mapOfLineItems = $this->getMapOfLineItems($kitItemLineItemIds);
+        foreach ($mapOfLineItems as [$lineItems, $checkout]) {
+            $productLineItemPrices = $this->productLineItemPriceProvider->getProductLineItemsPrices(
+                $lineItems,
+                $this->productPriceScopeCriteriaFactory->createByContext($checkout),
+                $checkout->getCurrency()
+            );
+            foreach ($productLineItemPrices as $productLineItemPrice) {
+                if (!$productLineItemPrice instanceof ProductKitLineItemPrice) {
+                    continue;
+                }
+                $kitItemPrices = $productLineItemPrice->getKitItemLineItemPrices();
+                foreach ($kitItemPrices as $kitItemPrice) {
+                    $result[$kitItemPrice->getKitItemLineItem()->getEntityIdentifier()] = $kitItemPrice;
+                }
+            }
         }
 
-        $shoppingList = $lineItem->getShoppingList();
-        $productLineItemPrices = $this->productLineItemPriceProvider->getProductLineItemsPrices(
-            [$lineItem],
-            $this->productPriceScopeCriteriaFactory->createByContext($shoppingList),
-            $shoppingList->getCurrency()
-        );
-
-        return $productLineItemPrices[0] ?? null;
+        return $result;
     }
 
-    private function getLineItem(int $kitItemLineItemId): ?LineItem
+    private function getMapOfLineItems(array $kitItemLineItemIds): array
     {
-        /** @var ProductKitItemLineItem|null $kitItemLineItem */
-        $kitItemLineItem = $this->doctrineHelper->createQueryBuilder(ProductKitItemLineItem::class, 'kli')
+        $mapOfLineItems = [];
+        $lineItems = $this->getLineItems($kitItemLineItemIds);
+        foreach ($lineItems as $lineItem) {
+            /** @var ShoppingList $shoppingList */
+            $shoppingList = $lineItem->getShoppingList();
+            if (!isset($mapOfLineItems[$shoppingList->getId()])) {
+                $mapOfLineItems[$shoppingList->getId()] = [[], $shoppingList];
+            }
+            $mapOfLineItems[$shoppingList->getId()][0][] = $lineItem;
+        }
+
+        return $mapOfLineItems;
+    }
+
+    /**
+     * @return LineItem[]
+     */
+    private function getLineItems(array $kitItemLineItemIds): array
+    {
+        /** @var ProductKitItemLineItem[] $kitItemLineItems */
+        $kitItemLineItems = $this->doctrineHelper->createQueryBuilder(ProductKitItemLineItem::class, 'kli')
             ->select('kli, li, sl, p, pu, ki, kii')
             ->leftJoin('kli.lineItem', 'li')
             ->leftJoin('li.shoppingList', 'sl')
@@ -103,23 +140,26 @@ class ComputeShoppingListProductKitItemLineItemPrice implements ProcessorInterfa
             ->leftJoin('li.unit', 'pu')
             ->leftJoin('li.kitItemLineItems', 'ki')
             ->leftJoin('ki.kitItem', 'kii')
-            ->where('kli.id = :id')
-            ->setParameter('id', $kitItemLineItemId)
+            ->where('kli.id IN (:ids)')
+            ->setParameter('ids', $kitItemLineItemIds)
             ->getQuery()
             ->setHint(Query::HINT_REFRESH, true)
-            ->getOneOrNullResult();
+            ->getResult();
 
-        return $kitItemLineItem?->getLineItem();
+        $lineItems = [];
+        foreach ($kitItemLineItems as $kitItemLineItem) {
+            /** @var LineItem $lineItem */
+            $lineItem = $kitItemLineItem->getLineItem();
+            if (!isset($lineItems[$lineItem->getId()])) {
+                $lineItems[$lineItem->getId()] = $lineItem;
+            }
+        }
+
+        return array_values($lineItems);
     }
 
-    private function getKitItemId(array $data, CustomizeLoadedDataContext $context): int
+    private function normalizeValue(mixed $value, EntityDefinitionFieldConfig $config, array $context): mixed
     {
-        $kitItemFieldName = $context->getResultFieldName('kitItem');
-        $kitItemIdFieldName = $context->getResultFieldName(
-            'id',
-            $context->getConfig()->getField($kitItemFieldName)->getTargetEntity()
-        );
-
-        return $data[$kitItemFieldName][$kitItemIdFieldName];
+        return $this->valueTransformer->transformFieldValue($value, $config->toArray(true), $context);
     }
 }

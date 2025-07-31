@@ -74,6 +74,19 @@ class ChangeCheckoutLineItemTest extends FrontendRestJsonApiTestCase
         self::assertEquals($expectedChecksum, $lineItem->getChecksum());
     }
 
+    public function testCreateWithReadonlySubTotal(): void
+    {
+        $data = $this->getRequestData('create_checkout_line_item_min.yml');
+        $data['data']['attributes']['subTotal'] = '123.123';
+        $response = $this->post(['entity' => 'checkoutlineitems'], $data);
+
+        $lineItemId = $this->getResourceId($response);
+        $expectedData = $data;
+        $expectedData['data']['id'] = $lineItemId;
+        $expectedData['data']['attributes']['subTotal'] = '100.5000';
+        $this->assertResponseContains($expectedData, $response);
+    }
+
     public function testCreateWithReadonlyChecksum(): void
     {
         $data = $this->getRequestData('create_checkout_line_item_min.yml');
@@ -193,6 +206,37 @@ class ChangeCheckoutLineItemTest extends FrontendRestJsonApiTestCase
             ],
             $response,
             Response::HTTP_FORBIDDEN
+        );
+    }
+
+    public function testTryToUpdateReadonlySubTotal(): void
+    {
+        $lineItemId = $this->getReference('checkout.in_progress.line_item.1')->getId();
+
+        $response = $this->patch(
+            ['entity' => 'checkoutlineitems', 'id' => (string)$lineItemId],
+            [
+                'data' => [
+                    'type' => 'checkoutlineitems',
+                    'id' => (string)$lineItemId,
+                    'attributes' => [
+                        'subTotal' => '123.123'
+                    ]
+                ]
+            ]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'checkoutlineitems',
+                    'id' => (string)$lineItemId,
+                    'attributes' => [
+                        'subTotal' => '1005.0000'
+                    ]
+                ]
+            ],
+            $response
         );
     }
 

@@ -187,8 +187,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [
                 'include' => 'items,items.kitItems',
                 'fields[shoppinglists]' => 'name,currency,total,subTotal,items',
-                'fields[shoppinglistitems]' => 'currency,value,quantity,kitItems',
-                'fields[shoppinglistkititems]' => 'currency,value,quantity'
+                'fields[shoppinglistitems]' => 'currency,value,quantity,subTotal,kitItems',
+                'fields[shoppinglistkititems]' => 'currency,value,quantity,subTotal'
             ],
             ['HTTP_X-Include' => 'totalCount']
         );
@@ -207,7 +207,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [
                 'include' => 'items,items.kitItems',
                 'fields[shoppinglists]' => 'name,currency,total,subTotal,items',
-                'fields[shoppinglistitems]' => 'currency,value,quantity'
+                'fields[shoppinglistitems]' => 'currency,value,quantity,subTotal'
             ],
             ['HTTP_X-Include' => 'totalCount']
         );
@@ -238,6 +238,26 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
 
         $this->assertResponseContains('get_shopping_list.yml', $response);
+    }
+
+    public function testGetWithTotalOnlyIncludingSubTotalForLineItemsAndKits(): void
+    {
+        $response = $this->get(
+            ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>'],
+            [
+                'include' => 'items,items.kitItems',
+                'fields[shoppinglists]' => 'total,subTotal,items',
+                'fields[shoppinglistitems]' => 'subTotal,kitItems',
+                'fields[shoppinglistkititems]' => 'subTotal'
+            ]
+        );
+
+        $this->assertResponseContains('get_shopping_list_with_total_only.yml', $response);
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertCount(2, $responseData['data']['attributes']);
+        foreach ($responseData['included'] as $i => $item) {
+            self::assertCount(1, $item['attributes'], 'include: ' . $i);
+        }
     }
 
     public function testGetForDefaultShoppingList(): void
@@ -1119,7 +1139,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             'add_line_item_existing.yml'
         );
 
-        $responseContent = $this->getResponseData('add_line_item_existing.yml', $response);
+        $responseContent = $this->getResponseData('add_line_item_existing.yml');
         $responseContent['data'][0]['relationships']['shoppingList'] = [
             'data' => ['type' => 'shoppinglists', 'id' => (string)$shoppingListId]
         ];
@@ -1808,7 +1828,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                         'attributes' => [
                             'quantity' => 5,
                             'currency' => 'USD',
-                            'value' => '1.2300'
+                            'value' => '1.2300',
+                            'subTotal' => '6.1500'
                         ]
                     ],
                     [
@@ -1817,7 +1838,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                         'attributes' => [
                             'quantity' => 10,
                             'currency' => 'USD',
-                            'value' => '2.3400'
+                            'value' => '2.3400',
+                            'subTotal' => '23.4000'
                         ]
                     ],
                     [
@@ -1826,7 +1848,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                         'attributes' => [
                             'quantity' => 2,
                             'currency' => 'USD',
-                            'value' => '14.8000'
+                            'value' => '14.8000',
+                            'subTotal' => '29.6000'
                         ]
                     ]
                 ]

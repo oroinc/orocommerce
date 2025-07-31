@@ -6,6 +6,7 @@ data:
         notes: 'New Kit Line Item Notes'
         currency: USD
         value: '19.2400'
+        subTotal: '38.4800'
     relationships:
         product:
             data:

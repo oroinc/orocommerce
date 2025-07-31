@@ -16,4 +16,4 @@ data:
         unit:
             data:
                 type: productunits
-                id: '<toString(@set->code)>'
+                id: '<toString(@each->code)>'

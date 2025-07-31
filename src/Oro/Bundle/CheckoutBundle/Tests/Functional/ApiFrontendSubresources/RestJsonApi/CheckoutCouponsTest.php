@@ -137,10 +137,10 @@ class CheckoutCouponsTest extends FrontendRestJsonApiTestCase
                     'attributes' => [
                         'poNumber' => null,
                         'customerNotes' => 'checkout.in_progress',
-                        'totalValue' => '273.8500',
+                        'totalValue' => '1047.2000',
                         'totals' => [
-                            ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '331.9900'],
-                            ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-58.1400']
+                            ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '1236.4900'],
+                            ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-189.2900']
                         ],
                         'coupons' => [
                             [
@@ -232,9 +232,9 @@ class CheckoutCouponsTest extends FrontendRestJsonApiTestCase
                     'attributes' => [
                         'poNumber' => null,
                         'customerNotes' => 'checkout.in_progress',
-                        'totalValue' => '321.9900',
+                        'totalValue' => '1226.4900',
                         'totals' => [
-                            ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '331.9900'],
+                            ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '1236.4900'],
                             ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-10.0000']
                         ],
                         'coupons' => []

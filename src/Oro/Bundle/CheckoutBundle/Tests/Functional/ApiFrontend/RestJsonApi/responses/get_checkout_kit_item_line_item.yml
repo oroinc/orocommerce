@@ -3,9 +3,10 @@ data:
     id: '<toString(@checkout.in_progress.line_item.2.kit_item.1->id)>'
     attributes:
         quantity: 1
+        currency: USD
         priceFixed: false
         price: '115.9000'
-        currency: USD
+        subTotal: '115.9000'
         sortOrder: 1
     relationships:
         lineItem:

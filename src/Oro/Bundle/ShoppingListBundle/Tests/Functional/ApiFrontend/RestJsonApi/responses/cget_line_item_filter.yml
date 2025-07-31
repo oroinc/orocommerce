@@ -7,6 +7,7 @@ data:
             notes: null
             currency: USD
             value: '1.2300'
+            subTotal: '6.1500'
         relationships:
             product:
                 data:
@@ -32,6 +33,7 @@ data:
             notes: null
             currency: USD
             value: '2.3400'
+            subTotal: '23.4000'
         relationships:
             product:
                 data:
@@ -48,7 +50,7 @@ data:
             unit:
                 data:
                     type: productunits
-                    id: '<toString(@item->code)>'
+                    id: '<toString(@set->code)>'
     -
         type: shoppinglistitems
         id: '<toString(@kit_line_item1->id)>'
@@ -58,6 +60,7 @@ data:
             notes: null
             currency: USD
             value: '14.8000'
+            subTotal: '29.6000'
         relationships:
             product:
                 data:

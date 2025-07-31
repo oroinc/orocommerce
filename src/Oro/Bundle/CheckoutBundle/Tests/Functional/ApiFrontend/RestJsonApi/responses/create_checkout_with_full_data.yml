@@ -128,9 +128,10 @@ included:
             productSku: 'product-1'
             freeFormProduct: null
             quantity: 1
+            currency: USD
             priceFixed: false
             price: '100.5000'
-            currency: USD
+            subTotal: '100.5000'
             comment: null
             shippingEstimateAmount: null
         relationships:

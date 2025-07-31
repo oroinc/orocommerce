@@ -60,10 +60,10 @@ class CheckoutLineItemTest extends FrontendRestJsonApiTestCase
                 'type' => 'checkouts',
                 'id' => '<toString(@checkout.in_progress->id)>',
                 'attributes' => [
-                    'totalValue' => '288.7900',
+                    'totalValue' => '1102.8400',
                     'totals' => [
-                        ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '331.9900'],
-                        ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-43.2000']
+                        ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '1236.4900'],
+                        ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-133.6500']
                     ]
                 ]
             ]
@@ -169,6 +169,26 @@ class CheckoutLineItemTest extends FrontendRestJsonApiTestCase
             ['include' => 'kitItemLineItems']
         );
         $this->assertResponseContains('get_checkout_line_item_with_kit_item.yml', $response);
+    }
+
+    public function testGetWithSubTotalOnly(): void
+    {
+        $response = $this->get(
+            ['entity' => 'checkoutlineitems', 'id' => '<toString(@checkout.in_progress.line_item.1->id)>'],
+            ['fields[checkoutlineitems]' => 'subTotal']
+        );
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'checkoutlineitems',
+                    'id' => '<toString(@checkout.in_progress.line_item.1->id)>',
+                    'attributes' => [
+                        'subTotal' => '1005.0000'
+                    ]
+                ]
+            ],
+            $response
+        );
     }
 
     public function testGetSubresourceForCheckout(): void

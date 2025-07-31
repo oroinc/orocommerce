@@ -6,6 +6,7 @@ data:
         sortOrder: 1
         currency: USD
         value: '1.2300'
+        subTotal: '6.1500'
     relationships:
         kitItem:
             data:
@@ -28,6 +29,7 @@ included:
             notes: 'New Line Item Notes'
             currency: USD
             value: '18.4900'
+            subTotal: '184.9000'
         relationships:
             product:
                 data:

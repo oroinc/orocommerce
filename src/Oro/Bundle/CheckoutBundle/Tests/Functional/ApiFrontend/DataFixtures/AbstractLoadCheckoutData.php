@@ -364,7 +364,7 @@ abstract class AbstractLoadCheckoutData extends AbstractFixture implements
         $lineItem = new ShoppingListLineItem();
         $lineItem->setProduct($product);
         $lineItem->setProductUnit($product->getPrimaryUnitPrecision()->getUnit());
-        $lineItem->setQuantity(1);
+        $lineItem->setQuantity($data['quantity'] ?? 1);
         $kitItems = $data['kitItems'] ?? [];
         foreach ($kitItems as $i => $kitItemReference) {
             /** @var ProductKitItem $kitItem */

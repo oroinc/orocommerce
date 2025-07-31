@@ -6,6 +6,7 @@ data:
         sortOrder: 0
         currency: USD
         value: '1.2300'
+        subTotal: '2.4600'
     relationships:
         lineItem:
             data:

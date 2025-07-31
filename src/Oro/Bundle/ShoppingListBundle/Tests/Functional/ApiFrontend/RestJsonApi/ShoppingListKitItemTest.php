@@ -89,13 +89,13 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'shoppinglistkititems'],
-            ['fields[shoppinglistkititems]' => 'currency,value']
+            ['fields[shoppinglistkititems]' => 'currency,value,subTotal']
         );
 
         $expectedData = $this->getResponseData('cget_kit_line_item.yml');
         foreach ($expectedData['data'] as $i => $item) {
             foreach ($expectedData['data'][$i]['attributes'] as $name => $val) {
-                if (!\in_array($name, ['currency', 'value'], true)) {
+                if (!\in_array($name, ['currency', 'value', 'subTotal'], true)) {
                     unset($expectedData['data'][$i]['attributes'][$name]);
                 }
             }
@@ -193,6 +193,28 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
 
         $kitItemLineItemShoppingList = $kitItemLineItem->getLineItem()->getShoppingList();
         self::assertEquals($shoppingList1->getId(), $kitItemLineItemShoppingList->getId());
+        $this->assertShoppingListTotal($kitItemLineItemShoppingList, 91.25, 'USD');
+    }
+
+    public function testCreateWithReadonlySubTotal(): void
+    {
+        $shoppingList1 = $this->getReference('shopping_list1');
+        $this->assertShoppingListTotal($shoppingList1, 59.15, 'USD');
+
+        $data = $this->getRequestData('create_kit_item_line_item.yml');
+        $data['data']['attributes']['subTotal'] = '123.123';
+        $response = $this->post(
+            ['entity' => 'shoppinglistkititems'],
+            $data
+        );
+
+        $kitItemLineItemId = (int)$this->getResourceId($response);
+        $responseContent = $this->updateResponseContent('create_kit_item_line_item.yml', $response);
+        $this->assertResponseContains($responseContent, $response);
+
+        /** @var ProductKitItemLineItem $kitItemLineItem */
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
+        $kitItemLineItemShoppingList = $kitItemLineItem->getLineItem()->getShoppingList();
         $this->assertShoppingListTotal($kitItemLineItemShoppingList, 91.25, 'USD');
     }
 
@@ -803,6 +825,37 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         $kitItemLineItemShoppingList = $kitItemLineItem->getLineItem()->getShoppingList();
         self::assertEquals($shoppingList1->getId(), $kitItemLineItemShoppingList->getId());
         $this->assertShoppingListTotal($kitItemLineItemShoppingList, 303.59, 'USD');
+    }
+
+    public function testTryToUpdateReadonlySubTotal(): void
+    {
+        $kitItemLineItemId = $this->getReference('product_kit_item1_line_item1')->getId();
+
+        $response = $this->patch(
+            ['entity' => 'shoppinglistkititems', 'id' => (string)$kitItemLineItemId],
+            [
+                'data' => [
+                    'type' => 'shoppinglistkititems',
+                    'id' => (string)$kitItemLineItemId,
+                    'attributes' => [
+                        'subTotal' => '123.123'
+                    ]
+                ]
+            ]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'shoppinglistkititems',
+                    'id' => (string)$kitItemLineItemId,
+                    'attributes' => [
+                        'subTotal' => '2.4600'
+                    ]
+                ]
+            ],
+            $response
+        );
     }
 
     public function testDelete(): void

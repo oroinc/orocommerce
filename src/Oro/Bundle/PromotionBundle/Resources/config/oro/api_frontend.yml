@@ -28,3 +28,31 @@ api:
                     depends_on: [value, quantity]
                     form_options:
                         mapped: false
+
+        Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+            documentation_resource: '@OroPromotionBundle/Resources/doc/api_frontend/shopping_list_item.md'
+            fields:
+                totalValue:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+                discount:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+
+        Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
+            documentation_resource: '@OroPromotionBundle/Resources/doc/api_frontend/checkout_line_item.md'
+            fields:
+                totalValue:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+                discount:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false

@@ -121,7 +121,7 @@ class LoadCheckoutData extends AbstractLoadCheckoutData
                 'checkout' => ['currency' => 'USD'],
                 'customerUser' => 'customer_user',
                 'shoppingListLineItems' => [
-                    ['product' => LoadProductData::PRODUCT_1],
+                    ['product' => LoadProductData::PRODUCT_1, 'quantity' => 10],
                     [
                         'product' => LoadProductKitData::PRODUCT_KIT_3,
                         'kitItems' => [

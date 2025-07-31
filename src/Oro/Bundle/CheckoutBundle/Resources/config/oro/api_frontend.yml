@@ -255,6 +255,11 @@ api:
                     property_path: _
                     form_options:
                         mapped: false
+                subTotal:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
                 productUnitCode:
                     exclude: true
                 checksum:
@@ -309,6 +314,11 @@ api:
                         mapped: false
                 currency:
                     data_type: string
+                    property_path: _
+                    form_options:
+                        mapped: false
+                subTotal:
+                    data_type: money
                     property_path: _
                     form_options:
                         mapped: false

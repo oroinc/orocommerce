@@ -126,10 +126,11 @@ included:
             productSku: product-kit-3
             freeFormProduct: null
             quantity: 1
-            price: '143.5800'
             currency: USD
-            comment: null
             priceFixed: false
+            price: '143.5800'
+            subTotal: '143.5800'
+            comment: null
             shippingEstimateAmount: null
         relationships:
             checkout:
@@ -165,9 +166,10 @@ included:
         attributes:
             quantity: 1
             sortOrder: 1
-            price: '115.9000'
             currency: USD
             priceFixed: false
+            price: '115.9000'
+            subTotal: '115.9000'
         relationships:
             lineItem:
                 data:
@@ -193,9 +195,10 @@ included:
         attributes:
             quantity: 2
             sortOrder: 2
-            price: '12.5900'
             currency: USD
             priceFixed: false
+            price: '12.5900'
+            subTotal: '25.1800'
         relationships:
             lineItem:
                 data:
@@ -221,9 +224,10 @@ included:
         attributes:
             quantity: 1
             sortOrder: 3
-            price: '2.5000'
             currency: USD
             priceFixed: false
+            price: '2.5000'
+            subTotal: '2.5000'
         relationships:
             lineItem:
                 data:

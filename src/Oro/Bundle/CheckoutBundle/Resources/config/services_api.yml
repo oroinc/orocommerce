@@ -311,7 +311,7 @@ services:
             - '@oro_api.value_transformer'
             - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem }
 
     oro_checkout.api.compute_shopping_list_product_kit_item_line_item_price:
         class: Oro\Bundle\CheckoutBundle\Api\Processor\ComputeCheckoutProductKitItemLineItemPrice
@@ -321,7 +321,7 @@ services:
             - '@oro_api.value_transformer'
             - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem }
 
     oro_checkout.api.compute_checkout_line_item_shipping_method:
         class: Oro\Bundle\CheckoutBundle\Api\Processor\ComputeCheckoutShippingMethod
