@@ -57,7 +57,7 @@ class ComputeOrderSubtotals implements ProcessorInterface
         }
 
         $data = $context->getData();
-        $dataMap = $this->getDataMap($data);
+        $dataMap = $this->getDataMap($data, $context->getResultFieldName('id'));
         $allOrderSubtotals = $this->loadOrderSubtotals(
             array_keys($dataMap),
             $context->getSharedData()->get(self::ORDER_SUBTOTALS) ?? []
@@ -76,11 +76,11 @@ class ComputeOrderSubtotals implements ProcessorInterface
         $context->setData($data);
     }
 
-    private function getDataMap(array $data): array
+    private function getDataMap(array $data, string $idFieldName): array
     {
         $dataMap = [];
         foreach ($data as $key => $item) {
-            $dataMap[$item['id']] = $key;
+            $dataMap[$item[$idFieldName]] = $key;
         }
 
         return $dataMap;

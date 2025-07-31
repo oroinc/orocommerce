@@ -26,10 +26,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\Coupon;
-use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProviderInterface;
-use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem as ShoppingListLineItem;
@@ -71,8 +67,7 @@ abstract class AbstractLoadCheckoutData extends AbstractFixture implements
             LoadShippingMethodsConfigsRulesWithConfigs::class,
             LoadPaymentTermData::class,
             LoadPaymentTermSettingsData::class,
-            LoadPaymentMethodsConfigsRuleData::class,
-            LoadCouponData::class
+            LoadPaymentMethodsConfigsRuleData::class
         ];
     }
 
@@ -213,19 +208,6 @@ abstract class AbstractLoadCheckoutData extends AbstractFixture implements
             $checkout->setShippingAddress($checkoutData['shippingAddress']);
             $this->setReference($name . '.shipping_address', $checkoutData['shippingAddress']);
         }
-        if (isset($checkoutData['coupons'])) {
-            /** @var EntityCouponsProviderInterface $entityCouponsProvider */
-            $entityCouponsProvider = $this->container->get('oro_promotion.provider.entity_coupons_provider');
-            foreach ($checkoutData['coupons'] as $i => $couponReference) {
-                $appliedCoupon = $this->applyCoupon(
-                    $manager,
-                    $checkout,
-                    $this->getReference($couponReference),
-                    $entityCouponsProvider
-                );
-                $this->setReference($name . '.applied_coupon.' . $i, $appliedCoupon);
-            }
-        }
         $manager->persist($checkout);
         $this->setReference($name, $checkout);
     }
@@ -364,7 +346,7 @@ abstract class AbstractLoadCheckoutData extends AbstractFixture implements
         $lineItem = new ShoppingListLineItem();
         $lineItem->setProduct($product);
         $lineItem->setProductUnit($product->getPrimaryUnitPrecision()->getUnit());
-        $lineItem->setQuantity(1);
+        $lineItem->setQuantity($data['quantity'] ?? 1);
         $kitItems = $data['kitItems'] ?? [];
         foreach ($kitItems as $i => $kitItemReference) {
             /** @var ProductKitItem $kitItem */
@@ -399,18 +381,5 @@ abstract class AbstractLoadCheckoutData extends AbstractFixture implements
         $request->query->set('_wid', 'ajax_checkout');
 
         return $request;
-    }
-
-    private function applyCoupon(
-        ObjectManager $manager,
-        Checkout $checkout,
-        Coupon $coupon,
-        EntityCouponsProviderInterface $entityCouponsProvider
-    ): AppliedCoupon {
-        $appliedCoupon = $entityCouponsProvider->createAppliedCouponByCoupon($coupon);
-        $checkout->addAppliedCoupon($appliedCoupon);
-        $manager->persist($appliedCoupon);
-
-        return $appliedCoupon;
     }
 }

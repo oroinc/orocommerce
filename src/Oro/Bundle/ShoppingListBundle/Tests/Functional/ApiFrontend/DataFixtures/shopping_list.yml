@@ -90,16 +90,19 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@item'
         precision: '0'
     precision4:
+        unit: '@set'
+        precision: '1'
+    precision5:
         unit: '@item'
         precision: '0'
-    precision5:
+    precision6:
         unit: '@set'
         sell: false
         precision: '0'
-    precision6:
+    precision7:
         unit: '@item'
         precision: '0'
-    precision7:
+    precision8:
         unit: '@item'
         precision: '0'
     product_kit1_precision1:
@@ -204,6 +207,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'PSKU2'
         names: ['@product2_name']
         primaryUnitPrecision: '@precision3'
+        unitPrecisions: ['@precision4']
         attributeFamily: '@default_product_family'
         inventoryStatus: '@in_stock'
         status: 'enabled'
@@ -212,8 +216,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product3:
         sku: 'PSKU3'
         names: ['@product3_name']
-        primaryUnitPrecision: '@precision4'
-        unitPrecisions: ['@precision4', '@precision5']
+        primaryUnitPrecision: '@precision5'
+        unitPrecisions: ['@precision5', '@precision6']
         attributeFamily: '@default_product_family'
         inventoryStatus: '@in_stock'
         status: 'enabled'
@@ -222,8 +226,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product4:
         sku: 'PSKU4'
         names: ['@product4_name']
-        primaryUnitPrecision: '@precision6'
-        unitPrecisions: ['@precision6']
+        primaryUnitPrecision: '@precision7'
+        unitPrecisions: ['@precision7']
         attributeFamily: '@default_product_family'
         inventoryStatus: '@in_stock'
         status: 'enabled'
@@ -232,8 +236,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
     disabled_product5:
         sku: 'PSKU5'
         names: ['@product5_name']
-        primaryUnitPrecision: '@precision7'
-        unitPrecisions: ['@precision7']
+        primaryUnitPrecision: '@precision8'
+        unitPrecisions: ['@precision8']
         attributeFamily: '@default_product_family'
         inventoryStatus: '@in_stock'
         status: 'disabled'
@@ -302,7 +306,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     line_item2:
         product: '@product2'
         quantity: 10
-        unit: '@item'
+        unit: '@set'
         customerUser: '@customer_user'
         organization: '@organization'
         owner: '@user'
@@ -460,6 +464,13 @@ Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
         priceList: '@default_combined_price_list'
         product: '@product2'
         unit: '@item'
+        quantity: 1
+        value: 2.34
+        currency: USD
+    product2_price1_set:
+        priceList: '@default_combined_price_list'
+        product: '@product2'
+        unit: '@set'
         quantity: 1
         value: 2.34
         currency: USD

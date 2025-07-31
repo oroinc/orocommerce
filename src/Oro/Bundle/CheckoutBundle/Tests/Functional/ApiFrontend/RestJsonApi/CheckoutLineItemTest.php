@@ -60,51 +60,14 @@ class CheckoutLineItemTest extends FrontendRestJsonApiTestCase
                 'type' => 'checkouts',
                 'id' => '<toString(@checkout.in_progress->id)>',
                 'attributes' => [
-                    'totalValue' => '288.7900',
+                    'totalValue' => '1236.4900',
                     'totals' => [
-                        ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '331.9900'],
-                        ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-43.2000']
+                        ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '1236.4900']
                     ]
                 ]
             ]
         ];
         $this->assertResponseContains($expectedData, $response);
-    }
-
-    public function testGetWithIncludeCheckoutCoupons(): void
-    {
-        $response = $this->get(
-            ['entity' => 'checkoutlineitems', 'id' => '<toString(@checkout.completed.line_item.1->id)>'],
-            ['include' => 'checkout', 'fields[checkouts]' => 'coupons']
-        );
-        $this->assertResponseContains(
-            [
-                'data' => [
-                    'type' => 'checkoutlineitems',
-                    'id' => '<toString(@checkout.completed.line_item.1->id)>',
-                    'relationships' => [
-                        'checkout' => [
-                            'data' => ['type' => 'checkouts', 'id' => '<toString(@checkout.completed->id)>']
-                        ]
-                    ]
-                ],
-                'included' => [
-                    [
-                        'type' => 'checkouts',
-                        'id' => '<toString(@checkout.completed->id)>',
-                        'attributes' => [
-                            'coupons' => [
-                                [
-                                    'couponCode' => 'coupon_with_promo_and_valid_from_and_until',
-                                    'description' => 'Order percent promotion name'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-            $response
-        );
     }
 
     public function testTryToGetForDeletedCheckout(): void
@@ -169,6 +132,26 @@ class CheckoutLineItemTest extends FrontendRestJsonApiTestCase
             ['include' => 'kitItemLineItems']
         );
         $this->assertResponseContains('get_checkout_line_item_with_kit_item.yml', $response);
+    }
+
+    public function testGetWithSubTotalOnly(): void
+    {
+        $response = $this->get(
+            ['entity' => 'checkoutlineitems', 'id' => '<toString(@checkout.in_progress.line_item.1->id)>'],
+            ['fields[checkoutlineitems]' => 'subTotal']
+        );
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'checkoutlineitems',
+                    'id' => '<toString(@checkout.in_progress.line_item.1->id)>',
+                    'attributes' => [
+                        'subTotal' => '1005.0000'
+                    ]
+                ]
+            ],
+            $response
+        );
     }
 
     public function testGetSubresourceForCheckout(): void

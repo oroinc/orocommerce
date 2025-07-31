@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Api\Processor;
+namespace Oro\Bundle\PromotionBundle\Api\Processor;
 
 use Doctrine\ORM\Query;
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
@@ -35,9 +35,9 @@ class ComputeCheckoutCoupons implements ProcessorInterface
         }
 
         $data = $context->getData();
-        $dataMap = $this->getDataMap($data);
+        $dataMap = $this->getDataMap($data, $context->getResultFieldName('id'));
         if ($dataMap) {
-            $allAppliedCoupons = $this->loadAllAppliedCoupons($dataMap);
+            $allAppliedCoupons = $this->loadAllAppliedCoupons(array_keys($dataMap));
             foreach ($allAppliedCoupons as $checkoutId => $appliedCoupons) {
                 $data[$dataMap[$checkoutId]][self::COUPONS_FIELD_NAME] = $appliedCoupons;
             }
@@ -45,19 +45,19 @@ class ComputeCheckoutCoupons implements ProcessorInterface
         }
     }
 
-    private function getDataMap(array $data): array
+    private function getDataMap(array $data, string $idFieldName): array
     {
         $dataMap = [];
         foreach ($data as $key => $item) {
             if ($item[self::COUPONS_FIELD_NAME]) {
-                $dataMap[$item['id']] = $key;
+                $dataMap[$item[$idFieldName]] = $key;
             }
         }
 
         return $dataMap;
     }
 
-    private function loadAllAppliedCoupons(array $dataMap): array
+    private function loadAllAppliedCoupons(array $checkoutIds): array
     {
         /** @var Checkout[] $checkouts */
         $checkouts = $this->doctrineHelper->createQueryBuilder(Checkout::class, 'c')
@@ -66,7 +66,7 @@ class ComputeCheckoutCoupons implements ProcessorInterface
             ->leftJoin('c.lineItems', 'li')
             ->leftJoin('li.product', 'p')
             ->where('c.id IN (:ids)')
-            ->setParameter('ids', array_keys($dataMap))
+            ->setParameter('ids', $checkoutIds)
             ->getQuery()
             ->setHint(Query::HINT_REFRESH, true)
             ->getResult();
@@ -76,7 +76,7 @@ class ComputeCheckoutCoupons implements ProcessorInterface
         }
 
         $result = [];
-        foreach ($dataMap as $checkoutId => $key) {
+        foreach ($checkoutIds as $checkoutId) {
             $result[$checkoutId] = isset($checkoutMap[$checkoutId])
                 ? $this->loadAppliedCoupons($checkoutMap[$checkoutId])
                 : [];

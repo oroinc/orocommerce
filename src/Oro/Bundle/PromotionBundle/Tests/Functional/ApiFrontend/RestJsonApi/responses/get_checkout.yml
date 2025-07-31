@@ -1,0 +1,70 @@
+data:
+    type: checkouts
+    id: '<toString(@checkout.completed->id)>'
+    attributes:
+        poNumber: null
+        shippingType: checkout
+        shippingMethod: '@checkout.completed->shippingMethod'
+        shippingMethodType: primary
+        shippingEstimateAmount: '10.0000'
+        paymentMethod: '@checkout.completed->paymentMethod'
+        shipUntil: null
+        shipToBillingAddress: false
+        customerNotes: checkout.completed
+        currency: USD
+        completed: true
+        createdAt: '@checkout.completed->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@checkout.completed->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        totalValue: '90.4500'
+        totals:
+            -
+                subtotalType: subtotal
+                description: Subtotal
+                amount: '100.5000'
+            -
+                subtotalType: discount
+                description: Discount
+                amount: '-20.0500'
+            -
+                subtotalType: shipping_cost
+                description: Shipping
+                amount: '10.0000'
+        coupons:
+            -
+                couponCode: coupon_with_promo_and_valid_from_and_until
+                description: 'Order percent promotion name'
+    relationships:
+        lineItems:
+            data:
+                -
+                    type: checkoutlineitems
+                    id: '<toString(@checkout.completed.line_item.1->id)>'
+                -
+                    type: checkoutlineitems
+                    id: '<toString(@checkout.completed.line_item.2->id)>'
+        lineItemGroups:
+            data: []
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@customer_user->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@customer->id)>'
+        billingAddress:
+            data:
+                type: checkoutaddresses
+                id: '<toString(@checkout.completed.billing_address->id)>'
+        shippingAddress:
+            data:
+                type: checkoutaddresses
+                id: '<toString(@checkout.completed.shipping_address->id)>'
+        source:
+            data:
+                type: shoppinglists
+                id: '<toString(@checkout.completed.shopping_list->id)>'
+        order:
+            data:
+                type: orders
+                id: '<toString(@checkout.completed.order->id)>'

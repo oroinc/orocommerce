@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Functional\ApiFrontend\DataFixtures;
+namespace Oro\Bundle\PromotionBundle\Tests\Functional\ApiFrontend\DataFixtures;
 
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\AbstractLoadDiscountConfigurationData;

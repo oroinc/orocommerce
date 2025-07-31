@@ -4,11 +4,12 @@ data:
     attributes:
         productSku: product-1
         freeFormProduct: null
-        quantity: 1
-        price: '100.5000'
+        quantity: 10
         currency: USD
-        comment: null
         priceFixed: false
+        price: '100.5000'
+        subTotal: '1005.0000'
+        comment: null
         shippingMethod: null
         shippingMethodType: null
         shippingEstimateAmount: null

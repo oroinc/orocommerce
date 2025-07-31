@@ -4,9 +4,9 @@ data:
         customerNotes: 'checkout.ready_for_completion'
         shipUntil: null
         currency: 'USD'
-        subtotalWithDiscounts: '90.5000'
+        subtotalWithDiscounts: '100.5000'
         subtotalValue: '100.5000'
-        totalValue: '100.5000'
+        totalValue: '110.5000'
         shippingCostAmount: '10.0000'
         totalIncludingTax: "110.5000"
         totalExcludingTax: "110.5000"
@@ -15,11 +15,7 @@ data:
         paymentStatus:
             code: 'pending'
             label: 'Pending payment'
-        discounts:
-            -
-                type: 'promotion.order'
-                description: 'Discount'
-                amount: '10.0000'
+        discounts: []
     relationships:
         customerUser:
             data:

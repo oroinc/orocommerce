@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Api\Model;
+namespace Oro\Bundle\PromotionBundle\Api\Model;
 
 /**
  * Represents a request to apply a new coupon or remove applied coupon.

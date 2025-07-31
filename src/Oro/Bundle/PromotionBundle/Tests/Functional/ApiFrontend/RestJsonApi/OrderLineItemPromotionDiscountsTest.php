@@ -22,12 +22,7 @@ class OrderLineItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return string|null
-     */
-    private function getMoneyValue($value)
+    private function getMoneyValue(mixed $value): ?string
     {
         if (null !== $value) {
             $value = (string)BigDecimal::of($value)->toScale(MoneyType::TYPE_SCALE);
@@ -36,29 +31,24 @@ class OrderLineItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
         return $value;
     }
 
-    /**
-     * @param Result|null $taxValue
-     *
-     * @return array
-     */
-    private function getDiscountRelatedFields($price, $quantity, $discountAmount, ?Result $taxValue)
-    {
+    private function getDiscountRelatedFields(
+        ?float $price,
+        float $quantity,
+        ?float $discountAmount,
+        ?Result $taxValue
+    ): array {
         if (null === $discountAmount && null === $taxValue) {
             return [
-                'rowTotalDiscountAmount'            => $this->getMoneyValue(0.0),
-                'rowTotalAfterDiscount'             => $this->getMoneyValue(
-                    $price * $quantity
-                ),
+                'rowTotalDiscountAmount' => $this->getMoneyValue(0.0),
+                'rowTotalAfterDiscount' => $this->getMoneyValue($price * $quantity),
                 'rowTotalAfterDiscountIncludingTax' => $this->getMoneyValue(0.0),
                 'rowTotalAfterDiscountExcludingTax' => $this->getMoneyValue(0.0)
             ];
         }
 
         return [
-            'rowTotalDiscountAmount'            => $this->getMoneyValue($discountAmount),
-            'rowTotalAfterDiscount'             => $this->getMoneyValue(
-                $price * $quantity - $discountAmount
-            ),
+            'rowTotalDiscountAmount' => $this->getMoneyValue($discountAmount),
+            'rowTotalAfterDiscount' => $this->getMoneyValue($price * $quantity - $discountAmount),
             'rowTotalAfterDiscountIncludingTax' => $this->getMoneyValue(
                 $taxValue->getRow()->getIncludingTax() - $discountAmount
             ),
@@ -94,8 +84,8 @@ class OrderLineItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'orderlineitems',
-                        'id'         => '<toString(@order1_line_item1->id)>',
+                        'type' => 'orderlineitems',
+                        'id' => '<toString(@order1_line_item1->id)>',
                         'attributes' => $this->getDiscountRelatedFields(
                             $lineItem1Price,
                             $lineItem1Quantity,
@@ -104,8 +94,8 @@ class OrderLineItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
                         )
                     ],
                     [
-                        'type'       => 'orderlineitems',
-                        'id'         => '<toString(@order1_line_item2->id)>',
+                        'type' => 'orderlineitems',
+                        'id' => '<toString(@order1_line_item2->id)>',
                         'attributes' => $this->getDiscountRelatedFields(
                             $lineItem2Price,
                             $lineItem2Quantity,
@@ -138,8 +128,8 @@ class OrderLineItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'orderlineitems',
-                    'id'         => '<toString(@order1_line_item1->id)>',
+                    'type' => 'orderlineitems',
+                    'id' => '<toString(@order1_line_item1->id)>',
                     'attributes' => $this->getDiscountRelatedFields(
                         $lineItemPrice,
                         $lineItemQuantity,
@@ -166,8 +156,8 @@ class OrderLineItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'orderlineitems',
-                    'id'         => '<toString(@order1_line_item2->id)>',
+                    'type' => 'orderlineitems',
+                    'id' => '<toString(@order1_line_item2->id)>',
                     'attributes' => $this->getDiscountRelatedFields(
                         $lineItemPrice,
                         $lineItemQuantity,
@@ -210,8 +200,8 @@ class OrderLineItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'orderlineitems',
-                    'id'         => '<toString(@order1_line_item1->id)>',
+                    'type' => 'orderlineitems',
+                    'id' => '<toString(@order1_line_item1->id)>',
                     'attributes' => $this->getDiscountRelatedFields(
                         $lineItemPrice,
                         $lineItemQuantity,

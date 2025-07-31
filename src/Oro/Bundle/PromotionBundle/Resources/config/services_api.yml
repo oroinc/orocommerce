@@ -25,3 +25,66 @@ services:
             - '@oro_api.value_transformer'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem }
+
+    oro_promotion.api.compute_shopping_list_line_item_discount:
+        class: Oro\Bundle\PromotionBundle\Api\Processor\ComputeShoppingListLineItemDiscount
+        arguments:
+            - '@oro_promotion.promotion_executor'
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.value_transformer'
+            - '@oro_api.value_normalizer'
+            - '@oro_pricing.provider.product_line_item_price'
+            - '@oro_shopping_list.model.product_price_scope_criteria_factory'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: -10 }
+
+    oro_promotion.api.build_form_builder_for_checkout_coupon_subresource:
+        class: Oro\Bundle\ApiBundle\Processor\Subresource\ChangeSubresource\BuildFormBuilder
+        arguments:
+            - '@oro_api.form_helper'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: transform_data, requestType: frontend, association: coupons, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 100 }
+            - { name: oro.api.processor, action: delete_subresource, group: transform_data, requestType: frontend, association: coupons, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 100 }
+
+    oro_promotion.api.prepare_form_data_for_change_checkout_coupon_subresource:
+        class: Oro\Bundle\PromotionBundle\Api\Processor\PrepareAppliedCouponSubresourceFormData
+        tags:
+            - { name: oro.api.processor, action: delete_subresource, group: load_data, requestType: frontend, association: coupons, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: -99 }
+            - { name: oro.api.processor, action: add_subresource, group: load_data, requestType: frontend, association: coupons, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: -99 }
+
+    oro_promotion.api.handle_apply_checkout_coupon_subresource:
+        class: Oro\Bundle\PromotionBundle\Api\Processor\HandleApplyCheckoutCouponSubresource
+        arguments:
+            - '@oro_promotion.frontend_applied_coupon_manager'
+            - '@translator'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: save_data, requestType: frontend, association: coupons, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_promotion.api.handle_delete_checkout_coupon_subresource:
+        class: Oro\Bundle\PromotionBundle\Api\Processor\HandleDeleteCheckoutCouponSubresource
+        arguments:
+            - '@oro_promotion.frontend_applied_coupon_manager'
+            - '@translator'
+        tags:
+            - { name: oro.api.processor, action: delete_subresource, group: save_data, requestType: frontend, association: coupons, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_promotion.api.compute_checkout_coupons:
+        class: Oro\Bundle\PromotionBundle\Api\Processor\ComputeCheckoutCoupons
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_promotion.frontend_applied_coupon_manager'
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_promotion.api.compute_checkout_line_item_discount:
+        class: Oro\Bundle\PromotionBundle\Api\Processor\ComputeCheckoutLineItemDiscount
+        arguments:
+            - '@oro_promotion.promotion_executor'
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.value_transformer'
+            - '@oro_api.value_normalizer'
+            - '@oro_pricing.provider.product_line_item_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: -10 }

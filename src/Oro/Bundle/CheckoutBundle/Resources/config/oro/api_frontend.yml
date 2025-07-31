@@ -109,16 +109,6 @@ api:
                 shippingEstimateAmount:
                     form_options:
                         mapped: false
-                coupons:
-                    data_type: objects
-                    property_path: appliedCoupons
-                    max_results: -1
-                    exclusion_policy: all
-                    fields:
-                        couponCode: ~
-                        description:
-                            data_type: string
-                            property_path: _
             filters:
                 fields:
                     poNumber:
@@ -135,19 +125,9 @@ api:
                 create:
                     form_options:
                         validation_groups: [ Default, api, checkout_validity ]
-                    fields:
-                        coupons:
-                            property_path: _
-                            form_options:
-                                mapped: false
                 update:
                     form_options:
                         validation_groups: [ Default, api, checkout_validity ]
-                    fields:
-                        coupons:
-                            property_path: _
-                            form_options:
-                                mapped: false
             subresources:
                 availableBillingAddresses:
                     target_class: Oro\Bundle\CheckoutBundle\Api\Model\AvailableAddress
@@ -199,16 +179,6 @@ api:
                 shippingAddress:
                     actions:
                         update_relationship: false
-                coupons:
-                    target_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
-                    actions:
-                        add_subresource:
-                            description: Apply coupon to checkout
-                            request_target_class: Oro\Bundle\CheckoutBundle\Api\Model\ChangeCouponRequest
-                        delete_subresource:
-                            description: Remove applied coupon from checkout
-                            request_target_class: Oro\Bundle\CheckoutBundle\Api\Model\ChangeCouponRequest
-                        get_subresource: false
                 customer:
                     actions:
                         update_relationship: false
@@ -252,6 +222,11 @@ api:
                         mapped: false
                 currency:
                     data_type: string
+                    property_path: _
+                    form_options:
+                        mapped: false
+                subTotal:
+                    data_type: money
                     property_path: _
                     form_options:
                         mapped: false
@@ -309,6 +284,11 @@ api:
                         mapped: false
                 currency:
                     data_type: string
+                    property_path: _
+                    form_options:
+                        mapped: false
+                subTotal:
+                    data_type: money
                     property_path: _
                     form_options:
                         mapped: false
@@ -472,16 +452,6 @@ api:
                     data_type: string
                 options:
                     data_type: object
-            # this entity does not have own API resource
-            actions: false
-
-        Oro\Bundle\CheckoutBundle\Api\Model\ChangeCouponRequest:
-            fields:
-                couponCode:
-                    data_type: string
-                    form_options:
-                        constraints:
-                            - NotBlank: ~
             # this entity does not have own API resource
             actions: false
 

@@ -24,6 +24,7 @@ included:
             notes: 'New Line Item Notes'
             currency: USD
             value: '1.0100'
+            subTotal: '10.1000'
         relationships:
             product:
                 data:

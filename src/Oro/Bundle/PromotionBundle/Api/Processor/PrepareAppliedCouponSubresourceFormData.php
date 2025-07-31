@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Api\Processor;
+namespace Oro\Bundle\PromotionBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Form\Extension\ValidationExtension;
 use Oro\Bundle\ApiBundle\Processor\Subresource\ChangeSubresourceContext;
-use Oro\Bundle\CheckoutBundle\Api\Model\ChangeCouponRequest;
+use Oro\Bundle\PromotionBundle\Api\Model\ChangeCouponRequest;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 

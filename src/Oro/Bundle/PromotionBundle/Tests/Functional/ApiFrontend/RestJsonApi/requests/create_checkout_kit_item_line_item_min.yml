@@ -1,0 +1,21 @@
+data:
+    type: checkoutproductkititemlineitems
+    attributes:
+        quantity: 1
+    relationships:
+        lineItem:
+            data:
+                type: checkoutlineitems
+                id: '<toString(@checkout.in_progress.line_item.3->id)>'
+        kitItem:
+            data:
+                type: productkititems
+                id: '<toString(@product-kit-2-kit-item-1->id)>'
+        product:
+            data:
+                type: products
+                id: '<toString(@product-3->id)>'
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@product_unit.milliliter->code)>'

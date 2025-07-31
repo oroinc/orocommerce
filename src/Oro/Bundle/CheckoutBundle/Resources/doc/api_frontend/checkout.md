@@ -342,24 +342,6 @@ Example of data: **\[{"subtotalType": "subtotal", "description": "Subtotal", "am
 
 **The read-only field. A passed value will be ignored.**
 
-### coupons
-
-The coupons allied to the checkout record.
-
-Each item is an object with the following properties:
-
-**couponCode** is a string that represents the coupon code.
-
-**description** is a string that represents the coupon description.
-
-Example of data: **\[{"couponCode": "SALE25", "description": "Seasonal Sale"}\]**
-
-#### create, update
-
-{@inheritdoc}
-
-**The read-only field. A passed value will be ignored.**
-
 ### shippingType
 
 Indicates where a shipping method should be specified. Possible values: `checkout`, `line_item_group` or `line_item`.
@@ -553,40 +535,6 @@ Retrieve an entity from which a specific checkout record was created.
 
 Retrieve the ID of an entity from which a specific checkout record was created.
 
-### coupons
-
-#### add_subresource
-
-Apply a coupon to a specific checkout record.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "meta": {
-    "couponCode": "SALE25"
-  }
-}
-```
-{@/request}
-
-#### delete_subresource
-
-Remove a coupon applied to a specific checkout record.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "meta": {
-    "couponCode": "SALE25"
-  }
-}
-```
-{@/request}
-
 ### payment
 
 #### get_subresource
@@ -709,12 +657,3 @@ The URL of API resource that should be used to complete payment when the checkou
 ### errors
 
 The collection of errors when the checkout is not ready for payment.
-
-
-# Oro\Bundle\CheckoutBundle\Api\Model\ChangeCouponRequest
-
-## FIELDS
-
-### couponCode
-
-The coupon code.

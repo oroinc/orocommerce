@@ -58,6 +58,7 @@ included:
             quantity: 5
             currency: USD
             value: '1.2300'
+            subTotal: '6.1500'
     -
         type: shoppinglistitems
         id: '<toString(@line_item2->id)>'
@@ -65,6 +66,7 @@ included:
             quantity: 10
             currency: USD
             value: '2.3400'
+            subTotal: '23.4000'
     -
         type: shoppinglistitems
         id: '<toString(@kit_line_item1->id)>'
@@ -72,6 +74,7 @@ included:
             quantity: 2
             currency: USD
             value: '14.8000'
+            subTotal: '29.6000'
     -
         type: shoppinglistitems
         id: '<toString(@kit_line_item2->id)>'
@@ -79,6 +82,7 @@ included:
             quantity: 2
             currency: USD
             value: '14.8000'
+            subTotal: '29.6000'
     -
         type: shoppinglistitems
         id: '<toString(@line_item3->id)>'
@@ -86,6 +90,7 @@ included:
             quantity: 20
             currency: USD
             value: '1.0100'
+            subTotal: '20.2000'
     -
         type: shoppinglistitems
         id: '<toString(@line_item6->id)>'
@@ -93,3 +98,4 @@ included:
             quantity: 1
             currency: USD
             value: '1.2300'
+            subTotal: '1.2300'

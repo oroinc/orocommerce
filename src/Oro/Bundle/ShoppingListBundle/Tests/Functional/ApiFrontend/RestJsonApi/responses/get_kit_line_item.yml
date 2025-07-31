@@ -6,6 +6,7 @@ data:
         notes: null
         currency: USD
         value: '14.8000'
+        subTotal: '29.6000'
     relationships:
         product:
             data:

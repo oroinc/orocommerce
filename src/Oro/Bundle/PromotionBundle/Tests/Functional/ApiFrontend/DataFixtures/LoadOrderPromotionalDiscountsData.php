@@ -20,7 +20,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 class LoadOrderPromotionalDiscountsData extends AbstractFixture implements DependentFixtureInterface
 {
     #[\Override]
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadSegmentData::class,
@@ -30,7 +30,7 @@ class LoadOrderPromotionalDiscountsData extends AbstractFixture implements Depen
     }
 
     #[\Override]
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $rule = new Rule();
         $rule->setName('test rule');
@@ -92,7 +92,7 @@ class LoadOrderPromotionalDiscountsData extends AbstractFixture implements Depen
         $manager->flush();
     }
 
-    private function assertOrderAppliedDiscountNotExists(ObjectManager $manager, Order $order)
+    private function assertOrderAppliedDiscountNotExists(ObjectManager $manager, Order $order): void
     {
         /** @var EntityRepository $repo */
         $repo = $manager->getRepository(AppliedDiscount::class);
@@ -104,7 +104,7 @@ class LoadOrderPromotionalDiscountsData extends AbstractFixture implements Depen
             ->getQuery()
             ->getOneOrNullResult();
         if (null !== $appliedDiscount) {
-            throw new \LogicException(sprintf(
+            throw new \LogicException(\sprintf(
                 'The applied discount must not exist for %s (ID: %s)',
                 Order::class,
                 $order->getId()
@@ -112,13 +112,13 @@ class LoadOrderPromotionalDiscountsData extends AbstractFixture implements Depen
         }
     }
 
-    private function assertLineItemAppliedDiscountNotExists(ObjectManager $manager, OrderLineItem $lineItem)
+    private function assertLineItemAppliedDiscountNotExists(ObjectManager $manager, OrderLineItem $lineItem): void
     {
         /** @var EntityRepository $repo */
         $repo = $manager->getRepository(AppliedDiscount::class);
         $appliedDiscount = $repo->findOneBy(['lineItem' => $lineItem]);
         if (null !== $appliedDiscount) {
-            throw new \LogicException(sprintf(
+            throw new \LogicException(\sprintf(
                 'The applied discount must not exist for %s (ID: %s)',
                 OrderLineItem::class,
                 $lineItem->getId()

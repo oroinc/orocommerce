@@ -48,7 +48,7 @@ data:
             unit:
                 data:
                     type: productunits
-                    id: '<toString(@item->code)>'
+                    id: '<toString(@set->code)>'
     -
         type: shoppinglistitems
         id: '<toString(@line_item6->id)>'

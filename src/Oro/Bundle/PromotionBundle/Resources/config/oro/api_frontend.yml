@@ -28,3 +28,79 @@ api:
                     depends_on: [value, quantity]
                     form_options:
                         mapped: false
+
+        Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+            documentation_resource: '@OroPromotionBundle/Resources/doc/api_frontend/shopping_list_item.md'
+            fields:
+                totalValue:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+                discount:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+
+        Oro\Bundle\CheckoutBundle\Entity\Checkout:
+            documentation_resource: '@OroPromotionBundle/Resources/doc/api_frontend/checkout.md'
+            fields:
+                coupons:
+                    data_type: objects
+                    property_path: appliedCoupons
+                    max_results: -1
+                    exclusion_policy: all
+                    fields:
+                        couponCode: ~
+                        description:
+                            data_type: string
+                            property_path: _
+            actions:
+                create:
+                    fields:
+                        coupons:
+                            property_path: _
+                            form_options:
+                                mapped: false
+                update:
+                    fields:
+                        coupons:
+                            property_path: _
+                            form_options:
+                                mapped: false
+            subresources:
+                coupons:
+                    target_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
+                    actions:
+                        add_subresource:
+                            description: Apply coupon to checkout
+                            request_target_class: Oro\Bundle\PromotionBundle\Api\Model\ChangeCouponRequest
+                        delete_subresource:
+                            description: Remove applied coupon from checkout
+                            request_target_class: Oro\Bundle\PromotionBundle\Api\Model\ChangeCouponRequest
+                        get_subresource: false
+
+        Oro\Bundle\PromotionBundle\Api\Model\ChangeCouponRequest:
+            fields:
+                couponCode:
+                    data_type: string
+                    form_options:
+                        constraints:
+                            - NotBlank: ~
+            # this entity does not have own API resource
+            actions: false
+
+        Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
+            documentation_resource: '@OroPromotionBundle/Resources/doc/api_frontend/checkout_line_item.md'
+            fields:
+                totalValue:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+                discount:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false

@@ -5,10 +5,11 @@ data:
         productSku: product-kit-3
         freeFormProduct: null
         quantity: 1
-        price: '130.9900'
         currency: USD
-        comment: null
         priceFixed: false
+        price: '130.9900'
+        subTotal: '130.9900'
+        comment: null
         shippingMethod: null
         shippingMethodType: null
         shippingEstimateAmount: null
@@ -44,9 +45,10 @@ included:
         attributes:
             quantity: 1
             sortOrder: 1
-            price: '115.9000'
             currency: USD
             priceFixed: false
+            price: '115.9000'
+            subTotal: '115.9000'
         relationships:
             lineItem:
                 data:
@@ -70,9 +72,10 @@ included:
         attributes:
             quantity: 1
             sortOrder: 2
-            price: '12.5900'
             currency: USD
             priceFixed: false
+            price: '12.5900'
+            subTotal: '12.5900'
         relationships:
             lineItem:
                 data:

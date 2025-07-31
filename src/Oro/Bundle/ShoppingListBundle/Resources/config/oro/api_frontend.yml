@@ -111,6 +111,11 @@ api:
                     data_type: money
                     form_options:
                         mapped: false
+                subTotal:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
                 kitItems:
                     property_path: kitItemLineItems
                 checksum:
@@ -150,12 +155,15 @@ api:
                     data_type: string
                     form_options:
                         mapped: false
-                    depends_on: [ kitItem ]
                 value:
                     data_type: money
                     form_options:
                         mapped: false
-                    depends_on: [ kitItem ]
+                subTotal:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
                 sortOrder:
                     data_type: integer
             actions:

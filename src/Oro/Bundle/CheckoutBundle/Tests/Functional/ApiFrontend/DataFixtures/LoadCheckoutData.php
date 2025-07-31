@@ -19,7 +19,6 @@ use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
-use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -121,7 +120,7 @@ class LoadCheckoutData extends AbstractLoadCheckoutData
                 'checkout' => ['currency' => 'USD'],
                 'customerUser' => 'customer_user',
                 'shoppingListLineItems' => [
-                    ['product' => LoadProductData::PRODUCT_1],
+                    ['product' => LoadProductData::PRODUCT_1, 'quantity' => 10],
                     [
                         'product' => LoadProductKitData::PRODUCT_KIT_3,
                         'kitItems' => [
@@ -145,8 +144,7 @@ class LoadCheckoutData extends AbstractLoadCheckoutData
                     'postalCode' => '14608',
                     'firstName' => 'John',
                     'lastName' => 'Doe'
-                ]),
-                'coupons' => [LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL]
+                ])
             ],
             'checkout.deleted' => [
                 'checkout' => ['currency' => 'USD', 'deleted' => true],
