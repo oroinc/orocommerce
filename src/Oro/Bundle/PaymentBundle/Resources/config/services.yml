@@ -71,7 +71,7 @@ services:
     oro_payment.methods_provider.cache:
         parent: oro.cache.adapter.array
         tags:
-            - { name: 'cache.pool', namespace: 'payment_methods_provider_cache' }
+            - { name: 'cache.pool', namespace: 'oro_payment_methods_provider' }
 
     oro_payment.provider.methods_provider:
         class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodViewsProvider'

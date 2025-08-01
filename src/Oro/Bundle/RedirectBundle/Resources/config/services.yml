@@ -190,7 +190,6 @@ services:
 
     oro_redirect.canonical_url_configs.cache:
         parent: oro.cache.adapter.array
-        public: false
         tags:
             - { name: 'cache.pool', namespace: 'oro_redirect_canonical_url_configs' }
 
@@ -279,7 +278,6 @@ services:
             - '%kernel.cache_dir%/oro_data'
 
     oro_redirect.slug_url.cache.persistent_key_value:
-        public: false
         parent: oro.data.cache.without_memory_cache
         tags:
             - { name: 'cache.pool', namespace: 'oro_slug_kv' }

@@ -1099,10 +1099,9 @@ services:
             - '@oro_product.expression.fields_provider'
 
     oro_pricing.cache.rule_cache.storage:
-        public: false
         parent: oro.data.cache
         tags:
-            - { name: 'cache.pool', namespace: 'oro_pricing_rule_cache' }
+            - { name: 'cache.pool', namespace: 'oro_pricing_rule' }
 
     oro_pricing.cache.rule_cache:
         class: 'Oro\Bundle\PricingBundle\Cache\RuleCache'

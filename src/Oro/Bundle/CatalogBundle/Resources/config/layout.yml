@@ -45,7 +45,6 @@ services:
 
     oro_catalog.layout.data_provider.category.cache:
         parent: oro.data.cache
-        public: false
         tags:
             - { name: 'cache.pool', namespace: 'oro_catalog_category' }
 

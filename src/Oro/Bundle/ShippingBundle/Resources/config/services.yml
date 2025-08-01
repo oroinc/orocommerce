@@ -279,7 +279,6 @@ services:
             - '@oro_shipping.shipping_context.cache_key_generator'
 
     oro_shipping.price.cache:
-        public: false
         parent: oro.data.cache
         tags:
             - { name: 'cache.pool', namespace: 'oro_shipping_price' }
