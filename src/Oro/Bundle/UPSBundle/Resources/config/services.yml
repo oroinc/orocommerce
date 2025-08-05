@@ -128,7 +128,6 @@ services:
             - "@oro_ups.cache.lifetime_provider"
 
     oro_ups.cache.shipping_price:
-        public: false
         parent: oro.data.cache
         tags:
             - { name: 'cache.pool', namespace: 'oro_ups_shipping_price' }

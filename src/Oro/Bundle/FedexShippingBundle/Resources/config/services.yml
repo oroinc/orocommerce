@@ -238,7 +238,6 @@ services:
         public: false
 
     oro_fedex_shipping.cache:
-        public: false
         parent: oro.data.cache
         tags:
             - { name: 'cache.pool', namespace: 'oro_fedex_shipping' }

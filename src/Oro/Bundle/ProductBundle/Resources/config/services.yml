@@ -322,7 +322,6 @@ services:
             - !abstract '$availableProductTypes defined in Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension'
 
     oro_product.product_unit.cache:
-        public: false
         parent: oro.data.cache
         tags:
               - { name: 'cache.pool', namespace: 'oro_product_unit' }
@@ -883,9 +882,8 @@ services:
 
     oro_product.layout.data_provider.cache:
         parent: oro.data.cache
-        public: false
         tags:
-              - { name: 'cache.pool', namespace: 'oro_product' }
+            - { name: 'cache.pool', namespace: 'oro_product' }
 
     oro_product.entity_listener.segment:
         class: 'Oro\Bundle\ProductBundle\Entity\EntityListener\SegmentEntityListener'
@@ -1217,9 +1215,8 @@ services:
 
     oro_product.virtual_fields.decorator_cache:
         parent: oro.cache.adapter.array
-        public: false
         tags:
-            - { name: 'cache.pool', namespace: 'virtual_fields_decorator_cache' }
+            - { name: 'cache.pool', namespace: 'oro_virtual_fields_decorator' }
 
     oro_product.virtual_fields.decorator_factory:
         class: 'Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory'

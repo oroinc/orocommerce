@@ -256,7 +256,7 @@ services:
     oro_cms.content_widget_layout_cache:
         parent: oro.data.cache
         tags:
-            - { name: 'cache.pool', namespace: 'content_widget_layout_cache' }
+            - { name: 'cache.pool', namespace: 'oro_content_widget_layout' }
 
     oro_cms.provider.content_widget_layout:
         class: Oro\Bundle\CMSBundle\Provider\ContentWidgetLayoutProvider

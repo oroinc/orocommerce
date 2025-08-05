@@ -31,7 +31,6 @@ services:
             - '@logger'
 
     oro_ups.cache.time_in_transit:
-        public: false
         parent: oro.data.cache.without_memory_cache
         tags:
             - { name: 'cache.pool', namespace: 'oro_ups_time_in_transit' }
