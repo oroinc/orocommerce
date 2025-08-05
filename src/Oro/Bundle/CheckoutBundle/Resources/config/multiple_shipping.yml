@@ -177,6 +177,8 @@ services:
         class: Oro\Bundle\CheckoutBundle\Splitter\MultiShipping\CheckoutSplitter
         arguments:
             - '@oro_checkout.factory.multi_shipping.checkout_factory'
+        calls:
+            - [setSubOrderShippingMethodSetter, ['@oro_checkout.provider.multi_shipping.sub_order_shipping_method_setter']]
 
     oro_checkout.provider.multi_shipping.grouped_line_items_provider:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemsGrouping\GroupedLineItemsProvider

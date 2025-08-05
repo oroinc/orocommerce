@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Splitter\MultiShipping;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\CheckoutBundle\Action\MultiShipping\SubOrderMultiShippingMethodSetter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Factory\MultiShipping\CheckoutFactoryInterface;
@@ -11,8 +12,11 @@ use Oro\Component\Testing\ReflectionUtil;
 
 class CheckoutSplitterTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CheckoutFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CheckoutFactoryInterface&\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutFactory;
+
+    /** @var SubOrderMultiShippingMethodSetter&\PHPUnit\Framework\MockObject\MockObject */
+    private $subOrderMultiShippingMethodSetter;
 
     /** @var CheckoutSplitter */
     private $checkoutSplitter;
@@ -20,8 +24,10 @@ class CheckoutSplitterTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->checkoutFactory = $this->createMock(CheckoutFactoryInterface::class);
+        $this->subOrderMultiShippingMethodSetter = $this->createMock(SubOrderMultiShippingMethodSetter::class);
 
         $this->checkoutSplitter = new CheckoutSplitter($this->checkoutFactory);
+        $this->checkoutSplitter->setSubOrderShippingMethodSetter($this->subOrderMultiShippingMethodSetter);
     }
 
     private function getCheckout(array $lineItems): Checkout
@@ -42,6 +48,7 @@ class CheckoutSplitterTest extends \PHPUnit\Framework\TestCase
 
     public function testSplit()
     {
+        $checkout = new Checkout();
         $lineItem1 = $this->getCheckoutLineItem(1);
         $lineItem2 = $this->getCheckoutLineItem(2);
         $lineItem3 = $this->getCheckoutLineItem(3);
@@ -58,7 +65,14 @@ class CheckoutSplitterTest extends \PHPUnit\Framework\TestCase
             ->method('createCheckout')
             ->willReturnOnConsecutiveCalls($checkout1, $checkout2);
 
-        $result = $this->checkoutSplitter->split(new Checkout(), $groupedLineItems);
+        $this->subOrderMultiShippingMethodSetter->expects($this->exactly(2))
+            ->method('setShippingMethod')
+            ->withConsecutive(
+                [$checkout, $checkout1, 'product.owner:1'],
+                [$checkout, $checkout2, 'product.owner:2'],
+            );
+
+        $result = $this->checkoutSplitter->split($checkout, $groupedLineItems);
 
         $this->assertNotEmpty($result);
         $this->assertCount(2, $result);
