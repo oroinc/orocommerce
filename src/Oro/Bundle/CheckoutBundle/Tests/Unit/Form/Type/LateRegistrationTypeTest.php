@@ -3,32 +3,47 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
+use Oro\Bundle\CustomerBundle\Validator\Constraints\UniqueCustomerUserNameAndEmailValidator;
+use Oro\Bundle\UserBundle\Provider\PasswordComplexityConfigProvider;
+use Oro\Bundle\UserBundle\Validator\Constraints\PasswordComplexityValidator;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\TestContainerBuilder;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Validator\ContainerConstraintValidatorFactory;
+use Symfony\Component\Validator\Validation;
 
 class LateRegistrationTypeTest extends FormIntegrationTestCase
 {
     #[\Override]
     protected function getExtensions(): array
     {
-        $validator = $this->createMock(ValidatorInterface::class);
-        $validator->expects($this->any())
-            ->method('validate')
-            ->willReturn(new ConstraintViolationList());
-        $validator->expects($this->any())
-            ->method('getMetadataFor')
-            ->willReturn(new ClassMetadata(Form::class));
+        $customerUserManager = $this->createMock(CustomerUserManager::class);
+        $passwordComplexityConfigProvider = $this->createMock(PasswordComplexityConfigProvider::class);
+        $constraintValidatorFactoryContainer = TestContainerBuilder::create()
+            ->add(
+                'oro_customer.customer_user.validator.unique_name_and_email',
+                new UniqueCustomerUserNameAndEmailValidator($customerUserManager)
+            )
+            ->add(
+                PasswordComplexityValidator::class,
+                new PasswordComplexityValidator($passwordComplexityConfigProvider)
+            )
+            ->getContainer($this);
+
+        $validator = Validation::createValidatorBuilder()
+            ->enableAttributeMapping()
+            ->setConstraintValidatorFactory(
+                new ContainerConstraintValidatorFactory($constraintValidatorFactoryContainer)
+            )
+            ->getValidator();
 
         return [
             new ValidatorExtension($validator),
         ];
     }
 
-    public function testSubmit()
+    public function testSubmit(): void
     {
         $submittedData =  [
             'is_late_registration_enabled' => true,
@@ -50,7 +65,35 @@ class LateRegistrationTypeTest extends FormIntegrationTestCase
         $this->assertEquals($submittedData, $formData);
     }
 
-    public function testIsLateRegistrationEnabledByDefault()
+    public function testSubmitWithInvalidEmail(): void
+    {
+        $submittedData =  [
+            'is_late_registration_enabled' => true,
+            'email' => 'f o o@bar.com',
+            'password' => [
+                'first' => 'Q1foobar',
+                'second' => 'Q1foobar'
+            ]
+        ];
+
+        $form = $this->factory->create(LateRegistrationType::class);
+
+        $form->submit($submittedData);
+
+        $errors = $form->getErrors(true);
+        self::assertFalse($form->isValid());
+        self::assertTrue($form->isSynchronized());
+
+        self::assertFormIsNotValid($form);
+        self::assertCount(1, $errors);
+        self::assertEquals('This value is not a valid email address.', $errors->current()->getMessage());
+
+        $formData = $form->getData();
+        $submittedData['password'] = 'Q1foobar';
+        self::assertEquals($submittedData, $formData);
+    }
+
+    public function testIsLateRegistrationEnabledByDefault(): void
     {
         $expectedData =  [
             'is_late_registration_enabled' => true
@@ -61,7 +104,7 @@ class LateRegistrationTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $formData);
     }
 
-    public function testIsLateRegistrationEnabledByDefaultWithNullEmail()
+    public function testIsLateRegistrationEnabledByDefaultWithNullEmail(): void
     {
         $form = $this->factory->create(LateRegistrationType::class, ['email' => null]);
         $formData = $form->getData();
@@ -74,7 +117,7 @@ class LateRegistrationTypeTest extends FormIntegrationTestCase
         );
     }
 
-    public function testSubmitWithUncheckedCheckbox()
+    public function testSubmitWithUncheckedCheckbox(): void
     {
         $expectedData =  [
             'is_late_registration_enabled' => false,
