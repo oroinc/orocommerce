@@ -10,7 +10,8 @@ Oro\Bundle\RFPBundle\Entity\Request:
                 max: 255
         email:
             - NotBlank: ~
-            - Email: ~
+            - Email:
+                  mode: strict
             - Length:
                 max: 255
         company:

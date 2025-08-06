@@ -82,7 +82,7 @@ class RequestControllerTest extends WebTestCase
     {
         $updatedFirstName = LoadRequestData::FIRST_NAME . '_update';
         $updatedLastName = LoadRequestData::LAST_NAME . '_update';
-        $updatedEmail = LoadRequestData::EMAIL . '_update';
+        $updatedEmail = 'update_' . LoadRequestData::EMAIL;
         $updatedPoNumber = LoadRequestData::PO_NUMBER . '_update';
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_request_update', ['id' => $id]));
