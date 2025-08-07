@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 
 /**
  * Tests "products" API resource when SKU is used as the product identifier.
@@ -13,25 +14,44 @@ use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTe
  */
 class ProductBySkuTest extends FrontendRestJsonApiTestCase
 {
+    private ?array $initialEnabledLocalizations;
+
     #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
-
-        // guard
-        self::assertEquals(
-            ['prod_inventory_status.in_stock', 'prod_inventory_status.out_of_stock'],
-            $this->getConfigManager()->get('oro_product.general_frontend_product_visibility')
-        );
-
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
             '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product.yml',
             '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product_prices.yml'
         ]);
+
+        // guard
+        self::assertEquals(
+            ['prod_inventory_status.in_stock', 'prod_inventory_status.out_of_stock'],
+            self::getConfigManager()->get('oro_product.general_frontend_product_visibility')
+        );
+
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            LoadLocalizationData::getLocalizationIds(self::getContainer())
+        );
+        $configManager->flush();
     }
 
-    public function testGetList()
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->flush();
+
+        parent::tearDown();
+    }
+
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'products'],
@@ -42,7 +62,7 @@ class ProductBySkuTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_product_by_sku.yml', $response);
     }
 
-    public function testGetListFilterBySeveralIds()
+    public function testGetListFilterBySeveralIds(): void
     {
         $response = $this->cget(
             ['entity' => 'products'],
@@ -61,7 +81,7 @@ class ProductBySkuTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '@product1->sku'],
@@ -76,7 +96,7 @@ class ProductBySkuTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($expectedData, $response);
     }
 
-    public function testGetOnlyUpcomingAttribute()
+    public function testGetOnlyUpcomingAttribute(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '@product1->sku'],
@@ -87,7 +107,7 @@ class ProductBySkuTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(['data' => ['attributes' => ['upcoming' => true]]], $response);
     }
 
-    public function testGetOnlyAvailabilityDateAttribute()
+    public function testGetOnlyAvailabilityDateAttribute(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '@product1->sku'],
@@ -101,7 +121,7 @@ class ProductBySkuTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetOnlyLowInventoryAttribute()
+    public function testGetOnlyLowInventoryAttribute(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '@product1->sku'],
@@ -112,7 +132,7 @@ class ProductBySkuTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(['data' => ['attributes' => ['lowInventory' => true]]], $response);
     }
 
-    public function testGetWithIncludeVariantProducts()
+    public function testGetWithIncludeVariantProducts(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '@configurable_product1->sku'],
@@ -123,7 +143,7 @@ class ProductBySkuTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_configurable_product_with_variants_by_sku.yml', $response);
     }
 
-    public function testGetWithIncludeParentProducts()
+    public function testGetWithIncludeParentProducts(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '@configurable_product1_variant1->sku'],
@@ -134,12 +154,12 @@ class ProductBySkuTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_product_with_parent_products_by_sku.yml', $response);
     }
 
-    public function testGetSubresourceForVariantProducts()
+    public function testGetSubresourceForVariantProducts(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'products',
-                'id'          => '@configurable_product3->sku',
+                'entity' => 'products',
+                'id' => '@configurable_product3->sku',
                 'association' => 'variantProducts'
             ],
             [],
@@ -149,22 +169,22 @@ class ProductBySkuTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'products',
-                        'id'         => '@configurable_product1_variant1->sku',
+                        'type' => 'products',
+                        'id' => '@configurable_product1_variant1->sku',
                         'attributes' => [
                             'productId' => '@configurable_product1_variant1->id'
                         ]
                     ],
                     [
-                        'type'       => 'products',
-                        'id'         => '@configurable_product3_variant1->sku',
+                        'type' => 'products',
+                        'id' => '@configurable_product3_variant1->sku',
                         'attributes' => [
                             'productId' => '@configurable_product3_variant1->id'
                         ]
                     ],
                     [
-                        'type'       => 'products',
-                        'id'         => '@configurable_product3_variant2->sku',
+                        'type' => 'products',
+                        'id' => '@configurable_product3_variant2->sku',
                         'attributes' => [
                             'productId' => '@configurable_product3_variant2->id'
                         ]
@@ -175,12 +195,12 @@ class ProductBySkuTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForVariantProducts()
+    public function testGetRelationshipForVariantProducts(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'products',
-                'id'          => '@configurable_product3->sku',
+                'entity' => 'products',
+                'id' => '@configurable_product3->sku',
                 'association' => 'variantProducts'
             ],
             [],
@@ -198,12 +218,12 @@ class ProductBySkuTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetSubresourceForParentProducts()
+    public function testGetSubresourceForParentProducts(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'products',
-                'id'          => '@configurable_product1_variant1->sku',
+                'entity' => 'products',
+                'id' => '@configurable_product1_variant1->sku',
                 'association' => 'parentProducts'
             ],
             [],
@@ -213,15 +233,15 @@ class ProductBySkuTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'products',
-                        'id'         => '@configurable_product1->sku',
+                        'type' => 'products',
+                        'id' => '@configurable_product1->sku',
                         'attributes' => [
                             'productId' => '@configurable_product1->id'
                         ]
                     ],
                     [
-                        'type'       => 'products',
-                        'id'         => '@configurable_product3->sku',
+                        'type' => 'products',
+                        'id' => '@configurable_product3->sku',
                         'attributes' => [
                             'productId' => '@configurable_product3->id'
                         ]
@@ -232,12 +252,12 @@ class ProductBySkuTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForParentProducts()
+    public function testGetRelationshipForParentProducts(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'products',
-                'id'          => '@configurable_product1_variant1->sku',
+                'entity' => 'products',
+                'id' => '@configurable_product1_variant1->sku',
                 'association' => 'parentProducts'
             ],
             [],

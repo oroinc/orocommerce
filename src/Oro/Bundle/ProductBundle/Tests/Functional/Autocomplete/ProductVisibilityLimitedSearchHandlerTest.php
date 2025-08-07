@@ -5,8 +5,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Autocomplete;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
-use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
@@ -23,6 +23,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    private ?array $initialEnabledLocalizations;
     private ?Event $firedEvent = null;
 
     #[\Override]
@@ -33,6 +34,24 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
             LoadProductKitData::class,
             LoadFrontendProductData::class
         ]);
+
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            LoadLocalizationData::getLocalizationIds(self::getContainer())
+        );
+        $configManager->flush();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->flush();
+
+        parent::tearDown();
     }
 
     public function testFrontendVisibilityWithZeroValue(): void
@@ -61,8 +80,8 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
             'oro_frontend_autocomplete_search',
             [
                 'per_page' => 10,
-                'query'    => $query,
-                'name'     => $searchHandlerName
+                'query' => $query,
+                'name' => $searchHandlerName
             ]
         );
 
@@ -122,13 +141,13 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
      */
     public function testBackendVisibility(string $searchHandlerName, array $expectedProducts): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $url = $this->getUrl(
             'oro_form_autocomplete_search',
             [
                 'per_page' => 10,
-                'query'    => 'pro',
-                'name'     => $searchHandlerName
+                'query' => 'pro',
+                'name' => $searchHandlerName
             ]
         );
 
@@ -209,11 +228,9 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
 
     public function testConvertItemWhenSearchItem(): void
     {
-        $key = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
-
         $configManager = self::getConfigManager();
-        $originalValue = $configManager->get($key);
-        $configManager->set($key, true);
+        $initialValue = $configManager->get('oro_product.allow_partial_product_search');
+        $configManager->set('oro_product.allow_partial_product_search', true);
         $configManager->flush();
 
         self::getContainer()->get('request_stack')->push(Request::create(''));
@@ -245,7 +262,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
             $result
         );
 
-        $configManager->set($key, $originalValue);
+        $configManager->set('oro_product.allow_partial_product_search', $initialValue);
         $configManager->flush();
     }
 
@@ -314,8 +331,9 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
                         (string)$product->getDefaultName()
                     )
                     . array_reduce($results, function ($output, $item) {
-                        return $output . sprintf(
-                            "id: %s, sku: %s, defaultName.string: %s\n",
+                        return sprintf(
+                            "%sid: %s, sku: %s, defaultName.string: %s\n",
+                            $output,
                             $item['id'],
                             $item['sku'],
                             $item['defaultName.string']

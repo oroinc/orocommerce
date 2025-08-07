@@ -4,7 +4,6 @@ namespace Oro\Bundle\SEOBundle\Tests\Functional\Sitemap\Provider;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
@@ -22,20 +21,9 @@ class UrlItemsProviderTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    /**
-     * @var CanonicalUrlGenerator
-     */
-    private $canonicalUrlGenerator;
-
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
-
-    /**
-     * @var UrlItemsProvider
-     */
-    private $provider;
+    private ?string $initialCanonicalUrlType;
+    private CanonicalUrlGenerator $canonicalUrlGenerator;
+    private UrlItemsProvider $provider;
 
     #[\Override]
     protected function setUp(): void
@@ -44,21 +32,30 @@ class UrlItemsProviderTest extends WebTestCase
         // also 2 pages created by main migrations
         $this->loadFixtures([LoadPageData::class, LoadSlugsData::class]);
 
-        $this->canonicalUrlGenerator = $this->getContainer()->get('oro_redirect.generator.canonical_url');
+        $this->initialCanonicalUrlType = self::getConfigManager()->get('oro_redirect.canonical_url_type');
+
+        $this->canonicalUrlGenerator = self::getContainer()->get('oro_redirect.generator.canonical_url');
         /** @var EventDispatcherInterface $eventDispatcher */
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->configManager = self::getConfigManager('global');
 
         $this->provider = new UrlItemsProvider(
             $this->canonicalUrlGenerator,
             self::getConfigManager(null),
             $eventDispatcher,
-            $this->getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine')
         );
         $this->provider->setType('cms_page');
         $this->provider->setEntityClass(Page::class);
         $this->provider->setChangeFrequencySettingsKey('oro_seo.sitemap_changefreq_cms_page');
         $this->provider->setPrioritySettingsKey('oro_seo.sitemap_priority_cms_page');
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_redirect.canonical_url_type', $this->initialCanonicalUrlType);
+        $configManager->flush();
     }
 
     public function testItYieldsSystemUrls()
@@ -67,8 +64,9 @@ class UrlItemsProviderTest extends WebTestCase
         $website = $this->createMock(WebsiteInterface::class);
         $version = 1;
 
-        $this->configManager->set('oro_redirect.canonical_url_type', Configuration::SYSTEM_URL);
-        $this->configManager->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_redirect.canonical_url_type', Configuration::SYSTEM_URL);
+        $configManager->flush();
 
         $urlItems = iterator_to_array($this->provider->getUrlItems($website, $version));
         $this->assertCount(3, $urlItems);
@@ -78,8 +76,8 @@ class UrlItemsProviderTest extends WebTestCase
         $expectedUrlItem = new UrlItem(
             $expectedUrl,
             $expectedEntity->getUpdatedAt(),
-            $this->configManager->get('oro_seo.sitemap_changefreq_cms_page'),
-            $this->configManager->get('oro_seo.sitemap_priority_cms_page')
+            $configManager->get('oro_seo.sitemap_changefreq_cms_page'),
+            $configManager->get('oro_seo.sitemap_priority_cms_page')
         );
 
         static::assertContainsEquals($expectedUrlItem, $urlItems);
@@ -91,8 +89,9 @@ class UrlItemsProviderTest extends WebTestCase
         $website = $this->createMock(WebsiteInterface::class);
         $version = 1;
 
-        $this->configManager->set('oro_redirect.canonical_url_type', Configuration::DIRECT_URL);
-        $this->configManager->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_redirect.canonical_url_type', Configuration::DIRECT_URL);
+        $configManager->flush();
 
         $urlItems = iterator_to_array($this->provider->getUrlItems($website, $version));
 
@@ -101,8 +100,8 @@ class UrlItemsProviderTest extends WebTestCase
         $expectedUrlItem = new UrlItem(
             $expectedUrl,
             $expectedEntity->getUpdatedAt(),
-            $this->configManager->get('oro_seo.sitemap_changefreq_cms_page'),
-            $this->configManager->get('oro_seo.sitemap_priority_cms_page')
+            $configManager->get('oro_seo.sitemap_changefreq_cms_page'),
+            $configManager->get('oro_seo.sitemap_priority_cms_page')
         );
 
         static::assertContainsEquals($expectedUrlItem, $urlItems);

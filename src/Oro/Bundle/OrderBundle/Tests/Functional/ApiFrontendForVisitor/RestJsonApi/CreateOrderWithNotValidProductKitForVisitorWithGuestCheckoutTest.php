@@ -18,7 +18,7 @@ class CreateOrderWithNotValidProductKitForVisitorWithGuestCheckoutTest extends F
 {
     use RolePermissionExtension;
 
-    private ?bool $originalGuestCheckoutOptionValue;
+    private ?bool $initialGuestCheckoutOptionValue;
 
     #[\Override]
     protected function setUp(): void
@@ -30,8 +30,8 @@ class CreateOrderWithNotValidProductKitForVisitorWithGuestCheckoutTest extends F
             '@OroOrderBundle/Tests/Functional/ApiFrontend/DataFixtures/orders.yml',
             LoadPaymentTermData::class,
         ]);
-        $this->originalGuestCheckoutOptionValue = $this->getGuestCheckoutOptionValue();
-        if (!$this->originalGuestCheckoutOptionValue) {
+        $this->initialGuestCheckoutOptionValue = $this->getGuestCheckoutOptionValue();
+        if (!$this->initialGuestCheckoutOptionValue) {
             $this->setGuestCheckoutOptionValue(true);
         }
     }
@@ -40,10 +40,10 @@ class CreateOrderWithNotValidProductKitForVisitorWithGuestCheckoutTest extends F
     protected function tearDown(): void
     {
         parent::tearDown();
-        if ($this->getGuestCheckoutOptionValue() !== $this->originalGuestCheckoutOptionValue) {
-            $this->setGuestCheckoutOptionValue($this->originalGuestCheckoutOptionValue);
+        if ($this->getGuestCheckoutOptionValue() !== $this->initialGuestCheckoutOptionValue) {
+            $this->setGuestCheckoutOptionValue($this->initialGuestCheckoutOptionValue);
         }
-        $this->originalGuestCheckoutOptionValue = null;
+        $this->initialGuestCheckoutOptionValue = null;
     }
 
     #[\Override]
@@ -74,12 +74,12 @@ class CreateOrderWithNotValidProductKitForVisitorWithGuestCheckoutTest extends F
 
     private function getGuestCheckoutOptionValue(): bool
     {
-        return $this->getConfigManager()->get('oro_checkout.guest_checkout');
+        return self::getConfigManager()->get('oro_checkout.guest_checkout');
     }
 
     private function setGuestCheckoutOptionValue(bool $value): void
     {
-        $configManager = $this->getConfigManager();
+        $configManager = self::getConfigManager();
         $configManager->set('oro_checkout.guest_checkout', $value);
         $configManager->flush();
     }

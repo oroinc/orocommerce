@@ -42,9 +42,10 @@ class ProductVisibilityProcessorTest extends WebTestCase
             LoadCustomerUserData::class,
         ]);
 
-        self::getConfigManager()->set('oro_visibility.product_visibility', VisibilityInterface::VISIBLE);
-        self::getConfigManager()->set('oro_visibility.category_visibility', VisibilityInterface::VISIBLE);
-        self::getConfigManager()->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_visibility.product_visibility', VisibilityInterface::VISIBLE);
+        $configManager->set('oro_visibility.category_visibility', VisibilityInterface::VISIBLE);
+        $configManager->flush();
 
         self::getContainer()
             ->get('oro_visibility.visibility.cache.cache_builder')
@@ -54,9 +55,10 @@ class ProductVisibilityProcessorTest extends WebTestCase
     #[\Override]
     protected function tearDown(): void
     {
-        self::getConfigManager()->set('oro_visibility.product_visibility', VisibilityInterface::VISIBLE);
-        self::getConfigManager()->set('oro_visibility.category_visibility', VisibilityInterface::VISIBLE);
-        self::getConfigManager()->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_visibility.product_visibility', VisibilityInterface::VISIBLE);
+        $configManager->set('oro_visibility.category_visibility', VisibilityInterface::VISIBLE);
+        $configManager->flush();
 
         parent::tearDown();
     }
@@ -123,8 +125,9 @@ class ProductVisibilityProcessorTest extends WebTestCase
 
         $productVisibility = self::createProductVisibility($product, ProductVisibility::CONFIG);
 
-        self::getConfigManager()->set('oro_visibility.product_visibility', VisibilityInterface::HIDDEN);
-        self::getConfigManager()->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_visibility.product_visibility', VisibilityInterface::HIDDEN);
+        $configManager->flush();
 
         // Ensures MQ is empty before adding the message we are going to consume.
         self::purgeMessageQueue();
@@ -153,8 +156,9 @@ class ProductVisibilityProcessorTest extends WebTestCase
 
         self::assertProductVisibility(self::isTrue(), $product, $customerUser);
 
-        self::getConfigManager()->set('oro_visibility.category_visibility', VisibilityInterface::HIDDEN);
-        self::getConfigManager()->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_visibility.category_visibility', VisibilityInterface::HIDDEN);
+        $configManager->flush();
 
         // Ensures MQ is empty before adding the message we are going to consume.
         self::purgeMessageQueue();
@@ -230,8 +234,9 @@ class ProductVisibilityProcessorTest extends WebTestCase
 
         self::assertProductVisibility(self::isTrue(), $product, $customerUser);
 
-        self::getConfigManager()->set('oro_visibility.category_visibility', VisibilityInterface::HIDDEN);
-        self::getConfigManager()->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_visibility.category_visibility', VisibilityInterface::HIDDEN);
+        $configManager->flush();
 
         $customerGroupProductVisibility = self::createCustomerGroupProductVisibility(
             $product,
@@ -349,8 +354,9 @@ class ProductVisibilityProcessorTest extends WebTestCase
 
         self::assertProductVisibility(self::isTrue(), $product, $customerUser);
 
-        self::getConfigManager()->set('oro_visibility.category_visibility', VisibilityInterface::HIDDEN);
-        self::getConfigManager()->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_visibility.category_visibility', VisibilityInterface::HIDDEN);
+        $configManager->flush();
 
         $customerProductVisibility = self::createCustomerProductVisibility(
             $product,

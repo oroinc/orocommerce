@@ -37,10 +37,8 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures([
-            FixtureDir\LoadWebCatalogPageData::class
-        ]);
+        $this->initClient([], self::generateBasicAuthHeader());
+        $this->loadFixtures([FixtureDir\LoadWebCatalogPageData::class]);
 
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
@@ -48,7 +46,7 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
         $listener = new RestrictSitemapCmsPageByWebCatalogListener(
             $this->configManager,
             $this->getRestrictionProvider(),
-            $this->getContainer()->get('oro_seo.modifier.scope_query_builder_modifier')
+            self::getContainer()->get('oro_seo.modifier.scope_query_builder_modifier')
         );
 
         $this->eventDispatcher = new EventDispatcher();
@@ -72,7 +70,7 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
         bool $includeNotOwn,
         array $expected,
         ?string $webCatalogName
-    ) {
+    ): void {
         $version = '1';
         $webCatalogId = null;
         /** @var Website $website */
@@ -93,11 +91,13 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
             ->with('frontend_master_catalog')
             ->willReturn(null === $webCatalogId);
 
-        $this->configManager->method('get')->willReturnMap([
-            [self::WEB_CATALOG, false, false, $website, $webCatalogId],
-            [self::EXCLUDE_WEB_CATALOG_LANDING_PAGES, true, false, $website, $exclude],
-            [self::INCLUDE_NOT_IN_WEB_CATALOG_LANDING_PAGES, false, false, $website, $includeNotOwn]
-        ]);
+        $this->configManager->expects(self::any())
+            ->method('get')
+            ->willReturnMap([
+                [self::WEB_CATALOG, false, false, $website, $webCatalogId],
+                [self::EXCLUDE_WEB_CATALOG_LANDING_PAGES, true, false, $website, $exclude],
+                [self::INCLUDE_NOT_IN_WEB_CATALOG_LANDING_PAGES, false, false, $website, $includeNotOwn]
+            ]);
 
         /** @var QueryBuilder $qb */
         $qb = self::getContainer()
@@ -121,9 +121,9 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
     {
         return [
             'pages out of web catalog' => [
-                'exclude'        => true,
-                'includeNotOwn'  => true,
-                'expected'       => [
+                'exclude' => true,
+                'includeNotOwn' => true,
+                'expected' => [
                     FixtureDir\LoadPageData::PAGE2_WEB_CATALOG_SCOPE_DEFAULT,
                     FixtureDir\LoadPageData::PAGE4_WEB_CATALOG_SCOPE_DEFAULT,
                     FixtureDir\LoadPageData::PAGE_OUT_OF_WEB_CATALOG,
@@ -133,9 +133,9 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
                 'webCatalogName' => LoadWebCatalogData::CATALOG_1,
             ],
             'inactive restriction, all pages' => [
-                'exclude'        => true,
-                'includeNotOwn'  => false,
-                'expected'       => [
+                'exclude' => true,
+                'includeNotOwn' => false,
+                'expected' => [
                     FixtureDir\LoadPageData::PAGE1_WEB_CATALOG_SCOPE_DEFAULT,
                     FixtureDir\LoadPageData::PAGE2_WEB_CATALOG_SCOPE_DEFAULT,
                     FixtureDir\LoadPageData::PAGE3_WEB_CATALOG_SCOPE_DEFAULT,
@@ -150,9 +150,9 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
                 'webCatalogName' => LoadWebCatalogData::CATALOG_1,
             ],
             'all pages' => [
-                'exclude'        => false,
-                'includeNotOwn'  => true,
-                'expected'       => [
+                'exclude' => false,
+                'includeNotOwn' => true,
+                'expected' => [
                     FixtureDir\LoadPageData::PAGE1_WEB_CATALOG_SCOPE_DEFAULT,
                     FixtureDir\LoadPageData::PAGE2_WEB_CATALOG_SCOPE_DEFAULT,
                     FixtureDir\LoadPageData::PAGE3_WEB_CATALOG_SCOPE_DEFAULT,
@@ -167,9 +167,9 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
                 'webCatalogName' => LoadWebCatalogData::CATALOG_1,
             ],
             'pages in web catalog' => [
-                'exclude'        => false,
-                'includeNotOwn'  => false,
-                'expected'       => [
+                'exclude' => false,
+                'includeNotOwn' => false,
+                'expected' => [
                     FixtureDir\LoadPageData::PAGE1_WEB_CATALOG_SCOPE_DEFAULT,
                     FixtureDir\LoadPageData::PAGE3_WEB_CATALOG_SCOPE_DEFAULT,
                     FixtureDir\LoadPageData::PAGE5_WEB_CATALOG_SCOPE_DEFAULT,

@@ -2,15 +2,21 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Layout\DataProvider;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogUsageProvider;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogCategoryVariantsData;
+use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
 
 class WebCatalogBreadcrumbProviderTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
     use SearchExtensionTrait;
+
+    private ?int $initialWebCatalogId;
 
     #[\Override]
     protected function setUp(): void
@@ -19,14 +25,30 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
             [],
             self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
+        $this->loadFixtures([
+            LoadWebCatalogData::class,
+            LoadWebCatalogCategoryVariantsData::class
+        ]);
 
-        $this->loadFixtures(
-            [
-                LoadWebCatalogCategoryVariantsData::class
-            ]
+        $configManager = self::getConfigManager();
+        $this->initialWebCatalogId = $configManager->get(WebCatalogUsageProvider::SETTINGS_KEY);
+        $configManager->set(
+            WebCatalogUsageProvider::SETTINGS_KEY,
+            $this->getReference(LoadWebCatalogData::CATALOG_1)->getId()
         );
+        $configManager->flush();
 
         self::getContainer()->get('oro_website_search.indexer')->reindex();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set(WebCatalogUsageProvider::SETTINGS_KEY, $this->initialWebCatalogId);
+        $configManager->flush();
+
+        parent::tearDown();
     }
 
     /**
@@ -49,7 +71,6 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
         );
 
         $breadcrumbs = [];
-        /** @var \DOMElement $item */
         foreach ($crawler->filter('.breadcrumbs__item a') as $key => $item) {
             self::assertEquals($expectedBreadcrumbs[$key], $item->textContent);
             $breadcrumbs[] = trim($item->textContent);
@@ -75,7 +96,6 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
 
         $breadcrumbUrls = [];
 
-        /** @var \DOMElement $item */
         foreach ($crawler->filter('.breadcrumbs__item a') as $key => $item) {
             $breadcrumbUrls[] = $item->getAttribute('href');
         }

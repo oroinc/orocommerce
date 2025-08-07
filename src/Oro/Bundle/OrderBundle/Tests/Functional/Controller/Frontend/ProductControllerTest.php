@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderLineItemData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
-use Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM\PreviouslyPurchasedFeatureTrait;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 
@@ -17,8 +17,8 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
  */
 class ProductControllerTest extends FrontendWebTestCase
 {
+    use ConfigManagerAwareTestTrait;
     use WebsiteSearchExtensionTrait;
-    use PreviouslyPurchasedFeatureTrait;
 
     private const FRONTEND_GRID_NAME = 'order-products-previously-purchased-grid';
 
@@ -27,23 +27,32 @@ class ProductControllerTest extends FrontendWebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
+            self::generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
+        $this->loadFixtures([
+            LoadProductData::class,
+            LoadOrders::class,
+            LoadOrderLineItemData::class
+        ]);
 
-        $this->loadFixtures(
-            [
-                LoadProductData::class,
-                LoadOrders::class,
-                LoadOrderLineItemData::class,
-            ]
-        );
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_order.enable_purchase_history', true);
+        $configManager->flush();
 
-        $this->enablePreviouslyPurchasedFeature();
-
-        $this->reindexProductData();
+        self::reindexProductData();
     }
 
-    public function testPreviouslyPurchasedGrid()
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_order.enable_purchase_history', false);
+        $configManager->flush();
+
+        parent::tearDown();
+    }
+
+    public function testPreviouslyPurchasedGrid(): void
     {
         $response = $this->client->requestFrontendGrid(self::FRONTEND_GRID_NAME, [], true);
 
@@ -58,7 +67,7 @@ class ProductControllerTest extends FrontendWebTestCase
         $this->assertArrayHasKey(LoadProductData::PRODUCT_6, $skus);
     }
 
-    public function testPreviouslyPurchasedGridIfUserNonAuth()
+    public function testPreviouslyPurchasedGridIfUserNonAuth(): void
     {
         /** login as anonymous user */
         $this->initClient([]);
@@ -75,7 +84,7 @@ class ProductControllerTest extends FrontendWebTestCase
     /**
      * @dataProvider gridParamDataProvider
      */
-    public function testSortPreviouslyPurchasedGrid(array $gridParam, array $expected)
+    public function testSortPreviouslyPurchasedGrid(array $gridParam, array $expected): void
     {
         $this->markTestSkipped('will be unskipped in BB-13532');
 

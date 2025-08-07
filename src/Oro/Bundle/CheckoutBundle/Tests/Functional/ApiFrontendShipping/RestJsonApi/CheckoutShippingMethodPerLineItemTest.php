@@ -6,7 +6,6 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadCheckoutData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadCompetedCheckoutData;
-use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -17,15 +16,13 @@ use Oro\Bundle\ShippingBundle\Method\MultiShippingMethodProvider;
  */
 class CheckoutShippingMethodPerLineItemTest extends FrontendRestJsonApiTestCase
 {
-    use ConfigManagerAwareTestTrait;
-
     private const string ENABLE_SHIPPING_PER_LINE_ITEM = 'oro_checkout.enable_shipping_method_selection_per_line_item';
     private const string ENABLE_LINE_ITEM_GROUPING = 'oro_checkout.enable_line_item_grouping';
     private const string GROUP_LINE_ITEMS_BY = 'oro_checkout.group_line_items_by';
 
-    private ?bool $originalEnableShippingPerLineItem;
-    private ?bool $originalEnableLineItemGrouping;
-    private ?string $originalGroupLineItemsBy;
+    private ?bool $initialEnableShippingPerLineItem;
+    private ?bool $initialEnableLineItemGrouping;
+    private ?string $initialGroupLineItemsBy;
 
     #[\Override]
     protected function setUp(): void
@@ -38,9 +35,9 @@ class CheckoutShippingMethodPerLineItemTest extends FrontendRestJsonApiTestCase
         ]);
 
         $configManager = self::getConfigManager();
-        $this->originalEnableShippingPerLineItem = $configManager->get(self::ENABLE_SHIPPING_PER_LINE_ITEM);
-        $this->originalEnableLineItemGrouping = $configManager->get(self::ENABLE_LINE_ITEM_GROUPING);
-        $this->originalGroupLineItemsBy = $configManager->get(self::GROUP_LINE_ITEMS_BY);
+        $this->initialEnableShippingPerLineItem = $configManager->get(self::ENABLE_SHIPPING_PER_LINE_ITEM);
+        $this->initialEnableLineItemGrouping = $configManager->get(self::ENABLE_LINE_ITEM_GROUPING);
+        $this->initialGroupLineItemsBy = $configManager->get(self::GROUP_LINE_ITEMS_BY);
         $configManager->set(self::ENABLE_SHIPPING_PER_LINE_ITEM, true);
         $configManager->set(self::ENABLE_LINE_ITEM_GROUPING, true);
         $configManager->set(self::GROUP_LINE_ITEMS_BY, 'product.id');
@@ -51,9 +48,9 @@ class CheckoutShippingMethodPerLineItemTest extends FrontendRestJsonApiTestCase
     protected function tearDown(): void
     {
         $configManager = self::getConfigManager();
-        $configManager->set(self::ENABLE_SHIPPING_PER_LINE_ITEM, $this->originalEnableShippingPerLineItem);
-        $configManager->set(self::ENABLE_LINE_ITEM_GROUPING, $this->originalEnableLineItemGrouping);
-        $configManager->set(self::GROUP_LINE_ITEMS_BY, $this->originalGroupLineItemsBy);
+        $configManager->set(self::ENABLE_SHIPPING_PER_LINE_ITEM, $this->initialEnableShippingPerLineItem);
+        $configManager->set(self::ENABLE_LINE_ITEM_GROUPING, $this->initialEnableLineItemGrouping);
+        $configManager->set(self::GROUP_LINE_ITEMS_BY, $this->initialGroupLineItemsBy);
         $configManager->flush();
     }
 

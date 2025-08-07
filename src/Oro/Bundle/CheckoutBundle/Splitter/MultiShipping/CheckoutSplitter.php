@@ -17,8 +17,7 @@ class CheckoutSplitter
     public function __construct(
         CheckoutFactoryInterface $checkoutFactory,
         SubOrderMultiShippingMethodSetter $subOrderMultiShippingMethodSetter
-    )
-    {
+    ) {
         $this->checkoutFactory = $checkoutFactory;
         $this->subOrderMultiShippingMethodSetter = $subOrderMultiShippingMethodSetter;
     }

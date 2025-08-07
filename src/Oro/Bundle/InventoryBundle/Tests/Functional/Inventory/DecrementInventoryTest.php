@@ -42,9 +42,20 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         $this->precisionBottleQuantity = self::processTemplateData(
             '@inventory_level.product_unit_precision.product-1.bottle->quantity'
         );
+
         $configManager = self::getConfigManager();
         $configManager->set('oro_inventory.manage_inventory', true);
         $configManager->flush();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_inventory.manage_inventory', false);
+        $configManager->flush();
+
+        parent::tearDown();
     }
 
     public function testOrderWithoutDecrement()

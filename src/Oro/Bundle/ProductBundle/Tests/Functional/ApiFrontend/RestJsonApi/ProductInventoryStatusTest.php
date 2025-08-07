@@ -29,13 +29,12 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
 
         $em = $this->getEntityManager();
         /** @var EnumOptionTranslation|null $translation */
-        $translation = $em->getRepository(EnumOptionTranslation::class)
-            ->findOneBy([
-                'objectClass' => EnumOption::class,
-                'field' => 'name',
-                'foreignKey' => 'prod_inventory_status.in_stock',
-                'locale' => $esLanguageCode
-            ]);
+        $translation = $em->getRepository(EnumOptionTranslation::class)->findOneBy([
+            'objectClass' => EnumOption::class,
+            'field' => 'name',
+            'foreignKey' => 'prod_inventory_status.in_stock',
+            'locale' => $esLanguageCode
+        ]);
         if (null === $translation) {
             $translation = new EnumOptionTranslation();
             $translation->setObjectClass(EnumOption::class);
@@ -48,7 +47,7 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
         }
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'productinventorystatuses']
@@ -85,7 +84,7 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetListFilterBySeveralIds()
+    public function testGetListFilterBySeveralIds(): void
     {
         $response = $this->cget(
             ['entity' => 'productinventorystatuses'],
@@ -104,7 +103,7 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetListForAnotherLocalization()
+    public function testGetListForAnotherLocalization(): void
     {
         $response = $this->cget(
             ['entity' => 'productinventorystatuses'],
@@ -143,7 +142,7 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $response = $this->get(
             ['entity' => 'productinventorystatuses', 'id' => 'in_stock']
@@ -163,7 +162,7 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetForAnotherLocalization()
+    public function testGetForAnotherLocalization(): void
     {
         $response = $this->get(
             ['entity' => 'productinventorystatuses', 'id' => 'in_stock'],
@@ -185,7 +184,7 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetForAnotherLocalizationWhenNoLocalizedNameForIt()
+    public function testGetForAnotherLocalizationWhenNoLocalizedNameForIt(): void
     {
         $response = $this->get(
             ['entity' => 'productinventorystatuses', 'id' => 'in_stock'],
@@ -207,7 +206,7 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdate()
+    public function testTryToUpdate(): void
     {
         $data = [
             'data' => [
@@ -229,7 +228,7 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToCreate()
+    public function testTryToCreate(): void
     {
         $data = [
             'data' => [
@@ -250,7 +249,7 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDelete()
+    public function testTryToDelete(): void
     {
         $response = $this->delete(
             ['entity' => 'productinventorystatuses', 'id' => 'in_stock'],
@@ -262,7 +261,7 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDeleteList()
+    public function testTryToDeleteList(): void
     {
         $response = $this->cdelete(
             ['entity' => 'productinventorystatuses'],

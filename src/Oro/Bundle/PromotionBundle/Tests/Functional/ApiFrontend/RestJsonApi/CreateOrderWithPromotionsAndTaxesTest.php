@@ -15,8 +15,8 @@ use Oro\Bundle\TaxBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadTaxesData
  */
 class CreateOrderWithPromotionsAndTaxesTest extends FrontendRestJsonApiTestCase
 {
-    private string $originalTaxationUseAsBaseOption;
-    private bool $originalTaxesAfterPromotionsOption;
+    private ?string $initialTaxationUseAsBaseOption;
+    private ?bool $initialTaxesAfterPromotionsOption;
 
     #[\Override]
     protected function setUp(): void
@@ -31,10 +31,10 @@ class CreateOrderWithPromotionsAndTaxesTest extends FrontendRestJsonApiTestCase
             LoadPromotionData::class
         ]);
 
-        $configManager = $this->getConfigManager();
-        $this->originalTaxationUseAsBaseOption = $configManager->get('oro_tax.use_as_base_by_default');
+        $configManager = self::getConfigManager();
+        $this->initialTaxationUseAsBaseOption = $configManager->get('oro_tax.use_as_base_by_default');
+        $this->initialTaxesAfterPromotionsOption = $configManager->get('oro_tax.calculate_taxes_after_promotions');
         $configManager->set('oro_tax.use_as_base_by_default', TaxationSettingsProvider::USE_AS_BASE_DESTINATION);
-        $this->originalTaxesAfterPromotionsOption = $configManager->get('oro_tax.calculate_taxes_after_promotions');
         $configManager->set('oro_tax.calculate_taxes_after_promotions', true);
         $configManager->flush();
     }
@@ -42,9 +42,9 @@ class CreateOrderWithPromotionsAndTaxesTest extends FrontendRestJsonApiTestCase
     #[\Override]
     protected function tearDown(): void
     {
-        $configManager = $this->getConfigManager();
-        $configManager->set('oro_tax.use_as_base_by_default', $this->originalTaxationUseAsBaseOption);
-        $configManager->set('oro_tax.calculate_taxes_after_promotions', $this->originalTaxesAfterPromotionsOption);
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_tax.use_as_base_by_default', $this->initialTaxationUseAsBaseOption);
+        $configManager->set('oro_tax.calculate_taxes_after_promotions', $this->initialTaxesAfterPromotionsOption);
         $configManager->flush();
 
         parent::tearDown();

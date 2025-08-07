@@ -6,6 +6,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdmi
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -16,10 +17,17 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProductTest extends FrontendRestJsonApiTestCase
 {
+    private ?array $initialEnabledLocalizations;
+
     #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
+        $this->loadFixtures([
+            LoadAdminCustomerUserData::class,
+            '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product.yml',
+            '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product_prices.yml'
+        ]);
 
         // guard
         self::assertEquals(
@@ -27,11 +35,23 @@ class ProductTest extends FrontendRestJsonApiTestCase
             self::getConfigManager()->get('oro_product.general_frontend_product_visibility')
         );
 
-        $this->loadFixtures([
-            LoadAdminCustomerUserData::class,
-            '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product.yml',
-            '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product_prices.yml'
-        ]);
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            LoadLocalizationData::getLocalizationIds(self::getContainer())
+        );
+        $configManager->flush();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->flush();
+
+        parent::tearDown();
     }
 
     public function testGetList(): void

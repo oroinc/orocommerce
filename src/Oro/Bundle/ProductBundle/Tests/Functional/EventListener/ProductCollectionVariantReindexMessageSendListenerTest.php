@@ -28,17 +28,31 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
  */
 class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
 {
-    use MessageQueueExtension;
     use ConfigManagerAwareTestTrait;
+    use MessageQueueExtension;
+
+    private ?int $initialWebCatalogId;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
         $this->loadFixtures([LoadWebCatalogsData::class]);
+
+        $this->initialWebCatalogId = self::getConfigManager()->get('oro_web_catalog.web_catalog');
     }
 
-    public function testListenerWhenNewSegmentCreated()
+    #[\Override]
+    protected function tearDown(): void
+    {
+        if (false !== $this->initialWebCatalogId) {
+            $configManager = self::getConfigManager();
+            $configManager->set('oro_web_catalog.web_catalog', $this->initialWebCatalogId);
+            $configManager->flush();
+        }
+    }
+
+    public function testListenerWhenNewSegmentCreated(): void
     {
         $this->setWebCatalog();
         $segment = $this->createNewContentVariantWithSegment()[0];
@@ -65,7 +79,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
         );
     }
 
-    public function testListenerWhenSegmentRemoved()
+    public function testListenerWhenSegmentRemoved(): void
     {
         $this->setWebCatalog();
         /**
@@ -115,14 +129,14 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
         );
     }
 
-    public function testListenerWhenNewSegmentCreatedAndWebCatalogIsNotActive()
+    public function testListenerWhenNewSegmentCreatedAndWebCatalogIsNotActive(): void
     {
         $this->createNewContentVariantWithSegment();
 
         self::assertMessagesEmpty(ReindexProductCollectionBySegmentTopic::NAME);
     }
 
-    public function testListenerWhenNewSegmentCreatedAndWebCatalogIsOff()
+    public function testListenerWhenNewSegmentCreatedAndWebCatalogIsOff(): void
     {
         $this->setWebCatalog();
 
@@ -133,7 +147,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
         self::assertMessagesEmpty(ReindexProductCollectionBySegmentTopic::NAME);
     }
 
-    public function testListenerWhenSegmentUpdatedButDefinitionNotChanged()
+    public function testListenerWhenSegmentUpdatedButDefinitionNotChanged(): void
     {
         $this->loadFixtures([LoadContentVariantSegmentsWithRelationsData::class]);
         $this->setWebCatalog();
@@ -149,7 +163,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
         self::assertMessagesEmpty(ReindexProductCollectionBySegmentTopic::NAME);
     }
 
-    public function testListenerWhenSegmentUpdatedAndDefinitionChanged()
+    public function testListenerWhenSegmentUpdatedAndDefinitionChanged(): void
     {
         $this->loadFixtures([LoadContentVariantSegmentsWithRelationsData::class]);
         $this->setWebCatalog();
@@ -163,8 +177,6 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
 
         $entityManager->persist($segment);
         $entityManager->flush();
-        // Clears cache in general config manager.
-        self::getConfigManager(null)->reload();
 
         $rootJob = $this->getRootJob();
         $this->assertRootJobContainsDependentJob($rootJob);

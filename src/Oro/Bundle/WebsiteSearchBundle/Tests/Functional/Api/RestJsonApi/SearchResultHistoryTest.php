@@ -2,93 +2,127 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Api\RestJsonApi;
 
+use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadSearchResultHistoryPart1Data;
 
-class SearchResultHistoryTest extends FeatureAwareRestJsonApiTestCase
+class SearchResultHistoryTest extends RestJsonApiTestCase
 {
-    private const API_TYPE = 'searchresulthistories';
+    private ?bool $initialFeatureState;
 
     #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
-
         $this->loadFixtures([
-            LoadSearchResultHistoryPart1Data::class,
+            LoadOrganization::class,
+            LoadBusinessUnit::class,
+            LoadSearchResultHistoryPart1Data::class
         ]);
+
+        $configManager = self::getConfigManager();
+        $this->initialFeatureState = $configManager->get('oro_website_search.enable_global_search_history_feature');
+        $configManager->set('oro_website_search.enable_global_search_history_feature', true);
+        $configManager->flush();
     }
 
-    public function testGetList()
+    #[\Override]
+    protected function tearDown(): void
     {
-        $response = $this->cget(
-            ['entity' => self::API_TYPE]
-        );
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_website_search.enable_global_search_history_feature', $this->initialFeatureState);
+        $configManager->flush();
 
-        if (self::isEnterprise()) {
-            $this->assertResponseContains('cget_search_result_history_ee.yml', $response, true);
-        } else {
-            $this->assertResponseContains('cget_search_result_history.yml', $response, true);
-        }
+        parent::tearDown();
     }
 
-    public function testGet()
+    public function testGetList(): void
     {
-        $id = $this->getReference('search_result_tires')->getId();
-        $response = $this->get(
-            ['entity' => self::API_TYPE, 'id' => $id]
-        );
+        $response = $this->cget(['entity' => 'searchresulthistories']);
 
-        if (self::isEnterprise()) {
-            $this->assertResponseContains('get_search_result_history_ee.yml', $response);
-        } else {
-            $this->assertResponseContains('get_search_result_history.yml', $response);
-        }
+        $this->assertResponseContains('cget_search_result_history.yml', $response, true);
     }
 
-    /**
-     * @dataProvider relationshipDataProvider
-     */
-    public function testGetCustomerRelationship(
-        string $resourceType,
-        string $associationType
-    ) {
-        $getterMethod = 'get' . ucwords($associationType, '_');
+    public function testGet(): void
+    {
+        $response = $this->get(['entity' => 'searchresulthistories', 'id' => '<toString(@search_result_tires->id)>']);
 
-        $record = $this->getReference('search_result_tires');
-        $id = $record->getId();
+        $this->assertResponseContains('get_search_result_history.yml', $response);
+    }
 
-        $response = $this->getRelationship(
-            ['entity' => self::API_TYPE, 'id' => $id, 'association' => $associationType]
-        );
+    public function testGetRelationshipForLocalization(): void
+    {
+        $response = $this->getRelationship([
+            'entity' => 'searchresulthistories',
+            'id' => '<toString(@search_result_tires->id)>',
+            'association' => 'localization'
+        ]);
 
         $this->assertResponseContains(
-            ['data' => ['type' => $resourceType, 'id' => (string)$record->{$getterMethod}()->getId()]],
+            ['data' => ['type' => 'localizations', 'id' => '<toString(@en_US->id)>']],
             $response
         );
     }
 
-    public function relationshipDataProvider(): array
+    public function testGetRelationshipForCustomer(): void
     {
-        $data = [
-            'customer' => ['customers', 'customer'],
-            'customerUser' => ['customerusers', 'customerUser'],
-            'localization' => ['localizations', 'localization'],
-            'organization' => ['organizations', 'organization'],
-            'owner' => ['businessunits', 'owner']
-        ];
+        $response = $this->getRelationship([
+            'entity' => 'searchresulthistories',
+            'id' => '<toString(@search_result_tires->id)>',
+            'association' => 'customer'
+        ]);
 
-        if (self::isEnterprise()) {
-            $data['website'] = ['websites', 'website'];
-        }
-
-        return $data;
+        $this->assertResponseContains(
+            ['data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1->id)>']],
+            $response
+        );
     }
 
-    /**
-     * EE response contains additional website relation, which is not available for CE version.
-     */
-    private static function isEnterprise(): bool
+    public function testGetRelationshipForCustomerUser(): void
     {
-        return class_exists('Oro\Bundle\MultiWebsiteBundle\OroMultiWebsiteBundle');
+        $response = $this->getRelationship([
+            'entity' => 'searchresulthistories',
+            'id' => '<toString(@search_result_tires->id)>',
+            'association' => 'customerUser'
+        ]);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'customerusers',
+                    'id' => '<toString(@grzegorz.brzeczyszczykiewicz@example.com->id)>'
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForOrganization(): void
+    {
+        $response = $this->getRelationship([
+            'entity' => 'searchresulthistories',
+            'id' => '<toString(@search_result_tires->id)>',
+            'association' => 'organization'
+        ]);
+
+        $this->assertResponseContains(
+            ['data' => ['type' => 'organizations', 'id' => '<toString(@organization->id)>']],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForOwner(): void
+    {
+        $response = $this->getRelationship([
+            'entity' => 'searchresulthistories',
+            'id' => '<toString(@search_result_tires->id)>',
+            'association' => 'owner'
+        ]);
+
+        $this->assertResponseContains(
+            ['data' => ['type' => 'businessunits', 'id' => '<toString(@business_unit->id)>']],
+            $response
+        );
     }
 }

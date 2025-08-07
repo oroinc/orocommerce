@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\ControllerFrontend;
 
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutUserACLData;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -33,16 +32,14 @@ class ShoppingListControllerTest extends WebTestCase
 
     private const TEST_LABEL1 = 'Shopping list label 1';
     private const TEST_LABEL2 = 'Shopping list label 2';
-    private const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
-    private const SHOPPING_LIST_AVAIL_FOR_GUEST_KEY = 'oro_shopping_list.availability_for_guests';
 
-    private ConfigManager $configManager;
+    private ?array $initialVisibility;
+    private ?array $initialGeneralVisibility;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
-
         $this->loadFixtures([
             LoadProductUnitPrecisions::class,
             LoadShoppingLists::class,
@@ -52,18 +49,21 @@ class ShoppingListControllerTest extends WebTestCase
             LoadCheckoutUserACLData::class,
         ]);
 
-        $this->configManager = self::getConfigManager();
-
-        $this->configManager->set(self::SHOPPING_LIST_AVAIL_FOR_GUEST_KEY, true);
-        $this->configManager->flush();
+        $configManager = self::getConfigManager();
+        $this->initialVisibility = $configManager->get('oro_rfp.frontend_product_visibility');
+        $this->initialGeneralVisibility = $configManager->get('oro_product.general_frontend_product_visibility');
+        $configManager->set('oro_shopping_list.availability_for_guests', true);
+        $configManager->flush();
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        $this->configManager->reset(self::RFP_PRODUCT_VISIBILITY_KEY);
-        $this->configManager->reset(self::SHOPPING_LIST_AVAIL_FOR_GUEST_KEY);
-        $this->configManager->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_rfp.frontend_product_visibility', $this->initialVisibility);
+        $configManager->set('oro_product.general_frontend_product_visibility', $this->initialGeneralVisibility);
+        $configManager->set('oro_shopping_list.availability_for_guests', false);
+        $configManager->flush();
     }
 
     public function testViewWhenNoId(): void
@@ -71,7 +71,7 @@ class ShoppingListControllerTest extends WebTestCase
         $user = $this->getReference(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC);
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(
+            self::generateBasicAuthHeader(
                 LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
                 LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC
             )
@@ -79,11 +79,11 @@ class ShoppingListControllerTest extends WebTestCase
 
         /** @var ShoppingList $currentShoppingList */
         $currentShoppingList = $this->getReference(LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC);
-        $this->getContainer()->get('oro_shopping_list.manager.current_shopping_list')
+        self::getContainer()->get('oro_shopping_list.manager.current_shopping_list')
             ->setCurrent($user, $currentShoppingList);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_view'));
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         self::assertStringContainsString($currentShoppingList->getLabel(), $crawler->html());
         // operations only for ShoppingList with LineItems
         self::assertStringNotContainsString('Request Quote', $crawler->html());
@@ -92,23 +92,19 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testIndex(): void
     {
-        $user = $this->getContainer()
-            ->get('oro_customer_user.manager')
-            ->findUserByEmail(BaseLoadCustomerData::AUTH_USER);
-
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
+            self::generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
         );
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_index'));
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertStringContainsString('frontend-customer-user-shopping-lists-grid', $crawler->html());
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertStringContainsString('frontend-customer-user-shopping-lists-grid', $crawler->html());
 
         $response = $this->client->requestFrontendGrid('frontend-customer-user-shopping-lists-grid', [], true);
 
-        $data = $this->getJsonResponseContent($response, 200)['data'];
+        $data = self::getJsonResponseContent($response, 200)['data'];
 
         $expectedLabels = [
             LoadShoppingLists::SHOPPING_LIST_1 . '_label',
@@ -119,23 +115,17 @@ class ShoppingListControllerTest extends WebTestCase
             LoadShoppingLists::SHOPPING_LIST_8 . '_label',
         ];
 
-        $this->assertCount(6, $data);
-        $this->assertCount(
-            0,
-            array_filter(
-                $data,
-                static function (array $row) use ($expectedLabels) {
-                    return !\in_array($row['label'], $expectedLabels, true);
-                }
-            )
-        );
+        self::assertCount(6, $data);
+        self::assertCount(0, array_filter($data, static function (array $row) use ($expectedLabels) {
+            return !\in_array($row['label'], $expectedLabels, true);
+        }));
     }
 
     public function testViewGrid(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
+            self::generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
         );
 
         /** @var ShoppingList $shoppingList */
@@ -146,8 +136,8 @@ class ShoppingListControllerTest extends WebTestCase
             $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
         );
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertStringContainsString('frontend-customer-user-shopping-list-grid', $crawler->html());
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertStringContainsString('frontend-customer-user-shopping-list-grid', $crawler->html());
 
         $response = $this->client->requestFrontendGrid(
             'frontend-customer-user-shopping-list-grid',
@@ -155,22 +145,22 @@ class ShoppingListControllerTest extends WebTestCase
             true
         );
 
-        $data = $this->getJsonResponseContent($response, 200)['data'];
+        $data = self::getJsonResponseContent($response, 200)['data'];
 
-        $this->assertCount(1, $data);
-        $this->assertArrayHasKey('item', $data[0]);
-        $this->assertEquals('product-1', $data[0]['sku']);
-        $this->assertEquals('prod_inventory_status.in_stock', $data[0]['inventoryStatus']);
-        $this->assertEquals(8, $data[0]['quantity']);
-        $this->assertEquals('bottle', $data[0]['unit']);
-        $this->assertEquals('$13.10', $data[0]['price']);
-        $this->assertEquals('$104.80', $data[0]['subtotal']);
-        $this->assertEquals('product-1.names.default', $data[0]['name']);
-        $this->assertEquals('Test Notes', $data[0]['notes']);
-        $this->assertFalse($data[0]['isConfigurable']);
-        $this->assertFalse($data[0]['isUpcoming']);
-        $this->assertNull($data[0]['availabilityDate']);
-        $this->assertNull($data[0]['subData']);
+        self::assertCount(1, $data);
+        self::assertArrayHasKey('item', $data[0]);
+        self::assertEquals('product-1', $data[0]['sku']);
+        self::assertEquals('prod_inventory_status.in_stock', $data[0]['inventoryStatus']);
+        self::assertEquals(8, $data[0]['quantity']);
+        self::assertEquals('bottle', $data[0]['unit']);
+        self::assertEquals('$13.10', $data[0]['price']);
+        self::assertEquals('$104.80', $data[0]['subtotal']);
+        self::assertEquals('product-1.names.default', $data[0]['name']);
+        self::assertEquals('Test Notes', $data[0]['notes']);
+        self::assertFalse($data[0]['isConfigurable']);
+        self::assertFalse($data[0]['isUpcoming']);
+        self::assertNull($data[0]['availabilityDate']);
+        self::assertNull($data[0]['subData']);
     }
 
     public function testView(): void
@@ -178,7 +168,7 @@ class ShoppingListControllerTest extends WebTestCase
         $user = $this->getReference(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC);
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(
+            self::generateBasicAuthHeader(
                 LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
                 LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC
             )
@@ -186,14 +176,14 @@ class ShoppingListControllerTest extends WebTestCase
 
         /** @var ShoppingList $currentShoppingList */
         $currentShoppingList = $this->getReference(LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC);
-        $this->getContainer()->get('oro_shopping_list.manager.current_shopping_list')
+        self::getContainer()->get('oro_shopping_list.manager.current_shopping_list')
             ->setCurrent($user, $currentShoppingList);
 
         // assert current shopping list
         $this->requestShoppingListPage('oro_shopping_list_frontend_view', $currentShoppingList->getId());
 
         $response = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($response, 200);
+        self::assertJsonResponseStatusCodeEquals($response, 200);
 
         $content = self::jsonToArray($response->getContent());
         $pageCrawler = new Crawler($content['page_content']);
@@ -205,11 +195,11 @@ class ShoppingListControllerTest extends WebTestCase
         self::assertEquals(0, $buttonsCrawler->count());
     }
 
-    public function testAccessDeniedForShoppingListsFromAnotherWebsite()
+    public function testAccessDeniedForShoppingListsFromAnotherWebsite(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(
+            self::generateBasicAuthHeader(
                 LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
                 LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC
             )
@@ -221,7 +211,7 @@ class ShoppingListControllerTest extends WebTestCase
             'GET',
             $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
         );
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 403);
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 403);
     }
 
     /**
@@ -231,7 +221,7 @@ class ShoppingListControllerTest extends WebTestCase
         string $shoppingList,
         string|array $expectedLineItemPrice,
         bool $atLeastOneAvailableProduct
-    ) {
+    ): void {
         /** @var ShoppingList $shoppingList1 */
         $shoppingList1 = $this->getReference($shoppingList);
 
@@ -246,30 +236,27 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(
-                BaseLoadCustomerData::AUTH_USER,
-                BaseLoadCustomerData::AUTH_PW
-            )
+            self::generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
         );
 
         $this->requestShoppingListPage('oro_shopping_list_frontend_view', $shoppingList1->getId());
 
         $availableInventoryStatuses = [
-            $this->getContainer()->get('doctrine')
-                ->getRepository(EnumOption::class)
+            self::getContainer()->get('doctrine')->getRepository(EnumOption::class)
                 ->find(ExtendHelper::buildEnumOptionId(
                     Product::INVENTORY_STATUS_ENUM_CODE,
                     Product::INVENTORY_STATUS_IN_STOCK
                 ))
         ];
 
-        $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, $availableInventoryStatuses);
-        $this->configManager->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_rfp.frontend_product_visibility', $availableInventoryStatuses);
+        $configManager->flush();
 
         $response = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($response, 200);
+        self::assertJsonResponseStatusCodeEquals($response, 200);
 
-        $content = \json_decode($response->getContent(), true);
+        $content = self::jsonToArray($response->getContent());
         $pageCrawler = new Crawler($content['page_content']);
         $buttonsCrawler = new Crawler($content['combined_button_wrapper']);
 
@@ -286,7 +273,7 @@ class ShoppingListControllerTest extends WebTestCase
             true
         );
 
-        $this->assertJsonResponseStatusCodeEquals($response, 200);
+        self::assertJsonResponseStatusCodeEquals($response, 200);
 
         $data = self::jsonToArray($response->getContent())['data'];
 
@@ -317,19 +304,17 @@ class ShoppingListControllerTest extends WebTestCase
         ];
     }
 
-    public function testViewSelectedShoppingListWithoutLineItemPrice()
+    public function testViewSelectedShoppingListWithoutLineItemPrice(): void
     {
         // assert selected shopping list
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(
-                BaseLoadCustomerData::AUTH_USER,
-                BaseLoadCustomerData::AUTH_PW
-            )
+            self::generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
         );
-        $this->configManager->set(
+        $configManager = self::getConfigManager();
+        $configManager->set(
             'oro_product.general_frontend_product_visibility',
             [
                 ExtendHelper::buildEnumOptionId(
@@ -346,25 +331,24 @@ class ShoppingListControllerTest extends WebTestCase
                 ),
             ]
         );
-        $this->configManager->flush();
+        $configManager->flush();
 
         $this->requestShoppingListPage('oro_shopping_list_frontend_view', $shoppingList->getId());
 
         $availableInventoryStatuses = [
-            $this->getContainer()->get('doctrine')->getRepository(EnumOption::class)
-                ->find(
-                    ExtendHelper::buildEnumOptionId(
-                        Product::INVENTORY_STATUS_ENUM_CODE,
-                        Product::INVENTORY_STATUS_IN_STOCK
-                    )
-                )
+            self::getContainer()->get('doctrine')->getRepository(EnumOption::class)
+                ->find(ExtendHelper::buildEnumOptionId(
+                    Product::INVENTORY_STATUS_ENUM_CODE,
+                    Product::INVENTORY_STATUS_IN_STOCK
+                ))
         ];
 
-        $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, $availableInventoryStatuses);
-        $this->configManager->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_rfp.frontend_product_visibility', $availableInventoryStatuses);
+        $configManager->flush();
 
         $response = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($response, 200);
+        self::assertJsonResponseStatusCodeEquals($response, 200);
 
         $content = self::jsonToArray($response->getContent());
         $pageCrawler = new Crawler($content['page_content']);
@@ -379,19 +363,19 @@ class ShoppingListControllerTest extends WebTestCase
             true
         );
 
-        $this->assertJsonResponseStatusCodeEquals($response, 200);
+        self::assertJsonResponseStatusCodeEquals($response, 200);
 
-        $data = json_decode($response->getContent(), true)['data'];
+        $data = self::jsonToArray($response->getContent())['data'];
 
-        $this->assertCount(1, $data);
-        $this->assertNull($data[0]['price']);
+        self::assertCount(1, $data);
+        self::assertNull($data[0]['price']);
     }
 
     public function testAssign(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
+            self::generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
         );
 
         /** @var ShoppingList $shoppingList */
@@ -403,18 +387,18 @@ class ShoppingListControllerTest extends WebTestCase
             $this->getUrl('oro_shopping_list_frontend_assign', $parameters)
         );
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertStringContainsString('shopping-list-assign-grid', $crawler->html());
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertStringContainsString('shopping-list-assign-grid', $crawler->html());
     }
 
-    public function testQuickAdd()
+    public function testQuickAdd(): void
     {
         $this->markTestSkipped(
             'Waiting for new quick order page to be finished'
         );
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_3);
@@ -425,7 +409,7 @@ class ShoppingListControllerTest extends WebTestCase
         ]];
 
         /** @var ShoppingList $currentShoppingList */
-        $currentShoppingList = $this->getContainer()->get('oro_shopping_list.manager.current_shopping_list')
+        $currentShoppingList = self::getContainer()->get('oro_shopping_list.manager.current_shopping_list')
             ->getForCurrentUser();
 
         $this->assertQuickAddFormSubmitted($crawler, $products);//add to current
@@ -444,8 +428,8 @@ class ShoppingListControllerTest extends WebTestCase
         string $user,
         int $status,
         bool $expectedCreateOrderButtonVisible
-    ) {
-        $this->initClient([], $this->generateBasicAuthHeader($user, $user));
+    ): void {
+        $this->initClient([], self::generateBasicAuthHeader($user, $user));
 
         /* @var ShoppingList $resource */
         $resource = $this->getReference($resource);
@@ -453,7 +437,7 @@ class ShoppingListControllerTest extends WebTestCase
         $this->requestShoppingListPage($route, $resource->getId());
 
         $response = $this->client->getResponse();
-        $this->assertResponseStatusCodeEquals($response, $status);
+        self::assertResponseStatusCodeEquals($response, $status);
 
         if (200 === $response->getStatusCode()) {
             $content = self::jsonToArray($response->getContent());
@@ -547,21 +531,21 @@ class ShoppingListControllerTest extends WebTestCase
         ];
     }
 
-    public function testViewListForGuest()
+    public function testViewListForGuest(): void
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_view'));
         $response = $this->client->getResponse();
 
-        $this->assertHtmlResponseStatusCodeEquals($response, 200);
+        self::assertHtmlResponseStatusCodeEquals($response, 200);
         self::assertStringContainsString('You do not have available Shopping Lists', $crawler->html());
     }
 
-    public function testUpdateListForGuest()
+    public function testUpdateListForGuest(): void
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_update'));
         $response = $this->client->getResponse();
 
-        $this->assertHtmlResponseStatusCodeEquals($response, 200);
+        self::assertHtmlResponseStatusCodeEquals($response, 200);
         self::assertStringContainsString('You do not have available Shopping Lists', $crawler->html());
     }
 
@@ -572,7 +556,7 @@ class ShoppingListControllerTest extends WebTestCase
     ): Crawler {
         $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
 
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
 
         $crawler = $this->client->request(
             $form->getMethod(),
@@ -587,11 +571,11 @@ class ShoppingListControllerTest extends WebTestCase
             ]
         );
 
-        $expectedMessage = $this->getContainer()
+        $expectedMessage = self::getContainer()
             ->get('translator')
             ->trans('oro.shoppinglist.actions.add_success_message', ['%count%' => count($products)]);
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         self::assertStringContainsString($expectedMessage, $crawler->html());
 
         return $crawler;
@@ -600,23 +584,23 @@ class ShoppingListControllerTest extends WebTestCase
     private function assertShoppingListItemSaved(ShoppingList $shoppingList, string $sku, int $quantity): void
     {
         /** @var LineItem[] $items */
-        $items = $this->getContainer()->get('doctrine')
+        $items = self::getContainer()->get('doctrine')
             ->getRepository(LineItem::class)
             ->findBy(['shoppingList' => $shoppingList], ['id' => 'DESC']);
 
-        $this->assertCount(2, $items);
+        self::assertCount(2, $items);
         $item = $items[0];
 
-        $this->assertEquals($sku, $item->getProductSku());
-        $this->assertEquals($quantity, $item->getQuantity());
+        self::assertEquals($sku, $item->getProductSku());
+        self::assertEquals($quantity, $item->getQuantity());
     }
 
-    private function assertLineItemPriceEquals($expected, array $data)
+    private function assertLineItemPriceEquals($expected, array $data): void
     {
         $expected = (array)$expected;
-        $this->assertSameSize($expected, $data);
+        self::assertSameSize($expected, $data);
         foreach ($data as $value) {
-            $this->assertContains($value['price'], $expected);
+            self::assertContains($value['price'], $expected);
         }
     }
 

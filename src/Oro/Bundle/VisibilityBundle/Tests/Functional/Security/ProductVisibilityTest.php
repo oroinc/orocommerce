@@ -16,31 +16,45 @@ class ProductVisibilityTest extends FrontendWebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    private const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
+    private ?string $initialProductVisibility;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
+            self::generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
         $this->setCurrentWebsite('default');
         $this->loadFixtures([
             LoadProductVisibilityData::class,
             LoadCustomerUserData::class
         ]);
-        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
+
+        $this->initialProductVisibility = self::getConfigManager()->get('oro_visibility.product_visibility');
+
+        self::getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_visibility.product_visibility', $this->initialProductVisibility);
+        $configManager->flush();
+
+        parent::tearDown();
     }
 
     /**
      * @dataProvider visibilityDataProvider
      */
-    public function testVisibility(string $configValue, array $expectedData)
+    public function testVisibility(string $configValue, array $expectedData): void
     {
-        $configManager = self::getConfigManager('global');
-        $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, $configValue);
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_visibility.product_visibility', $configValue);
         $configManager->flush();
+
         foreach ($expectedData as $productSKU => $resultCode) {
             $product = $this->getReference($productSKU);
             $this->client->request(

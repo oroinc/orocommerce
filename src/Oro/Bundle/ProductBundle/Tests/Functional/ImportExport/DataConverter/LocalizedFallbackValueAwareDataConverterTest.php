@@ -105,8 +105,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 
     private const HEADER_FIELD = 'sku';
     private const HEADER_NOT_SET = 'not_set';
-    private $previousHeader;
 
+    private ?string $previousHeader;
     private LocalizedFallbackValueAwareDataConverter $converter;
 
     #[\Override]
@@ -118,13 +118,13 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         $this->storeFieldConfigImportExportHeader(self::HEADER_FIELD);
         $this->setFieldConfigImportExportHeader(self::HEADER_FIELD, null);
 
-        $container = $this->getContainer();
+        $container = self::getContainer();
 
         $this->loadFixtures([LoadLocalizationData::class, LoadOrganization::class]);
 
         $organization = $this->getReference('organization');
         $token = new UsernamePasswordOrganizationToken($this->createMock(AbstractUser::class), 'key', $organization);
-        $this->getContainer()->get('security.token_storage')->setToken($token);
+        $container->get('security.token_storage')->setToken($token);
 
         $this->converter = new LocalizedFallbackValueAwareDataConverter(
             $container->get('oro_entity.helper.field_helper'),
@@ -140,13 +140,13 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
     #[\Override]
     protected function tearDown(): void
     {
-        $this->revertFieldConfigImportExportHeader(self::HEADER_FIELD);
+        $this->setFieldConfigImportExportHeader(self::HEADER_FIELD, $this->previousHeader);
     }
 
     private function setFieldConfigImportExportHeader(string $fieldName, ?string $newHeader): void
     {
         /** @var ConfigModelManager $manager */
-        $manager = $this->getContainer()->get('oro_entity_config.config_model_manager');
+        $manager = self::getContainer()->get('oro_entity_config.config_model_manager');
 
         $fieldConfig = $manager->getFieldModel(Product::class, $fieldName);
         $importExportConfig = $fieldConfig->toArray('importexport');
@@ -159,16 +159,12 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 
         $fieldConfig->fromArray('importexport', $importExportConfig);
 
-        $manager->getEntityManager()->persist($fieldConfig);
-        $manager->getEntityManager()->flush();
+        $entityManager = $manager->getEntityManager();
+        $entityManager->persist($fieldConfig);
+        $entityManager->flush();
 
         $manager->clearCache();
-        $this->getContainer()->get('oro_entity_config.config_manager')->clear();
-    }
-
-    private function revertFieldConfigImportExportHeader(string $fieldName): void
-    {
-        $this->setFieldConfigImportExportHeader($fieldName, $this->previousHeader);
+        self::getContainer()->get('oro_entity_config.config_manager')->clear();
     }
 
     private function storeFieldConfigImportExportHeader(string $fieldName): void
@@ -181,7 +177,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 
     private function loadFieldConfig(string $fieldName): FieldConfigModel
     {
-        $manager = $this->getContainer()->get('oro_entity_config.config_model_manager');
+        /** @var ConfigModelManager $manager */
+        $manager = self::getContainer()->get('oro_entity_config.config_model_manager');
 
         return $manager->getFieldModel(Product::class, $fieldName);
     }
@@ -189,7 +186,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
     /**
      * @dataProvider importDataProvider
      */
-    public function testConvertToImportFormat(array $data, array $expected)
+    public function testConvertToImportFormat(array $data, array $expected): void
     {
         $productClass = Product::class;
 
@@ -225,7 +222,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
     /**
      * @dataProvider exportDataProvider
      */
-    public function testConvertToExportFormat(array $data, array $expected)
+    public function testConvertToExportFormat(array $data, array $expected): void
     {
         $productClass = Product::class;
 

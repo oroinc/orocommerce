@@ -3,9 +3,12 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadCustomerData;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 
 class WebCatalogTreeForVisitorTest extends WebCatalogTreeTestCase
 {
+    private ?array $initialEnabledLocalizations;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -16,9 +19,27 @@ class WebCatalogTreeForVisitorTest extends WebCatalogTreeTestCase
             '@OroWebCatalogBundle/Tests/Functional/ApiFrontend/DataFixtures/content_node.yml'
         ]);
         $this->switchToWebCatalog();
+
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            LoadLocalizationData::getLocalizationIds(self::getContainer())
+        );
+        $configManager->flush();
     }
 
-    public function testGetList()
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->flush();
+
+        parent::tearDown();
+    }
+
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'webcatalogtree']
@@ -26,7 +47,7 @@ class WebCatalogTreeForVisitorTest extends WebCatalogTreeTestCase
         $this->assertResponseContains('cget_content_node.yml', $response);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node11->id)>']
@@ -34,14 +55,14 @@ class WebCatalogTreeForVisitorTest extends WebCatalogTreeTestCase
         $this->assertResponseContains('get_content_node.yml', $response);
     }
 
-    public function testTryToUpdate()
+    public function testTryToUpdate(): void
     {
         $response = $this->patch(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node11->id)>'],
             [
                 'data' => [
-                    'type'       => 'webcatalogtree',
-                    'id'         => '<toString(@catalog1_node11->id)>',
+                    'type' => 'webcatalogtree',
+                    'id' => '<toString(@catalog1_node11->id)>',
                     'attributes' => [
                         'title' => 'Updated Node'
                     ]
@@ -53,13 +74,13 @@ class WebCatalogTreeForVisitorTest extends WebCatalogTreeTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToCreate()
+    public function testTryToCreate(): void
     {
         $response = $this->post(
             ['entity' => 'webcatalogtree'],
             [
                 'data' => [
-                    'type'       => 'webcatalogtree',
+                    'type' => 'webcatalogtree',
                     'attributes' => [
                         'title' => 'New Node'
                     ]
@@ -71,7 +92,7 @@ class WebCatalogTreeForVisitorTest extends WebCatalogTreeTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDelete()
+    public function testTryToDelete(): void
     {
         $response = $this->delete(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node11->id)>'],
@@ -82,7 +103,7 @@ class WebCatalogTreeForVisitorTest extends WebCatalogTreeTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDeleteList()
+    public function testTryToDeleteList(): void
     {
         $response = $this->cdelete(
             ['entity' => 'webcatalogtree'],

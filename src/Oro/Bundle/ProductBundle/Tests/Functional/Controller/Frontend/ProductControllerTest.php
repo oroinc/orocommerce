@@ -3,14 +3,12 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadFrontendCategoryProductData;
-use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
-use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -22,8 +20,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ProductControllerTest extends WebTestCase
 {
-    use ConfigManagerAwareTestTrait;
-
     private const PRODUCT_GRID_NAME = 'frontend-product-search-grid';
 
     /** @var Client */
@@ -34,28 +30,16 @@ class ProductControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
-        $this->getContainer()
-            ->get('oro_website_search.indexer')
-            ->resetIndex();
+        self::getContainer()->get('oro_website_search.indexer')->resetIndex();
 
         $this->loadFixtures([
             LoadLocalizationData::class,
             LoadFrontendCategoryProductData::class,
-            LoadCombinedPriceLists::class,
+            LoadCombinedPriceLists::class
         ]);
-    }
-
-    private function getTranslator(): TranslatorInterface
-    {
-        return self::getContainer()->get('translator');
-    }
-
-    private function getProduct(string $reference): Product
-    {
-        return $this->getReference($reference);
     }
 
     public function testIndexAction(): void
@@ -90,13 +74,6 @@ class ProductControllerTest extends WebTestCase
 
     public function testAutocompleteAction(): void
     {
-        $key = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
-
-        $configManager = self::getConfigManager();
-        $originalValue = $configManager->get($key);
-        $configManager->set($key, true);
-        $configManager->flush();
-
         $this->client->request(
             'GET',
             $this->getUrl('oro_product_frontend_product_search_autocomplete'),
@@ -161,9 +138,6 @@ class ProductControllerTest extends WebTestCase
             ],
             $data['categories']
         );
-
-        $configManager->set($key, $originalValue);
-        $configManager->flush();
     }
 
     public function testIndexActionInSubfolder(): void
@@ -196,7 +170,7 @@ class ProductControllerTest extends WebTestCase
     {
         // default view is DataGridThemeHelper::VIEW_GRID
         $response = $this->client->requestFrontendGrid(self::PRODUCT_GRID_NAME, [], true);
-        $result = $this->getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
         self::assertArrayHasKey('image', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
@@ -207,7 +181,7 @@ class ProductControllerTest extends WebTestCase
             true
         );
 
-        $result = $this->getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
         self::assertArrayHasKey('image', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
@@ -218,7 +192,7 @@ class ProductControllerTest extends WebTestCase
             true
         );
 
-        $result = $this->getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
         self::assertArrayHasKey('image', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
@@ -229,12 +203,12 @@ class ProductControllerTest extends WebTestCase
             true
         );
 
-        $result = $this->getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
         self::assertArrayHasKey('image', $result['data'][0]);
 
         // view saves to session so current view is DataGridThemeHelper::VIEW_TILES
         $response = $this->client->requestFrontendGrid(self::PRODUCT_GRID_NAME, [], true);
-        $result = $this->getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
         self::assertArrayHasKey('image', $result['data'][0]);
     }
 
@@ -250,16 +224,15 @@ class ProductControllerTest extends WebTestCase
             ],
             true
         );
-        $result = $this->getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
         self::assertCount(1, $result['data']);
         self::assertEquals($product->getSku(), $result['data'][0]['sku']);
     }
 
     public function testViewProductWithRequestQuoteAvailable(): void
     {
-        $product = $this->getProduct(LoadProductData::PRODUCT_1);
-
-        self::assertInstanceOf(Product::class, $product);
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
 
         $this->client->request(
             'GET',
@@ -270,8 +243,10 @@ class ProductControllerTest extends WebTestCase
         self::assertStringContainsString($product->getSku(), $result->getContent());
         self::assertStringContainsString($product->getDefaultName()->getString(), $result->getContent());
 
+        /** @var TranslatorInterface $translator */
+        $translator = self::getContainer()->get('translator');
         self::assertStringContainsString(
-            $this->getTranslator()->trans('oro.frontend.product.view.request_a_quote'),
+            $translator->trans('oro.frontend.product.view.request_a_quote'),
             $result->getContent()
         );
     }

@@ -19,7 +19,7 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
 
         $this->loadFixtures([LoadLocalizationData::class]);
 
-        $container = $this->getContainer();
+        $container = self::getContainer();
 
         $this->converter = new PropertyPathTitleDataConverter(
             $container->get('oro_entity.helper.field_helper'),
@@ -32,7 +32,7 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
     /**
      * @dataProvider importDataProvider
      */
-    public function testConvertToImportFormat(array $data, array $expected)
+    public function testConvertToImportFormat(array $data, array $expected): void
     {
         $this->converter->setEntityName(LocalizedFallbackValue::class);
 
@@ -60,7 +60,7 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
     /**
      * @dataProvider exportDataProvider
      */
-    public function testConvertToExportFormat(array $data, array $expected)
+    public function testConvertToExportFormat(array $data, array $expected): void
     {
         $this->converter->setEntityName(LocalizedFallbackValue::class);
 

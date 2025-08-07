@@ -4,7 +4,6 @@ namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Functional\ApiFrontend\Res
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
-use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
@@ -12,11 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class LocalizationTest extends FrontendRestJsonApiTestCase
 {
-    /** @var string[] */
-    private $originalEnabledLocalizations;
-
-    /** @var string */
-    private $originalDefaultLocalization;
+    private ?array $initialEnabledLocalizations;
+    private string $initialDefaultLocalization;
 
     #[\Override]
     protected function setUp(): void
@@ -47,40 +43,26 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
             $em->flush();
         }
 
-        $configManager = $this->getConfigManager();
-        $enabledLocalizationsConfigKey = Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS);
-        $defaultLocalizationConfigKey = Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION);
-        $this->originalEnabledLocalizations = $configManager->get($enabledLocalizationsConfigKey);
-        $this->originalDefaultLocalization = $configManager->get($defaultLocalizationConfigKey);
-        $configManager->set(
-            $enabledLocalizationsConfigKey,
-            [$esLocalizationId, $enLocalizationId]
-        );
-        $configManager->set(
-            $defaultLocalizationConfigKey,
-            $enLocalizationId
-        );
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $this->initialDefaultLocalization = $configManager->get('oro_locale.default_localization');
+        $configManager->set('oro_locale.enabled_localizations', [$esLocalizationId, $enLocalizationId]);
+        $configManager->set('oro_locale.default_localization', $enLocalizationId);
         $configManager->flush();
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        $configManager = $this->getConfigManager();
-        $configManager->set(
-            Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS),
-            $this->originalEnabledLocalizations
-        );
-        $configManager->set(
-            Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION),
-            $this->originalDefaultLocalization
-        );
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->set('oro_locale.default_localization', $this->initialDefaultLocalization);
         $configManager->flush();
 
         parent::tearDown();
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'localizations']
@@ -115,7 +97,7 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $response = $this->get(
             ['entity' => 'localizations', 'id' => '<toString(@en_US->id)>']
@@ -138,7 +120,7 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetForAnotherLocalization()
+    public function testGetForAnotherLocalization(): void
     {
         $response = $this->get(
             ['entity' => 'localizations', 'id' => '<toString(@en_US->id)>'],
@@ -163,7 +145,7 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetDisabled()
+    public function testTryToGetDisabled(): void
     {
         $response = $this->get(
             ['entity' => 'localizations', 'id' => '<toString(@en_CA->id)>'],
@@ -175,7 +157,7 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function testTryToUpdate()
+    public function testTryToUpdate(): void
     {
         $data = [
             'data' => [
@@ -197,7 +179,7 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToCreate()
+    public function testTryToCreate(): void
     {
         $data = [
             'data' => [
@@ -218,7 +200,7 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDelete()
+    public function testTryToDelete(): void
     {
         $response = $this->delete(
             ['entity' => 'localizations', 'id' => '<toString(@en_US->id)>'],
@@ -230,7 +212,7 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDeleteList()
+    public function testTryToDeleteList(): void
     {
         $response = $this->cdelete(
             ['entity' => 'localizations'],
