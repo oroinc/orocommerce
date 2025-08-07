@@ -833,3 +833,11 @@ services:
             - '@translator'
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
+
+    oro_order.migration.enumerable_config_keys_provider:
+        parent: oro_entity_extend.migration.enumerable_config_keys_provider
+        arguments:
+            - [ 'oro_order.frontend_product_visibility', 'oro_order.backend_product_visibility' ]
+            - 'prod_inventory_status'
+        tags:
+            - { name: migration.update_enumerable_system_config }

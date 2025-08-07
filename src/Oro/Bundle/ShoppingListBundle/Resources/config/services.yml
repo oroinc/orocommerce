@@ -911,3 +911,11 @@ services:
         public: true
         arguments:
             - '@security.authorization_checker'
+
+    oro_shopping_list.migration.enumerable_config_keys_provider:
+        parent: oro_entity_extend.migration.enumerable_config_keys_provider
+        arguments:
+            - [ 'oro_shopping_list.backend_product_visibility' ]
+            - 'prod_inventory_status'
+        tags:
+            - { name: migration.update_enumerable_system_config }
