@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -14,17 +13,29 @@ class QuickAddFeatureToggleTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    private ConfigManager $configManager;
+    private ?bool $initialEnableQuickOrderForm;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
-        $this->configManager = self::getConfigManager();
+        $this->initialEnableQuickOrderForm = self::getConfigManager()->get('oro_product.enable_quick_order_form');
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        if ($configManager->get('oro_product.enable_quick_order_form') !== $this->initialEnableQuickOrderForm) {
+            $configManager->set('oro_product.enable_quick_order_form', $this->initialEnableQuickOrderForm);
+            $configManager->flush();
+        }
+
+        parent::tearDown();
     }
 
     /**
@@ -35,8 +46,9 @@ class QuickAddFeatureToggleTest extends WebTestCase
         $this->client->request('GET', $this->getUrl($route));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
 
-        $this->configManager->set('oro_product.enable_quick_order_form', false);
-        $this->configManager->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_product.enable_quick_order_form', false);
+        $configManager->flush();
 
         $this->client->request('GET', $this->getUrl($route));
         $this->assertTrue($this->client->getResponse()->isNotFound());
@@ -56,7 +68,7 @@ class QuickAddFeatureToggleTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         $linksCrawler = $crawler->selectLink('Quick Order');
         $this->assertEquals(1, $linksCrawler->count());
         $this->assertEquals($this->getUrl('oro_product_frontend_quick_add', [], true), $linksCrawler->link()->getUri());
@@ -64,12 +76,13 @@ class QuickAddFeatureToggleTest extends WebTestCase
 
     public function testIndexPageWithoutQuickOrder()
     {
-        $this->configManager->set('oro_product.enable_quick_order_form', false);
-        $this->configManager->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_product.enable_quick_order_form', false);
+        $configManager->flush();
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         $linksCrawler = $crawler->selectLink('Quick Order');
         $this->assertEquals(0, $linksCrawler->count());
     }

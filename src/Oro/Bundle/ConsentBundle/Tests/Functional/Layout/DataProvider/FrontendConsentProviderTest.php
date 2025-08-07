@@ -2,14 +2,16 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Functional\Layout\DataProvider;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Layout\DataProvider\FrontendConsentProvider;
 use Oro\Bundle\ConsentBundle\Model\ConsentData;
-use Oro\Bundle\ConsentBundle\Tests\Functional\DataFixtures\LoadConsentConfigData;
+use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfig;
+use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter;
 use Oro\Bundle\ConsentBundle\Tests\Functional\DataFixtures\LoadConsentsData;
 use Oro\Bundle\ConsentBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\ConsentBundle\Tests\Functional\DataFixtures\LoadScopeData;
-use Oro\Bundle\ConsentBundle\Tests\Functional\Entity\ConsentFeatureTrait;
+use Oro\Bundle\ConsentBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -22,20 +24,93 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
  */
 class FrontendConsentProviderTest extends WebTestCase
 {
-    use ConsentFeatureTrait;
+    use ConfigManagerAwareTestTrait;
 
+    private ?int $initialWebCatalogId;
+    private ?array $initialEnabledConsents;
     private FrontendConsentProvider $provider;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
-        $this->loadFixtures([LoadConsentConfigData::class]);
+        $this->loadFixtures([LoadConsentsData::class]);
+
+        $configManager = self::getConfigManager();
+        $this->initialWebCatalogId = $configManager->get('oro_web_catalog.web_catalog');
+        $this->initialEnabledConsents = $configManager->get('oro_consent.enabled_consents');
+        $configManager->set(
+            'oro_web_catalog.web_catalog',
+            $this->getReference(LoadWebCatalogData::CATALOG_1_USE_IN_ROUTING)->getId()
+        );
+        $configManager->set('oro_consent.enabled_consents', $this->getEnabledConsents());
+        $configManager->set('oro_consent.consent_feature_enabled', true);
+        $configManager->flush();
 
         $this->initFrontendRequest();
-        $this->enableConsentFeature();
 
         $this->provider = self::getContainer()->get('oro_consent.layout.data_provider.consent');
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_web_catalog.web_catalog', $this->initialWebCatalogId);
+        $configManager->set('oro_consent.enabled_consents', $this->initialEnabledConsents);
+        $configManager->set('oro_consent.consent_feature_enabled', false);
+        $configManager->flush();
+    }
+
+    private function getEnabledConsents(): array
+    {
+        $consentConfig = array_map(
+            function ($consentReference) {
+                return new ConsentConfig($this->getReference($consentReference));
+            },
+            [
+                LoadConsentsData::CONSENT_OPTIONAL_NODE1_WITH_CMS,
+                LoadConsentsData::CONSENT_OPTIONAL_NODE1_WITH_SYSTEM,
+                LoadConsentsData::CONSENT_OPTIONAL_NODE2_WITH_CMS,
+                LoadConsentsData::CONSENT_REQUIRED_NODE1_WITH_CMS,
+                LoadConsentsData::CONSENT_REQUIRED_NODE1_WITH_SYSTEM,
+                LoadConsentsData::CONSENT_REQUIRED_NODE2_WITH_CMS,
+                LoadConsentsData::CONSENT_OPTIONAL_WITHOUT_NODE,
+                LoadConsentsData::CONSENT_REQUIRED_WITHOUT_NODE,
+            ]
+        );
+
+        /** @var ConsentConfigConverter $consentConfigConverter */
+        $consentConfigConverter = self::getContainer()->get('oro_consent.system_config.consent_config_converter');
+
+        return $consentConfigConverter->convertBeforeSave($consentConfig);
+    }
+
+    /**
+     * Prepare and set request object to the request stack
+     */
+    private function initFrontendRequest(): void
+    {
+        $request = Request::create('');
+        $request->attributes = new ParameterBag([
+            '_web_content_scope' => $this->getReference(LoadScopeData::CATALOG_1_SCOPE)
+        ]);
+        self::getContainer()->get('request_stack')->push($request);
+    }
+
+    private function assertExpectedConsents(array $consentData, array $expectedConsentReferences): void
+    {
+        $expectedConsentIds = array_map(
+            fn ($consentReference) => $this->getReference($consentReference)->getId(),
+            $expectedConsentReferences
+        );
+        $consentIds = array_map(
+            function (ConsentData $consent) {
+                return $consent->getId();
+            },
+            $consentData
+        );
+        self::assertSame($expectedConsentIds, $consentIds);
     }
 
     /**
@@ -201,38 +276,5 @@ class FrontendConsentProviderTest extends WebTestCase
                 ]
             ],
         ];
-    }
-
-    /**
-     * @param ConsentData[] $consentData
-     * @param array $expectedConsentReferences
-     */
-    private function assertExpectedConsents(array $consentData, array $expectedConsentReferences): void
-    {
-        $expectedConsentIds = array_map(
-            fn ($consentReference) => $this->getReference($consentReference)->getId(),
-            $expectedConsentReferences
-        );
-
-        $consentIds = array_map(
-            static fn (ConsentData $consent) => $consent->getId(),
-            $consentData
-        );
-
-        self::assertSame($expectedConsentIds, $consentIds);
-    }
-
-    /**
-     * Prepare and set request object to the request stack
-     */
-    private function initFrontendRequest(): void
-    {
-        $request = Request::create('');
-        $request->attributes = new ParameterBag(
-            [
-                '_web_content_scope' => $this->getReference(LoadScopeData::CATALOG_1_SCOPE)
-            ]
-        );
-        self::getContainer()->get('request_stack')->push($request);
     }
 }

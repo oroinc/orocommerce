@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
-use Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM\PreviouslyPurchasedFeatureTrait;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 
 /**
@@ -13,29 +12,35 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 class ProductSearchBySkuTest extends FrontendRestJsonApiTestCase
 {
     use WebsiteSearchExtensionTrait;
-    use PreviouslyPurchasedFeatureTrait;
 
     #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
-
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
             '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product.yml',
             '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product_prices.yml'
         ]);
+
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_order.enable_purchase_history', true);
+        $configManager->flush();
+
+        self::reindexProductData();
     }
 
     #[\Override]
-    protected function postFixtureLoad()
+    protected function tearDown(): void
     {
-        parent::postFixtureLoad();
-        $this->enablePreviouslyPurchasedFeature();
-        $this->reindexProductData();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_order.enable_purchase_history', false);
+        $configManager->flush();
+
+        parent::tearDown();
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'productsearch'],
@@ -46,7 +51,7 @@ class ProductSearchBySkuTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_product_search_by_sku.yml', $response);
     }
 
-    public function testIncludeProduct()
+    public function testIncludeProduct(): void
     {
         $response = $this->cget(
             ['entity' => 'productsearch'],
@@ -56,15 +61,15 @@ class ProductSearchBySkuTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseContains(
             [
-                'data'     => [
+                'data' => [
                     [
-                        'type'          => 'productsearch',
-                        'id'            => '<toString(@product1->id)>',
+                        'type' => 'productsearch',
+                        'id' => '<toString(@product1->id)>',
                         'relationships' => [
                             'product' => [
                                 'data' => [
                                     'type' => 'products',
-                                    'id'   => '@product1->sku'
+                                    'id' => '@product1->sku'
                                 ]
                             ]
                         ]
@@ -73,7 +78,7 @@ class ProductSearchBySkuTest extends FrontendRestJsonApiTestCase
                 'included' => [
                     [
                         'type' => 'products',
-                        'id'   => '@product1->sku'
+                        'id' => '@product1->sku'
                     ]
                 ]
             ],

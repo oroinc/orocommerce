@@ -27,7 +27,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 {
     use RolePermissionExtension;
 
-    private ?bool $originalGuestCheckoutOptionValue;
+    private ?bool $initialGuestCheckoutOptionValue;
 
     #[\Override]
     protected function setUp(): void
@@ -39,8 +39,8 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
             '@OroOrderBundle/Tests/Functional/ApiFrontend/DataFixtures/orders.yml',
             LoadPaymentTermData::class
         ]);
-        $this->originalGuestCheckoutOptionValue = $this->getGuestCheckoutOptionValue();
-        if (!$this->originalGuestCheckoutOptionValue) {
+        $this->initialGuestCheckoutOptionValue = $this->getGuestCheckoutOptionValue();
+        if (!$this->initialGuestCheckoutOptionValue) {
             $this->setGuestCheckoutOptionValue(true);
         }
     }
@@ -49,10 +49,10 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
     protected function tearDown(): void
     {
         parent::tearDown();
-        if ($this->getGuestCheckoutOptionValue() !== $this->originalGuestCheckoutOptionValue) {
-            $this->setGuestCheckoutOptionValue($this->originalGuestCheckoutOptionValue);
+        if ($this->getGuestCheckoutOptionValue() !== $this->initialGuestCheckoutOptionValue) {
+            $this->setGuestCheckoutOptionValue($this->initialGuestCheckoutOptionValue);
         }
-        $this->originalGuestCheckoutOptionValue = null;
+        $this->initialGuestCheckoutOptionValue = null;
     }
 
     #[\Override]

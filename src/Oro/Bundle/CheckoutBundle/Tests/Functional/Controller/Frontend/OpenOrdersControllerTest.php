@@ -15,71 +15,77 @@ class OpenOrdersControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(OroLoadCustomerUserData::AUTH_USER, OroLoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(OroLoadCustomerUserData::AUTH_USER, OroLoadCustomerUserData::AUTH_PW)
         );
     }
 
-    public function testOpenOrdersWhenConfigIsOff()
+    public function testOpenOrdersWhenConfigIsOff(): void
     {
-        self::getConfigManager('global')->set('oro_checkout.frontend_show_open_orders', false);
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_checkout.frontend_show_open_orders', false);
+        $configManager->flush();
+        try {
+            $this->client->request('GET', $this->getUrl('oro_checkout_frontend_open_orders'));
+            $result = $this->client->getResponse();
+        } finally {
+            $configManager->set('oro_checkout.frontend_show_open_orders', true);
+            $configManager->flush();
+        }
 
-        $this->client->request('GET', $this->getUrl('oro_checkout_frontend_open_orders'));
-        $result = $this->client->getResponse();
-
-        $this->assertHtmlResponseStatusCodeEquals($result, 404);
-
-        self::getConfigManager('global')->set('oro_checkout.frontend_show_open_orders', true);
+        self::assertHtmlResponseStatusCodeEquals($result, 404);
     }
 
-    public function testOpenOrders()
+    public function testOpenOrders(): void
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_checkout_frontend_open_orders'));
         $result = $this->client->getResponse();
 
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('Open Orders', $crawler->filter('h1.page-title')->html());
-        static::assertStringContainsString('grid-frontend-checkouts-grid', $crawler->html());
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertStringContainsString('Open Orders', $crawler->filter('h1.page-title')->html());
+        self::assertStringContainsString('grid-frontend-checkouts-grid', $crawler->html());
     }
 
-    public function testOpenOrdersIfSeparatePageSettingIsTrue()
+    public function testOpenOrdersIfSeparatePageSettingIsTrue(): void
     {
-        $configManager = self::getConfigManager('global');
-
+        $configManager = self::getConfigManager();
         $configManager->set('oro_checkout.frontend_open_orders_separate_page', true);
         $configManager->flush();
-        // Clears cache in general config manager.
-        self::getConfigManager(null)->reload();
+        try {
+            $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
+            $result = $this->client->getResponse();
+        } finally {
+            $configManager->set('oro_checkout.frontend_open_orders_separate_page', false);
+            $configManager->flush();
+        }
 
-        $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
-        $result = $this->client->getResponse();
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        static::assertStringNotContainsString('grid-frontend-checkouts-grid', $crawler->html());
+        self::assertStringNotContainsString('grid-frontend-checkouts-grid', $crawler->html());
 
         $navigationList = $crawler->filter('ul.primary-menu');
 
-        static::assertStringContainsString('Open Orders', $navigationList->html());
+        self::assertStringContainsString('Open Orders', $navigationList->html());
     }
 
-    public function testOpenOrdersIfSeparatePageSettingIsFalse()
+    public function testOpenOrdersIfSeparatePageSettingIsFalse(): void
     {
-        $configManager = self::getConfigManager('global');
-
+        $configManager = self::getConfigManager();
         $configManager->set('oro_checkout.frontend_open_orders_separate_page', false);
         $configManager->flush();
-        // Clears cache in general config manager.
-        self::getConfigManager(null)->reload();
+        try {
+            $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
+            $result = $this->client->getResponse();
+        } finally {
+            $configManager->set('oro_checkout.frontend_open_orders_separate_page', true);
+            $configManager->flush();
+        }
 
-        $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
-        $result = $this->client->getResponse();
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        static::assertStringContainsString('grid-frontend-checkouts-grid', $crawler->html());
+        self::assertStringContainsString('grid-frontend-checkouts-grid', $crawler->html());
 
         $navigationList = $crawler->filter('ul.primary-menu');
 
-        static::assertStringNotContainsString('Open Orders', $navigationList->html());
+        self::assertStringNotContainsString('Open Orders', $navigationList->html());
     }
 }

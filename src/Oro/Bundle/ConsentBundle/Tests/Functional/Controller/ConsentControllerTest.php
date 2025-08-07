@@ -5,9 +5,8 @@ namespace Oro\Bundle\ConsentBundle\Tests\Functional\Controller;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\ActionBundle\Tests\Functional\OperationAwareTestTrait;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
-use Oro\Bundle\ConsentBundle\Tests\Functional\Entity\ConsentFeatureTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
@@ -15,13 +14,13 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ConsentControllerTest extends WebTestCase
 {
-    use ConsentFeatureTrait;
+    use ConfigManagerAwareTestTrait;
     use OperationAwareTestTrait;
 
     private const CONSENT_TEST_NAME = 'Test Consent';
     private const CONSENT_UPDATED_TEST_NAME = 'Test Updated Consent';
 
-    private ConfigManager $configManager;
+    private ?int $initialWebCatalogId;
 
     #[\Override]
     protected function setUp(): void
@@ -34,18 +33,22 @@ class ConsentControllerTest extends WebTestCase
             LoadContentNodesData::class,
         ]);
 
-        $this->configManager = self::getConfigManager();
-        $this->enableConsentFeature();
+        $configManager = self::getConfigManager();
+        $this->initialWebCatalogId = $configManager->get('oro_web_catalog.web_catalog');
+        $configManager->set('oro_consent.consent_feature_enabled', true);
+        $configManager->flush();
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        $this->disableConsentFeature();
-        $this->unsetDefaultWebCatalog();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_web_catalog.web_catalog', $this->initialWebCatalogId);
+        $configManager->set('oro_consent.consent_feature_enabled', false);
+        $configManager->flush();
     }
 
-    public function testIndex()
+    public function testIndex(): void
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_consent_index'));
         $result = $this->client->getResponse();
@@ -55,9 +58,12 @@ class ConsentControllerTest extends WebTestCase
 
     public function testCreate(): int
     {
-        $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
-        $this->configManager->set('oro_web_catalog.web_catalog', $webCatalog->getId());
-        $this->configManager->flush();
+        $webCatalogId = $this->getReference(LoadWebCatalogData::CATALOG_1)->getId();
+
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_web_catalog.web_catalog', $webCatalogId);
+        $configManager->flush();
+
         $contentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2);
         $crawler = $this->client->request('GET', $this->getUrl('oro_consent_create'));
         $result  = $this->client->getResponse();
@@ -72,10 +78,7 @@ class ConsentControllerTest extends WebTestCase
         unset($formValues['oro_consent']['declinedNotification']);
         $formValues['input_action'] = '{"route":"oro_consent_update","params":{"id":"$id"}}';
 
-        self::assertEquals(
-            $webCatalog->getId(),
-            $form['oro_consent[webcatalog]']->getValue()
-        );
+        self::assertEquals($webCatalogId, $form['oro_consent[webcatalog]']->getValue());
         $this->client->followRedirects();
 
         // Submit form
@@ -124,7 +127,7 @@ class ConsentControllerTest extends WebTestCase
     /**
      * @depends testCreate
      */
-    public function testDelete(int $id)
+    public function testDelete(int $id): void
     {
         $entityClass = Consent::class;
         $operationName = 'DELETE';

@@ -18,21 +18,21 @@ class ContentVariantUrlItemsProviderTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    private ?ContentVariantUrlItemsProvider $contentVariantUrlItemsProvider = null;
+    private ?int $initialWebCatalogId;
+    private ContentVariantUrlItemsProvider $contentVariantUrlItemsProvider;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures([
-            FixtureDir\LoadWebCatalogPageData::class
-        ]);
+        $this->initClient([], self::generateBasicAuthHeader());
+        $this->loadFixtures([FixtureDir\LoadWebCatalogPageData::class]);
 
         $this->contentVariantUrlItemsProvider = self::getContainer()->get(
             'oro_seo.sitemap.provider.content_variant_items_provider'
         );
 
         $configManager = self::getConfigManager();
+        $this->initialWebCatalogId = $configManager->get('oro_web_catalog.web_catalog');
         $configManager->set(
             'oro_web_catalog.web_catalog',
             $this->getReference(LoadWebCatalogData::CATALOG_1)->getId()
@@ -42,7 +42,17 @@ class ContentVariantUrlItemsProviderTest extends WebTestCase
         self::getContainer()->get('oro_web_catalog.cache.root')->clear();
     }
 
-    public function testGetUrlItems()
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_web_catalog.web_catalog', $this->initialWebCatalogId);
+        $configManager->flush();
+        self::getContainer()->get('oro_web_catalog.cache.merged')->clear();
+        self::getContainer()->get('oro_web_catalog.cache.root')->clear();
+    }
+
+    public function testGetUrlItems(): void
     {
         $urlItems = $this->contentVariantUrlItemsProvider->getUrlItems(
             $this->getReference(FixtureDir\LoadWebsiteData::WEBSITE_DEFAULT),
@@ -62,7 +72,7 @@ class ContentVariantUrlItemsProviderTest extends WebTestCase
         ], $actualLocations);
     }
 
-    public function testGetUrlItemsOfRootNode()
+    public function testGetUrlItemsOfRootNode(): void
     {
         $website = $this->getReference(FixtureDir\LoadWebsiteData::WEBSITE_DEFAULT);
 

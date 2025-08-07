@@ -11,7 +11,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUser;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate as EmailTemplateEntity;
 use Oro\Bundle\EmailBundle\Form\Type\EmailType;
-use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -25,11 +24,9 @@ class EmailTemplateRenderingSubscriberTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    private ?array $initialEnabledLocalizations;
     private FormFactoryInterface $formFactory;
-
     private ManagerRegistry $doctrine;
-
-    private array $originalEnabledLocalizations;
 
     #[\Override]
     protected function setUp(): void
@@ -42,6 +39,14 @@ class EmailTemplateRenderingSubscriberTest extends WebTestCase
             '@OroSaleBundle/Tests/Functional/Form/Extension/DataFixtures/EmailTemplateRenderingSubscriber.quote.yml',
         ]);
 
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            array_merge($this->initialEnabledLocalizations, [$this->getReference('localization_de')->getId()])
+        );
+        $configManager->flush();
+
         $this->loginUser(self::AUTH_USER);
         $this->updateUserSecurityToken(self::AUTH_USER);
 
@@ -53,18 +58,6 @@ class EmailTemplateRenderingSubscriberTest extends WebTestCase
 
         $this->doctrine = self::getContainer()->get('doctrine');
         $this->doctrine->getManagerForClass(CustomerUser::class)->flush();
-
-        $localizationDe = $this->getReference('localization_de');
-
-        $configManager = self::getConfigManager();
-        $enabledLocalizationsConfigKey = Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS);
-
-        $this->originalEnabledLocalizations = $configManager->get($enabledLocalizationsConfigKey);
-        $configManager->set(
-            $enabledLocalizationsConfigKey,
-            array_merge($this->originalEnabledLocalizations, [$localizationDe->getId()])
-        );
-        $configManager->flush();
     }
 
     #[\Override]
@@ -74,10 +67,7 @@ class EmailTemplateRenderingSubscriberTest extends WebTestCase
         $this->switchCustomerUserLocalization($quote->getCustomerUser(), null);
 
         $configManager = self::getConfigManager();
-        $configManager->set(
-            Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS),
-            $this->originalEnabledLocalizations
-        );
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
         $configManager->flush();
     }
 

@@ -9,7 +9,6 @@ use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
-use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
@@ -19,18 +18,18 @@ class ProductAutocompleteProviderTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    /** @var ProductAutocompleteProvider */
-    private $provider;
+    private ?bool $initialAllowPartialSearch;
+    private ProductAutocompleteProvider $provider;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
-        $container = $this->getContainer();
+        $container = self::getContainer();
         $container->get('oro_website_search.indexer')->resetIndex();
 
         $this->loadFixtures([
@@ -38,6 +37,11 @@ class ProductAutocompleteProviderTest extends WebTestCase
             LoadFrontendCategoryProductData::class,
             LoadCombinedPriceLists::class,
         ]);
+
+        $configManager = self::getConfigManager();
+        $this->initialAllowPartialSearch = $configManager->get('oro_product.allow_partial_product_search');
+        $configManager->set('oro_product.allow_partial_product_search', true);
+        $configManager->flush();
 
         $user = $container->get('oro_customer_user.manager')->findUserByEmail(LoadCustomerUserData::AUTH_USER);
         $token = new UsernamePasswordOrganizationToken($user, 'main', $user->getOrganization());
@@ -51,20 +55,17 @@ class ProductAutocompleteProviderTest extends WebTestCase
     #[\Override]
     protected function tearDown(): void
     {
-        $container = $this->getContainer();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_product.allow_partial_product_search', $this->initialAllowPartialSearch);
+        $configManager->flush();
+
+        $container = self::getContainer();
         $container->get('oro_frontend.request.frontend_helper')->resetRequestEmulation();
         $container->get('security.token_storage')->setToken(null);
     }
 
     public function testGetAutocompleteData(): void
     {
-        $key = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
-
-        $configManager = self::getConfigManager('global');
-        $originalValue = $configManager->get($key);
-        $configManager->set($key, true);
-        $configManager->flush();
-
         $data = $this->provider->getAutocompleteData('продукт');
 
         $this->assertArrayHasKey('total_count', $data);
@@ -120,8 +121,5 @@ class ProductAutocompleteProviderTest extends WebTestCase
             ],
             $data['categories']
         );
-
-        $configManager->set($key, $originalValue);
-        $configManager->flush();
     }
 }

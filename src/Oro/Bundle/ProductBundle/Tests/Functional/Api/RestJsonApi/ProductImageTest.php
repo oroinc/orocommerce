@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\RestJsonApi;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\AttachmentBundle\Tests\Functional\WebpConfigurationTrait;
 use Oro\Bundle\AttachmentBundle\Tools\WebpConfiguration;
-use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -16,7 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProductImageTest extends RestJsonApiTestCase
 {
-    use ConfigManagerAwareTestTrait;
     use WebpConfigurationTrait;
 
     #[\Override]
@@ -89,7 +87,7 @@ class ProductImageTest extends RestJsonApiTestCase
         return $product->getImages()->first();
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'productimages'],
@@ -99,7 +97,7 @@ class ProductImageTest extends RestJsonApiTestCase
         $this->assertResponseContains('cget_product_image_filter_by_product.yml', $response);
     }
 
-    public function testGetWithIncludedImage()
+    public function testGetWithIncludedImage(): void
     {
         $productImage = $this->getProductImage(LoadProductData::PRODUCT_1);
         $productImageId = $productImage->getId();
@@ -117,7 +115,7 @@ class ProductImageTest extends RestJsonApiTestCase
         $this->assertResponseContains($expectedData, $response);
     }
 
-    public function testGetWithIncludedImageAndOnlyFilePathIsRequested()
+    public function testGetWithIncludedImageAndOnlyFilePathIsRequested(): void
     {
         $productImage = $this->getProductImage(LoadProductData::PRODUCT_1);
         $productImageId = $productImage->getId();
@@ -135,7 +133,7 @@ class ProductImageTest extends RestJsonApiTestCase
         $this->assertResponseContains($expectedData, $response);
     }
 
-    public function testGetWithIncludedImageAndOnlyFilePathIsRequestedAndOriginalNamesEnabled()
+    public function testGetWithIncludedImageAndOnlyFilePathIsRequestedAndOriginalNamesEnabled(): void
     {
         $configManager = self::getConfigManager();
         $configManager->set('oro_attachment.original_file_names_enabled', false);
@@ -158,7 +156,7 @@ class ProductImageTest extends RestJsonApiTestCase
         $this->assertResponseContains($expectedData, $response);
     }
 
-    public function testGetWithIncludedImageAndWebpDisabled()
+    public function testGetWithIncludedImageAndWebpDisabled(): void
     {
         self::setWebpStrategy(WebpConfiguration::DISABLED);
 
@@ -182,7 +180,7 @@ class ProductImageTest extends RestJsonApiTestCase
         $this->assertResponseContains($expectedData, $response);
     }
 
-    public function testGetWithIncludedImageAndWebpEnabledForAll()
+    public function testGetWithIncludedImageAndWebpEnabledForAll(): void
     {
         self::setWebpStrategy(WebpConfiguration::ENABLED_FOR_ALL);
 
@@ -202,7 +200,7 @@ class ProductImageTest extends RestJsonApiTestCase
         $this->assertResponseContains($expectedData, $response);
     }
 
-    public function testGetProductImageFile()
+    public function testGetProductImageFile(): void
     {
         $fileId = $this->getProductImage(LoadProductData::PRODUCT_1)->getImage()->getId();
 
@@ -219,7 +217,7 @@ class ProductImageTest extends RestJsonApiTestCase
         $this->assertResponseContains($expectedData, $response);
     }
 
-    public function testDeleteAction()
+    public function testDeleteAction(): void
     {
         $productImageId = $this->getProductImage(LoadProductData::PRODUCT_1)->getId();
 

@@ -13,7 +13,7 @@ class WYSIWYGTypeExtensionTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    private ?string $originalLayoutThemeName;
+    private ?string $initialLayoutThemeName;
 
     #[\Override]
     protected function setUp(): void
@@ -23,16 +23,20 @@ class WYSIWYGTypeExtensionTest extends WebTestCase
         $this->updateUserSecurityToken(self::AUTH_USER);
         // Emulate request processing
         $this->emulateRequest();
-        $this->originalLayoutThemeName = self::getConfigManager(null)->get('oro_frontend.frontend_theme');
-        self::getConfigManager(null)->set('oro_frontend.frontend_theme', $this->getActualThemeName());
-        self::getConfigManager(null)->flush();
+
+        $configManager = self::getConfigManager(null);
+        $this->initialLayoutThemeName = $configManager->get('oro_frontend.frontend_theme');
+        $configManager->set('oro_frontend.frontend_theme', $this->getActualThemeName());
+        $configManager->flush();
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        self::getConfigManager(null)->set('oro_frontend.frontend_theme', $this->originalLayoutThemeName);
-        self::getConfigManager(null)->flush();
+        $configManager = self::getConfigManager(null);
+        $configManager->set('oro_frontend.frontend_theme', $this->initialLayoutThemeName);
+        $configManager->flush();
+        $configManager->reload();
     }
 
     public function testFinishView(): void

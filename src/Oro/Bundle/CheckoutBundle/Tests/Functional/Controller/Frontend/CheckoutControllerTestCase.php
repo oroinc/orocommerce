@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -57,7 +56,6 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     protected const TRANSITION_BACK_TO_BILLING_ADDRESS = 'back_to_billing_address';
     protected const TRANSITION_BACK_TO_SHIPPING_ADDRESS = 'back_to_shipping_address';
 
-    protected ManagerRegistry $registry;
     protected static ?string $checkoutUrl = null;
 
     #[\Override]
@@ -65,7 +63,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(TestCustomerUserData::AUTH_USER, TestCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(TestCustomerUserData::AUTH_USER, TestCustomerUserData::AUTH_PW)
         );
         $this->loadFixtures(array_merge($this->getInventoryFixtures(), [
             LoadCustomerUserData::class,
@@ -75,7 +73,6 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadCombinedProductPrices::class,
             LoadShippingMethodsConfigsRulesWithConfigs::class,
         ], $this->getPaymentFixtures()));
-        $this->registry = self::getContainer()->get('doctrine');
     }
 
     protected function getPaymentFixtures(): array
@@ -91,7 +88,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         return [UpdateInventoryLevelsQuantities::class];
     }
 
-    protected function startCheckout(ShoppingList $shoppingList)
+    protected function startCheckout(ShoppingList $shoppingList): void
     {
         $this->startCheckoutByData($this->getCheckoutData($shoppingList));
     }
@@ -195,12 +192,12 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         );
     }
 
-    protected function startCheckoutByData(array $data)
+    protected function startCheckoutByData(array $data): void
     {
         $userManager = self::getContainer()->get('oro_customer_user.manager');
         $this->setCurrentWebsite('default');
         /** @var CustomerUser $user */
-        $user = $this->registry
+        $user = self::getContainer()->get('doctrine')
             ->getRepository(CustomerUser::class)
             ->findOneBy(['username' => TestCustomerUserData::AUTH_USER]);
         $user->setCustomer($this->getReference('customer.level_1'));

@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
 {
-    private ?int $originalShoppingListLimit;
+    private ?int $initialShoppingListLimit;
 
     #[\Override]
     protected function setUp(): void
@@ -37,17 +37,16 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
             );
         }
 
-        $this->originalShoppingListLimit = $this->getShoppingListLimit();
+        $this->initialShoppingListLimit = $this->getShoppingListLimit();
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        parent::tearDown();
-        if ($this->getShoppingListLimit() !== $this->originalShoppingListLimit) {
-            $this->setShoppingListLimit($this->originalShoppingListLimit);
+        if ($this->getShoppingListLimit() !== $this->initialShoppingListLimit) {
+            $this->setShoppingListLimit($this->initialShoppingListLimit);
         }
-        $this->originalShoppingListLimit = null;
+        parent::tearDown();
     }
 
     private function getShoppingListLimit(): int

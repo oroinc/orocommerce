@@ -25,16 +25,19 @@ class ExportControllerTest extends WebTestCase
             [],
             self::generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
-
         $this->loadFixtures([LoadCustomerUserData::class]);
 
-        self::getConfigManager()->set('oro_product.product_data_export_enabled', true);
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_product.product_data_export_enabled', true);
+        $configManager->flush();
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        self::getConfigManager()->set('oro_product.product_data_export_enabled', false);
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_product.product_data_export_enabled', false);
+        $configManager->flush();
 
         parent::tearDown();
     }

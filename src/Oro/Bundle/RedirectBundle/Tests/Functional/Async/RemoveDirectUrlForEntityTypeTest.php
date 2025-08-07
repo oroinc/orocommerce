@@ -4,6 +4,8 @@ namespace Oro\Bundle\RedirectBundle\Tests\Functional\Async;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\JobsAwareTestTrait;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Brand;
@@ -22,9 +24,12 @@ use Oro\Component\MessageQueue\Job\Job;
  */
 class RemoveDirectUrlForEntityTypeTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
     use MessageQueueExtension;
     use JobsAwareTestTrait;
     use SlugAwareTestTrait;
+
+    private ?array $initialEnabledLocalizations;
 
     #[\Override]
     protected function setUp(): void
@@ -32,8 +37,24 @@ class RemoveDirectUrlForEntityTypeTest extends WebTestCase
         $this->initClient();
         $this->loadFixtures([
             LoadBrandData::class,
-            LoadSlugsData::class,
+            LoadSlugsData::class
         ]);
+
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            LoadLocalizationData::getLocalizationIds(self::getContainer())
+        );
+        $configManager->flush();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->flush();
     }
 
     public function testProcess(): void
@@ -54,9 +75,7 @@ class RemoveDirectUrlForEntityTypeTest extends WebTestCase
         self::assertProcessedMessageStatus(MessageProcessorInterface::ACK, $sentMessage);
         self::assertProcessedMessageProcessor('oro_redirect.async.direct_url_remove', $sentMessage);
 
-        $page1 = self::getContainer()
-            ->get('doctrine')
-            ->getManagerForClass(Page::class)
+        $page1 = self::getContainer()->get('doctrine')->getManagerForClass(Page::class)
             ->find(Page::class, $page1->getId());
 
         self::assertCount(0, $page1->getSlugs());
@@ -95,9 +114,7 @@ class RemoveDirectUrlForEntityTypeTest extends WebTestCase
         self::assertProcessedMessageStatus(MessageProcessorInterface::ACK, $sentMessage);
         self::assertProcessedMessageProcessor('oro_redirect.async.direct_url_remove', $sentMessage);
 
-        $brand = self::getContainer()
-            ->get('doctrine')
-            ->getManagerForClass(Brand::class)
+        $brand = self::getContainer()->get('doctrine')->getManagerForClass(Brand::class)
             ->find(Brand::class, $brand->getId());
 
         self::assertCount(0, $brand->getSlugs());

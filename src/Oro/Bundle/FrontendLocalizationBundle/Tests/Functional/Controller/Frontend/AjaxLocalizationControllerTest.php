@@ -4,29 +4,56 @@ namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Functional\Controller\Fron
 
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadDisabledLocalizationData;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TranslationBundle\Entity\Language;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @dbIsolationPerTest
+ */
 class AjaxLocalizationControllerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
+    private ?array $initialEnabledLocalizations;
+
     #[\Override]
     protected function setUp(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-
         $this->loadFixtures([
             LoadSlugsData::class,
             LoadDisabledLocalizationData::class
         ]);
+
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            array_diff(
+                LoadLocalizationData::getLocalizationIds(self::getContainer()),
+                LoadDisabledLocalizationData::getLocalizationIds(self::getContainer())
+            )
+        );
+        $configManager->flush();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->flush();
     }
 
     /**
@@ -39,7 +66,7 @@ class AjaxLocalizationControllerTest extends WebTestCase
         ?array $queryParameters,
         array $serverParameters,
         array $expectedResult,
-        string $current
+        ?string $current
     ): void {
         $localization = $this->getLocalizationByCode($code);
         if ($routeParameters) {
@@ -63,22 +90,22 @@ class AjaxLocalizationControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
 
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
-
-        $data = json_decode($result->getContent(), true);
-        $this->assertSame($expectedResult, $data);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertSame($expectedResult, self::jsonToArray($result->getContent()));
 
         // Do not access localization from UserLocalizationManager service directly,
         // it has local cache and will reflect after client request.
-        $website = $this->client->getContainer()->get('oro_website.manager')->getDefaultWebsite();
-        $tokenStorage = $this->getContainer()->get('oro_security.token_accessor');
+        $website = self::getContainer()->get('oro_website.manager')->getDefaultWebsite();
+        $tokenStorage = self::getContainer()->get('oro_security.token_accessor');
         /** @var CustomerUser $user */
         $user = $tokenStorage->getUser();
         $currentLocalization = $user->getWebsiteSettings($website)?->getLocalization();
-
-        $this->assertNotEmpty($localization);
-        $this->assertNotEmpty($currentLocalization);
-        $this->assertEquals($current, $currentLocalization->getFormattingCode());
+        if (null === $current) {
+            self::assertNull($currentLocalization);
+        } else {
+            self::assertNotEmpty($currentLocalization);
+            self::assertEquals($current, $currentLocalization->getFormattingCode());
+        }
     }
 
     public function setCurrentLocalizationProvider(): array
@@ -121,7 +148,7 @@ class AjaxLocalizationControllerTest extends WebTestCase
                 'queryParameters' => null,
                 'serverParameters' => [],
                 'expectedResult' => ['success' => false],
-                'current' => 'en_CA'
+                'current' => null
             ],
             'Set to en and redirect to root when site installed in sub-directory' => [
                 'code' => 'en',
@@ -159,13 +186,9 @@ class AjaxLocalizationControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param string $code
-     * @return Localization
-     */
-    protected function getLocalizationByCode($code)
+    private function getLocalizationByCode(string $code): Localization
     {
-        $registry = $this->getContainer()->get('doctrine');
+        $registry = self::getContainer()->get('doctrine');
 
         $language = $registry->getManagerForClass(Language::class)
             ->getRepository(Language::class)

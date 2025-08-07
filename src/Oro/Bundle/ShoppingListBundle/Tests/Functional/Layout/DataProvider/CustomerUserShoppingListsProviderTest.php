@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Layout\DataProvider;
 
-use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListUserACLData;
@@ -10,20 +9,14 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CustomerUserShoppingListsProviderTest extends WebTestCase
 {
-    use ConfigManagerAwareTestTrait;
-
     #[\Override]
     protected function setUp(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $this->loadFixtures(
-            [
-                LoadShoppingListACLData::class,
-            ]
-        );
+        $this->loadFixtures([LoadShoppingListACLData::class]);
     }
 
     public function testGetCurrent(): void
@@ -31,7 +24,7 @@ class CustomerUserShoppingListsProviderTest extends WebTestCase
         $this->loginUser(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP);
         $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 
-        $shoppingList = $this->getContainer()
+        $shoppingList = self::getContainer()
             ->get('oro_shopping_list.layout.data_provider.customer_user_shopping_lists')
             ->getCurrent();
 
@@ -46,7 +39,7 @@ class CustomerUserShoppingListsProviderTest extends WebTestCase
         $this->loginUser(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP);
         $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 
-        $provider = $this->getContainer()
+        $provider = self::getContainer()
             ->get('oro_shopping_list.layout.data_provider.customer_user_shopping_lists');
 
         $this->assertTrue(
@@ -65,7 +58,7 @@ class CustomerUserShoppingListsProviderTest extends WebTestCase
         $this->loginUser($user);
         $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 
-        $actualShoppingLists = $this->getContainer()
+        $actualShoppingLists = self::getContainer()
             ->get('oro_shopping_list.layout.data_provider.customer_user_shopping_lists')
             ->getShoppingLists();
 
@@ -122,14 +115,10 @@ class CustomerUserShoppingListsProviderTest extends WebTestCase
      */
     public function testGetShoppingListsForWidgetWhenNotShowAll(array $shoppingLists, string $user): void
     {
-        $configManager = self::getConfigManager('global');
-        $configManager->set('oro_shopping_list.show_all_in_shopping_list_widget', false);
-        $configManager->flush();
-
         $this->loginUser($user);
         $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 
-        $actualShoppingLists = $this->getContainer()
+        $actualShoppingLists = self::getContainer()
             ->get('oro_shopping_list.layout.data_provider.customer_user_shopping_lists')
             ->getShoppingListsForWidget();
 

@@ -25,10 +25,11 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
  */
 class ProductCollectionsIndexCronCommandTest extends WebTestCase
 {
-    use MessageQueueExtension;
     use ConfigManagerAwareTestTrait;
+    use MessageQueueExtension;
 
     private string $prevVariantClass;
+    private ?int $initialWebCatalogId;
 
     #[\Override]
     protected function setUp(): void
@@ -40,6 +41,8 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         $metadata->name = TestContentVariant::class;
 
         $this->loadFixtures([LoadContentVariantSegmentsWithRelationsData::class]);
+
+        $this->initialWebCatalogId = self::getConfigManager()->get('oro_web_catalog.web_catalog');
     }
 
     #[\Override]
@@ -47,12 +50,18 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
     {
         $metadata = $this->getContentVariantMetadata();
         $metadata->name = $this->prevVariantClass;
+
+        if (false !== $this->initialWebCatalogId) {
+            $configManager = self::getConfigManager();
+            $configManager->set('oro_web_catalog.web_catalog', $this->initialWebCatalogId);
+            $configManager->flush();
+        }
     }
 
     /**
      * @dataProvider partialConfigDataProvider
      */
-    public function testCommandWhenWebCatalogIsUsed(bool $isPartialConfig)
+    public function testCommandWhenWebCatalogIsUsed(bool $isPartialConfig): void
     {
         $configManager = self::getConfigManager();
         $configManager->set(
@@ -65,7 +74,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         );
         $configManager->flush();
 
-        self::runCommand('oro:cron:product-collections:index', []);
+        self::runCommand('oro:cron:product-collections:index');
 
         $isFullReindex = false === $isPartialConfig;
         $rootJob = $this->getRootJob($isFullReindex);
@@ -123,7 +132,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         ];
     }
 
-    public function testCommandWhenWebCatalogIsUsedPartialOptionPassed()
+    public function testCommandWhenWebCatalogIsUsedPartialOptionPassed(): void
     {
         $configManager = self::getConfigManager();
         $configManager->set(
@@ -185,13 +194,13 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
     /**
      * @dataProvider partialConfigDataWithCommandResponseDataProvider
      */
-    public function testTryRunCronCommandBeforePreviousJobComplete(bool $isPartial, string $expectedResponse)
+    public function testTryRunCronCommandBeforePreviousJobComplete(bool $isPartial, string $expectedResponse): void
     {
         $this->testCommandWhenWebCatalogIsUsed($isPartial);
 
         self::getMessageCollector()->clear();
 
-        $response = self::runCommand('oro:cron:product-collections:index', []);
+        $response = self::runCommand('oro:cron:product-collections:index');
         self::assertEquals($expectedResponse, $response);
         self::assertMessagesEmpty(ReindexProductCollectionBySegmentTopic::NAME);
     }
@@ -212,17 +221,17 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         ];
     }
 
-    public function testCommandWhenWebCatalogIsNotUsed()
+    public function testCommandWhenWebCatalogIsNotUsed(): void
     {
-        self::runCommand('oro:cron:product-collections:index', []);
+        self::runCommand('oro:cron:product-collections:index');
 
         self::assertMessagesEmpty(ReindexProductCollectionBySegmentTopic::NAME);
     }
 
-    public function testGetDefaultDefinitions()
+    public function testGetDefaultDefinitions(): void
     {
         /** @var EntityRepository $repo */
-        $repo = $this->getContainer()->get('doctrine')->getRepository(Schedule::class);
+        $repo = self::getContainer()->get('doctrine')->getRepository(Schedule::class);
         /** @var Schedule $commandSchedule */
         $commandSchedule = $repo->findOneBy(['command' => 'oro:cron:product-collections:index']);
         self::assertNotEmpty($commandSchedule);
@@ -231,7 +240,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         $configManager = self::getConfigManager();
         $configManager->set(ProductCollectionsScheduleConfigurationListener::CONFIG_FIELD, '0 0 0 0 *');
         $configManager->flush();
-        self::runCommand('oro:cron:definitions:load', []);
+        self::runCommand('oro:cron:definitions:load');
 
         $commandSchedule = $repo->findOneBy(['command' => 'oro:cron:product-collections:index']);
         self::assertSame('0 0 0 0 *', $commandSchedule->getDefinition());
@@ -239,7 +248,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
 
     private function getContentVariantMetadata(): ClassMetadata
     {
-        return $this->getContainer()->get('doctrine')
+        return self::getContainer()->get('doctrine')
             ->getManagerForClass(Segment::class)
             ->getClassMetadata(ContentVariantInterface::class);
     }

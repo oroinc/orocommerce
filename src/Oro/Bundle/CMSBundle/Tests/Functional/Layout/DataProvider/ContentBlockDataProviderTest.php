@@ -17,7 +17,6 @@ use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
-use Oro\Bundle\ThemeBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ThemeBundle\Entity\ThemeConfiguration as ThemeConfigurationEntity;
 
 /**
@@ -27,8 +26,9 @@ class ContentBlockDataProviderTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    private ContentBlockDataProvider $provider;
+    private ?int $initialThemeConfig;
     private ?string $optionKey = null;
+    private ContentBlockDataProvider $provider;
 
     #[\Override]
     protected function setUp(): void
@@ -40,23 +40,29 @@ class ContentBlockDataProviderTest extends WebTestCase
             LoadCustomerVisitors::class,
             LoadThemeConfigurationData::class,
         ]);
-        $this->provider = self::getContainer()->get('oro_cms.provider.content_block_provider');
+
+        $this->initialThemeConfig = self::getConfigManager()->get('oro_theme.theme_configuration');
         $this->optionKey = ThemeConfiguration::buildOptionKey('header', 'promotional_content');
+
+        $this->provider = self::getContainer()->get('oro_cms.provider.content_block_provider');
     }
 
     #[\Override]
     protected function tearDown(): void
     {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_theme.theme_configuration', $this->initialThemeConfig);
+        $configManager->flush();
+
         self::getContainer()->get('security.token_storage')->setToken(null);
         self::getContainer()->get(FrontendHelper::class)->resetRequestEmulation();
-        parent::tearDown();
     }
 
     private function getThemeConfiguration(): ThemeConfigurationEntity
     {
         return $this->getThemeConfigurationEntityManager()->find(
             ThemeConfigurationEntity::class,
-            self::getConfigManager()->get(Configuration::getConfigKeyByName(Configuration::THEME_CONFIGURATION))
+            self::getConfigManager()->get('oro_theme.theme_configuration')
         );
     }
 
@@ -127,7 +133,7 @@ class ContentBlockDataProviderTest extends WebTestCase
 
         $configManager = self::getConfigManager();
         $configManager->set(
-            Configuration::getConfigKeyByName(Configuration::THEME_CONFIGURATION),
+            'oro_theme.theme_configuration',
             $this->getReference(LoadThemeConfigurationData::THEME_CONFIGURATION_1)->getId()
         );
         $configManager->flush();

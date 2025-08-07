@@ -5,6 +5,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -14,6 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CategoryTest extends FrontendRestJsonApiTestCase
 {
+    private ?array $initialEnabledLocalizations;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -22,9 +25,27 @@ class CategoryTest extends FrontendRestJsonApiTestCase
             LoadAdminCustomerUserData::class,
             '@OroCatalogBundle/Tests/Functional/ApiFrontend/DataFixtures/category.yml'
         ]);
+
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            LoadLocalizationData::getLocalizationIds(self::getContainer())
+        );
+        $configManager->flush();
     }
 
-    public function testGetList()
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->flush();
+
+        parent::tearDown();
+    }
+
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogcategories']
@@ -33,7 +54,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_category.yml', $response);
     }
 
-    public function testGetListFilterBySeveralIds()
+    public function testGetListFilterBySeveralIds(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogcategories'],
@@ -44,15 +65,15 @@ class CategoryTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'mastercatalogcategories',
-                        'id'         => '<toString(@category1->id)>',
+                        'type' => 'mastercatalogcategories',
+                        'id' => '<toString(@category1->id)>',
                         'attributes' => [
                             'title' => 'Category 1'
                         ]
                     ],
                     [
-                        'type'       => 'mastercatalogcategories',
-                        'id'         => '<toString(@category2->id)>',
+                        'type' => 'mastercatalogcategories',
+                        'id' => '<toString(@category2->id)>',
                         'attributes' => [
                             'title' => 'Category 2'
                         ]
@@ -63,7 +84,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $response = $this->get(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category1->id)>']
@@ -78,7 +99,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         self::assertArrayNotHasKey('largeImage', $responseContent['data']['relationships']);
     }
 
-    public function testTryToGetInvisibleCategory()
+    public function testTryToGetInvisibleCategory(): void
     {
         $response = $this->get(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category3->id)>'],
@@ -88,7 +109,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'No access to the entity.'
             ],
             $response,
@@ -96,7 +117,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetCategoryFromAnotherOrganization()
+    public function testTryToGetCategoryFromAnotherOrganization(): void
     {
         $category = $this->getEntityManager()
             ->getRepository(Category::class)
@@ -113,7 +134,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'No access to the entity.'
             ],
             $response,
@@ -121,7 +142,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetUrlsForAnotherLocalization()
+    public function testGetUrlsForAnotherLocalization(): void
     {
         $response = $this->get(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category1->id)>'],
@@ -132,10 +153,10 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'mastercatalogcategories',
-                    'id'         => '<toString(@category1->id)>',
+                    'type' => 'mastercatalogcategories',
+                    'id' => '<toString(@category1->id)>',
                     'attributes' => [
-                        'url'  => '/category1_slug_es',
+                        'url' => '/category1_slug_es',
                         'urls' => [
                             ['url' => '/category1_slug_default', 'localizationId' => '<toString(@en_US->id)>'],
                             ['url' => '/category1_slug_en_CA', 'localizationId' => '<toString(@en_CA->id)>']
@@ -147,7 +168,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetOnlyCategoryPathRelationship()
+    public function testGetOnlyCategoryPathRelationship(): void
     {
         $response = $this->get(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category1_1_1->id)>'],
@@ -157,8 +178,8 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'          => 'mastercatalogcategories',
-                    'id'            => '<toString(@category1_1_1->id)>',
+                    'type' => 'mastercatalogcategories',
+                    'id' => '<toString(@category1_1_1->id)>',
                     'relationships' => [
                         'categoryPath' => [
                             'data' => [
@@ -191,7 +212,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetCategoryPathRelationshipWithIncludeFilter()
+    public function testGetCategoryPathRelationshipWithIncludeFilter(): void
     {
         $response = $this->get(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category1_1_1->id)>'],
@@ -200,10 +221,10 @@ class CategoryTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseContains(
             [
-                'data'     => [
-                    'type'          => 'mastercatalogcategories',
-                    'id'            => '<toString(@category1_1_1->id)>',
-                    'attributes'    => [
+                'data' => [
+                    'type' => 'mastercatalogcategories',
+                    'id' => '<toString(@category1_1_1->id)>',
+                    'attributes' => [
                         'title' => 'Category 1_1_1'
                     ],
                     'relationships' => [
@@ -218,9 +239,9 @@ class CategoryTest extends FrontendRestJsonApiTestCase
                 ],
                 'included' => [
                     [
-                        'type'          => 'mastercatalogcategories',
-                        'id'            => '<toString(@root_category->id)>',
-                        'attributes'    => [
+                        'type' => 'mastercatalogcategories',
+                        'id' => '<toString(@root_category->id)>',
+                        'attributes' => [
                             'title' => 'All Products'
                         ],
                         'relationships' => [
@@ -230,9 +251,9 @@ class CategoryTest extends FrontendRestJsonApiTestCase
                         ]
                     ],
                     [
-                        'type'          => 'mastercatalogcategories',
-                        'id'            => '<toString(@category1->id)>',
-                        'attributes'    => [
+                        'type' => 'mastercatalogcategories',
+                        'id' => '<toString(@category1->id)>',
+                        'attributes' => [
                             'title' => 'Category 1'
                         ],
                         'relationships' => [
@@ -244,9 +265,9 @@ class CategoryTest extends FrontendRestJsonApiTestCase
                         ]
                     ],
                     [
-                        'type'          => 'mastercatalogcategories',
-                        'id'            => '<toString(@category1_1->id)>',
-                        'attributes'    => [
+                        'type' => 'mastercatalogcategories',
+                        'id' => '<toString(@category1_1->id)>',
+                        'attributes' => [
                             'title' => 'Category 1_1'
                         ],
                         'relationships' => [
@@ -264,12 +285,12 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdate()
+    public function testTryToUpdate(): void
     {
         $data = [
             'data' => [
-                'type'       => 'mastercatalogcategories',
-                'id'         => '<toString(@category1->id)>',
+                'type' => 'mastercatalogcategories',
+                'id' => '<toString(@category1->id)>',
                 'attributes' => [
                     'title' => 'Updated Category'
                 ]
@@ -286,11 +307,11 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToCreate()
+    public function testTryToCreate(): void
     {
         $data = [
             'data' => [
-                'type'       => 'mastercatalogcategories',
+                'type' => 'mastercatalogcategories',
                 'attributes' => [
                     'title' => 'New Category'
                 ]
@@ -307,7 +328,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDelete()
+    public function testTryToDelete(): void
     {
         $response = $this->delete(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category1->id)>'],
@@ -319,7 +340,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDeleteList()
+    public function testTryToDeleteList(): void
     {
         $response = $this->cdelete(
             ['entity' => 'mastercatalogcategories'],
@@ -331,7 +352,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToGetSubresourceForProducts()
+    public function testTryToGetSubresourceForProducts(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category1->id)>', 'association' => 'products'],
@@ -342,7 +363,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function testTryToGetRelationshipForProducts()
+    public function testTryToGetRelationshipForProducts(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category1->id)>', 'association' => 'products'],
@@ -353,7 +374,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function testTryToUpdateRelationshipForProducts()
+    public function testTryToUpdateRelationshipForProducts(): void
     {
         $response = $this->patchRelationship(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category1->id)>', 'association' => 'products'],
@@ -364,7 +385,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function testTryToAddRelationshipForProducts()
+    public function testTryToAddRelationshipForProducts(): void
     {
         $response = $this->postRelationship(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category1->id)>', 'association' => 'products'],
@@ -375,7 +396,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function testTryToDeleteRelationshipForProducts()
+    public function testTryToDeleteRelationshipForProducts(): void
     {
         $response = $this->deleteRelationship(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category1->id)>', 'association' => 'products'],
@@ -386,12 +407,12 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function testGetSubresourceForCategoryPath()
+    public function testGetSubresourceForCategoryPath(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'mastercatalogcategories',
-                'id'          => '<toString(@category1_1_1->id)>',
+                'entity' => 'mastercatalogcategories',
+                'id' => '<toString(@category1_1_1->id)>',
                 'association' => 'categoryPath'
             ]
         );
@@ -399,22 +420,22 @@ class CategoryTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'mastercatalogcategories',
-                        'id'         => '<toString(@root_category->id)>',
+                        'type' => 'mastercatalogcategories',
+                        'id' => '<toString(@root_category->id)>',
                         'attributes' => [
                             'title' => 'All Products'
                         ]
                     ],
                     [
-                        'type'       => 'mastercatalogcategories',
-                        'id'         => '<toString(@category1->id)>',
+                        'type' => 'mastercatalogcategories',
+                        'id' => '<toString(@category1->id)>',
                         'attributes' => [
                             'title' => 'Category 1'
                         ]
                     ],
                     [
-                        'type'       => 'mastercatalogcategories',
-                        'id'         => '<toString(@category1_1->id)>',
+                        'type' => 'mastercatalogcategories',
+                        'id' => '<toString(@category1_1->id)>',
                         'attributes' => [
                             'title' => 'Category 1_1'
                         ]
@@ -425,12 +446,12 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForCategoryPath()
+    public function testGetRelationshipForCategoryPath(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'mastercatalogcategories',
-                'id'          => '<toString(@category1_1_1->id)>',
+                'entity' => 'mastercatalogcategories',
+                'id' => '<toString(@category1_1_1->id)>',
                 'association' => 'categoryPath'
             ]
         );
@@ -446,12 +467,12 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForCategoryPathForRootCategory()
+    public function testGetRelationshipForCategoryPathForRootCategory(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'mastercatalogcategories',
-                'id'          => '<toString(@root_category->id)>',
+                'entity' => 'mastercatalogcategories',
+                'id' => '<toString(@root_category->id)>',
                 'association' => 'categoryPath'
             ]
         );

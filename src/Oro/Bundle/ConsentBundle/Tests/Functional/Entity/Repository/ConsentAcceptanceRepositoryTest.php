@@ -2,16 +2,21 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Entity\Repository\ConsentAcceptanceRepository;
 use Oro\Bundle\ConsentBundle\Tests\Functional\DataFixtures\LoadConsentsData;
 use Oro\Bundle\ConsentBundle\Tests\Functional\DataFixtures\LoadPageDataWithSlug;
+use Oro\Bundle\ConsentBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ConsentAcceptanceRepositoryTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
+    private ?int $initialWebCatalogId;
     private ConsentAcceptanceRepository $repository;
 
     #[\Override]
@@ -21,10 +26,26 @@ class ConsentAcceptanceRepositoryTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadConsentsData::class]);
 
+        $configManager = self::getConfigManager();
+        $this->initialWebCatalogId = $configManager->get('oro_web_catalog.web_catalog');
+        $configManager->set(
+            'oro_web_catalog.web_catalog',
+            $this->getReference(LoadWebCatalogData::CATALOG_1_USE_IN_ROUTING)->getId()
+        );
+        $configManager->flush();
+
         $this->repository = self::getContainer()->get('doctrine')->getRepository(ConsentAcceptance::class);
     }
 
-    public function testGetAcceptedConsentsByCustomer()
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_web_catalog.web_catalog', $this->initialWebCatalogId);
+        $configManager->flush();
+    }
+
+    public function testGetAcceptedConsentsByCustomer(): void
     {
         $customerUser = $this->getReference(LoadCustomerUserData::EMAIL);
         $expectedConsentAcceptance =
@@ -76,11 +97,8 @@ class ConsentAcceptanceRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider landingPagesProvider
-     *
-     * @param string $pageName
-     * @param bool   $expectedResult
      */
-    public function testHasLandingPageAcceptedConsents($pageName, $expectedResult)
+    public function testHasLandingPageAcceptedConsents(string $pageName, bool $expectedResult): void
     {
         $landingPage = $this->getReference($pageName);
         $result = $this->repository->hasLandingPageAcceptedConsents($landingPage);
@@ -102,11 +120,9 @@ class ConsentAcceptanceRepositoryTest extends WebTestCase
     }
 
     /**
-     * @param string $consentName
-     * @param bool $expectedResult
      * @dataProvider hasAcceptedConsentsProvider
      */
-    public function testHasConsentAcceptancesByConsent($consentName, $expectedResult)
+    public function testHasConsentAcceptancesByConsent(string $consentName, bool $expectedResult): void
     {
         /** @var Consent $consent */
         $consent = $this->getReference($consentName);

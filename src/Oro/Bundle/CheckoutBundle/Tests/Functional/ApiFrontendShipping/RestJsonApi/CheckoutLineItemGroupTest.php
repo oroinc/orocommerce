@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\ApiFrontendShipping\RestJso
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadCheckoutData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadCompetedCheckoutData;
-use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -17,13 +16,11 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CheckoutLineItemGroupTest extends FrontendRestJsonApiTestCase
 {
-    use ConfigManagerAwareTestTrait;
-
     private const string ENABLE_LINE_ITEM_GROUPING = 'oro_checkout.enable_line_item_grouping';
     private const string GROUP_LINE_ITEMS_BY = 'oro_checkout.group_line_items_by';
 
-    private ?bool $originalEnableLineItemGrouping;
-    private ?string $originalGroupLineItemsBy;
+    private ?bool $initialEnableLineItemGrouping;
+    private ?string $initialGroupLineItemsBy;
 
     #[\Override]
     protected function setUp(): void
@@ -36,8 +33,8 @@ class CheckoutLineItemGroupTest extends FrontendRestJsonApiTestCase
         ]);
 
         $configManager = self::getConfigManager();
-        $this->originalEnableLineItemGrouping = $configManager->get(self::ENABLE_LINE_ITEM_GROUPING);
-        $this->originalGroupLineItemsBy = $configManager->get(self::GROUP_LINE_ITEMS_BY);
+        $this->initialEnableLineItemGrouping = $configManager->get(self::ENABLE_LINE_ITEM_GROUPING);
+        $this->initialGroupLineItemsBy = $configManager->get(self::GROUP_LINE_ITEMS_BY);
         $configManager->set(self::ENABLE_LINE_ITEM_GROUPING, true);
         $configManager->set(self::GROUP_LINE_ITEMS_BY, 'product.id');
         $configManager->flush();
@@ -47,8 +44,8 @@ class CheckoutLineItemGroupTest extends FrontendRestJsonApiTestCase
     protected function tearDown(): void
     {
         $configManager = self::getConfigManager();
-        $configManager->set(self::ENABLE_LINE_ITEM_GROUPING, $this->originalEnableLineItemGrouping);
-        $configManager->set(self::GROUP_LINE_ITEMS_BY, $this->originalGroupLineItemsBy);
+        $configManager->set(self::ENABLE_LINE_ITEM_GROUPING, $this->initialEnableLineItemGrouping);
+        $configManager->set(self::GROUP_LINE_ITEMS_BY, $this->initialGroupLineItemsBy);
         $configManager->flush();
     }
 

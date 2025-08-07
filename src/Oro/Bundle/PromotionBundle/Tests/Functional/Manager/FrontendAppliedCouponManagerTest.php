@@ -424,6 +424,7 @@ class FrontendAppliedCouponManagerTest extends WebTestCase
         } finally {
             $configManager->set('oro_promotion.case_insensitive_coupon_search', false);
             $configManager->flush();
+            $configManager->reload();
         }
     }
 }

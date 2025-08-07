@@ -9,7 +9,6 @@ use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Exception\Fallback\FallbackFieldConfigurationMissingException;
 use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackKeyException;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
-use Oro\Bundle\InventoryBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
@@ -122,8 +121,6 @@ class UpcomingProductProvider
 
     private function isUpcomingStatusOffPastAvailabilityDate(): bool
     {
-        return $this->configManager->get(
-            sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::HIDE_LABELS_PAST_AVAILABILITY_DATE)
-        );
+        return $this->configManager->get('oro_inventory.hide_labels_past_availability_date');
     }
 }

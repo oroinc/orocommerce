@@ -913,16 +913,16 @@ class OrderTest extends RestJsonApiTestCase
     {
         $data = $this->getRequestData('create_order.yml');
 
-        $minimumOrderAmountConfigKey = 'oro_checkout.minimum_order_amount';
-        $configManager = $this->getConfigManager();
-        $originalMinimumOrderAmount = $configManager->get($minimumOrderAmountConfigKey);
-        $configManager->set($minimumOrderAmountConfigKey, [['value' => '112.55', 'currency' => 'USD']]);
+        $configManager = self::getConfigManager();
+        $initialMinimumOrderAmount = $configManager->get('oro_checkout.minimum_order_amount');
+        $configManager->set('oro_checkout.minimum_order_amount', [['value' => '112.55', 'currency' => 'USD']]);
         $configManager->flush();
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data
-        );
+        try {
+            $response = $this->post(['entity' => 'orders'], $data);
+        } finally {
+            $configManager->set('oro_checkout.minimum_order_amount', $initialMinimumOrderAmount);
+            $configManager->flush();
+        }
 
         $orderId = (int)$this->getResourceId($response);
 
@@ -931,25 +931,22 @@ class OrderTest extends RestJsonApiTestCase
         self::assertEquals('2345678', $order->getPoNumber());
         self::assertSame('73.5400', $order->getSubtotal());
         self::assertSame('73.5400', $order->getTotal());
-
-        $configManager->set($minimumOrderAmountConfigKey, $originalMinimumOrderAmount);
-        $configManager->flush();
     }
 
     public function testCreateWithMaximumOrderAmountNotMet(): void
     {
         $data = $this->getRequestData('create_order.yml');
 
-        $maximumOrderAmountConfigKey = 'oro_checkout.maximum_order_amount';
-        $configManager = $this->getConfigManager();
-        $originalMaximumOrderAmount = $configManager->get($maximumOrderAmountConfigKey);
-        $configManager->set($maximumOrderAmountConfigKey, [['value' => '70.00', 'currency' => 'USD']]);
+        $configManager = self::getConfigManager();
+        $initialMaximumOrderAmount = $configManager->get('oro_checkout.maximum_order_amount');
+        $configManager->set('oro_checkout.maximum_order_amount', [['value' => '70.00', 'currency' => 'USD']]);
         $configManager->flush();
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data
-        );
+        try {
+            $response = $this->post(['entity' => 'orders'], $data);
+        } finally {
+            $configManager->set('oro_checkout.maximum_order_amount', $initialMaximumOrderAmount);
+            $configManager->flush();
+        }
 
         $orderId = (int)$this->getResourceId($response);
 
@@ -958,9 +955,6 @@ class OrderTest extends RestJsonApiTestCase
         self::assertEquals('2345678', $order->getPoNumber());
         self::assertSame('73.5400', $order->getSubtotal());
         self::assertSame('73.5400', $order->getTotal());
-
-        $configManager->set($maximumOrderAmountConfigKey, $originalMaximumOrderAmount);
-        $configManager->flush();
     }
 
     public function testUpdate(): void

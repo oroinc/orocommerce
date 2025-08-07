@@ -2,68 +2,74 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Api\RestJsonApi;
 
+use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadSearchTermReportData;
 
-class SearchTermReportTest extends FeatureAwareRestJsonApiTestCase
+class SearchTermReportTest extends RestJsonApiTestCase
 {
-    private const API_TYPE = 'searchtermreports';
+    private ?bool $initialFeatureState;
 
     #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
+        $this->loadFixtures([LoadSearchTermReportData::class]);
 
-        $this->loadFixtures([
-            LoadSearchTermReportData::class,
-        ]);
+        $configManager = self::getConfigManager();
+        $this->initialFeatureState = $configManager->get('oro_website_search.enable_global_search_history_feature');
+        $configManager->set('oro_website_search.enable_global_search_history_feature', true);
+        $configManager->flush();
     }
 
-    public function testGetList()
+    #[\Override]
+    protected function tearDown(): void
     {
-        $response = $this->cget(
-            ['entity' => self::API_TYPE]
-        );
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_website_search.enable_global_search_history_feature', $this->initialFeatureState);
+        $configManager->flush();
+
+        parent::tearDown();
+    }
+
+    public function testGetList(): void
+    {
+        $response = $this->cget(['entity' => 'searchtermreports']);
 
         $this->assertResponseContains('cget_search_term_report.yml', $response, true);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
-        $id = $this->getReference('search_term_report_1')->getId();
-        $response = $this->get(
-            ['entity' => self::API_TYPE, 'id' => $id]
-        );
+        $response = $this->get(['entity' => 'searchtermreports', 'id' => '<toString(@search_term_report_1->id)>']);
 
         $this->assertResponseContains('get_search_term_report.yml', $response);
     }
 
-    /**
-     * @dataProvider relationshipDataProvider
-     */
-    public function testGetCustomerRelationship(
-        string $resourceType,
-        string $associationType
-    ) {
-        $getterMethod = 'get' . ucwords($associationType, '_');
-
-        $record = $this->getReference('search_term_report_2');
-        $id = $record->getId();
-
-        $response = $this->getRelationship(
-            ['entity' => self::API_TYPE, 'id' => $id, 'association' => $associationType]
-        );
+    public function testGetRelationshipForOrganization(): void
+    {
+        $response = $this->getRelationship([
+            'entity' => 'searchtermreports',
+            'id' => '<toString(@search_term_report_2->id)>',
+            'association' => 'organization'
+        ]);
 
         $this->assertResponseContains(
-            ['data' => ['type' => $resourceType, 'id' => (string)$record->{$getterMethod}()->getId()]],
+            ['data' => ['type' => 'organizations', 'id' => '<toString(@organization->id)>']],
             $response
         );
     }
 
-    public function relationshipDataProvider(): array
+    public function testGetRelationshipForOwner(): void
     {
-        return [
-            'organization' => ['organizations', 'organization'],
-            'owner' => ['businessunits', 'owner']
-        ];
+        $response = $this->getRelationship([
+            'entity' => 'searchtermreports',
+            'id' => '<toString(@search_term_report_2->id)>',
+            'association' => 'owner'
+        ]);
+
+        $this->assertResponseContains(
+            ['data' => ['type' => 'businessunits', 'id' => '<toString(@business_unit->id)>']],
+            $response
+        );
     }
 }

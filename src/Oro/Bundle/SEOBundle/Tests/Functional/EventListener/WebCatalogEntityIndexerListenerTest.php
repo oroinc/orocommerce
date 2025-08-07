@@ -9,7 +9,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadWebCatalogWithContentNodes;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
-use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM\OrmIndexerTest;
@@ -21,29 +20,40 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
 
     private const QUERY = 'web_catalog_entity_indexer_listener_test_query_string';
 
+    private ?int $initialWebCatalogId;
+
     #[\Override]
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         OrmIndexerTest::checkSearchEngine($this);
         $this->setCurrentWebsite();
         $this->loadFixtures([LoadWebCatalogWithContentNodes::class]);
-        $this->getContainer()->get('request_stack')->push(Request::create(''));
+        self::getContainer()->get('request_stack')->push(Request::create(''));
+
+        $configManager = self::getConfigManager();
+        $this->initialWebCatalogId = $configManager->get('oro_web_catalog.web_catalog');
+        $configManager->set(
+            'oro_web_catalog.web_catalog',
+            $this->getReference(LoadWebCatalogWithContentNodes::WEB_CATALOG_NAME)->getId()
+        );
+        $configManager->flush();
     }
 
-    public function testOnWebsiteSearchIndex()
+    #[\Override]
+    protected function tearDown(): void
     {
-        $container = $this->getContainer();
-        $localizedFallbackValueManager = $container->get('doctrine')->getManagerForClass(LocalizedFallbackValue::class);
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_web_catalog.web_catalog', $this->initialWebCatalogId);
+        $configManager->flush();
 
-        /** @var WebCatalog $webCatalog */
-        $webCatalog = $this->getReference(LoadWebCatalogWithContentNodes::WEB_CATALOG_NAME);
+        parent::tearDown();
+    }
 
-        // set WebCatalog for current Website
-        self::getConfigManager('global')->set(
-            'oro_web_catalog.web_catalog',
-            $webCatalog->getId()
-        );
+    public function testOnWebsiteSearchIndex(): void
+    {
+        $localizedFallbackValueManager = self::getContainer()->get('doctrine')
+            ->getManagerForClass(LocalizedFallbackValue::class);
 
         /** @var ContentNode $contentNode */
         $contentNode = $this->getReference(LoadWebCatalogWithContentNodes::CONTENT_NODE_1);
@@ -60,12 +70,12 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
         $localizedFallbackValueManager->persist($metaDescription);
         $localizedFallbackValueManager->flush();
 
-        $container->get('event_dispatcher')->dispatch(
+        self::getContainer()->get('event_dispatcher')->dispatch(
             new ReindexationRequestEvent([Product::class], [], [$product->getId()], false),
             ReindexationRequestEvent::EVENT_NAME
         );
 
-        $query = $container->get('oro_product.website_search.repository.product')
+        $query = self::getContainer()->get('oro_product.website_search.repository.product')
             ->getSearchQuery(self::QUERY, 0, 1)
             ->addSelect(sprintf(
                 'integer.assigned_to.%s_%s as assigned',

@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\EventListener;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
@@ -26,6 +26,7 @@ use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
  */
 class LoginOnCheckoutOrderLimitListenerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
     use MessageQueueExtension;
 
     private InteractiveAuthenticatorInterface&MockObject $authenticator;
@@ -54,10 +55,10 @@ class LoginOnCheckoutOrderLimitListenerTest extends WebTestCase
         bool $guestCheckout,
         bool $redirectExpected
     ): void {
-        $listener = $this->getContainer()->get('oro_checkout.event_listener.login_on_checkout_order_limit');
+        $listener = self::getContainer()->get('oro_checkout.event_listener.login_on_checkout_order_limit');
 
         /** @var CustomerUser $customerUser */
-        $customerUser = $this->getContainer()->get('doctrine')
+        $customerUser = self::getContainer()->get('doctrine')
             ->getRepository(CustomerUser::class)
             ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
 
@@ -65,72 +66,65 @@ class LoginOnCheckoutOrderLimitListenerTest extends WebTestCase
         $minimumOrderAmountConfigKey = 'oro_checkout.minimum_order_amount';
         $maximumOrderAmountConfigKey = 'oro_checkout.maximum_order_amount';
 
-        /** @var ConfigManager $configManager */
-        $configManager = $this->getContainer()->get('oro_config.manager');
-
-        $originalGuestCheckout = $configManager->get($guestCheckoutConfigKey);
-        $originalMinimumOrderAmount = $configManager->get($minimumOrderAmountConfigKey);
-        $originalMaximumOrderAmount = $configManager->get($maximumOrderAmountConfigKey);
-
+        $configManager = self::getConfigManager(null);
+        $initialGuestCheckout = $configManager->get($guestCheckoutConfigKey);
+        $initialMinimumOrderAmount = $configManager->get($minimumOrderAmountConfigKey);
+        $initialMaximumOrderAmount = $configManager->get($maximumOrderAmountConfigKey);
         $configManager->set($guestCheckoutConfigKey, $guestCheckout);
         $configManager->set($minimumOrderAmountConfigKey, [['value' => $minimumOrderAmount, 'currency' => 'USD']]);
         $configManager->set($maximumOrderAmountConfigKey, [['value' => $maximumOrderAmount, 'currency' => 'USD']]);
         $configManager->flush();
+        try {
+            $this->authenticator->expects($this->any())
+                ->method('isInteractive')
+                ->willReturn(true);
+            $this->token->expects($this->any())
+                ->method('getUser')
+                ->willReturn($customerUser);
 
-        $this->authenticator->expects($this->any())
-            ->method('isInteractive')
-            ->willReturn(true);
+            /** @var Checkout $checkout */
+            $checkout = $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_1);
 
-        $this->token->expects($this->any())
-            ->method('getUser')
-            ->willReturn($customerUser);
+            // Actual shopping list subtotal: 303.27 USD
+            /** @var ShoppingList $shoppingList */
+            $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
-        /** @var Checkout $checkout */
-        $checkout = $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_1);
-
-        /** @var ShoppingList $shoppingList */
-        // Actual shopping list subtotal: 303.27 USD
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
-
-        $request = new Request([], ['_checkout_id' => $checkout->getId()]);
-
-        $event = new LoginSuccessEvent(
-            $this->authenticator,
-            $this->createMock(Passport::class),
-            $this->token,
-            $request,
-            null,
-            'test'
-        );
-
-        $listener->onCheckoutLogin($event);
-
-        $checkout = $this->getContainer()->get('doctrine')
-            ->getRepository(Checkout::class)
-            ->findOneById($checkout->getId());
-
-        if ($redirectExpected) {
-            $this->assertTrue($event->isPropagationStopped());
-
-            $this->assertInstanceOf(RedirectResponse::class, $event->getResponse());
-            $this->assertEquals(
-                $this->getContainer()->get('router')->generate(
-                    'oro_shopping_list_frontend_update',
-                    ['id' => $shoppingList->getId()]
-                ),
-                $event->getResponse()->getTargetUrl()
+            $event = new LoginSuccessEvent(
+                $this->authenticator,
+                $this->createMock(Passport::class),
+                $this->token,
+                new Request([], ['_checkout_id' => $checkout->getId()]),
+                null,
+                'test'
             );
+            $listener->onCheckoutLogin($event);
 
-            $this->assertNull($checkout);
-        } else {
-            $this->assertFalse($event->isPropagationStopped());
-            $this->assertNotNull($checkout);
+            $checkout = self::getContainer()->get('doctrine')
+                ->getRepository(Checkout::class)
+                ->findOneById($checkout->getId());
+
+            if ($redirectExpected) {
+                $this->assertTrue($event->isPropagationStopped());
+                $this->assertInstanceOf(RedirectResponse::class, $event->getResponse());
+                $this->assertEquals(
+                    self::getContainer()->get('router')->generate(
+                        'oro_shopping_list_frontend_update',
+                        ['id' => $shoppingList->getId()]
+                    ),
+                    $event->getResponse()->getTargetUrl()
+                );
+                $this->assertNull($checkout);
+            } else {
+                $this->assertFalse($event->isPropagationStopped());
+                $this->assertNotNull($checkout);
+            }
+        } finally {
+            $configManager->set($guestCheckoutConfigKey, $initialGuestCheckout);
+            $configManager->set($minimumOrderAmountConfigKey, $initialMinimumOrderAmount);
+            $configManager->set($maximumOrderAmountConfigKey, $initialMaximumOrderAmount);
+            $configManager->flush();
+            $configManager->reload();
         }
-
-        $configManager->set($guestCheckoutConfigKey, $originalGuestCheckout);
-        $configManager->set($minimumOrderAmountConfigKey, $originalMinimumOrderAmount);
-        $configManager->set($maximumOrderAmountConfigKey, $originalMaximumOrderAmount);
-        $configManager->flush();
     }
 
     public function onCheckoutLoginDataProvider(): array

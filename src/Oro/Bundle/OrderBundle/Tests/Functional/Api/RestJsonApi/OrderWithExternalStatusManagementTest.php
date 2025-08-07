@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
-use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\Api\DataFixtures\LoadOrderDocuments;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
@@ -13,24 +12,27 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
  */
 class OrderWithExternalStatusManagementTest extends RestJsonApiTestCase
 {
-    use ConfigManagerAwareTestTrait;
-
     #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
-
         $this->loadFixtures([
             '@OroOrderBundle/Tests/Functional/DataFixtures/order_line_items.yml',
             LoadOrderDocuments::class
         ]);
-        self::getConfigManager()->set('oro_order.order_enable_external_status_management', true);
+
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_order.order_enable_external_status_management', true);
+        $configManager->flush();
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        self::getConfigManager()->set('oro_order.order_enable_external_status_management', false);
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_order.order_enable_external_status_management', false);
+        $configManager->flush();
+
         parent::tearDown();
     }
 

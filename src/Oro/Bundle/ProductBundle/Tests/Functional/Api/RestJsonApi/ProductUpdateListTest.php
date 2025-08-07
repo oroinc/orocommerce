@@ -37,7 +37,7 @@ class ProductUpdateListTest extends RestJsonApiUpdateListTestCase
         ]);
     }
 
-    public function testCreateSimpleProducts()
+    public function testCreateSimpleProducts(): void
     {
         $this->processUpdateList(
             Product::class,
@@ -60,7 +60,7 @@ class ProductUpdateListTest extends RestJsonApiUpdateListTestCase
         $this->assertResponseContains($responseContent, $response);
     }
 
-    public function testUpdateProducts()
+    public function testUpdateProducts(): void
     {
         $this->processUpdateList(
             Product::class,
@@ -108,7 +108,7 @@ class ProductUpdateListTest extends RestJsonApiUpdateListTestCase
         );
     }
 
-    public function testCreateConfigurableProductViaUpdateListRequest()
+    public function testCreateConfigurableProductViaUpdateListRequest(): void
     {
         $this->processUpdateList(
             Product::class,
@@ -135,7 +135,7 @@ class ProductUpdateListTest extends RestJsonApiUpdateListTestCase
         self::assertEquals('enabled', $variantProduct->getStatus());
     }
 
-    public function testTryToUpdateProductWithInvalidData()
+    public function testTryToUpdateProductWithInvalidData(): void
     {
         $operationId = $this->processUpdateList(
             Product::class,
@@ -202,7 +202,7 @@ class ProductUpdateListTest extends RestJsonApiUpdateListTestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testTryToUpdateProductWithInvalidDataAndIncludedData()
+    public function testTryToUpdateProductWithInvalidDataAndIncludedData(): void
     {
         $operationId = $this->processUpdateList(
             Product::class,

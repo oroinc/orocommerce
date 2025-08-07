@@ -10,7 +10,6 @@ use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration as LayoutThemeConfiguration;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ThemeBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ThemeBundle\Entity\ThemeConfiguration as ThemeConfigurationEntity;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -26,7 +25,7 @@ class ThemeConfigurationDeleteVoterTest extends WebTestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->loadFixtures([LoadTextContentVariantsData::class]);
         $this->checker = self::getContainer()->get('security.authorization_checker');
     }
@@ -35,7 +34,7 @@ class ThemeConfigurationDeleteVoterTest extends WebTestCase
     {
         return $this->getThemeConfigurationEntityManager()->find(
             ThemeConfigurationEntity::class,
-            self::getConfigManager(null)->get(Configuration::getConfigKeyByName(Configuration::THEME_CONFIGURATION))
+            self::getConfigManager(null)->get('oro_theme.theme_configuration')
         );
     }
 
@@ -46,7 +45,7 @@ class ThemeConfigurationDeleteVoterTest extends WebTestCase
 
     private function login(string $email, string $password): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader($email, $password));
+        $this->initClient([], self::generateBasicAuthHeader($email, $password));
         $this->client->useHashNavigation(true);
         $this->client->request('GET', '/admin'); // any page to apply new user
     }

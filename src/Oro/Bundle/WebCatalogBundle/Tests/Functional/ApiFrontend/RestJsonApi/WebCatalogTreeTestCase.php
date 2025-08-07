@@ -10,31 +10,28 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
 class WebCatalogTreeTestCase extends FrontendRestJsonApiTestCase
 {
-    private const WEB_CATALOG_CONFIG_NAME = 'oro_web_catalog.web_catalog';
-
-    /** @var int|null */
-    private $originalWebCatalog;
+    private ?int $initialWebCatalogId;
 
     #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
-        $this->originalWebCatalog = false;
+        $this->initialWebCatalogId = self::getConfigManager()->get('oro_web_catalog.web_catalog');
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        if (false !== $this->originalWebCatalog) {
-            $configManager = self::getConfigManager('global');
-            $configManager->set(self::WEB_CATALOG_CONFIG_NAME, $this->originalWebCatalog);
+        if (false !== $this->initialWebCatalogId) {
+            $configManager = self::getConfigManager();
+            $configManager->set('oro_web_catalog.web_catalog', $this->initialWebCatalogId);
             $configManager->flush();
         }
         parent::tearDown();
     }
 
     #[\Override]
-    protected function preFixtureLoad()
+    protected function preFixtureLoad(): void
     {
         parent::preFixtureLoad();
 
@@ -43,7 +40,7 @@ class WebCatalogTreeTestCase extends FrontendRestJsonApiTestCase
         $this->switchToWebCatalog();
     }
 
-    protected function loadWebCatalog()
+    protected function loadWebCatalog(): void
     {
         $em = $this->getEntityManager();
         $webCatalog = new WebCatalog();
@@ -54,25 +51,21 @@ class WebCatalogTreeTestCase extends FrontendRestJsonApiTestCase
         $em->flush();
     }
 
-    protected function switchToWebCatalog()
+    protected function switchToWebCatalog(): void
     {
-        $configManager = self::getConfigManager('global');
-        $this->originalWebCatalog = $configManager->get(self::WEB_CATALOG_CONFIG_NAME);
-        $configManager->set(self::WEB_CATALOG_CONFIG_NAME, $this->getReference('catalog1')->getId());
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_web_catalog.web_catalog', $this->getReference('catalog1')->getId());
         $configManager->flush();
     }
 
-    protected function switchToMasterCatalog()
+    protected function switchToMasterCatalog(): void
     {
-        $configManager = self::getConfigManager('global');
-        $configManager->set(self::WEB_CATALOG_CONFIG_NAME, null);
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_web_catalog.web_catalog', null);
         $configManager->flush();
     }
 
-    /**
-     * @return Localization
-     */
-    protected function getCurrentLocalization()
+    protected function getCurrentLocalization(): Localization
     {
         /** @var UserLocalizationManager $localizationManager */
         $localizationManager = self::getContainer()->get('oro_frontend_localization.manager.user_localization');
@@ -80,10 +73,7 @@ class WebCatalogTreeTestCase extends FrontendRestJsonApiTestCase
         return $localizationManager->getCurrentLocalization();
     }
 
-    /**
-     * @return int
-     */
-    protected function getCurrentLocalizationId()
+    protected function getCurrentLocalizationId(): int
     {
         return $this->getCurrentLocalization()->getId();
     }

@@ -3,20 +3,23 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
+ * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @dbIsolationPerTest
  */
 class WebCatalogTreeTest extends WebCatalogTreeTestCase
 {
     use WebsiteSearchExtensionTrait;
+
+    private ?array $initialEnabledLocalizations;
 
     #[\Override]
     protected function setUp(): void
@@ -27,17 +30,29 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
             '@OroWebCatalogBundle/Tests/Functional/ApiFrontend/DataFixtures/content_node.yml'
         ]);
         $this->switchToWebCatalog();
+
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            LoadLocalizationData::getLocalizationIds(self::getContainer())
+        );
+        $configManager->flush();
+
+        self::reindexProductData();
     }
 
     #[\Override]
-    protected function postFixtureLoad()
+    protected function tearDown(): void
     {
-        parent::postFixtureLoad();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->flush();
 
-        $this->reindexProductData();
+        parent::tearDown();
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'webcatalogtree']
@@ -45,20 +60,20 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $this->assertResponseContains('cget_content_node.yml', $response);
     }
 
-    public function testGetListWithIncludeAndFieldsFilters()
+    public function testGetListWithIncludeAndFieldsFilters(): void
     {
         $response = $this->cget(
             ['entity' => 'webcatalogtree'],
             [
-                'filter[id]'             => '<toString(@catalog1_node11->id)>',
-                'include'                => 'parent,path',
+                'filter[id]' => '<toString(@catalog1_node11->id)>',
+                'include' => 'parent,path',
                 'fields[webcatalogtree]' => 'title,parent,path'
             ]
         );
         $this->assertResponseContains('cget_content_node_include_fields.yml', $response);
     }
 
-    public function testGetListForAnotherLocalization()
+    public function testGetListForAnotherLocalization(): void
     {
         $response = $this->cget(
             ['entity' => 'webcatalogtree'],
@@ -82,7 +97,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetListForAnotherCustomer()
+    public function testGetListForAnotherCustomer(): void
     {
         $response = $this->cget(
             ['entity' => 'webcatalogtree'],
@@ -108,7 +123,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetListForAnotherLocalizationAndCustomer()
+    public function testGetListForAnotherLocalizationAndCustomer(): void
     {
         $response = $this->cget(
             ['entity' => 'webcatalogtree'],
@@ -141,7 +156,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node11->id)>']
@@ -149,19 +164,19 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $this->assertResponseContains('get_content_node.yml', $response);
     }
 
-    public function testGetWithIncludeAndFieldsFilters()
+    public function testGetWithIncludeAndFieldsFilters(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node11->id)>'],
             [
-                'include'                => 'parent,path',
+                'include' => 'parent,path',
                 'fields[webcatalogtree]' => 'title,parent,path'
             ]
         );
         $this->assertResponseContains('get_content_node_include_fields.yml', $response);
     }
 
-    public function testGetListFilteredByParent()
+    public function testGetListFilteredByParent(): void
     {
         $response = $this->cget(
             ['entity' => 'webcatalogtree'],
@@ -178,7 +193,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetListFilteredByRootFilter()
+    public function testGetListFilteredByRootFilter(): void
     {
         $response = $this->cget(
             ['entity' => 'webcatalogtree'],
@@ -196,7 +211,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetListFilteredByRootFilterIncludingSpecifiedRootNode()
+    public function testGetListFilteredByRootFilterIncludingSpecifiedRootNode(): void
     {
         $response = $this->cget(
             ['entity' => 'webcatalogtree'],
@@ -215,7 +230,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetListFilteredByLevel()
+    public function testGetListFilteredByLevel(): void
     {
         $response = $this->cget(
             ['entity' => 'webcatalogtree'],
@@ -235,7 +250,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetWhenWebCatalogIsNotEnabled()
+    public function testTryToGetWhenWebCatalogIsNotEnabled(): void
     {
         $this->switchToMasterCatalog();
         $response = $this->get(
@@ -246,7 +261,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'not found http exception',
+                'title' => 'not found http exception',
                 'detail' => 'An entity with the requested identifier does not exist.'
             ],
             $response,
@@ -254,7 +269,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetNodeFromAnotherWebCatalog()
+    public function testTryToGetNodeFromAnotherWebCatalog(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog2_node1->id)>'],
@@ -264,7 +279,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -272,7 +287,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetSharedNodeFromAnotherLocalization()
+    public function testGetSharedNodeFromAnotherLocalization(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node11->id)>'],
@@ -285,7 +300,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetLocalizationSpecificNodeFromOwnLocalization()
+    public function testGetLocalizationSpecificNodeFromOwnLocalization(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node13_es->id)>'],
@@ -298,7 +313,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetNestedNodeForLocalizationSpecificNodeFromOwnLocalization()
+    public function testGetNestedNodeForLocalizationSpecificNodeFromOwnLocalization(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node131->id)>'],
@@ -311,7 +326,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetLocalizationSpecificNodeFromAnotherLocalization()
+    public function testTryToGetLocalizationSpecificNodeFromAnotherLocalization(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node13_es->id)>'],
@@ -321,7 +336,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -329,7 +344,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetNestedNodeForLocalizationSpecificNodeFromAnotherLocalization()
+    public function testTryToGetNestedNodeForLocalizationSpecificNodeFromAnotherLocalization(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node131->id)>'],
@@ -339,7 +354,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -347,7 +362,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetCustomerSpecificNodeFromOwnCustomer()
+    public function testGetCustomerSpecificNodeFromOwnCustomer(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node14_customer1->id)>'],
@@ -360,7 +375,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetNestedNodeForCustomerSpecificNodeFromOwnCustomer()
+    public function testGetNestedNodeForCustomerSpecificNodeFromOwnCustomer(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node141->id)>'],
@@ -373,7 +388,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetCustomerSpecificNodeFromAnotherCustomer()
+    public function testTryToGetCustomerSpecificNodeFromAnotherCustomer(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node14_customer1->id)>'],
@@ -383,7 +398,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -391,7 +406,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetNestedNodeForCustomerSpecificNodeFromAnotherCustomer()
+    public function testTryToGetNestedNodeForCustomerSpecificNodeFromAnotherCustomer(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node141->id)>'],
@@ -401,7 +416,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -409,7 +424,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetCustomerGroupSpecificNodeFromOwnCustomerGroup()
+    public function testGetCustomerGroupSpecificNodeFromOwnCustomerGroup(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node15_customer_group1->id)>'],
@@ -422,7 +437,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetNestedNodeForCustomerGroupSpecificNodeFromOwnCustomerGroup()
+    public function testGetNestedNodeForCustomerGroupSpecificNodeFromOwnCustomerGroup(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node151->id)>'],
@@ -435,7 +450,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetCustomerGroupSpecificNodeFromAnotherCustomerGroup()
+    public function testTryToGetCustomerGroupSpecificNodeFromAnotherCustomerGroup(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node15_customer_group1->id)>'],
@@ -445,7 +460,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -453,7 +468,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetNestedNodeForCustomerGroupSpecificNodeFromAnotherCustomerGroup()
+    public function testTryToGetNestedNodeForCustomerGroupSpecificNodeFromAnotherCustomerGroup(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node151->id)>'],
@@ -463,7 +478,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -471,7 +486,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetCustomerGroupSpecificNodeFromCustomerWithoutCustomerGroup()
+    public function testTryToGetCustomerGroupSpecificNodeFromCustomerWithoutCustomerGroup(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node15_customer_group1->id)>'],
@@ -481,7 +496,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -489,7 +504,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetScopedNodeWithSeveralScopedParents()
+    public function testGetScopedNodeWithSeveralScopedParents(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node1311_customer1->id)>'],
@@ -505,7 +520,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetScopedNodeWithSeveralScopedParentsForAnotherLocalization()
+    public function testTryToGetScopedNodeWithSeveralScopedParentsForAnotherLocalization(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node1311_customer1->id)>'],
@@ -515,7 +530,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -523,7 +538,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetScopedNodeWithSeveralScopedParentsForAnotherCustomer()
+    public function testTryToGetScopedNodeWithSeveralScopedParentsForAnotherCustomer(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node1311_customer1->id)>'],
@@ -533,7 +548,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -541,7 +556,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetScopedNodeWithSeveralScopedParentsForAnotherLocalizationAndCustomer()
+    public function testTryToGetScopedNodeWithSeveralScopedParentsForAnotherLocalizationAndCustomer(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node1311_customer1->id)>'],
@@ -551,7 +566,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -559,7 +574,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetNestedNodeWithSeveralScopedParents()
+    public function testGetNestedNodeWithSeveralScopedParents(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node13111->id)>'],
@@ -575,7 +590,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetNestedNodeWithSeveralScopedParentsForAnotherLocalization()
+    public function testTryToGetNestedNodeWithSeveralScopedParentsForAnotherLocalization(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node13111->id)>'],
@@ -585,7 +600,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -593,7 +608,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetNestedNodeWithSeveralScopedParentsForAnotherCustomer()
+    public function testTryToGetNestedNodeWithSeveralScopedParentsForAnotherCustomer(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node13111->id)>'],
@@ -603,7 +618,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -611,7 +626,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetNestedNodeWithSeveralScopedParentsForAnotherLocalizationAndCustomer()
+    public function testTryToGetNestedNodeWithSeveralScopedParentsForAnotherLocalizationAndCustomer(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node13111->id)>'],
@@ -621,7 +636,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -629,7 +644,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetUrlsForAnotherLocalization()
+    public function testGetUrlsForAnotherLocalization(): void
     {
         $currentLocalizationId = $this->getCurrentLocalizationId();
         $response = $this->get(
@@ -640,10 +655,10 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'webcatalogtree',
-                    'id'         => '<toString(@catalog1_node11->id)>',
+                    'type' => 'webcatalogtree',
+                    'id' => '<toString(@catalog1_node11->id)>',
                     'attributes' => [
-                        'url'  => '/catalog1_node11_es',
+                        'url' => '/catalog1_node11_es',
                         'urls' => [
                             ['url' => '/catalog1_node11', 'localizationId' => (string)$currentLocalizationId],
                             ['url' => '/catalog1_node11_en_CA', 'localizationId' => '<toString(@en_CA->id)>']
@@ -655,14 +670,14 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToUpdate()
+    public function testTryToUpdate(): void
     {
         $response = $this->patch(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node11->id)>'],
             [
                 'data' => [
-                    'type'       => 'webcatalogtree',
-                    'id'         => '<toString(@catalog1_node11->id)>',
+                    'type' => 'webcatalogtree',
+                    'id' => '<toString(@catalog1_node11->id)>',
                     'attributes' => [
                         'title' => 'Updated Node'
                     ]
@@ -674,13 +689,13 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToCreate()
+    public function testTryToCreate(): void
     {
         $response = $this->post(
             ['entity' => 'webcatalogtree'],
             [
                 'data' => [
-                    'type'       => 'webcatalogtree',
+                    'type' => 'webcatalogtree',
                     'attributes' => [
                         'title' => 'New Node'
                     ]
@@ -692,7 +707,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDelete()
+    public function testTryToDelete(): void
     {
         $response = $this->delete(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node11->id)>'],
@@ -703,7 +718,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDeleteList()
+    public function testTryToDeleteList(): void
     {
         $response = $this->cdelete(
             ['entity' => 'webcatalogtree'],
@@ -714,20 +729,20 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testGetSubresourceForParent()
+    public function testGetSubresourceForParent(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node111->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node111->id)>',
                 'association' => 'parent'
             ]
         );
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'webcatalogtree',
-                    'id'         => '<toString(@catalog1_node11->id)>',
+                    'type' => 'webcatalogtree',
+                    'id' => '<toString(@catalog1_node11->id)>',
                     'attributes' => [
                         'title' => 'Web Catalog 1 Node 1.1'
                     ]
@@ -737,12 +752,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetRelationshipForParent()
+    public function testGetRelationshipForParent(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node111->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node111->id)>',
                 'association' => 'parent'
             ]
         );
@@ -754,12 +769,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetSubresourceForParentWhenParentNodeIsNotAccessible()
+    public function testGetSubresourceForParentWhenParentNodeIsNotAccessible(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node13_es->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node13_es->id)>',
                 'association' => 'parent'
             ],
             [],
@@ -768,7 +783,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'No access to the parent entity.'
             ],
             $response,
@@ -776,12 +791,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetRelationshipForParentWhenParentNodeIsNotAccessible()
+    public function testGetRelationshipForParentWhenParentNodeIsNotAccessible(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node13_es->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node13_es->id)>',
                 'association' => 'parent'
             ],
             [],
@@ -790,7 +805,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'No access to the parent entity.'
             ],
             $response,
@@ -798,12 +813,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetSubresourceForParentWhenParentNodeDoesNotExist()
+    public function testGetSubresourceForParentWhenParentNodeDoesNotExist(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '9999999',
+                'entity' => 'webcatalogtree',
+                'id' => '9999999',
                 'association' => 'parent'
             ],
             [],
@@ -812,7 +827,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'not found http exception',
+                'title' => 'not found http exception',
                 'detail' => 'The parent entity does not exist.'
             ],
             $response,
@@ -820,12 +835,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetRelationshipForParentWhenParentNodeDoesNotExist()
+    public function testGetRelationshipForParentWhenParentNodeDoesNotExist(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '9999999',
+                'entity' => 'webcatalogtree',
+                'id' => '9999999',
                 'association' => 'parent'
             ],
             [],
@@ -834,7 +849,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'not found http exception',
+                'title' => 'not found http exception',
                 'detail' => 'The parent entity does not exist.'
             ],
             $response,
@@ -842,12 +857,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetSubresourceForPath()
+    public function testGetSubresourceForPath(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node111->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node111->id)>',
                 'association' => 'path'
             ]
         );
@@ -855,22 +870,22 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'webcatalogtree',
-                        'id'         => '<toString(@catalog1_rootNode->id)>',
+                        'type' => 'webcatalogtree',
+                        'id' => '<toString(@catalog1_rootNode->id)>',
                         'attributes' => [
                             'title' => 'Web Catalog 1 Root Node'
                         ]
                     ],
                     [
-                        'type'       => 'webcatalogtree',
-                        'id'         => '<toString(@catalog1_node1->id)>',
+                        'type' => 'webcatalogtree',
+                        'id' => '<toString(@catalog1_node1->id)>',
                         'attributes' => [
                             'title' => 'Web Catalog 1 Node 1'
                         ]
                     ],
                     [
-                        'type'       => 'webcatalogtree',
-                        'id'         => '<toString(@catalog1_node11->id)>',
+                        'type' => 'webcatalogtree',
+                        'id' => '<toString(@catalog1_node11->id)>',
                         'attributes' => [
                             'title' => 'Web Catalog 1 Node 1.1'
                         ]
@@ -881,12 +896,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetRelationshipForPath()
+    public function testGetRelationshipForPath(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node111->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node111->id)>',
                 'association' => 'path'
             ]
         );
@@ -902,12 +917,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetSubresourceForPathWhenParentNodeIsNotAccessible()
+    public function testGetSubresourceForPathWhenParentNodeIsNotAccessible(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node13_es->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node13_es->id)>',
                 'association' => 'path'
             ],
             [],
@@ -916,7 +931,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'No access to the parent entity.'
             ],
             $response,
@@ -924,12 +939,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetRelationshipForPathWhenParentNodeIsNotAccessible()
+    public function testGetRelationshipForPathWhenParentNodeIsNotAccessible(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node13_es->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node13_es->id)>',
                 'association' => 'path'
             ],
             [],
@@ -938,7 +953,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'No access to the parent entity.'
             ],
             $response,
@@ -946,12 +961,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetSubresourceForPathWhenParentNodeDoesNotExist()
+    public function testGetSubresourceForPathWhenParentNodeDoesNotExist(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '9999999',
+                'entity' => 'webcatalogtree',
+                'id' => '9999999',
                 'association' => 'path'
             ],
             [],
@@ -960,7 +975,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'not found http exception',
+                'title' => 'not found http exception',
                 'detail' => 'The parent entity does not exist.'
             ],
             $response,
@@ -968,12 +983,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetRelationshipForPathWhenParentNodeDoesNotExist()
+    public function testGetRelationshipForPathWhenParentNodeDoesNotExist(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '9999999',
+                'entity' => 'webcatalogtree',
+                'id' => '9999999',
                 'association' => 'path'
             ],
             [],
@@ -982,7 +997,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'not found http exception',
+                'title' => 'not found http exception',
                 'detail' => 'The parent entity does not exist.'
             ],
             $response,
@@ -990,7 +1005,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetWithOnlyContentFieldFilter()
+    public function testGetWithOnlyContentFieldFilter(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node11->id)>'],
@@ -999,8 +1014,8 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'          => 'webcatalogtree',
-                    'id'            => '<toString(@catalog1_node11->id)>',
+                    'type' => 'webcatalogtree',
+                    'id' => '<toString(@catalog1_node11->id)>',
                     'relationships' => [
                         'content' => [
                             'data' => ['type' => 'mastercatalogcategories', 'id' => '<toString(@category1->id)>']
@@ -1012,7 +1027,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetContentWithOnlyVariantFieldFilterWithSeveralScopedParentsForAnotherCustomer()
+    public function testGetContentWithOnlyVariantFieldFilterWithSeveralScopedParentsForAnotherCustomer(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node11->id)>'],
@@ -1022,8 +1037,8 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'          => 'webcatalogtree',
-                    'id'            => '<toString(@catalog1_node11->id)>',
+                    'type' => 'webcatalogtree',
+                    'id' => '<toString(@catalog1_node11->id)>',
                     'relationships' => [
                         'content' => [
                             'data' => ['type' => 'mastercatalogcategories', 'id' => '<toString(@category11->id)>']
@@ -1035,7 +1050,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetContentWithOnlyVariantFieldFilterWithSeveralScopedParentsForAnotherLocalization()
+    public function testGetContentWithOnlyVariantFieldFilterWithSeveralScopedParentsForAnotherLocalization(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node11->id)>'],
@@ -1045,8 +1060,8 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'          => 'webcatalogtree',
-                    'id'            => '<toString(@catalog1_node11->id)>',
+                    'type' => 'webcatalogtree',
+                    'id' => '<toString(@catalog1_node11->id)>',
                     'relationships' => [
                         'content' => [
                             'data' => ['type' => 'products', 'id' => '<toString(@product2->id)>']
@@ -1058,7 +1073,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetContentWithOnlyVariantFieldFilterWithSeveralScopedParents()
+    public function testGetContentWithOnlyVariantFieldFilterWithSeveralScopedParents(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node11->id)>'],
@@ -1071,8 +1086,8 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'          => 'webcatalogtree',
-                    'id'            => '<toString(@catalog1_node11->id)>',
+                    'type' => 'webcatalogtree',
+                    'id' => '<toString(@catalog1_node11->id)>',
                     'relationships' => [
                         'content' => [
                             'data' => ['type' => 'mastercatalogcategories', 'id' => '<toString(@category11->id)>']
@@ -1084,79 +1099,79 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetWithIncludeForSystemPageContentVariant()
+    public function testGetWithIncludeForSystemPageContentVariant(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node111->id)>'],
             [
                 'fields[webcatalogtree]' => 'content',
-                'include'                => 'content'
+                'include' => 'content'
             ]
         );
         $this->assertResponseContains('get_content_node_include_system_page.yml', $response);
     }
 
-    public function testGetWithIncludeForCategoryContentVariant()
+    public function testGetWithIncludeForCategoryContentVariant(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node11->id)>'],
             [
                 'fields[webcatalogtree]' => 'content',
-                'include'                => 'content'
+                'include' => 'content'
             ]
         );
         $this->assertResponseContains('get_content_node_include_category.yml', $response);
     }
 
-    public function testGetWithIncludeForProductContentVariant()
+    public function testGetWithIncludeForProductContentVariant(): void
     {
         $this->getReferenceRepository()->setReference('current_localization', $this->getCurrentLocalization());
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node11->id)>'],
             [
                 'fields[webcatalogtree]' => 'content',
-                'include'                => 'content'
+                'include' => 'content'
             ],
             ['HTTP_X-Localization-ID' => $this->getReference('es')->getId()]
         );
         $this->assertResponseContains('get_content_node_include_product.yml', $response);
     }
 
-    public function testGetWithIncludeForProductCollectionContentVariant()
+    public function testGetWithIncludeForProductCollectionContentVariant(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node1->id)>'],
             [
                 'fields[webcatalogtree]' => 'content',
-                'include'                => 'content'
+                'include' => 'content'
             ]
         );
         $this->assertResponseContains('get_content_node_include_product_collection.yml', $response);
         self::assertCount(1, self::jsonToArray($response->getContent())['included']);
     }
 
-    public function testGetWithIncludeForProductCollectionContentVariantWithProducts()
+    public function testGetWithIncludeForProductCollectionContentVariantWithProducts(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node1->id)>'],
             [
                 'fields[webcatalogtree]' => 'content',
-                'fields[productsearch]'  => 'name,product,productFamily',
-                'fields[products]'       => 'sku,name,url,urls',
-                'include'                => 'content.products.product'
+                'fields[productsearch]' => 'name,product,productFamily',
+                'fields[products]' => 'sku,name,url,urls',
+                'include' => 'content.products.product'
             ]
         );
         $this->assertResponseContains('get_content_node_include_product_collection_products.yml', $response);
         self::assertCount(3, self::jsonToArray($response->getContent())['included']);
     }
 
-    public function testGetWithIncludeForProductCollectionContentVariantWithPaginationLinks()
+    public function testGetWithIncludeForProductCollectionContentVariantWithPaginationLinks(): void
     {
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node12->id)>'],
             [
                 'fields[webcatalogtree]' => 'content',
-                'include'                => 'content'
+                'include' => 'content'
             ],
             ['HTTP_HATEOAS' => true]
         );
@@ -1180,12 +1195,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         self::assertCount(1, self::jsonToArray($response->getContent())['included']);
     }
 
-    public function testGetRelationshipForMasterCatalogCategoryContent()
+    public function testGetRelationshipForMasterCatalogCategoryContent(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node11->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node11->id)>',
                 'association' => 'content'
             ]
         );
@@ -1196,20 +1211,20 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         self::assertArrayNotHasKey('attributes', self::jsonToArray($response->getContent())['data']);
     }
 
-    public function testGetSubresourceForMasterCatalogCategoryContent()
+    public function testGetSubresourceForMasterCatalogCategoryContent(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node11->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node11->id)>',
                 'association' => 'content'
             ]
         );
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'mastercatalogcategories',
-                    'id'         => '<toString(@category1->id)>',
+                    'type' => 'mastercatalogcategories',
+                    'id' => '<toString(@category1->id)>',
                     'attributes' => [
                         'title' => 'Category 1'
                     ]
@@ -1219,12 +1234,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetRelationshipForProductContent()
+    public function testGetRelationshipForProductContent(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node11->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node11->id)>',
                 'association' => 'content'
             ],
             [],
@@ -1237,12 +1252,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         self::assertArrayNotHasKey('attributes', self::jsonToArray($response->getContent())['data']);
     }
 
-    public function testGetSubresourceForProductContent()
+    public function testGetSubresourceForProductContent(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node11->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node11->id)>',
                 'association' => 'content'
             ],
             [],
@@ -1251,8 +1266,8 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'products',
-                    'id'         => '<toString(@product2->id)>',
+                    'type' => 'products',
+                    'id' => '<toString(@product2->id)>',
                     'attributes' => [
                         'name' => 'Product 2'
                     ]
@@ -1262,12 +1277,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetRelationshipForSystemPageContent()
+    public function testGetRelationshipForSystemPageContent(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node111->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node111->id)>',
                 'association' => 'content'
             ]
         );
@@ -1278,20 +1293,20 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         self::assertArrayNotHasKey('attributes', self::jsonToArray($response->getContent())['data']);
     }
 
-    public function testGetSubresourceForSystemPageContent()
+    public function testGetSubresourceForSystemPageContent(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node111->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node111->id)>',
                 'association' => 'content'
             ]
         );
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'systempages',
-                    'id'         => 'oro_product_frontend_product_index',
+                    'type' => 'systempages',
+                    'id' => 'oro_product_frontend_product_index',
                     'attributes' => [
                         'url' => '/product/'
                     ]
@@ -1301,12 +1316,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetRelationshipForProductCollectionContent()
+    public function testGetRelationshipForProductCollectionContent(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node12->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node12->id)>',
                 'association' => 'content'
             ]
         );
@@ -1314,7 +1329,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
             [
                 'data' => [
                     'type' => 'productcollection',
-                    'id'   => '<toString(@catalog1_node12->contentVariants->first()->id)>'
+                    'id' => '<toString(@catalog1_node12->contentVariants->first()->id)>'
                 ]
             ],
             $response
@@ -1322,20 +1337,20 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         self::assertArrayNotHasKey('relationships', self::jsonToArray($response->getContent())['data']);
     }
 
-    public function testGetSubresourceForProductCollectionContent()
+    public function testGetSubresourceForProductCollectionContent(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node1->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node1->id)>',
                 'association' => 'content'
             ]
         );
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'          => 'productcollection',
-                    'id'            => '<toString(@catalog1_node1->contentVariants->first()->id)>',
+                    'type' => 'productcollection',
+                    'id' => '<toString(@catalog1_node1->contentVariants->first()->id)>',
                     'relationships' => [
                         'products' => [
                             'data' => [
@@ -1349,12 +1364,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetSubresourceForProductCollectionContentDefaultCount()
+    public function testGetSubresourceForProductCollectionContentDefaultCount(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node12->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node12->id)>',
                 'association' => 'content'
             ]
         );
@@ -1362,7 +1377,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
             [
                 'data' => [
                     'type' => 'productcollection',
-                    'id'   => '<toString(@catalog1_node12->contentVariants->first()->id)>'
+                    'id' => '<toString(@catalog1_node12->contentVariants->first()->id)>'
                 ]
             ],
             $response
@@ -1373,12 +1388,12 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetSubresourceForProductCollectionContentWithPaginationLinks()
+    public function testGetSubresourceForProductCollectionContentWithPaginationLinks(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'webcatalogtree',
-                'id'          => '<toString(@catalog1_node12->id)>',
+                'entity' => 'webcatalogtree',
+                'id' => '<toString(@catalog1_node12->id)>',
                 'association' => 'content'
             ],
             [],
@@ -1387,8 +1402,8 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'          => 'productcollection',
-                    'id'            => '<toString(@catalog1_node12->contentVariants->first()->id)>',
+                    'type' => 'productcollection',
+                    'id' => '<toString(@catalog1_node12->contentVariants->first()->id)>',
                     'relationships' => [
                         'products' => [
                             'links' => [

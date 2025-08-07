@@ -4,6 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -13,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CatalogTreeTest extends FrontendRestJsonApiTestCase
 {
+    private ?array $initialEnabledLocalizations;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -21,9 +24,27 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
             LoadAdminCustomerUserData::class,
             '@OroCatalogBundle/Tests/Functional/ApiFrontend/DataFixtures/category.yml'
         ]);
+
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            LoadLocalizationData::getLocalizationIds(self::getContainer())
+        );
+        $configManager->flush();
     }
 
-    public function testGetList()
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->flush();
+
+        parent::tearDown();
+    }
+
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogtree']
@@ -31,7 +52,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_catalog_tree.yml', $response);
     }
 
-    public function testGetListFilteredById()
+    public function testGetListFilteredById(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogtree'],
@@ -41,8 +62,8 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'mastercatalogtree',
-                        'id'         => '<toString(@category1->id)>',
+                        'type' => 'mastercatalogtree',
+                        'id' => '<toString(@category1->id)>',
                         'attributes' => [
                             'order' => 2
                         ]
@@ -53,7 +74,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetListFilteredByCategory()
+    public function testGetListFilteredByCategory(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogtree'],
@@ -63,8 +84,8 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'mastercatalogtree',
-                        'id'         => '<toString(@category1->id)>',
+                        'type' => 'mastercatalogtree',
+                        'id' => '<toString(@category1->id)>',
                         'attributes' => [
                             'order' => 2
                         ]
@@ -75,7 +96,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetListFilteredByInvisibleCategory()
+    public function testTryToGetListFilteredByInvisibleCategory(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogtree'],
@@ -87,7 +108,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetListFilteredByParent()
+    public function testGetListFilteredByParent(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogtree'],
@@ -97,8 +118,8 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'mastercatalogtree',
-                        'id'         => '<toString(@category1_1->id)>',
+                        'type' => 'mastercatalogtree',
+                        'id' => '<toString(@category1_1->id)>',
                         'attributes' => [
                             'order' => 3
                         ]
@@ -109,7 +130,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetListFilteredByInvisibleParent()
+    public function testTryToGetListFilteredByInvisibleParent(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogtree'],
@@ -121,7 +142,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetListFilteredBySeveralParentsIncludingInvisibleParent()
+    public function testGetListFilteredBySeveralParentsIncludingInvisibleParent(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogtree'],
@@ -131,8 +152,8 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'mastercatalogtree',
-                        'id'         => '<toString(@category1_1->id)>',
+                        'type' => 'mastercatalogtree',
+                        'id' => '<toString(@category1_1->id)>',
                         'attributes' => [
                             'order' => 3
                         ]
@@ -143,7 +164,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetListFilteredByParentWithExistsOperator()
+    public function testGetListFilteredByParentWithExistsOperator(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogtree'],
@@ -163,7 +184,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetListFilteredByParentWithNotExistsOperator()
+    public function testGetListFilteredByParentWithNotExistsOperator(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogtree', 'filter[parent]' => ['exists' => false]]
@@ -178,7 +199,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetListFilteredByParentWithNeqOrNullOperator()
+    public function testGetListFilteredByParentWithNeqOrNullOperator(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogtree'],
@@ -198,7 +219,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetListFilteredByRoot()
+    public function testGetListFilteredByRoot(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogtree'],
@@ -208,15 +229,15 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'mastercatalogtree',
-                        'id'         => '<toString(@category1_1->id)>',
+                        'type' => 'mastercatalogtree',
+                        'id' => '<toString(@category1_1->id)>',
                         'attributes' => [
                             'order' => 3
                         ]
                     ],
                     [
-                        'type'       => 'mastercatalogtree',
-                        'id'         => '<toString(@category1_1_1->id)>',
+                        'type' => 'mastercatalogtree',
+                        'id' => '<toString(@category1_1_1->id)>',
                         'attributes' => [
                             'order' => 4
                         ]
@@ -227,7 +248,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetListFilteredByRootWhenRootShouldBeReturned()
+    public function testGetListFilteredByRootWhenRootShouldBeReturned(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogtree'],
@@ -237,22 +258,22 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'mastercatalogtree',
-                        'id'         => '<toString(@category1->id)>',
+                        'type' => 'mastercatalogtree',
+                        'id' => '<toString(@category1->id)>',
                         'attributes' => [
                             'order' => 2
                         ]
                     ],
                     [
-                        'type'       => 'mastercatalogtree',
-                        'id'         => '<toString(@category1_1->id)>',
+                        'type' => 'mastercatalogtree',
+                        'id' => '<toString(@category1_1->id)>',
                         'attributes' => [
                             'order' => 3
                         ]
                     ],
                     [
-                        'type'       => 'mastercatalogtree',
-                        'id'         => '<toString(@category1_1_1->id)>',
+                        'type' => 'mastercatalogtree',
+                        'id' => '<toString(@category1_1_1->id)>',
                         'attributes' => [
                             'order' => 4
                         ]
@@ -263,7 +284,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetListFilteredByInvisibleRoot()
+    public function testTryToGetListFilteredByInvisibleRoot(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogtree'],
@@ -275,7 +296,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $response = $this->get(
             ['entity' => 'mastercatalogtree', 'id' => '<toString(@category1_1->id)>']
@@ -283,19 +304,19 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_catalog_tree.yml', $response);
     }
 
-    public function testGetWithIncludeAndFieldsFilters()
+    public function testGetWithIncludeAndFieldsFilters(): void
     {
         $response = $this->get(
             ['entity' => 'mastercatalogtree', 'id' => '<toString(@category1_1->id)>'],
             [
-                'include'                   => 'parent,path',
+                'include' => 'parent,path',
                 'fields[mastercatalogtree]' => 'order,parent,path'
             ]
         );
         $this->assertResponseContains('get_catalog_tree_include_fields.yml', $response);
     }
 
-    public function testGetWithIncludeFilterForCategory()
+    public function testGetWithIncludeFilterForCategory(): void
     {
         $response = $this->get(
             ['entity' => 'mastercatalogtree', 'id' => '<toString(@category1_1->id)>'],
@@ -304,7 +325,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_catalog_tree_include_category.yml', $response);
     }
 
-    public function testTryToGetForInvisibleCategory()
+    public function testTryToGetForInvisibleCategory(): void
     {
         $response = $this->get(
             ['entity' => 'mastercatalogtree', 'id' => '<toString(@category3_1->id)>'],
@@ -314,7 +335,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -322,7 +343,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetForNotExistingCategory()
+    public function testTryToGetForNotExistingCategory(): void
     {
         $response = $this->get(
             ['entity' => 'mastercatalogtree', 'id' => '9999999'],
@@ -332,7 +353,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'not found http exception',
+                'title' => 'not found http exception',
                 'detail' => 'An entity with the requested identifier does not exist.'
             ],
             $response,
@@ -340,14 +361,14 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdate()
+    public function testTryToUpdate(): void
     {
         $response = $this->patch(
             ['entity' => 'mastercatalogtree', 'id' => '<toString(@category1_1->id)>'],
             [
                 'data' => [
-                    'type'       => 'mastercatalogtree',
-                    'id'         => '<toString(@category1_1->id)>',
+                    'type' => 'mastercatalogtree',
+                    'id' => '<toString(@category1_1->id)>',
                     'attributes' => [
                         'order' => 100
                     ]
@@ -359,13 +380,13 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToCreate()
+    public function testTryToCreate(): void
     {
         $response = $this->post(
             ['entity' => 'mastercatalogtree'],
             [
                 'data' => [
-                    'type'       => 'mastercatalogtree',
+                    'type' => 'mastercatalogtree',
                     'attributes' => [
                         'order' => 100
                     ]
@@ -377,7 +398,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDelete()
+    public function testTryToDelete(): void
     {
         $response = $this->delete(
             ['entity' => 'mastercatalogtree', 'id' => '<toString(@category1_1->id)>'],
@@ -388,7 +409,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDeleteList()
+    public function testTryToDeleteList(): void
     {
         $response = $this->cdelete(
             ['entity' => 'mastercatalogtree'],
@@ -399,20 +420,20 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testGetSubresourceForParent()
+    public function testGetSubresourceForParent(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'mastercatalogtree',
-                'id'          => '<toString(@category1_1->id)>',
+                'entity' => 'mastercatalogtree',
+                'id' => '<toString(@category1_1->id)>',
                 'association' => 'parent'
             ]
         );
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'mastercatalogtree',
-                    'id'         => '<toString(@category1->id)>',
+                    'type' => 'mastercatalogtree',
+                    'id' => '<toString(@category1->id)>',
                     'attributes' => [
                         'order' => 2
                     ]
@@ -422,12 +443,12 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForParent()
+    public function testGetRelationshipForParent(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'mastercatalogtree',
-                'id'          => '<toString(@category1_1->id)>',
+                'entity' => 'mastercatalogtree',
+                'id' => '<toString(@category1_1->id)>',
                 'association' => 'parent'
             ]
         );
@@ -439,12 +460,12 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForParentForInvisibleParent()
+    public function testTryToGetRelationshipForParentForInvisibleParent(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'mastercatalogtree',
-                'id'          => '<toString(@category3_1->id)>',
+                'entity' => 'mastercatalogtree',
+                'id' => '<toString(@category3_1->id)>',
                 'association' => 'parent'
             ],
             [],
@@ -453,7 +474,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'No access to the parent entity.'
             ],
             $response,
@@ -461,12 +482,12 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForParentForNotExistingParent()
+    public function testTryToGetRelationshipForParentForNotExistingParent(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'mastercatalogtree',
-                'id'          => '9999999',
+                'entity' => 'mastercatalogtree',
+                'id' => '9999999',
                 'association' => 'parent'
             ],
             [],
@@ -475,7 +496,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'not found http exception',
+                'title' => 'not found http exception',
                 'detail' => 'The parent entity does not exist.'
             ],
             $response,
@@ -483,12 +504,12 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetSubresourceForPath()
+    public function testGetSubresourceForPath(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'mastercatalogtree',
-                'id'          => '<toString(@category1_1->id)>',
+                'entity' => 'mastercatalogtree',
+                'id' => '<toString(@category1_1->id)>',
                 'association' => 'path'
             ]
         );
@@ -496,15 +517,15 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'mastercatalogtree',
-                        'id'         => '<toString(@root_category->id)>',
+                        'type' => 'mastercatalogtree',
+                        'id' => '<toString(@root_category->id)>',
                         'attributes' => [
                             'order' => 1
                         ]
                     ],
                     [
-                        'type'       => 'mastercatalogtree',
-                        'id'         => '<toString(@category1->id)>',
+                        'type' => 'mastercatalogtree',
+                        'id' => '<toString(@category1->id)>',
                         'attributes' => [
                             'order' => 2
                         ]
@@ -515,12 +536,12 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForPath()
+    public function testGetRelationshipForPath(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'mastercatalogtree',
-                'id'          => '<toString(@category1_1->id)>',
+                'entity' => 'mastercatalogtree',
+                'id' => '<toString(@category1_1->id)>',
                 'association' => 'path'
             ]
         );
@@ -535,12 +556,12 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForPathForInvisibleParent()
+    public function testTryToGetRelationshipForPathForInvisibleParent(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'mastercatalogtree',
-                'id'          => '<toString(@category3_1->id)>',
+                'entity' => 'mastercatalogtree',
+                'id' => '<toString(@category3_1->id)>',
                 'association' => 'path'
             ],
             [],
@@ -549,7 +570,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'No access to the parent entity.'
             ],
             $response,
@@ -557,12 +578,12 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForPathForNotExistingParent()
+    public function testTryToGetRelationshipForPathForNotExistingParent(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'mastercatalogtree',
-                'id'          => '9999999',
+                'entity' => 'mastercatalogtree',
+                'id' => '9999999',
                 'association' => 'path'
             ],
             [],
@@ -571,7 +592,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'not found http exception',
+                'title' => 'not found http exception',
                 'detail' => 'The parent entity does not exist.'
             ],
             $response,
@@ -579,23 +600,23 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetSubresourceForCategory()
+    public function testGetSubresourceForCategory(): void
     {
         $response = $this->getSubresource(
             [
-                'entity'      => 'mastercatalogtree',
-                'id'          => '<toString(@category1_1->id)>',
+                'entity' => 'mastercatalogtree',
+                'id' => '<toString(@category1_1->id)>',
                 'association' => 'category'
             ]
         );
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'mastercatalogcategories',
-                    'id'         => '<toString(@category1_1->id)>',
+                    'type' => 'mastercatalogcategories',
+                    'id' => '<toString(@category1_1->id)>',
                     'attributes' => [
                         'title' => 'Category 1_1',
-                        'url'   => '/category1_1_slug_default'
+                        'url' => '/category1_1_slug_default'
                     ]
                 ]
             ],
@@ -603,12 +624,12 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForCategory()
+    public function testGetRelationshipForCategory(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'mastercatalogtree',
-                'id'          => '<toString(@category1_1->id)>',
+                'entity' => 'mastercatalogtree',
+                'id' => '<toString(@category1_1->id)>',
                 'association' => 'category'
             ]
         );
@@ -620,12 +641,12 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForCategoryForInvisibleParent()
+    public function testTryToGetRelationshipForCategoryForInvisibleParent(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'mastercatalogtree',
-                'id'          => '<toString(@category3_1->id)>',
+                'entity' => 'mastercatalogtree',
+                'id' => '<toString(@category3_1->id)>',
                 'association' => 'category'
             ],
             [],
@@ -634,7 +655,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'No access to the parent entity.'
             ],
             $response,
@@ -642,12 +663,12 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForCategoryForNotExistingParent()
+    public function testTryToGetRelationshipForCategoryForNotExistingParent(): void
     {
         $response = $this->getRelationship(
             [
-                'entity'      => 'mastercatalogtree',
-                'id'          => '9999999',
+                'entity' => 'mastercatalogtree',
+                'id' => '9999999',
                 'association' => 'category'
             ],
             [],
@@ -656,7 +677,7 @@ class CatalogTreeTest extends FrontendRestJsonApiTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'not found http exception',
+                'title' => 'not found http exception',
                 'detail' => 'The parent entity does not exist.'
             ],
             $response,

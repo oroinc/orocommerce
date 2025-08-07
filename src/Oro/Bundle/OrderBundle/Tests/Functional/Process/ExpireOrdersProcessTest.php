@@ -38,6 +38,10 @@ class ExpireOrdersProcessTest extends WebTestCase
     private ProcessDefinition $processDefinition;
     private ConfigManager $configManager;
 
+    private ?bool $initialOrderAutoCancellation;
+    private ?array $initialOrderAutoStatuses;
+    private ?string $initialOrderAutoTargetStatus;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -55,7 +59,10 @@ class ExpireOrdersProcessTest extends WebTestCase
         $this->processDefinition = $this->doctrine->getRepository(ProcessDefinition::class)
             ->findOneBy(['name' => 'expire_orders']);
 
-        $this->configManager = self::getConfigManager();
+        $configManager = self::getConfigManager();
+        $this->initialOrderAutoCancellation = $configManager->get('oro_order.order_automation_enable_cancellation');
+        $this->initialOrderAutoStatuses = $configManager->get('oro_order.order_automation_applicable_statuses');
+        $this->initialOrderAutoTargetStatus = $configManager->get('oro_order.order_automation_target_status');
 
         $this->loadFixtures([
             LoadCustomers::class,
@@ -70,6 +77,15 @@ class ExpireOrdersProcessTest extends WebTestCase
         $qb = $connection->createQueryBuilder();
         $qb->delete('oro_config_value')
             ->andWhere($qb->expr()->eq('section', 'oro_order'));
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_order.order_automation_enable_cancellation', $this->initialOrderAutoCancellation);
+        $configManager->set('oro_order.order_automation_applicable_statuses', $this->initialOrderAutoStatuses);
+        $configManager->set('oro_order.order_automation_target_status', $this->initialOrderAutoTargetStatus);
     }
 
     public function testProcessDefinition()
@@ -195,22 +211,18 @@ class ExpireOrdersProcessTest extends WebTestCase
 
     private function initializeConfigs(
         bool $enabled = true,
-        array $statuses = [
-            OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
-        ],
+        array $statuses = [OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN],
         string $target = OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
     ): void {
-        $this->configManager->set('oro_order.order_automation_enable_cancellation', $enabled);
-        $this->configManager->set(
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_order.order_automation_enable_cancellation', $enabled);
+        $configManager->set(
             'oro_order.order_automation_applicable_statuses',
             ExtendHelper::mapToEnumOptionIds(Order::INTERNAL_STATUS_CODE, $statuses)
         );
-        $this->configManager->set(
+        $configManager->set(
             'oro_order.order_automation_target_status',
-            ExtendHelper::buildEnumOptionId(
-                Order::INTERNAL_STATUS_CODE,
-                $target
-            )
+            ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $target)
         );
     }
 

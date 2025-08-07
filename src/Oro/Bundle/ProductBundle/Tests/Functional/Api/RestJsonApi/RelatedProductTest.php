@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadUserData as CatalogLoadUserData;
-use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadRelatedProductData;
@@ -23,7 +22,6 @@ use Symfony\Component\HttpFoundation\Response;
 class RelatedProductTest extends RestJsonApiTestCase
 {
     use RolePermissionExtension;
-    use ConfigManagerAwareTestTrait;
 
     #[\Override]
     protected function setUp(): void
@@ -56,7 +54,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         $configManager->flush();
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(['entity' => 'relatedproducts']);
 
@@ -67,7 +65,7 @@ class RelatedProductTest extends RestJsonApiTestCase
      * oro_related_products_edit - false
      * Product::VIEW             - true
      */
-    public function testTryToGetListWhenAccessDeniedOnLackOfPermissionToEditRelatedProducts()
+    public function testTryToGetListWhenAccessDeniedOnLackOfPermissionToEditRelatedProducts(): void
     {
         $response = $this->cget(
             ['entity' => 'relatedproducts'],
@@ -78,7 +76,7 @@ class RelatedProductTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'No access to change related products.'
             ],
             $response,
@@ -90,7 +88,7 @@ class RelatedProductTest extends RestJsonApiTestCase
      * oro_related_products_edit - true
      * Product::VIEW             - false
      */
-    public function testTryToGetListWhenAccessDeniedOnLackOfPermissionToViewProductEntity()
+    public function testTryToGetListWhenAccessDeniedOnLackOfPermissionToViewProductEntity(): void
     {
         $this->updateRolePermission(
             CatalogLoadUserData::ROLE_CATALOG_MANAGER,
@@ -108,11 +106,11 @@ class RelatedProductTest extends RestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $response = $this->get([
             'entity' => 'relatedproducts',
-            'id'     => '<toString(@related-product-product-3-product-1->id)>',
+            'id' => '<toString(@related-product-product-3-product-1->id)>',
         ]);
 
         $this->assertResponseContains('related_product/get.yml', $response);
@@ -122,12 +120,12 @@ class RelatedProductTest extends RestJsonApiTestCase
      * oro_related_products_edit - false
      * Product::VIEW             - true
      */
-    public function testTryToGetWhenAccessDeniedOnLackOfPermissionToEditRelatedProducts()
+    public function testTryToGetWhenAccessDeniedOnLackOfPermissionToEditRelatedProducts(): void
     {
         $response = $this->get(
             [
                 'entity' => 'relatedproducts',
-                'id'     => '<toString(@related-product-product-3-product-1->id)>',
+                'id' => '<toString(@related-product-product-3-product-1->id)>',
             ],
             [],
             self::generateApiAuthHeader(LoadUserData::USER_NAME),
@@ -136,7 +134,7 @@ class RelatedProductTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'No access to change related products.'
             ],
             $response,
@@ -148,7 +146,7 @@ class RelatedProductTest extends RestJsonApiTestCase
      * oro_related_products_edit - true
      * Product::VIEW             - false
      */
-    public function testTryToGetAccessDeniedOnLackOfPermissionToViewProductEntity()
+    public function testTryToGetAccessDeniedOnLackOfPermissionToViewProductEntity(): void
     {
         $this->updateRolePermission(
             CatalogLoadUserData::ROLE_CATALOG_MANAGER,
@@ -159,7 +157,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         $response = $this->get(
             [
                 'entity' => 'relatedproducts',
-                'id'     => '<toString(@related-product-product-3-product-1->id)>',
+                'id' => '<toString(@related-product-product-3-product-1->id)>',
             ],
             [],
             self::generateApiAuthHeader(CatalogLoadUserData::USER_NAME_CATALOG_MANAGER),
@@ -169,7 +167,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $this->setRelatedProductsEnabled(true);
         $this->setRelatedProductsLimit(100);
@@ -183,7 +181,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         self::assertNotNull($entity);
     }
 
-    public function testTryToCreateWhenFunctionalityIsDisabled()
+    public function testTryToCreateWhenFunctionalityIsDisabled(): void
     {
         $this->setRelatedProductsEnabled(false);
 
@@ -191,14 +189,14 @@ class RelatedProductTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'value constraint',
+                'title' => 'value constraint',
                 'detail' => 'Related Items functionality is disabled.'
             ],
             $response
         );
     }
 
-    public function testTryToCreateWhenUserTriesToAddProductToItself()
+    public function testTryToCreateWhenUserTriesToAddProductToItself(): void
     {
         $this->setRelatedProductsEnabled(true);
 
@@ -211,27 +209,27 @@ class RelatedProductTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'value constraint',
+                'title' => 'value constraint',
                 'detail' => 'It is not possible to create relations from product to itself.'
             ],
             $response
         );
     }
 
-    public function testTryToCreateWhenRelationAlreadyExist()
+    public function testTryToCreateWhenRelationAlreadyExist(): void
     {
         $response = $this->post(['entity' => 'relatedproducts'], 'related_product/post_relation_exists.yml', [], false);
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'value constraint',
+                'title' => 'value constraint',
                 'detail' => 'Relation between products already exists.'
             ],
             $response
         );
     }
 
-    public function testTryToCreateWhenLimitExceeded()
+    public function testTryToCreateWhenLimitExceeded(): void
     {
         $this->setRelatedProductsLimit(1);
 
@@ -239,14 +237,14 @@ class RelatedProductTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'value constraint',
+                'title' => 'value constraint',
                 'detail' => 'It is not possible to add more related items, because of the limit of relations.'
             ],
             $response
         );
     }
 
-    public function testTryToCreateWhenRequestHasNoRelationshipData()
+    public function testTryToCreateWhenRequestHasNoRelationshipData(): void
     {
         $this->setRelatedProductsLimit(10);
 
@@ -260,12 +258,12 @@ class RelatedProductTest extends RestJsonApiTestCase
         $this->assertResponseValidationErrors(
             [
                 [
-                    'title'  => 'not blank constraint',
+                    'title' => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
                     'source' => ['pointer' => '/data/relationships/product/data']
                 ],
                 [
-                    'title'  => 'not blank constraint',
+                    'title' => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
                     'source' => ['pointer' => '/data/relationships/relatedItem/data']
                 ]
@@ -274,7 +272,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToCreateWhenRequestHasNoProductRelationshipData()
+    public function testTryToCreateWhenRequestHasNoProductRelationshipData(): void
     {
         $response = $this->post(
             ['entity' => 'relatedproducts'],
@@ -285,7 +283,7 @@ class RelatedProductTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'not blank constraint',
+                'title' => 'not blank constraint',
                 'detail' => 'This value should not be blank.',
                 'source' => ['pointer' => '/data/relationships/product/data']
             ],
@@ -293,7 +291,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToCreateWhenRequestHasNoRelatedItemRelationshipData()
+    public function testTryToCreateWhenRequestHasNoRelatedItemRelationshipData(): void
     {
         $response = $this->post(
             ['entity' => 'relatedproducts'],
@@ -304,7 +302,7 @@ class RelatedProductTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'not blank constraint',
+                'title' => 'not blank constraint',
                 'detail' => 'This value should not be blank.',
                 'source' => ['pointer' => '/data/relationships/relatedItem/data']
             ],
@@ -316,7 +314,7 @@ class RelatedProductTest extends RestJsonApiTestCase
      * oro_related_products_edit - false
      * Product::VIEW,EDIT        - true
      */
-    public function testTryToCreateWhenAccessDeniedOnLackOfPermissionToEditRelatedProducts()
+    public function testTryToCreateWhenAccessDeniedOnLackOfPermissionToEditRelatedProducts(): void
     {
         $response = $this->post(
             ['entity' => 'relatedproducts'],
@@ -327,7 +325,7 @@ class RelatedProductTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'No access to change related products.'
             ],
             $response,
@@ -340,7 +338,7 @@ class RelatedProductTest extends RestJsonApiTestCase
      * Product::VIEW             - true
      * Product::EDIT             - false
      */
-    public function testTryToCreateWhenAccessDeniedOnLackOfPermissionToEditProductEntity()
+    public function testTryToCreateWhenAccessDeniedOnLackOfPermissionToEditProductEntity(): void
     {
         $this->updateRolePermissionForAction(
             LoadRolesData::ROLE_USER,
@@ -358,19 +356,19 @@ class RelatedProductTest extends RestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         $this->delete(
             [
                 'entity' => 'relatedproducts',
-                'id'     => '<toString(@related-product-product-5-product-4->id)>',
+                'id' => '<toString(@related-product-product-5-product-4->id)>',
             ]
         );
 
         $response = $this->get(
             [
                 'entity' => 'relatedproducts',
-                'id'     => '<toString(@related-product-product-5-product-4->id)>',
+                'id' => '<toString(@related-product-product-5-product-4->id)>',
             ],
             [],
             [],
@@ -385,7 +383,7 @@ class RelatedProductTest extends RestJsonApiTestCase
      * Product::EDIT             - true
      * Product::VIEW             - false
      */
-    public function testTryToDeleteWhenDeniedOnLackOfPermissionToViewProductEntity()
+    public function testTryToDeleteWhenDeniedOnLackOfPermissionToViewProductEntity(): void
     {
         $this->updateRolePermission(
             CatalogLoadUserData::ROLE_CATALOG_MANAGER,
@@ -402,7 +400,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         $response = $this->delete(
             [
                 'entity' => 'relatedproducts',
-                'id'     => '<toString(@related-product-product-3-product-1->id)>',
+                'id' => '<toString(@related-product-product-3-product-1->id)>',
             ],
             [],
             self::generateApiAuthHeader(CatalogLoadUserData::USER_NAME_CATALOG_MANAGER),
@@ -414,7 +412,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         $response = $this->get(
             [
                 'entity' => 'relatedproducts',
-                'id'     => '<toString(@related-product-product-3-product-1->id)>',
+                'id' => '<toString(@related-product-product-3-product-1->id)>',
             ]
         );
 

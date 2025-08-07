@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\ApiFrontendForVisitor\RestJsonApi;
 
-use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
@@ -19,7 +18,6 @@ use Symfony\Component\HttpFoundation\Response;
 class ShoppingListItemForVisitorWithShoppingListTest extends FrontendRestJsonApiTestCase
 {
     use RolePermissionExtension;
-    use ConfigManagerAwareTestTrait;
 
     #[\Override]
     protected function setUp(): void
