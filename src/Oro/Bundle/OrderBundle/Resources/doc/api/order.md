@@ -257,6 +257,10 @@ Calculated order subtotal records for a specific order.
 
 **The read-only field. A passed value will be ignored.**
 
+### invoices
+
+Collection of invoice records assigned to a specific order.
+
 ## SUBRESOURCES
 
 ### billingAddress
@@ -411,6 +415,73 @@ Example:
     {
       "type": "orderdiscounts",
       "id": "2"
+    }
+  ]
+}
+```
+{@/request}
+
+### invoices
+
+#### get_subresource
+
+Retrieve the invoices collection assigned to a specific order record.
+
+#### get_relationship
+
+Retrieve the IDs of the invoices assigned to a specific order record.
+
+#### update_relationship
+
+Replace the list of invoices assigned to a specific order record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "invoices",
+      "id": "1"
+    }
+  ]
+}
+```
+{@/request}
+
+#### add_relationship
+
+Add invoices to a specific order record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "invoices",
+      "id": "2"
+    }
+  ]
+}
+```
+{@/request}
+
+#### delete_relationship
+
+Remove invoices from a specific order record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "invoices",
+      "id": "1"
     }
   ]
 }
