@@ -55,12 +55,13 @@
         position: relative;
     }
 
-    &:focus-within {
-        z-index: $sticky-panel-z-index;
-    }
-
     .ui-dialog & {
         --sticky-position-top-offset: -#{spacing('md')};
+    }
+
+    &:focus-within,
+    &:has(.dropdown-menu.show) {
+        z-index: $sticky-panel-z-index;
     }
 
     &.in-sticky {
