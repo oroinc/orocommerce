@@ -111,13 +111,13 @@ Feature: Brand cannot be selected on product form when edit permission is set to
   Scenario: Check search when view brand permission is set to Global and edit permission is set to None
     Given I reload the page
     And type "Acme" in "search"
-    Then I should see 1 search suggestions
+    Then I should see 2 search suggestions
     When I click "Search Submit"
     Then I should see following search results:
       | Title | Type  |
       | ACME  | Brand |
     And type "DefaultBrandLtd" in "search"
-    Then I should see 1 search suggestions
+    Then I should see 2 search suggestions
     When I click "Search Submit"
     Then I should see following search results:
       | Title            | Type  |
@@ -134,15 +134,13 @@ Feature: Brand cannot be selected on product form when edit permission is set to
   Scenario: Check search when view brand permission is set to Business Unit
     Given I reload the page
     And type "Acme" in "search"
-    Then I should see 1 search suggestions
+    Then I should see 2 search suggestions
     When I click "Search Submit"
     Then I should see following search results:
       | Title | Type  |
       | ACME  | Brand |
     And type "DefaultBrandLtd" in "search"
-    Then I should see 0 search suggestions
-    When I click "Search Submit"
-    Then I should see "No results were found to match your search."
+    Then I should see 1 search suggestions
 
   Scenario: Check is brand grid show only brand owned by business unit when view permission is set to Business Unit
     When I go to Products/Brand

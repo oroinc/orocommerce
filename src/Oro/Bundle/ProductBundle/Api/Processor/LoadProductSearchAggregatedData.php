@@ -7,12 +7,13 @@ use Oro\Bundle\ApiBundle\Model\ErrorSource;
 use Oro\Bundle\ApiBundle\Processor\ListContext;
 use Oro\Bundle\ApiBundle\Request\Constraint;
 use Oro\Bundle\SearchBundle\Api\Exception\InvalidSearchQueryException;
+use Oro\Bundle\SearchBundle\Api\Filter\SearchAggregationFilter;
 use Oro\Bundle\SearchBundle\Api\Model\SearchResult;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Loads product search aggregated data using search query result stored in the context.
+ * Loads product search aggregated data using a search query result stored in the context.
  */
 class LoadProductSearchAggregatedData implements ProcessorInterface
 {
@@ -31,9 +32,9 @@ class LoadProductSearchAggregatedData implements ProcessorInterface
             $aggregatedData = $searchResult->getAggregatedData();
         } catch (InvalidSearchQueryException $e) {
             $error = Error::createValidationError(Constraint::FILTER, $e->getMessage());
-            $filterValue = $context->getFilterValues()->getOne('aggregations');
-            if (null !== $filterValue) {
-                $error->setSource(ErrorSource::createByParameter($filterValue->getSourceKey()));
+            $aggregationFilterName = $this->getSearchAggregationFilterName($context);
+            if ($aggregationFilterName) {
+                $error->setSource(ErrorSource::createByParameter($aggregationFilterName));
             }
             $context->addError($error);
 
@@ -43,5 +44,17 @@ class LoadProductSearchAggregatedData implements ProcessorInterface
         if ($aggregatedData) {
             $context->addInfoRecord('aggregatedData', $aggregatedData);
         }
+    }
+
+    private function getSearchAggregationFilterName(ListContext $context): ?string
+    {
+        $filterValues = $context->getFilterValues()->getAll();
+        foreach ($filterValues as $filterKey => $filterValue) {
+            if ($context->getFilters()->get($filterKey) instanceof SearchAggregationFilter) {
+                return $filterKey;
+            }
+        }
+
+        return null;
     }
 }

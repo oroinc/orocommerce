@@ -834,6 +834,15 @@ services:
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
 
+    oro_order.listener.order_payment_status_search_listener:
+        class: Oro\Bundle\OrderBundle\EventListener\OrderPaymentStatusSearchListener
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_payment.formatter.payment_status_label'
+        tags:
+            - { name: kernel.event_listener, event: oro_search.prepare_entity_map, method: prepareEntityMapEvent, priority: 100 }
+            - { name: kernel.event_listener, event: oro_search.search_mapping_collect, method: collectEntityMapEvent, priority: -100 }
+
     oro_order.migration.enumerable_config_keys_provider:
         parent: oro_entity_extend.migration.enumerable_config_keys_provider
         arguments:

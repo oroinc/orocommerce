@@ -2455,6 +2455,12 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\Product, event: prePersist }
 
+    oro_product.listener.product_category_search_listener:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductCategorySearchListener
+        tags:
+            - { name: kernel.event_listener, event: oro_search.prepare_entity_map, method: prepareEntityMapEvent, priority: 100 }
+            - { name: kernel.event_listener, event: oro_search.search_mapping_collect, method: collectEntityMapEvent, priority: -100 }
+
     oro_product.migration.enumerable_config_keys_provider:
         parent: oro_entity_extend.migration.enumerable_config_keys_provider
         arguments:

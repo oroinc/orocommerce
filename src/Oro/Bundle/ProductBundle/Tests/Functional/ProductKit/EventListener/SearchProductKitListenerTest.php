@@ -201,8 +201,13 @@ class SearchProductKitListenerTest extends WebTestCase
                 'defaultDescription' => (string)$product6->getDefaultDescription(),
                 'defaultShortDescription' => (string)$product6->getDefaultShortDescription(),
                 'shortDescriptions' => (string)$product6->getDefaultShortDescription(),
-                'all_text' => 'product-6.names.default product 6 names default product-6 product-6.descriptions.default'
-                    .' descriptions product-6.shortDescriptions.default shortDescriptions'
+                'all_text' => 'product-6.names.default product 6 names default product-6 simple enabled '
+                    . 'product-6.descriptions.default descriptions product-6.shortDescriptions.default '
+                    . 'shortDescriptions Default',
+                'productType' => 'simple',
+                'productStatus' => 'enabled',
+                'productFamilyName' => 'Default',
+                'category' => ''
             ]
         ];
 
@@ -227,10 +232,14 @@ class SearchProductKitListenerTest extends WebTestCase
                 'sku' => $kit1->getSku(),
                 'defaultName' => $name,
                 'names' => $name,
-                'all_text' => 'PKSKU1 - Unit of Quantity Taken from Product Kit product-1.names.default product 1 names'
-                    .' default product-1 product-1.names.en_CA en CA product-1.descriptions.default descriptions'
-                    .' product-1.shortDescriptions.default shortDescriptions product-1.shortDescriptions.en_CA with'
-                    .' Single Item product-kit-1 kit'
+                'all_text' => 'PKSKU1 - Unit of Quantity Taken from Product Kit product-1.names.default '
+                    . 'product 1 names default product-1 simple enabled product-1.names.en_CA en CA '
+                    . 'product-1.descriptions.default descriptions product-1.shortDescriptions.default '
+                    . 'shortDescriptions product-1.shortDescriptions.en_CA Default with Single Item product-kit-1 kit',
+                'productType' => 'kit',
+                'productStatus' => 'enabled',
+                'productFamilyName' => 'Default',
+                'category' => ''
             ]
         ];
 
@@ -256,7 +265,11 @@ class SearchProductKitListenerTest extends WebTestCase
                 'sku' => $kit1->getSku(),
                 'defaultName' => $name,
                 'names' => $name,
-                'all_text' => 'Product Kit with Single Item product-kit-1 product kit 1'
+                'all_text' => 'Product Kit with Single Item product-kit-1 product kit 1 enabled Default',
+                'productType' => 'kit',
+                'productStatus' => 'enabled',
+                'productFamilyName' => 'Default',
+                'category' => ''
             ]
         ];
 
