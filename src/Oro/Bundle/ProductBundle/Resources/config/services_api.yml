@@ -342,24 +342,26 @@ services:
     oro_product.api.product_search.handle_aggregations_filter:
         class: Oro\Bundle\SearchBundle\Api\Processor\HandleSearchAggregationFilter
         tags:
-            - { name: oro.api.processor, action: get_list, group: build_query, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -95 }
+            - { name: oro.api.processor, action: get_list, group: build_query, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -93 }
 
     oro_product.api.product_search.load_data:
         class: Oro\Bundle\ProductBundle\Api\Processor\LoadProductSearchData
+        arguments:
+            - '@oro_search.api.search_query_executor'
         tags:
             - { name: oro.api.processor, action: get_list, group: load_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch }
 
     oro_product.api.product_search.load_aggregated_data:
         class: Oro\Bundle\ProductBundle\Api\Processor\LoadProductSearchAggregatedData
         tags:
-            - { name: oro.api.processor, action: get_list, group: load_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -10 }
+            - { name: oro.api.processor, action: get_list, group: load_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -23 }
 
     oro_product.api.product_search.normalize_aggregated_data:
         class: Oro\Bundle\SearchBundle\Api\Processor\NormalizeSearchAggregatedData
         arguments:
             - '@oro_api.value_transformer'
         tags:
-            - { name: oro.api.processor, action: get_list, group: load_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -12 }
+            - { name: oro.api.processor, action: get_list, group: load_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -28 }
 
     oro_product.api.product_search.expand_product_search_entities:
         class: Oro\Bundle\ProductBundle\Api\Processor\ExpandProductSearchEntities

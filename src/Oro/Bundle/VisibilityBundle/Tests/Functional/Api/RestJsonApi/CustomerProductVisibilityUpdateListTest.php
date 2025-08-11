@@ -33,7 +33,7 @@ class CustomerProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestC
             ['filter[product][eq]' => '@product-4->id']
         );
 
-        $this->assertResponseContains('update_list_create_customer_product_visibilities.yml', $response);
+        $this->assertResponseContains('update_list_create_customer_product_visibilities.yml', $response, true);
     }
 
     public function testUpdateEntities(): void

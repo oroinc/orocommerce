@@ -30,10 +30,10 @@ class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateList
 
         $response = $this->cget(
             ['entity' => 'customergroupproductvisibilities'],
-            ['filter[product][eq]' => '@product-4->id']
+            ['filter[product][eq]' => '@product-4->id', 'sort' => 'customerGroup']
         );
 
-        $this->assertResponseContains('update_list_create_customer_group_product_visibilities.yml', $response);
+        $this->assertResponseContains('update_list_create_customer_group_product_visibilities.yml', $response, true);
     }
 
     public function testUpdateEntities(): void

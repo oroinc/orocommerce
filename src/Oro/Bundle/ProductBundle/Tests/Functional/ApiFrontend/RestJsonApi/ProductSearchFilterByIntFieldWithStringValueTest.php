@@ -8,7 +8,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * This test is in the own class to avoid using dbIsolationPerTest in ProductSearchTest (to speed uo tests).
+ * This test is in the own class to avoid using dbIsolationPerTest in ProductSearchTest (to speed up tests).
  */
 class ProductSearchFilterByIntFieldWithStringValueTest extends FrontendRestJsonApiTestCase
 {

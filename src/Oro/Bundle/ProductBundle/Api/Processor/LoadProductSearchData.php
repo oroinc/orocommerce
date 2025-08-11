@@ -12,6 +12,7 @@ use Oro\Bundle\ApiBundle\Request\DataType;
 use Oro\Bundle\ApiBundle\Util\ConfigUtil;
 use Oro\Bundle\ProductBundle\Api\Model\ProductSearch;
 use Oro\Bundle\SearchBundle\Api\Exception\InvalidSearchQueryException;
+use Oro\Bundle\SearchBundle\Api\Model\SearchQueryExecutorInterface;
 use Oro\Bundle\SearchBundle\Api\Model\SearchResult;
 use Oro\Bundle\SearchBundle\Query\Result\Item as SearchResultItem;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
@@ -25,6 +26,15 @@ class LoadProductSearchData implements ProcessorInterface
 {
     public const SEARCH_RESULT = 'search_result';
 
+    private SearchQueryExecutorInterface $queryExecutor;
+
+    public function __construct(
+        SearchQueryExecutorInterface $queryExecutor
+    ) {
+        $this->queryExecutor = $queryExecutor;
+    }
+
+    #[\Override]
     /**
      * {@inheritdoc}
      */
@@ -46,7 +56,7 @@ class LoadProductSearchData implements ProcessorInterface
         $config = $context->getConfig();
         $this->updateConfigAndMetadata($config, $context->getMetadata());
 
-        $searchResult = new SearchResult($query, $config->getHasMore());
+        $searchResult = new SearchResult($query, $this->queryExecutor, $config->getHasMore());
         $context->set(self::SEARCH_RESULT, $searchResult);
 
         try {
