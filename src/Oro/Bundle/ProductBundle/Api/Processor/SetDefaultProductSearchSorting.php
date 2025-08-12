@@ -24,4 +24,12 @@ class SetDefaultProductSearchSorting extends SetDefaultSorting
 
         return $orderBy;
     }
+
+    #[\Override]
+    protected function getAllowedSortFieldsDescription(
+        EntityDefinitionConfig $config,
+        SortersConfig $configOfSorters
+    ): ?string {
+        return null;
+    }
 }

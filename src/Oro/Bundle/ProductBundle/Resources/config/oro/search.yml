@@ -16,6 +16,14 @@ search:
                 target_type:            text
                 target_fields:          [defaultName]
             -
+                name:                   type
+                target_type:            text
+                target_fields:          [productType]
+            -
+                name:                   status
+                target_type:            text
+                target_fields:          [productStatus]
+            -
                 name: names
                 relation_type: many-to-many
                 relation_fields:
@@ -47,6 +55,30 @@ search:
                         name: text
                         target_type: text
                         target_fields: [shortDescriptions]
+            -
+                name: attributeFamily
+                relation_type: many-to-one
+                relation_fields:
+                    -
+                        name: labels
+                        relation_type: many-to-many
+                        relation_fields:
+                            -
+                                name: string
+                                target_type: text
+                                target_fields: [productFamilyName]
+            -
+                name: brand
+                relation_type: many-to-one
+                relation_fields:
+                    -
+                        name: names
+                        relation_type: many-to-many
+                        relation_fields:
+                            -
+                                name: string
+                                target_type: text
+                                target_fields: [productBrand]
 
     Oro\Bundle\ProductBundle\Entity\Brand:
         alias:                          oro_brand
@@ -87,3 +119,11 @@ search:
                         name: text
                         target_type: text
                         target_fields: [shortDescriptions]
+            -
+                name:                   inventory_status
+                relation_type:          many-to-one
+                relation_fields:
+                    -
+                        name:           name
+                        target_type:    text
+                        target_fields:  [inventoryStatus]

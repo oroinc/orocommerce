@@ -12,13 +12,33 @@ search:
                 target_type:            text
                 target_fields:          [identifier]
             -
+                name:                   poNumber
+                target_type:            text
+                target_fields:          [poNumber]
+            -
+                name:                   shipUntil
+                target_type:            datetime
+                target_fields:          [shipUntil]
+            -
+                name:                   createdAt
+                target_type:            datetime
+                target_fields:          [createdAt]
+            -
+                name:                   subtotalValue
+                target_type:            decimal
+                target_fields:          [subtotal]
+            -
+                name:                   totalValue
+                target_type:            decimal
+                target_fields:          [total]
+            -
                 name:                   customer
                 relation_type:          many-to-one
                 relation_fields:
                     -
                         name:           name
                         target_type:    text
-                        target_fields:  [name]
+                        target_fields:  [name, customerName]
             -
                 name:                   customerUser
                 relation_type:          many-to-one
@@ -35,3 +55,89 @@ search:
                         name:           lastName
                         target_type:    text
                         target_fields:  [lastName]
+            -
+                name: billingAddress
+                relation_type: one-to-one
+                relation_fields:
+                    -   name: street
+                        target_type: text
+                        target_fields: [billingAddressStreet, billingAddress]
+                    -   name: street2
+                        target_type: text
+                        target_fields: [billingAddressStreet2, billingAddress]
+                    -   name: city
+                        target_type: text
+                        target_fields: [billingAddressCity, billingAddress]
+                    -   name: country
+                        relation_type: many-to-one
+                        relation_fields:
+                            -   name: iso2Code
+                                target_type: text
+                                target_fields: [billingAddressCountry, billingAddress]
+                    -   name: region
+                        relation_type: many-to-one
+                        relation_fields:
+                            -   name: name
+                                target_type: text
+                                target_fields: [billingAddressRegion, billingAddress]
+                    -   name: postalCode
+                        target_type: text
+                        target_fields: [billingAddressPostalCode, billingAddress]
+                    -   name: firstName
+                        target_type: text
+                        target_fields: [billingAddressFirstName, billingAddress]
+                    -   name: lastName
+                        target_type: text
+                        target_fields: [billingAddressLastName, billingAddress]
+            -
+                name: shippingAddress
+                relation_type: one-to-one
+                relation_fields:
+                    -   name: street
+                        target_type: text
+                        target_fields: [shippingAddressStreet, shippingAddress]
+                    -   name: street2
+                        target_type: text
+                        target_fields: [shippingAddressStreet2, shippingAddress]
+                    -   name: city
+                        target_type: text
+                        target_fields: [shippingAddressCity, shippingAddress]
+                    -   name: country
+                        relation_type: many-to-one
+                        relation_fields:
+                            -   name: iso2Code
+                                target_type: text
+                                target_fields: [shippingAddressCountry, shippingAddress]
+                    -   name: region
+                        relation_type: many-to-one
+                        relation_fields:
+                            -   name: name
+                                target_type: text
+                                target_fields: [shippingAddressRegion, shippingAddress]
+                    -   name: postalCode
+                        target_type: text
+                        target_fields: [shippingAddressPostalCode, shippingAddress]
+                    -   name: firstName
+                        target_type: text
+                        target_fields: [shippingAddressFirstName, shippingAddress]
+                    -   name: lastName
+                        target_type: text
+                        target_fields: [shippingAddressLastName, shippingAddress]
+            -
+                name: lineItems
+                relation_type: many-to-many
+                relation_fields:
+                    - name: productSku
+                      target_type: text
+                      target_fields: [orderLineItemSku]
+                    - name: productName
+                      target_type: text
+                      target_fields: [orderLineItemName]
+            -
+                name:                   internal_status
+                relation_type:          many-to-one
+                relation_fields:
+                    -
+                        name:           name
+                        target_type:    text
+                        target_fields:  [status]
