@@ -8,13 +8,123 @@ search:
         search_template:                '@OroSale/Quote/searchResult.html.twig'
         fields:
             -
+                name:                   id
+                target_type:            integer
+                target_fields:          [quoteId]
+            -
+                name:                   expired
+                target_type:            integer
+                target_fields:          [expired]
+            -
+                name:                   validUntil
+                target_type:            datetime
+                target_fields:          [validUntil]
+            -
+                name:                   shipUntil
+                target_type:            datetime
+                target_fields:          [shipUntil]
+            -
+                name:                   poNumber
+                target_type:            datetime
+                target_fields:          [poNumber]
+            -
                 name:                   email
                 target_type:            text
                 target_fields:          [email]
             -
-                name:                   poNumber
-                target_type:            text
-                target_fields:          [poNumber]
+                name:                   createdAt
+                target_type:            datetime
+                target_fields:          [createdAt]
+            -
+                name: quoteProducts
+                relation_type:          one-to-many
+                relation_fields:
+                    -
+                        name: productSku
+                        target_type: text
+                        target_fields: [productSku]
+                    -
+                        name: product
+                        relation_type: many-to-one
+                        relation_fields:
+                            -
+                                name: defaultName
+                                target_type: text
+                                target_fields: [productName]
+            -
+                name: assignedUsers
+                relation_type:          many-to-many
+                relation_fields:
+                    -
+                        name: firstName
+                        target_type: text
+                        target_fields: [assignedUser]
+                    -
+                        name: lastName
+                        target_type: text
+                        target_fields: [assignedUser]
+                    -
+                        name: userName
+                        target_type: text
+                        target_fields: [assignedUser]
+            -
+                name:                   customerUser
+                relation_type:          many-to-one
+                relation_fields:
+                    -
+                        name: firstName
+                        target_type: text
+                        target_fields: [customerUserName]
+                    -
+                        name: middleName
+                        target_type: text
+                        target_fields: [customerUserName]
+                    -
+                        name: lastName
+                        target_type: text
+                        target_fields: [customerUserName]
+                    -
+                        name:           customer
+                        relation_type:  many-to-one
+                        relation_fields:
+                            -
+                                name:          name
+                                target_type:   text
+                                target_fields: [customerName]
+            -
+                name: shippingAddress
+                relation_type: one-to-one
+                relation_fields:
+                    -   name: street
+                        target_type: text
+                        target_fields: [shippingAddressStreet, shippingAddress]
+                    -   name: street2
+                        target_type: text
+                        target_fields: [shippingAddressStreet2, shippingAddress]
+                    -   name: city
+                        target_type: text
+                        target_fields: [shippingAddressCity, shippingAddress]
+                    -   name: country
+                        relation_type: many-to-one
+                        relation_fields:
+                            -   name: iso2Code
+                                target_type: text
+                                target_fields: [shippingAddressCountry, shippingAddress]
+                    -   name: region
+                        relation_type: many-to-one
+                        relation_fields:
+                            -   name: name
+                                target_type: text
+                                target_fields: [shippingAddressRegion, shippingAddress]
+                    -   name: postalCode
+                        target_type: text
+                        target_fields: [shippingAddressPostalCode, shippingAddress]
+                    -   name: firstName
+                        target_type: text
+                        target_fields: [shippingAddressFirstName, shippingAddress]
+                    -   name: lastName
+                        target_type: text
+                        target_fields: [shippingAddressLastName, shippingAddress]
             -
                 name:                   request
                 relation_type:          many-to-one

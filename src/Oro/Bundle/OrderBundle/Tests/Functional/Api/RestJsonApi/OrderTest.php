@@ -1963,7 +1963,15 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame('11.0000', $updatedOrder->getSubtotal());
         self::assertSame('10.0000', $updatedOrder->getTotal());
         self::assertEquals(Price::create('1.0000', 'USD'), $updatedOrder->getTotalDiscounts());
-        self::assertAllMessagesSent([]);
+        self::assertAllMessagesSent([
+            [
+                'topic' => IndexEntitiesByIdTopic::getName(),
+                'message' => [
+                    'class' => Order::class,
+                    'entityIds' => [$order->getId() => $order->getId()]
+                ]
+            ]
+        ]);
 
         $responseData = self::jsonToArray($response->getContent());
         self::assertSame('test notes', $responseData['data']['attributes']['customerNotes']);
@@ -2018,7 +2026,22 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame('444.5000', $updatedOrder->getTotal());
         self::assertNull($updatedOrder->getTotalDiscounts());
         self::assertNull($updatedOrder->getStatus());
-        self::assertAllMessagesSent([]);
+        self::assertAllMessagesSent([
+            [
+                'topic' => IndexEntitiesByIdTopic::getName(),
+                'message' => [
+                    'class' => Order::class,
+                    'entityIds' => [$order->getId() => $order->getId()]
+                ]
+            ],
+            [
+                'topic' => IndexEntitiesByIdTopic::getName(),
+                'message' => [
+                    'class' => Order::class,
+                    'entityIds' => [$order->getId() => $order->getId()]
+                ]
+            ]
+        ]);
 
         $responseData = self::jsonToArray($response->getContent());
         self::assertSame('test notes', $responseData['data']['attributes']['customerNotes']);
@@ -2066,7 +2089,15 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame('11.0000', $updatedOrder->getSubtotal());
         self::assertSame('10.0000', $updatedOrder->getTotal());
         self::assertEquals(Price::create('1.0000', 'USD'), $updatedOrder->getTotalDiscounts());
-        self::assertAllMessagesSent([]);
+        self::assertAllMessagesSent([
+            [
+                'topic' => IndexEntitiesByIdTopic::getName(),
+                'message' => [
+                    'class' => Order::class,
+                    'entityIds' => [$order->getId() => $order->getId()]
+                ]
+            ]
+        ]);
 
         $this->assertResponseContains('update_order_with_included_order_subtotals.yml', $response);
     }
@@ -2115,7 +2146,15 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame('11.0000', $updatedOrder->getSubtotal());
         self::assertSame('10.0000', $updatedOrder->getTotal());
         self::assertEquals(Price::create('1.0000', 'USD'), $updatedOrder->getTotalDiscounts());
-        self::assertAllMessagesSent([]);
+        self::assertAllMessagesSent([
+            [
+                'topic' => IndexEntitiesByIdTopic::getName(),
+                'message' => [
+                    'class' => Order::class,
+                    'entityIds' => [$order->getId() => $order->getId()]
+                ]
+            ]
+        ]);
 
         $this->assertResponseContains('update_order_with_partially_included_order_subtotals.yml', $response);
 
