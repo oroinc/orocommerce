@@ -46,7 +46,7 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testIndex(array $inputData, array $expectedData): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
+        $this->initClient([], self::generateBasicAuthHeader($inputData['login'], $inputData['password']));
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_frontend_index'));
 
@@ -248,7 +248,7 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testView(array $inputData, array $expectedData): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
+        $this->initClient([], self::generateBasicAuthHeader($inputData['login'], $inputData['password']));
 
         /* @var Quote $quote */
         $quote = $this->getReference($inputData['qid']);
@@ -266,7 +266,7 @@ class QuoteControllerTest extends WebTestCase
         self::assertSameSize($expectedData['columns'], $controls);
 
         /* @var TranslatorInterface $translator */
-        $translator = $this->getContainer()->get('translator');
+        $translator = self::getContainer()->get('translator');
 
         $accessor = PropertyAccess::createPropertyAccessor();
         foreach ($controls as $key => $control) {
@@ -285,6 +285,7 @@ class QuoteControllerTest extends WebTestCase
                         if ($item instanceof AbstractUser) {
                             return sprintf('%s %s', $item->getFirstName(), $item->getLastName());
                         }
+
                         return (string)$item;
                     })->toArray()
                 );
@@ -632,11 +633,9 @@ class QuoteControllerTest extends WebTestCase
         $this->initClient();
 
         $configManager = self::getConfigManager();
-
         foreach ($configs as $name => $value) {
             $configManager->set($name, $value);
         }
-
         $configManager->flush();
 
         /** @var Quote $quote */
@@ -796,7 +795,7 @@ class QuoteControllerTest extends WebTestCase
         $crawler = $this->client->request('POST', $data['redirectUrl']);
         self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
         $crawler = $this->client->submit(
             $crawler->selectButton('Checkout')->form(),
             [

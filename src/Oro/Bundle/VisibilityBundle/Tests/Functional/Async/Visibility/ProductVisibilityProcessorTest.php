@@ -42,11 +42,6 @@ class ProductVisibilityProcessorTest extends WebTestCase
             LoadCustomerUserData::class,
         ]);
 
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_visibility.product_visibility', VisibilityInterface::VISIBLE);
-        $configManager->set('oro_visibility.category_visibility', VisibilityInterface::VISIBLE);
-        $configManager->flush();
-
         self::getContainer()
             ->get('oro_visibility.visibility.cache.cache_builder')
             ->buildCache();

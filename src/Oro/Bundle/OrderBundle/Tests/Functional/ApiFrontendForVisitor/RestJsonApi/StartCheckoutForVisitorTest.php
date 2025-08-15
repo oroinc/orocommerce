@@ -40,7 +40,6 @@ class StartCheckoutForVisitorTest extends FrontendRestJsonApiTestCase
     public function testTryToStartCheckoutForVisitorWithGuestCheckout(): void
     {
         $configManager = self::getConfigManager();
-        $initialGuestCheckout = $configManager->get('oro_checkout.guest_checkout');
         $configManager->set('oro_checkout.guest_checkout', true);
         $configManager->flush();
         try {
@@ -51,7 +50,7 @@ class StartCheckoutForVisitorTest extends FrontendRestJsonApiTestCase
                 false
             );
         } finally {
-            $configManager->set('oro_checkout.guest_checkout', $initialGuestCheckout);
+            $configManager->set('oro_checkout.guest_checkout', false);
             $configManager->flush();
         }
 

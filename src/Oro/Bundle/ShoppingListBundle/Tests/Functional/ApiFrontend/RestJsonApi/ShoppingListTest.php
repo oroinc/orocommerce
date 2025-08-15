@@ -62,7 +62,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         return self::getConfigManager()->get('oro_shopping_list.shopping_list_limit');
     }
 
-    private function setShoppingListLimit(int $limit): void
+    private function setShoppingListLimit(?int $limit): void
     {
         $configManager = self::getConfigManager();
         $configManager->set('oro_shopping_list.shopping_list_limit', $limit);

@@ -75,65 +75,73 @@ class InlineEditProductControllerTest extends WebTestCase
     /**
      * @dataProvider productEditNameRedirectDataProvider
      */
-    public function testProductEditName(?string $redirectStrategy, bool $createRedirect, bool $expectedCreateRedirect)
-    {
+    public function testProductEditName(
+        ?string $redirectStrategy,
+        bool $createRedirect,
+        bool $expectedCreateRedirect
+    ): void {
         /** @var Product $product1 */
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        $this->assertEquals(LoadProductData::PRODUCT_1_DEFAULT_NAME, $product1->getName());
-        $this->assertEquals(LoadProductData::PRODUCT_1_DEFAULT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
-        $this->assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
+        self::assertEquals(LoadProductData::PRODUCT_1_DEFAULT_NAME, $product1->getName());
+        self::assertEquals(LoadProductData::PRODUCT_1_DEFAULT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
+        self::assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
 
         $configManager = self::getConfigManager();
+        $initialStrategy = $configManager->get('oro_redirect.redirect_generation_strategy');
         $configManager->set('oro_redirect.redirect_generation_strategy', $redirectStrategy);
         $configManager->flush();
-        $configManager->reload();
+        try {
+            $this->client->jsonRequest(
+                'PATCH',
+                $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $product1->getId()]),
+                ['productName' => self::NEW_PRODUCT_NAME, 'createRedirect' => $createRedirect]
+            );
+            $result = $this->client->getResponse();
+        } finally {
+            $configManager->set('oro_redirect.redirect_generation_strategy', $initialStrategy);
+            $configManager->flush();
+        }
 
-        $this->client->jsonRequest(
-            'PATCH',
-            $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $product1->getId()]),
-            [
-                'productName' => self::NEW_PRODUCT_NAME,
-                'createRedirect' => $createRedirect,
-            ]
-        );
-        $result = $this->client->getResponse();
-
-        $this->assertEquals(['productName' => self::NEW_PRODUCT_NAME], self::getJsonResponseContent($result, 200));
-        $this->assertEquals(self::NEW_PRODUCT_NAME, $product1->getName());
-        $this->assertEquals(self::NEW_PRODUCT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
-        $this->assertEquals($expectedCreateRedirect, $product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
+        self::assertEquals(['productName' => self::NEW_PRODUCT_NAME], self::getJsonResponseContent($result, 200));
+        self::assertEquals(self::NEW_PRODUCT_NAME, $product1->getName());
+        self::assertEquals(self::NEW_PRODUCT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
+        self::assertEquals($expectedCreateRedirect, $product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
     }
 
     public function testProductEditNameWhenContainsTags(): void
     {
         /** @var Product $product1 */
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        $this->assertEquals(LoadProductData::PRODUCT_1_DEFAULT_NAME, $product1->getName());
-        $this->assertEquals(LoadProductData::PRODUCT_1_DEFAULT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
-        $this->assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
+        self::assertEquals(LoadProductData::PRODUCT_1_DEFAULT_NAME, $product1->getName());
+        self::assertEquals(LoadProductData::PRODUCT_1_DEFAULT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
+        self::assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
 
         $configManager = self::getConfigManager();
+        $initialStrategy = $configManager->get('oro_redirect.redirect_generation_strategy');
         $configManager->set('oro_redirect.redirect_generation_strategy', Configuration::STRATEGY_ASK);
         $configManager->flush();
-        $configManager->reload();
+        try {
+            $this->client->jsonRequest(
+                'PATCH',
+                $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $product1->getId()]),
+                [
+                    'productName' => '<a href="#">'. self::NEW_PRODUCT_NAME . '</a>',
+                    'createRedirect' => true,
+                ]
+            );
+            $result = $this->client->getResponse();
+        } finally {
+            $configManager->set('oro_redirect.redirect_generation_strategy', $initialStrategy);
+            $configManager->flush();
+        }
 
-        $this->client->jsonRequest(
-            'PATCH',
-            $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $product1->getId()]),
-            [
-                'productName' => '<a href="#">'. self::NEW_PRODUCT_NAME . '</a>',
-                'createRedirect' => true,
-            ]
-        );
-        $result = $this->client->getResponse();
-
-        $this->assertEquals(['productName' => self::NEW_PRODUCT_NAME], self::getJsonResponseContent($result, 200));
-        $this->assertEquals(self::NEW_PRODUCT_NAME, $product1->getName());
-        $this->assertEquals(self::NEW_PRODUCT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
-        $this->assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
+        self::assertEquals(['productName' => self::NEW_PRODUCT_NAME], self::getJsonResponseContent($result, 200));
+        self::assertEquals(self::NEW_PRODUCT_NAME, $product1->getName());
+        self::assertEquals(self::NEW_PRODUCT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
+        self::assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
     }
 
-    public function testProductEditNameMissingProduct()
+    public function testProductEditNameMissingProduct(): void
     {
         /** @var Product $product8 */
         $product8 = $this->getReference(LoadProductData::PRODUCT_8);
@@ -149,10 +157,10 @@ class InlineEditProductControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
 
-        $this->assertJsonResponseStatusCodeEquals($result, 404);
+        self::assertJsonResponseStatusCodeEquals($result, 404);
     }
 
-    public function testProductEditNameMissingProductName()
+    public function testProductEditNameMissingProductName(): void
     {
         /** @var Product $product8 */
         $product8 = $this->getReference(LoadProductData::PRODUCT_8);
@@ -164,16 +172,16 @@ class InlineEditProductControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
 
-        $this->assertJsonResponseStatusCodeEquals($result, 404);
+        self::assertJsonResponseStatusCodeEquals($result, 404);
     }
 
-    public function testProductEditNameMissingCreateRedirect()
+    public function testProductEditNameMissingCreateRedirect(): void
     {
         /** @var Product $product1 */
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        $this->assertEquals(LoadProductData::PRODUCT_1_DEFAULT_NAME, $product1->getName());
-        $this->assertEquals(LoadProductData::PRODUCT_1_DEFAULT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
-        $this->assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
+        self::assertEquals(LoadProductData::PRODUCT_1_DEFAULT_NAME, $product1->getName());
+        self::assertEquals(LoadProductData::PRODUCT_1_DEFAULT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
+        self::assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
 
         $this->client->jsonRequest(
             'PATCH',
@@ -184,17 +192,17 @@ class InlineEditProductControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
 
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
-        $this->assertEquals(self::NEW_PRODUCT_NAME, $product1->getName());
-        $this->assertEquals(self::NEW_PRODUCT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
-        $this->assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
+        self::assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertEquals(self::NEW_PRODUCT_NAME, $product1->getName());
+        self::assertEquals(self::NEW_PRODUCT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
+        self::assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
     }
 
-    public function testProductEditInventoryStatus()
+    public function testProductEditInventoryStatus(): void
     {
         /** @var Product $product1 */
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        $this->assertEquals(Product::INVENTORY_STATUS_IN_STOCK, $product1->getInventoryStatus()->getInternalId());
+        self::assertEquals(Product::INVENTORY_STATUS_IN_STOCK, $product1->getInventoryStatus()->getInternalId());
 
         $this->client->jsonRequest(
             'PATCH',
@@ -205,11 +213,11 @@ class InlineEditProductControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
 
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
-        $this->assertEquals(self::NEW_INVENTORY_STATUS_ID, $product1->getInventoryStatus()->getInternalId());
+        self::assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertEquals(self::NEW_INVENTORY_STATUS_ID, $product1->getInventoryStatus()->getInternalId());
     }
 
-    public function testProductEditInventoryStatusEmptyParameters()
+    public function testProductEditInventoryStatusEmptyParameters(): void
     {
         /** @var Product $product1 */
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
@@ -220,10 +228,10 @@ class InlineEditProductControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
 
-        $this->assertJsonResponseStatusCodeEquals($result, 400);
+        self::assertJsonResponseStatusCodeEquals($result, 400);
     }
 
-    public function testProductEditInventoryStatusMissingProduct()
+    public function testProductEditInventoryStatusMissingProduct(): void
     {
         /** @var Product $product8 */
         $product8 = $this->getReference(LoadProductData::PRODUCT_8);
@@ -235,10 +243,10 @@ class InlineEditProductControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
 
-        $this->assertJsonResponseStatusCodeEquals($result, 404);
+        self::assertJsonResponseStatusCodeEquals($result, 404);
     }
 
-    public function testProductEditUnknownInventoryStatus()
+    public function testProductEditUnknownInventoryStatus(): void
     {
         /** @var Product $product1 */
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
@@ -252,6 +260,6 @@ class InlineEditProductControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
 
-        $this->assertJsonResponseStatusCodeEquals($result, 404);
+        self::assertJsonResponseStatusCodeEquals($result, 404);
     }
 }

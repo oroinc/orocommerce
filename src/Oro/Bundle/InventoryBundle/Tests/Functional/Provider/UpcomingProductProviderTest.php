@@ -15,11 +15,36 @@ class UpcomingProductProviderTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    private ?bool $initialHideLabelsPastAvailabilityDate;
+
     #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadProductUpcomingData::class]);
+
+        $this->initialHideLabelsPastAvailabilityDate = self::getConfigManager()
+            ->get('oro_inventory.hide_labels_past_availability_date');
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $this->setHideLabelsPastAvailabilityDateOption($this->initialHideLabelsPastAvailabilityDate);
+    }
+
+    private function setHideLabelsPastAvailabilityDateOption(?bool $enabled): void
+    {
+        $configManager = self::getConfigManager();
+        if ($configManager->get('oro_inventory.hide_labels_past_availability_date') !== $enabled) {
+            $configManager->set('oro_inventory.hide_labels_past_availability_date', $enabled);
+            $configManager->flush();
+        }
+    }
+
+    private function getUpcomingProductProvider(): UpcomingProductProvider
+    {
+        return self::getContainer()->get('oro_inventory.provider.upcoming_product_provider');
     }
 
     public function testIsUpcomingWhenHideLabelsDisabled(): void
@@ -171,17 +196,5 @@ class UpcomingProductProviderTest extends WebTestCase
                 'enabled' => false
             ],
         ];
-    }
-
-    public function getUpcomingProductProvider(): UpcomingProductProvider
-    {
-        return self::getContainer()->get('oro_inventory.provider.upcoming_product_provider');
-    }
-
-    private function setHideLabelsPastAvailabilityDateOption(bool $enabled): void
-    {
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_inventory.hide_labels_past_availability_date', $enabled);
-        $configManager->flush();
     }
 }

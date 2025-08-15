@@ -51,11 +51,9 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         $metadata = $this->getContentVariantMetadata();
         $metadata->name = $this->prevVariantClass;
 
-        if (false !== $this->initialWebCatalogId) {
-            $configManager = self::getConfigManager();
-            $configManager->set('oro_web_catalog.web_catalog', $this->initialWebCatalogId);
-            $configManager->flush();
-        }
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_web_catalog.web_catalog', $this->initialWebCatalogId);
+        $configManager->flush();
     }
 
     /**
