@@ -9,6 +9,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as OroLoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadConfigurableProductWithVariants;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
@@ -412,6 +413,24 @@ class LineItemRepositoryTest extends WebTestCase
         self::assertCount(2, $lineItems);
         self::assertContains($lineItem4, $lineItems);
         self::assertContains($lineItem5, $lineItems);
+    }
+
+    public function testUpdateParentProductIfProductVariantWasRemoved(): void
+    {
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_10);
+        $productVariant = (new ProductVariantLink())
+            ->setProduct($lineItem->getProduct())
+            ->setParentProduct($lineItem->getParentProduct());
+
+        $registry = $this->getContainer()->get('doctrine');
+        $repository = $registry->getRepository(LineItem::class);
+        $repository->unsetRemovedProductVariant($productVariant);
+        $registry->getManager()->clear();
+        $updatedLineItem = $repository->find($lineItem->getId());
+
+        self::assertInstanceOf(Product::class, $lineItem->getParentProduct());
+        self::assertNull($updatedLineItem->getParentProduct());
     }
 
     private function getLineItemRepository(): LineItemRepository
