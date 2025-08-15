@@ -1,4 +1,5 @@
 @ticket-BB-20130
+@ticket-BB-25802
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Payment.yml
@@ -89,3 +90,23 @@ Feature: Check shopping list dialog in configurable product
     Then I should see "UiDialog" with elements:
       | Title | Product A 2 |
     And I close ui dialog
+    When I open page with shopping list "Configurable products list 1"
+    And I should see following grid:
+      | SKU      | Item                         |
+      | PROD_A_1 | ConfigurableProductA Size: S |
+      | PROD_A_2 | ConfigurableProductA Size: M |
+
+  Scenario: Check title of shopping list for removed product variant
+    Given I proceed as the Admin
+    When I go to Products / Products
+    And filter SKU as is equal to "CNFA"
+    And I click Edit "CNFA" in grid
+    And I uncheck PROD_A_1 record in grid
+    And I save form
+    Then I should see "Product has been saved" flash message
+    Then I proceed as the Buyer
+    When I open page with shopping list "Configurable products list 1"
+    Then I should see following grid:
+      | SKU      | Item                         |
+      | PROD_A_1 | Product A 1                  |
+      | PROD_A_2 | ConfigurableProductA Size: M |
