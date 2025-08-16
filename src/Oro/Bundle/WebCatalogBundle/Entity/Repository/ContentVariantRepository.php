@@ -103,9 +103,7 @@ class ContentVariantRepository extends EntityRepository
      *              [
      *                  'id' => int,
      *                  'url' => ?string,
-     *                  'localization' => ?array [
-     *                      'id' => int,
-     *                  ],
+     *                  'localization' => ?array ['id' => int]
      *              ]
      *          ],
      *          'default' => bool,

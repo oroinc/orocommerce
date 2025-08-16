@@ -12,20 +12,15 @@ use Symfony\Contracts\Cache\CacheInterface;
  */
 class MenuCategoriesCache implements CacheInterface
 {
-    private CacheInterface $cache;
-
-    private LocalizedFallbackValueCollectionNormalizer $titlesNormalizer;
+    private const string TITLES = 'titles';
 
     public function __construct(
-        CacheInterface $cache,
-        LocalizedFallbackValueCollectionNormalizer $localizedFallbackValueCollectionNormalizer
+        private readonly CacheInterface $cache,
+        private readonly LocalizedFallbackValueCollectionNormalizer $titlesNormalizer
     ) {
-        $this->cache = $cache;
-        $this->titlesNormalizer = $localizedFallbackValueCollectionNormalizer;
     }
 
     /**
-     *
      * @param callable $callback Callback must return an array of menu categories data
      *                           as per {@see MenuCategoriesProviderInterface::getCategories}.
      */
@@ -36,7 +31,7 @@ class MenuCategoriesCache implements CacheInterface
             $denormalizedMenuCategories = $callback($cacheItem);
             $normalizedMenuCategories = [];
             foreach ($denormalizedMenuCategories as $categoryData) {
-                $categoryData['titles'] = $this->titlesNormalizer->normalize($categoryData['titles'] ?? []);
+                $categoryData[self::TITLES] = $this->titlesNormalizer->normalize($categoryData[self::TITLES] ?? []);
                 $normalizedMenuCategories[] = $categoryData;
             }
 
@@ -48,19 +43,21 @@ class MenuCategoriesCache implements CacheInterface
         return $denormalizedMenuCategories ?? $this->denormalize($menuCategories);
     }
 
-    private function denormalize(array $menuCategories): array
-    {
-        foreach ($menuCategories as &$categoryData) {
-            $categoryData['titles'] = $this->titlesNormalizer
-                ->denormalize($categoryData['titles'] ?? [], LocalizedFallbackValue::class);
-        }
-
-        return $menuCategories;
-    }
-
     #[\Override]
     public function delete(string $key): bool
     {
         return $this->cache->delete($key);
+    }
+
+    private function denormalize(array $menuCategories): array
+    {
+        foreach ($menuCategories as &$categoryData) {
+            $categoryData[self::TITLES] = $this->titlesNormalizer->denormalize(
+                $categoryData[self::TITLES] ?? [],
+                LocalizedFallbackValue::class
+            );
+        }
+
+        return $menuCategories;
     }
 }

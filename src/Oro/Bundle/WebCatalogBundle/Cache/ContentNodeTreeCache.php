@@ -10,23 +10,14 @@ use Psr\Cache\CacheItemPoolInterface;
  */
 class ContentNodeTreeCache
 {
-    private CacheItemPoolInterface $cache;
-
-    private ResolvedContentNodeNormalizer $normalizer;
-
     public function __construct(
-        CacheItemPoolInterface $cache,
-        ResolvedContentNodeNormalizer $normalizer
+        private readonly CacheItemPoolInterface $cache,
+        private readonly ResolvedContentNodeNormalizer $normalizer
     ) {
-        $this->cache = $cache;
-        $this->normalizer = $normalizer;
     }
 
     /**
-     * Gets a content node tree from the cache
-     *
-     * @param int[] $scopeIds
-     * @param int $treeDepth Restricts the maximum tree depth. -1 stands for unlimited.
+     * Gets a content node tree from the cache.
      */
     public function fetch(int $nodeId, array $scopeIds, int $treeDepth = -1): ResolvedContentNode|false|null
     {
@@ -44,9 +35,7 @@ class ContentNodeTreeCache
     }
 
     /**
-     * Saves a content node tree to the cache
-     *
-     * @param int[] $scopeIds
+     * Saves a content node tree to the cache.
      */
     public function save(int $nodeId, array $scopeIds, ?ResolvedContentNode $resolvedContentNode): bool
     {
@@ -57,9 +46,7 @@ class ContentNodeTreeCache
     }
 
     /**
-     * Deletes a content node tree from the cache
-     *
-     * @param int[] $scopeIds
+     * Deletes a content node tree from the cache.
      */
     public function delete(int $nodeId, array $scopeIds): bool
     {
@@ -67,9 +54,9 @@ class ContentNodeTreeCache
     }
 
     /**
-     * @param array<array{int,int[]}> $scopeIdsByNodeId
+     * Deletes content node trees from the cache.
      *
-     * @return bool
+     * @param array $scopeIdsByNodeId [node id => [scope id, ...], ...]
      */
     public function deleteMultiple(array $scopeIdsByNodeId): bool
     {
@@ -86,13 +73,10 @@ class ContentNodeTreeCache
         return $this->cache->clear();
     }
 
-    /**
-     * @param int[] $scopeIds
-     */
     private function getCacheKey(int $nodeId, array $scopeIds): string
     {
         sort($scopeIds);
 
-        return sprintf('node_%s_scope_%s', $nodeId, implode('_', $scopeIds) ?: 0);
+        return \sprintf('node_%s_scope_%s', $nodeId, implode('_', $scopeIds) ?: 0);
     }
 }

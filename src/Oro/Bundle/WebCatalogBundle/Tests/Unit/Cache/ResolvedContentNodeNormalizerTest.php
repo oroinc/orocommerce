@@ -14,16 +14,12 @@ use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentNodeFactory;
 use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
-use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    private DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper;
-
-    private ResolvedContentNodeFactory|\PHPUnit\Framework\MockObject\MockObject $resolvedContentNodeFactory;
-
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private ResolvedContentNodeFactory&MockObject $resolvedContentNodeFactory;
     private ResolvedContentNodeNormalizer $normalizer;
 
     #[\Override]
@@ -39,8 +35,7 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
             $this->resolvedContentNodeFactory
         );
 
-        $localizedFallbackValueNormalizer
-            ->expects(self::any())
+        $localizedFallbackValueNormalizer->expects(self::any())
             ->method('denormalize')
             ->willReturnCallback(function (array $value, string $entityClass) {
                 self::assertEquals(LocalizedFallbackValue::class, $entityClass);
@@ -52,16 +47,30 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
                     );
             });
 
-        $localizedFallbackValueNormalizer
-            ->expects(self::any())
+        $localizedFallbackValueNormalizer->expects(self::any())
             ->method('normalize')
             ->willReturnCallback(function (AbstractLocalizedFallbackValue $value) {
-                return [
-                    'string' => $value->getString(),
-                    'fallback' => $value->getFallback(),
-                    'localization' => $value->getLocalization() ? ['id' => $value->getLocalization()->getId()] : null,
-                ];
+                $result = ['s' => $value->getString()];
+                if (null !== $value->getFallback()) {
+                    $result['f'] = $value->getFallback();
+                }
+                if (null !== $value->getLocalization()) {
+                    $result['l'] = $value->getLocalization()->getId();
+                }
+
+                return $result;
             });
+    }
+
+    private function createResolvedNode(array $data): ResolvedContentNode
+    {
+        return new ResolvedContentNode(
+            $data['id'],
+            $data['identifier'],
+            0,
+            new ArrayCollection(),
+            new ResolvedContentVariant()
+        );
     }
 
     /**
@@ -69,20 +78,21 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
      */
     public function testNormalize(ResolvedContentNode $resolvedNode, array $expected): void
     {
-        $this->doctrineHelper
-            ->expects(self::any())
+        $this->doctrineHelper->expects(self::any())
             ->method('isManageableEntity')
             ->willReturn(true);
 
-        $this->doctrineHelper
-            ->expects(self::any())
+        $this->doctrineHelper->expects(self::any())
             ->method('getEntityClass')
-            ->willReturnCallback(static fn ($object) => get_class($object));
+            ->willReturnCallback(function (object $object) {
+                return get_class($object);
+            });
 
-        $this->doctrineHelper
-            ->expects(self::any())
+        $this->doctrineHelper->expects(self::any())
             ->method('getSingleEntityIdentifier')
-            ->willReturnCallback(static fn ($object) => $object->getId());
+            ->willReturnCallback(function (object $object) {
+                return $object->getId();
+            });
 
         self::assertEquals($expected, $this->normalizer->normalize($resolvedNode));
     }
@@ -120,9 +130,7 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
                     'type' => 'test_type',
                     'skipped_null' => null,
                     'sub_array' => ['a' => 'b'],
-                    'sub_iterator' => new ArrayCollection(
-                        ['c' => new LocalizationStub(3)]
-                    ),
+                    'sub_iterator' => new ArrayCollection(['c' => new LocalizationStub(3)])
                 ]),
             false
         );
@@ -138,80 +146,74 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
                     new ResolvedContentVariant()
                 ),
                 'expected' => [
-                    'id' => 1,
-                    'identifier' => 'sample',
-                    'priority' => 1,
-                    'rewriteVariantTitle' => true,
-                    'titles' => [],
-                    'contentVariant' => [
-                        'slugs' => [],
-                    ],
-                    'childNodes' => [],
-                ],
+                    'i' => 1,
+                    'a' => 'sample',
+                    'p' => 1,
+                    'r' => true,
+                    't' => [],
+                    'c' => ['s' => []],
+                    'n' => []
+                ]
             ],
             'with titles, resolved content variant and child nodes' => [
                 'resolvedNode' => $resolvedNode,
                 'expected' => [
-                    'id' => $resolvedNode->getId(),
-                    'identifier' => $resolvedNode->getIdentifier(),
-                    'priority' => 1,
-                    'rewriteVariantTitle' => true,
-                    'titles' => [
-                        ['string' => 'Title 1', 'localization' => null, 'fallback' => null],
-                        [
-                            'string' => 'Title 1 EN',
-                            'localization' => ['id' => 5],
-                            'fallback' => 'parent_localization',
-                        ],
+                    'i' => $resolvedNode->getId(),
+                    'a' => $resolvedNode->getIdentifier(),
+                    'p' => 1,
+                    'r' => true,
+                    't' => [
+                        ['s' => 'Title 1'],
+                        ['s' => 'Title 1 EN', 'l' => 5, 'f' => 'parent_localization']
                     ],
-                    'contentVariant' => [
-                        'id' => 3,
-                        'type' => 'test_type',
+                    'c' => [
+                        'i' => 3,
+                        't' => 'test_type',
                         'test' => 1,
-                        'slugs' => [['url' => '/test', 'localization' => null, 'fallback' => null]],
+                        's' => [['u' => '/test']]
                     ],
-                    'childNodes' => [
+                    'n' => [
                         [
-                            'id' => 2,
-                            'identifier' => 'root__second',
-                            'priority' => 2,
-                            'rewriteVariantTitle' => false,
-                            'titles' => [['string' => 'Child Title 1', 'localization' => null, 'fallback' => null]],
-                            'contentVariant' => [
-                                'id' => 7,
-                                'type' => 'test_type',
+                            'i' => 2,
+                            'a' => 'root__second',
+                            'p' => 2,
+                            'r' => false,
+                            't' => [['s' => 'Child Title 1']],
+                            'c' => [
+                                'i' => 7,
+                                't' => 'test_type',
                                 'sub_array' => ['a' => 'b'],
                                 'sub_iterator' => [
-                                    'c' => [
-                                        'class' => LocalizationStub::class,
-                                        'id' => 3,
-                                    ],
+                                    'c' => ['o' => LocalizationStub::class, 'i' => 3]
                                 ],
-                                'slugs' => [
-                                    [
-                                        'url' => '/test/c',
-                                        'localization' => null,
-                                        'fallback' => null,
-                                    ],
-                                ],
+                                's' => [
+                                    ['u' => '/test/c']
+                                ]
                             ],
-                            'childNodes' => [],
-                        ],
-                    ],
-                ],
-            ],
+                            'n' => []
+                        ]
+                    ]
+                ]
+            ]
         ];
     }
 
     public function testDenormalizeWhenNoId(): void
     {
-        $this->expectExceptionObject(
-            new InvalidArgumentException(
-                'Elements "id", "identifier" are required for the denormalization of ResolvedContentNode'
-            )
-        );
+        $this->expectExceptionObject(new InvalidArgumentException(
+            'Element "id" is required for the denormalization of ResolvedContentNode.'
+        ));
 
-        $this->normalizer->denormalize([], []);
+        $this->normalizer->denormalize([]);
+    }
+
+    public function testDenormalizeWhenNoIdentifier(): void
+    {
+        $this->expectExceptionObject(new InvalidArgumentException(
+            'Element "identifier" is required for the denormalization of ResolvedContentNode.'
+        ));
+
+        $this->normalizer->denormalize(['id' => 1]);
     }
 
     /**
@@ -219,10 +221,11 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
      */
     public function testDenormalize(array $cachedData, array $context, ?ResolvedContentNode $expected): void
     {
-        $this->resolvedContentNodeFactory
-            ->expects(self::any())
+        $this->resolvedContentNodeFactory->expects(self::any())
             ->method('createFromArray')
-            ->willReturnCallback(fn (array $data) => $this->createResolvedNode($data));
+            ->willReturnCallback(function (array $data) {
+                return $this->createResolvedNode($data);
+            });
 
         self::assertEquals($expected, $this->normalizer->denormalize($cachedData, $context));
     }
@@ -231,21 +234,65 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'without child nodes' => [
+                'cachedData' => ['i' => 1, 'a' => 'root'],
+                'context' => [],
+                'expected' => $this->createResolvedNode(['id' => 1, 'identifier' => 'root'])
+            ],
+            'without child nodes (old format)' => [
                 'cachedData' => ['id' => 1, 'identifier' => 'root'],
                 'context' => [],
-                'expected' => $this->createResolvedNode(['id' => 1, 'identifier' => 'root']),
+                'expected' => $this->createResolvedNode(['id' => 1, 'identifier' => 'root'])
             ],
             'with child nodes' => [
                 'cachedData' => [
+                    'i' => 1,
+                    'a' => 'root',
+                    'n' => [['i' => 11, 'a' => 'root__node11']]
+                ],
+                'context' => [],
+                'expected' => $this->createResolvedNode(['id' => 1, 'identifier' => 'root'])
+                    ->addChildNode($this->createResolvedNode(['id' => 11, 'identifier' => 'root__node11'])),
+            ],
+            'with child nodes (old format)' => [
+                'cachedData' => [
                     'id' => 1,
                     'identifier' => 'root',
-                    'childNodes' => [['id' => 11, 'identifier' => 'root__node11']],
+                    'childNodes' => [['id' => 11, 'identifier' => 'root__node11']]
                 ],
                 'context' => [],
                 'expected' => $this->createResolvedNode(['id' => 1, 'identifier' => 'root'])
                     ->addChildNode($this->createResolvedNode(['id' => 11, 'identifier' => 'root__node11'])),
             ],
             'with tree depth' => [
+                'cachedData' => [
+                    'i' => 1,
+                    'a' => 'root',
+                    'n' => [
+                        [
+                            'i' => 11,
+                            'a' => 'root__node11',
+                            'n' => [
+                                [
+                                    'i' => 111,
+                                    'a' => 'root__node11__node111',
+                                    'n' => [
+                                        ['i' => 1111, 'a' => 'root__node11__node_111__node_1111']
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'context' => ['tree_depth' => 2],
+                'expected' => $this->createResolvedNode(['id' => 1, 'identifier' => 'root'])
+                    ->addChildNode(
+                        $this->createResolvedNode(['id' => 11, 'identifier' => 'root__node11'])
+                            ->addChildNode(
+                                $this->createResolvedNode(['id' => 111, 'identifier' => 'root__node11__node111'])
+                            )
+                    )
+            ],
+            'with tree depth (old format)' => [
                 'cachedData' => [
                     'id' => 1,
                     'identifier' => 'root',
@@ -258,15 +305,12 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
                                     'id' => 111,
                                     'identifier' => 'root__node11__node111',
                                     'childNodes' => [
-                                        [
-                                            'id' => 1111,
-                                            'identifier' => 'root__node11__node_111__node_1111',
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
+                                        ['id' => 1111, 'identifier' => 'root__node11__node_111__node_1111']
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
                 ],
                 'context' => ['tree_depth' => 2],
                 'expected' => $this->createResolvedNode(['id' => 1, 'identifier' => 'root'])
@@ -275,19 +319,8 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
                             ->addChildNode(
                                 $this->createResolvedNode(['id' => 111, 'identifier' => 'root__node11__node111'])
                             )
-                    ),
-            ],
+                    )
+            ]
         ];
-    }
-
-    private function createResolvedNode(array $data): ResolvedContentNode
-    {
-        return new ResolvedContentNode(
-            $data['id'],
-            $data['identifier'],
-            0,
-            new ArrayCollection(),
-            new ResolvedContentVariant()
-        );
     }
 }
