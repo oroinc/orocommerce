@@ -494,8 +494,9 @@ services:
 
     oro_checkout.api.deny_access_for_disabled_guest_checkout:
         class: Oro\Bundle\CheckoutBundle\Api\Processor\DenyAccessForDisabledGuestCheckout
+        arguments:
+            - '@oro_featuretoggle.checker.feature_checker'
         tags:
-            - { name: oro_featuretogle.feature, feature: guest_checkout }
             - { name: oro.api.processor, action: get, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
             - { name: oro.api.processor, action: get, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 5 }
             - { name: oro.api.processor, action: get, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: 5 }
