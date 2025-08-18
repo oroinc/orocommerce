@@ -45,7 +45,6 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
             LoadShippingMethodsConfigsRulesWithConfigs::class,
             UpdateInventoryLevelsQuantities::class
         ]);
-        $this->registry = self::getContainer()->get('doctrine');
 
         $this->ensureSessionIsAvailable();
     }
@@ -226,70 +225,59 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 
     private function disableAllShippingRules(): void
     {
-        $shippingRules = $this->getAllShippingRules();
-
+        $em = self::getContainer()->get('doctrine')->getManager();
+        $em->clear();
+        /** @var ShippingMethodsConfigsRule[] $shippingRules */
+        $shippingRules = $em->getRepository(ShippingMethodsConfigsRule::class)->findAll();
         foreach ($shippingRules as $shippingRule) {
             $shippingRule->getRule()->setEnabled(false);
         }
-
-        $this->registry->getManager()->flush();
-    }
-
-    private function disableAllPaymentRules(): void
-    {
-        $paymentRules = $this->getAllPaymentRules();
-
-        foreach ($paymentRules as $paymentRule) {
-            $paymentRule->getRule()->setEnabled(false);
-        }
-
-        $this->registry->getManager()->flush();
+        $em->flush();
     }
 
     private function enableAllShippingRules(): void
     {
-        $shippingRules = $this->getAllShippingRules();
-
+        $em = self::getContainer()->get('doctrine')->getManager();
+        $em->clear();
+        /** @var ShippingMethodsConfigsRule[] $shippingRules */
+        $shippingRules = $em->getRepository(ShippingMethodsConfigsRule::class)->findAll();
         foreach ($shippingRules as $shippingRule) {
             $shippingRule->getRule()->setEnabled(true);
         }
+        $em->flush();
+    }
 
-        $this->registry->getManager()->flush();
+    private function disableAllPaymentRules(): void
+    {
+        $em = self::getContainer()->get('doctrine')->getManager();
+        $em->clear();
+        /** @var PaymentMethodsConfigsRule[] $paymentRules */
+        $paymentRules = $em->getRepository(PaymentMethodsConfigsRule::class)->findAll();
+        foreach ($paymentRules as $paymentRule) {
+            $paymentRule->getRule()->setEnabled(false);
+        }
+        $em->flush();
     }
 
     private function enableAllPaymentRules(): void
     {
-        $paymentRules = $this->getAllPaymentRules();
-
+        $em = self::getContainer()->get('doctrine')->getManager();
+        $em->clear();
+        /** @var PaymentMethodsConfigsRule[] $paymentRules */
+        $paymentRules = $em->getRepository(PaymentMethodsConfigsRule::class)->findAll();
         foreach ($paymentRules as $paymentRule) {
             $paymentRule->getRule()->setEnabled(true);
         }
-
-        $this->registry->getManager()->flush();
-    }
-
-    /**
-     * @return ShippingMethodsConfigsRule[]
-     */
-    private function getAllShippingRules(): array
-    {
-        return $this->registry->getRepository(ShippingMethodsConfigsRule::class)->findAll();
-    }
-
-    /**
-     * @return PaymentMethodsConfigsRule[]
-     */
-    private function getAllPaymentRules(): array
-    {
-        return $this->registry->getRepository(PaymentMethodsConfigsRule::class)->findAll();
+        $em->flush();
     }
 
     private function goToOrderReviewStepFromPaymentWithPaymentTerm(Crawler $crawler): Crawler
     {
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
-        $values[self::ORO_WORKFLOW_TRANSITION]['payment_method'] =
-            $this->getPaymentMethodIdentifier($this->getContainer());
+        $values[self::ORO_WORKFLOW_TRANSITION]['payment_method'] = $this->getPaymentMethodIdentifier(
+            self::getContainer()
+        );
         $values['_widgetContainer'] = 'ajax';
         $values['_wid'] = 'ajax_checkout';
 

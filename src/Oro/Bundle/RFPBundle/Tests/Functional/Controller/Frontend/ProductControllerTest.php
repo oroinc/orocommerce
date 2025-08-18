@@ -15,15 +15,13 @@ class ProductControllerTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    private const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
-
     #[\Override]
     protected function setUp(): void
     {
         self::markTestSkipped('Will be fixed in BAP-22773');
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->loadFixtures([LoadProductData::class]);
     }
@@ -36,8 +34,8 @@ class ProductControllerTest extends WebTestCase
     public function testViewProductWithRequestQuoteAvailable()
     {
         $configManager = self::getConfigManager();
-        $originalRfpProductVisibility = $configManager->get(self::RFP_PRODUCT_VISIBILITY_KEY);
-        $configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [
+        $initialRfpProductVisibility = $configManager->get('oro_rfp.frontend_product_visibility');
+        $configManager->set('oro_rfp.frontend_product_visibility', [
             ExtendHelper::buildEnumOptionId(Product::INVENTORY_STATUS_ENUM_CODE, Product::INVENTORY_STATUS_OUT_OF_STOCK)
         ]);
         $configManager->flush();
@@ -47,7 +45,7 @@ class ProductControllerTest extends WebTestCase
                 $this->viewProduct()->getContent()
             );
         } finally {
-            $configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, $originalRfpProductVisibility);
+            $configManager->set('oro_rfp.frontend_product_visibility', $initialRfpProductVisibility);
             $configManager->flush();
         }
     }
@@ -55,8 +53,8 @@ class ProductControllerTest extends WebTestCase
     public function testViewProductWithoutRequestQuoteAvailable()
     {
         $configManager = self::getConfigManager();
-        $originalRfpProductVisibility = $configManager->get(self::RFP_PRODUCT_VISIBILITY_KEY);
-        $configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
+        $initialRfpProductVisibility = $configManager->get('oro_rfp.frontend_product_visibility');
+        $configManager->set('oro_rfp.frontend_product_visibility', [Product::INVENTORY_STATUS_IN_STOCK]);
         $configManager->flush();
         try {
             self::assertStringNotContainsString(
@@ -64,7 +62,7 @@ class ProductControllerTest extends WebTestCase
                 $this->viewProduct()->getContent()
             );
         } finally {
-            $configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, $originalRfpProductVisibility);
+            $configManager->set('oro_rfp.frontend_product_visibility', $initialRfpProductVisibility);
             $configManager->flush();
         }
     }

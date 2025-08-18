@@ -70,11 +70,6 @@ included:
             value: 200
             currency: 'USD'
         relationships:
-            orders:
-                data:
-                    -
-                        type: orders
-                        id: '<toString(@simple_order3->id)>'
             productUnit:
                 data:
                     type: productunits

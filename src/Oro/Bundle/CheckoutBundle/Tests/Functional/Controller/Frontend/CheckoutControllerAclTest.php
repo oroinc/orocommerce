@@ -33,22 +33,25 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
         int $indexResponseStatus,
         int $gridResponseStatus,
         array $data = []
-    ) {
+    ): void {
         $this->initClient([], self::generateBasicAuthHeader($user, $user));
 
         $configManager = self::getConfigManager();
+        $initialOpenOrdersSeparatePage = $configManager->get('oro_checkout.frontend_open_orders_separate_page');
         $configManager->set('oro_checkout.frontend_open_orders_separate_page', true);
         $configManager->flush();
-
-        $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
-        $this->assertSame($indexResponseStatus, $this->client->getResponse()->getStatusCode());
-        $response = $this->client->requestFrontendGrid(
-            [
-                'gridName' => 'frontend-checkouts-grid',
-            ],
-            [],
-            true,
-        );
+        try {
+            $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
+            $this->assertSame($indexResponseStatus, $this->client->getResponse()->getStatusCode());
+            $response = $this->client->requestFrontendGrid(
+                ['gridName' => 'frontend-checkouts-grid'],
+                [],
+                true
+            );
+        } finally {
+            $configManager->set('oro_checkout.frontend_open_orders_separate_page', $initialOpenOrdersSeparatePage);
+            $configManager->flush();
+        }
 
         self::assertResponseStatusCodeEquals($response, $gridResponseStatus);
         if (200 === $gridResponseStatus) {
@@ -113,15 +116,15 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
     /**
      * @dataProvider viewDataProvider
      */
-    public function testView(string $resource, string $user, int $status)
+    public function testView(string $resource, string $user, int $status): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader($user, $user));
+        $this->initClient([], self::generateBasicAuthHeader($user, $user));
         /** @var Checkout $checkout */
         $checkout = $this->getReference($resource);
         $this->client->request('GET', $this->getUrl('oro_checkout_frontend_checkout', ['id' => $checkout->getId()]));
 
         $response = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($response, $status);
+        self::assertHtmlResponseStatusCodeEquals($response, $status);
     }
 
     public function viewDataProvider(): array

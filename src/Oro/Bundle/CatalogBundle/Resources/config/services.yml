@@ -261,7 +261,6 @@ services:
             - { name: website_search.placeholder }
 
     oro_catalog.category_counts.cache_provider:
-        public: false
         parent: oro.data.cache
         tags:
             - { name: 'cache.pool', namespace: 'oro_catalog_category_counts' }

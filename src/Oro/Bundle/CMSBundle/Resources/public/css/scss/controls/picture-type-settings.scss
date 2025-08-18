@@ -11,6 +11,11 @@
 
     .breakpoint-selector {
         margin-right: 8px;
+
+        .dropdown-menu {
+            max-height: 350px;
+            overflow-y: auto;
+        }
     }
 
     thead {

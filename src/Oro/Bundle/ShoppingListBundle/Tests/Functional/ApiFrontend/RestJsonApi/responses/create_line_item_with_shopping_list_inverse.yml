@@ -6,6 +6,7 @@ data:
         notes: 'New Line Item Notes'
         currency: USD
         value: '10.9900'
+        subTotal: '164.8500'
     relationships:
         product:
             data:

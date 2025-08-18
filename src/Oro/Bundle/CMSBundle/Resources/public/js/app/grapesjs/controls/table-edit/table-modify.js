@@ -167,7 +167,7 @@ class TableModify {
             })
         }], opts);
 
-        this.em.trigger('change:canvasOffset');
+        this.em.trigger('canvas:refresh');
     }
 
     insertColumn(index) {
@@ -204,7 +204,7 @@ class TableModify {
             ));
         }
 
-        this.em.trigger('change:canvasOffset');
+        this.em.trigger('canvas:refresh');
     }
 
     deleteRow(rowIndex, columnIndex, context) {
@@ -238,7 +238,7 @@ class TableModify {
             }
         }
 
-        this.em.trigger('change:canvasOffset');
+        this.em.trigger('canvas:refresh');
     }
 
     deleteColumn(rowIndex, columnIndex, context) {
@@ -262,7 +262,7 @@ class TableModify {
             this.deleteTable();
         }
 
-        this.em.trigger('change:canvasOffset');
+        this.em.trigger('canvas:refresh');
     }
 
     deleteTable() {

@@ -21,7 +21,6 @@ data:
                 subtotalType: shipping_cost
                 description: Shipping
                 amount: '10.0000'
-        coupons: []
     relationships:
         lineItems:
             data: []

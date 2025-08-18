@@ -5,25 +5,38 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM\PreviouslyPurchasedFeatureTrait;
 use Oro\Bundle\SearchBundle\Engine\Orm;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 
 class ProductSearchTest extends FrontendRestJsonApiTestCase
 {
     use WebsiteSearchExtensionTrait;
-    use PreviouslyPurchasedFeatureTrait;
 
     #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
-
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
             '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product.yml',
             '@OroOrderBundle/Tests/Functional/ApiFrontend/DataFixtures/product_search_orders.yml'
         ]);
+
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_order.enable_purchase_history', true);
+        $configManager->flush();
+
+        self::reindexProductData();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_order.enable_purchase_history', false);
+        $configManager->flush();
+
+        parent::tearDown();
     }
 
     #[\Override]
@@ -38,9 +51,6 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         $order1->setCreatedAt(new \DateTime('2018-02-15 10:30:00', new \DateTimeZone('UTC')));
         $order2->setCreatedAt(new \DateTime('2018-10-05 10:30:00', new \DateTimeZone('UTC')));
         $this->getEntityManager()->flush();
-
-        $this->enablePreviouslyPurchasedFeature();
-        $this->reindexProductData();
     }
 
     private function isOrmEngine(): bool
@@ -48,7 +58,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         return Orm::ENGINE_NAME === self::getContainer()->get('oro_website_search.engine.parameters')->getEngineName();
     }
 
-    public function testOrderedAt()
+    public function testOrderedAt(): void
     {
         /** @var \DateTime $orderedAt */
         $orderedAt = $this->getReference('order1')->getCreatedAt();
@@ -74,7 +84,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testFilterByOrderedAt()
+    public function testFilterByOrderedAt(): void
     {
         /** @var \DateTime $orderedAt */
         $orderedAt = $this->getReference('order2')->getCreatedAt();
@@ -103,7 +113,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testSortByOrderedAtAsc()
+    public function testSortByOrderedAtAsc(): void
     {
         /** @var \DateTime $orderedAt1 */
         $orderedAt1 = $this->getReference('order1')->getCreatedAt();
@@ -138,7 +148,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testSortByOrderedAtDesc()
+    public function testSortByOrderedAtDesc(): void
     {
         /** @var \DateTime $orderedAt1 */
         $orderedAt1 = $this->getReference('order1')->getCreatedAt();
@@ -173,7 +183,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testCountByOrderedAt()
+    public function testCountByOrderedAt(): void
     {
         /** @var \DateTime $orderedAt1 */
         $orderedAt1 = $this->getReference('order1')->getCreatedAt();
@@ -202,7 +212,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testMinByOrderedAt()
+    public function testMinByOrderedAt(): void
     {
         if (!$this->isOrmEngine()) {
             $this->markTestSkipped('Can be tested only with ORM search engine');
@@ -230,7 +240,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testMaxByOrderedAt()
+    public function testMaxByOrderedAt(): void
     {
         if (!$this->isOrmEngine()) {
             $this->markTestSkipped('Can be tested only with ORM search engine');
@@ -258,7 +268,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testCountByOrderedAtWhenNoProductsWithThisValue()
+    public function testCountByOrderedAtWhenNoProductsWithThisValue(): void
     {
         $response = $this->cget(
             ['entity' => 'productsearch'],
@@ -270,7 +280,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         self::assertArrayNotHasKey('meta', self::jsonToArray($response->getContent()));
     }
 
-    public function testMinByOrderedAtWhenNoProductsWithThisValue()
+    public function testMinByOrderedAtWhenNoProductsWithThisValue(): void
     {
         if (!$this->isOrmEngine()) {
             $this->markTestSkipped('Can be tested only with ORM search engine');
@@ -295,7 +305,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testMaxByOrderedAtWhenNoProductsWithThisValue()
+    public function testMaxByOrderedAtWhenNoProductsWithThisValue(): void
     {
         if (!$this->isOrmEngine()) {
             $this->markTestSkipped('Can be tested only with ORM search engine');

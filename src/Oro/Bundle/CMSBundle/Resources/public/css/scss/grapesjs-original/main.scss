@@ -1,0 +1,167 @@
+/* stylelint-disable */
+@use 'sass:meta';
+@use 'codemirror/lib/codemirror';
+@use 'codemirror/theme/hopscotch';
+
+@use 'gjs_vars';
+@use 'gjs_main_mixins';
+@use 'gjs_status';
+
+@use 'gjs_root';
+@use 'gjs_traits';
+@use 'gjs_canvas';
+@use 'gjs_commands';
+@use 'gjs_panels';
+@use 'gjs_inputs';
+@use 'gjs_devices';
+@use 'gjs_style_manager';
+@use 'gjs_category_general';
+@use 'gjs_blocks';
+@use 'gjs_layers';
+@use 'gjs_selectors';
+@use 'gjs_modal';
+@use 'gjs_assets';
+@use 'gjs_file_uploader';
+@use 'gjs_code_manager';
+@use 'gjs_rte';
+@use 'gjs_spectrum';
+
+// spectrum.scss is now called from _gjs_spectrum.scss
+//@use 'spectrum.scss';
+
+$colorsAll: (one, var(--gjs-primary-color)), (two, var(--gjs-secondary-color)), (three, var(--gjs-tertiary-color)),
+  (four, var(--gjs-quaternary-color)), (danger, var(--gjs-color-red));
+
+.#{gjs_vars.$prefix} {
+  @each $cnum, $ccol in $colorsAll {
+    &#{$cnum} {
+      &-bg {
+        background-color: $ccol;
+      }
+
+      &-color {
+        color: $ccol;
+
+        &-h:hover {
+          color: $ccol;
+        }
+      }
+    }
+  }
+}
+
+.#{gjs_vars.$app-prefix}bdrag {
+  pointer-events: none !important;
+  position: absolute !important;
+  z-index: 10 !important;
+  width: auto;
+}
+
+.#{gjs_vars.$app-prefix}drag-helper {
+  background-color: var(--gjs-color-blue) !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  z-index: 10 !important;
+  transform: scale(0.3) !important;
+  transform-origin: top left !important;
+  -webkit-transform-origin: top left !important;
+  margin: 15px !important;
+  transition: none !important;
+  outline: none !important;
+}
+
+.#{gjs_vars.$app-prefix}grabbing,
+.#{gjs_vars.$app-prefix}grabbing * {
+  @extend .#{gjs_vars.$app-prefix}no-user-select;
+
+  cursor: grabbing !important;
+  cursor: -webkit-grabbing !important;
+}
+
+.#{gjs_vars.$app-prefix}grabbing {
+  overflow: hidden;
+}
+
+.#{gjs_vars.$app-prefix}off-prv {
+  @extend .#{gjs_vars.$app-prefix}color-main;
+  @extend .#{gjs_vars.$app-prefix}bg-main;
+  position: relative;
+  z-index: 10;
+  padding: 5px;
+  cursor: pointer;
+}
+
+// Custom scrollbars for Chrome
+.#{gjs_vars.$app-prefix}editor-cont ::-webkit-scrollbar-track {
+  background: var(--gjs-secondary-dark-color);
+}
+
+.#{gjs_vars.$app-prefix}editor-cont ::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.#{gjs_vars.$app-prefix}editor-cont ::-webkit-scrollbar {
+  width: 8px;
+}
+
+/********************* MAIN ************************/
+// @property --input-padding {
+//   syntax: "<length>";
+//   inherits: false;
+//   initial-value: #{$inputPadding};
+// }
+
+.#{gjs_vars.$app-prefix} {
+  &no-touch-actions {
+    touch-action: none;
+  }
+
+  &disabled {
+    @include gjs_main_mixins.user-select(none);
+    @include gjs_main_mixins.opacity(0.5);
+  }
+
+  &editor {
+    font-family: var(--gjs-main-font);
+    font-size: var(--gjs-font-size);
+    position: relative;
+    box-sizing: border-box;
+    height: 100%;
+  }
+}
+
+.#{gjs_vars.$app-prefix}freezed,
+.#{gjs_vars.$nv-prefix}freezed {
+  @include gjs_main_mixins.opacity(0.5);
+  pointer-events: none;
+}
+
+.#{gjs_vars.$app-prefix}hidden {
+  display: none;
+}
+
+@keyframes #{gjs_vars.$app-prefix}slide-down {
+  0% {
+    transform: translate(0, -3rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes #{gjs_vars.$app-prefix}slide-up {
+  0% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, -3rem);
+    opacity: 0;
+  }
+}
+
+.cm-s-hopscotch span.cm-error {
+  color: #ffffff;
+}

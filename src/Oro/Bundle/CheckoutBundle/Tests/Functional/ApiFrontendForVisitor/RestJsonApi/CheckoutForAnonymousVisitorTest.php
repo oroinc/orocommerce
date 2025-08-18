@@ -25,21 +25,19 @@ class CheckoutForAnonymousVisitorTest extends FrontendRestJsonApiTestCase
             LoadGuestCheckoutData::class
         ]);
 
-        $this->setGuestCheckoutOptionValue(true);
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_checkout.guest_checkout', true);
+        $configManager->flush();
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        $this->setGuestCheckoutOptionValue(false);
-        parent::tearDown();
-    }
-
-    private function setGuestCheckoutOptionValue(bool $value): void
-    {
         $configManager = self::getConfigManager();
-        $configManager->set('oro_checkout.guest_checkout', $value);
+        $configManager->set('oro_checkout.guest_checkout', false);
         $configManager->flush();
+
+        parent::tearDown();
     }
 
     public function testGetList(): void

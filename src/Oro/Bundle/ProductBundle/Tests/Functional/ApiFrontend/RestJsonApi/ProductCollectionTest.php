@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\SearchBundle\Engine\Orm;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\ApiFrontend\RestJsonApi\WebCatalogTreeTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
@@ -17,27 +18,41 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
 {
     use WebsiteSearchExtensionTrait;
 
+    private ?array $initialEnabledLocalizations;
+
     #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
-
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
             '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product_collection.yml'
         ]);
+
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            LoadLocalizationData::getLocalizationIds(self::getContainer())
+        );
+        $configManager->flush();
+
         $this->switchToWebCatalog();
+
+        self::reindexProductData();
     }
 
     #[\Override]
-    protected function postFixtureLoad()
+    protected function tearDown(): void
     {
-        parent::postFixtureLoad();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->flush();
 
-        $this->reindexProductData();
+        parent::tearDown();
     }
 
-    public function testGetWithoutSearchQueryFilter()
+    public function testGetWithoutSearchQueryFilter(): void
     {
         $response = $this->get(
             ['entity' => 'productcollection', 'id' => '<toString(@catalog1_node11_variant1->id)>']
@@ -45,7 +60,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'id'            => '<toString(@catalog1_node11_variant1->id)>',
+                    'id' => '<toString(@catalog1_node11_variant1->id)>',
                     'relationships' => [
                         'products' => [
                             'data' => [
@@ -62,7 +77,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         self::assertArrayNotHasKey('included', self::jsonToArray($response->getContent()));
     }
 
-    public function testGetWithoutSearchQueryFilterAndWithIncludeFilter()
+    public function testGetWithoutSearchQueryFilterAndWithIncludeFilter(): void
     {
         $response = $this->get(
             ['entity' => 'productcollection', 'id' => '<toString(@catalog1_node11_variant1->id)>'],
@@ -71,7 +86,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         $this->assertResponseContains('get_product_collection.yml', $response);
     }
 
-    public function testGetWithSearchQueryFilter()
+    public function testGetWithSearchQueryFilter(): void
     {
         $response = $this->get(
             ['entity' => 'productcollection', 'id' => '<toString(@catalog1_node11_variant1->id)>'],
@@ -80,7 +95,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'id'            => '<toString(@catalog1_node11_variant1->id)>',
+                    'id' => '<toString(@catalog1_node11_variant1->id)>',
                     'relationships' => [
                         'products' => [
                             'data' => [
@@ -95,7 +110,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         self::assertArrayNotHasKey('included', self::jsonToArray($response->getContent()));
     }
 
-    public function testGetForAnotherLocalizationAndWithIncludeFilter()
+    public function testGetForAnotherLocalizationAndWithIncludeFilter(): void
     {
         $this->getReferenceRepository()->setReference('current_localization', $this->getCurrentLocalization());
         $response = $this->get(
@@ -106,7 +121,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         $this->assertResponseContains('get_product_collection_localization.yml', $response);
     }
 
-    public function testGetWithFieldsAndIncludeFilters()
+    public function testGetWithFieldsAndIncludeFilters(): void
     {
         $response = $this->get(
             ['entity' => 'productcollection', 'id' => '<toString(@catalog1_node11_variant1->id)>'],
@@ -114,8 +129,8 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseContains(
             [
-                'data'     => [
-                    'id'            => '<toString(@catalog1_node11_variant1->id)>',
+                'data' => [
+                    'id' => '<toString(@catalog1_node11_variant1->id)>',
                     'relationships' => [
                         'products' => [
                             'data' => [
@@ -128,22 +143,22 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
                 ],
                 'included' => [
                     [
-                        'type'       => 'productsearch',
-                        'id'         => '<toString(@product4->id)>',
+                        'type' => 'productsearch',
+                        'id' => '<toString(@product4->id)>',
                         'attributes' => [
                             'name' => 'Product 4'
                         ]
                     ],
                     [
-                        'type'       => 'productsearch',
-                        'id'         => '<toString(@product3->id)>',
+                        'type' => 'productsearch',
+                        'id' => '<toString(@product3->id)>',
                         'attributes' => [
                             'name' => 'Product 3'
                         ]
                     ],
                     [
-                        'type'       => 'productsearch',
-                        'id'         => '<toString(@product1->id)>',
+                        'type' => 'productsearch',
+                        'id' => '<toString(@product1->id)>',
                         'attributes' => [
                             'name' => 'Product 1'
                         ]
@@ -159,7 +174,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         }
     }
 
-    public function testGetWithFieldsFilterButWithoutIncludeFilterShouldNotReturnIncludedEntities()
+    public function testGetWithFieldsFilterButWithoutIncludeFilterShouldNotReturnIncludedEntities(): void
     {
         $response = $this->get(
             ['entity' => 'productcollection', 'id' => '<toString(@catalog1_node11_variant1->id)>'],
@@ -168,7 +183,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'id'            => '<toString(@catalog1_node11_variant1->id)>',
+                    'id' => '<toString(@catalog1_node11_variant1->id)>',
                     'relationships' => [
                         'products' => [
                             'data' => [
@@ -185,7 +200,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         self::assertArrayNotHasKey('included', self::jsonToArray($response->getContent()));
     }
 
-    public function testTryToGetForNotExistingContentVariant()
+    public function testTryToGetForNotExistingContentVariant(): void
     {
         $response = $this->get(
             ['entity' => 'productcollection', 'id' => '9999999'],
@@ -195,7 +210,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'not found http exception',
+                'title' => 'not found http exception',
                 'detail' => 'An entity with the requested identifier does not exist.'
             ],
             $response,
@@ -203,7 +218,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetForContentVariantThatIsNotProductCollection()
+    public function testTryToGetForContentVariantThatIsNotProductCollection(): void
     {
         $response = $this->get(
             ['entity' => 'productcollection', 'id' => '<toString(@catalog1_node11_variant3_system_page->id)>'],
@@ -213,7 +228,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -221,7 +236,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testTryToGetForContentVariantThatNotApplicableForCurrentLocalization()
+    public function testTryToGetForContentVariantThatNotApplicableForCurrentLocalization(): void
     {
         $response = $this->get(
             ['entity' => 'productcollection', 'id' => '<toString(@catalog1_node11_variant2_es->id)>'],
@@ -231,7 +246,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'access denied exception',
+                'title' => 'access denied exception',
                 'detail' => 'Access Denied.'
             ],
             $response,
@@ -239,7 +254,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetWithAggregationsFilter()
+    public function testGetWithAggregationsFilter(): void
     {
         $searchEngine = self::getContainer()->get('oro_website_search.engine.parameters')->getEngineName();
         if (Orm::ENGINE_NAME !== $searchEngine) {
@@ -253,7 +268,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'id'            => '<toString(@catalog1_node11_variant1->id)>',
+                    'id' => '<toString(@catalog1_node11_variant1->id)>',
                     'relationships' => [
                         'products' => [
                             'meta' => [
@@ -274,7 +289,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testPaginationLinksForFirstPage()
+    public function testPaginationLinksForFirstPage(): void
     {
         $response = $this->get(
             ['entity' => 'productcollection', 'id' => '<toString(@catalog1_node11_variant1->id)>'],
@@ -301,7 +316,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         self::assertCount(2, self::jsonToArray($response->getContent())['data']['relationships']['products']['data']);
     }
 
-    public function testPaginationLinksForLastPage()
+    public function testPaginationLinksForLastPage(): void
     {
         $response = $this->get(
             ['entity' => 'productcollection', 'id' => '<toString(@catalog1_node11_variant1->id)>'],
@@ -318,7 +333,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
                         'products' => [
                             'links' => [
                                 'first' => $urlWithFilter . '&page%5Bsize%5D=2',
-                                'prev'  => $urlWithFilter . '&page%5Bsize%5D=2'
+                                'prev' => $urlWithFilter . '&page%5Bsize%5D=2'
                             ]
                         ]
                     ]

@@ -6,18 +6,38 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdmi
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 
 class LandingPageTest extends FrontendRestJsonApiTestCase
 {
+    private ?array $initialEnabledLocalizations;
+
     #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
-
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
             '@OroCMSBundle/Tests/Functional/ApiFrontend/DataFixtures/landing_page.yml'
         ]);
+
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            LoadLocalizationData::getLocalizationIds(self::getContainer())
+        );
+        $configManager->flush();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->flush();
+
+        parent::tearDown();
     }
 
     /**
@@ -31,7 +51,7 @@ class LandingPageTest extends FrontendRestJsonApiTestCase
         return $localizationManager->getCurrentLocalization();
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'landingpages'],
@@ -41,7 +61,7 @@ class LandingPageTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_landing_page.yml', $response);
     }
 
-    public function testGetListFilterById()
+    public function testGetListFilterById(): void
     {
         $response = $this->cget(
             ['entity' => 'landingpages'],
@@ -51,7 +71,7 @@ class LandingPageTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_landing_page_filter_by_id.yml', $response);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $response = $this->get(
             ['entity' => 'landingpages', 'id' => '<toString(@page1->id)>']
@@ -60,7 +80,7 @@ class LandingPageTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_landing_page.yml', $response);
     }
 
-    public function testGetForAnotherLocalization()
+    public function testGetForAnotherLocalization(): void
     {
         $this->getReferenceRepository()->setReference('current_localization', $this->getCurrentLocalization());
         $response = $this->get(
@@ -72,7 +92,7 @@ class LandingPageTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_landing_page_es.yml', $response);
     }
 
-    public function testGetForAnotherLocalizationForLandingPageOnlyWithDefaultUrl()
+    public function testGetForAnotherLocalizationForLandingPageOnlyWithDefaultUrl(): void
     {
         $this->getReferenceRepository()->setReference('current_localization', $this->getCurrentLocalization());
         $response = $this->get(
@@ -85,10 +105,10 @@ class LandingPageTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     'attributes' => [
-                        'url'  => '/page2_slug_default',
+                        'url' => '/page2_slug_default',
                         'urls' => [
                             [
-                                'url'            => '/page2_slug_default',
+                                'url' => '/page2_slug_default',
                                 'localizationId' => '<toString(@current_localization->id)>'
                             ],
                             ['url' => '/page2_slug_default', 'localizationId' => '<toString(@en_CA->id)>']
@@ -100,12 +120,12 @@ class LandingPageTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdate()
+    public function testTryToUpdate(): void
     {
         $data = [
             'data' => [
-                'type'       => 'landingpages',
-                'id'         => '<toString(@page1->id)>',
+                'type' => 'landingpages',
+                'id' => '<toString(@page1->id)>',
                 'attributes' => [
                     'title' => 'Updated Landing Page Title'
                 ]
@@ -122,11 +142,11 @@ class LandingPageTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToCreate()
+    public function testTryToCreate(): void
     {
         $data = [
             'data' => [
-                'type'       => 'landingpages',
+                'type' => 'landingpages',
                 'attributes' => [
                     'title' => 'New Landing Page'
                 ]
@@ -143,7 +163,7 @@ class LandingPageTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDelete()
+    public function testTryToDelete(): void
     {
         $response = $this->delete(
             ['entity' => 'landingpages', 'id' => '<toString(@page1->id)>'],
@@ -155,7 +175,7 @@ class LandingPageTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDeleteList()
+    public function testTryToDeleteList(): void
     {
         $response = $this->cdelete(
             ['entity' => 'landingpages'],

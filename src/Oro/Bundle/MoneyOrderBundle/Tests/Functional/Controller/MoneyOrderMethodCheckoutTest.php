@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Tests\Functional\Controller;
 
-use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
@@ -64,7 +63,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
     {
         $sourceEntity = $this->getSourceEntity();
         $sourceEntityId = $sourceEntity->getId();
-        $checkoutSources = $this->registry
+        $checkoutSources = self::getContainer()->get('doctrine')
             ->getRepository(CheckoutSource::class)
             ->findBy(['shoppingList' => $sourceEntity]);
 
@@ -83,20 +82,15 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
 
         self::assertStringContainsString(self::FINISH_SIGN, $crawler->html());
-        self::assertCount(1, $this->registry->getRepository(CheckoutSource::class)->findAll());
-        self::assertNull($this->registry->getRepository(ShoppingList::class)->find($sourceEntityId));
 
-        /** @var EntityRepository $objectManager */
-        $objectManager = self::getContainer()->get('doctrine')
-            ->getRepository(PaymentTransaction::class);
+        $em = self::getContainer()->get('doctrine')->getManager();
+        $em->clear();
+        self::assertCount(1, $em->getRepository(CheckoutSource::class)->findAll());
+        self::assertNull($em->getRepository(ShoppingList::class)->find($sourceEntityId));
 
-        $paymentTransactions = $objectManager
-            ->findBy([
-                'paymentMethod' => $this->getPaymentMethodIdentifier(
-                    $this->getReference('money_order:channel_1')
-                )
-            ]);
-
+        $paymentTransactions = $em->getRepository(PaymentTransaction::class)->findBy([
+            'paymentMethod' => $this->getPaymentMethodIdentifier($this->getReference('money_order:channel_1'))
+        ]);
         self::assertNotEmpty($paymentTransactions);
         self::assertCount(1, $paymentTransactions);
         self::assertInstanceOf(PaymentTransaction::class, $paymentTransactions[0]);

@@ -801,7 +801,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         }
 
         $scope = $this->spin(function () {
-            return $this->getPage()->findVisible('css', '.gjs-trt-traits div[data-icon-collection]');
+            return $this->getPage()->findVisible('css', '.gjs-traits-cs div[data-icon-collection]');
         }, 5);
 
         self::assertNotNull($scope, 'There is no visible icons collection in traits');

@@ -31,7 +31,7 @@ const GridType = BaseType.extend({
                             <div data-gjs-type="grid-column" style="width: 100%;"></div>
                         </div>${GRID_STYLES}`,
             attributes: {
-                'class': 'gjs-fonts gjs-f-b1'
+                'class': 'fa gjs-icon-f-b1'
             },
             category: {
                 label: __('oro.cms.wysiwyg.block_manager.categories.legacy'),
@@ -47,7 +47,7 @@ const GridType = BaseType.extend({
                             <div data-gjs-type="grid-column" style="width: 50%;"></div>
                         </div>${GRID_STYLES}`,
             attributes: {
-                'class': 'gjs-fonts gjs-f-b2'
+                'class': 'fa gjs-icon-f-b2'
             },
             category: {
                 label: __('oro.cms.wysiwyg.block_manager.categories.legacy'),
@@ -64,7 +64,7 @@ const GridType = BaseType.extend({
                             <div data-gjs-type="grid-column" style="width: 33.33%;"></div>
                         </div>${GRID_STYLES}`,
             attributes: {
-                'class': 'gjs-fonts gjs-f-b3'
+                'class': 'fa gjs-icon-f-b3'
             },
             category: {
                 label: __('oro.cms.wysiwyg.block_manager.categories.legacy'),
@@ -80,7 +80,7 @@ const GridType = BaseType.extend({
                             <div data-gjs-type="grid-column" style="width: 70%;"></div>
                         </div>${GRID_STYLES}`,
             attributes: {
-                'class': 'gjs-fonts gjs-f-b37'
+                'class': 'fa gjs-icon-f-b37'
             },
             category: {
                 label: __('oro.cms.wysiwyg.block_manager.categories.legacy'),

@@ -32,6 +32,8 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
     use MessageQueueAssertTrait;
     use ConfigManagerAwareTestTrait;
 
+    private ?string $initialPriceStrategy;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -40,51 +42,57 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_price_cpl');
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
 
-        self::getConfigManager('global')
-            ->set('oro_pricing.price_strategy', MinimalPricesCombiningStrategy::NAME);
+        $configManager = self::getConfigManager();
+        $this->initialPriceStrategy = $configManager->get('oro_pricing.price_strategy');
+        $configManager->set('oro_pricing.price_strategy', MinimalPricesCombiningStrategy::NAME);
+        $configManager->flush();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_pricing.price_strategy', $this->initialPriceStrategy);
+        $configManager->flush();
     }
 
     /**
      * @dataProvider activeDataProvider
-     * @param bool $pricesCalculated
      */
-    public function testIsActiveNoSchedules($pricesCalculated)
+    public function testIsActiveNoSchedules(bool $pricesCalculated): void
     {
-        $this->loadFixtures(
-            [
-                LoadProductPrices::class,
-                LoadCombinedPriceListsSimplified::class
-            ]
-        );
+        $this->loadFixtures([
+            LoadProductPrices::class,
+            LoadCombinedPriceListsSimplified::class
+        ]);
         $this->buildActivationPlans();
         $this->prepareMessageCollector();
 
         $this->updatePricesCalculatedForAllCpls($pricesCalculated);
 
         $command = self::getContainer()->get('oro_pricing.tests.combined_price_list_schedule_command');
-        $this->assertFalse($command->isActive());
+        self::assertFalse($command->isActive());
     }
 
     /**
      * @dataProvider activeDataProvider
-     * @param bool $pricesCalculated
      */
-    public function testIsActive($pricesCalculated)
+    public function testIsActive(bool $pricesCalculated): void
     {
         $this->loadFixturesWithSchedules();
         $this->updatePricesCalculatedForAllCpls($pricesCalculated);
 
         $command = self::getContainer()->get('oro_pricing.tests.combined_price_list_schedule_command');
-        $this->assertTrue($command->isActive());
+        self::assertTrue($command->isActive());
     }
 
-    public function testIsActiveWithAllActualSchedules()
+    public function testIsActiveWithAllActualSchedules(): void
     {
         $this->loadFixturesWithSchedules();
         $this->updateActivationPlanActivity(true);
 
         $command = self::getContainer()->get('oro_pricing.tests.combined_price_list_schedule_command');
-        $this->assertFalse($command->isActive());
+        self::assertFalse($command->isActive());
     }
 
     public function activeDataProvider(): array
@@ -95,7 +103,7 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
         ];
     }
 
-    public function testCommand()
+    public function testCommand(): void
     {
         $this->loadFixturesWithSchedules();
 
@@ -104,7 +112,7 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
 
         $this->assertCustomerGroupActiveCPL($website, $customerGroup, '1_2_3', false);
 
-        $this->runCommand('oro:cron:price-lists:schedule');
+        self::runCommand('oro:cron:price-lists:schedule');
 
         $priceList2 = $this->getReference(LoadPriceLists::PRICE_LIST_2);
         $priceList3 = $this->getReference(LoadPriceLists::PRICE_LIST_3);
@@ -114,7 +122,7 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
         $this->assertMessageCollectorContainsRightMessagesOnReindex();
     }
 
-    private function assertMessageCollectorContainsRightMessagesOnReindex()
+    private function assertMessageCollectorContainsRightMessagesOnReindex(): void
     {
         self::assertMessageSent(
             WebsiteSearchReindexTopic::getName(),
@@ -136,19 +144,19 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
     private function getWebsiteIds(): array
     {
         /** @var WebsiteProviderInterface $websiteProvider */
-        $websiteProvider = $this->getContainer()->get('oro_website.website.provider');
+        $websiteProvider = self::getContainer()->get('oro_website.website.provider');
 
         return $websiteProvider->getWebsiteIds();
     }
 
-    protected function assertCustomerGroupActiveCPL(
+    private function assertCustomerGroupActiveCPL(
         Website $website,
         CustomerGroup $customerGroup,
         string $expectedActivePriceList,
         bool $isPricesCalculated
-    ) {
+    ): void {
         /** @var CombinedPriceListToCustomerGroupRepository $cplToCustomerGroupRepo */
-        $cplToCustomerGroupRepo = $this->getContainer()->get('doctrine')
+        $cplToCustomerGroupRepo = self::getContainer()->get('doctrine')
             ->getManagerForClass(CombinedPriceListToCustomerGroup::class)
             ->getRepository(CombinedPriceListToCustomerGroup::class);
 
@@ -158,50 +166,45 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
             'customerGroup' => $customerGroup
         ]);
 
-        $this->getContainer()->get('doctrine')
+        self::getContainer()->get('doctrine')
             ->getManagerForClass(CombinedPriceListToCustomerGroup::class)
             ->refresh($groupToCPL);
 
-        $this->assertEquals(
+        self::assertEquals(
             md5($expectedActivePriceList),
             $groupToCPL->getPriceList()->getName(),
             'Active CPL should be ' . $expectedActivePriceList
         );
-        $this->assertEquals($isPricesCalculated, $groupToCPL->getPriceList()->isPricesCalculated());
+        self::assertEquals($isPricesCalculated, $groupToCPL->getPriceList()->isPricesCalculated());
     }
 
-    protected function buildActivationPlans()
+    private function buildActivationPlans(): void
     {
-        $activationPlanBuilder = $this->getContainer()
+        $activationPlanBuilder = self::getContainer()
             ->get('oro_pricing.builder.combined_price_list_activation_plan_builder');
 
         $activationPlanBuilder->buildByPriceList($this->getReference(LoadPriceLists::PRICE_LIST_1));
         $activationPlanBuilder->buildByPriceList($this->getReference(LoadPriceLists::PRICE_LIST_2));
     }
 
-    protected function prepareMessageCollector()
+    private function prepareMessageCollector(): void
     {
-        $this->clearMessageCollector();
-        $this->assertCount(0, $this->getSentMessages());
+        self::clearMessageCollector();
+        self::assertCount(0, self::getSentMessages());
     }
 
-    protected function loadFixturesWithSchedules(): void
+    private function loadFixturesWithSchedules(): void
     {
-        $this->loadFixtures(
-            [
-                LoadProductPrices::class,
-                LoadCombinedPriceListsSimplified::class,
-                LoadPriceListSchedulesSimplified::class
-            ]
-        );
+        $this->loadFixtures([
+            LoadProductPrices::class,
+            LoadCombinedPriceListsSimplified::class,
+            LoadPriceListSchedulesSimplified::class
+        ]);
         $this->buildActivationPlans();
         $this->prepareMessageCollector();
     }
 
-    /**
-     * @param bool $pricesCalculated
-     */
-    protected function updatePricesCalculatedForAllCpls($pricesCalculated): void
+    private function updatePricesCalculatedForAllCpls(bool $pricesCalculated): void
     {
         self::getContainer()->get('doctrine')
             ->getManagerForClass(CombinedPriceList::class)
@@ -213,10 +216,7 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
             ->execute();
     }
 
-    /**
-     * @param bool $isActive
-     */
-    protected function updateActivationPlanActivity($isActive): void
+    private function updateActivationPlanActivity(bool $isActive): void
     {
         self::getContainer()->get('doctrine')
             ->getManagerForClass(CombinedPriceListActivationRule::class)

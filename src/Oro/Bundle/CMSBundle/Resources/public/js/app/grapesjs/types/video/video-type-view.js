@@ -9,7 +9,7 @@ export default BaseTypeView => {
         onRender() {
             if (!this.model.get('initial')) {
                 this.em.removeSelected();
-                this.em.addSelected(this.el);
+                this.em.addSelected(this.el.__cashData.model);
             }
             return this;
         },

@@ -27,7 +27,7 @@ const TextWrapperType = BaseType.extend({
 
             if (parentText) {
                 em.get('Editor').select(parentText);
-                setTimeout(() => em.get('Editor').trigger('change:canvasOffset'));
+                setTimeout(() => em.get('Editor').trigger('canvas:refresh'));
             }
         },
 
@@ -57,7 +57,7 @@ const TextWrapperType = BaseType.extend({
                 draggable: false
             }));
         }
-        setTimeout(() => model.em.get('Editor').trigger('change:canvasOffset'));
+        setTimeout(() => model.em.get('Editor').trigger('canvas:refresh'));
     },
 
     onRteDisable({model} = {}) {

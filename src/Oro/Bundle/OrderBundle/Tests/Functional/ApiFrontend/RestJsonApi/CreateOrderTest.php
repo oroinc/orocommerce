@@ -94,18 +94,16 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $data = $this->getRequestData('create_order.yml');
         $data['data']['attributes']['shipUntil'] = $shipUntil;
 
-        $minimumOrderAmountConfigKey = 'oro_checkout.minimum_order_amount';
-        $configManager = $this->getConfigManager();
-        $originalMinimumOrderAmount = $configManager->get($minimumOrderAmountConfigKey);
-        $configManager->set($minimumOrderAmountConfigKey, [['value' => '112.55', 'currency' => 'USD']]);
+        $configManager = self::getConfigManager();
+        $initialMinimumOrderAmount = $configManager->get('oro_checkout.minimum_order_amount');
+        $configManager->set('oro_checkout.minimum_order_amount', [['value' => '112.55', 'currency' => 'USD']]);
         $configManager->flush();
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
+        try {
+            $response = $this->post(['entity' => 'orders'], $data, [], false);
+        } finally {
+            $configManager->set('oro_checkout.minimum_order_amount', $initialMinimumOrderAmount);
+            $configManager->flush();
+        }
 
         $this->assertResponseValidationError(
             [
@@ -115,9 +113,6 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             ],
             $response
         );
-
-        $configManager->set($minimumOrderAmountConfigKey, $originalMinimumOrderAmount);
-        $configManager->flush();
     }
 
     public function testTryToCreateWithMaximumOrderAmountNotMet(): void
@@ -126,18 +121,16 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $data = $this->getRequestData('create_order.yml');
         $data['data']['attributes']['shipUntil'] = $shipUntil;
 
-        $maximumOrderAmountConfigKey = 'oro_checkout.maximum_order_amount';
-        $configManager = $this->getConfigManager();
-        $originalMaximumOrderAmount = $configManager->get($maximumOrderAmountConfigKey);
-        $configManager->set($maximumOrderAmountConfigKey, [['value' => '11.55', 'currency' => 'USD']]);
+        $configManager = self::getConfigManager();
+        $initialMaximumOrderAmount = $configManager->get('oro_checkout.maximum_order_amount');
+        $configManager->set('oro_checkout.maximum_order_amount', [['value' => '11.55', 'currency' => 'USD']]);
         $configManager->flush();
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
+        try {
+            $response = $this->post(['entity' => 'orders'], $data, [], false);
+        } finally {
+            $configManager->set('oro_checkout.maximum_order_amount', $initialMaximumOrderAmount);
+            $configManager->flush();
+        }
 
         $this->assertResponseValidationError(
             [
@@ -147,9 +140,6 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             ],
             $response
         );
-
-        $configManager->set($maximumOrderAmountConfigKey, $originalMaximumOrderAmount);
-        $configManager->flush();
     }
 
     public function testCreateWithRequiredDataOnly(): void

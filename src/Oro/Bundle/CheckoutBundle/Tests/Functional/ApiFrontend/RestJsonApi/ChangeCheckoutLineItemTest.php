@@ -62,16 +62,28 @@ class ChangeCheckoutLineItemTest extends FrontendRestJsonApiTestCase
                 'type' => 'checkouts',
                 'id' => '<toString(@checkout.open->id)>',
                 'attributes' => [
-                    'totalValue' => '111.4000',
+                    'totalValue' => '121.4000',
                     'totals' => [
-                        ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '121.4000'],
-                        ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-10.0000']
+                        ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '121.4000']
                     ]
                 ]
             ]
         ];
         $this->assertResponseContains($expectedData, $response);
         self::assertEquals($expectedChecksum, $lineItem->getChecksum());
+    }
+
+    public function testCreateWithReadonlySubTotal(): void
+    {
+        $data = $this->getRequestData('create_checkout_line_item_min.yml');
+        $data['data']['attributes']['subTotal'] = '123.123';
+        $response = $this->post(['entity' => 'checkoutlineitems'], $data);
+
+        $lineItemId = $this->getResourceId($response);
+        $expectedData = $data;
+        $expectedData['data']['id'] = $lineItemId;
+        $expectedData['data']['attributes']['subTotal'] = '100.5000';
+        $this->assertResponseContains($expectedData, $response);
     }
 
     public function testCreateWithReadonlyChecksum(): void
@@ -119,10 +131,9 @@ class ChangeCheckoutLineItemTest extends FrontendRestJsonApiTestCase
             'type' => 'checkouts',
             'id' => '<toString(@checkout.in_progress->id)>',
             'attributes' => [
-                'totalValue' => '650.5900',
+                'totalValue' => '733.9900',
                 'totals' => [
-                    ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '733.9900'],
-                    ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-83.4000']
+                    ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '733.9900']
                 ]
             ]
         ];
@@ -157,10 +168,9 @@ class ChangeCheckoutLineItemTest extends FrontendRestJsonApiTestCase
             'type' => 'checkouts',
             'id' => '<toString(@checkout.another_customer_user->id)>',
             'attributes' => [
-                'totalValue' => '623.4900',
+                'totalValue' => '633.4900',
                 'totals' => [
-                    ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '633.4900'],
-                    ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-10.0000']
+                    ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '633.4900']
                 ]
             ]
         ];
@@ -193,6 +203,37 @@ class ChangeCheckoutLineItemTest extends FrontendRestJsonApiTestCase
             ],
             $response,
             Response::HTTP_FORBIDDEN
+        );
+    }
+
+    public function testTryToUpdateReadonlySubTotal(): void
+    {
+        $lineItemId = $this->getReference('checkout.in_progress.line_item.1')->getId();
+
+        $response = $this->patch(
+            ['entity' => 'checkoutlineitems', 'id' => (string)$lineItemId],
+            [
+                'data' => [
+                    'type' => 'checkoutlineitems',
+                    'id' => (string)$lineItemId,
+                    'attributes' => [
+                        'subTotal' => '123.123'
+                    ]
+                ]
+            ]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'checkoutlineitems',
+                    'id' => (string)$lineItemId,
+                    'attributes' => [
+                        'subTotal' => '1005.0000'
+                    ]
+                ]
+            ],
+            $response
         );
     }
 
@@ -247,10 +288,9 @@ class ChangeCheckoutLineItemTest extends FrontendRestJsonApiTestCase
             'type' => 'checkouts',
             'id' => '<toString(@checkout.in_progress->id)>',
             'attributes' => [
-                'totalValue' => '198.3400',
+                'totalValue' => '231.4900',
                 'totals' => [
-                    ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '231.4900'],
-                    ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-33.1500']
+                    ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '231.4900']
                 ]
             ]
         ];

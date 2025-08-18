@@ -15,24 +15,16 @@ data:
         completed: true
         createdAt: '@checkout.completed->createdAt->format("Y-m-d\TH:i:s\Z")'
         updatedAt: '@checkout.completed->updatedAt->format("Y-m-d\TH:i:s\Z")'
-        totalValue: '90.4500'
+        totalValue: '110.5000'
         totals:
             -
                 subtotalType: subtotal
                 description: Subtotal
                 amount: '100.5000'
             -
-                subtotalType: discount
-                description: Discount
-                amount: '-20.0500'
-            -
                 subtotalType: shipping_cost
                 description: Shipping
                 amount: '10.0000'
-        coupons:
-            -
-                couponCode: coupon_with_promo_and_valid_from_and_until
-                description: 'Order percent promotion name'
     relationships:
         lineItems:
             data:

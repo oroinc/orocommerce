@@ -10,14 +10,13 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Tests\Functional\DataFixtures\LoadScopeData;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadWebCatalogCategoryVariantsData extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * @var array
-     */
-    public static $data = [
+    private static array $data = [
         LoadContentNodesData::CATALOG_1_ROOT => LoadCategoryData::FIRST_LEVEL,
         LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1 => LoadCategoryData::SECOND_LEVEL1,
         LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_2 => LoadCategoryData::SECOND_LEVEL2,
@@ -26,7 +25,19 @@ class LoadWebCatalogCategoryVariantsData extends AbstractFixture implements Depe
     ];
 
     #[\Override]
-    public function load(ObjectManager $manager)
+    public function getDependencies(): array
+    {
+        return [
+            LoadWebCatalogData::class,
+            LoadScopeData::class,
+            LoadWebsiteData::class,
+            LoadContentNodesData::class,
+            LoadCategoryData::class
+        ];
+    }
+
+    #[\Override]
+    public function load(ObjectManager $manager): void
     {
         /** @var Scope $scope */
         $scope = $this->getReference(LoadScopeData::DEFAULT_SCOPE);
@@ -34,62 +45,33 @@ class LoadWebCatalogCategoryVariantsData extends AbstractFixture implements Depe
         foreach (LoadContentNodesData::$data as $nodes) {
             foreach ($nodes as $nodeReference => $nodeData) {
                 if (!isset(self::$data[$nodeReference])) {
-                    unset($nodeData);
                     continue;
                 }
+
                 /** @var Category $category */
                 $category = $this->getReference(self::$data[$nodeReference]);
 
+                /** @var ContentNode $node */
                 $node = $this->getReference($nodeReference);
                 $node->addScope($scope);
 
                 $slug = new Slug();
                 $slug->setUrl('/'.$nodeReference);
-                $slug->setRouteName($this->getRoute());
+                $slug->setRouteName('oro_product_frontend_product_index');
                 $slug->setRouteParameters(['categoryId' => $category->getId(), 'includeSubcategories' => 1]);
                 $slug->addScope($scope);
                 $slug->setOrganization($category->getOrganization());
-
                 $manager->persist($slug);
 
                 $variant = new ContentVariant();
-                $variant->setType($this->getContentVariantType());
+                $variant->setType('category_page');
                 $variant->setCategoryPageCategory($category);
                 $variant->setNode($node);
                 $variant->addSlug($slug);
-
                 $manager->persist($variant);
             }
         }
 
         $manager->flush();
-    }
-
-    #[\Override]
-    public function getDependencies()
-    {
-        return [
-            LoadWebCatalogData::class,
-            LoadContentNodesData::class,
-            LoadCategoryData::class,
-            LoadScopeData::class,
-            LoadConfigValue::class
-        ];
-    }
-
-    /**
-     * @return string
-     */
-    protected function getRoute()
-    {
-        return 'oro_product_frontend_product_index';
-    }
-
-    /**
-     * @return string
-     */
-    protected function getContentVariantType()
-    {
-        return 'category_page';
     }
 }

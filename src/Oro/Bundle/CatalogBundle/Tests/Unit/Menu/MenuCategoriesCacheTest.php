@@ -5,56 +5,62 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Menu;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CatalogBundle\Menu\MenuCategoriesCache;
 use Oro\Bundle\LocaleBundle\Cache\Normalizer\LocalizedFallbackValueCollectionNormalizer;
+use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class MenuCategoriesCacheTest extends \PHPUnit\Framework\TestCase
 {
     private ArrayAdapter $cache;
-
-    private LocalizedFallbackValueCollectionNormalizer $titlesNormalizer;
-
     private MenuCategoriesCache $menuCategoriesCache;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->cache = new ArrayAdapter();
-        $this->titlesNormalizer = $this->createMock(LocalizedFallbackValueCollectionNormalizer::class);
 
-        $this->menuCategoriesCache = new MenuCategoriesCache($this->cache, $this->titlesNormalizer);
+        $titlesNormalizer = $this->createMock(LocalizedFallbackValueCollectionNormalizer::class);
+        $titlesNormalizer->expects(self::any())
+            ->method('normalize')
+            ->willReturnCallback(function (iterable $localizedFallbackValues) {
+                $normalizedData = [];
+                /** @var AbstractLocalizedFallbackValue $val */
+                foreach ($localizedFallbackValues as $val) {
+                    $normalizedData[] = ['s' => $val->getString()];
+                }
+
+                return $normalizedData;
+            });
+        $titlesNormalizer->expects(self::any())
+            ->method('denormalize')
+            ->willReturnCallback(function (array $normalizedData, string $entityClass) {
+                self::assertEquals(LocalizedFallbackValue::class, $entityClass);
+                $collection = [];
+                foreach ($normalizedData as $item) {
+                    $collection[] = (new LocalizedFallbackValue())->setString($item['s']);
+                }
+
+                return new ArrayCollection($collection);
+            });
+
+        $this->menuCategoriesCache = new MenuCategoriesCache($this->cache, $titlesNormalizer);
     }
 
     public function testGetWhenNoCachedData(): void
     {
         $titles = new ArrayCollection([(new LocalizedFallbackValue())->setString('Sample 1')]);
-        $categoriesData = [
-            [
-                'titles' => $titles,
-                'sample_key1' => 'sample_value1',
-            ],
-        ];
-        $normalizedTitles = [['normalized_key' => 'normalized_value']];
-        $callback = fn () => $categoriesData;
-
-        $this->titlesNormalizer
-            ->expects(self::once())
-            ->method('normalize')
-            ->with($titles)
-            ->willReturn($normalizedTitles);
-
-        $this->titlesNormalizer
-            ->expects(self::never())
-            ->method('denormalize');
+        $categoriesData = [['titles' => $titles, 'sample_key1' => 'sample_value1']];
 
         $key = 'sample_key';
         self::assertEquals(
             $categoriesData,
-            $this->menuCategoriesCache->get($key, $callback)
+            $this->menuCategoriesCache->get($key, function () use ($categoriesData) {
+                return $categoriesData;
+            })
         );
 
         self::assertEquals(
-            [['titles' => $normalizedTitles, 'sample_key1' => 'sample_value1',]],
+            [['titles' => [['s' => 'Sample 1']], 'sample_key1' => 'sample_value1']],
             $this->cache->getItem($key)->get()
         );
     }
@@ -62,40 +68,22 @@ class MenuCategoriesCacheTest extends \PHPUnit\Framework\TestCase
     public function testGetWhenHasCachedData(): void
     {
         $titles = new ArrayCollection([(new LocalizedFallbackValue())->setString('Sample 1')]);
-        $normalizedTitles = [['normalized_key' => 'normalized_value']];
-        $categoriesData = [
-            [
-                'titles' => $titles,
-                'sample_key1' => 'sample_value1',
-            ],
-        ];
+        $normalizedTitles = [['s' => 'Sample 1']];
+        $categoriesData = [['titles' => $titles, 'sample_key1' => 'sample_value1']];
         $key = 'sample_key';
         $cacheItem = $this->cache->getItem($key);
-        $cacheItem->set([
-            [
-                'titles' => $normalizedTitles,
-                'sample_key1' => 'sample_value1',
-            ],
-        ]);
+        $cacheItem->set([['titles' => $normalizedTitles, 'sample_key1' => 'sample_value1']]);
         $this->cache->save($cacheItem);
-
-        $this->titlesNormalizer
-            ->expects(self::never())
-            ->method('normalize');
-
-        $this->titlesNormalizer
-            ->expects(self::once())
-            ->method('denormalize')
-            ->with($normalizedTitles)
-            ->willReturn($titles);
 
         self::assertEquals(
             $categoriesData,
-            $this->menuCategoriesCache->get($key, static fn () => [])
+            $this->menuCategoriesCache->get($key, function () {
+                return [];
+            })
         );
 
         self::assertEquals(
-            [['titles' => $normalizedTitles, 'sample_key1' => 'sample_value1',]],
+            [['titles' => $normalizedTitles, 'sample_key1' => 'sample_value1']],
             $this->cache->getItem($key)->get()
         );
     }

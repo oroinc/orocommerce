@@ -17,8 +17,7 @@ use Oro\DBAL\Types\MoneyType;
  */
 class OrderTaxesTest extends FrontendRestJsonApiTestCase
 {
-    /** @var string */
-    private $originalTaxationUseAsBaseOption;
+    private ?string $initialTaxationUseAsBaseOption;
 
     #[\Override]
     protected function setUp(): void
@@ -31,8 +30,8 @@ class OrderTaxesTest extends FrontendRestJsonApiTestCase
             LoadPaymentTermData::class
         ]);
 
-        $configManager = $this->getConfigManager();
-        $this->originalTaxationUseAsBaseOption = $configManager->get('oro_tax.use_as_base_by_default');
+        $configManager = self::getConfigManager();
+        $this->initialTaxationUseAsBaseOption = $configManager->get('oro_tax.use_as_base_by_default');
         $configManager->set('oro_tax.use_as_base_by_default', TaxationSettingsProvider::USE_AS_BASE_DESTINATION);
         $configManager->flush();
     }
@@ -40,8 +39,8 @@ class OrderTaxesTest extends FrontendRestJsonApiTestCase
     #[\Override]
     protected function tearDown(): void
     {
-        $configManager = $this->getConfigManager();
-        $configManager->set('oro_tax.use_as_base_by_default', $this->originalTaxationUseAsBaseOption);
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_tax.use_as_base_by_default', $this->initialTaxationUseAsBaseOption);
         $configManager->flush();
 
         parent::tearDown();

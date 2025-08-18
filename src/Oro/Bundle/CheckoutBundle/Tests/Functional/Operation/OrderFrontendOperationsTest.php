@@ -11,7 +11,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderLineItemData;
 class OrderFrontendOperationsTest extends OrderFrontendOperationsTestCase
 {
     #[\Override]
-    protected function getFixtures()
+    protected function getFixtures(): array
     {
         return [
             LoadOrderLineItemData::class,

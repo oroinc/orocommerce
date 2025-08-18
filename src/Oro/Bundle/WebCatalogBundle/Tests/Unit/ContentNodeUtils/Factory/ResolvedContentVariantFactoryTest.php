@@ -23,48 +23,41 @@ class ResolvedContentVariantFactoryTest extends \PHPUnit\Framework\TestCase
     #[\Override]
     protected function setUp(): void
     {
-        $managerRegistry = $this->createMock(ManagerRegistry::class);
-        $localizedFallbackValueNormalizer = $this->createMock(LocalizedFallbackValueNormalizer::class);
-
-        $this->factory = new ResolvedContentVariantFactory($managerRegistry, $localizedFallbackValueNormalizer);
-
-        $entityManager = $this->createMock(EntityManager::class);
-        $managerRegistry
-            ->expects(self::any())
-            ->method('getManagerForClass')
-            ->with(ContentVariant::class)
-            ->willReturn($entityManager);
-
-        $entityManager
-            ->expects(self::any())
-            ->method('getReference')
-            ->willReturnCallback(static fn ($class, $id) => new ProxyStub($class, $id));
-
         $classMetadata = new ClassMetadata(ContentVariant::class);
         $classMetadata->fieldMappings = ['id' => [], 'default' => []];
         $classMetadata->associationMappings = [
-            'node' => [
-                'targetEntity' => ContentNode::class,
-                'type' => ClassMetadataInfo::TO_ONE,
-            ],
+            'node' => ['targetEntity' => ContentNode::class, 'type' => ClassMetadataInfo::TO_ONE],
             'product' => ['targetEntity' => Product::class, 'type' => ClassMetadataInfo::TO_ONE],
-            'slugs' => ['targetEntity' => Slug::class, 'type' => ClassMetadataInfo::TO_MANY],
+            'slugs' => ['targetEntity' => Slug::class, 'type' => ClassMetadataInfo::TO_MANY]
         ];
 
-        $entityManager
-            ->expects(self::any())
+        $entityManager = $this->createMock(EntityManager::class);
+        $entityManager->expects(self::any())
+            ->method('getReference')
+            ->willReturnCallback(function (string $class, int $id) {
+                return new ProxyStub($class, $id);
+            });
+        $entityManager->expects(self::any())
             ->method('getClassMetadata')
             ->with(ContentVariant::class)
             ->willReturn($classMetadata);
 
-        $localizedFallbackValueNormalizer
-            ->expects(self::any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
+            ->method('getManagerForClass')
+            ->with(ContentVariant::class)
+            ->willReturn($entityManager);
+
+        $localizedFallbackValueNormalizer = $this->createMock(LocalizedFallbackValueNormalizer::class);
+        $localizedFallbackValueNormalizer->expects(self::any())
             ->method('denormalize')
             ->willReturnCallback(function (array $value, string $entityClass) {
                 self::assertEquals(LocalizedFallbackValue::class, $entityClass);
 
                 return (new LocalizedFallbackValue())->setString($value['string']);
             });
+
+        $this->factory = new ResolvedContentVariantFactory($doctrine, $localizedFallbackValueNormalizer);
     }
 
     /**
@@ -81,33 +74,29 @@ class ResolvedContentVariantFactoryTest extends \PHPUnit\Framework\TestCase
             'empty' => ['data' => [], 'expected' => new ResolvedContentVariant()],
             'with scalar fields' => [
                 'data' => ['id' => 42, 'default' => true],
-                'expected' => (new ResolvedContentVariant())->setData(['id' => 42, 'default' => true]),
+                'expected' => (new ResolvedContentVariant())->setData(['id' => 42, 'default' => true])
             ],
             'with slug' => [
                 'data' => [
                     'id' => 42,
                     'default' => true,
-                    'slugs' => [
-                        [
-                            'url' => '/sample/url',
-                        ],
-                    ],
+                    'slugs' => [['url' => '/sample/url']]
                 ],
                 'expected' => (new ResolvedContentVariant())
                     ->setData(['id' => 42, 'default' => true])
-                    ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/sample/url')),
+                    ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/sample/url'))
             ],
             'with to-one association' => [
                 'data' => [
                     'id' => 42,
                     'default' => true,
                     'slugs' => [['url' => '/sample/url']],
-                    'product' => ['id' => 1000],
+                    'product' => ['id' => 1000]
                 ],
                 'expected' => (new ResolvedContentVariant())
                     ->setData(['id' => 42, 'default' => true, 'product' => new ProxyStub(Product::class, 1000)])
-                    ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/sample/url')),
-            ],
+                    ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/sample/url'))
+            ]
         ];
     }
 }

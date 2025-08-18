@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM;
 
-use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
@@ -25,32 +25,38 @@ use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
  */
 class OrderReindexTest extends FrontendWebTestCase
 {
+    use ConfigManagerAwareTestTrait;
     use MessageQueueAssertTrait;
-    use PreviouslyPurchasedFeatureTrait;
-
-    /** @var ManagerRegistry */
-    private $doctrine;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
+            self::generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
-
-        $this->doctrine = $this->getContainer()->get('doctrine');
-
         $this->loadFixtures([
             LoadOrders::class,
             LoadOrderLineItemData::class,
             LoadProductData::class
         ]);
 
-        $this->enablePreviouslyPurchasedFeature();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_order.enable_purchase_history', true);
+        $configManager->flush();
     }
 
-    public function testReindexWhenOrderChangeStatusIsApplicable()
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_order.enable_purchase_history', false);
+        $configManager->flush();
+
+        parent::tearDown();
+    }
+
+    public function testReindexWhenOrderChangeStatusIsApplicable(): void
     {
         /** get ORDER_4 because it has 2 product PRODUCT_1 and PRODUCT_6 */
         $order = $this->getReference(LoadOrders::ORDER_5);
@@ -64,7 +70,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $this->assertContains($expectedMessage, $messages);
     }
 
-    public function testReindexWhenOrderChangeStatusNotApplicable()
+    public function testReindexWhenOrderChangeStatusNotApplicable(): void
     {
         $order = $this->getReference(LoadOrders::ORDER_5);
         $this->changeOrderStatus($order, OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED);
@@ -76,7 +82,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $this->assertNotContains($expectedMessage, $messages);
     }
 
-    public function testReindexProductLineItemWhenCreate()
+    public function testReindexProductLineItemWhenCreate(): void
     {
         $lineItem = $this->createOrderLineItem(
             LoadProductData::PRODUCT_7,
@@ -93,14 +99,14 @@ class OrderReindexTest extends FrontendWebTestCase
         $this->assertContains($expectedMessage, $messages);
     }
 
-    public function testReindexProductLineItemWhenDelete()
+    public function testReindexProductLineItemWhenDelete(): void
     {
         $lineItem = $this->getReference(LoadOrderLineItemData::ORDER_LINEITEM_6);
         $product = $lineItem->getProduct();
 
         $expectedMessage = $this->getExpectedMessageForLineItem($product);
 
-        $em = $this->doctrine->getManagerForClass(OrderLineItem::class);
+        $em = self::getContainer()->get('doctrine')->getManagerForClass(OrderLineItem::class);
         $em->remove($lineItem);
         $em->flush();
 
@@ -109,7 +115,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $this->assertContains($expectedMessage, $messages);
     }
 
-    public function testReindexProductLineItemWhenUpdate()
+    public function testReindexProductLineItemWhenUpdate(): void
     {
         $this->clearMessageCollector();
 
@@ -122,7 +128,7 @@ class OrderReindexTest extends FrontendWebTestCase
 
         $lineItem->setProduct($product8);
 
-        $em = $this->doctrine->getManagerForClass(OrderLineItem::class);
+        $em = self::getContainer()->get('doctrine')->getManagerForClass(OrderLineItem::class);
         $em->persist($lineItem);
         $em->flush();
 
@@ -131,13 +137,13 @@ class OrderReindexTest extends FrontendWebTestCase
         $this->assertContains($expectedMessage, $messages);
     }
 
-    public function testReindexProductLineItemWhenEventFieldNotChanged()
+    public function testReindexProductLineItemWhenEventFieldNotChanged(): void
     {
         /** @var OrderLineItem $lineItem */
         $lineItem = $this->getReference(LoadOrderLineItemData::ORDER_LINEITEM_6);
         $lineItem->setCurrency('EUR');
 
-        $em = $this->doctrine->getManagerForClass(OrderLineItem::class);
+        $em = self::getContainer()->get('doctrine')->getManagerForClass(OrderLineItem::class);
         $em->persist($lineItem);
         $em->flush();
 
@@ -190,14 +196,15 @@ class OrderReindexTest extends FrontendWebTestCase
     private function changeOrderStatus(Order $order, string $statusId): void
     {
         $order->setInternalStatus($this->getOrderInternalStatusById($statusId));
-        $em = $this->doctrine->getManagerForClass(Order::class);
+        $em = self::getContainer()->get('doctrine')->getManagerForClass(Order::class);
         $em->persist($order);
         $em->flush();
     }
 
     private function getOrderInternalStatusById(string $id): EnumOptionInterface
     {
-        return $this->doctrine->getManagerForClass(EnumOption::class)->getRepository(EnumOption::class)
+        return self::getContainer()->get('doctrine')->getManagerForClass(EnumOption::class)
+            ->getRepository(EnumOption::class)
             ->find(ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $id));
     }
 
@@ -218,7 +225,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $order = $this->getReference($order);
         $order->addLineItem($lineItem);
 
-        $em = $this->doctrine->getManagerForClass(OrderLineItem::class);
+        $em = self::getContainer()->get('doctrine')->getManagerForClass(OrderLineItem::class);
         $em->persist($lineItem);
         $em->flush();
 

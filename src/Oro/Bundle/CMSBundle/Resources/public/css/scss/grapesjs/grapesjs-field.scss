@@ -1,11 +1,18 @@
 /* @theme: admin.oro; */
 
-.#{$app-prefix} {
+@use '../grapesjs-original/gjs_vars';
+
+.#{gjs_vars.$app-prefix} {
     &field {
         border-radius: 4px;
         background-color: $primary-inverse;
         border: 1px solid $primary-750;
         color: $primary-100;
+
+        input,
+        select {
+            color: $input-color;
+        }
 
         select {
             padding-top: 0;
@@ -20,12 +27,12 @@
             border-top-color: $primary-400;
         }
 
-        &.#{$app-prefix}field-checkbox {
+        &.#{gjs_vars.$app-prefix}field-checkbox {
             border: none;
             background-color: transparent;
             border-radius: 0;
 
-            .#{$app-prefix}chk-icon {
+            .#{gjs_vars.$app-prefix}chk-icon {
                 transform: none;
                 height: 16px;
                 margin: auto;
@@ -36,7 +43,7 @@
             }
 
             input[type='checkbox']:checked {
-                + .#{$app-prefix}chk-icon {
+                + .#{gjs_vars.$app-prefix}chk-icon {
                     border-color: $secondary;
                     background-color: $secondary;
 
@@ -55,7 +62,7 @@
                 }
             }
 
-            .#{$app-prefix}input-holder {
+            .#{gjs_vars.$app-prefix}input-holder {
                 height: 16px;
                 width: 16px;
             }

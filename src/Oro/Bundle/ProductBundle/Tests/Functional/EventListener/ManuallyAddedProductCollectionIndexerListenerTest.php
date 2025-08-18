@@ -16,6 +16,8 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends FrontendWebTestC
 {
     use ConfigManagerAwareTestTrait;
 
+    private ?int $initialWebCatalogId;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -23,15 +25,28 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends FrontendWebTestC
         OrmIndexerTest::checkSearchEngine($this);
         $this->setCurrentWebsite();
         $this->loadFixtures([LoadProductCollectionContentVariantWithManuallyAddedData::class]);
+
+        $this->initialWebCatalogId = self::getConfigManager()->get('oro_web_catalog.web_catalog');
     }
 
-    public function testOnWebsiteSearchIndex()
+    #[\Override]
+    protected function tearDown(): void
+    {
+        if (false !== $this->initialWebCatalogId) {
+            $configManager = self::getConfigManager();
+            $configManager->set('oro_web_catalog.web_catalog', $this->initialWebCatalogId);
+            $configManager->flush();
+        }
+        parent::tearDown();
+    }
+
+    public function testOnWebsiteSearchIndex(): void
     {
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
         $product2 = $this->getReference(LoadProductData::PRODUCT_2);
 
         $webCatalog = $this->getReference(LoadProductCollectionContentVariantWithManuallyAddedData::WEB_CATALOG);
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set('oro_web_catalog.web_catalog', $webCatalog->getId());
         $configManager->flush();
 

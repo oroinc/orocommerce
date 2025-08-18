@@ -161,9 +161,7 @@ class ContentNodeRepository extends NestedTreeRepository
      *                  'id' => int,
      *                  'string' => ?string,
      *                  'fallback' => ?string,
-     *                  'localization' => ?array [
-     *                      'id' => int,
-     *                  ],
+     *                  'localization' => ?array ['id' => int]
      *              ]
      *          ],
      *          'localizedUrls' => [
@@ -171,9 +169,7 @@ class ContentNodeRepository extends NestedTreeRepository
      *                  'id' => int,
      *                  'text' => ?string,
      *                  'fallback' => ?string,
-     *                  'localization' => ?array [
-     *                      'id' => int,
-     *                  ],
+     *                  'localization' => ?array ['id' => int]
      *              ]
      *          ],
      *          'rewriteVariantTitle' => bool,

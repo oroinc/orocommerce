@@ -82,16 +82,37 @@ services:
         tags:
             - { name: 'cache.pool', namespace: 'oro_website_search_mapping_configuration' }
 
+    oro_website_search.cache.mapping_configuration.normalizer:
+        class: Oro\Bundle\SearchBundle\Provider\SearchMappingCacheNormalizer
+        arguments:
+            -
+                'a': 'alias'
+                't': 'search_template'
+                'l': 'label'
+                'm': 'mode'
+                'r': 'route'
+                'f': 'fields'
+                's': 'synonyms_enabled'
+                'w': 'stop_words_enabled'
+            -
+                'n': 'name'
+                't': 'type'
+                'a': 'fulltext'
+                'g': 'group'
+                'o': 'organization_id'
+                's': 'store'
+            - 'type'
+
     oro_website_search.provider.search_mapping:
         class: Oro\Bundle\SearchBundle\Provider\SearchMappingProvider
-        public: false
         arguments:
             - '@event_dispatcher'
             - '@oro_website_search.mapping_configuration.provider'
             - '@oro_website_search.cache.mapping_configuration'
-            - 'oro_website_search.mapping_config:'
-            - "@=service('oro_website_search.engine.parameters').getEngineName()"
+            - '@oro_website_search.cache.mapping_configuration.normalizer'
             - 'oro_website_search.event.website_search_mapping.configuration'
+            - 'oro_website_search.mapping_config'
+            - "@=service('oro_website_search.engine.parameters').getEngineName()"
 
     oro_website_search.cache.website_search_mapping.warmer:
         class: Oro\Bundle\WebsiteSearchBundle\Cache\WebsiteSearchProviderCacheWarmer

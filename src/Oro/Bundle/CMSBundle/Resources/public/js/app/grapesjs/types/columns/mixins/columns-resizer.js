@@ -12,7 +12,7 @@ export default {
     step: 1,
     currentUnit: 0,
     unitWidth: '',
-    keyWidth: '--grid-column-span',
+    keyWidth: '',
     onStart(event, {resizer}) {
         resizer.placeholder = document.createElement('div');
         resizer.placeholder.classList.add('column-resizer-placeholder');
@@ -23,17 +23,17 @@ export default {
         resizer.placeholder.append(resizer.spanNumber);
         resizer.container.append(resizer.placeholder);
     },
-    onEnd() {
-        this.placeholder && this.placeholder.remove();
+    onEnd(event, {resizer}) {
+        resizer.placeholder && resizer.placeholder.remove();
 
-        this.selectedHandler.style.right = '';
-        this.selectedHandler.style.left = '';
+        resizer.selectedHandler.style.right = '';
+        resizer.selectedHandler.style.left = '';
 
-        if (this.toSpan) {
-            this.targetModel.setSpan(this.toSpan);
+        if (resizer.toSpan) {
+            resizer.targetModel.setSpan(resizer.toSpan);
         }
     },
-    updateTarget(target, {w}, {resizer}) {
+    updateTarget(target, rect, {resizer}) {
         const model = target.__cashData.model;
         const parent = target.parentNode;
         const parentModel = parent.__cashData.model;

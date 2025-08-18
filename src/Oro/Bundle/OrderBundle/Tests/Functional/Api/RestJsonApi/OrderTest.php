@@ -913,16 +913,16 @@ class OrderTest extends RestJsonApiTestCase
     {
         $data = $this->getRequestData('create_order.yml');
 
-        $minimumOrderAmountConfigKey = 'oro_checkout.minimum_order_amount';
-        $configManager = $this->getConfigManager();
-        $originalMinimumOrderAmount = $configManager->get($minimumOrderAmountConfigKey);
-        $configManager->set($minimumOrderAmountConfigKey, [['value' => '112.55', 'currency' => 'USD']]);
+        $configManager = self::getConfigManager();
+        $initialMinimumOrderAmount = $configManager->get('oro_checkout.minimum_order_amount');
+        $configManager->set('oro_checkout.minimum_order_amount', [['value' => '112.55', 'currency' => 'USD']]);
         $configManager->flush();
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data
-        );
+        try {
+            $response = $this->post(['entity' => 'orders'], $data);
+        } finally {
+            $configManager->set('oro_checkout.minimum_order_amount', $initialMinimumOrderAmount);
+            $configManager->flush();
+        }
 
         $orderId = (int)$this->getResourceId($response);
 
@@ -931,25 +931,22 @@ class OrderTest extends RestJsonApiTestCase
         self::assertEquals('2345678', $order->getPoNumber());
         self::assertSame('73.5400', $order->getSubtotal());
         self::assertSame('73.5400', $order->getTotal());
-
-        $configManager->set($minimumOrderAmountConfigKey, $originalMinimumOrderAmount);
-        $configManager->flush();
     }
 
     public function testCreateWithMaximumOrderAmountNotMet(): void
     {
         $data = $this->getRequestData('create_order.yml');
 
-        $maximumOrderAmountConfigKey = 'oro_checkout.maximum_order_amount';
-        $configManager = $this->getConfigManager();
-        $originalMaximumOrderAmount = $configManager->get($maximumOrderAmountConfigKey);
-        $configManager->set($maximumOrderAmountConfigKey, [['value' => '70.00', 'currency' => 'USD']]);
+        $configManager = self::getConfigManager();
+        $initialMaximumOrderAmount = $configManager->get('oro_checkout.maximum_order_amount');
+        $configManager->set('oro_checkout.maximum_order_amount', [['value' => '70.00', 'currency' => 'USD']]);
         $configManager->flush();
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data
-        );
+        try {
+            $response = $this->post(['entity' => 'orders'], $data);
+        } finally {
+            $configManager->set('oro_checkout.maximum_order_amount', $initialMaximumOrderAmount);
+            $configManager->flush();
+        }
 
         $orderId = (int)$this->getResourceId($response);
 
@@ -958,9 +955,6 @@ class OrderTest extends RestJsonApiTestCase
         self::assertEquals('2345678', $order->getPoNumber());
         self::assertSame('73.5400', $order->getSubtotal());
         self::assertSame('73.5400', $order->getTotal());
-
-        $configManager->set($maximumOrderAmountConfigKey, $originalMaximumOrderAmount);
-        $configManager->flush();
     }
 
     public function testUpdate(): void
@@ -1969,7 +1963,15 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame('11.0000', $updatedOrder->getSubtotal());
         self::assertSame('10.0000', $updatedOrder->getTotal());
         self::assertEquals(Price::create('1.0000', 'USD'), $updatedOrder->getTotalDiscounts());
-        self::assertAllMessagesSent([]);
+        self::assertAllMessagesSent([
+            [
+                'topic' => IndexEntitiesByIdTopic::getName(),
+                'message' => [
+                    'class' => Order::class,
+                    'entityIds' => [$order->getId() => $order->getId()]
+                ]
+            ]
+        ]);
 
         $responseData = self::jsonToArray($response->getContent());
         self::assertSame('test notes', $responseData['data']['attributes']['customerNotes']);
@@ -2024,7 +2026,22 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame('444.5000', $updatedOrder->getTotal());
         self::assertNull($updatedOrder->getTotalDiscounts());
         self::assertNull($updatedOrder->getStatus());
-        self::assertAllMessagesSent([]);
+        self::assertAllMessagesSent([
+            [
+                'topic' => IndexEntitiesByIdTopic::getName(),
+                'message' => [
+                    'class' => Order::class,
+                    'entityIds' => [$order->getId() => $order->getId()]
+                ]
+            ],
+            [
+                'topic' => IndexEntitiesByIdTopic::getName(),
+                'message' => [
+                    'class' => Order::class,
+                    'entityIds' => [$order->getId() => $order->getId()]
+                ]
+            ]
+        ]);
 
         $responseData = self::jsonToArray($response->getContent());
         self::assertSame('test notes', $responseData['data']['attributes']['customerNotes']);
@@ -2072,7 +2089,15 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame('11.0000', $updatedOrder->getSubtotal());
         self::assertSame('10.0000', $updatedOrder->getTotal());
         self::assertEquals(Price::create('1.0000', 'USD'), $updatedOrder->getTotalDiscounts());
-        self::assertAllMessagesSent([]);
+        self::assertAllMessagesSent([
+            [
+                'topic' => IndexEntitiesByIdTopic::getName(),
+                'message' => [
+                    'class' => Order::class,
+                    'entityIds' => [$order->getId() => $order->getId()]
+                ]
+            ]
+        ]);
 
         $this->assertResponseContains('update_order_with_included_order_subtotals.yml', $response);
     }
@@ -2121,7 +2146,15 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame('11.0000', $updatedOrder->getSubtotal());
         self::assertSame('10.0000', $updatedOrder->getTotal());
         self::assertEquals(Price::create('1.0000', 'USD'), $updatedOrder->getTotalDiscounts());
-        self::assertAllMessagesSent([]);
+        self::assertAllMessagesSent([
+            [
+                'topic' => IndexEntitiesByIdTopic::getName(),
+                'message' => [
+                    'class' => Order::class,
+                    'entityIds' => [$order->getId() => $order->getId()]
+                ]
+            ]
+        ]);
 
         $this->assertResponseContains('update_order_with_partially_included_order_subtotals.yml', $response);
 

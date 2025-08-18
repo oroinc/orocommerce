@@ -1,0 +1,21 @@
+/* stylelint-disable */
+
+@use 'gjs_main_mixins';
+@use 'gjs_vars';
+
+@function gjs-is($name) {
+  @return '#{gjs_main_mixins.$gjs-is-prefix}#{$name}';
+}
+
+#{gjs_main_mixins.$gjs-is-prefix} {
+  &grab,
+  &grab * {
+    cursor: grab !important;
+  }
+
+  &grabbing,
+  &grabbing * {
+    @include gjs_main_mixins.user-select(none);
+    cursor: grabbing !important;
+  }
+}

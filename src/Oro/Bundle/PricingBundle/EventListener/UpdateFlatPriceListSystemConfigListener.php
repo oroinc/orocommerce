@@ -12,22 +12,15 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 class UpdateFlatPriceListSystemConfigListener
 {
-    private const CONFIG_KEY = 'oro_pricing.default_price_list';
-
-    private ManagerRegistry $doctrine;
-    private PriceListRelationTriggerHandlerInterface $triggerHandler;
-
     public function __construct(
-        ManagerRegistry $doctrine,
-        PriceListRelationTriggerHandlerInterface $triggerHandler
+        private readonly ManagerRegistry $doctrine,
+        private readonly PriceListRelationTriggerHandlerInterface $triggerHandler
     ) {
-        $this->doctrine = $doctrine;
-        $this->triggerHandler = $triggerHandler;
     }
 
     public function onUpdateAfter(ConfigUpdateEvent $event): void
     {
-        if ($event->isChanged(self::CONFIG_KEY)) {
+        if ($event->isChanged('oro_pricing.default_price_list')) {
             if ($event->getScope() === 'website' && $event->getScopeId()) {
                 /** @var Website $website */
                 $website = $this->doctrine->getManagerForClass(Website::class)

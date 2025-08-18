@@ -13,52 +13,32 @@ class CombinedPriceListGarbageCollectorTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    /**
-     * @var ObjectManager
-     */
-    private $manager;
-
-    /**
-     * @var CombinedPriceListGarbageCollector
-     */
-    private $gc;
-
-    /**
-     * @var int
-     */
-    private $prevCpl;
-
-    /**
-     * @var int
-     */
-    private $prevFullCpl;
+    private ?int $initialCpl;
+    private ?int $initialFullCpl;
+    private ObjectManager $manager;
+    private CombinedPriceListGarbageCollector $gc;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->gc = $this->getContainer()
-            ->get('oro_pricing.builder.combined_price_list_garbage_collector');
+        $this->gc = self::getContainer()->get('oro_pricing.builder.combined_price_list_garbage_collector');
 
-        $this->loadFixtures([
-            LoadCombinedPriceListsForGC::class,
-        ]);
-        $this->manager = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass(CombinedPriceList::class);
+        $this->loadFixtures([LoadCombinedPriceListsForGC::class]);
+        $this->manager = self::getContainer()->get('doctrine')->getManagerForClass(CombinedPriceList::class);
 
         /** @var CombinedPriceList $fullCpl */
         $fullCpl = $this->getReference('cpl_conf_f');
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getReference('cpl_conf');
 
-        $cm = self::getConfigManager('global');
-        $this->prevCpl = $cm->get('oro_pricing.combined_price_list');
-        $this->prevFullCpl = $cm->get('oro_pricing.full_combined_price_list');
-        $cm->set('oro_pricing.combined_price_list', $cpl->getId());
-        $cm->set('oro_pricing.full_combined_price_list', $fullCpl->getId());
-        $cm->flush();
+        $configManager = self::getConfigManager();
+        $this->initialCpl = $configManager->get('oro_pricing.combined_price_list');
+        $this->initialFullCpl = $configManager->get('oro_pricing.full_combined_price_list');
+        $configManager->set('oro_pricing.combined_price_list', $cpl->getId());
+        $configManager->set('oro_pricing.full_combined_price_list', $fullCpl->getId());
+        $configManager->flush();
 
         // Set offset to 0 to apply cleanups immediately
         $this->gc->setGcOffsetMinutes(0);
@@ -67,10 +47,10 @@ class CombinedPriceListGarbageCollectorTest extends WebTestCase
     #[\Override]
     protected function tearDown(): void
     {
-        $cm = self::getConfigManager('global');
-        $cm->set('oro_pricing.combined_price_list', $this->prevCpl);
-        $cm->set('oro_pricing.full_combined_price_list', $this->prevFullCpl);
-        $cm->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_pricing.combined_price_list', $this->initialCpl);
+        $configManager->set('oro_pricing.full_combined_price_list', $this->initialFullCpl);
+        $configManager->flush();
 
         // Revert the default offset
         $this->gc->setGcOffsetMinutes(60);
@@ -78,7 +58,7 @@ class CombinedPriceListGarbageCollectorTest extends WebTestCase
         parent::tearDown();
     }
 
-    public function testCleanCombinedPriceLists()
+    public function testCleanCombinedPriceLists(): void
     {
         $this->assertFalse($this->gc->hasPriceListsScheduledForRemoval());
         $this->gc->cleanCombinedPriceLists();

@@ -33,9 +33,7 @@ class ResolvedContentVariantFactory
      *      'slugs' => [
      *          [
      *              'url' => ?string,
-     *              'localization' => ?array [
-     *                  'id' => int,
-     *              ],
+     *              'localization' => ?array ['id' => int],
      *          ],
      *          // ...
      *      ],
@@ -87,9 +85,7 @@ class ResolvedContentVariantFactory
      *  [
      *      [
      *          'url' => ?string,
-     *          'localization' => ?array [
-     *              'id' => int,
-     *          ],
+     *          'localization' => ?array ['id' => int]
      *      ],
      *      // ...
      *  ]

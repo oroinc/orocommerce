@@ -132,7 +132,7 @@ describe('orocms/js/app/grapesjs/types/video', () => {
 
                 expect(videoComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<video src="http://video.url/video" poster="http://poster.loc/image" loop="loop" autoplay="autoplay" controls="controls"></video>'
+                    '<video src="http://video.url/video" muted poster="http://poster.loc/image" loop="loop" autoplay="autoplay" controls="controls"></video>'
                 );
             });
 
@@ -148,7 +148,7 @@ describe('orocms/js/app/grapesjs/types/video', () => {
 
                 expect(videoComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<iframe src="https://www.youtube.com/embed/MLpWrANjFbI?&autoplay=1&loop=1&playlist=MLpWrANjFbI&mute=1" allowfullscreen="allowfullscreen"></iframe>'
+                    '<iframe src="https://www.youtube.com/embed/MLpWrANjFbI?&autoplay=1&mute=1&loop=1&playlist=MLpWrANjFbI" allowfullscreen="allowfullscreen"></iframe>'
                 );
             });
 
@@ -164,7 +164,7 @@ describe('orocms/js/app/grapesjs/types/video', () => {
 
                 expect(videoComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<iframe src="https://www.youtube-nocookie.com/embed/MLpWrANjFbI?&autoplay=1&loop=1&playlist=MLpWrANjFbI&mute=1" allowfullscreen="allowfullscreen"></iframe>'
+                    '<iframe src="https://www.youtube-nocookie.com/embed/MLpWrANjFbI?&autoplay=1&mute=1&loop=1&playlist=MLpWrANjFbI" allowfullscreen="allowfullscreen"></iframe>'
                 );
             });
 
@@ -180,7 +180,7 @@ describe('orocms/js/app/grapesjs/types/video', () => {
 
                 expect(videoComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<iframe src="https://player.vimeo.com/video/163721649?&autoplay=1&loop=1&muted=1" allowfullscreen="allowfullscreen"></iframe>'
+                    '<iframe src="https://player.vimeo.com/video/163721649?&autoplay=1&muted=1&loop=1" allowfullscreen="allowfullscreen"></iframe>'
                 );
             });
         });

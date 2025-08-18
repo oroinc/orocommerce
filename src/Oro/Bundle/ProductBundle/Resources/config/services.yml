@@ -322,7 +322,6 @@ services:
             - !abstract '$availableProductTypes defined in Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension'
 
     oro_product.product_unit.cache:
-        public: false
         parent: oro.data.cache
         tags:
               - { name: 'cache.pool', namespace: 'oro_product_unit' }
@@ -883,9 +882,8 @@ services:
 
     oro_product.layout.data_provider.cache:
         parent: oro.data.cache
-        public: false
         tags:
-              - { name: 'cache.pool', namespace: 'oro_product' }
+            - { name: 'cache.pool', namespace: 'oro_product' }
 
     oro_product.entity_listener.segment:
         class: 'Oro\Bundle\ProductBundle\Entity\EntityListener\SegmentEntityListener'
@@ -1217,9 +1215,8 @@ services:
 
     oro_product.virtual_fields.decorator_cache:
         parent: oro.cache.adapter.array
-        public: false
         tags:
-            - { name: 'cache.pool', namespace: 'virtual_fields_decorator_cache' }
+            - { name: 'cache.pool', namespace: 'oro_virtual_fields_decorator' }
 
     oro_product.virtual_fields.decorator_factory:
         class: 'Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory'
@@ -2449,7 +2446,21 @@ services:
         tags:
             - { name: form.type, alias: oro_product_type_inventory_switcher_filter }
 
+    oro_product.listener.product_variant_remove:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductVariantRemoveListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        public: false
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\ProductVariantLink', event: postRemove }
+
     oro_product.event_listener.product_page_template:
         class: Oro\Bundle\ProductBundle\EventListener\ProductPageTemplateListener
         tags:
             - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\Product, event: prePersist }
+
+    oro_product.listener.product_category_search_listener:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductCategorySearchListener
+        tags:
+            - { name: kernel.event_listener, event: oro_search.prepare_entity_map, method: prepareEntityMapEvent, priority: 100 }
+            - { name: kernel.event_listener, event: oro_search.search_mapping_collect, method: collectEntityMapEvent, priority: -100 }

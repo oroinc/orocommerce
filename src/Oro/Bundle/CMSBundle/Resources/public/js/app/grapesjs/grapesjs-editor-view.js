@@ -100,6 +100,7 @@ const GrapesjsEditorView = BaseView.extend({
         noticeOnUnload: false,
         cssIcons: false,
         showDevices: false,
+        telemetry: false,
         log: tools.debug ? ['warning', 'error'] : [],
         selectorManager: {
             // This option allows to apply styles by id attribute, therefore will affect only actual element
@@ -550,7 +551,6 @@ const GrapesjsEditorView = BaseView.extend({
      * Add builder event listeners
      */
     builderDelegateEvents() {
-        const canvas = this.builder.Canvas;
         const $form = this.$el.closest('form');
 
         this.listenTo(this.builder, 'load', this._onLoadBuilder.bind(this));
@@ -562,6 +562,7 @@ const GrapesjsEditorView = BaseView.extend({
         this.listenTo(this.builder, 'component:deselected', this.componentDeselected.bind(this));
         this.listenTo(this.builder, 'component:remove:before', this.componentBeforeRemove.bind(this));
         this.listenTo(this.builder, 'component:remove', this.componentRemove.bind(this));
+        this.listenTo(this.builder, 'canvas:tools:update', this.updateCanvasToolbar.bind(this));
         this.listenTo(this.builder, 'rteToolbarPosUpdate', this.updateRtePosition.bind(this));
         this.listenTo(this.state, 'change', this.updatePropertyField.bind(this));
 
@@ -602,25 +603,9 @@ const GrapesjsEditorView = BaseView.extend({
             }
         });
 
-        canvas.getCanvasView().$el.on(`scroll${this.eventNamespace()}`, e => {
-            if (!this.enabled) {
-                return;
-            }
-            const $cvTools = $(e.target).find('#gjs-cv-tools');
-
-            $cvTools.css({
-                top: e.target.scrollTop
-            });
-
-            // Force recalculate highlight boxes positions;
-            this.builder.trigger('frame:updated', {
-                frame: canvas.model.get('frame')
-            });
-        });
-
         this.$el.closest('.scrollable-container').on(`scroll${this.eventNamespace()}`, () => {
             if (this.enabled) {
-                this.builder.trigger('change:canvasOffset');
+                this.builder.trigger('canvas:refresh');
             }
         });
     },
@@ -653,7 +638,7 @@ const GrapesjsEditorView = BaseView.extend({
 
     onLayoutReposition() {
         if (this.builder) {
-            this.builder.trigger('change:canvasOffset');
+            this.builder.trigger('canvas:refresh');
         }
     },
 
@@ -743,6 +728,19 @@ const GrapesjsEditorView = BaseView.extend({
     componentAdd(model) {
         if (model.get('type') === 'textnode' && model.parent()?.get('type') === 'wrapper') {
             model.replaceWith(`<div>${model.get('content')}</div>`);
+        }
+    },
+
+    /**
+     * Adjusts the position of the GrapesJS canvas toolbar.
+     * If the toolbar's left position is negative and overflow canvas
+     *
+     * @param {Object} opts
+     */
+    updateCanvasToolbar(opts) {
+        const left = parseInt(this.builder.Canvas.getToolbarEl().style.left);
+        if (opts.left < Math.abs(left) && left < 0) {
+            this.builder.Canvas.getToolbarEl().style.left = '0px';
         }
     },
 
@@ -1039,6 +1037,7 @@ const GrapesjsEditorView = BaseView.extend({
             return;
         }
 
+        this.builder.Config.showOffsets = this.state.get('showOffsets');
         this.$propertiesInputElement.val(JSON.stringify(this.state.toJSON()));
     },
 
@@ -1117,12 +1116,13 @@ const GrapesjsEditorView = BaseView.extend({
         const theme = this.getCurrentTheme();
         const canvasStylesheets = this.getCanvasStylesheets();
 
-        return _.extend({}, this.canvasConfig, {
+        return {
             canvas: {
+                ...this.canvasConfig,
                 styles: theme ? [...theme.stylesheet, ...canvasStylesheets] : canvasStylesheets
             },
             protectedCss: []
-        });
+        };
     },
 
     /**
@@ -1184,11 +1184,9 @@ const GrapesjsEditorView = BaseView.extend({
             return;
         }
 
-        const $builderIframe = this.builder.Canvas.canvasView.$el;
         const {
             height: frameHeight,
-            bottom: frameBottom,
-            top: frameTop
+            width: frameWidth
         } = this.builder.Canvas.getFrameEl().getBoundingClientRect();
         const selected = this.builder.getSelected();
 
@@ -1197,32 +1195,18 @@ const GrapesjsEditorView = BaseView.extend({
         }
 
         const $el = selected.view.$el;
+
         const {
             width: targetWidth,
-            height: targetHeight,
-            top: targetTop,
-            bottom: targetBottom
-        } = this.rte.actionbar.getBoundingClientRect();
-
-        $(this.rte.actionbar).parent().css('margin-left', '');
-
-        if ($el && $builderIframe.innerWidth() <= (pos.canvasOffsetLeft + targetWidth)) {
-            let marginLeft = $el.outerWidth() - targetWidth;
-            $(this.rte.actionbar).parent().css('margin-left', marginLeft);
-
-            const barOffset = $(this.rte.actionbar).offset().left - $builderIframe.offset().left;
-            if (barOffset < 0) {
-                marginLeft -= barOffset;
-                $(this.rte.actionbar).parent().css('margin-left', marginLeft);
-            }
-        }
+            height: targetHeight
+        } = this.rte.toolbar.firstChild.getBoundingClientRect();
 
         if (pos.top < 0 && frameHeight > (pos.canvasOffsetTop + targetHeight + $el.height())) {
             pos.top += $el.outerHeight() + targetHeight;
         }
 
-        if (this.rte.customRte) {
-            this.rte.customRte.toggleVisibility(targetTop > frameBottom || targetBottom < frameTop);
+        if (pos.left < 0 && frameWidth > (pos.canvasOffsetLeft + targetWidth)) {
+            pos.left = 0;
         }
     },
 
@@ -1231,7 +1215,6 @@ const GrapesjsEditorView = BaseView.extend({
 
         LayerManager.render = _.wrap(LayerManager.render, wrap => {
             const root = wrap.call(LayerManager);
-
             root.querySelectorAll('[data-toggle-select]').forEach(el => {
                 el.style.paddingRight = el.style.paddingLeft;
                 el.style.paddingLeft = '';

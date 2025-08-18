@@ -2,13 +2,11 @@
 
 /* stylelint-disable scss/dollar-variable-pattern */
 
+@use '../grapesjs-original/gjs_vars';
+
 @import '../../../fonts/grapsejs/variables';
 
-$app-prefix: 'gjs-';
-$sm-prefix: $app-prefix + 'sm-';
-$clm-prefix: $app-prefix + 'clm-';
-
-$loading-mask-prefix: $app-prefix;
+$loading-mask-prefix: gjs_vars.$app-prefix;
 
 // Palette variables
 $primaryColor: $primary-inverse;
@@ -18,7 +16,6 @@ $quaternaryColor: $primary-400;
 
 $colorWarn: $secondary;
 $fontColor: $primary-400;
-$fontPath: '~grapesjs/src/styles/fonts';
 $mainLhlColor: $primary-400;
 $colorBlue: $secondary;
 
@@ -39,6 +36,7 @@ $canvas-pattern: linear-gradient(45deg, $primary-900 25%, transparent 25%),
 $canvas-pattern-size: 20px 20px !default;
 $canvas-pattern-position: 0 0, 0 10px, 10px -10px, -10px 0 !default;
 
+$arrowColor: $primary-400 !default;
 $leftWidth: 23%;
 
 $mainFont: $font-family-sans-serif;

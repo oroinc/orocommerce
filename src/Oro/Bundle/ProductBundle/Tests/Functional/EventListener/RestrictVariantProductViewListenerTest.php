@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -15,14 +15,16 @@ use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
  */
 class RestrictVariantProductViewListenerTest extends FrontendWebTestCase
 {
-    private string $displayValue;
+    use ConfigManagerAwareTestTrait;
+
+    private ?string $initialDisplayValue;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->setCurrentWebsite('default');
         $this->loadFixtures(
@@ -30,7 +32,7 @@ class RestrictVariantProductViewListenerTest extends FrontendWebTestCase
                 LoadProductVariants::class,
             ]
         );
-        $this->displayValue = $this->getConfigManager()->get('oro_product.display_simple_variations');
+        $this->initialDisplayValue = self::getConfigManager()->get('oro_product.display_simple_variations');
         $this->reindexProducts();
     }
 
@@ -39,7 +41,7 @@ class RestrictVariantProductViewListenerTest extends FrontendWebTestCase
      */
     private function reindexProducts(): void
     {
-        $this->getContainer()->get('event_dispatcher')->dispatch(
+        self::getContainer()->get('event_dispatcher')->dispatch(
             new ReindexationRequestEvent([Product::class], [], [], false),
             ReindexationRequestEvent::EVENT_NAME
         );
@@ -48,12 +50,13 @@ class RestrictVariantProductViewListenerTest extends FrontendWebTestCase
     #[\Override]
     protected function tearDown(): void
     {
-        parent::tearDown();
-
-        $currValue = $this->getConfigManager()->get('oro_product.display_simple_variations');
-        if ($this->displayValue !== $currValue) {
-            $this->setConfigValue($this->displayValue);
+        $configManager = self::getConfigManager();
+        if ($configManager->get('oro_product.display_simple_variations') !== $this->initialDisplayValue) {
+            $configManager->set('oro_product.display_simple_variations', $this->initialDisplayValue);
+            $configManager->flush();
         }
+
+        parent::tearDown();
     }
 
     /**
@@ -76,7 +79,9 @@ class RestrictVariantProductViewListenerTest extends FrontendWebTestCase
      */
     public function testVariantViewWhenAllowed(string $displayValue)
     {
-        $this->setConfigValue($displayValue);
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_product.display_simple_variations', $displayValue);
+        $configManager->flush();
 
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->client->request(
@@ -110,17 +115,5 @@ class RestrictVariantProductViewListenerTest extends FrontendWebTestCase
             'productReference' => LoadProductData::PRODUCT_1,
             'expectedCode' => 404,
         ];
-    }
-
-    private function setConfigValue(string $value): void
-    {
-        $configManager = $this->getConfigManager();
-        $configManager->set('oro_product.display_simple_variations', $value);
-        $configManager->flush();
-    }
-
-    private function getConfigManager(): ConfigManager
-    {
-        return $this->getContainer()->get('oro_config.global');
     }
 }

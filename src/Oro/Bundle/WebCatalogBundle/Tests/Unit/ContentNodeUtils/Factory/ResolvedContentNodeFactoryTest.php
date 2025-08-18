@@ -11,8 +11,9 @@ use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentNodeFact
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentNodeIdentifierGenerator;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentVariantFactory;
 use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 
-class ResolvedContentNodeFactoryTest extends \PHPUnit\Framework\TestCase
+class ResolvedContentNodeFactoryTest extends TestCase
 {
     private ResolvedContentNodeFactory $factory;
 
@@ -20,40 +21,37 @@ class ResolvedContentNodeFactoryTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $resolvedNodeIdentifierGenerator = $this->createMock(ResolvedContentNodeIdentifierGenerator::class);
+        $resolvedNodeIdentifierGenerator->expects(self::any())
+            ->method('getIdentifierByUrl')
+            ->willReturnCallback(function (string $url) {
+                return 'identifier__' . $url;
+            });
+
         $resolvedContentVariantFactory = $this->createMock(ResolvedContentVariantFactory::class);
+        $resolvedContentVariantFactory->expects(self::any())
+            ->method('createFromArray')
+            ->willReturnCallback(function (array $data) {
+                return (new ResolvedContentVariant())->setData($data);
+            });
+
         $localizedFallbackValueCollectionNormalizer = $this->createMock(
             LocalizedFallbackValueCollectionNormalizer::class
         );
+        $localizedFallbackValueCollectionNormalizer->expects(self::any())
+            ->method('denormalize')
+            ->willReturnCallback(function (array $values, string $entityClass) {
+                self::assertEquals(LocalizedFallbackValue::class, $entityClass);
+
+                return new ArrayCollection(array_map(function (array $value) {
+                    return (new LocalizedFallbackValue())->setString($value['string']);
+                }, $values));
+            });
 
         $this->factory = new ResolvedContentNodeFactory(
             $resolvedNodeIdentifierGenerator,
             $resolvedContentVariantFactory,
             $localizedFallbackValueCollectionNormalizer
         );
-
-        $resolvedNodeIdentifierGenerator
-            ->expects(self::any())
-            ->method('getIdentifierByUrl')
-            ->willReturnCallback(static fn ($url) => 'identifier__' . $url);
-
-        $resolvedContentVariantFactory
-            ->expects(self::any())
-            ->method('createFromArray')
-            ->willReturnCallback(static fn ($data) => (new ResolvedContentVariant())->setData($data));
-
-        $localizedFallbackValueCollectionNormalizer
-            ->expects(self::any())
-            ->method('denormalize')
-            ->willReturnCallback(function (array $values, string $entityClass) {
-                self::assertEquals(LocalizedFallbackValue::class, $entityClass);
-
-                return new ArrayCollection(
-                    array_map(
-                        static fn ($value) => (new LocalizedFallbackValue())->setString($value['string']),
-                        $values
-                    )
-                );
-            });
     }
 
     public function testWhenEmptyArray(): void

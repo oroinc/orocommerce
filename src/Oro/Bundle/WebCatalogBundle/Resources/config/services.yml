@@ -419,7 +419,6 @@ services:
     # Component added back for theme layout BC from version 5.0
     oro_web_catalog.layout.data_provider.menu_data.cache:
         parent: oro.data.cache
-        public: false
         tags:
             - { name: 'cache.pool', namespace: 'oro_web_catalog_layout_provider' }
 

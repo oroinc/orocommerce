@@ -1,15 +1,13 @@
 services:
     oro_paypal.paypal.payflow.host_address_provider:
         class: 'Oro\Bundle\PayPalBundle\Tests\Behat\Mock\PayPal\Payflow\Gateway\Host\HostAddressProviderMock'
-        public: false
 
     oro_paypal.paypal.payflow.client.nvp:
         class: 'Oro\Bundle\PayPalBundle\Tests\Behat\Mock\PayPal\Payflow\Client\NVPClientMock'
         arguments:
-            - '@oro_paypal.test.express_payment.cache'
-        public: false
+            - '@oro_paypal.behat.express_payment.cache'
 
-    oro_paypal.test.fake_controller_mock.listener:
+    oro_paypal.event_listener.paypal_outer_redirect:
         class: 'Oro\Bundle\PayPalBundle\Tests\Behat\Mock\EventListener\PayPalOuterRedirectEventListener'
         arguments:
             - '@router'
@@ -42,14 +40,13 @@ services:
 
     oro_paypal.method.factory.express_checkout:
         class: 'Oro\Bundle\PayPalBundle\Tests\Behat\Mock\Method\Factory\BasicPayPalExpressCheckoutPaymentMethodFactoryMock'
-        public: false
         arguments:
             - '@oro_paypal.paypal.payflow_express_checkout.gateway'
             - '@router'
             - '@property_accessor'
             - '@oro_paypal.options_provider.transaction'
 
-    oro_paypal.test.express_payment.cache:
+    oro_paypal.behat.express_payment.cache:
         parent: oro.data.cache
         public: true
         tags:

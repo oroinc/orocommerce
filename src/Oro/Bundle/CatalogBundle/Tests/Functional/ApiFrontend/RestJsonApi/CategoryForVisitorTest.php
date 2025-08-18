@@ -4,9 +4,12 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadCustomerData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 
 class CategoryForVisitorTest extends FrontendRestJsonApiTestCase
 {
+    private ?array $initialEnabledLocalizations;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -16,9 +19,27 @@ class CategoryForVisitorTest extends FrontendRestJsonApiTestCase
             LoadCustomerData::class,
             '@OroCatalogBundle/Tests/Functional/ApiFrontend/DataFixtures/category.yml'
         ]);
+
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            LoadLocalizationData::getLocalizationIds(self::getContainer())
+        );
+        $configManager->flush();
     }
 
-    public function testGetList()
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->flush();
+
+        parent::tearDown();
+    }
+
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'mastercatalogcategories']
@@ -27,7 +48,7 @@ class CategoryForVisitorTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_category.yml', $response);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $response = $this->get(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category1->id)>']
@@ -36,12 +57,12 @@ class CategoryForVisitorTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_category.yml', $response);
     }
 
-    public function testTryToUpdate()
+    public function testTryToUpdate(): void
     {
         $data = [
             'data' => [
-                'type'       => 'mastercatalogcategories',
-                'id'         => '<toString(@category1->id)>',
+                'type' => 'mastercatalogcategories',
+                'id' => '<toString(@category1->id)>',
                 'attributes' => [
                     'title' => 'Updated Category'
                 ]
@@ -58,11 +79,11 @@ class CategoryForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToCreate()
+    public function testTryToCreate(): void
     {
         $data = [
             'data' => [
-                'type'       => 'mastercatalogcategories',
+                'type' => 'mastercatalogcategories',
                 'attributes' => [
                     'title' => 'New Category'
                 ]
@@ -79,7 +100,7 @@ class CategoryForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDelete()
+    public function testTryToDelete(): void
     {
         $response = $this->delete(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category1->id)>'],
@@ -91,7 +112,7 @@ class CategoryForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDeleteList()
+    public function testTryToDeleteList(): void
     {
         $response = $this->cdelete(
             ['entity' => 'mastercatalogcategories'],

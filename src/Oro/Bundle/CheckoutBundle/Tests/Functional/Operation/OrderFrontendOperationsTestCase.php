@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Operation;
 
-use Doctrine\Persistence\ObjectManager;
-use Doctrine\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
@@ -16,38 +16,52 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
 {
-    /** @var ObjectManager */
-    protected $emProduct;
+    use ConfigManagerAwareTestTrait;
 
-    /** @var ObjectManager */
-    protected $emFallback;
+    protected EntityManagerInterface $emProduct;
+    protected EntityManagerInterface $emFallback;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
+            self::generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
-        $doctrine = $this->getContainer()->get('doctrine');
+        $doctrine = self::getContainer()->get('doctrine');
 
         $this->emProduct = $doctrine->getManagerForClass(Product::class);
         $this->emFallback = $doctrine->getManagerForClass(EntityFieldFallbackValue::class);
 
         $this->loadFixtures($this->getFixtures());
 
-        /* @var ConfigManager $configManager */
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $this->initConfigs();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $this->restoreConfigs();
+        parent::tearDown();
+    }
+
+    protected function initConfigs(): void
+    {
+        $configManager = self::getConfigManager();
         $configManager->set('oro_inventory.manage_inventory', true);
         $configManager->flush();
     }
 
-    /**
-     * @return array
-     */
-    abstract protected function getFixtures();
+    protected function restoreConfigs(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_inventory.manage_inventory', false);
+        $configManager->flush();
+    }
 
-    public function testReorder()
+    abstract protected function getFixtures(): array;
+
+    public function testReorder(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_6);
@@ -76,17 +90,13 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
         );
     }
 
-    /**
-     * @param Order $order
-     * @return Checkout
-     */
-    protected function startCheckout(Order $order)
+    protected function startCheckout(Order $order): Checkout
     {
         $repository = $this->getCheckoutRepository();
         $allCheckoutsCnt = count($repository->findAll());
         $this->executeOperation($order, 'oro_checkout_frontend_start_from_order');
 
-        $data = json_decode($this->client->getResponse()->getContent(), true);
+        $data = self::jsonToArray($this->client->getResponse()->getContent());
         $this->assertTrue($data['success']);
         /** @var Checkout[] $allCheckoutsAfterReorder */
         $allCheckoutsAfterReorder = $repository->findBy([], ['id' => 'DESC']);
@@ -101,35 +111,21 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
         return $checkoutFromOrder;
     }
 
-    /**
-     * @return array
-     */
-    protected function getOpenOrdersGridData()
+    protected function getOpenOrdersGridData(): array
     {
         $this->client->request('GET', '/');
         /** @var Response $gridResponse */
         $gridResponse = $this->client->requestFrontendGrid(['gridName' => 'frontend-checkouts-grid']);
 
-        return json_decode($gridResponse->getContent(), true)['data'];
+        return self::jsonToArray($gridResponse->getContent())['data'];
     }
 
-    /**
-     * @return ObjectRepository
-     */
-    protected function getCheckoutRepository()
+    protected function getCheckoutRepository(): EntityRepository
     {
-        return $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass(Checkout::class)
-            ->getRepository(Checkout::class);
+        return self::getContainer()->get('doctrine')->getRepository(Checkout::class);
     }
 
-    /**
-     * @param Order $order
-     * @param string $operationName
-     * @param int $statusCode
-     */
-    protected function executeOperation(Order $order, $operationName, $statusCode = Response::HTTP_OK)
+    protected function executeOperation(Order $order, string $operationName, int $statusCode = Response::HTTP_OK): void
     {
         $this->assertExecuteOperation(
             $operationName,
@@ -141,11 +137,7 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
         );
     }
 
-    /**
-     * @param Product $product
-     * @param int $quantity
-     */
-    protected function setProductDecrement(Product $product, $quantity)
+    protected function setProductDecrement(Product $product, int $quantity): void
     {
         $entityFallback = $this->createFallbackEntity($quantity);
         $product->setDecrementQuantity($entityFallback);
@@ -153,11 +145,7 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
         $this->emFallback->flush();
     }
 
-    /**
-     * @param mixed $scalarValue
-     * @return EntityFieldFallbackValue
-     */
-    protected function createFallbackEntity($scalarValue)
+    protected function createFallbackEntity(mixed $scalarValue): EntityFieldFallbackValue
     {
         $entityFallback = new EntityFieldFallbackValue();
         $entityFallback->setScalarValue($scalarValue);

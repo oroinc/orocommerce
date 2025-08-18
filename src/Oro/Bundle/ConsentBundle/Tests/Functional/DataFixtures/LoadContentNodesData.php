@@ -11,13 +11,9 @@ use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class LoadContentNodesData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
+class LoadContentNodesData extends AbstractFixture implements DependentFixtureInterface
 {
-    use ContainerAwareTrait;
-
     const CATALOG_1_ROOT = 'web_catalog.node.1.root';
     const CATALOG_1_ROOT_WITH_CMS_PAGE_VARIANT = 'web_catalog.node.1.cms_page_variant';
     const CATALOG_1_ROOT_WITH_SYSTEM_PAGE_VARIANT = 'web_catalog.node.1.system_page_variant';

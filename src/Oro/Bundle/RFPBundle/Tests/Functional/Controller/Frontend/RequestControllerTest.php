@@ -59,12 +59,13 @@ class RequestControllerTest extends WebTestCase
         $configManager = self::getConfigManager();
         $configManager->set('oro_rfp.guest_rfp', true);
         $configManager->flush();
-
-        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
-        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 401);
-
-        $configManager->reset('oro_rfp.guest_rfp');
-        $configManager->flush();
+        try {
+            $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
+            self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 401);
+        } finally {
+            $configManager->set('oro_rfp.guest_rfp', false);
+            $configManager->flush();
+        }
     }
 
     /**
@@ -752,7 +753,7 @@ class RequestControllerTest extends WebTestCase
 
         $form['oro_rfp_frontend_request[firstName]'] = LoadRequestData::FIRST_NAME . '_UPDATE';
         $form['oro_rfp_frontend_request[lastName]'] = LoadRequestData::LAST_NAME . '_UPDATE';
-        $form['oro_rfp_frontend_request[email]'] = LoadRequestData::EMAIL . '_UPDATE';
+        $form['oro_rfp_frontend_request[email]'] = 'UPDATE_' . LoadRequestData::EMAIL;
         $form['oro_rfp_frontend_request[poNumber]'] = LoadRequestData::PO_NUMBER . '_UPDATE';
         $form['oro_rfp_frontend_request[assignedCustomerUsers]'] = implode(',', [
             $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
@@ -771,7 +772,7 @@ class RequestControllerTest extends WebTestCase
             [
                 LoadRequestData::FIRST_NAME . '_UPDATE',
                 LoadRequestData::LAST_NAME . '_UPDATE',
-                LoadRequestData::EMAIL . '_UPDATE',
+                'UPDATE_' . LoadRequestData::EMAIL,
                 LoadRequestData::PO_NUMBER . '_UPDATE',
                 $this->getReference(LoadUserData::ACCOUNT1_USER1)->getFullName(),
                 $this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName(),

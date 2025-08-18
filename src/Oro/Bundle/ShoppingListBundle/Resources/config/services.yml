@@ -355,10 +355,9 @@ services:
             - { name: oro_action.condition, alias: 'rfp_allowed' }
 
     oro_shopping_list.shopping_list_provider.cache:
-        public: false
         parent: oro.data.cache
         tags:
-            - { name: 'cache.pool', namespace: 'shopping_list' }
+            - { name: 'cache.pool', namespace: 'oro_shopping_list' }
 
     oro_shopping_list.current_shopping_list_storage:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListStorage'

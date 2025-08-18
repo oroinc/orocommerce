@@ -20,12 +20,7 @@ class OrderPromotionDiscountsTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return string|null
-     */
-    private function getMoneyValue($value)
+    private function getMoneyValue(mixed $value): ?string
     {
         if (null !== $value) {
             $value = (string)BigDecimal::of($value)->toScale(MoneyType::TYPE_SCALE);
@@ -38,24 +33,24 @@ class OrderPromotionDiscountsTest extends FrontendRestJsonApiTestCase
     {
         return [
             [
-                'type'        => 'order',
+                'type' => 'order',
                 'description' => 'Percent Discount',
-                'amount'      => $this->getMoneyValue(158.589)
+                'amount' => $this->getMoneyValue(158.589)
             ],
             [
-                'type'        => 'order',
+                'type' => 'order',
                 'description' => 'Amount Discount',
-                'amount'      => $this->getMoneyValue(158.589)
+                'amount' => $this->getMoneyValue(158.589)
             ],
             [
-                'type'        => 'promotion.order',
+                'type' => 'promotion.order',
                 'description' => 'Discount',
-                'amount'      => $this->getMoneyValue(1.2)
+                'amount' => $this->getMoneyValue(1.2)
             ],
             [
-                'type'        => 'promotion.shipping',
+                'type' => 'promotion.shipping',
                 'description' => 'Shipping Discount',
-                'amount'      => $this->getMoneyValue(0.3)
+                'amount' => $this->getMoneyValue(0.3)
             ]
         ];
     }
@@ -73,8 +68,8 @@ class OrderPromotionDiscountsTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@order1->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@order1->id)>',
                         'attributes' => [
                             'discounts' => $orderDiscounts
                         ]
@@ -98,8 +93,8 @@ class OrderPromotionDiscountsTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'orders',
-                    'id'         => '<toString(@order1->id)>',
+                    'type' => 'orders',
+                    'id' => '<toString(@order1->id)>',
                     'attributes' => [
                         'discounts' => $orderDiscounts
                     ]
@@ -113,8 +108,6 @@ class OrderPromotionDiscountsTest extends FrontendRestJsonApiTestCase
 
     public function testGetForOrderWithoutDiscounts()
     {
-        $orderDiscounts = [];
-
         $response = $this->get(
             ['entity' => 'orders', 'id' => '<toString(@order2->id)>']
         );
@@ -122,16 +115,16 @@ class OrderPromotionDiscountsTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'orders',
-                    'id'         => '<toString(@order2->id)>',
+                    'type' => 'orders',
+                    'id' => '<toString(@order2->id)>',
                     'attributes' => [
-                        'discounts' => $orderDiscounts
+                        'discounts' => []
                     ]
                 ]
             ],
             $response
         );
         $responseContent = self::jsonToArray($response->getContent());
-        self::assertCount(count($orderDiscounts), $responseContent['data']['attributes']['discounts']);
+        self::assertCount(0, $responseContent['data']['attributes']['discounts']);
     }
 }

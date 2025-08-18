@@ -1,14 +1,26 @@
 parameters:
+    currency:
+        description: '<p>The currency for the product price.</p><p><strong>The read-only field. A passed value will be ignored.</strong></p>'
     notes:
         description: 'Additional information for the product.'
     quantity:
         description: '<p>The quantity of product units to be purchased.</p><p><strong>The required field.</strong></p>'
+    subTotal:
+        description: '<p>The product price multiplied by the quantity.</p><p><strong>The read-only field. A passed value will be ignored.</strong></p>'
+    value:
+        description: '<p>The product price.</p><p><strong>The read-only field. A passed value will be ignored.</strong></p>'
     shoppingList:
         description: '<p>The shopping list that contains the line item.</p><p><strong>The read-only field. A passed value will be ignored.</strong></p>'
 response:
+    currency:
+        description: '<p>The currency for the product price.</p>'
     notes:
         description: 'Additional information for the product.'
     quantity:
         description: 'The quantity of product units to be purchased.'
+    subTotal:
+        description: '<p>The product price multiplied by the quantity.</p>'
+    value:
+        description: '<p>The product price.</p>'
     shoppingList:
         description: 'The shopping list that contains the line item.'

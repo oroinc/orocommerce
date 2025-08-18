@@ -9,7 +9,6 @@ use Oro\Bundle\CheckoutBundle\Model\CheckoutSubtotalUpdater;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
-use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 class LoadCompetedCheckoutData extends AbstractLoadCheckoutData
@@ -46,8 +45,7 @@ class LoadCompetedCheckoutData extends AbstractLoadCheckoutData
                 'postalCode' => '47981',
                 'firstName' => 'John',
                 'lastName' => 'Doe'
-            ]),
-            'coupons' => [LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL]
+            ])
         ]);
         $manager->flush();
 

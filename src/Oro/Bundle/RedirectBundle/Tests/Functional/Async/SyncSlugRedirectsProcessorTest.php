@@ -31,7 +31,7 @@ class SyncSlugRedirectsProcessorTest extends WebTestCase
         $this->loadFixtures([
             LoadSlugsData::class,
             LoadRedirects::class,
-            LoadCustomers::class,
+            LoadCustomers::class
         ]);
     }
 
@@ -50,9 +50,7 @@ class SyncSlugRedirectsProcessorTest extends WebTestCase
         self::assertCount(0, $redirect->getScopes());
 
         $slug->addScope($this->createScopeWithCustomer());
-        $entityManager = self::getContainer()
-            ->get('doctrine')
-            ->getManagerForClass(Slug::class);
+        $entityManager = self::getContainer()->get('doctrine')->getManagerForClass(Slug::class);
         $entityManager->persist($slug);
         $entityManager->flush($slug);
 

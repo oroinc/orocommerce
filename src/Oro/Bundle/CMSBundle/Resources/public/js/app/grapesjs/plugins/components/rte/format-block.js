@@ -78,7 +78,7 @@ export default {
                 parent.insertBefore(child, parentNode);
             });
             parentNode.remove();
-            this.editor.trigger('change:canvasOffset');
+            this.editor.trigger('canvas:refresh');
         };
 
         const addParentOrReplace = (node, tagName) => {
@@ -107,7 +107,7 @@ export default {
                 node.after(newParent);
                 newParent.append(...toAppend);
             }
-            this.editor.trigger('change:canvasOffset');
+            this.editor.trigger('canvas:refresh');
         };
 
         if (value === 'normal') {
@@ -122,7 +122,7 @@ export default {
                     removeParent(container);
                 }
 
-                this.editor.trigger('change:canvasOffset');
+                this.editor.trigger('canvas:refresh');
                 cursor();
                 return;
             }
@@ -142,7 +142,7 @@ export default {
             });
 
             selection.removeAllRanges();
-            this.editor.trigger('change:canvasOffset');
+            this.editor.trigger('canvas:refresh');
 
             cursor();
             return;
@@ -157,7 +157,7 @@ export default {
             return;
         }
 
-        this.editor.trigger('change:canvasOffset');
+        this.editor.trigger('canvas:refresh');
         cursor();
         return rte.exec('formatBlock', value);
     },

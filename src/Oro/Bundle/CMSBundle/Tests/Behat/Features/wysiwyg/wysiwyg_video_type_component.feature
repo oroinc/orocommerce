@@ -54,7 +54,7 @@ Feature: WYSIWYG video type component
     And I move "SelectedComponent" to "FirstColumnInGrid" in editor canvas
     Then I check wysiwyg content in "CMS Page Content":
       | 3 | <div class="grid-cell">                                                                                                      |
-      | 4 | <iframe src="https://player.vimeo.com/video/38195013?&autoplay=1&loop=1&muted=1" allowfullscreen="allowfullscreen"></iframe> |
+      | 4 | <iframe src="https://player.vimeo.com/video/38195013?&autoplay=1&muted=1&loop=1" allowfullscreen="allowfullscreen"></iframe> |
       | 5 | </div>                                                                                                                       |
     And I select component in canvas by tree:
       | grid-row    | 1 |

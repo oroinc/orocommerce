@@ -40,6 +40,10 @@ search:
                 target_type:            text
                 target_fields:          [poNumber]
             -
+                name:                   shipUntil
+                target_type:            datetime
+                target_fields:          [shipUntil]
+            -
                 name:                   customer_status
                 relation_type:          many-to-one
                 relation_fields:
@@ -55,3 +59,63 @@ search:
                         name:           name
                         target_type:    text
                         target_fields:  [internalStatus]
+            -
+                name:                   createdAt
+                target_type:            datetime
+                target_fields:          [createdAt]
+            -
+                name: assignedUsers
+                relation_type:          many-to-many
+                relation_fields:
+                    -
+                        name: firstName
+                        target_type: text
+                        target_fields: [assignedUser]
+                    -
+                        name: lastName
+                        target_type: text
+                        target_fields: [assignedUser]
+                    -
+                        name: userName
+                        target_type: text
+                        target_fields: [assignedUser]
+            -
+                name: requestProducts
+                relation_type:          one-to-many
+                relation_fields:
+                    -
+                        name: productSku
+                        target_type: text
+                        target_fields: [productSku]
+                    -
+                        name: product
+                        relation_type: many-to-one
+                        relation_fields:
+                            -
+                                name: defaultName
+                                target_type: text
+                                target_fields: [productName]
+            -
+                name:                   customerUser
+                relation_type:          many-to-one
+                relation_fields:
+                    -
+                        name: firstName
+                        target_type: text
+                        target_fields: [customerUserName]
+                    -
+                        name: middleName
+                        target_type: text
+                        target_fields: [customerUserName]
+                    -
+                        name: lastName
+                        target_type: text
+                        target_fields: [customerUserName]
+                    -
+                        name:           customer
+                        relation_type:  many-to-one
+                        relation_fields:
+                            -
+                                name:          name
+                                target_type:   text
+                                target_fields: [customerName]

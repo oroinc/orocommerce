@@ -214,6 +214,16 @@ The currency for the product price.
 
 **This field must not be empty, if it is passed.**
 
+### subTotal
+
+The product price multiplied by the quantity. 
+
+#### create, update, add_shopping_list_items
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ### checksum
 
 #### create, update, add_shopping_list_items

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Splitter\MultiShipping;
 
+use Oro\Bundle\CheckoutBundle\Action\MultiShipping\SubOrderMultiShippingMethodSetter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\MultiShipping\CheckoutFactoryInterface;
 
@@ -11,10 +12,14 @@ use Oro\Bundle\CheckoutBundle\Factory\MultiShipping\CheckoutFactoryInterface;
 class CheckoutSplitter
 {
     private CheckoutFactoryInterface $checkoutFactory;
+    private SubOrderMultiShippingMethodSetter $subOrderMultiShippingMethodSetter;
 
-    public function __construct(CheckoutFactoryInterface $checkoutFactory)
-    {
+    public function __construct(
+        CheckoutFactoryInterface $checkoutFactory,
+        SubOrderMultiShippingMethodSetter $subOrderMultiShippingMethodSetter
+    ) {
         $this->checkoutFactory = $checkoutFactory;
+        $this->subOrderMultiShippingMethodSetter = $subOrderMultiShippingMethodSetter;
     }
 
     /**
@@ -27,7 +32,9 @@ class CheckoutSplitter
     {
         $groupedCheckouts = [];
         foreach ($groupedLineItems as $lineItemGroupKey => $lineItems) {
-            $groupedCheckouts[$lineItemGroupKey] = $this->checkoutFactory->createCheckout($checkout, $lineItems);
+            $subCheckout = $this->checkoutFactory->createCheckout($checkout, $lineItems);
+            $this->subOrderMultiShippingMethodSetter->setShippingMethod($checkout, $subCheckout, $lineItemGroupKey);
+            $groupedCheckouts[$lineItemGroupKey] = $subCheckout;
         }
 
         return $groupedCheckouts;

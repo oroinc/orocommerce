@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\RuleFiltration;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -163,7 +162,6 @@ class MultiShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         $context = [
             ContextDataConverterInterface::SHIPPING_METHOD => self::MULTI_SHIPPING,
             ContextDataConverterInterface::LINE_ITEMS      => [$lineItem1],
-            ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection(),
             'key'                                          => 'val'
         ];
 
@@ -184,7 +182,6 @@ class MultiShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         $context = [
             ContextDataConverterInterface::SHIPPING_METHOD => self::MULTI_SHIPPING,
             ContextDataConverterInterface::LINE_ITEMS      => [$lineItem1, $lineItem2],
-            ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection(),
             'key'                                          => 'val'
         ];
 
@@ -217,7 +214,6 @@ class MultiShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             ContextDataConverterInterface::SHIPPING_COST   => Price::create(20, 'USD'),
             ContextDataConverterInterface::LINE_ITEMS      => [$lineItem1, $lineItem2, $lineItem3],
             ContextDataConverterInterface::SUBTOTAL        => 306.0,
-            ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection(),
             'key'                                          => 'val'
         ];
 

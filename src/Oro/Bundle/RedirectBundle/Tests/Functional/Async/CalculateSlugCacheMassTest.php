@@ -4,6 +4,8 @@ namespace Oro\Bundle\RedirectBundle\Tests\Functional\Async;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\JobsAwareTestTrait;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheJobAwareTopic;
@@ -20,21 +22,39 @@ use Oro\Component\MessageQueue\Job\Job;
  */
 class CalculateSlugCacheMassTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
     use MessageQueueExtension;
     use JobsAwareTestTrait;
     use SlugAwareTestTrait;
+
+    private ?array $initialEnabledLocalizations;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
+        $this->loadFixtures([LoadLocalizationData::class]);
+
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            LoadLocalizationData::getLocalizationIds(self::getContainer())
+        );
+        $configManager->flush();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->flush();
     }
 
     public function testProcess(): void
     {
-        $this->loadFixtures([
-            LoadSlugsData::class,
-        ]);
+        $this->loadFixtures([LoadSlugsData::class]);
 
         /** @var Page $page1 */
         $page1 = $this->getReference(LoadPageData::PAGE_1);
@@ -81,9 +101,7 @@ class CalculateSlugCacheMassTest extends WebTestCase
 
     public function testProcessWhenNoSlugs(): void
     {
-        $this->loadFixtures([
-            LoadPageData::class,
-        ]);
+        $this->loadFixtures([LoadPageData::class]);
 
         /** @var Page $page1 */
         $page1 = $this->getReference(LoadPageData::PAGE_1);

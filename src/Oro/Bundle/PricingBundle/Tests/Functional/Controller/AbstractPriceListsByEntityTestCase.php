@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\EntityExtendBundle\PropertyAccess;
@@ -18,6 +19,8 @@ use Symfony\Component\DomCrawler\Form;
 
 abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /** @var string */
     protected $formExtensionPath;
 
@@ -26,6 +29,8 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
 
     /** @var PriceList[] $priceLists */
     protected $priceLists;
+
+    private ?string $initialPriceStrategy;
 
     /**
      * @return BasePriceListRelation[]
@@ -56,10 +61,8 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        self::getContainer()->get('oro_config.global')
-            ->set('oro_pricing.price_strategy', MergePricesCombiningStrategy::NAME);
         $this->loadFixtures([
             LoadWebsite::class,
             LoadCustomers::class,
@@ -67,6 +70,19 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
             LoadPriceLists::class
         ]);
         $this->formExtensionPath = sprintf('%s[priceListsByWebsites]', $this->getMainFormName());
+
+        $configManager = self::getConfigManager();
+        $this->initialPriceStrategy = $configManager->get('oro_pricing.price_strategy');
+        $configManager->set('oro_pricing.price_strategy', MergePricesCombiningStrategy::NAME);
+        $configManager->flush();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_pricing.price_strategy', $this->initialPriceStrategy);
+        $configManager->flush();
     }
 
     private function urlToRouteJson(string $url): string

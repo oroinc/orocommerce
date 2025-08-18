@@ -18,9 +18,6 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ComputeCheckoutTotals implements ProcessorInterface
 {
-    private const string TOTAL_FIELD_NAME = 'totalValue';
-    private const string TOTALS_FIELD_NAME = 'totals';
-
     public function __construct(
         private readonly CheckoutTotalsProvider $checkoutTotalsProvider,
         private readonly DoctrineHelper $doctrineHelper,
@@ -33,16 +30,18 @@ class ComputeCheckoutTotals implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $isTotalFieldRequested = $context->isFieldRequested(self::TOTAL_FIELD_NAME);
-        $isTotalsFieldRequested = $context->isFieldRequested(self::TOTALS_FIELD_NAME);
+        $config = $context->getConfig();
+        $totalValueFieldName = $context->getResultFieldName('totalValue', $config);
+        $totalsFieldName = $context->getResultFieldName('totals', $config);
+        $isTotalFieldRequested = $context->isFieldRequested($totalValueFieldName);
+        $isTotalsFieldRequested = $context->isFieldRequested($totalsFieldName);
         if (!$isTotalFieldRequested && !$isTotalsFieldRequested) {
             return;
         }
 
         $data = $context->getData();
-        $dataMap = $this->getDataMap($data);
+        $dataMap = $this->getDataMap($data, $context->getResultFieldName('id', $config));
         $allTotals = $this->loadAllCheckoutTotals(array_keys($dataMap));
-        $config = $context->getConfig();
         $normalizationContext = $context->getNormalizationContext();
         foreach ($allTotals as $checkoutId => $totalsData) {
             $dataKey = $dataMap[$checkoutId] ?? null;
@@ -50,16 +49,16 @@ class ComputeCheckoutTotals implements ProcessorInterface
                 continue;
             }
             if ($isTotalFieldRequested) {
-                $data[$dataKey][self::TOTAL_FIELD_NAME] = $this->normalizeTotalValue(
+                $data[$dataKey][$totalValueFieldName] = $this->normalizeTotalValue(
                     $totalsData['total']['amount'] ?? null,
-                    $config->getField(self::TOTAL_FIELD_NAME),
+                    $config->getField($totalValueFieldName),
                     $normalizationContext
                 );
             }
             if ($isTotalsFieldRequested) {
-                $data[$dataKey][self::TOTALS_FIELD_NAME] = $this->normalizeTotalsValue(
+                $data[$dataKey][$totalsFieldName] = $this->normalizeTotalsValue(
                     $totalsData['subtotals'] ?? [],
-                    $config->getField(self::TOTALS_FIELD_NAME)->getTargetEntity(),
+                    $config->getField($totalsFieldName)->getTargetEntity(),
                     $normalizationContext
                 );
             }
@@ -67,11 +66,11 @@ class ComputeCheckoutTotals implements ProcessorInterface
         $context->setData($data);
     }
 
-    private function getDataMap(array $data): array
+    private function getDataMap(array $data, string $idFieldName): array
     {
         $dataMap = [];
         foreach ($data as $key => $item) {
-            $dataMap[$item['id']] = $key;
+            $dataMap[$item[$idFieldName]] = $key;
         }
 
         return $dataMap;
@@ -79,7 +78,6 @@ class ComputeCheckoutTotals implements ProcessorInterface
 
     private function loadAllCheckoutTotals(array $checkoutIds): array
     {
-        $allTotals = [];
         /** @var Checkout[] $checkouts */
         $checkouts = $this->doctrineHelper->createQueryBuilder(Checkout::class, 'c')
             ->select('c, li, p, kli, klik, klip')
@@ -93,6 +91,8 @@ class ComputeCheckoutTotals implements ProcessorInterface
             ->getQuery()
             ->setHint(Query::HINT_REFRESH, true)
             ->getResult();
+
+        $allTotals = [];
         foreach ($checkouts as $checkout) {
             $allTotals[$checkout->getId()] = $this->checkoutTotalsProvider->getTotalsArray($checkout);
         }
@@ -137,6 +137,6 @@ class ComputeCheckoutTotals implements ProcessorInterface
 
     private function normalizeValue(mixed $value, EntityDefinitionFieldConfig $config, array $context): mixed
     {
-        return $this->valueTransformer->transformFieldValue($value, $config->toArray(), $context);
+        return $this->valueTransformer->transformFieldValue($value, $config->toArray(true), $context);
     }
 }

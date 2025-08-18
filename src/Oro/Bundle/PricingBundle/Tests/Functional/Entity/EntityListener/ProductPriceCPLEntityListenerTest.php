@@ -39,7 +39,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_prices');
 
-        $this->enableMessageBuffering();
+        self::enableMessageBuffering();
     }
 
     public function testOnCreate()
@@ -115,28 +115,27 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
 
     public function testOnUpdateFeatureDisabled()
     {
-        $configManager = self::getConfigManager('global');
-        $savedStorage = $configManager->get('oro_pricing.price_storage');
+        $configManager = self::getConfigManager();
+        $initialPriceStorage = $configManager->get('oro_pricing.price_storage');
         $configManager->set('oro_pricing.price_storage', 'flat');
-        $this->getContainer()->get('oro_featuretoggle.checker.feature_checker')->resetCache();
+        $configManager->flush();
+        try {
+            $priceList = $this->getReference('price_list_2');
+            $productPrices = $this->getProductPriceRepository()->findByPriceList(
+                $this->getShardManager(),
+                $priceList,
+                ['priceList' => $priceList, 'product' => $this->getReference(LoadProductData::PRODUCT_2)]
+            );
+            $productPrice = $productPrices[0];
+            $productPrice->setPrice(Price::create(1000, 'EUR'));
 
-        $priceList = $this->getReference('price_list_2');
-        $productPrices = $this->getProductPriceRepository()->findByPriceList(
-            $this->getShardManager(),
-            $priceList,
-            [
-                'priceList' => $priceList,
-                'product'   => $this->getReference(LoadProductData::PRODUCT_2)
-            ]
-        );
-        $productPrice = $productPrices[0];
-        $productPrice->setPrice(Price::create(1000, 'EUR'));
-
-        $priceManager = $this->getPriceManager();
-        $priceManager->persist($productPrice);
-        $priceManager->flush();
-
-        $configManager->set('oro_pricing.price_storage', $savedStorage);
+            $priceManager = $this->getPriceManager();
+            $priceManager->persist($productPrice);
+            $priceManager->flush();
+        } finally {
+            $configManager->set('oro_pricing.price_storage', $initialPriceStorage);
+            $configManager->flush();
+        }
 
         self::assertEmpty(self::getSentMessages());
     }
@@ -341,26 +340,26 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
 
     private function disableListener()
     {
-        $this->getContainer()->get('oro_pricing.entity_listener.product_price_cpl')->setEnabled(false);
+        self::getContainer()->get('oro_pricing.entity_listener.product_price_cpl')->setEnabled(false);
     }
 
     private function getPriceManager(): PriceManager
     {
-        return $this->getContainer()->get('oro_pricing.manager.price_manager');
+        return self::getContainer()->get('oro_pricing.manager.price_manager');
     }
 
     private function getShardManager(): ShardManager
     {
-        return $this->getContainer()->get('oro_pricing.shard_manager');
+        return self::getContainer()->get('oro_pricing.shard_manager');
     }
 
     private function getProductPriceRepository(): ProductPriceRepository
     {
-        return $this->getContainer()->get('doctrine')->getRepository(ProductPrice::class);
+        return self::getContainer()->get('doctrine')->getRepository(ProductPrice::class);
     }
 
     private function getPriceListToProductRepository(): PriceListToProductRepository
     {
-        return $this->getContainer()->get('doctrine')->getRepository(PriceListToProduct::class);
+        return self::getContainer()->get('doctrine')->getRepository(PriceListToProduct::class);
     }
 }

@@ -18,7 +18,7 @@ const TableType = BaseType.extend({
         'table-edit': {
             run(editor, sender, table) {
                 this.tableEdit = new TableEditView({
-                    container: this.editorModel.view.$el.find('#gjs-tools'),
+                    container: editor.em.view.$el.find('#gjs-tools'),
                     table,
                     selected: editor.getSelected()
                 });

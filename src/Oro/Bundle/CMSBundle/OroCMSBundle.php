@@ -6,6 +6,7 @@ use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\AttributeBlockTypeMapperPa
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\DbalTypeDefaultValuePass;
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\EntityExtendFieldTypePass;
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\ExtendFieldValidationLoaderPass;
+use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\LocalizedFallbackValueNormalizerPass;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\EntityFallbackFieldsStoragePass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -30,5 +31,6 @@ class OroCMSBundle extends Bundle
                 'title' => 'titles'
             ]
         ]));
+        $container->addCompilerPass(new LocalizedFallbackValueNormalizerPass());
     }
 }

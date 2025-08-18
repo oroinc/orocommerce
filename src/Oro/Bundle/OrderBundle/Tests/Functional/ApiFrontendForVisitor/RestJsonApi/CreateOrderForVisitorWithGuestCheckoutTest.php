@@ -27,8 +27,6 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 {
     use RolePermissionExtension;
 
-    private ?bool $originalGuestCheckoutOptionValue;
-
     #[\Override]
     protected function setUp(): void
     {
@@ -39,20 +37,20 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
             '@OroOrderBundle/Tests/Functional/ApiFrontend/DataFixtures/orders.yml',
             LoadPaymentTermData::class
         ]);
-        $this->originalGuestCheckoutOptionValue = $this->getGuestCheckoutOptionValue();
-        if (!$this->originalGuestCheckoutOptionValue) {
-            $this->setGuestCheckoutOptionValue(true);
-        }
+
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_checkout.guest_checkout', true);
+        $configManager->flush();
     }
 
     #[\Override]
     protected function tearDown(): void
     {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_checkout.guest_checkout', false);
+        $configManager->flush();
+
         parent::tearDown();
-        if ($this->getGuestCheckoutOptionValue() !== $this->originalGuestCheckoutOptionValue) {
-            $this->setGuestCheckoutOptionValue($this->originalGuestCheckoutOptionValue);
-        }
-        $this->originalGuestCheckoutOptionValue = null;
     }
 
     #[\Override]
@@ -79,18 +77,6 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
             $this->getReference('payment_term_net_10')
         );
         $this->getEntityManager()->flush();
-    }
-
-    private function getGuestCheckoutOptionValue(): bool
-    {
-        return self::getConfigManager()->get('oro_checkout.guest_checkout');
-    }
-
-    private function setGuestCheckoutOptionValue(bool $value): void
-    {
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_checkout.guest_checkout', $value);
-        $configManager->flush();
     }
 
     private function getCurrentWebsite(): Website

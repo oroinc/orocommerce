@@ -15,20 +15,11 @@ use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
  */
 class ResolvedContentNodeFactory
 {
-    private ResolvedContentNodeIdentifierGenerator $resolvedContentNodeIdentifierGenerator;
-
-    private ResolvedContentVariantFactory $resolvedContentVariantFactory;
-
-    private LocalizedFallbackValueCollectionNormalizer $localizedFallbackValueCollectionNormalizer;
-
     public function __construct(
-        ResolvedContentNodeIdentifierGenerator $resolvedContentNodeIdentifierGenerator,
-        ResolvedContentVariantFactory $resolvedContentVariantFactory,
-        LocalizedFallbackValueCollectionNormalizer $localizedFallbackValueCollectionNormalizer
+        private readonly ResolvedContentNodeIdentifierGenerator $resolvedContentNodeIdentifierGenerator,
+        private readonly ResolvedContentVariantFactory $resolvedContentVariantFactory,
+        private readonly LocalizedFallbackValueCollectionNormalizer $localizedFallbackValueCollectionNormalizer
     ) {
-        $this->resolvedContentNodeIdentifierGenerator = $resolvedContentNodeIdentifierGenerator;
-        $this->resolvedContentVariantFactory = $resolvedContentVariantFactory;
-        $this->localizedFallbackValueCollectionNormalizer = $localizedFallbackValueCollectionNormalizer;
     }
 
     /**
@@ -39,9 +30,7 @@ class ResolvedContentNodeFactory
      *      'localizedUrls' => [ // Not required if 'identifier' is present.
      *          [
      *              'text' => ?string,
-     *              'localization' => ?array [
-     *                  'id' => int,
-     *              ],
+     *              'localization' => ?array ['id' => int]
      *          ],
      *          // ...
      *      ],
@@ -51,9 +40,7 @@ class ResolvedContentNodeFactory
      *          [
      *              'string' => ?string,
      *              'fallback' => ?string,
-     *              'localization' => ?array [
-     *                  'id' => int
-     *              ],
+     *              'localization' => ?array ['id' => int]
      *          ],
      *          // ...
      *      ],
@@ -71,13 +58,11 @@ class ResolvedContentNodeFactory
 
         $resolvedContentVariant = $contentNodeData['contentVariant'] ?? null;
         if (!$resolvedContentVariant instanceof ResolvedContentVariant) {
-            if (!is_array($resolvedContentVariant)) {
-                throw new InvalidArgumentException(
-                    sprintf(
-                        'Element "contentVariant" is required and expected to be array or %s',
-                        ResolvedContentNode::class
-                    )
-                );
+            if (!\is_array($resolvedContentVariant)) {
+                throw new InvalidArgumentException(\sprintf(
+                    'Element "contentVariant" is required and expected to be array or %s',
+                    ResolvedContentNode::class
+                ));
             }
 
             $resolvedContentVariant = $this->resolvedContentVariantFactory
@@ -92,7 +77,7 @@ class ResolvedContentNodeFactory
                 );
             }
 
-            if (!is_array($contentNodeData['localizedUrls'])) {
+            if (!\is_array($contentNodeData['localizedUrls'])) {
                 throw new InvalidArgumentException('Element "localizedUrls" is expected to be array');
             }
 
@@ -115,9 +100,7 @@ class ResolvedContentNodeFactory
      *  [
      *      [
      *          'text' => ?string,
-     *          'localization' => ?array [
-     *              'id' => int,
-     *          ],
+     *          'localization' => ?array ['id' => int]
      *      ],
      *      // ...
      *  ]
@@ -140,9 +123,7 @@ class ResolvedContentNodeFactory
      *      [
      *          'string' => ?string,
      *          'fallback' => ?string,
-     *          'localization' => ?array [
-     *              'id' => int
-     *          ],
+     *          'localization' => ?array ['id' => int],
      *          // ...
      *      ],
      *      // ...

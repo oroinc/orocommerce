@@ -11,7 +11,6 @@ use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
-use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
 
 class LoadGuestCheckoutData extends AbstractLoadCheckoutData
 {
@@ -58,8 +57,7 @@ class LoadGuestCheckoutData extends AbstractLoadCheckoutData
                     'postalCode' => '14608',
                     'firstName' => 'John',
                     'lastName' => 'Doe'
-                ]),
-                'coupons' => [LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL]
+                ])
             ],
             'checkout.unaccessible' => [
                 'user' => 'user',

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Datagrid;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Security\AnonymousCustomerUserAuthenticator;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerVisitors;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class UnauthorizedAccessToShoppingListDataTest extends WebTestCase
 {
-    private bool $guestShoppingListAccess;
+    use ConfigManagerAwareTestTrait;
 
     #[\Override]
     protected function setUp(): void
@@ -32,9 +32,7 @@ class UnauthorizedAccessToShoppingListDataTest extends WebTestCase
             LoadGuestShoppingListLineItems::class
         ]);
 
-        /** @var ConfigManager $configManager */
-        $configManager = self::getContainer()->get('oro_config.manager');
-        $this->guestShoppingListAccess = $configManager->get('oro_shopping_list.availability_for_guests');
+        $configManager = self::getConfigManager(null);
         $configManager->set('oro_shopping_list.availability_for_guests', true);
         $configManager->flush();
     }
@@ -42,10 +40,10 @@ class UnauthorizedAccessToShoppingListDataTest extends WebTestCase
     #[\Override]
     protected function tearDown(): void
     {
-        /** @var ConfigManager $configManager */
-        $configManager = self::getContainer()->get('oro_config.manager');
-        $configManager->set('oro_shopping_list.availability_for_guests', $this->guestShoppingListAccess);
+        $configManager = self::getConfigManager(null);
+        $configManager->set('oro_shopping_list.availability_for_guests', false);
         $configManager->flush();
+        $configManager->reload();
 
         self::getContainer()->get('security.token_storage')->setToken(null);
         self::getContainer()->get(FrontendHelper::class)->resetRequestEmulation();

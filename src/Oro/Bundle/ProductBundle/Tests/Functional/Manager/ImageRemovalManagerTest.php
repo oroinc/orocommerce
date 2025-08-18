@@ -60,6 +60,7 @@ class ImageRemovalManagerTest extends WebTestCase
         if ($configManager->get($configName) !== $enabled) {
             $configManager->set($configName, $enabled);
             $configManager->flush();
+            $configManager->reload();
         }
     }
 

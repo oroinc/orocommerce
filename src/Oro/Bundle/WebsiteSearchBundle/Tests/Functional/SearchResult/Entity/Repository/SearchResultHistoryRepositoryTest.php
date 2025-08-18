@@ -28,7 +28,7 @@ class SearchResultHistoryRepositoryTest extends WebTestCase
         $this->repo = self::getContainer()->get('doctrine')->getRepository(SearchResultHistory::class);
     }
 
-    public function testGetOrganizationsByHistory()
+    public function testGetOrganizationsByHistory(): void
     {
         $this->loadFixtures([
             LoadSearchResultHistoryOldData::class,
@@ -45,7 +45,7 @@ class SearchResultHistoryRepositoryTest extends WebTestCase
         $this->assertEquals([$orgId], $organizationsIds);
     }
 
-    public function testRemoveOldRecords()
+    public function testRemoveOldRecords(): void
     {
         $this->loadFixtures([
             LoadSearchResultHistoryOldData::class,
@@ -67,7 +67,7 @@ class SearchResultHistoryRepositoryTest extends WebTestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testUpsertSearchHistoryRecord()
+    public function testUpsertSearchHistoryRecord(): void
     {
         $this->loadFixtures([
             LoadCustomerUserData::class,

@@ -13,21 +13,16 @@ data:
         customerNotes: 'Customer notes'
         currency: USD
         completed: false
-        totalValue: '100.5000'
+        totalValue: '110.5000'
         totals:
             -
                 subtotalType: subtotal
                 description: Subtotal
                 amount: '100.5000'
             -
-                subtotalType: discount
-                description: Discount
-                amount: '-10.0000'
-            -
                 subtotalType: shipping_cost
                 description: Shipping
                 amount: '10.0000'
-        coupons: {  }
     relationships:
         order:
             data: null
@@ -128,9 +123,10 @@ included:
             productSku: 'product-1'
             freeFormProduct: null
             quantity: 1
+            currency: USD
             priceFixed: false
             price: '100.5000'
-            currency: USD
+            subTotal: '100.5000'
             comment: null
             shippingEstimateAmount: null
         relationships:

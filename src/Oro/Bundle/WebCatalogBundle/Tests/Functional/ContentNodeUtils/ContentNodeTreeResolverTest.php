@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\ContentNodeUtils;
 
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
@@ -21,7 +22,6 @@ class ContentNodeTreeResolverTest extends WebTestCase
             '@OroWebCatalogBundle/Tests/Functional/ContentNodeUtils/DataFixtures/content_node_tree.yml',
         ]);
 
-        /** @var ContentNodeTreeResolverInterface $resolver */
         $this->resolver = self::getContainer()->get('oro_web_catalog.content_node_tree_resolver');
     }
 
@@ -36,7 +36,9 @@ class ContentNodeTreeResolverTest extends WebTestCase
 
         /** @var ContentNodeTreeCache $rootCache */
         $rootCache = self::getContainer()->get('oro_web_catalog.content_node_tree_cache.root');
-        $rootCache->delete($node->getId(), array_map(static fn ($scope) => $scope->getId(), $scopes));
+        $rootCache->delete($node->getId(), array_map(function (Scope $scope) {
+            return $scope->getId();
+        }, $scopes));
 
         return $this->resolver->getResolvedContentNode($node, $scopes, $context);
     }
@@ -80,7 +82,7 @@ class ContentNodeTreeResolverTest extends WebTestCase
     {
         return [
             'id' => $variant->getId(),
-            'type' => $variant->getType(),
+            'type' => $variant->getType()
         ];
     }
 

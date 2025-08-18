@@ -32,7 +32,7 @@ const ContentTemplateType = BaseType.extend({
 
                 const newModel = this.model.replaceWith(`${content}<style>${contentStyle}</style>`);
                 this.editor.select(newModel);
-                this.editor.trigger('change:canvasOffset');
+                this.editor.trigger('canvas:refresh');
             } catch (e) {
                 hideLoading();
 

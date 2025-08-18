@@ -22,8 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ShoppingListItemTest extends FrontendRestJsonApiTestCase
 {
-    /** @var int|null */
-    private $originalShoppingListLimit;
+    private ?int $initialShoppingListLimit;
 
     #[\Override]
     protected function setUp(): void
@@ -43,17 +42,16 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             );
         }
 
-        $this->originalShoppingListLimit = $this->getShoppingListLimit();
+        $this->initialShoppingListLimit = $this->getShoppingListLimit();
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        parent::tearDown();
-        if ($this->getShoppingListLimit() !== $this->originalShoppingListLimit) {
-            $this->setShoppingListLimit($this->originalShoppingListLimit);
+        if ($this->getShoppingListLimit() !== $this->initialShoppingListLimit) {
+            $this->setShoppingListLimit($this->initialShoppingListLimit);
         }
-        $this->originalShoppingListLimit = null;
+        parent::tearDown();
     }
 
     private function getShoppingListLimit(): int
@@ -61,7 +59,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         return self::getConfigManager()->get('oro_shopping_list.shopping_list_limit');
     }
 
-    private function setShoppingListLimit(int $limit): void
+    private function setShoppingListLimit(?int $limit): void
     {
         $configManager = self::getConfigManager();
         $configManager->set('oro_shopping_list.shopping_list_limit', $limit);
@@ -173,13 +171,13 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'shoppinglistitems'],
-            ['fields[shoppinglistitems]' => 'currency,value']
+            ['fields[shoppinglistitems]' => 'currency,value,subTotal']
         );
 
         $expectedData = $this->getResponseData('cget_line_item.yml');
         foreach ($expectedData['data'] as $i => $item) {
             foreach ($expectedData['data'][$i]['attributes'] as $name => $val) {
-                if (!\in_array($name, ['currency', 'value'], true)) {
+                if (!\in_array($name, ['currency', 'value', 'subTotal'], true)) {
                     unset($expectedData['data'][$i]['attributes'][$name]);
                 }
             }
@@ -196,8 +194,8 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $response = $this->cget(
             ['entity' => 'shoppinglistitems'],
             [
-                'fields[shoppinglistitems]' => 'currency,value,kitItems',
-                'fields[shoppinglistkititems]' => 'currency,value',
+                'fields[shoppinglistitems]' => 'currency,value,subTotal,kitItems',
+                'fields[shoppinglistkititems]' => 'currency,value,subTotal',
                 'include' => 'kitItems'
             ]
         );
@@ -205,7 +203,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $expectedData = $this->getResponseData('cget_line_item.yml');
         foreach ($expectedData['data'] as $i => $item) {
             foreach ($expectedData['data'][$i]['attributes'] as $name => $val) {
-                if (!\in_array($name, ['currency', 'value'], true)) {
+                if (!\in_array($name, ['currency', 'value', 'subTotal'], true)) {
                     unset($expectedData['data'][$i]['attributes'][$name]);
                 }
             }
@@ -217,7 +215,8 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                 'id' => '<toString(@product_kit_item1_line_item1->id)>',
                 'attributes' => [
                     'currency' => 'USD',
-                    'value' => '1.2300'
+                    'value' => '1.2300',
+                    'subTotal' => '2.4600'
                 ]
             ],
             [
@@ -225,7 +224,8 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                 'id' => '<toString(@product_kit_item1_line_item2->id)>',
                 'attributes' => [
                     'currency' => null,
-                    'value' => null
+                    'value' => null,
+                    'subTotal' => null
                 ]
             ],
             [
@@ -233,7 +233,8 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                 'id' => '<toString(@product_kit_item2_line_item1->id)>',
                 'attributes' => [
                     'currency' => 'USD',
-                    'value' => '1.2300'
+                    'value' => '1.2300',
+                    'subTotal' => '2.4600'
                 ]
             ],
         ];
@@ -298,7 +299,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title' => 'quantity unit precision constraint',
-                'detail' => 'The precision for the unit "item" is not valid.',
+                'detail' => 'The precision for the unit "set" is not valid.',
                 'source' => ['pointer' => '/data/attributes/quantity']
             ],
             $response
@@ -340,6 +341,24 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $shoppingList = $lineItem->getShoppingList();
         self::assertEquals($shoppingListId, $shoppingList->getId());
         self::assertCount(4, $shoppingList->getLineItems());
+        $this->assertShoppingListTotal($lineItem->getShoppingList(), 169.05, 'USD');
+    }
+
+    public function testCreateWithReadonlySubTotal(): void
+    {
+        $data = $this->getRequestData('create_line_item.yml');
+        $data['data']['attributes']['subTotal'] = '123.123';
+        $response = $this->post(
+            ['entity' => 'shoppinglistitems'],
+            $data
+        );
+
+        $lineItemId = (int)$this->getResourceId($response);
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
+        $responseContent = $this->updateResponseContent('create_line_item.yml', $response);
+        $this->assertResponseContains($responseContent, $response);
+
         $this->assertShoppingListTotal($lineItem->getShoppingList(), 169.05, 'USD');
     }
 
@@ -595,6 +614,37 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertCount(2, $shoppingList->getLineItems());
         $this->assertShoppingListTotal($shoppingList, 53.0, 'USD');
+    }
+
+    public function testTryToUpdateReadonlySubTotal(): void
+    {
+        $lineItemId = $this->getReference('line_item1')->getId();
+
+        $response = $this->patch(
+            ['entity' => 'shoppinglistitems', 'id' => (string)$lineItemId],
+            [
+                'data' => [
+                    'type' => 'shoppinglistitems',
+                    'id' => (string)$lineItemId,
+                    'attributes' => [
+                        'subTotal' => '123.123'
+                    ]
+                ]
+            ]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'shoppinglistitems',
+                    'id' => (string)$lineItemId,
+                    'attributes' => [
+                        'subTotal' => '6.1500'
+                    ]
+                ]
+            ],
+            $response
+        );
     }
 
     public function testTryToSetZeroQuantity(): void
@@ -1121,6 +1171,26 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             false
         );
         $this->assertUnsupportedSubresourceResponse($response);
+    }
+
+    public function testGetWithSubTotalOnly(): void
+    {
+        $response = $this->get(
+            ['entity' => 'shoppinglistitems', 'id' => '<toString(@line_item1->id)>'],
+            ['fields[shoppinglistitems]' => 'subTotal']
+        );
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'shoppinglistitems',
+                    'id' => '<toString(@line_item1->id)>',
+                    'attributes' => [
+                        'subTotal' => '6.1500'
+                    ]
+                ]
+            ],
+            $response
+        );
     }
 
     public function testGetKitLineItem(): void

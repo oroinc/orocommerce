@@ -27,6 +27,10 @@ class RestrictSitemapProductSlugByLocaleListenerTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    private ?array $initialProductVisibility;
+    private ?string $initialCanonicalUrlType;
+    private ?array $initialEnabledLocalizations;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -37,7 +41,29 @@ class RestrictSitemapProductSlugByLocaleListenerTest extends WebTestCase
             LoadLocalizationData::class
         ]);
 
+        $website = $this->getReference(FixtureDir\LoadWebsiteData::WEBSITE_DEFAULT);
+        $configManager = self::getConfigManager();
+        $this->initialProductVisibility = $configManager->get('oro_product.general_frontend_product_visibility');
+        $this->initialCanonicalUrlType = $configManager->get('oro_redirect.canonical_url_type');
+        $this->initialEnabledLocalizations = $configManager->get(
+            'oro_locale.enabled_localizations',
+            false,
+            false,
+            $website
+        );
+
         $this->updateProductSlug();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $website = $this->getReference(FixtureDir\LoadWebsiteData::WEBSITE_DEFAULT);
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_product.general_frontend_product_visibility', $this->initialProductVisibility);
+        $configManager->set('oro_redirect.canonical_url_type', $this->initialCanonicalUrlType);
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations, $website);
+        $configManager->flush();
     }
 
     public function testRestrictQueryBuilderMatchedLocalizedSlug(): void
@@ -114,7 +140,6 @@ class RestrictSitemapProductSlugByLocaleListenerTest extends WebTestCase
     {
         /** @var Product $product1 */
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        $entityManager = self::getContainer()->get('doctrine')->getManagerForClass(Product::class);
         $slugDefault = new Slug();
         $slugDefault->setUrl('/product-1')
             ->setRouteName('oro_product_frontend_product_view')
@@ -129,13 +154,13 @@ class RestrictSitemapProductSlugByLocaleListenerTest extends WebTestCase
 
         /** @var Product $product2 */
         $product2 = $this->getReference(LoadProductData::PRODUCT_2);
-        $entityManager = self::getContainer()->get('doctrine')->getManagerForClass(Product::class);
         $slug2Default = new Slug();
         $slug2Default->setUrl('/product-2')
             ->setRouteName('oro_product_frontend_product_view')
             ->setRouteParameters(['id' => $product2->getId()]);
         $product2->addSlug($slug2Default);
 
+        $entityManager = self::getContainer()->get('doctrine')->getManagerForClass(Product::class);
         $entityManager->persist($product1);
         $entityManager->persist($product2);
         $entityManager->flush();
@@ -144,8 +169,7 @@ class RestrictSitemapProductSlugByLocaleListenerTest extends WebTestCase
     private function updateConfigs(array $localizationIds): void
     {
         $website = $this->getReference(FixtureDir\LoadWebsiteData::WEBSITE_DEFAULT);
-
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set('oro_product.general_frontend_product_visibility', []);
         $configManager->set('oro_redirect.canonical_url_type', Configuration::DIRECT_URL);
         $configManager->set('oro_locale.enabled_localizations', $localizationIds, $website);

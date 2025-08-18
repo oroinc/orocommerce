@@ -9,6 +9,28 @@ class SwitchPricingStorageCommandTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    private ?int $initialPriceList;
+    private ?array $initialPriceLists;
+
+    #[\Override]
+    protected function setUp(): void
+    {
+        $configManager = self::getConfigManager();
+        $this->initialPriceList = $configManager->get('oro_pricing.default_price_list');
+        $this->initialPriceLists = self::getContainer()->get('oro_pricing.system_config_converter')->convertFromSaved(
+            $configManager->get('oro_pricing.default_price_lists')
+        );
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_pricing.default_price_list', $this->initialPriceList);
+        $configManager->set('oro_pricing.default_price_lists', $this->initialPriceLists);
+        $configManager->flush();
+    }
+
     public function testExecute(): void
     {
         $storageSwitch = [

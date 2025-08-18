@@ -123,6 +123,16 @@ A currency for a product price.
 
 **The read-only field. A passed value will be ignored.**
 
+### subTotal
+
+The product price multiplied by the quantity.
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ### freeFormProduct
 
 #### create, update

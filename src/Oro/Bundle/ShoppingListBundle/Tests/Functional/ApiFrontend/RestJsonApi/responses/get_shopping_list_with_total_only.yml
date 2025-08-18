@@ -1,0 +1,59 @@
+data:
+    type: shoppinglists
+    id: '<toString(@shopping_list1->id)>'
+    attributes:
+        total: '59.15'
+        subTotal: '59.15'
+    relationships:
+        items:
+            data:
+                -
+                    type: shoppinglistitems
+                    id: '<toString(@kit_line_item1->id)>'
+                -
+                    type: shoppinglistitems
+                    id: '<toString(@line_item1->id)>'
+                -
+                    type: shoppinglistitems
+                    id: '<toString(@line_item2->id)>'
+included:
+    -
+        type: shoppinglistkititems
+        id: '<toString(@product_kit_item1_line_item1->id)>'
+        attributes:
+            subTotal: '2.4600'
+    -
+        type: shoppinglistkititems
+        id: '<toString(@product_kit_item1_line_item2->id)>'
+        attributes:
+            subTotal: null
+    -
+        type: shoppinglistitems
+        id: '<toString(@kit_line_item1->id)>'
+        attributes:
+            subTotal: '29.6000'
+        relationships:
+            kitItems:
+                data:
+                    -
+                        type: shoppinglistkititems
+                        id: '<toString(@product_kit_item1_line_item1->id)>'
+                    -
+                        type: shoppinglistkititems
+                        id: '<toString(@product_kit_item1_line_item2->id)>'
+    -
+        type: shoppinglistitems
+        id: '<toString(@line_item1->id)>'
+        attributes:
+            subTotal: '6.1500'
+        relationships:
+            kitItems:
+                data: []
+    -
+        type: shoppinglistitems
+        id: '<toString(@line_item2->id)>'
+        attributes:
+            subTotal: '23.4000'
+        relationships:
+            kitItems:
+                data: []

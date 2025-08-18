@@ -4,9 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Search;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\ORM\Query;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
-use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
@@ -22,43 +20,46 @@ class ProductRepositoryTest extends WebTestCase
     use MysqlVersionCheckTrait;
     use ConfigManagerAwareTestTrait;
 
-    private ConfigManager $configManager;
-    private string $configKey;
-    private bool $originalConfigValue;
+    private ?bool $initialAllowPartialSearch;
     private AbstractPlatform $platform;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-        $this->getContainer()->get('request_stack')->push(Request::create(''));
+        $this->initClient([], self::generateBasicAuthHeader());
+        self::getContainer()->get('request_stack')->push(Request::create(''));
 
         $this->loadFixtures([LoadFrontendProductData::class]);
 
-        $this->configManager = self::getConfigManager();
+        $configManager = self::getConfigManager();
+        $this->initialAllowPartialSearch = $configManager->get('oro_product.allow_partial_product_search');
 
-        $this->configKey = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
-        $this->originalConfigValue = $this->configManager->get($this->configKey);
-
-        $this->platform = $this->getContainer()->get('doctrine')->getManager()->getConnection()->getDatabasePlatform();
+        $this->platform = self::getContainer()->get('doctrine')->getManager()->getConnection()->getDatabasePlatform();
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        if ($this->configManager->get($this->configKey) === $this->originalConfigValue) {
-            return;
+        $configManager = self::getConfigManager();
+        if ($configManager->get('oro_product.allow_partial_product_search') !== $this->initialAllowPartialSearch) {
+            $configManager->set('oro_product.allow_partial_product_search', $this->initialAllowPartialSearch);
+            $configManager->flush();
         }
-
-        $this->configManager->set($this->configKey, $this->originalConfigValue);
-        $this->configManager->flush();
     }
 
-    public function testGetFamilyAttributeCountsQuery()
+    private function getProductSearchRepository(): ProductSearchRepository
     {
-        $query = $this->client->getContainer()
-            ->get('oro_product.website_search.repository.product')
-            ->getFamilyAttributeCountsQuery(null, 'familyAttributesCount');
+        return self::getContainer()->get('oro_product.website_search.repository.product');
+    }
+
+    private function getProductRepository(): ProductRepository
+    {
+        return self::getContainer()->get('doctrine')->getRepository(Product::class);
+    }
+
+    public function testGetFamilyAttributeCountsQuery(): void
+    {
+        $query = $this->getProductSearchRepository()->getFamilyAttributeCountsQuery();
 
         $expectedResult = [
             $this->getReference(LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE)->getId() => 6,
@@ -74,45 +75,31 @@ class ProductRepositoryTest extends WebTestCase
          */
         $aggregateData = $query->getResult()->getAggregatedData();
 
-        $this->assertArrayHasKey('familyAttributesCount', $aggregateData);
+        self::assertArrayHasKey('familyAttributesCount', $aggregateData);
 
         $actualResult = $aggregateData['familyAttributesCount'];
         ksort($actualResult);
 
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
-    public function testFindOne()
+    public function testFindOne(): void
     {
         $exampleProduct = $this->getReference(LoadProductData::PRODUCT_1);
 
-        /** @var \Oro\Bundle\SearchBundle\Query\Result\Item $product */
-        $product = $this->client->getContainer()->get('oro_product.website_search.repository.product')->findOne(
-            $exampleProduct->getId()
-        );
+        $product = $this->getProductSearchRepository()->findOne($exampleProduct->getId());
 
-        $this->assertNotNull($product);
-        $this->assertEquals($product->getId(), $exampleProduct->getId());
+        self::assertNotNull($product);
+        self::assertEquals($product->getId(), $exampleProduct->getId());
         $this->initClient();
-        $this->getContainer()->get('request_stack')->push(Request::create(''));
+        self::getContainer()->get('request_stack')->push(Request::create(''));
 
-        $notFoundProduct = $this->client->getContainer()->get('oro_product.website_search.repository.product')->findOne(
-            100500000
-        );
-        $this->assertNull($notFoundProduct);
+        self::assertNull($this->getProductSearchRepository()->findOne(100500000));
     }
 
-    public function testSearchFilteredBySkus()
+    public function testSearchFilteredBySkus(): void
     {
-        /** @var ProductRepository $ormRepository */
-        $ormRepository = $this->client->getContainer()
-            ->get('doctrine')
-            ->getRepository(Product::class);
-        /** @var ProductSearchRepository $searchRepository */
-        $searchRepository = $this->client->getContainer()
-            ->get('oro_product.website_search.repository.product');
-
-        $productsFromOrm = $ormRepository->createQueryBuilder('p')
+        $productsFromOrm = $this->getProductRepository()->createQueryBuilder('p')
             ->setMaxResults(3)
             ->orderBy('p.id', 'desc')
             ->getQuery()
@@ -123,8 +110,8 @@ class ProductRepositoryTest extends WebTestCase
             $skus[] = $productFromOrm['sku'];
         }
 
-        $productsFromSearch = $searchRepository->searchFilteredBySkus($skus);
-        $this->assertCount(count($productsFromOrm), $productsFromSearch);
+        $productsFromSearch = $this->getProductSearchRepository()->searchFilteredBySkus($skus);
+        self::assertCount(count($productsFromOrm), $productsFromSearch);
 
         foreach ($productsFromOrm as $productFromOrm) {
             $found = false;
@@ -133,63 +120,49 @@ class ProductRepositoryTest extends WebTestCase
                     $found = true;
                 }
             }
-            $this->assertTrue($found, 'Product with sku `' . $productFromOrm['sku'] . '` not found.');
+            self::assertTrue($found, 'Product with sku `' . $productFromOrm['sku'] . '` not found.');
         }
     }
 
-    public function testGetSearchQuery()
+    public function testGetSearchQuery(): void
     {
         /** @var Product $exampleProduct */
         $exampleProduct = $this->getReference(LoadProductData::PRODUCT_1);
-        $products = $this->client->getContainer()->get('oro_product.website_search.repository.product')->getSearchQuery(
-            $exampleProduct->getSku(),
-            0,
-            1
-        )->getResult();
+        $products = $this->getProductSearchRepository()->getSearchQuery($exampleProduct->getSku(), 0, 1)->getResult();
 
         foreach ($products->getElements() as $productItem) {
-            $this->assertArrayHasKey('sku', $productItem->getSelectedData());
-            $this->assertEquals(LoadProductData::PRODUCT_1, $productItem->getSelectedData()['sku']);
-            $this->assertArrayHasKey('name', $productItem->getSelectedData());
+            self::assertArrayHasKey('sku', $productItem->getSelectedData());
+            self::assertEquals(LoadProductData::PRODUCT_1, $productItem->getSelectedData()['sku']);
+            self::assertArrayHasKey('name', $productItem->getSelectedData());
         }
     }
 
-    public function testFindBySkuOrName()
+    public function testFindBySkuOrName(): void
     {
         if ($this->isMysqlPlatform() && $this->isInnoDBFulltextIndexSupported()) {
-            $this->configManager->set($this->configKey, true);
-            $this->configManager->flush();
+            $configManager = self::getConfigManager();
+            $configManager->set('oro_product.allow_partial_product_search', true);
+            $configManager->flush();
         }
 
-        /** @var ProductRepository $ormRepository */
-        $ormRepository = $this->client->getContainer()
-            ->get('doctrine')
-            ->getRepository(Product::class);
-
-        /** @var ProductSearchRepository $searchRepository */
-        $searchRepository = $this->client->getContainer()
-            ->get('oro_product.website_search.repository.product');
-
-        $productsFromOrm = $ormRepository->createQueryBuilder('p')
+        $productsFromOrm = $this->getProductRepository()->createQueryBuilder('p')
             ->where('p.sku = :sku')
             ->setParameter('sku', LoadProductData::PRODUCT_7)
             ->getQuery()
             ->getResult(Query::HYDRATE_ARRAY);
 
-        $productsFromSearch = $searchRepository->findBySkuOrName(LoadProductData::PRODUCT_7);
+        $productsFromSearch = $this->getProductSearchRepository()->findBySkuOrName(LoadProductData::PRODUCT_7);
 
-        $this->assertTrue(count($productsFromSearch) > 0);
+        self::assertTrue(count($productsFromSearch) > 0);
 
         foreach ($productsFromOrm as $productFromOrm) {
             $found = false;
-
             foreach ($productsFromSearch as $productFromSearch) {
                 if ($productFromSearch->getSelectedData()['sku'] === $productFromOrm['sku']) {
                     $found = true;
                 }
             }
-
-            $this->assertTrue($found, 'Product with sku `' . $productFromOrm['sku'] . '` not found.');
+            self::assertTrue($found, 'Product with sku `' . $productFromOrm['sku'] . '` not found.');
         }
     }
 
@@ -204,41 +177,31 @@ class ProductRepositoryTest extends WebTestCase
             );
         }
 
-        $this->configManager->set($this->configKey, $isConfigEnabled);
-        $this->configManager->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_product.allow_partial_product_search', $isConfigEnabled);
+        $configManager->flush();
 
-        /** @var ProductRepository $ormRepository */
-        $ormRepository = $this->client->getContainer()
-            ->get('doctrine')
-            ->getRepository(Product::class);
-
-        /** @var ProductSearchRepository $searchRepository */
-        $searchRepository = $this->client->getContainer()
-            ->get('oro_product.website_search.repository.product');
-
-        $productsFromOrm = $ormRepository->createQueryBuilder('p')
+        $productsFromOrm = $this->getProductRepository()->createQueryBuilder('p')
             ->where('p.sku = :sku')
             ->setParameter('sku', LoadProductData::PRODUCT_6)
             ->getQuery()
             ->getResult(Query::HYDRATE_ARRAY);
 
-        $productsFromSearch = $searchRepository
+        $productsFromSearch = $this->getProductSearchRepository()
             ->getSearchQueryBySkuOrName(substr(LoadProductData::PRODUCT_6, 0, 5))
             ->getResult()
             ->getElements();
 
-        $this->assertTrue(count($productsFromSearch) > 0);
+        self::assertTrue(count($productsFromSearch) > 0);
 
         foreach ($productsFromOrm as $productFromOrm) {
             $found = false;
-
             foreach ($productsFromSearch as $productFromSearch) {
                 if ($productFromSearch->getSelectedData()['sku'] === $productFromOrm['sku']) {
                     $found = true;
                 }
             }
-
-            $this->assertTrue($found, 'Product with sku `' . $productFromOrm['sku'] . '` not found.');
+            self::assertTrue($found, 'Product with sku `' . $productFromOrm['sku'] . '` not found.');
         }
     }
 
@@ -253,41 +216,31 @@ class ProductRepositoryTest extends WebTestCase
             );
         }
 
-        $this->configManager->set($this->configKey, $isConfigEnabled);
-        $this->configManager->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_product.allow_partial_product_search', $isConfigEnabled);
+        $configManager->flush();
 
-        /** @var ProductRepository $ormRepository */
-        $ormRepository = $this->client->getContainer()
-            ->get('doctrine')
-            ->getRepository(Product::class);
-
-        /** @var ProductSearchRepository $searchRepository */
-        $searchRepository = $this->client->getContainer()
-            ->get('oro_product.website_search.repository.product');
-
-        $productsFromOrm = $ormRepository->createQueryBuilder('p')
+        $productsFromOrm = $this->getProductRepository()->createQueryBuilder('p')
             ->where('p.sku IN (:sku)')
             ->setParameter('sku', [LoadProductData::PRODUCT_7, LoadProductData::PRODUCT_9])
             ->getQuery()
             ->getResult(Query::HYDRATE_ARRAY);
 
-        $productsFromSearch = $searchRepository
+        $productsFromSearch = $this->getProductSearchRepository()
             ->getAutocompleteSearchQuery('продукт', 2)
             ->getResult()
             ->getElements();
 
-        $this->assertTrue(count($productsFromSearch) > 0);
+        self::assertTrue(count($productsFromSearch) > 0);
 
         foreach ($productsFromOrm as $productFromOrm) {
             $found = false;
-
             foreach ($productsFromSearch as $productFromSearch) {
                 if ($productFromSearch->getSelectedData()['sku'] === $productFromOrm['sku']) {
                     $found = true;
                 }
             }
-
-            $this->assertTrue($found, 'Product with sku `' . $productFromOrm['sku'] . '` not found.');
+            self::assertTrue($found, 'Product with sku `' . $productFromOrm['sku'] . '` not found.');
         }
     }
 
@@ -302,28 +255,24 @@ class ProductRepositoryTest extends WebTestCase
             );
         }
 
-        $this->configManager->set($this->configKey, $isConfigEnabled);
-        $this->configManager->flush();
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_product.allow_partial_product_search', $isConfigEnabled);
+        $configManager->flush();
 
-        $repository = $this->client->getContainer()->get('oro_product.website_search.repository.product');
-
-        $this->assertEquals($expected, $repository->getProductSearchOperator());
+        self::assertEquals($expected, $this->getProductSearchRepository()->getProductSearchOperator());
     }
 
-    /**
-     * @return array[]
-     */
     public function productSearchOperatorDataProvider(): array
     {
         return [
             [
                 'isConfigEnabled' => false,
-                'expected' => 'contains',
+                'expected' => 'contains'
             ],
             [
                 'isConfigEnabled' => true,
-                'expected' => 'like',
-            ],
+                'expected' => 'like'
+            ]
         ];
     }
 }

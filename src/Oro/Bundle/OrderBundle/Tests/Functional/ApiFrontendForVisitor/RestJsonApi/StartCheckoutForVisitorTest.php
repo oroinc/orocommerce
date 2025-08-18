@@ -40,17 +40,20 @@ class StartCheckoutForVisitorTest extends FrontendRestJsonApiTestCase
     public function testTryToStartCheckoutForVisitorWithGuestCheckout(): void
     {
         $configManager = self::getConfigManager();
-        $originalGuestCheckoutOptionValue = $configManager->get('oro_checkout.guest_checkout');
-        self::assertFalse($originalGuestCheckoutOptionValue);
         $configManager->set('oro_checkout.guest_checkout', true);
         $configManager->flush();
+        try {
+            $response = $this->postSubresource(
+                ['entity' => 'orders', 'id' => '<toString(@order4->id)>', 'association' => 'checkout'],
+                [],
+                [],
+                false
+            );
+        } finally {
+            $configManager->set('oro_checkout.guest_checkout', false);
+            $configManager->flush();
+        }
 
-        $response = $this->postSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@order4->id)>', 'association' => 'checkout'],
-            [],
-            [],
-            false
-        );
         $this->assertResponseValidationError(
             [
                 'title' => 'access denied exception',

@@ -13,11 +13,11 @@ const postParseModel = model => {
     if (model.style && model.type === 'text') {
         ['padding-left', 'padding-right'].map(prop => {
             if (model.style[prop]) {
-                const styleProps = model.attributes.style ? model.attributes.style.split(';') : [];
+                const styleProps = model.attributes?.style ? model.attributes?.style.split(';') : [];
                 styleProps.push(`padding-left: ${model.style[prop]}`);
 
                 model.attributes = {
-                    ...model.attributes,
+                    ...model.attributes || {},
                     style: styleProps.join(';') + ';'
                 };
                 delete model.style[prop];
@@ -80,7 +80,7 @@ const postParseModel = model => {
  * @constructor
  */
 export default function ContentParser(editor) {
-    const originParseNode = editor.Parser.parserHtml.parseNode;
+    const originParseNodes = editor.Parser.parserHtml.parseNodes;
     const originParse = editor.Parser.parserHtml.parse;
 
     editor.Parser.parserHtml.parse = (content, options) => {
@@ -93,12 +93,15 @@ export default function ContentParser(editor) {
         return originParse.call(editor.Parser.parserHtml, content, options);
     };
 
-    editor.Parser.parserHtml.parseNode = (...args) =>
-        originParseNode.apply(editor.Parser.parserHtml, args).map(postParseModel).flat();
+    editor.Parser.parserHtml.parseNodes = (...args) =>
+        originParseNodes.apply(editor.Parser.parserHtml, args).map(postParseModel).flat();
 
     const originDestroy = editor.destroy;
     editor.destroy = () => {
-        const Parser = {...editor.em.get('Parser')};
+        const Parser = Object.create(
+            Object.getPrototypeOf(editor.em.get('Parser')),
+            Object.getOwnPropertyDescriptors(editor.em.get('Parser'))
+        );
         originDestroy.call(editor);
         editor.em.set('Parser', Parser);
     };

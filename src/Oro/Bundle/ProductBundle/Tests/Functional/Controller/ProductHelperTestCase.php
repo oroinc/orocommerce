@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -16,6 +17,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ProductHelperTestCase extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     protected function createProduct(): Crawler
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
@@ -190,7 +193,7 @@ class ProductHelperTestCase extends WebTestCase
 
     protected function getBusinessUnitId(): int
     {
-        return $this->getContainer()->get('oro_security.token_accessor')->getUser()->getOwner()->getId();
+        return self::getContainer()->get('oro_security.token_accessor')->getUser()->getOwner()->getId();
     }
 
     protected function sortUnitPrecisions(array $unitPrecisions): array
@@ -214,7 +217,7 @@ class ProductHelperTestCase extends WebTestCase
     protected function getProductDataBySku(string $sku): Product
     {
         /** @var Product $product */
-        $product = $this->getContainer()->get('doctrine')
+        $product = self::getContainer()->get('doctrine')
             ->getRepository(Product::class)
             ->findOneBy(['sku' => $sku]);
         $this->assertNotEmpty($product);
@@ -242,7 +245,7 @@ class ProductHelperTestCase extends WebTestCase
 
     protected function getLocalization(): Localization
     {
-        $localization = $this->getContainer()->get('doctrine')
+        $localization = self::getContainer()->get('doctrine')
             ->getRepository(Localization::class)
             ->findOneBy([]);
 
@@ -273,7 +276,7 @@ class ProductHelperTestCase extends WebTestCase
 
     protected function assertProductPrecision(int $productId, string $unit, string $expectedPrecision): void
     {
-        $productUnitPrecision = $this->getContainer()->get('doctrine')
+        $productUnitPrecision = self::getContainer()->get('doctrine')
             ->getRepository(ProductUnitPrecision::class)
             ->findOneBy(['product' => $productId, 'unit' => $unit]);
 
@@ -285,7 +288,7 @@ class ProductHelperTestCase extends WebTestCase
      */
     protected function assertDefaultProductUnit(Form $form): void
     {
-        $configManager = $this->client->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager(null);
         $expectedDefaultProductUnit = $configManager->get('oro_product.default_unit');
         $expectedDefaultProductUnitPrecision = $configManager->get('oro_product.default_unit_precision');
 

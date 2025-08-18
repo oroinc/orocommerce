@@ -1,0 +1,79 @@
+/* stylelint-disable */
+
+@use 'gjs_vars';
+@use 'gjs_category_general';
+
+.#{gjs_vars.$app-prefix} {
+  &traits-label {
+    border-bottom: 1px solid var(--gjs-main-dark-color);
+    font-weight: lighter;
+    margin-bottom: 5px;
+    padding: 10px;
+    text-align: left;
+  }
+
+  &label {
+    &-wrp {
+      width: 30%;
+      min-width: 30%;
+    }
+  }
+
+  &field {
+    &-wrp {
+      flex-grow: 1;
+    }
+  }
+
+  &traits-c,
+  &traits-cs {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &trait-categories {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &trait-category {
+    width: 100%;
+
+    &.#{gjs_vars.$app-prefix}open {
+      @extend .#{gjs_vars.$app-prefix}category-open;
+    }
+
+    .#{gjs_vars.$app-prefix}title {
+      @extend .#{gjs_vars.$app-prefix}category-title;
+    }
+
+    .#{gjs_vars.$app-prefix}caret-icon {
+      margin-right: 5px;
+    }
+  }
+}
+
+.#{gjs_vars.$trt-prefix}header {
+  font-weight: lighter;
+  padding: 10px;
+}
+
+.#{gjs_vars.$trt-prefix}trait {
+  display: flex;
+  justify-content: flex-start;
+  padding: 5px 10px;
+  font-weight: lighter;
+  align-items: center;
+  text-align: left;
+  gap: 5px;
+
+  &s {
+    font-size: var(--gjs-font-size);
+  }
+
+  .#{gjs_vars.$app-prefix}label {
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}

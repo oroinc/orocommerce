@@ -32,24 +32,21 @@ class FrontendRoutingTest extends WebTestCase
     {
         $configManager = self::getConfigManager();
         $sluggableUrlsEnabled = $configManager->get('oro_redirect.enable_direct_url');
-        if ($sluggableUrlsEnabled) {
-            $configManager->set('oro_redirect.enable_direct_url', false);
-            $configManager->flush();
-            try {
-                $slugTargetUrl = $this->getUrl($slug->getRouteName(), $slug->getRouteParameters());
-            } finally {
-                $configManager->set('oro_redirect.enable_direct_url', $sluggableUrlsEnabled);
-                $configManager->flush();
-            }
-        } else {
+        $configManager->set('oro_redirect.enable_direct_url', false);
+        $configManager->flush();
+        try {
             $slugTargetUrl = $this->getUrl($slug->getRouteName(), $slug->getRouteParameters());
+        } finally {
+            $configManager->set('oro_redirect.enable_direct_url', $sluggableUrlsEnabled);
+            $configManager->flush();
         }
+
         self::assertStringStartsNotWith('/slug/', $slugTargetUrl);
 
         return $slugTargetUrl;
     }
 
-    public function testSlugRouting()
+    public function testSlugRouting(): void
     {
         /** @var Page $page */
         $page = $this->getReference(LoadPageData::PAGE_1);
@@ -57,37 +54,37 @@ class FrontendRoutingTest extends WebTestCase
         $slug = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
 
         $crawler = $this->client->request('GET', $this->getSlugTargetUrl($slug));
-        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), 200);
         self::assertStringContainsString($page->getContent(), $crawler->html());
 
         $crawler = $this->client->request('GET', LoadSlugsData::SLUG_URL_ANONYMOUS);
-        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), 200);
         self::assertStringContainsString($page->getContent(), $crawler->html());
     }
 
-    public function testSlugRoutingAuthentication()
+    public function testSlugRoutingAuthentication(): void
     {
         /** @var Slug $slug */
         $slug = $this->getReference(LoadSlugsData::SLUG_URL_USER);
 
         $this->client->request('GET', $this->getSlugTargetUrl($slug));
-        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 401);
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), 401);
 
         $this->client->request('GET', LoadSlugsData::SLUG_URL_USER);
-        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 401);
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), 401);
 
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
 
         $crawler = $this->client->request('GET', $this->getSlugTargetUrl($slug));
-        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), 200);
         $pageTitle = $crawler->filter('title')->first()->html();
 
         $crawler = $this->client->request('GET', LoadSlugsData::SLUG_URL_USER);
-        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), 200);
         $slugPageTitle = $crawler->filter('title')->first()->html();
 
         $this->assertEquals($pageTitle, $slugPageTitle);
