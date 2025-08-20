@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Api\Processor;
 
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -12,12 +12,15 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class DenyAccessForDisabledGuestCheckout implements ProcessorInterface
 {
-    use FeatureCheckerHolderTrait;
+    public function __construct(
+        private readonly FeatureChecker $featureChecker
+    ) {
+    }
 
     #[\Override]
     public function process(ContextInterface $context): void
     {
-        if (!$this->isFeaturesEnabled()) {
+        if (!$this->featureChecker->isFeatureEnabled('guest_checkout')) {
             throw new AccessDeniedException('The guest checkout is disabled.');
         }
     }

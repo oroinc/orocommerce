@@ -29,6 +29,7 @@ class StartCheckoutForVisitorWithShoppingListTest extends FrontendRestJsonApiTes
         $configManager->set('oro_checkout.guest_checkout', false);
         $configManager->set('oro_shopping_list.availability_for_guests', false);
         $configManager->flush();
+
         parent::tearDown();
     }
 

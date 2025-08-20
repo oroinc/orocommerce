@@ -57,8 +57,6 @@ class CreateOrderForBuyerTest extends FrontendRestJsonApiTestCase
 
     public function testCreateWithProductKit(): void
     {
-        self::markTestSkipped('Will be fixed in BB-26091');
-
         $shipUntil = (new \DateTime('now + 10 day'))->format('Y-m-d');
         $data = $this->getRequestData('create_order_with_product_kit.yml');
         $data['data']['attributes']['shipUntil'] = $shipUntil;

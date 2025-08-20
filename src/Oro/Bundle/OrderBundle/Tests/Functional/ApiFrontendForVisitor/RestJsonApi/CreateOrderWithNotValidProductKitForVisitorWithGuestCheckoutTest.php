@@ -18,8 +18,6 @@ class CreateOrderWithNotValidProductKitForVisitorWithGuestCheckoutTest extends F
 {
     use RolePermissionExtension;
 
-    private ?bool $initialGuestCheckoutOptionValue;
-
     #[\Override]
     protected function setUp(): void
     {
@@ -30,20 +28,20 @@ class CreateOrderWithNotValidProductKitForVisitorWithGuestCheckoutTest extends F
             '@OroOrderBundle/Tests/Functional/ApiFrontend/DataFixtures/orders.yml',
             LoadPaymentTermData::class,
         ]);
-        $this->initialGuestCheckoutOptionValue = $this->getGuestCheckoutOptionValue();
-        if (!$this->initialGuestCheckoutOptionValue) {
-            $this->setGuestCheckoutOptionValue(true);
-        }
+
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_checkout.guest_checkout', true);
+        $configManager->flush();
     }
 
     #[\Override]
     protected function tearDown(): void
     {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_checkout.guest_checkout', false);
+        $configManager->flush();
+
         parent::tearDown();
-        if ($this->getGuestCheckoutOptionValue() !== $this->initialGuestCheckoutOptionValue) {
-            $this->setGuestCheckoutOptionValue($this->initialGuestCheckoutOptionValue);
-        }
-        $this->initialGuestCheckoutOptionValue = null;
     }
 
     #[\Override]
@@ -70,18 +68,6 @@ class CreateOrderWithNotValidProductKitForVisitorWithGuestCheckoutTest extends F
             $this->getReference('payment_term_net_10')
         );
         $this->getEntityManager()->flush();
-    }
-
-    private function getGuestCheckoutOptionValue(): bool
-    {
-        return self::getConfigManager()->get('oro_checkout.guest_checkout');
-    }
-
-    private function setGuestCheckoutOptionValue(bool $value): void
-    {
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_checkout.guest_checkout', $value);
-        $configManager->flush();
     }
 
     private function getGuestCustomerGroup(): ?CustomerGroup

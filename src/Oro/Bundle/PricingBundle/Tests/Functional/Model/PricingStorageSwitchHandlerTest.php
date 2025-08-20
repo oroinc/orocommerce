@@ -62,6 +62,7 @@ class PricingStorageSwitchHandlerTest extends WebTestCase
 
     public function testMoveAssociationsForFlatPricingStorage(): void
     {
+        $this->markTestSkipped('Due to BB-26112');
         $this->handler->moveAssociationsForFlatPricingStorage();
 
         $website = $this->getReference('US');

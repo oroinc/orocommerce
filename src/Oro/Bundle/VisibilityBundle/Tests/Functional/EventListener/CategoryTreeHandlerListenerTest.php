@@ -4,14 +4,12 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
-use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
@@ -22,7 +20,6 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibi
 class CategoryTreeHandlerListenerTest extends WebTestCase
 {
     use CatalogTrait;
-    use ConfigManagerAwareTestTrait;
 
     private ScopeManager $scopeManager;
 
@@ -43,9 +40,6 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
      */
     public function testCheckCalculatedCategories(array $visibleCategories, array $invisibleCategories): void
     {
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_visibility.category_visibility', CategoryVisibility::VISIBLE);
-        $configManager->flush();
         self::getContainer()->get('oro_visibility.visibility.cache.cache_builder')
             ->buildCache();
 

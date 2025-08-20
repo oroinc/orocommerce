@@ -20,18 +20,32 @@ class ProductControllerTest extends WebTestCase
 
     private const SIDEBAR_ROUTE = 'oro_catalog_category_product_sidebar';
 
+    private ?bool $initialSingleUnitMode;
+
     #[\Override]
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadCategoryProductData::class, LoadCategoryUnitPrecisionData::class]);
+
+        $this->initialSingleUnitMode = self::getConfigManager()->get('oro_product.single_unit_mode');
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        if ($configManager->get('oro_product.single_unit_mode') !== $this->initialSingleUnitMode) {
+            $configManager->set('oro_product.single_unit_mode', $this->initialSingleUnitMode);
+            $configManager->flush();
+        }
     }
 
     /**
      * @dataProvider viewDataProvider
      */
-    public function testView(bool $includeSubcategories, bool $includeNotCategorized, array $expected)
+    public function testView(bool $includeSubcategories, bool $includeNotCategorized, array $expected): void
     {
         /** @var Category $secondLevelCategory */
         $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
@@ -46,7 +60,7 @@ class ProductControllerTest extends WebTestCase
             [],
             true
         );
-        $result = $this->getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
         $count = count($expected);
         $this->assertCount($count, $result['data']);
         foreach ($result['data'] as $data) {
@@ -54,7 +68,7 @@ class ProductControllerTest extends WebTestCase
         }
     }
 
-    public function testViewWithoutCategoryAndWithNotCategorizedProduct()
+    public function testViewWithoutCategoryAndWithNotCategorizedProduct(): void
     {
         $response = $this->client->requestGrid(
             [
@@ -64,7 +78,7 @@ class ProductControllerTest extends WebTestCase
             [],
             true
         );
-        $result = $this->getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
         $this->assertCount(1, $result['data']);
 
         foreach ($result['data'] as $data) {
@@ -112,7 +126,7 @@ class ProductControllerTest extends WebTestCase
         ];
     }
 
-    public function testSidebarAction()
+    public function testSidebarAction(): void
     {
         $categoryId = 1;
         $crawler = $this->client->request(
@@ -135,11 +149,14 @@ class ProductControllerTest extends WebTestCase
     /**
      * @dataProvider defaultUnitPrecisionDataProvider
      */
-    public function testDefaultProductUnitPrecision(bool $singleUnitMode, ?string $category, string $expected)
+    public function testDefaultProductUnitPrecision(bool $singleUnitMode, ?string $category, string $expected): void
     {
         $configManager = self::getConfigManager();
-        $configManager->set('oro_product.single_unit_mode', $singleUnitMode);
-        $configManager->flush();
+        if ($configManager->get('oro_product.single_unit_mode') !== $singleUnitMode) {
+            $configManager->set('oro_product.single_unit_mode', $singleUnitMode);
+            $configManager->flush();
+        }
+
         $systemDefaultUnit = $configManager->get('oro_product.default_unit');
         $systemDefaultPrecision = $configManager->get('oro_product.default_unit_precision');
 
@@ -173,7 +190,7 @@ class ProductControllerTest extends WebTestCase
             $formValues['oro_product_step_one']['type'] = Product::TYPE_SIMPLE;
         }
 
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
         $crawler = $this->client->request(
             'POST',
             $this->getUrl('oro_product_create'),
@@ -181,7 +198,7 @@ class ProductControllerTest extends WebTestCase
         );
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         $form = $crawler->selectButton('Save and Close')->form();
         $this->assertDefaultProductUnit(
             $form,

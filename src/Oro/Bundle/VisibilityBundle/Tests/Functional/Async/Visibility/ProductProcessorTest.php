@@ -6,7 +6,6 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Async\Visibility;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
@@ -26,7 +25,6 @@ use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 class ProductProcessorTest extends WebTestCase
 {
     use MessageQueueExtension;
-    use ConfigManagerAwareTestTrait;
     use VisibilityAwareTestTrait;
 
     #[\Override]
@@ -39,25 +37,9 @@ class ProductProcessorTest extends WebTestCase
             LoadCustomerUserData::class,
         ]);
 
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_visibility.product_visibility', VisibilityInterface::VISIBLE);
-        $configManager->set('oro_visibility.category_visibility', VisibilityInterface::VISIBLE);
-        $configManager->flush();
-
         self::getContainer()
             ->get('oro_visibility.visibility.cache.cache_builder')
             ->buildCache();
-    }
-
-    #[\Override]
-    protected function tearDown(): void
-    {
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_visibility.product_visibility', VisibilityInterface::VISIBLE);
-        $configManager->set('oro_visibility.category_visibility', VisibilityInterface::VISIBLE);
-        $configManager->flush();
-
-        parent::tearDown();
     }
 
     public function testProcess(): void

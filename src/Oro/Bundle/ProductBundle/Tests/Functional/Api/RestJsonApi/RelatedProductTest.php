@@ -23,6 +23,9 @@ class RelatedProductTest extends RestJsonApiTestCase
 {
     use RolePermissionExtension;
 
+    private ?bool $initialRelatedProducts;
+    private ?int $initialRelatedProductsLimit;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -37,21 +40,36 @@ class RelatedProductTest extends RestJsonApiTestCase
             Product::class,
             AccessLevel::GLOBAL_LEVEL
         );
+
+        $configManager = self::getConfigManager();
+        $this->initialRelatedProducts = $configManager->get('oro_product.related_products_enabled');
+        $this->initialRelatedProductsLimit = $configManager->get('oro_product.max_number_of_related_products');
     }
 
-    private function setRelatedProductsEnabled(bool $enabled): void
+    #[\Override]
+    protected function tearDown(): void
     {
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_product.related_products_enabled', $enabled);
-        $configManager->flush();
+        $this->setRelatedProductsEnabled($this->initialRelatedProducts);
+        $this->setRelatedProductsLimit($this->initialRelatedProductsLimit);
+        parent::tearDown();
     }
 
-    private function setRelatedProductsLimit(int $limit): void
+    private function setRelatedProductsEnabled(?bool $enabled): void
     {
         $configManager = self::getConfigManager();
-        $configManager->set('oro_product.max_number_of_related_products', $limit, 0);
-        $configManager->set('oro_product.max_number_of_related_products', $limit, 1);
-        $configManager->flush();
+        if ($configManager->get('oro_product.related_products_enabled') !== $enabled) {
+            $configManager->set('oro_product.related_products_enabled', $enabled);
+            $configManager->flush();
+        }
+    }
+
+    private function setRelatedProductsLimit(?int $limit): void
+    {
+        $configManager = self::getConfigManager();
+        if ($configManager->get('oro_product.max_number_of_related_products') !== $limit) {
+            $configManager->set('oro_product.max_number_of_related_products', $limit);
+            $configManager->flush();
+        }
     }
 
     public function testGetList(): void

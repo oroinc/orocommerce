@@ -14,8 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CheckoutAddressForVisitorWithoutGuestCheckoutTest extends FrontendRestJsonApiTestCase
 {
-    private const string ENABLE_GUEST_CHECKOUT = 'oro_checkout.guest_checkout';
-
     #[\Override]
     protected function setUp(): void
     {
@@ -26,8 +24,6 @@ class CheckoutAddressForVisitorWithoutGuestCheckoutTest extends FrontendRestJson
             LoadCustomerUserData::class,
             LoadGuestCheckoutData::class
         ]);
-        // guard
-        self::assertFalse(self::getConfigManager()->get(self::ENABLE_GUEST_CHECKOUT));
     }
 
     #[\Override]

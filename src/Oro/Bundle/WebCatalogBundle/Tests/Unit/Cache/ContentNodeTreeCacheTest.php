@@ -10,21 +10,17 @@ use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedContentNodeNormalizer;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 class ContentNodeTreeCacheTest extends TestCase
 {
-    use EntityTrait;
-
-    private CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject $cache;
-
-    private ResolvedContentNodeNormalizer|\PHPUnit\Framework\MockObject\MockObject $normalizer;
-
-    private CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject $cacheItem;
-
+    private CacheItemPoolInterface&MockObject $cache;
+    private ResolvedContentNodeNormalizer&MockObject $normalizer;
+    private CacheItemInterface&MockObject $cacheItem;
     private ContentNodeTreeCache $contentNodeTreeCache;
 
     #[\Override]
@@ -40,6 +36,14 @@ class ContentNodeTreeCacheTest extends TestCase
         );
     }
 
+    private function getLocalization(int $id): Localization
+    {
+        $localization = new Localization();
+        ReflectionUtil::setId($localization, $id);
+
+        return $localization;
+    }
+
     public function testFetchWhenNoCachedData(): void
     {
         $this->cache->expects(self::once())
@@ -51,8 +55,7 @@ class ContentNodeTreeCacheTest extends TestCase
             ->method('isHit')
             ->willReturn(false);
 
-        $this->normalizer
-            ->expects(self::never())
+        $this->normalizer->expects(self::never())
             ->method(self::anything());
 
         self::assertFalse($this->contentNodeTreeCache->fetch(2, [5]));
@@ -73,14 +76,14 @@ class ContentNodeTreeCacheTest extends TestCase
                 [
                     'string' => 'Title 1 EN',
                     'localization' => ['entity_class' => Localization::class, 'entity_id' => 5],
-                    'fallback' => FallbackType::PARENT_LOCALIZATION,
-                ],
+                    'fallback' => FallbackType::PARENT_LOCALIZATION
+                ]
             ],
             'contentVariant' => [
                 'data' => ['id' => 3, 'type' => 'test_type', 'test' => 1],
                 'localizedUrls' => [
-                    ['string' => '/test', 'localization' => null, 'fallback' => FallbackType::NONE],
-                ],
+                    ['string' => '/test', 'localization' => null, 'fallback' => FallbackType::NONE]
+                ]
             ],
             'childNodes' => [
                 [
@@ -89,31 +92,29 @@ class ContentNodeTreeCacheTest extends TestCase
                     'identifier' => 'root__second',
                     'resolveVariantTitle' => false,
                     'titles' => [
-                        ['string' => 'Child Title 1', 'localization' => null, 'fallback' => FallbackType::NONE],
+                        ['string' => 'Child Title 1', 'localization' => null, 'fallback' => FallbackType::NONE]
                     ],
                     'contentVariant' => [
                         'data' => ['id' => 7, 'type' => 'test_type', 'test' => 2],
                         'localizedUrls' => [
-                            ['string' => '/test/content', 'localization' => null, 'fallback' => FallbackType::NONE],
-                        ],
+                            ['string' => '/test/content', 'localization' => null, 'fallback' => FallbackType::NONE]
+                        ]
                     ],
-                    'childNodes' => [],
-                ],
-            ],
+                    'childNodes' => []
+                ]
+            ]
         ];
         $expected = new ResolvedContentNode(
             1,
             'root',
             1,
-            new ArrayCollection(
-                [
-                    (new LocalizedFallbackValue())->setString('Title 1'),
-                    (new LocalizedFallbackValue())
-                        ->setString('Title 1 EN')
-                        ->setFallback(FallbackType::PARENT_LOCALIZATION)
-                        ->setLocalization($this->getEntity(Localization::class, ['id' => 5])),
-                ]
-            ),
+            new ArrayCollection([
+                (new LocalizedFallbackValue())->setString('Title 1'),
+                (new LocalizedFallbackValue())
+                    ->setString('Title 1 EN')
+                    ->setFallback(FallbackType::PARENT_LOCALIZATION)
+                    ->setLocalization($this->getLocalization(5))
+            ]),
             (new ResolvedContentVariant())
                 ->setData(['id' => 3, 'type' => 'test_type', 'test' => 1])
                 ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test')),
@@ -124,11 +125,7 @@ class ContentNodeTreeCacheTest extends TestCase
             2,
             'root__second',
             2,
-            new ArrayCollection(
-                [
-                    (new LocalizedFallbackValue())->setString('Child Title 1'),
-                ]
-            ),
+            new ArrayCollection([(new LocalizedFallbackValue())->setString('Child Title 1')]),
             (new ResolvedContentVariant())
                 ->setData(['id' => 7, 'type' => 'test_type', 'test' => 2])
                 ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test/content')),
@@ -148,8 +145,7 @@ class ContentNodeTreeCacheTest extends TestCase
             ->method('get')
             ->willReturn($cacheData);
 
-        $this->normalizer
-            ->expects(self::once())
+        $this->normalizer->expects(self::once())
             ->method('denormalize')
             ->with($cacheData, ['tree_depth' => 4])
             ->willReturn($expected);
@@ -164,8 +160,7 @@ class ContentNodeTreeCacheTest extends TestCase
             ->with('node_2_scope_5')
             ->willReturn($this->cacheItem);
 
-        $this->normalizer
-            ->expects(self::never())
+        $this->normalizer->expects(self::never())
             ->method(self::anything());
 
         $this->cacheItem->expects(self::once())
@@ -189,14 +184,12 @@ class ContentNodeTreeCacheTest extends TestCase
             1,
             'root',
             1,
-            new ArrayCollection(
-                [
-                    (new LocalizedFallbackValue())->setString('Title 1'),
-                    (new LocalizedFallbackValue())->setString('Title 1 EN')
-                        ->setFallback(FallbackType::PARENT_LOCALIZATION)
-                        ->setLocalization($this->getEntity(Localization::class, ['id' => 5])),
-                ]
-            ),
+            new ArrayCollection([
+                (new LocalizedFallbackValue())->setString('Title 1'),
+                (new LocalizedFallbackValue())->setString('Title 1 EN')
+                    ->setFallback(FallbackType::PARENT_LOCALIZATION)
+                    ->setLocalization($this->getLocalization(5))
+            ]),
             (new ResolvedContentVariant())->setData(['id' => 3, 'type' => 'test_type', 'test' => 1])
                 ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test')),
             true
@@ -213,9 +206,7 @@ class ContentNodeTreeCacheTest extends TestCase
                     'type' => 'test_type',
                     'skipped_null' => null,
                     'sub_array' => ['a' => 'b'],
-                    'sub_iterator' => new ArrayCollection(
-                        ['c' => $this->getEntity(Localization::class, ['id' => 3])]
-                    ),
+                    'sub_iterator' => new ArrayCollection(['c' => $this->getLocalization(3)])
                 ]),
             false
         );
@@ -230,12 +221,12 @@ class ContentNodeTreeCacheTest extends TestCase
                 [
                     'string' => 'Title 1 EN',
                     'localization' => ['entity_class' => Localization::class, 'entity_id' => 5],
-                    'fallback' => 'parent_localization',
-                ],
+                    'fallback' => 'parent_localization'
+                ]
             ],
             'contentVariant' => [
                 'data' => ['id' => 3, 'type' => 'test_type', 'test' => 1],
-                'localizedUrls' => [['string' => '/test', 'localization' => null, 'fallback' => null]],
+                'localizedUrls' => [['string' => '/test', 'localization' => null, 'fallback' => null]]
             ],
             'childNodes' => [
                 [
@@ -249,17 +240,16 @@ class ContentNodeTreeCacheTest extends TestCase
                             'id' => 7,
                             'type' => 'test_type',
                             'sub_array' => ['a' => 'b'],
-                            'sub_iterator' => ['c' => ['entity_class' => Localization::class, 'entity_id' => 3]],
+                            'sub_iterator' => ['c' => ['entity_class' => Localization::class, 'entity_id' => 3]]
                         ],
-                        'localizedUrls' => [['string' => '/test/c', 'localization' => null, 'fallback' => null]],
+                        'localizedUrls' => [['string' => '/test/c', 'localization' => null, 'fallback' => null]]
                     ],
-                    'childNodes' => [],
-                ],
-            ],
+                    'childNodes' => []
+                ]
+            ]
         ];
 
-        $this->normalizer
-            ->expects(self::once())
+        $this->normalizer->expects(self::once())
             ->method('normalize')
             ->with($resolvedNode)
             ->willReturn($convertedNode);

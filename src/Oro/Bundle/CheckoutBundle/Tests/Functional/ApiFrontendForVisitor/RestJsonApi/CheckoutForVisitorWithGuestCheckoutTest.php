@@ -15,8 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CheckoutForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTestCase
 {
-    private const string ENABLE_GUEST_CHECKOUT = 'oro_checkout.guest_checkout';
-
     #[\Override]
     protected function setUp(): void
     {
@@ -27,15 +25,19 @@ class CheckoutForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTestCas
             LoadCustomerUserData::class,
             LoadGuestCheckoutData::class
         ]);
-        // guard
-        self::assertFalse(self::getConfigManager()->get(self::ENABLE_GUEST_CHECKOUT));
-        $this->setGuestCheckoutOptionValue(true);
+
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_checkout.guest_checkout', true);
+        $configManager->flush();
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        $this->setGuestCheckoutOptionValue(false);
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_checkout.guest_checkout', false);
+        $configManager->flush();
+
         parent::tearDown();
     }
 
@@ -52,13 +54,6 @@ class CheckoutForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTestCas
             $checkout->getSource()->getShoppingList()->addVisitor($visitor);
         }
         $this->getEntityManager()->flush();
-    }
-
-    private function setGuestCheckoutOptionValue(bool $value): void
-    {
-        $configManager = self::getConfigManager();
-        $configManager->set(self::ENABLE_GUEST_CHECKOUT, $value);
-        $configManager->flush();
     }
 
     public function testGetList(): void

@@ -26,20 +26,35 @@ class PriceListCollectionProviderTest extends WebTestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->initClient([]);
+        $this->initClient();
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
             LoadPriceListFallbackSettings::class,
             LoadPriceListRelations::class,
         ]);
 
-        $this->provider = $this->getContainer()->get('oro_pricing.provider.price_list_collection');
+        $this->provider = self::getContainer()->get('oro_pricing.provider.price_list_collection');
     }
 
-    public function testGetPriceListsByConfig()
+    public function testGetPriceListsByConfig(): void
     {
-        $this->setPriceListToConfig();
-        $pricesChain = $this->provider->getPriceListsByConfig();
+        $em = self::getContainer()->get('doctrine')->getManager();
+        $priceList = $em->getReference(PriceList::class, self::DEFAULT_PRICE_LIST);
+
+        $configManager = self::getConfigManager();
+        $configConverter = self::getContainer()->get('oro_pricing.system_config_converter');
+        $initialPriceLists = $configConverter->convertFromSaved(
+            $configManager->get('oro_pricing.default_price_lists')
+        );
+        $configManager->set('oro_pricing.default_price_lists', [new PriceListConfig($priceList, 100, true)]);
+        $configManager->flush();
+        try {
+            $pricesChain = $this->provider->getPriceListsByConfig();
+        } finally {
+            $configManager->set('oro_pricing.default_price_lists', $initialPriceLists);
+            $configManager->flush();
+        }
+
         $this->assertCount(1, $pricesChain);
         $this->assertTrue($pricesChain[0]->isMergeAllowed());
     }
@@ -47,7 +62,7 @@ class PriceListCollectionProviderTest extends WebTestCase
     /**
      * @dataProvider testGetPriceListsByWebsiteDataProvider
      */
-    public function testGetPriceListsByWebsite(string $websiteReference, array $expectedPriceLists)
+    public function testGetPriceListsByWebsite(string $websiteReference, array $expectedPriceLists): void
     {
         $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
 
@@ -115,7 +130,7 @@ class PriceListCollectionProviderTest extends WebTestCase
         string $customerGroupReference,
         string $websiteReference,
         array $expectedPriceLists
-    ) {
+    ): void {
         $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
 
         /** @var CustomerGroup $customerGroup */
@@ -228,7 +243,7 @@ class PriceListCollectionProviderTest extends WebTestCase
         string $customerReference,
         string $websiteReference,
         array $expectedPriceLists
-    ) {
+    ): void {
         $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
 
         /** @var Customer $customer */
@@ -276,8 +291,10 @@ class PriceListCollectionProviderTest extends WebTestCase
     /**
      * @dataProvider getPriceListsByCustomerForCustomerWithoutGroupDataProvider
      */
-    public function testGetPriceListsByCustomerForCustomerWithoutGroup(string $website, array $expectedPriceLists)
-    {
+    public function testGetPriceListsByCustomerForCustomerWithoutGroup(
+        string $website,
+        array $expectedPriceLists
+    ): void {
         /** @var Customer $customer */
         $customer = $this->getReference('customer.level_1_1');
         $this->assertNull($customer->getGroup());
@@ -344,7 +361,7 @@ class PriceListCollectionProviderTest extends WebTestCase
     {
         $result = [];
         /** @var EntityManager $em */
-        $em = $this->getContainer()->get('doctrine')->getManager();
+        $em = self::getContainer()->get('doctrine')->getManager();
         foreach ($expectedPriceLists as $expectedPriceListData) {
             if ($expectedPriceListData['priceList'] === self::DEFAULT_PRICE_LIST) {
                 $priceList = $em->getReference(PriceList::class, self::DEFAULT_PRICE_LIST);
@@ -358,19 +375,6 @@ class PriceListCollectionProviderTest extends WebTestCase
         }
 
         return $result;
-    }
-
-    private function setPriceListToConfig(): void
-    {
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        $priceList = $em->getReference(PriceList::class, self::DEFAULT_PRICE_LIST);
-
-        $configManager = self::getConfigManager();
-        $configManager->set(
-            'oro_pricing.default_price_lists',
-            [new PriceListConfig($priceList, 100, true)]
-        );
-        $configManager->flush();
     }
 
     private function resolveResult(array $sequenceMembers): array

@@ -10,8 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CustomerForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTestCase
 {
-    private const string ENABLE_GUEST_CHECKOUT = 'oro_checkout.guest_checkout';
-
     #[\Override]
     protected function setUp(): void
     {
@@ -22,23 +20,20 @@ class CustomerForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTestCas
             LoadCountriesAndRegions::class,
             '@OroCustomerBundle/Tests/Functional/ApiFrontend/DataFixtures/customer_user.yml'
         ]);
-        // guard
-        self::assertFalse(self::getConfigManager()->get(self::ENABLE_GUEST_CHECKOUT));
-        $this->setGuestCheckoutOptionValue(true);
+
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_checkout.guest_checkout', true);
+        $configManager->flush();
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        $this->setGuestCheckoutOptionValue(false);
-        parent::tearDown();
-    }
-
-    private function setGuestCheckoutOptionValue(bool $value): void
-    {
         $configManager = self::getConfigManager();
-        $configManager->set(self::ENABLE_GUEST_CHECKOUT, $value);
+        $configManager->set('oro_checkout.guest_checkout', false);
         $configManager->flush();
+
+        parent::tearDown();
     }
 
     public function testGetList(): void
