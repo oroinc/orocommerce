@@ -45,9 +45,9 @@ class OrderStub extends Order
         return $this->serializedData;
     }
 
-    public function setSerializedData(array $serializedData): self
+    public function setSerializedData(array $value): self
     {
-        $this->serializedData = $serializedData;
+        $this->serializedData = $value;
 
         return $this;
     }
