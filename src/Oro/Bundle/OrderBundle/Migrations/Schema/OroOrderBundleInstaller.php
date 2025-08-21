@@ -45,7 +45,7 @@ class OroOrderBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_25_1';
+        return 'v1_25_2';
     }
 
     #[\Override]

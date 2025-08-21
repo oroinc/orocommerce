@@ -3,6 +3,16 @@ parameters:
     oro_order.order_processing_workflow_group: 'order_processing'
 
 services:
+    oro_order.async.precalculate_order_total_processor:
+        class: Oro\Bundle\OrderBundle\Async\PrecalculateOrderTotalProcessor
+        arguments:
+            - '@oro_message_queue.message_producer'
+            - '@doctrine'
+            - '@oro_order.order.total.total_helper'
+            - '@oro_platform.optional_listeners.manager'
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
     oro_order.order.entity.id_generator:
         class: 'Oro\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator'
         public: false
