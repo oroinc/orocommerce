@@ -60,8 +60,8 @@ class SubtotalSubscriber implements EventSubscriberInterface
 
             $this->totalHelper->fill($data);
 
-            if (!empty($serializedData['totals']) && $serializedData['totals']['not_relevant_price'] === true &&
-                $data->getTotalObject()->getValue() === (float)$serializedData['totals']['total']
+            if (isset($serializedData['precalculatedTotal'])
+                && $data->getTotalObject()->getValue() === (float)$serializedData['precalculatedTotal']
             ) {
                 $data->setTotalObject($originalTotal);
             }
