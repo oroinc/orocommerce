@@ -19,7 +19,7 @@ class ProductShippingCostController extends AbstractController
     #[Route(
         path: '/widget/shipping_cost_update/{unit}/{precision}',
         name: 'oro_fixed_product_shipping_widget_shipping_cost_update',
-        requirements: ['unit' => '\w+', 'precision' => '\d+']
+        requirements: ['unit' => '[\w\s\:]+', 'precision' => '\d+']
     )]
     #[Template('@OroFixedProductShipping/Product/widget/shipping_cost_update.html.twig')]
     #[AclAncestor('oro_product_update')]
