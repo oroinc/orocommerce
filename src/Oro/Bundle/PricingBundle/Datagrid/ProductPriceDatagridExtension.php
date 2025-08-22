@@ -292,7 +292,12 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
     {
         $result = 'price_column_' . strtolower($currencyIsoCode);
 
-        return $unitCode ? sprintf('%s_%s', $result, strtolower($unitCode)) : $result;
+        if (!is_null($unitCode)) {
+            $unitCode = str_replace(':', '__', $unitCode);
+            $result = sprintf('%s_%s', $result, strtolower($unitCode));
+        }
+
+        return $result;
     }
 
     private function getJoinAlias(string $columnName): string
