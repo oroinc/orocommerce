@@ -154,7 +154,7 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
 
         $productUnitRepo->expects(self::once())
             ->method('getAllUnitCodes')
-            ->willReturn(['item']);
+            ->willReturn(['item', 'uom:7']);
 
         $this->mockTranslator();
 
@@ -370,6 +370,48 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
                 ),
             ],
         ];
+    }
+
+    public function testProcessConfigsWhenProductUnitContainsColon(): void
+    {
+        $unit = 'uom:7';
+        $column = 'price_column_usd_uom__7';
+        $joinAlias = 'price_column_usd_uom__7_table';
+        $selectedField = 'price_column_usd_uom__7__value';
+
+        $unitCodePart = "''";
+        $showTierPrices = true;
+
+        $selectExpressions = [
+            sprintf('price_column_usd_uom__7_table.value as %s', $selectedField),
+            sprintf(
+                "GROUP_CONCAT(DISTINCT CONCAT_WS('|', %s.value, CAST(%s.quantity as string), %s) SEPARATOR ';') " .
+                'as %s',
+                $joinAlias,
+                $joinAlias,
+                $unitCodePart,
+                $column
+            )
+        ];
+        $joinExpression = sprintf(
+            '%s.product = product.id AND %1$s.currency = \'USD\' AND %1$s.priceList = 1 AND %1$s.unit = \'%2$s\'',
+            $joinAlias,
+            $unit
+        );
+        $this->mockAuthorizationChecker(true);
+
+        $this->assertColumnsAddedToConfig();
+
+        $this->assertColumnsAddedToQueryConfig(
+            $selectedField,
+            $joinAlias,
+            $showTierPrices,
+            $selectExpressions,
+            $joinExpression
+        );
+
+        $this->extension->setParameters($this->datagridParameters);
+        $this->extension->processConfigs($this->datagridConfiguration);
     }
 
     private function assertColumnsAddedToQueryConfig(
