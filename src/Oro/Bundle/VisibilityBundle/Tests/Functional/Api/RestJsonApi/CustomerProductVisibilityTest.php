@@ -44,7 +44,7 @@ class CustomerProductVisibilityTest extends RestJsonApiTestCase
             ['entity' => 'customerproductvisibilities']
         );
 
-        $this->assertResponseContains('cget_customer_product_visibility.yml', $response);
+        $this->assertResponseContains('cget_customer_product_visibility.yml', $response, true);
     }
 
     public function testTryToGetListSortById(): void
