@@ -7,7 +7,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Computes value for zipCodes field of TaxJurisdiction entity.
+ * Computes a value of "zipCodes" field for TaxJurisdiction entity.
  */
 class ComputeTaxJurisdictionZipCodes implements ProcessorInterface
 {

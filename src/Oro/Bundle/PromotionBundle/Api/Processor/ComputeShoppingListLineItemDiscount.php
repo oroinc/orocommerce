@@ -22,7 +22,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Computes values for "totalValue" and "discount" fields for shopping list line item entity.
+ * Computes values of "totalValue" and "discount" fields for ShoppingListLineItem entity.
  */
 class ComputeShoppingListLineItemDiscount implements ProcessorInterface
 {

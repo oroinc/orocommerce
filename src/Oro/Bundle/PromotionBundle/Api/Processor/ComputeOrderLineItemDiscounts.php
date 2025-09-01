@@ -11,7 +11,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Computes values for the following fields for OrderLineItem entity:
+ * Computes values of the following fields for OrderLineItem entity:
  * * rowTotalDiscountAmount
  * * rowTotalAfterDiscount
  * * rowTotalAfterDiscountIncludingTax
