@@ -60,7 +60,7 @@ class OroOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_17_6';
+        return 'v1_17_7';
     }
 
     /**

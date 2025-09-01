@@ -127,12 +127,7 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
     {
         $order = $this->prepareOrder();
         $order->getTotalObject()->setValue(89.00);
-        $order->setSerializedData([
-            'totals' => [
-                'total' => 90.00,
-                'not_relevant_price' => true
-            ]
-        ]);
+        $order->setSerializedData(['precalculatedTotal' => 90.00]);
         $event = $this->prepareEvent($order);
         $this->prepareProviders();
 

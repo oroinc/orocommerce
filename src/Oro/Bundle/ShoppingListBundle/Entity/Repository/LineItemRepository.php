@@ -9,6 +9,7 @@ use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -352,5 +353,19 @@ class LineItemRepository extends ServiceEntityRepository
             ->andWhere($expr->eq('line_item.unit', ':unit_code'))
             ->getQuery()
             ->execute(['shopping_list_id' => $shoppingListId, 'product_id' => $productId, 'unit_code' => $unitCode]);
+    }
+
+    public function unsetRemovedProductVariant(ProductVariantLink $productVariantLink): void
+    {
+        $qb = $this->createQueryBuilder('line_item');
+        $qb->update()
+            ->where('line_item.product = :product')
+            ->andWhere('line_item.parentProduct = :parentProduct')
+            ->set('line_item.parentProduct', ':nullValue')
+            ->setParameter('product', $productVariantLink->getProduct())
+            ->setParameter('parentProduct', $productVariantLink->getParentProduct())
+            ->setParameter('nullValue', null)
+            ->getQuery()
+            ->execute();
     }
 }

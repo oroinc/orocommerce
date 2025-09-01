@@ -52,7 +52,7 @@ class ProductController extends AbstractController
      * @Route(
      *     "/widget/prices_update/{unit}/{precision}",
      *     name="oro_pricing_widget_prices_update",
-     *     requirements={"unit"="\w+", "precision"="\d+"}
+     *     requirements={"unit"="[\w\s\:]+", "precision"="\d+"}
      * )
      * @Template("@OroPricing/Product/widget/prices_update.html.twig")
      * @AclAncestor("oro_product_update")

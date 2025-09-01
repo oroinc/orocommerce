@@ -1,0 +1,36 @@
+Oro\Bundle\TranslationBundle\Entity\TranslationKey:
+    product_unit_uom7:
+        key: 'oro.product_unit.uom: 7.label.full'
+        domain: messages
+
+Oro\Bundle\TranslationBundle\Entity\Translation:
+    translation_empty_product_grid:
+        translationKey: '@product_unit_uom7'
+        value: 'uom: 7'
+        language: '@en_language'
+        scope: 1
+
+Oro\Bundle\ProductBundle\Entity\ProductUnit:
+    uom7:
+        code: 'uom: 7'
+        defaultPrecision: '0'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision_uom7:
+        unit: '@uom7'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locValue1:
+        string: 'Product 1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'SKU1'
+        primaryUnitPrecision: '@precision_uom7'
+        __calls:
+            -   addName: [ '@locValue1' ]
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'

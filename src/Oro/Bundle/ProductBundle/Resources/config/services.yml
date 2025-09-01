@@ -2419,6 +2419,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex, priority: 255 }
 
+    oro_product.listener.product_variant_remove:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductVariantRemoveListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        public: false
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\ProductVariantLink', event: postRemove }
+
     oro_product.event_listener.product_brand_view:
         class: Oro\Bundle\ProductBundle\EventListener\ProductBrandViewListener
         arguments:
