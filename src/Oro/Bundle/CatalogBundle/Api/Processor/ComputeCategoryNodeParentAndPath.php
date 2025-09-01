@@ -8,7 +8,7 @@ use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContex
 use Oro\Component\ChainProcessor\ContextInterface;
 
 /**
- * Computes a value of "parent" and "path" fields for CategoryNode entity.
+ * Computes values of "parent" and "path" fields for CategoryNode entity.
  */
 class ComputeCategoryNodeParentAndPath extends ComputeTreeNodePathField
 {

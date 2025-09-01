@@ -8,7 +8,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Computes a value for "default" field for a shopping list.
+ * Computes a value of "default" field for ShoppingList entity.
  */
 class ComputeShoppingListDefault implements ProcessorInterface
 {

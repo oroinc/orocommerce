@@ -9,7 +9,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Computes a value of "resourceType" and "apiUrl" fields for Route entity.
+ * Computes values of "resourceType" and "apiUrl" fields for Route entity.
  */
 class ComputeRouteResourceTypeAndApiUrl implements ProcessorInterface
 {

@@ -10,7 +10,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Computes a value of "shippingCostAmount" and "shippingMethod" fields for Order entity.
+ * Computes values of "shippingCostAmount" and "shippingMethod" fields for Order entity.
  */
 class ComputeOrderShipping implements ProcessorInterface
 {
