@@ -24,15 +24,18 @@ Feature: Email Template Inheritance
     Given I go to System/ Emails/ Templates
     And I filter Template Name as is equal to "order_confirmation_email"
     And I click "edit" on first row in grid
+    And I clear "Content" textarea in form "Email Template Form"
     When fill "Email Template Form" with:
       | Subject | Inherited subject                                                                                                                   |
       | Content | {% extends oro_get_email_template('order_confirmation_email_parent') %}{% block child %}Child Inherited Content{% endblock child %} |
     And I click "German"
     When fill "Email Template Form" with:
-      | Subject Fallback | false                                                                                                                                        |
-      | Content Fallback | false                                                                                                                                        |
-      | Subject          | German Inherited subject                                                                                                                     |
-      | Content          | {% extends oro_get_email_template('order_confirmation_email_parent') %}{% block child %} German Child Inherited Content {% endblock child %} |
+      | Subject Fallback | false |
+      | Content Fallback | false |
+    And I clear "Content" textarea in form "Email Template Form"
+    And fill "Email Template Form" with:
+      | Subject | German Inherited subject                                                                                                                     |
+      | Content | {% extends oro_get_email_template('order_confirmation_email_parent') %}{% block child %} German Child Inherited Content {% endblock child %} |
     Then I save and close form
     And I should see "Template saved" flash message
 

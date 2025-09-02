@@ -24,6 +24,7 @@ Feature: Order confirmation by email to the business unit
     And go to System / Emails / Templates
     And filter Template Name as is equal to "order_confirmation_email"
     When I click "Clone" on row "order_confirmation_email" in grid
+    And I clear "Content" textarea in form "Email Template Form"
     And fill form with:
       | Template Name | admin_order_confirmation_email  |
       | Subject       | Client order has been received. |
