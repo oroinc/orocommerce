@@ -20,6 +20,7 @@ Feature: Default Checkout From Shopping List With Wrong Order Confirmation Templ
     And I go to System/ Emails/ Templates
     And I filter Template Name as Contains "order_confirmation_email"
     And I click edit "order_confirmation_email" in grid
+    And I clear "Content" textarea in form "Email Template Form"
     And I fill "Email Template Form" with:
       | Content | {{ item.product_name_with_error }} |
     When I save form
