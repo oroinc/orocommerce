@@ -20,7 +20,7 @@ Feature: Localized email notification for RFQ
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
       | Enabled Localizations | [English (United States), German Localization, French Localization] |
-      | Default Localization  | French Localization                                 |
+      | Default Localization  | French Localization                                                 |
     And I submit form
     Then I should see "Configuration saved" flash message
     When I go to System / User Management / Organizations
@@ -50,16 +50,19 @@ Feature: Localized email notification for RFQ
     Given I go to System / Emails / Templates
     When I filter Template Name as is equal to "request_create_notification"
     And I click "edit" on first row in grid
+    And I clear "Content" textarea in form "Email Template Form"
     And fill "Email Template Form" with:
       | Subject | English RFQ Create Notification Subject |
       | Content | English RFQ Create Notification Body    |
     And I click "French"
+    And I clear "Content" textarea in form "Email Template Form"
     And fill "Email Template Form" with:
       | Subject Fallback | false                                  |
       | Content Fallback | false                                  |
       | Subject          | French RFQ Create Notification Subject |
       | Content          | French RFQ Create Notification Body    |
     And I click "German"
+    And I clear "Content" textarea in form "Email Template Form"
     And fill "Email Template Form" with:
       | Subject Fallback | false                                  |
       | Content Fallback | false                                  |
@@ -137,21 +140,26 @@ Feature: Localized email notification for RFQ
     And I go to System / Emails / Templates
     And I filter Template Name as is equal to "request_create_confirmation"
     And I click "edit" on first row in grid
+    And I clear "Content" textarea in form "Email Template Form"
     And fill "Email Template Form" with:
       | Subject | English RFQ Create Confirmation Subject |
       | Content | English RFQ Create Confirmation Body    |
     And I click "French"
     And fill "Email Template Form" with:
-      | Subject Fallback | false                                  |
-      | Content Fallback | false                                  |
-      | Subject          | French RFQ Create Confirmation Subject |
-      | Content          | French RFQ Create Confirmation Body    |
+      | Subject Fallback | false |
+      | Content Fallback | false |
+    And I clear "Content" textarea in form "Email Template Form"
+    And fill "Email Template Form" with:
+      | Subject | French RFQ Create Confirmation Subject |
+      | Content | French RFQ Create Confirmation Body    |
     And I click "German"
     And fill "Email Template Form" with:
-      | Subject Fallback | false                                  |
-      | Content Fallback | false                                  |
-      | Subject          | German RFQ Create Confirmation Subject |
-      | Content          | German RFQ Create Confirmation Body    |
+      | Subject Fallback | false |
+      | Content Fallback | false |
+    And I clear "Content" textarea in form "Email Template Form"
+    And fill "Email Template Form" with:
+      | Subject | German RFQ Create Confirmation Subject |
+      | Content | German RFQ Create Confirmation Body    |
     And I submit form
     Then I should see "Template saved" flash message
 

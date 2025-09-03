@@ -26,7 +26,8 @@ class AddDocumentsField implements Migration, AttachmentExtensionAwareInterface
             'documents',
             [
                 'attachment' => ['file_applications' => ['default', 'commerce']],
-                'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM]
+                'email' => ['available_in_template' => true],
+                'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
             ],
             2
         );
