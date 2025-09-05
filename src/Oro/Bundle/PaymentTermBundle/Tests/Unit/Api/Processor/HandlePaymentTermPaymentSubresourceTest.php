@@ -17,7 +17,9 @@ use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\AddressActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\SplitOrderActionsInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
 use Oro\Bundle\PaymentTermBundle\Api\Processor\HandlePaymentTermPaymentSubresource;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -25,16 +27,18 @@ use Symfony\Component\PropertyAccess\PropertyPath;
 
 class HandlePaymentTermPaymentSubresourceTest extends ChangeSubresourceProcessorTestCase
 {
-    private SplitOrderActionsInterface|MockObject $splitOrderActions;
-    private CheckoutActionsInterface|MockObject $checkoutActions;
-    private AddressActionsInterface|MockObject $addressActions;
-    private ActionExecutor|MockObject $actionExecutor;
-    private PaymentStatusProviderInterface|MockObject $paymentStatusProvider;
-    private GroupedCheckoutLineItemsProvider|MockObject $groupedCheckoutLineItemsProvider;
-    private DoctrineHelper|MockObject $doctrineHelper;
-    private FlushDataHandlerInterface|MockObject $flushDataHandler;
+    private SplitOrderActionsInterface&MockObject $splitOrderActions;
+    private CheckoutActionsInterface&MockObject $checkoutActions;
+    private AddressActionsInterface&MockObject $addressActions;
+    private ActionExecutor&MockObject $actionExecutor;
+    private PaymentStatusManager&MockObject $paymentStatusManager;
+    private PaymentStatusProviderInterface&MockObject $paymentStatusProvider;
+    private GroupedCheckoutLineItemsProvider&MockObject $groupedCheckoutLineItemsProvider;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private FlushDataHandlerInterface&MockObject $flushDataHandler;
     private HandlePaymentTermPaymentSubresource $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -43,6 +47,7 @@ class HandlePaymentTermPaymentSubresourceTest extends ChangeSubresourceProcessor
         $this->checkoutActions = $this->createMock(CheckoutActionsInterface::class);
         $this->addressActions = $this->createMock(AddressActionsInterface::class);
         $this->actionExecutor = $this->createMock(ActionExecutor::class);
+        $this->paymentStatusManager = $this->createMock(PaymentStatusManager::class);
         $this->paymentStatusProvider = $this->createMock(PaymentStatusProviderInterface::class);
         $this->groupedCheckoutLineItemsProvider = $this->createMock(GroupedCheckoutLineItemsProvider::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -58,6 +63,7 @@ class HandlePaymentTermPaymentSubresourceTest extends ChangeSubresourceProcessor
             $this->doctrineHelper,
             $this->flushDataHandler
         );
+        $this->processor->setPaymentStatusManager($this->paymentStatusManager);
     }
 
     private function expectSaveChanges(): void
@@ -108,11 +114,46 @@ class HandlePaymentTermPaymentSubresourceTest extends ChangeSubresourceProcessor
         $this->groupedCheckoutLineItemsProvider->expects(self::never())
             ->method('getGroupedLineItemsIds');
 
-        $this->paymentStatusProvider->expects(self::never())
+        $this->paymentStatusManager->expects(self::never())
             ->method('getPaymentStatus');
 
         $this->context->setParentEntity($checkout);
         $this->context->setAssociationName('test');
+        $this->processor->process($this->context);
+
+        self::assertTrue($checkout->isPaymentInProgress());
+        self::assertTrue($this->context->hasErrors());
+        self::assertEquals(
+            [
+                Error::createValidationError(
+                    'payment constraint',
+                    'Can not process payment without order.'
+                )
+            ],
+            $this->context->getErrors()
+        );
+        self::assertFalse($this->context->isProcessed(SaveParentEntity::OPERATION_NAME));
+    }
+
+    public function testProcessPaymentInProgressWithoutOrderWhenNullPaymentStatusManager(): void
+    {
+        $checkout = new Checkout();
+
+        $checkout->setPaymentMethod('payment_term');
+        $checkout->setPaymentInProgress(true);
+
+        $this->groupedCheckoutLineItemsProvider->expects(self::never())
+            ->method('getGroupedLineItemsIds');
+
+        $this->paymentStatusProvider->expects(self::never())
+            ->method('getPaymentStatus');
+
+        $this->paymentStatusManager->expects(self::never())
+            ->method('getPaymentStatus');
+
+        $this->context->setParentEntity($checkout);
+        $this->context->setAssociationName('test');
+        $this->processor->setPaymentStatusManager(null);
         $this->processor->process($this->context);
 
         self::assertTrue($checkout->isPaymentInProgress());
@@ -141,15 +182,59 @@ class HandlePaymentTermPaymentSubresourceTest extends ChangeSubresourceProcessor
         $this->groupedCheckoutLineItemsProvider->expects(self::never())
             ->method('getGroupedLineItemsIds');
 
-        $this->paymentStatusProvider->expects(self::once())
+        $paymentStatus = new PaymentStatus();
+        $paymentStatus->setPaymentStatus(PaymentStatuses::DECLINED);
+
+        $this->paymentStatusManager->expects(self::once())
             ->method('getPaymentStatus')
             ->with($order)
-            ->willReturn(PaymentStatusProvider::DECLINED);
+            ->willReturn($paymentStatus);
 
         $this->expectSaveChangesAndRemoveOrder($order);
 
         $this->context->setParentEntity($checkout);
         $this->context->setAssociationName('test');
+        $this->processor->process($this->context);
+
+        self::assertFalse($checkout->isPaymentInProgress());
+        self::assertTrue($this->context->hasErrors());
+        self::assertEquals(
+            [
+                Error::createValidationError(
+                    'payment constraint',
+                    'Payment failed, please try again or select a different payment method.'
+                )
+            ],
+            $this->context->getErrors()
+        );
+        self::assertTrue($this->context->isProcessed(SaveParentEntity::OPERATION_NAME));
+    }
+
+    public function testProcessPaymentInProgressWithNotFinishedStatusWhenNullPaymentStatusManager(): void
+    {
+        $checkout = new Checkout();
+        $order = new Order();
+
+        $checkout->setPaymentMethod('payment_term');
+        $checkout->setOrder($order);
+        $checkout->setPaymentInProgress(true);
+
+        $this->groupedCheckoutLineItemsProvider->expects(self::never())
+            ->method('getGroupedLineItemsIds');
+
+        $this->paymentStatusManager->expects(self::never())
+            ->method('getPaymentStatus');
+
+        $this->paymentStatusProvider->expects(self::once())
+            ->method('getPaymentStatus')
+            ->with($order)
+            ->willReturn(PaymentStatuses::DECLINED);
+
+        $this->expectSaveChangesAndRemoveOrder($order);
+
+        $this->context->setParentEntity($checkout);
+        $this->context->setAssociationName('test');
+        $this->processor->setPaymentStatusManager(null);
         $this->processor->process($this->context);
 
         self::assertFalse($checkout->isPaymentInProgress());
@@ -178,10 +263,13 @@ class HandlePaymentTermPaymentSubresourceTest extends ChangeSubresourceProcessor
         $this->groupedCheckoutLineItemsProvider->expects(self::never())
             ->method('getGroupedLineItemsIds');
 
-        $this->paymentStatusProvider->expects(self::once())
+        $paymentStatus = new PaymentStatus();
+        $paymentStatus->setPaymentStatus(PaymentStatuses::PAID_IN_FULL);
+
+        $this->paymentStatusManager->expects(self::once())
             ->method('getPaymentStatus')
             ->with($order)
-            ->willReturn(PaymentStatusProvider::FULL);
+            ->willReturn($paymentStatus);
 
         $this->addressActions->expects(self::once())
             ->method('actualizeAddresses')
@@ -195,6 +283,46 @@ class HandlePaymentTermPaymentSubresourceTest extends ChangeSubresourceProcessor
         $this->context->setParentEntity($checkout);
         $this->context->setAssociationName('test');
         $this->context->setResult($order);
+        $this->processor->process($this->context);
+
+        self::assertFalse($checkout->isPaymentInProgress());
+        self::assertFalse($this->context->hasErrors());
+        self::assertTrue($this->context->isProcessed(SaveParentEntity::OPERATION_NAME));
+    }
+
+    public function testProcessPaymentInProgressWithFinishedStatusWhenNullPaymentStatusManager(): void
+    {
+        $checkout = new Checkout();
+        $order = new Order();
+
+        $checkout->setPaymentMethod('payment_term');
+        $checkout->setOrder($order);
+        $checkout->setPaymentInProgress(true);
+
+        $this->groupedCheckoutLineItemsProvider->expects(self::never())
+            ->method('getGroupedLineItemsIds');
+
+        $this->paymentStatusManager->expects(self::never())
+            ->method('getPaymentStatus');
+
+        $this->paymentStatusProvider->expects(self::once())
+            ->method('getPaymentStatus')
+            ->with($order)
+            ->willReturn(PaymentStatuses::PAID_IN_FULL);
+
+        $this->addressActions->expects(self::once())
+            ->method('actualizeAddresses')
+            ->with($checkout, $order);
+        $this->checkoutActions->expects(self::once())
+            ->method('fillCheckoutCompletedData')
+            ->with($checkout, $order);
+
+        $this->expectSaveChanges();
+
+        $this->context->setParentEntity($checkout);
+        $this->context->setAssociationName('test');
+        $this->context->setResult($order);
+        $this->processor->setPaymentStatusManager(null);
         $this->processor->process($this->context);
 
         self::assertFalse($checkout->isPaymentInProgress());

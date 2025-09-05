@@ -9,15 +9,17 @@ class PaymentStatusTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $properties = [
             ['id', 1],
             ['entityIdentifier', 10],
             ['entityClass', 'Some\Class'],
             ['paymentStatus', 'pending'],
+            ['forced', true],
+            ['updatedAt', new \DateTime('now')],
         ];
 
-        $this->assertPropertyAccessors(new PaymentStatus(), $properties);
+        self::assertPropertyAccessors(new PaymentStatus(), $properties);
     }
 }

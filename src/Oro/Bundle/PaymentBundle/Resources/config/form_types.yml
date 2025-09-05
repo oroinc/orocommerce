@@ -37,3 +37,11 @@ services:
             - '@oro_payment.payment_method_view.composite_provider'
         tags:
             - { name: form.type, alias: oro_payment_methods_configs_rule }
+
+    oro_payment.form.type.filter.payment_status:
+        class: Oro\Bundle\PaymentBundle\Form\Type\Filter\PaymentStatusFilterType
+        arguments:
+            - '@translator'
+            - '@oro_payment.formatter.payment_status_label'
+        tags:
+            - { name: form.type }

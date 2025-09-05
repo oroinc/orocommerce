@@ -40,5 +40,7 @@ services:
             - '@oro_checkout.provider.grouped_line_items'
             - '@oro_api.doctrine_helper'
             - '@oro_api.save_data_handler'
+        calls:
+            - [ setPaymentStatusManager, ['@oro_payment.manager.payment_status'] ]
         tags:
             - { name: oro.api.processor, action: add_subresource, group: save_data, requestType: frontend, association: paymentPaymentTerm, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }

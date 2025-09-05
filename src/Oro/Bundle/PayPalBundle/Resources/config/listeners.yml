@@ -52,6 +52,8 @@ services:
             - '@oro_paypal.method.provider.payflow_gateway.express_checkout'
             - '@oro_payment.provider.payment_status'
             - '@oro_entity.doctrine_helper'
+        calls:
+            - [ 'setPaymentStatusManager', [ '@oro_payment.manager.payment_status' ] ]
         tags:
             - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn, priority: 20 }
             - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError, priority: 20 }
@@ -63,6 +65,8 @@ services:
             - '@oro_paypal.method.provider.payments_pro.express_checkout'
             - '@oro_payment.provider.payment_status'
             - '@oro_entity.doctrine_helper'
+        calls:
+            - [ 'setPaymentStatusManager', [ '@oro_payment.manager.payment_status' ] ]
         tags:
             - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn, priority: 20 }
             - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError, priority: 20 }

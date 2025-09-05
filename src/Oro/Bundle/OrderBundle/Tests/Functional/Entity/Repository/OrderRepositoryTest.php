@@ -828,4 +828,23 @@ class OrderRepositoryTest extends WebTestCase
             ]
         );
     }
+
+    public function testFindParentOrder(): void
+    {
+        $subOrder = $this->getReference(LoadSubOrders::SUB_ORDER_1_OF_ORDER_1);
+        $parentOrder = $this->getReference(LoadOrders::ORDER_1);
+
+        $foundParent = $this->repository->findParentOrder($subOrder->getId());
+
+        self::assertInstanceOf(Order::class, $foundParent);
+        self::assertEquals($parentOrder->getId(), $foundParent->getId());
+    }
+
+    public function testFindParentOrderWithNoParent(): void
+    {
+        $parentOrder = $this->getReference(LoadOrders::ORDER_1);
+
+        $noParent = $this->repository->findParentOrder($parentOrder->getId());
+        self::assertNull($noParent);
+    }
 }

@@ -2,7 +2,8 @@
 
 namespace Oro\Bundle\PaymentBundle\Formatter;
 
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
+use Oro\Bundle\PaymentBundle\Provider\AvailablePaymentStatusesProvider;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -15,9 +16,17 @@ class PaymentStatusLabelFormatter
      */
     protected $translator;
 
+    private ?AvailablePaymentStatusesProvider $availablePaymentStatusesProvider = null;
+
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
+    }
+
+    public function setAvailablePaymentStatusesProvider(
+        ?AvailablePaymentStatusesProvider $availablePaymentStatusesProvider
+    ): void {
+        $this->availablePaymentStatusesProvider = $availablePaymentStatusesProvider;
     }
 
     /**
@@ -26,23 +35,49 @@ class PaymentStatusLabelFormatter
      */
     public function formatPaymentStatusLabel($paymentStatus)
     {
-        return $this->translator->trans(sprintf('oro.payment.status.%s', $paymentStatus));
+        $translationKey = $this->getTranslationKey($paymentStatus);
+        $label = $this->translator->trans($translationKey);
+        if ($label === $translationKey) {
+            // If the label is not translated, use the payment status as the label - transformed
+            // to human-readable format.
+            $label = ucfirst(str_replace(['_', '-'], ' ', strtolower($paymentStatus)));
+        }
+
+        return $label;
     }
 
     /**
-     * @return array
+     * @param string|null $entityClass The class name of the entity to get payment statuses for. The argument will be
+     *  added in v7.0.
+     *
+     * @return array<string,string> Associative array of payment statuses keyed by their labels
+     *  [
+     *      'Paid in Full' => 'full',
+     *      // ...
+     *  ]
      */
-    public function getAvailableStatuses()
+    public function getAvailableStatuses(/*?string $entityClass = null*/)
     {
-        return [
-            $this->formatPaymentStatusLabel(PaymentStatusProvider::FULL) => PaymentStatusProvider::FULL,
-            $this->formatPaymentStatusLabel(PaymentStatusProvider::AUTHORIZED) => PaymentStatusProvider::AUTHORIZED,
-            $this->formatPaymentStatusLabel(PaymentStatusProvider::PENDING) => PaymentStatusProvider::PENDING,
-            $this->formatPaymentStatusLabel(PaymentStatusProvider::DECLINED) => PaymentStatusProvider::DECLINED,
-            $this->formatPaymentStatusLabel(PaymentStatusProvider::PARTIALLY) => PaymentStatusProvider::PARTIALLY,
-            $this->formatPaymentStatusLabel(PaymentStatusProvider::CANCELED) => PaymentStatusProvider::CANCELED,
-            $this->formatPaymentStatusLabel(PaymentStatusProvider::CANCELED_PARTIALLY) =>
-                PaymentStatusProvider::CANCELED_PARTIALLY
-        ];
+        // BC layer.
+        if (!$this->availablePaymentStatusesProvider) {
+            $availablePaymentStatuses = PaymentStatuses::getAllPaymentStatuses();
+        } else {
+            $entityClass = func_num_args() > 0 ? func_get_arg(0) : null;
+            $availablePaymentStatuses = $this->availablePaymentStatusesProvider
+                ->getAvailablePaymentStatuses($entityClass);
+        }
+
+        $result = [];
+
+        foreach ($availablePaymentStatuses as $paymentStatus) {
+            $result[$this->formatPaymentStatusLabel($paymentStatus)] = $paymentStatus;
+        }
+
+        return $result;
+    }
+
+    private function getTranslationKey(string $paymentStatus): string
+    {
+        return sprintf('oro.payment.status.%s', $paymentStatus);
     }
 }

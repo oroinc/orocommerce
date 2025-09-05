@@ -198,12 +198,10 @@ datagrids:
                     type: currency
                     data_name: total
                 paymentStatus:
-                    type: choice
+                    type: payment-status
                     data_name: paymentStatus
                     options:
-                        field_options:
-                            choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
-                            translatable_options: false
+                        target_entity: 'Oro\Bundle\OrderBundle\Entity\Order'
                 shippingStatus:
                     type: choice
                     data_name: shippingStatusId

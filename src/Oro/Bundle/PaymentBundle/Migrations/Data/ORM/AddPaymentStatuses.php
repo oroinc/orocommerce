@@ -8,6 +8,7 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\PaymentStatusCalculatorInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -57,14 +58,17 @@ class AddPaymentStatuses extends AbstractFixture implements ContainerAwareInterf
             ->getQuery();
 
         $iterableResult = new BufferedIdentityQueryResultIterator($query);
-        $paymentStatusProvider = $this->container->get('oro_payment.provider.payment_status');
+
+        /** @var PaymentStatusCalculatorInterface $paymentStatusCalculator */
+        $paymentStatusCalculator = $this->container->get('oro_payment.payment_status.calculator');
 
         $objects = [];
         foreach ($iterableResult as $entity) {
             $paymentStatusEntity = new PaymentStatus();
             $paymentStatusEntity->setEntityClass($className);
             $paymentStatusEntity->setEntityIdentifier($entity->getId());
-            $paymentStatusEntity->setPaymentStatus($paymentStatusProvider->getPaymentStatus($entity));
+            $paymentStatusEntity->setPaymentStatus($paymentStatusCalculator->calculatePaymentStatus($entity));
+
             $manager->persist($paymentStatusEntity);
             $objects[] = $paymentStatusEntity;
             if (\count($objects) === 100) {

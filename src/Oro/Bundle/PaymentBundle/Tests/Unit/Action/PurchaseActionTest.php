@@ -1,48 +1,49 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 
 use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\PaymentBundle\Action\PurchaseAction;
+use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Component\ConfigExpression\ContextAccessor;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
-class PurchaseActionTest extends \PHPUnit\Framework\TestCase
+final class PurchaseActionTest extends TestCase
 {
-    private const PAYMENT_METHOD = 'testPaymentMethod';
+    private const string PAYMENT_METHOD = 'testPaymentMethod';
 
-    /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
-    private $contextAccessor;
+    private ContextAccessor&MockObject $contextAccessor;
 
-    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentMethodProvider;
+    private PaymentMethodProviderInterface&MockObject $paymentMethodProvider;
 
-    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentTransactionProvider;
+    private PaymentTransactionProvider&MockObject $paymentTransactionProvider;
 
-    /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $router;
+    private RouterInterface&MockObject $router;
 
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $dispatcher;
+    private LoggerInterface&MockObject $logger;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $logger;
+    private PaymentStatusManager&MockObject $paymentStatusManager;
 
-    /** @var PaymentStatusProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentStatusProvider;
+    private PaymentStatusProviderInterface&MockObject $paymentStatusProvider;
 
-    /** @var PurchaseAction */
-    private $action;
+    private PurchaseAction $action;
+
+    private EventDispatcherInterface&MockObject $dispatcher;
 
     #[\Override]
     protected function setUp(): void
@@ -53,6 +54,7 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
         $this->router = $this->createMock(RouterInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->paymentStatusManager = $this->createMock(PaymentStatusManager::class);
         $this->paymentStatusProvider = $this->createMock(PaymentStatusProviderInterface::class);
 
         $this->action = new PurchaseAction(
@@ -63,21 +65,22 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
         );
         $this->action->setLogger($this->logger);
         $this->action->setDispatcher($this->dispatcher);
+        $this->action->setPaymentStatusManager($this->paymentStatusManager);
         $this->action->setPaymentStatusProvider($this->paymentStatusProvider);
     }
 
     /**
      * @dataProvider executeDataProvider
      */
-    public function testExecute(array $data, array $expected)
+    public function testExecute(array $data, array $expected): void
     {
         $context = [];
         $options = $data['options'];
 
         if ($data['response'] instanceof \Exception) {
-            $responseValue = $this->throwException($data['response']);
+            $responseValue = self::throwException($data['response']);
         } else {
-            $responseValue = $this->returnValue($data['response']);
+            $responseValue = self::returnValue($data['response']);
         }
 
         $this->action->initialize($options);
@@ -133,14 +136,14 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
-                    RouterInterface::ABSOLUTE_URL
+                    UrlGeneratorInterface::ABSOLUTE_URL,
                 ],
                 [
                     'oro_payment_callback_return',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
-                    RouterInterface::ABSOLUTE_URL
+                    UrlGeneratorInterface::ABSOLUTE_URL,
                 ]
             )
             ->willReturnArgument(0);
@@ -292,14 +295,14 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
-                    RouterInterface::ABSOLUTE_URL,
+                    UrlGeneratorInterface::ABSOLUTE_URL,
                 ],
                 [
                     'oro_payment_callback_return',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
-                    RouterInterface::ABSOLUTE_URL,
+                    UrlGeneratorInterface::ABSOLUTE_URL,
                 ]
             )
             ->willReturnArgument(0);
@@ -319,7 +322,7 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
         $this->action->execute($context);
     }
 
-    public function testSourcePaymentTransactionNotFound()
+    public function testSourcePaymentTransactionNotFound(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Validation payment transaction not found');
@@ -372,8 +375,8 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
         PaymentTransaction $sourcePaymentTransaction,
         array $expectedAttributes = [],
         array $expectedSourceTransactionProperties = [],
-        string $status = PaymentStatusProvider::FULL
-    ) {
+        string $status = PaymentStatuses::PAID_IN_FULL
+    ): void {
         $options = [
             'object' => new \stdClass(),
             'amount' => 100.0,
@@ -400,9 +403,9 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
             ->method('getActiveValidatePaymentTransaction')
             ->willReturn($sourcePaymentTransaction);
 
-        $this->paymentStatusProvider->expects(self::exactly((int)$paymentTransaction->isSuccessful()))
+        $this->paymentStatusManager->expects(self::exactly((int)$paymentTransaction->isSuccessful()))
             ->method('getPaymentStatus')
-            ->willReturn($status);
+            ->willReturn((new PaymentStatus())->setPaymentStatus($status));
 
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $paymentMethod
@@ -421,13 +424,17 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
 
         $this->contextAccessor->expects(self::once())
             ->method('setValue')
-            ->with($context, $options['attribute'], $this->callback(function ($value) use ($expectedAttributes) {
-                foreach ($expectedAttributes as $expectedAttribute) {
-                    self::assertContains($expectedAttribute, $value);
-                }
+            ->with(
+                $context,
+                $options['attribute'],
+                self::callback(static function ($value) use ($expectedAttributes) {
+                    foreach ($expectedAttributes as $expectedAttribute) {
+                        self::assertContains($expectedAttribute, $value);
+                    }
 
-                return true;
-            }));
+                    return true;
+                })
+            );
 
         $this->action->initialize($options);
         $this->action->execute($context);
@@ -483,7 +490,7 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
                     'purchasePartial' => true,
                 ],
                 [],
-                PaymentStatusProvider::AUTHORIZED_PARTIALLY
+                PaymentStatuses::AUTHORIZED_PARTIALLY,
             ],
             'unsuccessful transaction with validation' => [
                 $unsuccessfulTransaction,
@@ -495,7 +502,7 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testFailedExecuteDoesNotExposeContext()
+    public function testFailedExecuteDoesNotExposeContext(): void
     {
         $options = [
             'object' => new \stdClass(),
@@ -537,8 +544,8 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
         $this->logger->expects(self::once())
             ->method('error')
             ->with(
-                $this->isType('string'),
-                $this->isType('array')
+                self::isType('string'),
+                self::isType('array')
             );
 
         $this->action->initialize($options);
@@ -641,14 +648,14 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
-                    RouterInterface::ABSOLUTE_URL
+                    UrlGeneratorInterface::ABSOLUTE_URL,
                 ],
                 [
                     'oro_payment_callback_return',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
-                    RouterInterface::ABSOLUTE_URL
+                    UrlGeneratorInterface::ABSOLUTE_URL,
                 ]
             )
             ->willReturnArgument(0);
@@ -667,5 +674,161 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
             ->with($context, $options['attribute'], $expected);
 
         $this->action->execute($context);
+    }
+
+    public function testSourcePaymentTransactionWithNullPaymentStatusManager(): void
+    {
+        $options = [
+            'object' => new \stdClass(),
+            'amount' => 100.0,
+            'currency' => 'USD',
+            'attribute' => new PropertyPath('test'),
+            'paymentMethod' => self::PAYMENT_METHOD,
+            'transactionOptions' => [
+                'testOption' => 'testOption',
+            ],
+        ];
+
+        $context = [];
+
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setAction(PaymentMethodInterface::PURCHASE)
+            ->setPaymentMethod(self::PAYMENT_METHOD)
+            ->setSuccessful(true);
+
+        $sourcePaymentTransaction = new PaymentTransaction();
+
+        $this->contextAccessor->expects(self::any())
+            ->method('getValue')
+            ->willReturnArgument(1);
+
+        $this->paymentTransactionProvider->expects(self::once())
+            ->method('createPaymentTransaction')
+            ->with($options['paymentMethod'], PaymentMethodInterface::PURCHASE, $options['object'])
+            ->willReturn($paymentTransaction);
+
+        $this->paymentTransactionProvider->expects(self::once())
+            ->method('getActiveValidatePaymentTransaction')
+            ->willReturn($sourcePaymentTransaction);
+
+        $this->paymentStatusProvider->expects(self::once())
+            ->method('getPaymentStatus')
+            ->with($options['object'])
+            ->willReturn(PaymentStatuses::AUTHORIZED_PARTIALLY);
+
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $paymentMethod
+            ->method('getIdentifier')
+            ->willReturn($options['paymentMethod']);
+        $paymentMethod->expects(self::once())
+            ->method('supports')
+            ->with(PaymentMethodInterface::VALIDATE)
+            ->willReturn(true);
+        $paymentMethod->expects(self::once())
+            ->method('execute')
+            ->with($paymentTransaction->getAction(), $paymentTransaction)
+            ->willReturn([]);
+
+        $this->mockPaymentMethodProvider($paymentMethod, $options['paymentMethod']);
+
+        $this->contextAccessor->expects(self::once())
+            ->method('setValue')
+            ->with(
+                $context,
+                $options['attribute'],
+                self::callback(static function ($value) {
+                    self::assertContains('purchaseSuccessful', array_keys($value));
+                    self::assertContains('purchasePartial', array_keys($value));
+                    self::assertTrue($value['purchaseSuccessful']);
+                    self::assertTrue($value['purchasePartial']);
+                    return true;
+                })
+            );
+
+        // Create action without PaymentStatusManager for BC layer
+        $action = new PurchaseAction(
+            $this->contextAccessor,
+            $this->paymentMethodProvider,
+            $this->paymentTransactionProvider,
+            $this->router
+        );
+        $action->setLogger($this->logger);
+        $action->setDispatcher($this->dispatcher);
+        $action->setPaymentStatusProvider($this->paymentStatusProvider);
+
+        $action->initialize($options);
+        $action->execute($context);
+    }
+
+    public function testIsPaidPartiallyWithNullPaymentStatusManagerNotPartial(): void
+    {
+        $options = [
+            'object' => new \stdClass(),
+            'amount' => 100.0,
+            'currency' => 'USD',
+            'attribute' => new PropertyPath('test'),
+            'paymentMethod' => self::PAYMENT_METHOD,
+        ];
+
+        $context = [];
+
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setAction(PaymentMethodInterface::PURCHASE)
+            ->setPaymentMethod(self::PAYMENT_METHOD)
+            ->setSuccessful(true);
+
+        $this->contextAccessor->expects(self::any())
+            ->method('getValue')
+            ->willReturnArgument(1);
+
+        $this->paymentTransactionProvider->expects(self::once())
+            ->method('createPaymentTransaction')
+            ->willReturn($paymentTransaction);
+
+        $this->paymentStatusProvider->expects(self::once())
+            ->method('getPaymentStatus')
+            ->with($options['object'])
+            ->willReturn(PaymentStatuses::PAID_IN_FULL);
+
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $paymentMethod
+            ->method('getIdentifier')
+            ->willReturn($options['paymentMethod']);
+        $paymentMethod->expects(self::once())
+            ->method('supports')
+            ->with(PaymentMethodInterface::VALIDATE)
+            ->willReturn(false);
+        $paymentMethod->expects(self::once())
+            ->method('execute')
+            ->willReturn([]);
+
+        $this->mockPaymentMethodProvider($paymentMethod, $options['paymentMethod']);
+
+        $this->contextAccessor->expects(self::once())
+            ->method('setValue')
+            ->with(
+                $context,
+                $options['attribute'],
+                self::callback(static function ($value) {
+                    self::assertArrayNotHasKey('purchasePartial', $value);
+                    return true;
+                })
+            );
+
+        // Create action without PaymentStatusManager for BC layer
+        $action = new PurchaseAction(
+            $this->contextAccessor,
+            $this->paymentMethodProvider,
+            $this->paymentTransactionProvider,
+            $this->router
+        );
+        $action->setLogger($this->logger);
+        $action->setDispatcher($this->dispatcher);
+        $action->setPaymentStatusProvider($this->paymentStatusProvider);
+
+        $action->initialize($options);
+        $action->execute($context);
     }
 }

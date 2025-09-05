@@ -6,7 +6,8 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderPaymentStatusProvider;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\PaymentStatusCalculatorInterface;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -55,7 +56,7 @@ class OrderPaymentStatusProviderTest extends TestCase
             ->with($order)
             ->willReturn([$paymentTransaction]);
 
-        $this->assertEquals(PaymentStatusProvider::AUTHORIZED, $this->provider->getPaymentStatus($order));
+        $this->assertEquals(PaymentStatuses::AUTHORIZED, $this->provider->getPaymentStatus($order));
     }
 
     public function testGetPaymentStatusForMultiOrder()
@@ -95,6 +96,52 @@ class OrderPaymentStatusProviderTest extends TestCase
                 [$paymentTransaction2]
             );
 
-        $this->assertEquals(PaymentStatusProvider::AUTHORIZED_PARTIALLY, $this->provider->getPaymentStatus($order));
+        $this->assertEquals(PaymentStatuses::AUTHORIZED_PARTIALLY, $this->provider->getPaymentStatus($order));
+    }
+
+    public function testGetPaymentStatusUsesCalculator(): void
+    {
+        $order = $this->getEntity(Order::class, ['id' => 42]);
+        $expectedStatus = PaymentStatuses::PAID_IN_FULL;
+
+        $paymentStatusCalculator = $this->createMock(PaymentStatusCalculatorInterface::class);
+        $paymentStatusCalculator->expects(self::once())
+            ->method('calculatePaymentStatus')
+            ->with($order, null)
+            ->willReturn($expectedStatus);
+
+        $this->provider->setPaymentStatusCalculator($paymentStatusCalculator);
+
+        // The legacy providers should not be called
+        $this->paymentTransactionProvider->expects(self::never())
+            ->method('getPaymentTransactions');
+        $this->totalProcessorProvider->expects(self::never())
+            ->method('getTotal');
+
+        self::assertEquals($expectedStatus, $this->provider->getPaymentStatus($order));
+    }
+
+    public function testGetPaymentStatusUsesCalculatorForOrderWithSubOrders(): void
+    {
+        $order = $this->getEntity(Order::class, ['id' => 1]);
+        $subOrder = $this->getEntity(Order::class, ['id' => 2]);
+        $order->addSubOrder($subOrder);
+        $expectedStatus = PaymentStatuses::AUTHORIZED_PARTIALLY;
+
+        $calculator = $this->createMock(PaymentStatusCalculatorInterface::class);
+        $calculator->expects(self::once())
+            ->method('calculatePaymentStatus')
+            ->with($order, null)
+            ->willReturn($expectedStatus);
+
+        $this->provider->setPaymentStatusCalculator($calculator);
+
+        // The legacy providers should not be called even for orders with sub-orders
+        $this->paymentTransactionProvider->expects(self::never())
+            ->method('getPaymentTransactions');
+        $this->totalProcessorProvider->expects(self::never())
+            ->method('getTotal');
+
+        self::assertEquals($expectedStatus, $this->provider->getPaymentStatus($order));
     }
 }

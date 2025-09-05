@@ -31,5 +31,5 @@ Feature: Sales Orders on Shopping List view page
     And I show column Payment Method in "Shopping list Orders Grid"
     And I should see following "Shopping list Orders Grid" grid:
       | Order Number | Total   | Total ($) | # Line Items | Internal Status | Payment Status | Payment Method | Customer       | Customer User |
-      | FirstOrder   | $51.00  | $51.00    | 1            | Open            |                | Payment Term   | first customer | Amanda Cole   |
+      | FirstOrder   | $51.00  | $51.00    | 1            | Open            | Paid in full   | Payment Term   | first customer | Amanda Cole   |
       | SecondOrder  | $102.00 | $102.00   | 1            | Open            |                |                | first customer | Amanda Cole   |

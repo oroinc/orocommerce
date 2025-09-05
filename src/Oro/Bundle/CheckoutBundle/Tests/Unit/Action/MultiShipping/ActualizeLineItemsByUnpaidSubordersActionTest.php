@@ -9,31 +9,34 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-class ActualizeLineItemsByUnpaidSubordersActionTest extends \PHPUnit\Framework\TestCase
+class ActualizeLineItemsByUnpaidSubordersActionTest extends TestCase
 {
-    /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
-    private $contextAccessor;
+    private MockObject&ContextAccessor $contextAccessor;
 
-    /** @var PaymentStatusProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentStatusProvider;
+    private MockObject&PaymentStatusManager $paymentStatusManager;
 
-    /** @var CheckoutLineItemsProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $checkoutLineItemsProvider;
+    private MockObject&PaymentStatusProviderInterface $paymentStatusProvider;
 
-    /** @var ActualizeLineItemsByUnpaidSubordersAction */
-    private $action;
+    private MockObject&CheckoutLineItemsProvider $checkoutLineItemsProvider;
+
+    private ActualizeLineItemsByUnpaidSubordersAction $action;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);
+        $this->paymentStatusManager = $this->createMock(PaymentStatusManager::class);
         $this->paymentStatusProvider = $this->createMock(PaymentStatusProviderInterface::class);
         $this->checkoutLineItemsProvider = $this->createMock(CheckoutLineItemsProvider::class);
 
@@ -42,6 +45,7 @@ class ActualizeLineItemsByUnpaidSubordersActionTest extends \PHPUnit\Framework\T
             $this->paymentStatusProvider,
             $this->checkoutLineItemsProvider
         );
+        $this->action->setPaymentStatusManager($this->paymentStatusManager);
         $this->action->setDispatcher($this->createMock(EventDispatcher::class));
     }
 
@@ -105,7 +109,7 @@ class ActualizeLineItemsByUnpaidSubordersActionTest extends \PHPUnit\Framework\T
         ];
     }
 
-    public function testExecuteWhenPartialPaidAction()
+    public function testExecuteWhenPartialPaidAction(): void
     {
         $checkoutOption = new PropertyPath('checkout');
         $orderOption = new PropertyPath('order');
@@ -126,7 +130,7 @@ class ActualizeLineItemsByUnpaidSubordersActionTest extends \PHPUnit\Framework\T
         $context->checkout = $checkout;
         $context->order = $order;
 
-        $this->contextAccessor->expects($this->exactly(2))
+        $this->contextAccessor->expects(self::exactly(2))
             ->method('getValue')
             ->withConsecutive(
                 [$context, $checkoutOption],
@@ -137,18 +141,18 @@ class ActualizeLineItemsByUnpaidSubordersActionTest extends \PHPUnit\Framework\T
                 $order
             );
 
-        $this->paymentStatusProvider->expects($this->exactly(2))
+        $this->paymentStatusManager->expects(self::exactly(2))
             ->method('getPaymentStatus')
             ->withConsecutive(
                 [$subOrder1],
                 [$subOrder2]
             )
             ->willReturnOnConsecutiveCalls(
-                PaymentStatusProvider::AUTHORIZED,
-                PaymentStatusProvider::PENDING
+                (new PaymentStatus())->setPaymentStatus(PaymentStatuses::AUTHORIZED),
+                (new PaymentStatus())->setPaymentStatus(PaymentStatuses::PENDING)
             );
 
-        $this->checkoutLineItemsProvider->expects($this->once())
+        $this->checkoutLineItemsProvider->expects(self::once())
             ->method('getProductSkusWithDifferences')
             ->with(
                 $subOrder2->getLineItems(),
@@ -162,13 +166,13 @@ class ActualizeLineItemsByUnpaidSubordersActionTest extends \PHPUnit\Framework\T
         ]);
         $this->action->execute($context);
 
-        $this->assertFalse($checkout->getLineItems()->isEmpty());
+        self::assertFalse($checkout->getLineItems()->isEmpty());
 
         $skus = $checkout->getLineItems()->map(fn (CheckoutLineItem $lineItem) => $lineItem->getProductSku());
-        $this->assertEqualsCanonicalizing(['SKU1', 'SKU2'], $skus->toArray());
+        self::assertEqualsCanonicalizing(['SKU1', 'SKU2'], $skus->toArray());
     }
 
-    public function testExecuteWhenNotPaidAction()
+    public function testExecuteWhenNotPaidAction(): void
     {
         $checkoutOption = new PropertyPath('checkout');
         $orderOption = new PropertyPath('order');
@@ -188,7 +192,7 @@ class ActualizeLineItemsByUnpaidSubordersActionTest extends \PHPUnit\Framework\T
         $context->checkout = $checkout;
         $context->order = $order;
 
-        $this->contextAccessor->expects($this->exactly(2))
+        $this->contextAccessor->expects(self::exactly(2))
             ->method('getValue')
             ->withConsecutive(
                 [$context, $checkoutOption],
@@ -199,18 +203,18 @@ class ActualizeLineItemsByUnpaidSubordersActionTest extends \PHPUnit\Framework\T
                 $order
             );
 
-        $this->paymentStatusProvider->expects($this->exactly(2))
+        $this->paymentStatusManager->expects(self::exactly(2))
             ->method('getPaymentStatus')
             ->withConsecutive(
                 [$subOrder1],
                 [$subOrder2]
             )
             ->willReturnOnConsecutiveCalls(
-                PaymentStatusProvider::AUTHORIZED,
-                PaymentStatusProvider::AUTHORIZED
+                (new PaymentStatus())->setPaymentStatus(PaymentStatuses::AUTHORIZED),
+                (new PaymentStatus())->setPaymentStatus(PaymentStatuses::AUTHORIZED)
             );
 
-        $this->checkoutLineItemsProvider->expects($this->never())
+        $this->checkoutLineItemsProvider->expects(self::never())
             ->method('getProductSkusWithDifferences');
 
         $this->action->initialize([
@@ -219,6 +223,125 @@ class ActualizeLineItemsByUnpaidSubordersActionTest extends \PHPUnit\Framework\T
         ]);
         $this->action->execute($context);
 
-        $this->assertTrue($checkout->getLineItems()->isEmpty());
+        self::assertTrue($checkout->getLineItems()->isEmpty());
+    }
+
+    public function testExecuteWithNullPaymentStatusManagerPartialPaid(): void
+    {
+        $checkoutOption = new PropertyPath('checkout');
+        $orderOption = new PropertyPath('order');
+
+        $checkout = $this->getCheckout([
+            $this->getCheckoutLineItem('SKU1'),
+            $this->getCheckoutLineItem('SKU2'),
+            $this->getCheckoutLineItem('SKU3')
+        ]);
+
+        $subOrder1 = $this->getOrder([$this->getOrderLineItem('SKU1'), $this->getOrderLineItem('SKU2')]);
+        $subOrder2 = $this->getOrder([$this->getOrderLineItem('SKU3')]);
+        $order = new Order();
+        $order->addSubOrder($subOrder1);
+        $order->addSubOrder($subOrder2);
+
+        $context = new \stdClass();
+        $context->checkout = $checkout;
+        $context->order = $order;
+
+        $this->contextAccessor->expects(self::exactly(2))
+            ->method('getValue')
+            ->withConsecutive(
+                [$context, $checkoutOption],
+                [$context, $orderOption]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $checkout,
+                $order
+            );
+
+        $this->paymentStatusProvider->expects(self::exactly(2))
+            ->method('getPaymentStatus')
+            ->withConsecutive(
+                [$subOrder1],
+                [$subOrder2]
+            )
+            ->willReturnOnConsecutiveCalls(
+                PaymentStatuses::AUTHORIZED,
+                PaymentStatuses::PENDING
+            );
+
+        $this->checkoutLineItemsProvider->expects(self::once())
+            ->method('getProductSkusWithDifferences')
+            ->with(
+                $subOrder2->getLineItems(),
+                $checkout->getLineItems()
+            )
+            ->willReturn(['SKU3']);
+
+        $this->action->setPaymentStatusManager(null);
+        $this->action->initialize([
+            'checkout' => $checkoutOption,
+            'order' => $orderOption
+        ]);
+        $this->action->execute($context);
+
+        self::assertFalse($checkout->getLineItems()->isEmpty());
+
+        $skus = $checkout->getLineItems()->map(fn (CheckoutLineItem $lineItem) => $lineItem->getProductSku());
+        self::assertEqualsCanonicalizing(['SKU1', 'SKU2'], $skus->toArray());
+    }
+
+    public function testExecuteWithNullPaymentStatusManagerAllPaid(): void
+    {
+        $checkoutOption = new PropertyPath('checkout');
+        $orderOption = new PropertyPath('order');
+
+        $checkout = $this->getCheckout([
+            $this->getCheckoutLineItem('SKU1'),
+            $this->getCheckoutLineItem('SKU2')
+        ]);
+
+        $subOrder1 = $this->getOrder([$this->getOrderLineItem('SKU1')]);
+        $subOrder2 = $this->getOrder([$this->getOrderLineItem('SKU2')]);
+        $order = new Order();
+        $order->addSubOrder($subOrder1);
+        $order->addSubOrder($subOrder2);
+
+        $context = new \stdClass();
+        $context->checkout = $checkout;
+        $context->order = $order;
+
+        $this->contextAccessor->expects(self::exactly(2))
+            ->method('getValue')
+            ->withConsecutive(
+                [$context, $checkoutOption],
+                [$context, $orderOption]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $checkout,
+                $order
+            );
+
+        $this->paymentStatusProvider->expects(self::exactly(2))
+            ->method('getPaymentStatus')
+            ->withConsecutive(
+                [$subOrder1],
+                [$subOrder2]
+            )
+            ->willReturnOnConsecutiveCalls(
+                PaymentStatuses::AUTHORIZED,
+                PaymentStatuses::AUTHORIZED
+            );
+
+        $this->checkoutLineItemsProvider->expects(self::never())
+            ->method('getProductSkusWithDifferences');
+
+        $this->action->setPaymentStatusManager(null);
+        $this->action->initialize([
+            'checkout' => $checkoutOption,
+            'order' => $orderOption
+        ]);
+        $this->action->execute($context);
+
+        self::assertTrue($checkout->getLineItems()->isEmpty());
     }
 }

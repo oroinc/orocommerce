@@ -5,6 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Provider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\PaymentStatusCalculatorInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Component\Math\BigDecimal;
@@ -12,6 +13,8 @@ use Oro\Component\Math\RoundingMode;
 
 /**
  * Provides payment status of passed entity according to its transactions.
+ *
+ * Will be removed in v7.0.0, use {@link PaymentStatusManager} or {@link PaymentStatusCalculator} instead.
  */
 class PaymentStatusProvider implements PaymentStatusProviderInterface
 {
@@ -33,6 +36,8 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
     /** @var TotalProcessorProvider */
     protected $totalProcessorProvider;
 
+    private ?PaymentStatusCalculatorInterface $paymentStatusCalculator = null;
+
     public function __construct(
         PaymentTransactionProvider $paymentTransactionProvider,
         TotalProcessorProvider $totalProcessorProvider
@@ -41,12 +46,24 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
         $this->totalProcessorProvider = $totalProcessorProvider;
     }
 
+    public function setPaymentStatusCalculator(?PaymentStatusCalculatorInterface $paymentStatusCalculator): void
+    {
+        $this->paymentStatusCalculator = $paymentStatusCalculator;
+    }
+
     #[\Override]
     public function getPaymentStatus($entity)
     {
-        $paymentTransactions = new ArrayCollection($this->paymentTransactionProvider->getPaymentTransactions($entity));
+        // BC layer.
+        if (!$this->paymentStatusCalculator) {
+            $paymentTransactions = new ArrayCollection(
+                $this->paymentTransactionProvider->getPaymentTransactions($entity)
+            );
 
-        return $this->getStatusByEntityAndTransactions($entity, $paymentTransactions);
+            return $this->getStatusByEntityAndTransactions($entity, $paymentTransactions);
+        }
+
+        return $this->paymentStatusCalculator->calculatePaymentStatus($entity);
     }
 
     /**

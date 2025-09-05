@@ -7,7 +7,8 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
@@ -19,6 +20,7 @@ use Symfony\Component\PropertyAccess\PropertyPath;
  */
 class ActualizeLineItemsByUnpaidSubordersAction extends AbstractAction
 {
+    private ?PaymentStatusManager $paymentStatusManager = null;
     private PaymentStatusProviderInterface $paymentStatusProvider;
     private CheckoutLineItemsProvider $checkoutLineItemsProvider;
     private PropertyPath $order;
@@ -32,6 +34,11 @@ class ActualizeLineItemsByUnpaidSubordersAction extends AbstractAction
         parent::__construct($contextAccessor);
         $this->paymentStatusProvider = $paymentStatusProvider;
         $this->checkoutLineItemsProvider = $checkoutLineItemsProvider;
+    }
+
+    public function setPaymentStatusManager(?PaymentStatusManager $paymentStatusManager): void
+    {
+        $this->paymentStatusManager = $paymentStatusManager;
     }
 
     #[\Override]
@@ -85,11 +92,23 @@ class ActualizeLineItemsByUnpaidSubordersAction extends AbstractAction
 
     private function isProcessed(Order $order): bool
     {
+        // BC layer.
+        if (!$this->paymentStatusManager) {
+            return \in_array(
+                $this->paymentStatusProvider->getPaymentStatus($order),
+                [
+                    PaymentStatuses::AUTHORIZED,
+                    PaymentStatuses::PAID_IN_FULL
+                ],
+                true
+            );
+        }
+
         return \in_array(
-            $this->paymentStatusProvider->getPaymentStatus($order),
+            (string) $this->paymentStatusManager->getPaymentStatus($order),
             [
-                PaymentStatusProvider::AUTHORIZED,
-                PaymentStatusProvider::FULL
+                PaymentStatuses::AUTHORIZED,
+                PaymentStatuses::PAID_IN_FULL
             ],
             true
         );

@@ -9,6 +9,8 @@ use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 
 /**
  * Update parent order payment status on sub-order status updates.
+ *
+ * Will be removed in v7.0
  */
 class PaymentStatusListener
 {

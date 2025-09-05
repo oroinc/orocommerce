@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Manager;
 
 use Doctrine\ORM\EntityManager;
@@ -7,36 +9,33 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentStatusRepository;
+use Oro\Bundle\PaymentBundle\Event\PaymentStatusUpdatedEvent;
 use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
-use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class PaymentStatusManagerTest extends \PHPUnit\Framework\TestCase
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+final class PaymentStatusManagerTest extends TestCase
 {
     use EntityTrait;
 
-    /** @var PaymentStatusProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $statusProvider;
+    private PaymentStatusProviderInterface&MockObject $statusProvider;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private EventDispatcherInterface&MockObject $eventDispatcher;
+    private PaymentStatusManager $manager;
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
-
-    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentTransactionProvider;
-
-    /** @var PaymentStatusManager */
-    private $manager;
-
-    /** @var PaymentTransaction */
-    private $transaction;
-
-    #[\Override]
     protected function setUp(): void
     {
-        $this->statusProvider = $this->createMock(PaymentStatusProvider::class);
+        $this->statusProvider = $this->createMock(PaymentStatusProviderInterface::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->transaction = new PaymentTransaction();
         $this->transaction->setEntityClass(\stdClass::class);
@@ -45,9 +44,9 @@ class PaymentStatusManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->manager = new PaymentStatusManager(
             $this->statusProvider,
-            $this->doctrineHelper,
-            $this->paymentTransactionProvider
+            $this->doctrineHelper
         );
+        $this->manager->setEventDispatcher($this->eventDispatcher);
     }
 
     public function testUpdateStatusNewEntity()
@@ -63,7 +62,7 @@ class PaymentStatusManagerTest extends \PHPUnit\Framework\TestCase
         $this->statusProvider->expects($this->once())
             ->method('getPaymentStatus')
             ->with($entity)
-            ->willReturn(PaymentStatusProvider::FULL);
+            ->willReturn(PaymentStatuses::PAID_IN_FULL);
 
         $this->manager->updateStatus($this->transaction);
     }
@@ -86,8 +85,8 @@ class PaymentStatusManagerTest extends \PHPUnit\Framework\TestCase
                 [$entity]
             )
             ->willReturnOnConsecutiveCalls(
-                PaymentStatusProvider::PARTIALLY,
-                PaymentStatusProvider::FULL
+                PaymentStatuses::PAID_PARTIALLY,
+                PaymentStatuses::PAID_IN_FULL
             );
 
         $this->manager->updateStatus($this->transaction);
@@ -141,7 +140,7 @@ class PaymentStatusManagerTest extends \PHPUnit\Framework\TestCase
             ->with(['entityClass' => \stdClass::class, 'entityIdentifier' => 1])
             ->willReturn(null);
 
-        $paymentStatus = PaymentStatusProvider::FULL;
+        $paymentStatus = PaymentStatuses::PAID_IN_FULL;
         $this->statusProvider->expects($this->once())
             ->method('getPaymentStatus')
             ->with($entity)
@@ -160,7 +159,7 @@ class PaymentStatusManagerTest extends \PHPUnit\Framework\TestCase
             ->with(PaymentStatus::class)
             ->willReturn($entityRepository);
 
-        $paymentStatus = PaymentStatusProvider::INVOICED;
+        $paymentStatus = PaymentStatuses::INVOICED;
         $entityRepository->expects($this->once())
             ->method('findOneBy')
             ->with(['entityClass' => \stdClass::class, 'entityIdentifier' => 1])
@@ -171,5 +170,444 @@ class PaymentStatusManagerTest extends \PHPUnit\Framework\TestCase
 
         $paymentStatusEntity = $this->manager->getPaymentStatusForEntity(\stdClass::class, 1);
         $this->assertEquals($paymentStatus, $paymentStatusEntity->getPaymentStatus());
+    }
+
+    public function testGetPaymentStatusWhenExists(): void
+    {
+        $entity = new \stdClass();
+        $entityClass = 'App\Entity\Order';
+        $entityId = 123;
+        $existingPaymentStatus = new PaymentStatus();
+        $existingPaymentStatus->setPaymentStatus(PaymentStatuses::PAID_IN_FULL);
+
+        $repository = $this->createMock(EntityRepository::class);
+        $repository
+            ->expects(self::once())
+            ->method('findOneBy')
+            ->with([
+                'entityClass' => $entityClass,
+                'entityIdentifier' => $entityId,
+            ])
+            ->willReturn($existingPaymentStatus);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getEntityClass')
+            ->with($entity)
+            ->willReturn($entityClass);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getSingleEntityIdentifier')
+            ->with($entity)
+            ->willReturn($entityId);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getEntityRepository')
+            ->with(PaymentStatus::class)
+            ->willReturn($repository);
+
+        $this->statusProvider
+            ->expects(self::never())
+            ->method('getPaymentStatus');
+
+        $result = $this->manager->getPaymentStatus($entity);
+
+        self::assertSame($existingPaymentStatus, $result);
+    }
+
+    public function testGetPaymentStatusWhenNotExists(): void
+    {
+        $entity = new \stdClass();
+        $entityClass = 'App\Entity\Order';
+        $entityId = 123;
+        $calculatedStatus = PaymentStatuses::PENDING;
+        $createdPaymentStatus = new PaymentStatus();
+        $createdPaymentStatus->setPaymentStatus($calculatedStatus);
+        $targetEntityReference = new \stdClass();
+
+        $repository = $this->createMock(EntityRepository::class);
+        $repository
+            ->expects(self::once())
+            ->method('findOneBy')
+            ->willReturn(null);
+
+        $paymentStatusRepository = $this->createMock(PaymentStatusRepository::class);
+        $paymentStatusRepository
+            ->expects(self::once())
+            ->method('upsertPaymentStatus')
+            ->with($entityClass, $entityId, $calculatedStatus, false)
+            ->willReturn($createdPaymentStatus);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getEntityClass')
+            ->with($entity)
+            ->willReturn($entityClass);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getSingleEntityIdentifier')
+            ->with($entity)
+            ->willReturn($entityId);
+
+        $this->doctrineHelper
+            ->expects(self::exactly(2))
+            ->method('getEntityRepository')
+            ->with(PaymentStatus::class)
+            ->willReturn($repository, $paymentStatusRepository);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getEntityReference')
+            ->with($entityClass, $entityId)
+            ->willReturn($targetEntityReference);
+
+        $this->statusProvider
+            ->expects(self::once())
+            ->method('getPaymentStatus')
+            ->with($entity)
+            ->willReturn($calculatedStatus);
+
+        $this->eventDispatcher
+            ->expects(self::once())
+            ->method('dispatch')
+            ->with(
+                self::callback(
+                    static function (PaymentStatusUpdatedEvent $event) use (
+                        $createdPaymentStatus,
+                        $targetEntityReference
+                    ) {
+                        return $event->getPaymentStatus() === $createdPaymentStatus
+                            && $event->getTargetEntity() === $targetEntityReference;
+                    }
+                )
+            );
+
+        $result = $this->manager->getPaymentStatus($entity);
+
+        self::assertSame($createdPaymentStatus, $result);
+    }
+
+    public function testSetPaymentStatus(): void
+    {
+        $entity = new \stdClass();
+        $entityClass = 'App\Entity\Order';
+        $entityId = 123;
+        $paymentStatus = PaymentStatuses::PAID_IN_FULL;
+        $force = true;
+        $createdPaymentStatus = new PaymentStatus();
+        $createdPaymentStatus->setPaymentStatus($paymentStatus);
+        $targetEntityReference = new \stdClass();
+
+        $paymentStatusRepository = $this->createMock(PaymentStatusRepository::class);
+        $paymentStatusRepository
+            ->expects(self::once())
+            ->method('upsertPaymentStatus')
+            ->with($entityClass, $entityId, $paymentStatus, $force)
+            ->willReturn($createdPaymentStatus);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getEntityClass')
+            ->with($entity)
+            ->willReturn($entityClass);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getSingleEntityIdentifier')
+            ->with($entity)
+            ->willReturn($entityId);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getEntityRepository')
+            ->with(PaymentStatus::class)
+            ->willReturn($paymentStatusRepository);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getEntityReference')
+            ->with($entityClass, $entityId)
+            ->willReturn($targetEntityReference);
+
+        $this->eventDispatcher
+            ->expects(self::once())
+            ->method('dispatch')
+            ->with(
+                self::callback(
+                    static function (PaymentStatusUpdatedEvent $event) use (
+                        $createdPaymentStatus,
+                        $targetEntityReference
+                    ) {
+                        return $event->getPaymentStatus() === $createdPaymentStatus
+                            && $event->getTargetEntity() === $targetEntityReference;
+                    }
+                )
+            );
+
+        $result = $this->manager->setPaymentStatus($entity, $paymentStatus, $force);
+
+        self::assertSame($createdPaymentStatus, $result);
+    }
+
+    public function testUpdatePaymentStatusWhenNotForced(): void
+    {
+        $entity = new \stdClass();
+        $entityClass = 'App\Entity\Order';
+        $entityId = 123;
+        $calculatedStatus = PaymentStatuses::DECLINED;
+        $existingPaymentStatus = new PaymentStatus();
+        $existingPaymentStatus->setPaymentStatus(PaymentStatuses::PENDING);
+        $existingPaymentStatus->setForced(false);
+        $updatedPaymentStatus = new PaymentStatus();
+        $updatedPaymentStatus->setPaymentStatus($calculatedStatus);
+        $targetEntityReference = new \stdClass();
+
+        $repository = $this->createMock(EntityRepository::class);
+        $repository
+            ->expects(self::once())
+            ->method('findOneBy')
+            ->with([
+                'entityClass' => $entityClass,
+                'entityIdentifier' => $entityId,
+            ])
+            ->willReturn($existingPaymentStatus);
+
+        $paymentStatusRepository = $this->createMock(PaymentStatusRepository::class);
+        $paymentStatusRepository
+            ->expects(self::once())
+            ->method('upsertPaymentStatus')
+            ->with($entityClass, $entityId, $calculatedStatus, false)
+            ->willReturn($updatedPaymentStatus);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getEntityClass')
+            ->with($entity)
+            ->willReturn($entityClass);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getSingleEntityIdentifier')
+            ->with($entity)
+            ->willReturn($entityId);
+
+        $this->doctrineHelper
+            ->expects(self::exactly(2))
+            ->method('getEntityRepository')
+            ->with(PaymentStatus::class)
+            ->willReturn($repository, $paymentStatusRepository);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getEntityReference')
+            ->with($entityClass, $entityId)
+            ->willReturn($targetEntityReference);
+
+        $this->statusProvider
+            ->expects(self::once())
+            ->method('getPaymentStatus')
+            ->with($entity)
+            ->willReturn($calculatedStatus);
+
+        $this->eventDispatcher
+            ->expects(self::once())
+            ->method('dispatch')
+            ->with(
+                self::callback(
+                    static function (PaymentStatusUpdatedEvent $event) use (
+                        $updatedPaymentStatus,
+                        $targetEntityReference
+                    ) {
+                        return $event->getPaymentStatus() === $updatedPaymentStatus
+                            && $event->getTargetEntity() === $targetEntityReference;
+                    }
+                )
+            );
+
+        $result = $this->manager->updatePaymentStatus($entity, false);
+
+        self::assertSame($updatedPaymentStatus, $result);
+    }
+
+    public function testUpdatePaymentStatusWhenForcedAndNotOverridden(): void
+    {
+        $entity = new \stdClass();
+        $entityClass = 'App\Entity\Order';
+        $entityId = 123;
+        $existingPaymentStatus = new PaymentStatus();
+        $existingPaymentStatus->setPaymentStatus(PaymentStatuses::PAID_IN_FULL);
+        $existingPaymentStatus->setForced(true);
+
+        $repository = $this->createMock(EntityRepository::class);
+        $repository
+            ->expects(self::once())
+            ->method('findOneBy')
+            ->with([
+                'entityClass' => $entityClass,
+                'entityIdentifier' => $entityId,
+            ])
+            ->willReturn($existingPaymentStatus);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getEntityClass')
+            ->with($entity)
+            ->willReturn($entityClass);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getSingleEntityIdentifier')
+            ->with($entity)
+            ->willReturn($entityId);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getEntityRepository')
+            ->with(PaymentStatus::class)
+            ->willReturn($repository);
+
+        $this->statusProvider
+            ->expects(self::never())
+            ->method('getPaymentStatus');
+
+        $this->eventDispatcher
+            ->expects(self::never())
+            ->method('dispatch');
+
+        $result = $this->manager->updatePaymentStatus($entity, false);
+
+        self::assertSame($existingPaymentStatus, $result);
+    }
+
+    public function testUpdatePaymentStatusWhenForcedButOverridden(): void
+    {
+        $entity = new \stdClass();
+        $entityClass = 'App\Entity\Order';
+        $entityId = 123;
+        $calculatedStatus = PaymentStatuses::CANCELED;
+        $existingPaymentStatus = new PaymentStatus();
+        $existingPaymentStatus->setPaymentStatus(PaymentStatuses::PAID_IN_FULL);
+        $existingPaymentStatus->setForced(true);
+        $updatedPaymentStatus = new PaymentStatus();
+        $updatedPaymentStatus->setPaymentStatus($calculatedStatus);
+        $targetEntityReference = new \stdClass();
+
+        $repository = $this->createMock(EntityRepository::class);
+        $repository
+            ->expects(self::once())
+            ->method('findOneBy')
+            ->willReturn($existingPaymentStatus);
+
+        $paymentStatusRepository = $this->createMock(PaymentStatusRepository::class);
+        $paymentStatusRepository
+            ->expects(self::once())
+            ->method('upsertPaymentStatus')
+            ->with($entityClass, $entityId, $calculatedStatus, true)
+            ->willReturn($updatedPaymentStatus);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getEntityClass')
+            ->with($entity)
+            ->willReturn($entityClass);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getSingleEntityIdentifier')
+            ->with($entity)
+            ->willReturn($entityId);
+
+        $this->doctrineHelper
+            ->expects(self::exactly(2))
+            ->method('getEntityRepository')
+            ->with(PaymentStatus::class)
+            ->willReturn($repository, $paymentStatusRepository);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getEntityReference')
+            ->with($entityClass, $entityId)
+            ->willReturn($targetEntityReference);
+
+        $this->statusProvider
+            ->expects(self::once())
+            ->method('getPaymentStatus')
+            ->with($entity)
+            ->willReturn($calculatedStatus);
+
+        $this->eventDispatcher
+            ->expects(self::once())
+            ->method('dispatch')
+            ->with(self::isInstanceOf(PaymentStatusUpdatedEvent::class));
+
+        $result = $this->manager->updatePaymentStatus($entity, true);
+
+        self::assertSame($updatedPaymentStatus, $result);
+    }
+
+    public function testUpdatePaymentStatusWhenNotExists(): void
+    {
+        $entity = new \stdClass();
+        $entityClass = 'App\Entity\Order';
+        $entityId = 123;
+        $calculatedStatus = PaymentStatuses::PENDING;
+        $createdPaymentStatus = new PaymentStatus();
+        $createdPaymentStatus->setPaymentStatus($calculatedStatus);
+        $targetEntityReference = new \stdClass();
+
+        $repository = $this->createMock(EntityRepository::class);
+        $repository
+            ->expects(self::once())
+            ->method('findOneBy')
+            ->willReturn(null);
+
+        $paymentStatusRepository = $this->createMock(PaymentStatusRepository::class);
+        $paymentStatusRepository
+            ->expects(self::once())
+            ->method('upsertPaymentStatus')
+            ->with($entityClass, $entityId, $calculatedStatus, false)
+            ->willReturn($createdPaymentStatus);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getEntityClass')
+            ->with($entity)
+            ->willReturn($entityClass);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getSingleEntityIdentifier')
+            ->with($entity)
+            ->willReturn($entityId);
+
+        $this->doctrineHelper
+            ->expects(self::exactly(2))
+            ->method('getEntityRepository')
+            ->with(PaymentStatus::class)
+            ->willReturn($repository, $paymentStatusRepository);
+
+        $this->doctrineHelper
+            ->expects(self::once())
+            ->method('getEntityReference')
+            ->with($entityClass, $entityId)
+            ->willReturn($targetEntityReference);
+
+        $this->statusProvider
+            ->expects(self::once())
+            ->method('getPaymentStatus')
+            ->with($entity)
+            ->willReturn($calculatedStatus);
+
+        $this->eventDispatcher
+            ->expects(self::once())
+            ->method('dispatch')
+            ->with(self::isInstanceOf(PaymentStatusUpdatedEvent::class));
+
+        $result = $this->manager->updatePaymentStatus($entity);
+
+        self::assertSame($createdPaymentStatus, $result);
     }
 }

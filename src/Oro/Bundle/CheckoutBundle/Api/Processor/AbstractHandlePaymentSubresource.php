@@ -15,6 +15,7 @@ use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\AddressActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\SplitOrderActionsInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -25,6 +26,8 @@ use Symfony\Component\PropertyAccess\PropertyPath;
  */
 abstract class AbstractHandlePaymentSubresource implements ProcessorInterface
 {
+    private ?PaymentStatusManager $paymentStatusManager = null;
+
     public function __construct(
         private readonly SplitOrderActionsInterface $splitOrderActions,
         private readonly CheckoutActionsInterface $checkoutActions,
@@ -35,6 +38,11 @@ abstract class AbstractHandlePaymentSubresource implements ProcessorInterface
         private readonly DoctrineHelper $doctrineHelper,
         private readonly FlushDataHandlerInterface $flushDataHandler
     ) {
+    }
+
+    public function setPaymentStatusManager(?PaymentStatusManager $paymentStatusManager): void
+    {
+        $this->paymentStatusManager = $paymentStatusManager;
     }
 
     #[\Override]
@@ -120,7 +128,12 @@ abstract class AbstractHandlePaymentSubresource implements ProcessorInterface
             return;
         }
 
-        $paymentStatus = $this->paymentStatusProvider->getPaymentStatus($checkout->getOrder());
+        // BC layer.
+        if (!$this->paymentStatusManager) {
+            $paymentStatus = $this->paymentStatusProvider->getPaymentStatus($checkout->getOrder());
+        } else {
+            $paymentStatus = (string) $this->paymentStatusManager->getPaymentStatus($checkout->getOrder());
+        }
         if (\in_array($paymentStatus, $this->getInProgressStatuses(), true)) {
             $context->addError(Error::createValidationError(
                 'payment status constraint',

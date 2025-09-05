@@ -1,41 +1,60 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentStatusProvider;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class OrderPaymentStatusProviderTest extends \PHPUnit\Framework\TestCase
+final class OrderPaymentStatusProviderTest extends TestCase
 {
-    /**
-     * @var PaymentStatusProvider| \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $paymentProvider;
+    private MockObject&PaymentStatusManager $paymentStatusManager;
 
-    /**
-     * @var OrderPaymentStatusProvider
-     */
-    protected $provider;
+    private OrderPaymentStatusProvider $provider;
+
+    private MockObject&PaymentStatusProviderInterface $paymentStatusProvider;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->paymentProvider = $this->createMock(PaymentStatusProvider::class);
+        $this->paymentStatusManager = $this->createMock(PaymentStatusManager::class);
+        $this->paymentStatusProvider = $this->createMock(PaymentStatusProviderInterface::class);
 
-        $this->provider = new OrderPaymentStatusProvider($this->paymentProvider);
+        $this->provider = new OrderPaymentStatusProvider($this->paymentStatusProvider);
+        $this->provider->setPaymentStatusManager($this->paymentStatusManager);
     }
 
-    public function testGetPaymentStatus()
+    public function testGetPaymentStatus(): void
     {
         $order = new Order();
+        $status = PaymentStatuses::AUTHORIZED;
 
-        $this->paymentProvider->expects($this->once())
+        $this->paymentStatusManager->expects(self::once())
             ->method('getPaymentStatus')
             ->with($order)
-            ->willReturn('status');
+            ->willReturn((new PaymentStatus())->setPaymentStatus($status));
 
-        $status = $this->provider->getPaymentStatus($order);
-        $this->assertEquals('status', $status);
+        self::assertEquals($status, $this->provider->getPaymentStatus($order));
+    }
+
+    public function testGetPaymentStatusWithNullPaymentStatusManager(): void
+    {
+        $order = new Order();
+        $status = PaymentStatuses::PENDING;
+
+        $this->paymentStatusProvider->expects(self::once())
+            ->method('getPaymentStatus')
+            ->with($order)
+            ->willReturn($status);
+
+        $this->provider->setPaymentStatusManager(null);
+        self::assertEquals($status, $this->provider->getPaymentStatus($order));
     }
 }

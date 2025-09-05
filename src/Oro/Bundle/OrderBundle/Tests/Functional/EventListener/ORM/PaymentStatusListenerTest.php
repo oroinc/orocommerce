@@ -9,6 +9,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -54,17 +55,17 @@ class PaymentStatusListenerTest extends WebTestCase
         $em->flush();
 
         self::assertEquals(
-            PaymentStatusProvider::AUTHORIZED,
+            PaymentStatuses::AUTHORIZED,
             $this->paymentStatusProvider->getPaymentStatus($subOrder1)
         );
 
         self::assertEquals(
-            PaymentStatusProvider::PENDING,
+            PaymentStatuses::PENDING,
             $this->paymentStatusProvider->getPaymentStatus($subOrder2)
         );
 
         self::assertEquals(
-            PaymentStatusProvider::AUTHORIZED_PARTIALLY,
+            PaymentStatuses::AUTHORIZED_PARTIALLY,
             $this->paymentStatusProvider->getPaymentStatus($order)
         );
     }

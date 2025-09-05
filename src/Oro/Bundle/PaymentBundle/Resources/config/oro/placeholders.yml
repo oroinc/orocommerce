@@ -11,4 +11,4 @@ placeholders:
             data: '@oro_payment.provider.payment_transaction->getPaymentMethods($entity$)'
         payment_info:
             template: '@@OroPayment/PaymentTransaction/status.html.twig'
-            data: '@oro_payment.provider.payment_status->getPaymentStatus($entity$)'
+            data: '@oro_payment.placeholder.payment_info->getPaymentStatus($entity$)'

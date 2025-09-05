@@ -4,6 +4,8 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\PaymentStatusCalculatorInterface;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -15,6 +17,7 @@ class PaymentStatusProviderTest extends TestCase
 {
     protected PaymentTransactionProvider|MockObject $paymentTransactionProvider;
     protected TotalProcessorProvider|MockObject $totalProcessorProvider;
+    protected PaymentStatusCalculatorInterface|MockObject $paymentStatusCalculator;
 
     protected PaymentStatusProvider $provider;
 
@@ -23,11 +26,33 @@ class PaymentStatusProviderTest extends TestCase
     {
         $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
         $this->totalProcessorProvider = $this->createMock(TotalProcessorProvider::class);
+        $this->paymentStatusCalculator = $this->createMock(PaymentStatusCalculatorInterface::class);
 
         $this->provider = new PaymentStatusProvider(
             $this->paymentTransactionProvider,
             $this->totalProcessorProvider
         );
+    }
+
+    public function testGetPaymentStatusWithCalculator(): void
+    {
+        $entity = new \stdClass();
+        $expectedStatus = PaymentStatuses::PAID_IN_FULL;
+
+        $this->paymentStatusCalculator->expects(self::once())
+            ->method('calculatePaymentStatus')
+            ->with($entity)
+            ->willReturn($expectedStatus);
+
+        $this->paymentTransactionProvider->expects(self::never())
+            ->method('getPaymentTransactions');
+
+        $this->totalProcessorProvider->expects(self::never())
+            ->method('getTotal');
+
+        $this->provider->setPaymentStatusCalculator($this->paymentStatusCalculator);
+
+        self::assertEquals($expectedStatus, $this->provider->getPaymentStatus($entity));
     }
 
     /**
@@ -76,7 +101,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::FULL,
+                PaymentStatuses::PAID_IN_FULL,
             ],
             'partial if has successful capture but less amount' => [
                 [
@@ -87,7 +112,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(50),
                 ],
                 100,
-                PaymentStatusProvider::PARTIALLY,
+                PaymentStatuses::PAID_PARTIALLY,
             ],
             'declined if has unsuccessful capture' => [
                 [
@@ -98,7 +123,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::DECLINED,
+                PaymentStatuses::DECLINED,
             ],
             'full if has successful charge' => [
                 [
@@ -109,7 +134,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::FULL,
+                PaymentStatuses::PAID_IN_FULL,
             ],
             'partial if has successful charge but less amount' => [
                 [
@@ -120,7 +145,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(40),
                 ],
                 100,
-                PaymentStatusProvider::PARTIALLY,
+                PaymentStatuses::PAID_PARTIALLY,
             ],
             'declined if has unsuccessful charge' => [
                 [
@@ -131,7 +156,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::DECLINED,
+                PaymentStatuses::DECLINED,
             ],
             'full if has successful purchase' => [
                 [
@@ -142,7 +167,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::FULL,
+                PaymentStatuses::PAID_IN_FULL,
             ],
             'partial  if has successful purchase but less amount' => [
                 [
@@ -153,7 +178,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(60),
                 ],
                 100,
-                PaymentStatusProvider::PARTIALLY,
+                PaymentStatuses::PAID_PARTIALLY,
             ],
             'declined if has unsuccessful purchase' => [
                 [
@@ -164,7 +189,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::DECLINED,
+                PaymentStatuses::DECLINED,
             ],
             'authorize if has active and successful authorize' => [
                 [
@@ -175,7 +200,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::AUTHORIZED,
+                PaymentStatuses::AUTHORIZED,
             ],
             'pending if has active but unsuccessful authorize' => [
                 [
@@ -186,7 +211,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::PENDING,
+                PaymentStatuses::PENDING,
             ],
             'pending if has successful but not active authorize' => [
                 [
@@ -197,7 +222,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::PENDING,
+                PaymentStatuses::PENDING,
             ],
             'pending if source validation transaction clone' => [
                 [
@@ -210,7 +235,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::PENDING,
+                PaymentStatuses::PENDING,
             ],
             'authorized if source validation transaction but not cloned' => [
                 [
@@ -223,7 +248,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::AUTHORIZED,
+                PaymentStatuses::AUTHORIZED,
             ],
             'declined if has unsuccessful and not active authorize' => [
                 [
@@ -234,7 +259,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::DECLINED,
+                PaymentStatuses::DECLINED,
             ],
             'full has higher priority than declined' => [
                 [
@@ -250,7 +275,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::FULL,
+                PaymentStatuses::PAID_IN_FULL,
             ],
             'invoiced has higher priority than authorized' => [
                 [
@@ -266,7 +291,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::INVOICED,
+                PaymentStatuses::INVOICED,
             ],
             'full has higher priority than authorized' => [
                 [
@@ -282,7 +307,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::FULL,
+                PaymentStatuses::PAID_IN_FULL,
             ],
             'partial has higher priority than authorized' => [
                 [
@@ -298,7 +323,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::PARTIALLY,
+                PaymentStatuses::PAID_PARTIALLY,
             ],
             'partial has higher priority than declined' => [
                 [
@@ -314,7 +339,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::PARTIALLY,
+                PaymentStatuses::PAID_PARTIALLY,
             ],
             'authorize has higher priority than declined' => [
                 [
@@ -330,7 +355,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::AUTHORIZED,
+                PaymentStatuses::AUTHORIZED,
             ],
             'full has top priority' => [
                 [
@@ -351,7 +376,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100),
                 ],
                 100,
-                PaymentStatusProvider::FULL,
+                PaymentStatuses::PAID_IN_FULL,
             ],
             'full with few successful' => [
                 [
@@ -367,7 +392,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(60),
                 ],
                 100,
-                PaymentStatusProvider::FULL,
+                PaymentStatuses::PAID_IN_FULL,
             ],
             'full with few successful and amount more than required' => [
                 [
@@ -383,7 +408,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(60),
                 ],
                 100,
-                PaymentStatusProvider::FULL,
+                PaymentStatuses::PAID_IN_FULL,
             ],
             'partial with few successful' => [
                 [
@@ -399,7 +424,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(20),
                 ],
                 100,
-                PaymentStatusProvider::PARTIALLY,
+                PaymentStatuses::PAID_PARTIALLY,
             ],
             'pending if has validation' => [
                 [
@@ -410,12 +435,12 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(0),
                 ],
                 100,
-                PaymentStatusProvider::PENDING,
+                PaymentStatuses::PENDING,
             ],
             'pending if has not any transactions' => [
                 [],
                 100,
-                PaymentStatusProvider::PENDING,
+                PaymentStatuses::PENDING,
             ],
             'partially cancelled amount' => [
                 [
@@ -436,7 +461,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(30),
                 ],
                 100,
-                PaymentStatusProvider::CANCELED_PARTIALLY
+                PaymentStatuses::CANCELED_PARTIALLY
             ],
             'partially authorized amount' => [
                 [
@@ -452,7 +477,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(50),
                 ],
                 100.001,
-                PaymentStatusProvider::AUTHORIZED_PARTIALLY
+                PaymentStatuses::AUTHORIZED_PARTIALLY
             ],
             're-authorized amount' => [
                 [
@@ -473,7 +498,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(100.003),
                 ],
                 100.002,
-                PaymentStatusProvider::AUTHORIZED
+                PaymentStatuses::AUTHORIZED
             ],
             'partially canceled amount' => [
                 [
@@ -489,7 +514,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(50)
                 ],
                 50,
-                PaymentStatusProvider::CANCELED
+                PaymentStatuses::CANCELED
             ],
             'partially refunded amount' => [
                 [
@@ -505,7 +530,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(30.00)
                 ],
                 50.00,
-                PaymentStatusProvider::REFUNDED_PARTIALLY
+                PaymentStatuses::REFUNDED_PARTIALLY
             ],
             'fully refunded amount' => [
                 [
@@ -521,7 +546,7 @@ class PaymentStatusProviderTest extends TestCase
                         ->setAmount(50.00)
                 ],
                 50.00,
-                PaymentStatusProvider::REFUNDED
+                PaymentStatuses::REFUNDED
             ]
         ];
     }
