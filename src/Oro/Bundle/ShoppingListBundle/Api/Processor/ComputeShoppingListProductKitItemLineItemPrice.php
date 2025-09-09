@@ -18,7 +18,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Computes values for "currency", "value" and "subTotal" fields for a shopping list kit items.
+ * Computes values of "currency", "value" and "subTotal" fields for ShoppingListKitItem entity.
  */
 class ComputeShoppingListProductKitItemLineItemPrice implements ProcessorInterface
 {

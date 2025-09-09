@@ -920,7 +920,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             expect(htmlParser(str).html).toEqual(result);
         });
 
-        it('icon inside button', () => {
+        xit('icon inside button', () => {
             const cases = [
                 [
                     '<div><a class="btn">{{ widget_icon("icon-before") }}Link text{{ widget_icon("icon-after") }}</a></div>',

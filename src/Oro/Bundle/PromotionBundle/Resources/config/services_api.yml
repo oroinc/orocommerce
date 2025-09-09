@@ -26,6 +26,15 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem }
 
+    oro_promotion.api.compute_shopping_list_discount:
+        class: Oro\Bundle\PromotionBundle\Api\Processor\ComputeShoppingListDiscount
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.value_transformer'
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, priority: -10 }
+
     oro_promotion.api.compute_shopping_list_line_item_discount:
         class: Oro\Bundle\PromotionBundle\Api\Processor\ComputeShoppingListLineItemDiscount
         arguments:

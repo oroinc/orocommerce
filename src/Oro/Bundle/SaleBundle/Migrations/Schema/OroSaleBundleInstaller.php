@@ -38,7 +38,7 @@ class OroSaleBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_25';
+        return 'v7_0_0_0';
     }
 
     #[\Override]
@@ -451,6 +451,7 @@ class OroSaleBundleInstaller implements
             'documents',
             [
                 'attachment' => ['file_applications' => ['default', 'commerce']],
+                'email' => ['available_in_template' => true],
                 'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM]
             ],
             2

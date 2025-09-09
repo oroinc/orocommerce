@@ -5,8 +5,8 @@ data:
         name: 'New Shopping List'
         notes: null
         currency: USD
-        total: '10.1'
-        subTotal: '10.1'
+        total: '10.1000'
+        subTotal: '10.1000'
         default: true
     relationships:
         items:

@@ -24,6 +24,7 @@ class OroOrderExtension extends Extension
         $loader->load('controllers.yml');
         $loader->load('address_validation.yml');
         $loader->load('importexport.yml');
+        $loader->load('mq_topics.yml');
 
         if ('test' === $container->getParameter('kernel.environment')) {
             $loader->load('services_test.yml');

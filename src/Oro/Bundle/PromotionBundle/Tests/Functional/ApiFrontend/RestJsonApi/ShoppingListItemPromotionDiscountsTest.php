@@ -23,34 +23,21 @@ class ShoppingListItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
         /** @var ShoppingListTotalManager $totalManager */
         $totalManager = self::getContainer()->get('oro_shopping_list.manager.shopping_list_total');
         for ($i = 1; $i <= 3; $i++) {
-            $totalManager->recalculateTotals(
-                $this->getReference(sprintf('shopping_list%d', $i)),
-                true
-            );
+            $totalManager->recalculateTotals($this->getReference('shopping_list' . $i), true);
         }
 
-        $this->initialShoppingListLimit = $this->getShoppingListLimit();
+        $this->initialShoppingListLimit = self::getConfigManager()->get('oro_shopping_list.shopping_list_limit');
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        if ($this->getShoppingListLimit() !== $this->initialShoppingListLimit) {
-            $this->setShoppingListLimit($this->initialShoppingListLimit);
+        $configManager = self::getConfigManager();
+        if ($configManager->get('oro_shopping_list.shopping_list_limit') !== $this->initialShoppingListLimit) {
+            $configManager->set('oro_shopping_list.shopping_list_limit', $this->initialShoppingListLimit);
+            $configManager->flush();
         }
         parent::tearDown();
-    }
-
-    private function getShoppingListLimit(): int
-    {
-        return self::getConfigManager()->get('oro_shopping_list.shopping_list_limit');
-    }
-
-    private function setShoppingListLimit(?int $limit): void
-    {
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_shopping_list.shopping_list_limit', $limit);
-        $configManager->flush();
     }
 
     public function testGetList(): void

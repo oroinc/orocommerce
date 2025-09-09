@@ -11,7 +11,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Computes a value of "upcoming" and "availabilityDate" fields for Product entity.
+ * Computes values of "upcoming" and "availabilityDate" fields for Product entity.
  */
 class ComputeProductAvailability implements ProcessorInterface
 {

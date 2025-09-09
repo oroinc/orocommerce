@@ -9,8 +9,8 @@ data:
             updatedAt: '@shopping_list1->updatedAt->format("Y-m-d\TH:i:s\Z")'
             default: true
             currency: USD
-            total: '49.79'
-            subTotal: '49.79'
+            total: '49.7900'
+            subTotal: '49.7900'
         relationships:
             items:
                 data:

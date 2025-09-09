@@ -21,8 +21,8 @@ Feature: Seller Info
     And I uncheck "Use Organization" for "Website" field
     And I uncheck "Use Organization" for "Tax ID" field
     When I fill form with:
-      | Contact Email    | banang.com        |
-      | Website          | local/uri/path    |
+      | Contact Email | banang.com     |
+      | Website       | local/uri/path |
     Then I should see "This value is not a valid email address."
     And I should see "This value is not a valid URL."
     When I fill form with:
@@ -45,6 +45,7 @@ Feature: Seller Info
     And I should see "{{ system.sellerPhoneNumber }} – Seller Phone Number"
     And I should see "{{ system.sellerTaxID }} – Seller tax ID"
     And I should see "{{ system.sellerWebsiteURL }} – Seller Website URL"
+    And I clear "Content" textarea in form "Email Template Form"
     When fill "Email Template Form" with:
       | Content | <p>{{ system.sellerCompanyName }}</p><br/><p>{{ system.sellerBusinessAddress }}</p><br/><p>{{ system.sellerPhoneNumber }}</p><br/><p>{{ system.sellerContactEmail }}</p><br/><p>{{ system.sellerWebsiteURL }}</p><br/><p>{{ system.sellerTaxID }}</p> |
     And I submit form

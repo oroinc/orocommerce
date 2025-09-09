@@ -10,7 +10,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Computes a value of "types" and "files" field for Product Image entity.
+ * Computes a value of "types" and "files" field for ProductImage entity.
  */
 class ComputeProductImageFields implements ProcessorInterface
 {

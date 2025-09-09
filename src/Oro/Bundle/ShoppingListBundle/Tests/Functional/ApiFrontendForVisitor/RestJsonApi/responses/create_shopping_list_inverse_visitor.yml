@@ -6,8 +6,8 @@ data:
         notes: null
         default: true
         currency: USD
-        total: '12.3'
-        subTotal: '12.3'
+        total: '12.3000'
+        subTotal: '12.3000'
     relationships:
         items:
             data:

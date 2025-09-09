@@ -151,6 +151,7 @@ services:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\ComputeShoppingListTotal
         arguments:
             - '@oro_api.doctrine_helper'
+            - '@oro_api.value_transformer'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
