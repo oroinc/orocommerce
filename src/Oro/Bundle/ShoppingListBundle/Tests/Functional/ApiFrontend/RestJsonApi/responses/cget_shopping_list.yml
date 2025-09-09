@@ -9,8 +9,8 @@ data:
             updatedAt: '@shopping_list1->updatedAt->format("Y-m-d\TH:i:s\Z")'
             default: false
             currency: USD
-            total: '59.15'
-            subTotal: '59.15'
+            total: '59.1500'
+            subTotal: '59.1500'
         relationships:
             items:
                 data:
@@ -41,8 +41,8 @@ data:
             updatedAt: '@shopping_list2->updatedAt->format("Y-m-d\TH:i:s\Z")'
             default: false
             currency: USD
-            total: '49.8'
-            subTotal: '49.8'
+            total: '49.8000'
+            subTotal: '49.8000'
         relationships:
             items:
                 data:
@@ -70,8 +70,8 @@ data:
             updatedAt: '@shopping_list5->updatedAt->format("Y-m-d\TH:i:s\Z")'
             default: true
             currency: USD
-            total: '1.23'
-            subTotal: '1.23'
+            total: '1.2300'
+            subTotal: '1.2300'
         relationships:
             items:
                 data:
