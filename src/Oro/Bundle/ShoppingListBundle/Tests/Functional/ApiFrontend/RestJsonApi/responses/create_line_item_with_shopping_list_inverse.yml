@@ -32,8 +32,8 @@ included:
             name: 'New Shopping List'
             notes: null
             currency: USD
-            total: '164.85'
-            subTotal: '164.85'
+            total: '164.8500'
+            subTotal: '164.8500'
         relationships:
             items:
                 data:

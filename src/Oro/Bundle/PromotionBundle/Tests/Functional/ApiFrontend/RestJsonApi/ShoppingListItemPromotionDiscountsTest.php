@@ -9,7 +9,7 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 
 class ShoppingListItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
 {
-    private ?int $originalShoppingListLimit;
+    private ?int $initialShoppingListLimit;
 
     #[\Override]
     protected function setUp(): void
@@ -23,35 +23,21 @@ class ShoppingListItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
         /** @var ShoppingListTotalManager $totalManager */
         $totalManager = self::getContainer()->get('oro_shopping_list.manager.shopping_list_total');
         for ($i = 1; $i <= 3; $i++) {
-            $totalManager->recalculateTotals(
-                $this->getReference(sprintf('shopping_list%d', $i)),
-                true
-            );
+            $totalManager->recalculateTotals($this->getReference('shopping_list' . $i), true);
         }
 
-        $this->originalShoppingListLimit = $this->getShoppingListLimit();
+        $this->initialShoppingListLimit = self::getConfigManager()->get('oro_shopping_list.shopping_list_limit');
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        parent::tearDown();
-        if ($this->getShoppingListLimit() !== $this->originalShoppingListLimit) {
-            $this->setShoppingListLimit($this->originalShoppingListLimit);
-        }
-        $this->originalShoppingListLimit = null;
-    }
-
-    private function getShoppingListLimit(): int
-    {
-        return self::getConfigManager()->get('oro_shopping_list.shopping_list_limit');
-    }
-
-    private function setShoppingListLimit(int $limit): void
-    {
         $configManager = self::getConfigManager();
-        $configManager->set('oro_shopping_list.shopping_list_limit', $limit);
-        $configManager->flush();
+        if ($configManager->get('oro_shopping_list.shopping_list_limit') !== $this->initialShoppingListLimit) {
+            $configManager->set('oro_shopping_list.shopping_list_limit', $this->initialShoppingListLimit);
+            $configManager->flush();
+        }
+        parent::tearDown();
     }
 
     public function testGetList(): void

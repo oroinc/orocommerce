@@ -5,6 +5,8 @@ namespace Oro\Bundle\ShoppingListBundle\Api\Processor;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
+use Oro\Bundle\ApiBundle\Request\DataType;
+use Oro\Bundle\ApiBundle\Request\ValueTransformer;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -16,8 +18,11 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ComputeShoppingListTotal implements ProcessorInterface
 {
+    public const SHOPPING_LIST_SUB_TOTALS = 'shopping_list_sub_totals';
+
     private DoctrineHelper $doctrineHelper;
     private TotalProcessorProvider $totalProvider;
+    private ValueTransformer $valueTransformer;
 
     public function __construct(DoctrineHelper $doctrineHelper, TotalProcessorProvider $totalProvider)
     {
@@ -25,9 +30,11 @@ class ComputeShoppingListTotal implements ProcessorInterface
         $this->totalProvider = $totalProvider;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     */
+    public function setValueTransformer(ValueTransformer $valueTransformer): void
+    {
+        $this->valueTransformer = $valueTransformer;
+    }
+
     #[\Override]
     public function process(ContextInterface $context): void
     {
@@ -37,11 +44,8 @@ class ComputeShoppingListTotal implements ProcessorInterface
 
         $totalFieldName = 'total';
         $subTotalFieldName = 'subTotal';
-        // have got `currency` field directly from shopping list entity
         $currencyFieldName = 'currency';
-        if (\array_key_exists($totalFieldName, $data)
-            || \array_key_exists($subTotalFieldName, $data)
-        ) {
+        if (\array_key_exists($totalFieldName, $data) || \array_key_exists($subTotalFieldName, $data)) {
             // the computing values are already set
             return;
         }
@@ -55,7 +59,7 @@ class ComputeShoppingListTotal implements ProcessorInterface
             return;
         }
         if ($totalField->isExcluded() && $subTotalField->isExcluded() && $currencyField->isExcluded()) {
-            // none of computing fields was requested
+            // the computing fields were not requested
             return;
         }
 
@@ -67,7 +71,8 @@ class ComputeShoppingListTotal implements ProcessorInterface
             $totalFieldName,
             $totalField,
             $subTotalFieldName,
-            $subTotalField
+            $subTotalField,
+            $context
         );
         $context->setData($data);
     }
@@ -80,26 +85,27 @@ class ComputeShoppingListTotal implements ProcessorInterface
         string $totalFieldName,
         EntityDefinitionFieldConfig $totalField,
         string $subTotalFieldName,
-        EntityDefinitionFieldConfig $subTotalField
+        EntityDefinitionFieldConfig $subTotalField,
+        CustomizeLoadedDataContext $context
     ): array {
-        $idFieldName = $config->findFieldNameByPropertyPath('id');
         $em = $this->doctrineHelper->getEntityManagerForClass(ShoppingList::class);
-        $shoppingList = $em->getReference(ShoppingList::class, $data[$idFieldName]);
+        $shoppingList = $em->getReference(ShoppingList::class, $data[$config->findFieldNameByPropertyPath('id')]);
         $em->refresh($shoppingList);
         $computedTotal = $this->totalProvider->getTotal($shoppingList);
 
         if (!$totalField->isExcluded()) {
-            $total = $computedTotal->getAmount();
-            if (null !== $total) {
-                $total = (string)$total;
-            }
-            $data[$totalFieldName] = $total;
+            $data[$totalFieldName] = $this->valueTransformer->transformValue(
+                $computedTotal->getAmount(),
+                DataType::MONEY,
+                $context->getNormalizationContext()
+            );
         }
         if (!$currencyField->isExcluded()) {
             $data[$currencyFieldName] = $computedTotal->getCurrency();
         }
         if (!$subTotalField->isExcluded()) {
             $computedSubtotals = $this->totalProvider->getSubtotals($shoppingList);
+            $context->set(self::SHOPPING_LIST_SUB_TOTALS, $computedSubtotals);
             $subTotal = null;
             foreach ($computedSubtotals as $computedValue) {
                 if ('subtotal' === $computedValue->getType()) {
@@ -108,7 +114,11 @@ class ComputeShoppingListTotal implements ProcessorInterface
                 }
             }
             if (null !== $subTotal) {
-                $subTotal = (string)$subTotal;
+                $subTotal = $this->valueTransformer->transformValue(
+                    $subTotal,
+                    DataType::MONEY,
+                    $context->getNormalizationContext()
+                );
             }
             $data[$subTotalFieldName] = $subTotal;
         }

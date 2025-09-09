@@ -1468,8 +1468,8 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     'attributes' => [
-                        'total' => '79.4',
-                        'subTotal' => '79.4'
+                        'total' => '79.4000',
+                        'subTotal' => '79.4000'
                     ]
                 ]
             ],
@@ -1483,8 +1483,8 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     'attributes' => [
-                        'total' => '29.55',
-                        'subTotal' => '29.55'
+                        'total' => '29.5500',
+                        'subTotal' => '29.5500'
                     ]
                 ]
             ],

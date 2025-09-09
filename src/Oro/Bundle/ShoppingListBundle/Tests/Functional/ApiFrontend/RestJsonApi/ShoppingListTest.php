@@ -609,8 +609,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
 
         $data['data']['attributes']['currency'] = 'USD';
-        $data['data']['attributes']['total'] = '6.15';
-        $data['data']['attributes']['subTotal'] = '6.15';
+        $data['data']['attributes']['total'] = '6.1500';
+        $data['data']['attributes']['subTotal'] = '6.1500';
         $this->assertResponseContains($data, $response);
 
         /** @var ShoppingList $shoppingList */

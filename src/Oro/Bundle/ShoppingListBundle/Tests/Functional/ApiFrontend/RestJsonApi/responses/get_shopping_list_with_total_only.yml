@@ -2,8 +2,8 @@ data:
     type: shoppinglists
     id: '<toString(@shopping_list1->id)>'
     attributes:
-        total: '59.15'
-        subTotal: '59.15'
+        total: '59.1500'
+        subTotal: '59.1500'
     relationships:
         items:
             data:

@@ -5,8 +5,8 @@ data:
         name: 'New Shopping List'
         notes: null
         currency: USD
-        total: '0'
-        subTotal: '0'
+        total: '0.0000'
+        subTotal: '0.0000'
     relationships:
         items:
             data: []
