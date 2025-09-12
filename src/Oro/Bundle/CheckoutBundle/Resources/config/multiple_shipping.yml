@@ -111,7 +111,7 @@ services:
         class: Oro\Bundle\CheckoutBundle\Action\MultiShipping\ActualizeLineItemsByUnpaidSubordersAction
         arguments:
             - '@oro_action.expression.context_accessor'
-            - '@oro_payment.provider.payment_status'
+            - '@oro_payment.manager.payment_status'
             - '@oro_checkout.provider.checkout_line_items'
         tags:
             - { name: oro_action.action, alias: actualize_line_items_by_unpaid_suborders }

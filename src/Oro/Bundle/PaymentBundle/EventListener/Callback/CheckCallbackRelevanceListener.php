@@ -8,9 +8,9 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -22,29 +22,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 class CheckCallbackRelevanceListener
 {
-    /**
-     * @var PaymentMethodProviderInterface
-     */
-    private $paymentMethodProvider;
-
-    /**
-     * @var PaymentStatusProviderInterface
-     */
-    private $paymentStatusProvider;
-
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
-
     public function __construct(
-        PaymentMethodProviderInterface $paymentMethodProvider,
-        PaymentStatusProviderInterface $paymentStatusProvider,
-        DoctrineHelper $doctrineHelper
+        private readonly PaymentMethodProviderInterface $paymentMethodProvider,
+        private readonly PaymentStatusManager $paymentStatusManager,
+        private readonly DoctrineHelper $doctrineHelper
     ) {
-        $this->paymentMethodProvider = $paymentMethodProvider;
-        $this->paymentStatusProvider = $paymentStatusProvider;
-        $this->doctrineHelper = $doctrineHelper;
     }
 
     public function onError(CallbackErrorEvent $event): void
@@ -81,7 +63,7 @@ class CheckCallbackRelevanceListener
             return;
         }
 
-        $orderPaymentStatus = $this->paymentStatusProvider->getPaymentStatus($order);
+        $orderPaymentStatus = (string) $this->paymentStatusManager->getPaymentStatus($order);
 
         if ($this->isPaymentStatusAllowed($orderPaymentStatus)) {
             return;
@@ -92,7 +74,7 @@ class CheckCallbackRelevanceListener
 
     protected function isPaymentStatusAllowed(string $orderPaymentStatus): bool
     {
-        return $orderPaymentStatus === PaymentStatusProvider::PENDING;
+        return $orderPaymentStatus === PaymentStatuses::PENDING;
     }
 
     private function redirectToFailureUrl(PaymentTransaction $paymentTransaction, AbstractCallbackEvent $event): void

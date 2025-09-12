@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\PaymentBundle\Formatter;
 
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Provider\AvailablePaymentStatusesProvider;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -10,39 +12,46 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class PaymentStatusLabelFormatter
 {
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    public function __construct(
+        private readonly AvailablePaymentStatusesProvider $availablePaymentStatusesProvider,
+        private readonly TranslatorInterface $translator
+    ) {
+    }
 
-    public function __construct(TranslatorInterface $translator)
+    public function formatPaymentStatusLabel(string $paymentStatus): string
     {
-        $this->translator = $translator;
+        $translationKey = $this->getTranslationKey($paymentStatus);
+        $label = $this->translator->trans($translationKey);
+        if ($label === $translationKey) {
+            // If the label is not translated, use the payment status as the label - transformed
+            // to human-readable format.
+            $label = ucfirst(str_replace(['_', '-'], ' ', strtolower($paymentStatus)));
+        }
+
+        return $label;
     }
 
     /**
-     * @param string $paymentStatus
-     * @return string
+     * @return array<string,string> Associative array of payment statuses keyed by their labels
+     *  [
+     *      'Paid in Full' => 'paid_in_full',
+     *      // ...
+     *  ]
      */
-    public function formatPaymentStatusLabel($paymentStatus)
+    public function getAvailableStatuses(?string $entityClass = null): array
     {
-        return $this->translator->trans(sprintf('oro.payment.status.%s', $paymentStatus));
+        $availablePaymentStatuses = $this->availablePaymentStatusesProvider->getAvailablePaymentStatuses($entityClass);
+        $result = [];
+
+        foreach ($availablePaymentStatuses as $paymentStatus) {
+            $result[$this->formatPaymentStatusLabel($paymentStatus)] = $paymentStatus;
+        }
+
+        return $result;
     }
 
-    /**
-     * @return array
-     */
-    public function getAvailableStatuses()
+    private function getTranslationKey(string $paymentStatus): string
     {
-        return [
-            $this->formatPaymentStatusLabel(PaymentStatusProvider::FULL) => PaymentStatusProvider::FULL,
-            $this->formatPaymentStatusLabel(PaymentStatusProvider::AUTHORIZED) => PaymentStatusProvider::AUTHORIZED,
-            $this->formatPaymentStatusLabel(PaymentStatusProvider::PENDING) => PaymentStatusProvider::PENDING,
-            $this->formatPaymentStatusLabel(PaymentStatusProvider::DECLINED) => PaymentStatusProvider::DECLINED,
-            $this->formatPaymentStatusLabel(PaymentStatusProvider::PARTIALLY) => PaymentStatusProvider::PARTIALLY,
-            $this->formatPaymentStatusLabel(PaymentStatusProvider::CANCELED) => PaymentStatusProvider::CANCELED,
-            $this->formatPaymentStatusLabel(PaymentStatusProvider::CANCELED_PARTIALLY) =>
-                PaymentStatusProvider::CANCELED_PARTIALLY
-        ];
+        return sprintf('oro.payment.status.%s', $paymentStatus);
     }
 }

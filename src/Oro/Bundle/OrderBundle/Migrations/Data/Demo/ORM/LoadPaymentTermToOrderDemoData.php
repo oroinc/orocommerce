@@ -8,10 +8,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentRuleIntegrationData;
 use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData;
@@ -84,20 +83,16 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
 
         $manager->flush();
 
-        /** @var PaymentStatusProviderInterface $paymentStatusProvider */
-        $paymentStatusProvider = $this->container->get('oro_payment.provider.payment_status');
+        /** @var PaymentStatusManager $paymentStatusManager */
+        $paymentStatusManager = $this->container->get('oro_payment.manager.payment_status');
 
         foreach ($paymentTransactions as $paymentTransaction) {
             $entityClass = $paymentTransaction->getEntityClass();
             $entityId = $paymentTransaction->getEntityIdentifier();
+            /** @var Order $order */
+            $order = $manager->getReference($entityClass, $entityId);
 
-            $paymentStatus = new PaymentStatus();
-            $paymentStatus->setEntityClass($entityClass);
-            $paymentStatus->setEntityIdentifier($entityId);
-            $paymentStatus->setPaymentStatus(
-                $paymentStatusProvider->getPaymentStatus($manager->getReference($entityClass, $entityId))
-            );
-
+            $paymentStatus = $paymentStatusManager->updatePaymentStatus($order);
             $manager->persist($paymentStatus);
         }
 

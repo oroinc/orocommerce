@@ -50,7 +50,7 @@ services:
         lazy: true
         arguments:
             - '@oro_paypal.method.provider.payflow_gateway.express_checkout'
-            - '@oro_payment.provider.payment_status'
+            - '@oro_payment.manager.payment_status'
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn, priority: 20 }
@@ -61,7 +61,7 @@ services:
         lazy: true
         arguments:
             - '@oro_paypal.method.provider.payments_pro.express_checkout'
-            - '@oro_payment.provider.payment_status'
+            - '@oro_payment.manager.payment_status'
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn, priority: 20 }

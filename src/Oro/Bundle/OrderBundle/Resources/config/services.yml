@@ -43,11 +43,6 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist}
 
-    oro_order.provider.payment_status_provider:
-        class: Oro\Bundle\OrderBundle\Provider\OrderPaymentStatusProvider
-        parent: oro_payment.provider.payment_status
-        decorates: oro_payment.provider.payment_status
-
     oro_order.provider.shipping_cost_subtotal:
         class: 'Oro\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider'
         public: false
@@ -318,7 +313,7 @@ services:
     oro_order.layout.provider.order_payment_status:
         class: 'Oro\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentStatusProvider'
         arguments:
-            - '@oro_payment.provider.payment_status'
+            - '@oro_payment.manager.payment_status'
         tags:
             - { name: layout.data_provider, alias: oro_order_frontend_payment_status_provider }
 
@@ -511,12 +506,13 @@ services:
             - '@oro_locale.settings'
             - '@oro_search.formatter.datetime_formatter'
 
-    oro_order.order.listener.orm.payment_status_listener:
-        class: Oro\Bundle\OrderBundle\EventListener\ORM\PaymentStatusListener
+    oro_order.event_listener.payment_status_updated:
+        class: Oro\Bundle\OrderBundle\EventListener\PaymentStatusUpdatedListener
         arguments:
+            - '@doctrine'
             - '@oro_payment.manager.payment_status'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PaymentBundle\Entity\PaymentStatus', event: preUpdate, method: preUpdate }
+            - { name: 'kernel.event_listener', event: 'Oro\Bundle\PaymentBundle\Event\PaymentStatusUpdatedEvent', method: 'onPaymentStatusUpdated' }
 
     oro_order.order.listener.orm.reindex_product_line_item_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductLineItemListener'
@@ -852,3 +848,37 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_search.prepare_entity_map, method: prepareEntityMapEvent, priority: 100 }
             - { name: kernel.event_listener, event: oro_search.search_mapping_collect, method: collectEntityMapEvent, priority: -100 }
+
+    oro_order.event_listener.payment_status_calculation_context.set_payment_transactions:
+        class: 'Oro\Bundle\OrderBundle\EventListener\PaymentStatusCalculationContext\SetPaymentTransactionsForPaymentStatusCalculationContextListener'
+        arguments:
+            - '@oro_payment.provider.payment_transaction'
+        tags:
+            -   name: 'kernel.event_listener'
+                event: 'Oro\Bundle\PaymentBundle\Event\PaymentStatusCalculationContextCollectEvent'
+                method: 'onPaymentStatusCalculationContextCollect'
+                # Must be executed before the "oro_payment.event_listener.payment_status_calculation_context.set_payment_transactions".
+                priority: 150
+
+    # Enables paymentStatus relation in reports.
+    oro_order.provider.payment_status_virtual_relation_provider:
+        class: 'Oro\Bundle\PaymentBundle\Provider\PaymentStatusVirtualRelationProvider'
+        arguments:
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+        tags:
+            - { name: 'oro_entity.virtual_relation_provider' }
+
+    # Enables paymentStatusLabel field in reports and segments.
+    oro_order.provider.payment_status_label_virtual_field_provider:
+        class: 'Oro\Bundle\PaymentBundle\Provider\PaymentStatusLabelVirtualFieldProvider'
+        arguments:
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+        tags:
+            - { name: 'oro_entity.virtual_field_provider' }
+
+    oro_order.datagrid.payment_status_label_column_options_guesser:
+        class: 'Oro\Bundle\PaymentBundle\DataGrid\PaymentStatusLabelColumnOptionsGuesser'
+        arguments:
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+        tags:
+            - { name: 'oro_datagrid.column_options_guesser' }

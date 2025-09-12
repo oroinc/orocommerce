@@ -171,6 +171,35 @@ oro:
                 pending.label: Pending
                 cancel.label: Cancel
                 refund.label: Refund
+        paymentstatus:
+            entity_label: Payment Status
+            entity_plural_label: Payment Statuses
+            entity_grid_all_view_label: All %entity_plural_label%
+            entity_description: >-
+                The payment status is used to define the current state of a payment for an entity.
+                It can be used to track whether a payment has been made, is pending, or has been refunded, etc.
+            id.label: Id
+            entity_class:
+                label: Entity Class
+                description: >-
+                    The class name of the entity for which the payment status is defined.
+            entity_identifier:
+                label: Entity Identifier
+                description: >-
+                    The identifier of the entity for which the payment status is defined.
+            payment_status:
+                label: Payment Status Code
+                description: >-
+                    The payment status code. For example, "full", "pending", etc.
+            payment_status_label:
+                label: Payment Status Label
+                description: >-
+                    The payment status label. For example, "Paid in full", "Pending payment", etc.
+            forced:
+                label: Forced
+                description: >-
+                    Indicates whether the payment status is forcefully set.
+                    If enabled, the payment status will not be recalculated in the future.
 
         sections:
             general: 'General Information'

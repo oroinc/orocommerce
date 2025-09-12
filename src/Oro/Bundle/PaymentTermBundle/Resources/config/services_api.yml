@@ -36,7 +36,7 @@ services:
             - '@oro_checkout.action_group.checkout_actions'
             - '@oro_checkout.action_group.address_actions'
             - '@oro_action.action_executor'
-            - '@oro_payment.provider.payment_status'
+            - '@oro_payment.manager.payment_status'
             - '@oro_checkout.provider.grouped_line_items'
             - '@oro_api.doctrine_helper'
             - '@oro_api.save_data_handler'

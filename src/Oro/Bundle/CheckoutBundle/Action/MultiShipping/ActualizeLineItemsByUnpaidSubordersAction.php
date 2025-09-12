@@ -7,8 +7,8 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
@@ -19,18 +19,18 @@ use Symfony\Component\PropertyAccess\PropertyPath;
  */
 class ActualizeLineItemsByUnpaidSubordersAction extends AbstractAction
 {
-    private PaymentStatusProviderInterface $paymentStatusProvider;
+    private PaymentStatusManager $paymentStatusManager;
     private CheckoutLineItemsProvider $checkoutLineItemsProvider;
     private PropertyPath $order;
     private PropertyPath $checkout;
 
     public function __construct(
         ContextAccessor $contextAccessor,
-        PaymentStatusProviderInterface $paymentStatusProvider,
-        CheckoutLineItemsProvider $checkoutLineItemsProvider
+        PaymentStatusManager $paymentStatusManager,
+        CheckoutLineItemsProvider $checkoutLineItemsProvider,
     ) {
         parent::__construct($contextAccessor);
-        $this->paymentStatusProvider = $paymentStatusProvider;
+        $this->paymentStatusManager = $paymentStatusManager;
         $this->checkoutLineItemsProvider = $checkoutLineItemsProvider;
     }
 
@@ -86,10 +86,10 @@ class ActualizeLineItemsByUnpaidSubordersAction extends AbstractAction
     private function isProcessed(Order $order): bool
     {
         return \in_array(
-            $this->paymentStatusProvider->getPaymentStatus($order),
+            (string) $this->paymentStatusManager->getPaymentStatus($order),
             [
-                PaymentStatusProvider::AUTHORIZED,
-                PaymentStatusProvider::FULL
+                PaymentStatuses::AUTHORIZED,
+                PaymentStatuses::PAID_IN_FULL
             ],
             true
         );

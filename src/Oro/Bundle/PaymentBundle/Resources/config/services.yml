@@ -112,13 +112,6 @@ services:
         calls:
             - ['setLogger', ['@logger']]
 
-    oro_payment.provider.payment_status:
-        class: 'Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider'
-        public: true
-        arguments:
-            - '@oro_payment.provider.payment_transaction'
-            - '@oro_pricing.subtotal_processor.total_processor_provider'
-
     oro_payment.action.payment_method_action.abstract:
         abstract: true
         arguments:
@@ -139,7 +132,7 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Action\PurchaseAction'
         parent: oro_payment.action.payment_method_action.abstract
         calls:
-            - ['setPaymentStatusProvider', ['@oro_payment.provider.payment_status']]
+            - ['setPaymentStatusManager', ['@oro_payment.manager.payment_status']]
         tags:
             - { name: oro_action.action, alias: payment_purchase }
 
@@ -196,6 +189,7 @@ services:
     oro_payment.listener.payment_transaction_listener:
         class: 'Oro\Bundle\PaymentBundle\EventListener\PaymentTransactionListener'
         arguments:
+            - '@doctrine'
             - '@oro_payment.manager.payment_status'
         tags:
             - { name: kernel.event_listener, event: oro_payment.event.transaction_complete, method: onTransactionComplete }
@@ -203,14 +197,16 @@ services:
     oro_payment.manager.payment_status:
         class: 'Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager'
         arguments:
-            - '@oro_payment.provider.payment_status'
+            - '@oro_payment.payment_status.calculator'
             - '@oro_entity.doctrine_helper'
+            - '@event_dispatcher'
 
     oro_payment.formatter.payment_status_label:
         class: 'Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter'
         public: true
         arguments:
-            - "@translator"
+            - '@oro_payment.provider.available_payment_statuses'
+            - '@translator'
 
     oro_payment.condition.require_payment_redirect:
         class: 'Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect'
@@ -390,3 +386,178 @@ services:
 
     oro_payment.context.line_item.factory.payment_kit_item_line_item_from_product_kit_item_line_item_factory:
         class: Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentKitItemLineItemFromProductKitItemLineItemFactory
+
+    oro_payment.placeholder.payment_info:
+        class: 'Oro\Bundle\PaymentBundle\Placeholder\PaymentInfoPlaceholder'
+        public: true
+        arguments:
+            - '@oro_payment.manager.payment_status'
+        tags:
+            - { name: 'oro_placeholder.placeholder' }
+
+    oro_payment.payment_status.helper:
+        class: 'Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\PaymentStatusCalculationHelper'
+
+    oro_payment.payment_status.context.factory:
+        class: 'Oro\Bundle\PaymentBundle\PaymentStatus\Context\PaymentStatusCalculationContextFactory'
+        arguments:
+            - '@event_dispatcher'
+
+    oro_payment.event_listener.payment_status_calculation_context.set_payment_transactions:
+        class: 'Oro\Bundle\PaymentBundle\EventListener\PaymentStatusCalculationContext\SetPaymentTransactionsForPaymentStatusCalculationContextListener'
+        arguments:
+            - '@oro_payment.provider.payment_transaction'
+        tags:
+            -   name: 'kernel.event_listener'
+                event: 'Oro\Bundle\PaymentBundle\Event\PaymentStatusCalculationContextCollectEvent'
+                method: 'onPaymentStatusCalculationContextCollect'
+                priority: 100
+
+    oro_payment.event_listener.payment_status_calculation_context.set_total:
+        class: 'Oro\Bundle\PaymentBundle\EventListener\PaymentStatusCalculationContext\SetTotalForPaymentStatusCalculationContextListener'
+        arguments:
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+        tags:
+            -   name: 'kernel.event_listener'
+                event: 'Oro\Bundle\PaymentBundle\Event\PaymentStatusCalculationContextCollectEvent'
+                method: 'onPaymentStatusCalculationContextCollect'
+                priority: 100
+
+    oro_payment.payment_status.calculator:
+        class: 'Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\PaymentStatusCalculator'
+        arguments:
+            - !tagged_iterator  { tag: 'oro_payment.payment_status.calculator' }
+            - '@oro_payment.payment_status.context.factory'
+
+    oro_payment.payment_status.calculator.refunded:
+        class: 'Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\RefundedPaymentStatusCalculator'
+        arguments:
+            - '@oro_payment.payment_status.helper'
+        tags:
+            - { name: 'oro_payment.payment_status.calculator', priority: 1000 }
+
+    oro_payment.payment_status.calculator.paid_in_full:
+        class: 'Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\PaidInFullPaymentStatusCalculator'
+        arguments:
+            - '@oro_payment.payment_status.helper'
+        tags:
+            - { name: 'oro_payment.payment_status.calculator', priority: 900 }
+
+    oro_payment.payment_status.calculator.invoiced:
+        class: 'Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\InvoicedPaymentStatusCalculator'
+        arguments:
+            - '@oro_payment.payment_status.helper'
+        tags:
+            - { name: 'oro_payment.payment_status.calculator', priority: 800 }
+
+    oro_payment.payment_status.calculator.authorized_partially:
+        class: 'Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\AuthorizedPartiallyPaymentStatusCalculator'
+        arguments:
+            - '@oro_payment.payment_status.helper'
+        tags:
+            - { name: 'oro_payment.payment_status.calculator', priority: 700 }
+
+    oro_payment.payment_status.calculator.canceled_partially:
+        class: 'Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\CanceledPartiallyPaymentStatusCalculator'
+        arguments:
+            - '@oro_payment.payment_status.helper'
+        tags:
+            - { name: 'oro_payment.payment_status.calculator', priority: 600 }
+
+    oro_payment.payment_status.calculator.paid_partially:
+        class: 'Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\PaidPartiallyPaymentStatusCalculator'
+        arguments:
+            - '@oro_payment.payment_status.helper'
+        tags:
+            - { name: 'oro_payment.payment_status.calculator', priority: 500 }
+
+    oro_payment.payment_status.calculator.authorized:
+        class: 'Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\AuthorizedPaymentStatusCalculator'
+        arguments:
+            - '@oro_payment.payment_status.helper'
+        tags:
+            - { name: 'oro_payment.payment_status.calculator', priority: 400 }
+
+    oro_payment.payment_status.calculator.canceled:
+        class: 'Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\CanceledPaymentStatusCalculator'
+        arguments:
+            - '@oro_payment.payment_status.helper'
+        tags:
+            - { name: 'oro_payment.payment_status.calculator', priority: 300 }
+
+    oro_payment.payment_status.calculator.declined:
+        class: 'Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\DeclinedPaymentStatusCalculator'
+        arguments:
+            - '@oro_payment.payment_status.helper'
+        tags:
+            - { name: 'oro_payment.payment_status.calculator', priority: 200 }
+
+    Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses: ~
+
+    oro_payment.provider.available_payment_statuses.cache:
+        parent: 'oro.data.cache'
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_payment.provider.available_payment_statuses' }
+
+    oro_payment.provider.available_payment_statuses_cache_key:
+        class: 'Oro\Bundle\PaymentBundle\Provider\AvailablePaymentStatusesCacheKeyProvider'
+        arguments:
+            - '@oro_security.token_accessor'
+            - '@oro_security.token_serializer'
+
+    oro_payment.provider.available_payment_statuses:
+        class: 'Oro\Bundle\PaymentBundle\Provider\AvailablePaymentStatusesProvider'
+        arguments:
+            - '@doctrine'
+            - "@=service('Oro\\\\Bundle\\\\PaymentBundle\\\\PaymentStatus\\\\PaymentStatuses').getAllPaymentStatuses()"
+            - '@oro_payment.provider.available_payment_statuses.cache'
+            - '@oro_payment.provider.available_payment_statuses_cache_key'
+
+    oro_payment.event_listener.clear_cache_on_payment_status_update:
+        class: 'Oro\Bundle\PaymentBundle\EventListener\ClearCacheOnPaymentStatusUpdateListener'
+        arguments:
+            - '@oro_payment.provider.available_payment_statuses.cache'
+        tags:
+            - { name: 'kernel.event_listener', event: 'Oro\Bundle\PaymentBundle\Event\PaymentStatusUpdatedEvent', method: 'onPaymentStatusUpdated' }
+
+    Oro\Bundle\PaymentBundle\Entity\Repository\PaymentStatusRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            $entityClass: 'Oro\Bundle\PaymentBundle\Entity\PaymentStatus'
+            $aclHelper: '@oro_security.acl_helper'
+        tags:
+            - { name: doctrine.repository_service }
+
+    oro_payment.provider.payment_status_label_virtual_field_provider:
+        class: 'Oro\Bundle\PaymentBundle\Provider\PaymentStatusLabelVirtualFieldProvider'
+        arguments:
+            - 'Oro\Bundle\PaymentBundle\Entity\PaymentStatus'
+        tags:
+            - { name: 'oro_entity.virtual_field_provider' }
+
+    oro_payment.datagrid.payment_status_label_column_options_guesser:
+        class: 'Oro\Bundle\PaymentBundle\DataGrid\PaymentStatusLabelColumnOptionsGuesser'
+        arguments:
+            - 'Oro\Bundle\PaymentBundle\Entity\PaymentStatus'
+        tags:
+            - { name: 'oro_datagrid.column_options_guesser' }
+
+    oro_payment.datagrid.payment_status_column_options_guesser:
+        class: 'Oro\Bundle\PaymentBundle\DataGrid\PaymentStatusColumnOptionsGuesser'
+        tags:
+            - { name: 'oro_datagrid.column_options_guesser' }
+
+    oro_payment.event_listener.datagrid.payment_status_filter:
+        class: 'Oro\Bundle\PaymentBundle\EventListener\DataGrid\PaymentStatusFilterDatagridListener'
+        arguments:
+            - '@oro_payment.formatter.payment_status_label'
+        tags:
+            - { name: 'kernel.event_listener', event: 'oro_datagrid.datagrid.build.before', method: 'onBuildBefore' }
+
+    oro_payment.filter.payment_status:
+        class: 'Oro\Bundle\PaymentBundle\Filter\PaymentStatusFilter'
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+        tags:
+            - { name: 'oro_filter.extension.orm_filter.filter', type: !php/const 'Oro\Bundle\PaymentBundle\Filter\PaymentStatusFilter::NAME' }

@@ -15,7 +15,7 @@ use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\AddressActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\SplitOrderActionsInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
@@ -30,7 +30,7 @@ abstract class AbstractHandlePaymentSubresource implements ProcessorInterface
         private readonly CheckoutActionsInterface $checkoutActions,
         private readonly AddressActionsInterface $addressActions,
         private readonly ActionExecutor $actionExecutor,
-        private readonly PaymentStatusProviderInterface $paymentStatusProvider,
+        private readonly PaymentStatusManager $paymentStatusManager,
         private readonly GroupedCheckoutLineItemsProvider $groupedCheckoutLineItemsProvider,
         private readonly DoctrineHelper $doctrineHelper,
         private readonly FlushDataHandlerInterface $flushDataHandler
@@ -120,7 +120,7 @@ abstract class AbstractHandlePaymentSubresource implements ProcessorInterface
             return;
         }
 
-        $paymentStatus = $this->paymentStatusProvider->getPaymentStatus($checkout->getOrder());
+        $paymentStatus = (string) $this->paymentStatusManager->getPaymentStatus($checkout->getOrder());
         if (\in_array($paymentStatus, $this->getInProgressStatuses(), true)) {
             $context->addError(Error::createValidationError(
                 'payment status constraint',
