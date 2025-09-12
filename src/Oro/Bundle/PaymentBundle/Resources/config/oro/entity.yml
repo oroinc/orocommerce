@@ -8,6 +8,8 @@ oro_entity:
         - { entity: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction, field: transactionOptions }
         - { entity: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction, field: entityClass }
         - { entity: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction, field: entityIdentifier }
+        - { entity: Oro\Bundle\PaymentBundle\Entity\PaymentStatus, field: entityClass }
+        - { entity: Oro\Bundle\PaymentBundle\Entity\PaymentStatus, field: entityIdentifier }
 
     virtual_relations:
         Oro\Bundle\OrderBundle\Entity\Order:
