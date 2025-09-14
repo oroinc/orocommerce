@@ -12,19 +12,15 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Validates that minimum and maximum order amounts are met when creating order via frontend API
- * It works as a processor because this validation should run after
- * oro_order.api.fill_order_line_item_price is executed and line item prices are filled
+ * Validates that minimum and maximum order amounts are met
+ * when creating order via the storefront API.
  */
-class OrderLimitAmountsValidationProcessor implements ProcessorInterface
+class ValidateOrderLimitAmounts implements ProcessorInterface
 {
-    private string $minimumOrderAmountMessage = 'oro.order.order_limits.minimum_order_amount';
-    private string $maximumOrderAmountMessage = 'oro.order.order_limits.maximum_order_amount';
-
     public function __construct(
-        private OrderLimitProviderInterface $orderLimitProvider,
-        private OrderLimitFormattedProviderInterface $orderLimitFormattedProvider,
-        private TranslatorInterface $translator
+        private readonly OrderLimitProviderInterface $orderLimitProvider,
+        private readonly OrderLimitFormattedProviderInterface $orderLimitFormattedProvider,
+        private readonly TranslatorInterface $translator
     ) {
     }
 
@@ -33,17 +29,14 @@ class OrderLimitAmountsValidationProcessor implements ProcessorInterface
     {
         /** @var CustomizeFormDataContext $context */
 
+        /** @var Order $order */
         $order = $context->getData();
-
-        if (!$order instanceof Order) {
-            return;
-        }
 
         if (!$this->orderLimitProvider->isMinimumOrderAmountMet($order)) {
             FormUtil::addNamedFormError(
                 $context->getForm(),
                 'order limit amounts constraint',
-                $this->translator->trans($this->minimumOrderAmountMessage, [
+                $this->translator->trans('oro.order.order_limits.minimum_order_amount', [
                     '%amount%' => $this->orderLimitFormattedProvider->getMinimumOrderAmountFormatted(),
                     '%difference%' =>
                         $this->orderLimitFormattedProvider->getMinimumOrderAmountDifferenceFormatted($order)
@@ -55,7 +48,7 @@ class OrderLimitAmountsValidationProcessor implements ProcessorInterface
             FormUtil::addNamedFormError(
                 $context->getForm(),
                 'order limit amounts constraint',
-                $this->translator->trans($this->maximumOrderAmountMessage, [
+                $this->translator->trans('oro.order.order_limits.maximum_order_amount', [
                     '%amount%' => $this->orderLimitFormattedProvider->getMaximumOrderAmountFormatted(),
                     '%difference%' =>
                         $this->orderLimitFormattedProvider->getMaximumOrderAmountDifferenceFormatted($order)
