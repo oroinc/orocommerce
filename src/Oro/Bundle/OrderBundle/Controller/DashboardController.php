@@ -3,7 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Controller;
 
 use Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartWidgetProvider;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**

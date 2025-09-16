@@ -8,8 +8,8 @@ use Oro\Bundle\AddressValidationBundle\Form\Type\AddressBookAwareAddressValidati
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,11 +30,13 @@ class QuoteAddressValidationController extends AbstractAddressValidationControll
     }
 
     #[CsrfProtection]
-    #[ParamConverter('quote', class: Quote::class, options: ['id' => 'id'], isOptional: true)]
     #[Template('@OroAddressValidation/AddressValidation/addressBookAwareAddressValidationDialogWidget.html.twig')]
     #[\Override]
-    public function addressValidationAction(Request $request): Response|array
-    {
+    public function addressValidationAction(
+        Request $request,
+        #[MapEntity(id: 'id')]
+        Quote|null $quote = null
+    ): Response|array {
         $this->denyAccessUnlessGranted(
             $request->attributes->get('quote') ? 'oro_sale_quote_update' : 'oro_sale_quote_create'
         );

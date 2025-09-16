@@ -7,7 +7,7 @@ use Oro\Bundle\CMSBundle\Form\Type\LoginPageType;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -29,7 +29,7 @@ class LoginPageController extends AbstractController
     }
 
     #[Route(path: '/view/{id}', name: 'oro_cms_loginpage_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCMS/LoginPage/view.html.twig')]
     #[Acl(id: 'oro_cms_loginpage_view', type: 'entity', class: LoginPage::class, permission: 'VIEW')]
     public function viewAction(LoginPage $loginPage): array
     {
@@ -48,7 +48,7 @@ class LoginPageController extends AbstractController
     }
 
     #[Route(path: '/update/{id}', name: 'oro_cms_loginpage_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCMS/LoginPage/update.html.twig')]
     #[Acl(id: 'oro_cms_loginpage_update', type: 'entity', class: LoginPage::class, permission: 'EDIT')]
     public function updateAction(LoginPage $loginPage): array|RedirectResponse
     {

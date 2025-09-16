@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Form\Type\BrandType;
 use Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -25,7 +25,7 @@ class BrandController extends AbstractController
      * @return array
      */
     #[Route(path: '/', name: 'oro_product_brand_index')]
-    #[Template]
+    #[Template('@OroProduct/Brand/index.html.twig')]
     #[Acl(id: 'oro_product_brand_view', type: 'entity', class: Brand::class, permission: 'VIEW')]
     public function indexAction()
     {
@@ -52,7 +52,7 @@ class BrandController extends AbstractController
      * @return array|RedirectResponse
      */
     #[Route(path: '/update/{id}', name: 'oro_product_brand_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroProduct/Brand/update.html.twig')]
     #[Acl(id: 'oro_product_brand_update', type: 'entity', class: Brand::class, permission: 'EDIT')]
     public function updateAction(Brand $brand, Request $request)
     {

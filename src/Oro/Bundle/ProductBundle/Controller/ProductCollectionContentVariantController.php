@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionSegmentProductsType;
 use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -84,7 +84,7 @@ class ProductCollectionContentVariantController extends AbstractController
         requirements: ['id' => '\d+'],
         methods: ['GET']
     )]
-    #[Template]
+    #[Template('@OroProduct/ProductCollectionContentVariant/manageSortOrderWidget.html.twig')]
     public function manageSortOrderWidgetAction(
         ContentVariant $contentVariant,
         string $gridName,

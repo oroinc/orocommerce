@@ -14,7 +14,7 @@ use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvide
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +27,6 @@ class MatrixGridOrderController extends AbstractLineItemController
 {
     #[Route(path: '/{productId}', name: 'oro_shopping_list_frontend_matrix_grid_order')]
     #[Layout]
-    #[ParamConverter('product', options: ['id' => 'productId'])]
     #[Acl(
         id: 'oro_shopping_list_frontend_view',
         type: 'entity',
@@ -35,8 +34,11 @@ class MatrixGridOrderController extends AbstractLineItemController
         permission: 'VIEW',
         groupName: 'commerce'
     )]
-    public function orderAction(Request $request, Product $product): Response|array
-    {
+    public function orderAction(
+        Request $request,
+        #[MapEntity(id: 'productId')]
+        Product $product
+    ): Response|array {
         $currentShoppingListManager = $this->container->get(CurrentShoppingListManager::class);
 
         $shoppingListId = $request->get('shoppingListId');
@@ -83,13 +85,13 @@ class MatrixGridOrderController extends AbstractLineItemController
 
     #[Route(path: '/{shoppingListId}/{productId}/{unitCode}', name: 'oro_shopping_list_frontend_matrix_grid_update')]
     #[Layout]
-    #[ParamConverter('shoppingList', options: ['id' => 'shoppingListId'])]
-    #[ParamConverter('product', options: ['id' => 'productId'])]
-    #[ParamConverter('unit', options: ['id' => 'unitCode'])]
     #[AclAncestor('oro_shopping_list_frontend_update')]
     public function updateAction(
+        #[MapEntity(id: 'shoppingListId')]
         ShoppingList $shoppingList,
+        #[MapEntity(id: 'productId')]
         Product $product,
+        #[MapEntity(id: 'unitCode')]
         ProductUnit $unit,
         Request $request
     ): Response|array {

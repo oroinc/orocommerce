@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\Controller\Frontend\BrandController;
 use Oro\Bundle\ProductBundle\Controller\Frontend\ProductController;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\EventListener\RestrictVariantProductViewListener;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -21,13 +24,20 @@ class RestrictVariantProductViewListenerTest extends \PHPUnit\Framework\TestCase
 
     private FeatureChecker|MockObject $featureChecker;
     private RestrictVariantProductViewListener $listener;
+    private ManagerRegistry|MockObject $registry;
+    private EntityManagerInterface|MockObject $entityManager;
+    private ProductRepository|MockObject $productRepository;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
-        $this->listener = new RestrictVariantProductViewListener();
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->entityManager = $this->createMock(EntityManagerInterface::class);
+        $this->productRepository = $this->createMock(ProductRepository::class);
+
+        $this->listener = new RestrictVariantProductViewListener($this->registry);
         $this->listener->setFeatureChecker($this->featureChecker);
         $this->listener->addFeature('simple_variations_view_restriction');
     }
@@ -95,13 +105,14 @@ class RestrictVariantProductViewListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testRestriction(): void
     {
+        $productId = 42;
         $parentVariantLink = new ProductVariantLink();
         /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => 42]);
+        $product = $this->getEntity(Product::class, ['id' => $productId]);
         $product->addParentVariantLink($parentVariantLink);
 
         $request = Request::create('/product/view/1', 'GET', []);
-        $request->attributes->set('product', $product);
+        $request->attributes->set('id', $productId);
 
         $event = new ControllerEvent(
             $this->createMock(HttpKernelInterface::class),
@@ -113,6 +124,20 @@ class RestrictVariantProductViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->featureChecker->expects($this->any())
             ->method('isFeatureEnabled')
             ->willReturn(true);
+
+        $this->entityManager->expects(self::once())
+            ->method('getRepository')
+            ->with(\Oro\Bundle\ProductBundle\Entity\Product::class)
+            ->willReturn($this->productRepository);
+
+        $this->productRepository->expects(self::once())
+            ->method('find')
+            ->with($productId)
+            ->willReturn($product);
+
+        $this->registry->expects(self::once())
+            ->method('getManager')
+            ->willReturn($this->entityManager);
 
         $this->expectException(AccessDeniedHttpException::class);
         $this->expectExceptionMessage('Product variant view is restricted by system config. Product id: 42');

@@ -20,7 +20,7 @@ use Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -36,7 +36,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ProductController extends AbstractController
 {
     #[Route(path: '/view/{id}', name: 'oro_product_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroProduct/Product/view.html.twig')]
     #[Acl(id: 'oro_product_view', type: 'entity', class: Product::class, permission: 'VIEW')]
     public function viewAction(Product $product): array
     {
@@ -55,7 +55,7 @@ class ProductController extends AbstractController
     }
 
     #[Route(path: '/info/{id}', name: 'oro_product_info', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroProduct/Product/info.html.twig')]
     #[AclAncestor('oro_product_view')]
     public function infoAction(Product $product): array
     {
@@ -66,7 +66,7 @@ class ProductController extends AbstractController
     }
 
     #[Route(path: '/info/{id}/kit-items', name: 'oro_product_info_kit_items', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroProduct/Product/kitItemsInfo.html.twig')]
     #[AclAncestor('oro_product_view')]
     public function kitItemsInfoAction(Product $product): array
     {
@@ -76,7 +76,7 @@ class ProductController extends AbstractController
     }
 
     #[Route(path: '/', name: 'oro_product_index')]
-    #[Template]
+    #[Template('@OroProduct/Product/index.html.twig')]
     #[AclAncestor('oro_product_view')]
     public function indexAction(): array
     {
@@ -130,7 +130,7 @@ class ProductController extends AbstractController
      * Edit product form
      */
     #[Route(path: '/update/{id}', name: 'oro_product_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroProduct/Product/update.html.twig')]
     #[Acl(id: 'oro_product_update', type: 'entity', class: Product::class, permission: 'EDIT')]
     public function updateAction(Product $product): array|RedirectResponse
     {
@@ -145,7 +145,7 @@ class ProductController extends AbstractController
         name: 'oro_product_related_items_update',
         requirements: ['id' => '\d+']
     )]
-    #[Template]
+    #[Template('@OroProduct/Product/updateRelatedItems.html.twig')]
     #[AclAncestor('oro_product_update')]
     public function updateRelatedItemsAction(Product $product): array|RedirectResponse
     {
@@ -283,7 +283,7 @@ class ProductController extends AbstractController
     }
 
     #[Route(path: '/add-products-widget/{gridName}', name: 'oro_add_products_widget')]
-    #[Template]
+    #[Template('@OroProduct/Product/addProductsWidget.html.twig')]
     #[AclAncestor('oro_product_view')]
     public function addProductsWidgetAction(Request $request, string $gridName): array
     {

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Controller;
 
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -17,7 +17,7 @@ class ProductKitItemController extends AbstractController
         name: 'oro_product_kit_item_info',
         requirements: ['id' => '\d+', 'state' => 'expanded|collapsed|both']
     )]
-    #[Template]
+    #[Template('@OroProduct/ProductKitItem/info.html.twig')]
     public function infoAction(ProductKitItem $kitItem, string $state): array
     {
         $this->denyAccessUnlessGranted('VIEW', $kitItem->getProductKit());

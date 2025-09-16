@@ -7,7 +7,7 @@ use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -19,7 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class CustomerTaxCodeController extends AbstractController
 {
     #[Route(path: '/', name: 'oro_tax_customer_tax_code_index')]
-    #[Template]
+    #[Template('@OroTax/CustomerTaxCode/index.html.twig')]
     #[AclAncestor('oro_tax_customer_tax_code_view')]
     public function indexAction(): array
     {
@@ -29,7 +29,7 @@ class CustomerTaxCodeController extends AbstractController
     }
 
     #[Route(path: '/view/{id}', name: 'oro_tax_customer_tax_code_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroTax/CustomerTaxCode/view.html.twig')]
     #[Acl(id: 'oro_tax_customer_tax_code_view', type: 'entity', class: CustomerTaxCode::class, permission: 'VIEW')]
     public function viewAction(CustomerTaxCode $customerTaxCode): array
     {
@@ -47,7 +47,7 @@ class CustomerTaxCodeController extends AbstractController
     }
 
     #[Route(path: '/update/{id}', name: 'oro_tax_customer_tax_code_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroTax/CustomerTaxCode/update.html.twig')]
     #[Acl(id: 'oro_tax_customer_tax_code_update', type: 'entity', class: CustomerTaxCode::class, permission: 'EDIT')]
     public function updateAction(CustomerTaxCode $customerTaxCode): array|RedirectResponse
     {

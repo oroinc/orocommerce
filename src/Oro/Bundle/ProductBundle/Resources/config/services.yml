@@ -1298,6 +1298,7 @@ services:
         public: false
         arguments:
             - "@oro_config.manager"
+            - "@doctrine"
         tags:
             - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -100 }
 
@@ -1311,6 +1312,8 @@ services:
     oro_product.event_listener.restrict_variant_product_view:
         class: Oro\Bundle\ProductBundle\EventListener\RestrictVariantProductViewListener
         public: false
+        arguments:
+            - "@doctrine"
         tags:
             - { name: oro_featuretogle.feature, feature: 'simple_variations_view_restriction' }
             - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -100 }

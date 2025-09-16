@@ -17,8 +17,8 @@ use Oro\Bundle\SaleBundle\Storage\ReturnRouteDataStorage;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,11 +41,12 @@ class QuoteController extends AbstractController
      * @return array
      */
     #[Route(path: '/view/{id}', name: 'oro_sale_quote_view', requirements: ['id' => '\d+'])]
-    #[Template]
-    #[ParamConverter('quote', options: ['repository_method' => 'getQuote'])]
+    #[Template('@OroSale/Quote/view.html.twig')]
     #[Acl(id: 'oro_sale_quote_view', type: 'entity', class: Quote::class, permission: 'VIEW')]
-    public function viewAction(Quote $quote)
-    {
+    public function viewAction(
+        #[MapEntity(expr: 'repository.getQuote(id)')]
+        Quote $quote
+    ) {
         return [
             'entity' => $quote,
         ];
@@ -56,7 +57,7 @@ class QuoteController extends AbstractController
      * @return array
      */
     #[Route(path: '/', name: 'oro_sale_quote_index')]
-    #[Template]
+    #[Template('@OroSale/Quote/index.html.twig')]
     #[AclAncestor('oro_sale_quote_view')]
     public function indexAction()
     {
@@ -168,11 +169,13 @@ class QuoteController extends AbstractController
      * @return array|RedirectResponse
      */
     #[Route(path: '/update/{id}', name: 'oro_sale_quote_update', requirements: ['id' => '\d+'])]
-    #[Template]
-    #[ParamConverter('quote', options: ['repository_method' => 'getQuote'])]
+    #[Template('@OroSale/Quote/update.html.twig')]
     #[Acl(id: 'oro_sale_quote_update', type: 'entity', class: Quote::class, permission: 'EDIT')]
-    public function updateAction(Quote $quote, Request $request)
-    {
+    public function updateAction(
+        #[MapEntity(expr: 'repository.getQuote(id)')]
+        Quote $quote,
+        Request $request
+    ) {
         return $this->update($quote, $request);
     }
 
@@ -181,7 +184,7 @@ class QuoteController extends AbstractController
      * @return array
      */
     #[Route(path: '/info/{id}', name: 'oro_sale_quote_info', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroSale/Quote/info.html.twig')]
     #[AclAncestor('oro_sale_quote_view')]
     public function infoAction(Quote $quote)
     {

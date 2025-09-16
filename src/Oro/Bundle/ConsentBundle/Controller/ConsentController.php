@@ -7,7 +7,7 @@ use Oro\Bundle\ConsentBundle\Form\Type\ConsentType;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +24,7 @@ class ConsentController extends AbstractController
      * @return array
      */
     #[Route(path: '/', name: 'oro_consent_index')]
-    #[Template]
+    #[Template('@OroConsent/Consent/index.html.twig')]
     #[AclAncestor('oro_consent_view')]
     public function indexAction()
     {
@@ -58,7 +58,7 @@ class ConsentController extends AbstractController
      * @return array|RedirectResponse
      */
     #[Route(path: '/update/{id}', name: 'oro_consent_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroConsent/Consent/update.html.twig')]
     #[Acl(id: 'oro_consent_update', type: 'entity', class: Consent::class, permission: 'EDIT')]
     public function updateAction(Consent $consent, Request $request)
     {
@@ -92,7 +92,7 @@ class ConsentController extends AbstractController
      * @return array
      */
     #[Route(path: '/view/{id}', name: 'oro_consent_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroConsent/Consent/view.html.twig')]
     #[Acl(id: 'oro_consent_view', type: 'entity', class: Consent::class, permission: 'VIEW')]
     public function viewAction(Consent $consent)
     {
@@ -106,7 +106,7 @@ class ConsentController extends AbstractController
      * @return array
      */
     #[Route(path: '/info/{id}', name: 'oro_consent_info', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroConsent/Consent/info.html.twig')]
     #[AclAncestor('oro_consent_view')]
     public function infoAction(Consent $consent)
     {

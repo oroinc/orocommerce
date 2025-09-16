@@ -9,7 +9,7 @@ use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\WebsiteSearchTermBundle\Entity\SearchTerm;
 use Oro\Bundle\WebsiteSearchTermBundle\Form\Type\SearchTermType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -25,7 +25,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SearchTermController extends AbstractController
 {
     #[Route(path: '/', name: 'oro_website_search_term_index')]
-    #[Template]
+    #[Template('@OroWebsiteSearchTerm/SearchTerm/index.html.twig')]
     #[AclAncestor('oro_website_search_term_acl_view')]
     public function indexAction(): array
     {
@@ -43,7 +43,7 @@ class SearchTermController extends AbstractController
     }
 
     #[Route(path: '/view/{id}', name: 'oro_website_search_term_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroWebsiteSearchTerm/SearchTerm/view.html.twig')]
     #[Acl(id: 'oro_website_search_term_acl_view', type: 'entity', class: SearchTerm::class, permission: 'VIEW')]
     public function viewAction(SearchTerm $searchTerm): array
     {
@@ -56,7 +56,7 @@ class SearchTermController extends AbstractController
     }
 
     #[Route(path: '/update/{id}', name: 'oro_website_search_term_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroWebsiteSearchTerm/SearchTerm/update.html.twig')]
     #[Acl(id: 'oro_website_search_term_acl_update', type: 'entity', class: SearchTerm::class, permission: 'EDIT')]
     public function updateAction(SearchTerm $searchTerm, Request $request): array|RedirectResponse
     {

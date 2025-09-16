@@ -15,7 +15,7 @@ use Oro\Bundle\PromotionBundle\Form\Type\CouponType;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -35,7 +35,7 @@ class CouponController extends AbstractController
      * @return array
      */
     #[Route(path: '/', name: 'oro_promotion_coupon_index')]
-    #[Template]
+    #[Template('@OroPromotion/Coupon/index.html.twig')]
     #[AclAncestor('oro_promotion_coupon_view')]
     public function indexAction()
     {
@@ -63,7 +63,7 @@ class CouponController extends AbstractController
      * @return array|RedirectResponse
      */
     #[Route(path: '/update/{id}', name: 'oro_promotion_coupon_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroPromotion/Coupon/update.html.twig')]
     #[Acl(id: 'oro_promotion_coupon_update', type: 'entity', class: Coupon::class, permission: 'EDIT')]
     public function updateAction(Coupon $coupon, Request $request)
     {
@@ -75,7 +75,7 @@ class CouponController extends AbstractController
      * @return array
      */
     #[Route(path: '/view/{id}', name: 'oro_promotion_coupon_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroPromotion/Coupon/view.html.twig')]
     #[Acl(id: 'oro_promotion_coupon_view', type: 'entity', class: Coupon::class, permission: 'VIEW')]
     public function viewAction(Coupon $coupon)
     {

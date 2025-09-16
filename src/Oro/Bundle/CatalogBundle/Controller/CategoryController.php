@@ -15,7 +15,7 @@ use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\UIBundle\Form\Type\TreeMoveType;
 use Oro\Bundle\UIBundle\Model\TreeCollection;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -41,7 +41,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route(path: '/update/{id}', name: 'oro_catalog_category_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCatalog/Category/update.html.twig')]
     #[Acl(id: 'oro_catalog_category_update', type: 'entity', class: Category::class, permission: 'EDIT')]
     public function updateAction(Category $category, Request $request): array|RedirectResponse
     {
@@ -49,7 +49,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route(path: '/', name: 'oro_catalog_category_index')]
-    #[Template]
+    #[Template('@OroCatalog/Category/index.html.twig')]
     #[Acl(id: 'oro_catalog_category_view', type: 'entity', class: Category::class, permission: 'VIEW')]
     public function indexAction(): array
     {
@@ -57,7 +57,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route(path: '/move', name: 'oro_catalog_category_move_form')]
-    #[Template]
+    #[Template('@OroCatalog/Category/move.html.twig')]
     #[Acl(id: 'oro_catalog_category_update', type: 'entity', class: Category::class, permission: 'EDIT')]
     public function moveAction(Request $request): array
     {
@@ -101,7 +101,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route(path: '/widget/tree', name: 'oro_catalog_category_tree_widget')]
-    #[Template]
+    #[Template('@OroCatalog/Category/treeWidget.html.twig')]
     #[Acl(id: 'oro_catalog_category_view', type: 'entity', class: Category::class, permission: 'VIEW')]
     public function treeWidgetAction(): array
     {

@@ -8,7 +8,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -20,7 +20,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PriceListController extends AbstractController
 {
     #[Route(path: '/view/{id}', name: 'oro_pricing_price_list_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroPricing/PriceList/view.html.twig')]
     #[Acl(id: 'oro_pricing_price_list_view', type: 'entity', class: PriceList::class, permission: 'VIEW')]
     public function viewAction(PriceList $priceList): array
     {
@@ -41,7 +41,7 @@ class PriceListController extends AbstractController
     }
 
     #[Route(path: '/', name: 'oro_pricing_price_list_index')]
-    #[Template]
+    #[Template('@OroPricing/PriceList/index.html.twig')]
     #[AclAncestor('oro_pricing_price_list_view')]
     public function indexAction(): array
     {
@@ -65,7 +65,7 @@ class PriceListController extends AbstractController
      * Edit price_list form
      */
     #[Route(path: '/update/{id}', name: 'oro_pricing_price_list_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroPricing/PriceList/update.html.twig')]
     #[Acl(id: 'oro_pricing_price_list_update', type: 'entity', class: PriceList::class, permission: 'EDIT')]
     public function updateAction(PriceList $priceList): array|RedirectResponse
     {

@@ -13,7 +13,7 @@ use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +28,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class InventoryLevelController extends AbstractController
 {
     #[Route(path: '/', name: 'oro_inventory_level_index')]
-    #[Template]
+    #[Template('@OroInventory/InventoryLevel/index.html.twig')]
     #[Acl(id: 'oro_inventory_level_view', type: 'entity', class: InventoryLevel::class, permission: 'VIEW')]
     public function indexAction(): array
     {
@@ -45,7 +45,7 @@ class InventoryLevelController extends AbstractController
      * Edit product inventory levels
      */
     #[Route(path: '/update/{id}', name: 'oro_inventory_level_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroInventory/InventoryLevel/update.html.twig')]
     #[Acl(id: 'oro_product_inventory_update', type: 'entity', class: InventoryLevel::class, permission: 'EDIT')]
     public function updateAction(Product $product, Request $request): array|RedirectResponse
     {

@@ -13,7 +13,7 @@ use Oro\Bundle\SaleBundle\Workflow\ActionGroup\AcceptQuoteAndSubmitToOrder;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\UIBundle\Tools\FlashMessageHelper;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +32,6 @@ class QuoteController extends AbstractController
      */
     #[Route(path: '/view/{id}', name: 'oro_sale_quote_frontend_view', requirements: ['id' => '\d+'])]
     #[Layout]
-    #[ParamConverter('quote', options: ['repository_method' => 'getQuote'])]
     #[Acl(
         id: 'oro_sale_quote_frontend_view',
         type: 'entity',
@@ -40,8 +39,10 @@ class QuoteController extends AbstractController
         permission: 'VIEW',
         groupName: 'commerce'
     )]
-    public function viewAction(Quote $quote)
-    {
+    public function viewAction(
+        #[MapEntity(expr: 'repository.getQuote(id)')]
+        Quote $quote
+    ): array {
         if (!$quote->isAcceptable()) {
             $this->addFlash(
                 'notice',
@@ -65,16 +66,13 @@ class QuoteController extends AbstractController
         ]
     )]
     #[Layout]
-    #[ParamConverter(
-        'quote',
-        options: [
-            'repository_method' => 'getQuoteByGuestAccessId',
-            'mapping' => ['guest_access_id' => 'guestAccessId'],
-            'map_method_signature' => true
-        ]
-    )]
-    public function guestAccessAction(Quote $quote): array
-    {
+    public function guestAccessAction(
+        #[MapEntity(
+            expr: 'repository.getQuoteByGuestAccessId(guest_access_id)',
+            mapping: ['guest_access_id' => 'guestAccessId']
+        )]
+        Quote $quote
+    ): array {
         $accessProvider = $this->container->get(GuestQuoteAccessProviderInterface::class);
         if (!$accessProvider->isGranted($quote)) {
             throw $this->createNotFoundException();

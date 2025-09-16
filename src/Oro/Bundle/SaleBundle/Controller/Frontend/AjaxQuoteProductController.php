@@ -7,7 +7,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Model\QuoteProductOfferMatcher;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,9 +31,12 @@ class AjaxQuoteProductController extends AbstractController
         name: 'oro_sale_quote_frontend_quote_product_match_offer',
         requirements: ['id' => '\d+', 'demandId' => '\d+']
     )]
-    #[ParamConverter('quoteDemand', class: QuoteDemand::class, options: ['id' => 'demandId'])]
-    public function matchQuoteProductOfferAction(QuoteProduct $quoteProduct, QuoteDemand $quoteDemand, Request $request)
-    {
+    public function matchQuoteProductOfferAction(
+        QuoteProduct $quoteProduct,
+        #[MapEntity(id: 'demandId')]
+        QuoteDemand $quoteDemand,
+        Request $request
+    ) {
         $authorizationChecker = $this->container->get('security.authorization_checker');
         if (!$authorizationChecker->isGranted('oro_sale_quote_demand_frontend_view', $quoteDemand) ||
             $quoteDemand->getQuote()->getId() !== $quoteProduct->getQuote()->getId()
