@@ -110,7 +110,7 @@
     {% import '@OroUI/macros.html.twig' as UI %}
     {% import _self as buttons %}
     {% set isShoppingListCreateEnabled =  (options.shoppingListCreateEnabled ?? true and feature_enabled('shopping_list_create') and is_granted('oro_shopping_list_frontend_create')) %}
-    {% set showSingleAddToShoppingListButton = isShoppingListCreateEnabled or not app.user %}
+    {% set showSingleAddToShoppingListButton = isShoppingListCreateEnabled or options.shoppingLists|length > 0 or not app.user %}
     {% set shoppingListRemoveEnabled = options.shoppingListRemoveEnabled is defined ? options.shoppingListRemoveEnabled : true %}
     {% set shoppingListUpdateEnabled = options.shoppingListUpdateEnabled is defined ? options.shoppingListUpdateEnabled : true %}
     {% set shoppingListAddToEnabled = options.shoppingListAddToEnabled is defined ? options.shoppingListAddToEnabled : true %}
