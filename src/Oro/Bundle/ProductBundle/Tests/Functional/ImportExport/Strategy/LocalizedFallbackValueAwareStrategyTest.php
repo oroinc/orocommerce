@@ -393,8 +393,13 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $this->assertEquals([], $context->getErrors());
         $this->assertNotEmpty($result);
         $this->assertEquals($expectedShortDescriptions, $result->getShortDescriptions()->toArray());
-        $this->assertEquals(FallbackType::SYSTEM, $result->getShortDescriptions()->last()->getFallback());
-        $this->assertNull($result->getShortDescriptions()->last()->getText());
+
+        $nullTextShortDescriptions = $result->getShortDescriptions()
+            ->filter(function (AbstractLocalizedFallbackValue $value) {
+                return null === $value->getText();
+            });
+        $this->assertCount(1, $nullTextShortDescriptions);
+        $this->assertEquals(FallbackType::SYSTEM, $nullTextShortDescriptions->first()->getFallback());
     }
 
     public function testSwitchTextToFallback(): void
