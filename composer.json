@@ -60,7 +60,8 @@
             "grapesjs-plugin-export": "1.0.12",
             "@oroinc/jquery-creditcardvalidator": "1.1",
             "@oroinc/elevatezoom": "3.0.81",
-            "html2canvas": "1.4.1"
+            "html2canvas": "1.4.1",
+            "codemirror": "5.63.0"
         },
         "branch-alias": {
             "dev-master": "6.1-dev"

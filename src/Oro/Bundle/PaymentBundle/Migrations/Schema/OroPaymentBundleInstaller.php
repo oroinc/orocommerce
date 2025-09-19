@@ -18,7 +18,7 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v7_0_0_0';
+        return 'v7_0_0_1';
     }
 
     #[\Override]
@@ -249,6 +249,8 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('entity_class', 'string', ['length' => 255]);
         $table->addColumn('entity_identifier', 'integer');
         $table->addColumn('payment_status', 'string', ['length' => 255]);
+        $table->addColumn('forced', 'boolean', ['default' => false]);
+        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['entity_class', 'entity_identifier'], 'oro_payment_status_unique');
     }

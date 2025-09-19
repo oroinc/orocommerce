@@ -8,7 +8,7 @@ use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -20,7 +20,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ContentBlockController extends AbstractController
 {
     #[Route(path: '/', name: 'oro_cms_content_block_index')]
-    #[Template]
+    #[Template('@OroCMS/ContentBlock/index.html.twig')]
     #[AclAncestor('oro_cms_content_block_view')]
     public function indexAction(): array
     {
@@ -30,7 +30,7 @@ class ContentBlockController extends AbstractController
     }
 
     #[Route(path: '/{id}', name: 'oro_cms_content_block_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCMS/ContentBlock/view.html.twig')]
     #[Acl(id: 'oro_cms_content_block_view', type: 'entity', class: ContentBlock::class, permission: 'VIEW')]
     public function viewAction(ContentBlock $contentBlock): array
     {
@@ -53,7 +53,7 @@ class ContentBlockController extends AbstractController
     }
 
     #[Route(path: '/update/{id}', name: 'oro_cms_content_block_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCMS/ContentBlock/update.html.twig')]
     #[Acl(id: 'oro_cms_content_block_update', type: 'entity', class: ContentBlock::class, permission: 'EDIT')]
     public function updateAction(ContentBlock $contentBlock): array|RedirectResponse
     {

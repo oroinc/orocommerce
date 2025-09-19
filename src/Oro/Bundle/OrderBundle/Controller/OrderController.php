@@ -22,8 +22,8 @@ use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\UserBundle\Entity\User;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
@@ -40,7 +40,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class OrderController extends AbstractController
 {
     #[Route(path: '/view/{id}', name: 'oro_order_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroOrder/Order/view.html.twig')]
     #[Acl(id: 'oro_order_view', type: 'entity', class: Order::class, permission: 'VIEW', category: 'orders')]
     public function viewAction(Order $order): array|RedirectResponse
     {
@@ -56,7 +56,7 @@ class OrderController extends AbstractController
     }
 
     #[Route(path: '/view-suborder/{id}', name: 'oro_order_suborder_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroOrder/Order/viewSubOrder.html.twig')]
     #[Acl(id: 'oro_order_view', type: 'entity', class: Order::class, permission: 'VIEW', category: 'orders')]
     public function viewSubOrderAction(Order $order): array|RedirectResponse
     {
@@ -72,7 +72,7 @@ class OrderController extends AbstractController
     }
 
     #[Route(path: '/info/{id}', name: 'oro_order_info', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroOrder/Order/info.html.twig')]
     #[AclAncestor('oro_order_view')]
     public function infoAction(Order $order): array
     {
@@ -89,7 +89,7 @@ class OrderController extends AbstractController
     }
 
     #[Route(path: '/', name: 'oro_order_index')]
-    #[Template]
+    #[Template('@OroOrder/Order/index.html.twig')]
     #[AclAncestor('oro_order_view')]
     public function indexAction(): array
     {
@@ -198,11 +198,13 @@ class OrderController extends AbstractController
      * Edit order form
      */
     #[Route(path: '/update/{id}', name: 'oro_order_update', requirements: ['id' => '\d+'])]
-    #[ParamConverter('order', options: ['repository_method' => 'getOrderWithRelations'])]
-    #[Template]
+    #[Template('@OroOrder/Order/update.html.twig')]
     #[Acl(id: 'oro_order_update', type: 'entity', class: Order::class, permission: 'EDIT')]
-    public function updateAction(Order $order, Request $request): array|RedirectResponse
-    {
+    public function updateAction(
+        #[MapEntity(expr: 'repository.getOrderWithRelations(id)')]
+        Order $order,
+        Request $request
+    ): array|RedirectResponse {
         if ($order->isExternal()) {
             throw $this->createAccessDeniedException();
         }
@@ -215,11 +217,13 @@ class OrderController extends AbstractController
     }
 
     #[Route(path: '/update-suborder/{id}', name: 'oro_order_suborder_update', requirements: ['id' => '\d+'])]
-    #[ParamConverter('order', options: ['repository_method' => 'getOrderWithRelations'])]
-    #[Template]
+    #[Template('@OroOrder/Order/updateSubOrder.html.twig')]
     #[Acl(id: 'oro_order_update', type: 'entity', class: Order::class, permission: 'EDIT')]
-    public function updateSubOrderAction(Order $order, Request $request): array|RedirectResponse
-    {
+    public function updateSubOrderAction(
+        #[MapEntity(expr: 'repository.getOrderWithRelations(id)')]
+        Order $order,
+        Request $request
+    ): array|RedirectResponse {
         if (!$order->getParent()) {
             return $this->redirectToRoute('oro_order_update', ['id' => $order->getId()]);
         }
@@ -228,11 +232,13 @@ class OrderController extends AbstractController
     }
 
     #[Route(path: '/reorder/{id}', name: 'oro_order_reorder', requirements: ['id' => '\d+'])]
-    #[ParamConverter('oldOrder', options: ['repository_method' => 'getOrderWithRelations'])]
-    #[Template]
+    #[Template('@OroOrder/Order/reorder.html.twig')]
     #[AclAncestor('oro_order_view')]
-    public function reorderAction(Order $oldOrder, Request $request): array|RedirectResponse
-    {
+    public function reorderAction(
+        #[MapEntity(expr: 'repository.getOrderWithRelations(id)')]
+        Order $oldOrder,
+        Request $request
+    ): array|RedirectResponse {
         if (!$this->isGranted('oro_order_create') || !$oldOrder->getSubOrders()->isEmpty()) {
             throw $this->createAccessDeniedException();
         }

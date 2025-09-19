@@ -8,7 +8,7 @@ use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -21,7 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PageController extends AbstractController
 {
     #[Route(path: '/view/{id}', name: 'oro_cms_page_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCMS/Page/view.html.twig')]
     #[Acl(id: 'oro_cms_page_view', type: 'entity', class: Page::class, permission: 'VIEW')]
     public function viewAction(Page $page): array
     {
@@ -31,7 +31,7 @@ class PageController extends AbstractController
     }
 
     #[Route(path: '/info/{id}', name: 'oro_cms_page_info', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCMS/Page/info.html.twig')]
     #[AclAncestor('oro_cms_page_view')]
     public function infoAction(Page $page): array
     {
@@ -41,7 +41,7 @@ class PageController extends AbstractController
     }
 
     #[Route(path: '/', name: 'oro_cms_page_index')]
-    #[Template]
+    #[Template('@OroCMS/Page/index.html.twig')]
     #[AclAncestor('oro_cms_page_view')]
     public function indexAction(): array
     {
@@ -60,7 +60,7 @@ class PageController extends AbstractController
     }
 
     #[Route(path: '/update/{id}', name: 'oro_cms_page_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCMS/Page/update.html.twig')]
     #[Acl(id: 'oro_cms_page_update', type: 'entity', class: Page::class, permission: 'EDIT')]
     public function updateAction(Page $page): array|RedirectResponse
     {

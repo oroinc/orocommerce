@@ -17,7 +17,7 @@ class RestrictVariantProductViewListener extends AbstractRestrictProductViewList
     use FeatureCheckerHolderTrait;
 
     #[\Override]
-    protected function restrictProductView(Product $product, ControllerEvent $event)
+    protected function restrictProductView(Product $product, ControllerEvent $event): void
     {
         $request = $event->getRequest();
         $isLayoutUpdateRequest = $request->isXmlHttpRequest() && $request->get('layout_block_ids');

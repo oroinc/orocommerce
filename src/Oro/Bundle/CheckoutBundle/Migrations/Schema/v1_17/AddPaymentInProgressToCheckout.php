@@ -25,7 +25,11 @@ class AddPaymentInProgressToCheckout implements Migration
 
         $table->addColumn('payment_in_progress', 'boolean', ['default' => false]);
         $queries->addPostQuery(new ParametrizedSqlMigrationQuery(
-            'UPDATE oro_checkout SET payment_in_progress = (wi.data::jsonb->>\'payment_in_progress\')::boolean'
+            'UPDATE oro_checkout SET payment_in_progress = '
+            // adding cast in reason of payment_in_progress not exists in checkout workflow item data
+            // in all steps before payment checkout and oro_checkout.payment_in_progress is not nullable
+            . '(CASE WHEN wi.data::jsonb->>\'payment_in_progress\' IS NULL THEN FALSE'
+            . ' ELSE (wi.data::jsonb->>\'payment_in_progress\')::boolean END)'
             . ' FROM oro_workflow_item wi'
             . ' WHERE wi.entity_class = :entityClass AND wi.entity_id::integer = oro_checkout.id',
             ['entityClass' => Checkout::class],

@@ -9,7 +9,7 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryProductsType;
 use Oro\Bundle\DataGridBundle\Controller\GridController;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -60,7 +60,7 @@ class CategoryProductsController extends AbstractController
         requirements: ['id' => '\d+'],
         methods: ['GET']
     )]
-    #[Template]
+    #[Template('@OroCatalog/CategoryProducts/manageSortOrderWidget.html.twig')]
     #[AclAncestor('oro_catalog_category_view')]
     public function manageSortOrderWidgetAction(Category $category, Request $request): array
     {

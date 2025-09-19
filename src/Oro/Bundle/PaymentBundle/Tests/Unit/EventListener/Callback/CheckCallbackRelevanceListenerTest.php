@@ -4,66 +4,56 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\EventListener\Callback;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use Oro\Bundle\PaymentBundle\EventListener\Callback\CheckCallbackRelevanceListener;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
+class CheckCallbackRelevanceListenerTest extends TestCase
 {
-    /**
-     * @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $paymentMethodProvider;
-
-    /**
-     * @var PaymentStatusProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $paymentStatusProvider;
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $doctrineHelper;
-    /**
-     * @var CheckCallbackRelevanceListener
-     */
-    private $listener;
+    private PaymentMethodProviderInterface&MockObject $paymentMethodProvider;
+    private PaymentStatusManager&MockObject $paymentStatusManager;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private CheckCallbackRelevanceListener $listener;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
-        $this->paymentStatusProvider = $this->createMock(PaymentStatusProviderInterface::class);
+        $this->paymentStatusManager = $this->createMock(PaymentStatusManager::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->listener = new CheckCallbackRelevanceListener(
             $this->paymentMethodProvider,
-            $this->paymentStatusProvider,
+            $this->paymentStatusManager,
             $this->doctrineHelper
         );
     }
 
-    public function testOnErrorWithoutTransaction()
+    public function testOnErrorWithoutTransaction(): void
     {
         $event = new CallbackErrorEvent();
 
         $this->paymentMethodProvider
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('hasPaymentMethod');
 
         $this->listener->onError($event);
-        $this->assertFalse($event->isPropagationStopped());
+        self::assertFalse($event->isPropagationStopped());
     }
 
-    public function testOnErrorWithNotApplicablePaymentMethod()
+    public function testOnErrorWithNotApplicablePaymentMethod(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('payment_method');
@@ -72,20 +62,20 @@ class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
         $event->setPaymentTransaction($paymentTransaction);
 
         $this->paymentMethodProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(false);
 
         $this->doctrineHelper
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('getEntity');
 
         $this->listener->onError($event);
-        $this->assertFalse($event->isPropagationStopped());
+        self::assertFalse($event->isPropagationStopped());
     }
 
-    public function testOnErrorWithoutExistingOrder()
+    public function testOnErrorWithoutExistingOrder(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('payment_method');
@@ -99,31 +89,31 @@ class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
         $event->setPaymentTransaction($paymentTransaction);
 
         $this->paymentMethodProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(true);
 
         $this->doctrineHelper
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getEntity')
             ->with(\stdClass::class, 5)
             ->willReturn(null);
 
-        $this->paymentStatusProvider
-            ->expects($this->never())
+        $this->paymentStatusManager
+            ->expects(self::never())
             ->method('getPaymentStatus');
 
         $this->listener->onError($event);
 
         /** @var RedirectResponse $response */
         $response = $event->getResponse();
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('https://example.com/failure-url', $response->getTargetUrl());
-        $this->assertTrue($event->isPropagationStopped());
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame('https://example.com/failure-url', $response->getTargetUrl());
+        self::assertTrue($event->isPropagationStopped());
     }
 
-    public function testOnErrorWithPandingOrder()
+    public function testOnErrorWithPendingOrder(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('payment_method');
@@ -135,31 +125,31 @@ class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
         $event->setPaymentTransaction($paymentTransaction);
 
         $this->paymentMethodProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(true);
 
         $order = new Order();
         $this->doctrineHelper
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getEntity')
             ->with(\stdClass::class, 5)
             ->willReturn($order);
 
-        $this->paymentStatusProvider
-            ->expects($this->once())
+        $this->paymentStatusManager
+            ->expects(self::once())
             ->method('getPaymentStatus')
             ->with($order)
-            ->willReturn(PaymentStatusProvider::PENDING);
+            ->willReturn((new PaymentStatus())->setPaymentStatus(PaymentStatuses::PENDING));
 
         $this->listener->onError($event);
 
-        $this->assertSame($originalResponse, $event->getResponse());
-        $this->assertFalse($event->isPropagationStopped());
+        self::assertSame($originalResponse, $event->getResponse());
+        self::assertFalse($event->isPropagationStopped());
     }
 
-    public function testOnErrorWithPaidOrder()
+    public function testOnErrorWithPaidOrder(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('payment_method');
@@ -173,34 +163,34 @@ class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
         $event->setPaymentTransaction($paymentTransaction);
 
         $this->paymentMethodProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(true);
 
         $order = new Order();
         $this->doctrineHelper
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getEntity')
             ->with(\stdClass::class, 5)
             ->willReturn($order);
 
-        $this->paymentStatusProvider
-            ->expects($this->once())
+        $this->paymentStatusManager
+            ->expects(self::once())
             ->method('getPaymentStatus')
             ->with($order)
-            ->willReturn(PaymentStatusProvider::FULL);
+            ->willReturn((new PaymentStatus())->setPaymentStatus(PaymentStatuses::PAID_IN_FULL));
 
         $this->listener->onError($event);
 
         /** @var RedirectResponse $response */
         $response = $event->getResponse();
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('https://example.com/failure-url', $response->getTargetUrl());
-        $this->assertTrue($event->isPropagationStopped());
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame('https://example.com/failure-url', $response->getTargetUrl());
+        self::assertTrue($event->isPropagationStopped());
     }
 
-    public function testOnErrorWithPaidOrderWithoutFailureUrl()
+    public function testOnErrorWithPaidOrderWithoutFailureUrl(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('payment_method');
@@ -211,46 +201,46 @@ class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
         $event->setPaymentTransaction($paymentTransaction);
 
         $this->paymentMethodProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(true);
 
         $order = new Order();
         $this->doctrineHelper
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getEntity')
             ->with(\stdClass::class, 5)
             ->willReturn($order);
 
-        $this->paymentStatusProvider
-            ->expects($this->once())
+        $this->paymentStatusManager
+            ->expects(self::once())
             ->method('getPaymentStatus')
             ->with($order)
-            ->willReturn(PaymentStatusProvider::FULL);
+            ->willReturn((new PaymentStatus())->setPaymentStatus(PaymentStatuses::PAID_IN_FULL));
 
         $this->listener->onError($event);
 
-        /** @var RedirectResponse $response */
+        /** @var Response $response */
         $response = $event->getResponse();
 
-        $this->assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode());
-        $this->assertTrue($event->isPropagationStopped());
+        self::assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+        self::assertTrue($event->isPropagationStopped());
     }
 
-    public function testOnReturnWithoutTransaction()
+    public function testOnReturnWithoutTransaction(): void
     {
         $event = new CallbackReturnEvent();
 
         $this->paymentMethodProvider
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('hasPaymentMethod');
 
         $this->listener->onReturn($event);
-        $this->assertFalse($event->isPropagationStopped());
+        self::assertFalse($event->isPropagationStopped());
     }
 
-    public function testOnReturnWithNotApplicablePaymentMethod()
+    public function testOnReturnWithNotApplicablePaymentMethod(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('payment_method');
@@ -259,20 +249,20 @@ class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
         $event->setPaymentTransaction($paymentTransaction);
 
         $this->paymentMethodProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(false);
 
         $this->doctrineHelper
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('getEntity');
 
         $this->listener->onReturn($event);
-        $this->assertFalse($event->isPropagationStopped());
+        self::assertFalse($event->isPropagationStopped());
     }
 
-    public function testOnReturnWithoutExistingOrder()
+    public function testOnReturnWithoutExistingOrder(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('payment_method');
@@ -286,31 +276,31 @@ class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
         $event->setPaymentTransaction($paymentTransaction);
 
         $this->paymentMethodProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(true);
 
         $this->doctrineHelper
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getEntity')
             ->with(\stdClass::class, 5)
             ->willReturn(null);
 
-        $this->paymentStatusProvider
-            ->expects($this->never())
+        $this->paymentStatusManager
+            ->expects(self::never())
             ->method('getPaymentStatus');
 
         $this->listener->onReturn($event);
 
         /** @var RedirectResponse $response */
         $response = $event->getResponse();
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('https://example.com/failure-url', $response->getTargetUrl());
-        $this->assertTrue($event->isPropagationStopped());
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame('https://example.com/failure-url', $response->getTargetUrl());
+        self::assertTrue($event->isPropagationStopped());
     }
 
-    public function testOnReturnWithPandingOrder()
+    public function testOnReturnWithPendingOrder(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('payment_method');
@@ -322,31 +312,31 @@ class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
         $event->setPaymentTransaction($paymentTransaction);
 
         $this->paymentMethodProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(true);
 
         $order = new Order();
         $this->doctrineHelper
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getEntity')
             ->with(\stdClass::class, 5)
             ->willReturn($order);
 
-        $this->paymentStatusProvider
-            ->expects($this->once())
+        $this->paymentStatusManager
+            ->expects(self::once())
             ->method('getPaymentStatus')
             ->with($order)
-            ->willReturn(PaymentStatusProvider::PENDING);
+            ->willReturn((new PaymentStatus())->setPaymentStatus(PaymentStatuses::PENDING));
 
         $this->listener->onReturn($event);
 
-        $this->assertSame($originalResponse, $event->getResponse());
-        $this->assertFalse($event->isPropagationStopped());
+        self::assertSame($originalResponse, $event->getResponse());
+        self::assertFalse($event->isPropagationStopped());
     }
 
-    public function testOnReturnWithPaidOrder()
+    public function testOnReturnWithPaidOrder(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('payment_method');
@@ -360,34 +350,34 @@ class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
         $event->setPaymentTransaction($paymentTransaction);
 
         $this->paymentMethodProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(true);
 
         $order = new Order();
         $this->doctrineHelper
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getEntity')
             ->with(\stdClass::class, 5)
             ->willReturn($order);
 
-        $this->paymentStatusProvider
-            ->expects($this->once())
+        $this->paymentStatusManager
+            ->expects(self::once())
             ->method('getPaymentStatus')
             ->with($order)
-            ->willReturn(PaymentStatusProvider::FULL);
+            ->willReturn((new PaymentStatus())->setPaymentStatus(PaymentStatuses::PAID_IN_FULL));
 
         $this->listener->onReturn($event);
 
         /** @var RedirectResponse $response */
         $response = $event->getResponse();
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('https://example.com/failure-url', $response->getTargetUrl());
-        $this->assertTrue($event->isPropagationStopped());
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertSame('https://example.com/failure-url', $response->getTargetUrl());
+        self::assertTrue($event->isPropagationStopped());
     }
 
-    public function testOnReturnWithPaidOrderWithoutFailureUrl()
+    public function testOnReturnWithPaidOrderWithoutFailureUrl(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('payment_method');
@@ -398,30 +388,28 @@ class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
         $event->setPaymentTransaction($paymentTransaction);
 
         $this->paymentMethodProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(true);
 
         $order = new Order();
         $this->doctrineHelper
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getEntity')
             ->with(\stdClass::class, 5)
             ->willReturn($order);
 
-        $this->paymentStatusProvider
-            ->expects($this->once())
+        $this->paymentStatusManager
+            ->expects(self::once())
             ->method('getPaymentStatus')
             ->with($order)
-            ->willReturn(PaymentStatusProvider::FULL);
+            ->willReturn((new PaymentStatus())->setPaymentStatus(PaymentStatuses::PAID_IN_FULL));
 
         $this->listener->onReturn($event);
 
-        /** @var RedirectResponse $response */
         $response = $event->getResponse();
-
-        $this->assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode());
-        $this->assertTrue($event->isPropagationStopped());
+        self::assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+        self::assertTrue($event->isPropagationStopped());
     }
 }

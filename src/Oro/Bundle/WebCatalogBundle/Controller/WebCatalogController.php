@@ -13,7 +13,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +26,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class WebCatalogController extends AbstractController
 {
     #[Route(path: '/', name: 'oro_web_catalog_index')]
-    #[Template]
+    #[Template('@OroWebCatalog/WebCatalog/index.html.twig')]
     #[AclAncestor('oro_web_catalog_view')]
     public function indexAction(): array
     {
@@ -36,7 +36,7 @@ class WebCatalogController extends AbstractController
     }
 
     #[Route(path: '/view/{id}', name: 'oro_web_catalog_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroWebCatalog/WebCatalog/view.html.twig')]
     #[Acl(id: 'oro_web_catalog_view', type: 'entity', class: WebCatalog::class, permission: 'VIEW')]
     public function viewAction(WebCatalog $webCatalog): array
     {
@@ -54,7 +54,7 @@ class WebCatalogController extends AbstractController
     }
 
     #[Route(path: '/update/{id}', name: 'oro_web_catalog_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroWebCatalog/WebCatalog/update.html.twig')]
     #[Acl(id: 'oro_web_catalog_update', type: 'entity', class: WebCatalog::class, permission: 'EDIT')]
     public function updateAction(WebCatalog $webCatalog): array|RedirectResponse
     {
@@ -62,7 +62,7 @@ class WebCatalogController extends AbstractController
     }
 
     #[Route(path: '/move/{id}', name: 'oro_web_catalog_move')]
-    #[Template]
+    #[Template('@OroWebCatalog/WebCatalog/move.html.twig')]
     #[Acl(id: 'oro_web_catalog_update', type: 'entity', class: WebCatalog::class, permission: 'EDIT')]
     public function moveAction(Request $request, WebCatalog $webCatalog): array
     {

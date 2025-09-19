@@ -22,7 +22,7 @@ use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Model\LineItemModel;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,10 +43,12 @@ class AjaxLineItemController extends AbstractLineItemController
         requirements: ['productId' => '\d+'],
         methods: ['POST']
     )]
-    #[ParamConverter('product', class: Product::class, options: ['id' => 'productId'])]
     #[AclAncestor('oro_product_frontend_view')]
-    public function addProductFromViewAction(Request $request, Product $product): JsonResponse
-    {
+    public function addProductFromViewAction(
+        Request $request,
+        #[MapEntity(id: 'productId')]
+        Product $product
+    ): JsonResponse {
         $currentShoppingListManager = $this->container->get(CurrentShoppingListManager::class);
         $shoppingListId = $request->get('shoppingListId');
         $shoppingListId = $shoppingListId ? (int)$shoppingListId : null;
@@ -99,10 +101,11 @@ class AjaxLineItemController extends AbstractLineItemController
         requirements: ['lineItemId' => '\d+'],
         methods: ['DELETE']
     )]
-    #[ParamConverter('lineItem', class: LineItem::class, options: ['id' => 'lineItemId'])]
     #[AclAncestor('oro_shopping_list_frontend_update')]
-    public function removeLineItemAction(LineItem $lineItem): JsonResponse
-    {
+    public function removeLineItemAction(
+        #[MapEntity(id: 'lineItemId')]
+        LineItem $lineItem
+    ): JsonResponse {
         if (!$this->isGranted('DELETE', $lineItem)) {
             throw $this->createAccessDeniedException();
         }
@@ -132,10 +135,12 @@ class AjaxLineItemController extends AbstractLineItemController
         requirements: ['productId' => '\d+'],
         methods: ['DELETE']
     )]
-    #[ParamConverter('product', class: Product::class, options: ['id' => 'productId'])]
     #[AclAncestor('oro_shopping_list_frontend_update')]
-    public function removeProductFromViewAction(Request $request, Product $product): JsonResponse
-    {
+    public function removeProductFromViewAction(
+        Request $request,
+        #[MapEntity(id: 'productId')]
+        Product $product
+    ): JsonResponse {
         $shoppingListManager = $this->container->get(ShoppingListManager::class);
 
         $shoppingListId = $request->get('shoppingListId');

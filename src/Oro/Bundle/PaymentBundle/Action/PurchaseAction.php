@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PaymentBundle\Action;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
@@ -16,11 +16,11 @@ class PurchaseAction extends AbstractPaymentMethodAction
 {
     const SAVE_FOR_LATER_USE = 'saveForLaterUse';
 
-    private PaymentStatusProviderInterface $paymentStatusProvider;
+    private ?PaymentStatusManager $paymentStatusManager = null;
 
-    public function setPaymentStatusProvider(PaymentStatusProviderInterface $paymentStatusProvider): void
+    public function setPaymentStatusManager(?PaymentStatusManager $paymentStatusManager): void
     {
-        $this->paymentStatusProvider = $paymentStatusProvider;
+        $this->paymentStatusManager = $paymentStatusManager;
     }
 
     #[\Override]
@@ -141,10 +141,10 @@ class PurchaseAction extends AbstractPaymentMethodAction
     private function isPaidPartially(object $object): bool
     {
         return in_array(
-            $this->paymentStatusProvider->getPaymentStatus($object),
+            $this->paymentStatusManager->getPaymentStatus($object),
             [
-                PaymentStatusProvider::AUTHORIZED_PARTIALLY,
-                PaymentStatusProvider::PARTIALLY
+                PaymentStatuses::AUTHORIZED_PARTIALLY,
+                PaymentStatuses::PAID_PARTIALLY
             ],
             true
         );

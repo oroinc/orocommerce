@@ -7,7 +7,7 @@ use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Form\Type\RequestType;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,7 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class RequestController extends AbstractController
 {
     #[Route(path: '/view/{id}', name: 'oro_rfp_request_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroRFP/Request/view.html.twig')]
     #[Acl(id: 'oro_rfp_request_view', type: 'entity', class: RFPRequest::class, permission: 'VIEW')]
     public function viewAction(RFPRequest $rfpRequest): array
     {
@@ -31,7 +31,7 @@ class RequestController extends AbstractController
     }
 
     #[Route(path: '/info/{id}', name: 'oro_rfp_request_info', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroRFP/Request/info.html.twig')]
     #[AclAncestor('oro_rfp_request_view')]
     public function infoAction(RFPRequest $rfpRequest): array
     {
@@ -41,7 +41,7 @@ class RequestController extends AbstractController
     }
 
     #[Route(path: '/', name: 'oro_rfp_request_index')]
-    #[Template]
+    #[Template('@OroRFP/Request/index.html.twig')]
     #[AclAncestor('oro_rfp_request_view')]
     public function indexAction(): array
     {
@@ -51,7 +51,7 @@ class RequestController extends AbstractController
     }
 
     #[Route(path: '/update/{id}', name: 'oro_rfp_request_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroRFP/Request/update.html.twig')]
     #[Acl(id: 'oro_rfp_request_update', type: 'entity', class: RFPRequest::class, permission: 'EDIT')]
     public function updateAction(RFPRequest $rfpRequest): array|RedirectResponse
     {

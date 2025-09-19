@@ -15,8 +15,8 @@ use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -82,11 +82,14 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         name: 'oro_product_price_delete',
         methods: ['DELETE']
     )]
-    #[ParamConverter('priceList', class: PriceList::class, options: ['id' => 'priceListId'])]
     #[Acl(id: 'oro_pricing_product_price_delete', type: 'entity', class: ProductPrice::class, permission: 'DELETE')]
     #[CsrfProtection()]
-    public function deleteAction(Request $request, PriceList $priceList, $productPriceId)
-    {
+    public function deleteAction(
+        Request $request,
+        #[MapEntity(id: 'priceListId')]
+        PriceList $priceList,
+        $productPriceId
+    ) {
         /** @var ProductPriceRepository $priceRepository */
         $priceRepository = $this->container->get('doctrine')->getRepository(ProductPrice::class);
         /** @var ProductPrice $productPrice */

@@ -8,8 +8,8 @@ use Oro\Bundle\AddressValidationBundle\Form\Type\AddressBookAwareAddressValidati
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
 use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,11 +30,13 @@ class OrderAddressValidationController extends AbstractAddressValidationControll
     }
 
     #[CsrfProtection]
-    #[ParamConverter('order', class: Order::class, options: ['id' => 'id'], isOptional: true)]
     #[Template('@OroAddressValidation/AddressValidation/addressBookAwareAddressValidationDialogWidget.html.twig')]
     #[\Override]
-    public function addressValidationAction(Request $request): Response|array
-    {
+    public function addressValidationAction(
+        Request $request,
+        #[MapEntity(id: 'id')]
+        Order|null $order = null
+    ): Response|array {
         $this->denyAccessUnlessGranted(
             $request->attributes->get('order') ? 'oro_order_update' : 'oro_order_create'
         );

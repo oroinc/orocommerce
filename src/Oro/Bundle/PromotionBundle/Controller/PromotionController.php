@@ -9,7 +9,7 @@ use Oro\Bundle\PromotionBundle\Form\Type\PromotionType;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +26,7 @@ class PromotionController extends AbstractController
      * @return array
      */
     #[Route(path: '/view/{id}', name: 'oro_promotion_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroPromotion/Promotion/view.html.twig')]
     #[Acl(id: 'oro_promotion_view', type: 'entity', class: Promotion::class, permission: 'VIEW')]
     public function viewAction(Promotion $promotion)
     {
@@ -48,7 +48,7 @@ class PromotionController extends AbstractController
      * @return array
      */
     #[Route(path: '/', name: 'oro_promotion_index')]
-    #[Template]
+    #[Template('@OroPromotion/Promotion/index.html.twig')]
     #[AclAncestor('oro_promotion_view')]
     public function indexAction()
     {
@@ -79,7 +79,7 @@ class PromotionController extends AbstractController
      * @return array|RedirectResponse
      */
     #[Route(path: '/update/{id}', name: 'oro_promotion_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroPromotion/Promotion/update.html.twig')]
     #[Acl(id: 'oro_promotion_update', type: 'entity', class: Promotion::class, permission: 'EDIT')]
     public function updateAction(Promotion $promotion, Request $request)
     {

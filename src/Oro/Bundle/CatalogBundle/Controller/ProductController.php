@@ -5,7 +5,7 @@ namespace Oro\Bundle\CatalogBundle\Controller;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Routing\Attribute\Route;
@@ -19,7 +19,7 @@ class ProductController extends AbstractController
      * @return array
      */
     #[Route(path: '/sidebar', name: 'oro_catalog_category_product_sidebar')]
-    #[Template]
+    #[Template('@OroCatalog/Product/sidebar.html.twig')]
     #[AclAncestor('oro_catalog_category_view')]
     public function sidebarAction()
     {

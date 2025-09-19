@@ -10,7 +10,7 @@ use Oro\Bundle\CMSBundle\Form\Type\ContentWidgetType;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -24,7 +24,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ContentWidgetController extends AbstractController
 {
     #[Route(path: '/', name: 'oro_cms_content_widget_index')]
-    #[Template]
+    #[Template('@OroCMS/ContentWidget/index.html.twig')]
     #[AclAncestor('oro_cms_content_widget_view')]
     public function indexAction(): array
     {
@@ -34,7 +34,7 @@ class ContentWidgetController extends AbstractController
     }
 
     #[Route(path: '/view/{id}', name: 'oro_cms_content_widget_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCMS/ContentWidget/view.html.twig')]
     #[Acl(id: 'oro_cms_content_widget_view', type: 'entity', class: ContentWidget::class, permission: 'VIEW')]
     public function viewAction(ContentWidget $contentWidget): array
     {
@@ -84,7 +84,7 @@ class ContentWidgetController extends AbstractController
      * @return array|RedirectResponse
      */
     #[Route(path: '/update/{id}', name: 'oro_cms_content_widget_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCMS/ContentWidget/update.html.twig')]
     #[Acl(id: 'oro_cms_content_widget_update', type: 'entity', class: ContentWidget::class, permission: 'EDIT')]
     public function updateAction(ContentWidget $contentWidget)
     {

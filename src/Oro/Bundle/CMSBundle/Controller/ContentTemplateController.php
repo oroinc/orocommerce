@@ -11,7 +11,7 @@ use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -25,7 +25,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ContentTemplateController extends AbstractController
 {
     #[Route(path: '/', name: 'oro_cms_content_template_index')]
-    #[Template]
+    #[Template('@OroCMS/ContentTemplate/index.html.twig')]
     #[Acl(id: 'oro_cms_content_template_view', type: 'entity', class: ContentTemplate::class, permission: 'VIEW')]
     public function indexAction(): array
     {
@@ -35,7 +35,7 @@ class ContentTemplateController extends AbstractController
     }
 
     #[Route(path: '/view/{id}', name: 'oro_cms_content_template_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCMS/ContentTemplate/view.html.twig')]
     #[AclAncestor('oro_cms_content_template_view')]
     public function viewAction(ContentTemplate $template): array
     {
@@ -45,7 +45,7 @@ class ContentTemplateController extends AbstractController
     }
 
     #[Route(path: '/widget/{id}', name: 'oro_cms_content_template_widget', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCMS/ContentTemplate/widget.html.twig')]
     #[AclAncestor('oro_cms_content_template_view')]
     public function widgetAction(ContentTemplate $template): array
     {

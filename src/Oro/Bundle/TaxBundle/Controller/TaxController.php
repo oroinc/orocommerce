@@ -7,7 +7,7 @@ use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Form\Type\TaxType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -19,7 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class TaxController extends AbstractController
 {
     #[Route(path: '/', name: 'oro_tax_index')]
-    #[Template]
+    #[Template('@OroTax/Tax/index.html.twig')]
     #[AclAncestor('oro_tax_view')]
     public function indexAction(): array
     {
@@ -29,7 +29,7 @@ class TaxController extends AbstractController
     }
 
     #[Route(path: '/view/{id}', name: 'oro_tax_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroTax/Tax/view.html.twig')]
     #[Acl(id: 'oro_tax_view', type: 'entity', class: Tax::class, permission: 'VIEW')]
     public function viewAction(Tax $tax): array
     {
@@ -47,7 +47,7 @@ class TaxController extends AbstractController
     }
 
     #[Route(path: '/update/{id}', name: 'oro_tax_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroTax/Tax/update.html.twig')]
     #[Acl(id: 'oro_tax_update', type: 'entity', class: Tax::class, permission: 'EDIT')]
     public function updateAction(Tax $tax): array|RedirectResponse
     {

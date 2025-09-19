@@ -7,7 +7,7 @@ use Oro\Bundle\ApiBundle\Processor\Subresource\ChangeSubresourceContext;
 use Oro\Bundle\CheckoutBundle\Api\Processor\AbstractHandlePaymentSubresource;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
 
 /**
  * Handles the checkout Payment Term payment sub-resource.
@@ -24,8 +24,8 @@ class HandlePaymentTermPaymentSubresource extends AbstractHandlePaymentSubresour
     protected function getErrorStatuses(): array
     {
         return [
-            PaymentStatusProvider::CANCELED,
-            PaymentStatusProvider::DECLINED
+            PaymentStatuses::CANCELED,
+            PaymentStatuses::DECLINED
         ];
     }
 

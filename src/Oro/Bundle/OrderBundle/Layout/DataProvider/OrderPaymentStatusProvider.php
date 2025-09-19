@@ -3,18 +3,15 @@
 namespace Oro\Bundle\OrderBundle\Layout\DataProvider;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 
+/**
+ * Layout data provider of an order payment status.
+ */
 class OrderPaymentStatusProvider
 {
-    /**
-     * @var PaymentStatusProviderInterface
-     */
-    protected $paymentStatusProvider;
-
-    public function __construct(PaymentStatusProviderInterface $paymentStatusProvider)
+    public function __construct(private readonly PaymentStatusManager $paymentStatusManager)
     {
-        $this->paymentStatusProvider = $paymentStatusProvider;
     }
 
     /**
@@ -24,6 +21,6 @@ class OrderPaymentStatusProvider
      */
     public function getPaymentStatus(Order $order)
     {
-        return $this->paymentStatusProvider->getPaymentStatus($order);
+        return (string) $this->paymentStatusManager->getPaymentStatus($order);
     }
 }

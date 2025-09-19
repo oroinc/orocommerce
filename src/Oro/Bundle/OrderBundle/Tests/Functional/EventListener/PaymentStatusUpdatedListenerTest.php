@@ -1,6 +1,8 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM;
+declare(strict_types=1);
+
+namespace Oro\Bundle\OrderBundle\Tests\Functional\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -8,18 +10,21 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\WebsiteTrait;
 
-class PaymentStatusListenerTest extends WebTestCase
+final class PaymentStatusUpdatedListenerTest extends WebTestCase
 {
-    protected ManagerRegistry $managerRegistry;
-    private PaymentStatusProvider $paymentStatusProvider;
+    use WebsiteTrait;
+
+    private ManagerRegistry $managerRegistry;
+    private PaymentStatusManager $paymentStatusManager;
     private PaymentTransactionProvider $paymentTransactionProvider;
 
     #[\Override]
@@ -28,13 +33,56 @@ class PaymentStatusListenerTest extends WebTestCase
         $this->initClient([], self::generateBasicAuthHeader());
 
         $this->managerRegistry = self::getContainer()->get('doctrine');
-        $this->paymentStatusProvider = self::getContainer()->get('oro_payment.provider.payment_status');
+        $this->paymentStatusManager = self::getContainer()->get('oro_payment.manager.payment_status');
         $this->paymentTransactionProvider = self::getContainer()->get('oro_payment.provider.payment_transaction');
 
         $this->loadFixtures([LoadCustomerUserData::class]);
     }
 
-    public function testPreUpdate(): void
+    public function testPaymentStatusWhenSingleOrder(): void
+    {
+        $order = $this->prepareOrderObject(100, '#41');
+
+        $em = $this->managerRegistry->getManagerForClass(Order::class);
+        $em->persist($order);
+        $em->flush();
+
+        // Test initial state - no payment transactions
+        self::assertEquals(
+            PaymentStatuses::PENDING,
+            (string)$this->paymentStatusManager->getPaymentStatus($order)
+        );
+
+        // Add successful authorize transaction
+        $this->addPaymentTransaction($order, PaymentMethodInterface::AUTHORIZE, true);
+
+        self::assertEquals(
+            PaymentStatuses::AUTHORIZED,
+            (string)$this->paymentStatusManager->getPaymentStatus($order)
+        );
+
+        // Add successful capture transaction
+        $this->addPaymentTransaction($order, PaymentMethodInterface::CAPTURE, true);
+
+        self::assertEquals(
+            PaymentStatuses::PAID_IN_FULL,
+            (string)$this->paymentStatusManager->getPaymentStatus($order)
+        );
+
+        // Add partial refund transaction
+        $refundTransaction = $this->addPaymentTransaction($order, PaymentMethodInterface::REFUND, true, 30.0);
+
+        $em = $this->managerRegistry->getManagerForClass(PaymentTransaction::class);
+        $em->persist($refundTransaction);
+        $em->flush();
+
+        self::assertEquals(
+            PaymentStatuses::REFUNDED_PARTIALLY,
+            (string)$this->paymentStatusManager->getPaymentStatus($order)
+        );
+    }
+
+    public function testPaymentStatusWhenOrderWithSubOrders(): void
     {
         $subOrder1 = $this->prepareOrderObject(50, '#42-1');
         $subOrder2 = $this->prepareOrderObject(50, '#42-2');
@@ -47,25 +95,22 @@ class PaymentStatusListenerTest extends WebTestCase
         $em->persist($order);
         $em->flush();
 
-        $paymentTransaction1 = $this->addPaymentTransaction($subOrder1, PaymentMethodInterface::AUTHORIZE, true);
-        $paymentTransaction2 = $this->addPaymentTransaction($subOrder2, PaymentMethodInterface::AUTHORIZE, false);
-        $em->persist($paymentTransaction1);
-        $em->persist($paymentTransaction2);
-        $em->flush();
+        $this->addPaymentTransaction($subOrder1, PaymentMethodInterface::AUTHORIZE, true);
+        $this->addPaymentTransaction($subOrder2, PaymentMethodInterface::AUTHORIZE, false);
 
         self::assertEquals(
-            PaymentStatusProvider::AUTHORIZED,
-            $this->paymentStatusProvider->getPaymentStatus($subOrder1)
+            PaymentStatuses::AUTHORIZED,
+            (string)$this->paymentStatusManager->getPaymentStatus($subOrder1)
         );
 
         self::assertEquals(
-            PaymentStatusProvider::PENDING,
-            $this->paymentStatusProvider->getPaymentStatus($subOrder2)
+            PaymentStatuses::PENDING,
+            (string)$this->paymentStatusManager->getPaymentStatus($subOrder2)
         );
 
         self::assertEquals(
-            PaymentStatusProvider::AUTHORIZED_PARTIALLY,
-            $this->paymentStatusProvider->getPaymentStatus($order)
+            PaymentStatuses::AUTHORIZED_PARTIALLY,
+            (string)$this->paymentStatusManager->getPaymentStatus($order)
         );
     }
 
@@ -97,19 +142,17 @@ class PaymentStatusListenerTest extends WebTestCase
     private function addPaymentTransaction(
         Order $order,
         string $transactionType,
-        bool $transactionStatus
+        bool $transactionStatus,
+        ?float $amount = null
     ): PaymentTransaction {
         $transaction = $this->paymentTransactionProvider->createPaymentTransaction('pm1', $transactionType, $order);
         $transaction->setSuccessful($transactionStatus);
         $transaction->setActive(true);
-        $transaction->setAmount($order->getTotal());
+        $transaction->setAmount($amount ?? $order->getTotal());
         $transaction->setCurrency($order->getCurrency());
 
-        return $transaction;
-    }
+        $this->paymentTransactionProvider->savePaymentTransaction($transaction);
 
-    protected function getDefaultWebsite(): Website
-    {
-        return $this->managerRegistry->getRepository(Website::class)->findOneBy(['default' => true]);
+        return $transaction;
     }
 }

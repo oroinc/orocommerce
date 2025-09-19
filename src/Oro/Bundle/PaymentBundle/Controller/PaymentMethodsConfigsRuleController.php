@@ -10,7 +10,7 @@ use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Oro\Bundle\UIBundle\Route\Router;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -37,7 +37,7 @@ class PaymentMethodsConfigsRuleController extends AbstractController
      * @return array
      */
     #[Route(path: '/', name: 'oro_payment_methods_configs_rule_index')]
-    #[Template]
+    #[Template('@OroPayment/PaymentMethodsConfigsRule/index.html.twig')]
     #[AclAncestor('oro_payment_methods_configs_rule_view')]
     public function indexAction()
     {
@@ -68,7 +68,7 @@ class PaymentMethodsConfigsRuleController extends AbstractController
      * @return array
      */
     #[Route(path: '/view/{id}', name: 'oro_payment_methods_configs_rule_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroPayment/PaymentMethodsConfigsRule/view.html.twig')]
     #[Acl(
         id: 'oro_payment_methods_configs_rule_view',
         type: 'entity',
@@ -88,7 +88,7 @@ class PaymentMethodsConfigsRuleController extends AbstractController
      * @return array
      */
     #[Route(path: '/update/{id}', name: 'oro_payment_methods_configs_rule_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroPayment/PaymentMethodsConfigsRule/update.html.twig')]
     #[Acl(
         id: 'oro_payment_methods_configs_rule_update',
         type: 'entity',

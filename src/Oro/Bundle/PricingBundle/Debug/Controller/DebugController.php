@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\Debug\Provider\SidebarFormProvider;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Intl\Currencies;
@@ -30,7 +30,7 @@ class DebugController extends AbstractController
      * @return array
      */
     #[Route(path: '/index', name: 'oro_pricing_price_product_debug_index')]
-    #[Template]
+    #[Template('@OroPricing/Debug/index.html.twig')]
     public function indexAction()
     {
         $widgetRouteParameters = [
@@ -56,7 +56,7 @@ class DebugController extends AbstractController
      * @return array
      */
     #[Route(path: '/sidebar', name: 'oro_pricing_price_product_debug_sidebar')]
-    #[Template]
+    #[Template('@OroPricing/Debug/sidebar.html.twig')]
     public function sidebarAction()
     {
         return $this->container->get(SidebarFormProvider::class)->getIndexPageSidebarFormElements();
@@ -71,7 +71,7 @@ class DebugController extends AbstractController
         name: 'oro_pricing_price_product_debug_sidebar_view',
         requirements: ['id' => '\d+']
     )]
-    #[Template]
+    #[Template('@OroPricing/Debug/sidebarView.html.twig')]
     public function sidebarViewAction(Product $product)
     {
         return $this->container->get(SidebarFormProvider::class)->getViewPageSidebarFormElements($product);
@@ -82,7 +82,7 @@ class DebugController extends AbstractController
      * @return array
      */
     #[Route(path: '/trace/{id}', name: 'oro_pricing_price_product_debug_trace', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroPricing/Debug/trace.html.twig')]
     public function traceAction(Product $product)
     {
         $cpl = $this->getPriceListHandler()->getPriceList();

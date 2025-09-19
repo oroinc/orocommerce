@@ -439,4 +439,21 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
             )
             ->setParameter('currency', $currency, Types::STRING);
     }
+
+    /**
+     * Finds the parent order for a given order ID, if any.
+     */
+    public function findParentOrder(int $orderId): ?Order
+    {
+        $qb = $this->createQueryBuilder('entity');
+        $qb
+            ->select('entity, parent')
+            ->innerJoin('entity.parent', 'parent')
+            ->where($qb->expr()->eq('entity.id', ':orderId'))
+            ->setParameter('orderId', $orderId, Types::INTEGER);
+
+        $result = $qb->getQuery()->getOneOrNullResult();
+
+        return $result ? $result->getParent() : null;
+    }
 }

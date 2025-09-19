@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentBundle\Event\PaymentMethodConfigDataEvent;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodOptionsFormatter;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PaymentBundle\Twig\DTO\PaymentMethodObject;
 use Psr\Container\ContainerInterface;
@@ -123,9 +123,9 @@ class PaymentExtension extends AbstractExtension implements ServiceSubscriberInt
      *
      * @return string
      */
-    public function getPaymentStatus($entity)
+    public function getPaymentStatus($entity): string
     {
-        return $this->getPaymentStatusProvider()->getPaymentStatus($entity);
+        return (string) $this->getPaymentStatusManager()->getPaymentStatus($entity);
     }
 
     #[\Override]
@@ -137,7 +137,7 @@ class PaymentExtension extends AbstractExtension implements ServiceSubscriberInt
             'oro_payment.formatter.payment_method_label' => PaymentMethodLabelFormatter::class,
             'oro_payment.formatter.payment_method_options' => PaymentMethodOptionsFormatter::class,
             'oro_payment.formatter.payment_status_label' => PaymentStatusLabelFormatter::class,
-            'oro_payment.provider.payment_status' => PaymentStatusProviderInterface::class,
+            'oro_payment.manager.payment_status' => PaymentStatusManager::class,
         ];
     }
 
@@ -166,8 +166,8 @@ class PaymentExtension extends AbstractExtension implements ServiceSubscriberInt
         return $this->container->get('oro_payment.formatter.payment_status_label');
     }
 
-    private function getPaymentStatusProvider(): PaymentStatusProviderInterface
+    private function getPaymentStatusManager(): PaymentStatusManager
     {
-        return $this->container->get('oro_payment.provider.payment_status');
+        return $this->container->get('oro_payment.manager.payment_status');
     }
 }

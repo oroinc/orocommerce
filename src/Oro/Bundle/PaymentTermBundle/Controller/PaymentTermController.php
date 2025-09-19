@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermType;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -19,7 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PaymentTermController extends AbstractController
 {
     #[Route(path: '/view/{id}', name: 'oro_payment_term_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroPaymentTerm/PaymentTerm/view.html.twig')]
     #[Acl(id: 'oro_payment_term_view', type: 'entity', class: PaymentTerm::class, permission: 'VIEW')]
     public function viewAction(PaymentTerm $paymentTerm): array
     {
@@ -29,7 +29,7 @@ class PaymentTermController extends AbstractController
     }
 
     #[Route(path: '/', name: 'oro_payment_term_index')]
-    #[Template]
+    #[Template('@OroPaymentTerm/PaymentTerm/index.html.twig')]
     #[AclAncestor('oro_payment_term_view')]
     public function indexAction(): array
     {
@@ -53,7 +53,7 @@ class PaymentTermController extends AbstractController
      * Edit payment term form
      */
     #[Route(path: '/update/{id}', name: 'oro_payment_term_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroPaymentTerm/PaymentTerm/update.html.twig')]
     #[Acl(id: 'oro_payment_term_update', type: 'entity', class: PaymentTerm::class, permission: 'EDIT')]
     public function updateAction(PaymentTerm $paymentTerm): array|RedirectResponse
     {
@@ -61,7 +61,7 @@ class PaymentTermController extends AbstractController
     }
 
     #[Route(path: '/widget/info/{id}', name: 'oro_payment_term_widget_info', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroPaymentTerm/PaymentTerm/info.html.twig')]
     #[AclAncestor('oro_payment_term_view')]
     public function infoAction(PaymentTerm $entity): array
     {

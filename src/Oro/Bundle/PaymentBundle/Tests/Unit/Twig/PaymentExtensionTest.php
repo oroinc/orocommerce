@@ -1,43 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 
+use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\PaymentMethodConfigDataEvent;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodOptionsFormatter;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PaymentBundle\Twig\DTO\PaymentMethodObject;
 use Oro\Bundle\PaymentBundle\Twig\PaymentExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class PaymentExtensionTest extends \PHPUnit\Framework\TestCase
+final class PaymentExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentTransactionProvider;
+    private PaymentTransactionProvider&MockObject $paymentTransactionProvider;
 
-    /** @var PaymentMethodLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentMethodLabelFormatter;
+    private PaymentMethodLabelFormatter&MockObject $paymentMethodLabelFormatter;
 
-    /** @var PaymentMethodOptionsFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentMethodOptionsFormatter;
+    private PaymentMethodOptionsFormatter&MockObject $paymentMethodOptionsFormatter;
 
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $dispatcher;
+    private EventDispatcherInterface&MockObject $dispatcher;
 
-    /** @var PaymentStatusLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentStatusLabelFormatter;
+    private PaymentStatusLabelFormatter&MockObject $paymentStatusLabelFormatter;
 
-    /** @var PaymentStatusProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentStatusProvider;
+    private PaymentStatusManager&MockObject $paymentStatusManager;
 
-    /** @var PaymentExtension */
-    private $extension;
+    private PaymentExtension $extension;
 
     #[\Override]
     protected function setUp(): void
@@ -47,7 +46,7 @@ class PaymentExtensionTest extends \PHPUnit\Framework\TestCase
         $this->paymentMethodOptionsFormatter = $this->createMock(PaymentMethodOptionsFormatter::class);
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->paymentStatusLabelFormatter = $this->createMock(PaymentStatusLabelFormatter::class);
-        $this->paymentStatusProvider = $this->createMock(PaymentStatusProvider::class);
+        $this->paymentStatusManager = $this->createMock(PaymentStatusManager::class);
 
         $container = self::getContainerBuilder()
             ->add('oro_payment.provider.payment_transaction', $this->paymentTransactionProvider)
@@ -55,7 +54,7 @@ class PaymentExtensionTest extends \PHPUnit\Framework\TestCase
             ->add('oro_payment.formatter.payment_method_options', $this->paymentMethodOptionsFormatter)
             ->add(EventDispatcherInterface::class, $this->dispatcher)
             ->add('oro_payment.formatter.payment_status_label', $this->paymentStatusLabelFormatter)
-            ->add('oro_payment.provider.payment_status', $this->paymentStatusProvider)
+            ->add('oro_payment.manager.payment_status', $this->paymentStatusManager)
             ->getContainer($this);
 
         $this->extension = new PaymentExtension($container);
@@ -70,20 +69,20 @@ class PaymentExtensionTest extends \PHPUnit\Framework\TestCase
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod($paymentMethodConstant);
 
-        $this->paymentTransactionProvider->expects($this->once())
+        $this->paymentTransactionProvider->expects(self::once())
             ->method('getPaymentTransactions')
             ->with(self::identicalTo($entity))
             ->willReturn([$paymentTransaction]);
-        $this->paymentMethodLabelFormatter->expects($this->once())
+        $this->paymentMethodLabelFormatter->expects(self::once())
             ->method('formatPaymentMethodLabel')
             ->with($paymentMethodConstant, false)
             ->willReturn($label);
-        $this->paymentMethodOptionsFormatter->expects($this->once())
+        $this->paymentMethodOptionsFormatter->expects(self::once())
             ->method('formatPaymentMethodOptions')
             ->with($paymentMethodConstant)
             ->willReturn([$option]);
 
-        $this->assertEquals(
+        self::assertEquals(
             [new PaymentMethodObject($label, [$option])],
             self::callTwigFunction($this->extension, 'get_payment_methods', [$entity])
         );
@@ -142,28 +141,28 @@ class PaymentExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $formattedValue = 'formattedValue';
 
-        $this->paymentStatusLabelFormatter->expects($this->once())
+        $this->paymentStatusLabelFormatter->expects(self::once())
             ->method('formatPaymentStatusLabel')
-            ->with(PaymentStatusProvider::FULL)
+            ->with(PaymentStatuses::PAID_IN_FULL)
             ->willReturn($formattedValue);
 
-        $this->assertEquals(
+        self::assertEquals(
             $formattedValue,
-            self::callTwigFunction($this->extension, 'get_payment_status_label', [PaymentStatusProvider::FULL])
+            self::callTwigFunction($this->extension, 'get_payment_status_label', [PaymentStatuses::PAID_IN_FULL])
         );
     }
 
     public function testGetPaymentStatus(): void
     {
         $object = new \stdClass();
-        $status = PaymentStatusProvider::FULL;
+        $status = PaymentStatuses::PAID_IN_FULL;
 
-        $this->paymentStatusProvider->expects($this->once())
+        $this->paymentStatusManager->expects(self::once())
             ->method('getPaymentStatus')
             ->with($object)
-            ->willReturn($status);
+            ->willReturn((new PaymentStatus())->setPaymentStatus(PaymentStatuses::PAID_IN_FULL));
 
-        $this->assertEquals(
+        self::assertEquals(
             $status,
             self::callTwigFunction($this->extension, 'get_payment_status', [$object])
         );

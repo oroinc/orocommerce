@@ -6,7 +6,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -20,7 +20,7 @@ class ShoppingListController extends AbstractController
      * @return array
      */
     #[Route(path: '/view/{id}', name: 'oro_shopping_list_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroShoppingList/ShoppingList/view.html.twig')]
     #[Acl(id: 'oro_shopping_list_view', type: 'entity', class: ShoppingList::class, permission: 'VIEW')]
     public function viewAction(ShoppingList $shoppingList)
     {
@@ -36,7 +36,7 @@ class ShoppingListController extends AbstractController
      * @return array
      */
     #[Route(path: '/info/{id}', name: 'oro_shopping_list_info', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroShoppingList/ShoppingList/info.html.twig')]
     #[AclAncestor('oro_shopping_list_view')]
     public function infoAction(ShoppingList $shoppingList)
     {
@@ -50,7 +50,7 @@ class ShoppingListController extends AbstractController
      * @return array
      */
     #[Route(path: '/', name: 'oro_shopping_list_index')]
-    #[Template]
+    #[Template('@OroShoppingList/ShoppingList/index.html.twig')]
     #[AclAncestor('oro_shopping_list_view')]
     public function indexAction()
     {

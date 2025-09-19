@@ -15,8 +15,8 @@ use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -98,9 +98,11 @@ class ContentNodeController extends AbstractController
         name: 'oro_content_node_get_possible_urls',
         requirements: ['id' => '\d+', 'newParentId' => '\d+']
     )]
-    #[ParamConverter('newParentContentNode', options: ['id' => 'newParentId'])]
-    public function getPossibleUrlsAction(ContentNode $contentNode, ContentNode $newParentContentNode): JsonResponse
-    {
+    public function getPossibleUrlsAction(
+        ContentNode $contentNode,
+        #[MapEntity(id: 'newParentId')]
+        ContentNode $newParentContentNode
+    ): JsonResponse {
         if (!$this->isGranted('oro_web_catalog_update', $contentNode->getWebCatalog())
             || !$this->isGranted('oro_web_catalog_update', $newParentContentNode->getWebCatalog())) {
             throw $this->createAccessDeniedException();

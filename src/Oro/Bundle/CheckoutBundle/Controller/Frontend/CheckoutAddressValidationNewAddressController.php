@@ -11,7 +11,7 @@ use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,10 +40,12 @@ class CheckoutAddressValidationNewAddressController extends AbstractAddressValid
     )]
     #[CsrfProtection]
     #[Layout]
-    #[ParamConverter('checkout', class: Checkout::class, options: ['id' => 'id'])]
     #[\Override]
-    public function addressValidationAction(Request $request): Response|array
-    {
+    public function addressValidationAction(
+        Request $request,
+        #[MapEntity(id: 'id')]
+        Checkout|null $checkout = null
+    ): Response|array {
         return parent::addressValidationAction($request);
     }
 

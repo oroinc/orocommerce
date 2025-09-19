@@ -11,7 +11,7 @@ use Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
 use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodOrganizationProvider;
 use Oro\Bundle\UIBundle\Route\Router;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -35,7 +35,7 @@ class ShippingMethodsConfigsRuleController extends AbstractController
     }
 
     #[Route(path: '/', name: 'oro_shipping_methods_configs_rule_index')]
-    #[Template]
+    #[Template('@OroShipping/ShippingMethodsConfigsRule/index.html.twig')]
     #[AclAncestor('oro_shipping_methods_configs_rule_view')]
     public function indexAction(): array
     {
@@ -78,7 +78,7 @@ class ShippingMethodsConfigsRuleController extends AbstractController
     }
 
     #[Route(path: '/update/{id}', name: 'oro_shipping_methods_configs_rule_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroShipping/ShippingMethodsConfigsRule/update.html.twig')]
     #[Acl(
         id: 'oro_shipping_methods_configs_rule_update',
         type: 'entity',

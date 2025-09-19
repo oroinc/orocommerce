@@ -13,7 +13,7 @@ use Oro\Bundle\UPSBundle\Connection\Validator\UpsConnectionValidator;
 use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,9 +35,10 @@ class AjaxUPSController extends AbstractController
         requirements: ['code' => '^[A-Z]{2}$'],
         methods: ['GET']
     )]
-    #[ParamConverter('country', options: ['id' => 'code'])]
-    public function getShippingServicesByCountryAction(Country $country)
-    {
+    public function getShippingServicesByCountryAction(
+        #[MapEntity(id: 'code')]
+        Country $country
+    ) {
         /** @var ShippingServiceRepository $repository */
         $repository = $this->container->get('doctrine')
             ->getManagerForClass(ShippingService::class)
@@ -58,10 +59,12 @@ class AjaxUPSController extends AbstractController
      * @return JsonResponse
      */
     #[Route(path: '/validate-connection/{channelId}/', name: 'oro_ups_validate_connection', methods: ['POST'])]
-    #[ParamConverter('channel', class: Channel::class, options: ['id' => 'channelId'])]
     #[CsrfProtection()]
-    public function validateConnectionAction(Request $request, ?Channel $channel = null)
-    {
+    public function validateConnectionAction(
+        Request $request,
+        #[MapEntity(id: 'channelId')]
+        ?Channel $channel = null
+    ) {
         if (!$channel) {
             $channel = new Channel();
         }

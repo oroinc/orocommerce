@@ -19,7 +19,7 @@ use Oro\Bundle\ShoppingListBundle\Form\Type\ProductKitLineItemType;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\ProductKit\Factory\ProductKitLineItemFactory;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -52,10 +52,12 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
         methods: ['GET', 'POST']
     )]
     #[Layout]
-    #[ParamConverter('product', options: ['id' => 'productId'])]
     #[AclAncestor('oro_product_frontend_view')]
-    public function createAction(Product $product, Request $request): Response|array
-    {
+    public function createAction(
+        #[MapEntity(id: 'productId')]
+        Product $product,
+        Request $request
+    ): Response|array {
         $shoppingListId = $request->get('shoppingListId');
         $shoppingListId = $shoppingListId ? (int)$shoppingListId : null;
         $shoppingList = $this->currentShoppingListManager->getForCurrentUser($shoppingListId, true);
@@ -76,10 +78,12 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
         methods: ['GET', 'POST']
     )]
     #[Layout]
-    #[ParamConverter('productKitLineItem', options: ['id' => 'id'])]
     #[AclAncestor('oro_shopping_list_frontend_update')]
-    public function updateAction(LineItem $productKitLineItem, Request $request): Response|array
-    {
+    public function updateAction(
+        #[MapEntity(id: 'id')]
+        LineItem $productKitLineItem,
+        Request $request
+    ): Response|array {
         $this->productKitLineItemFactory->addKitItemLineItemsAvailableForPurchase($productKitLineItem);
 
         return $this->update($productKitLineItem, $request);
@@ -170,10 +174,12 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
         methods: ['GET', 'POST']
     )]
     #[Layout]
-    #[ParamConverter('product', options: ['id' => 'productId'])]
     #[AclAncestor('oro_product_frontend_view')]
-    public function inShoppingListsAction(Product $product, Request $request): Response|array
-    {
+    public function inShoppingListsAction(
+        #[MapEntity(id: 'productId')]
+        Product $product,
+        Request $request
+    ): Response|array {
         return [
             'data' => [
                 'product' => $product,

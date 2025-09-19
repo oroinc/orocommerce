@@ -13,8 +13,8 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityRootScopesProvider;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
@@ -30,7 +30,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ProductVisibilityController extends AbstractController
 {
     #[Route(path: '/edit/{id}', name: 'oro_product_visibility_edit', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroVisibility/ProductVisibility/edit.html.twig')]
     #[AclAncestor('oro_product_update')]
     public function editAction(Request $request, Product $product): array|RedirectResponse
     {
@@ -55,11 +55,13 @@ class ProductVisibilityController extends AbstractController
         name: 'oro_product_visibility_scoped',
         requirements: ['productId' => '\d+', 'id' => '\d+']
     )]
-    #[ParamConverter('product', options: ['id' => 'productId'])]
     #[Template('@OroVisibility/ProductVisibility/widget/scope.html.twig')]
     #[AclAncestor('oro_product_update')]
-    public function scopeWidgetAction(Product $product, Scope $scope): array
-    {
+    public function scopeWidgetAction(
+        #[MapEntity(id: 'productId')]
+        Product $product,
+        Scope $scope
+    ): array {
         /** @var Form $form */
         $form = $this->createScopedDataForm($product, [$scope]);
 
