@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Handler;
 
-use Box\Spout\Common\Exception\UnsupportedTypeException;
+use OpenSpout\Common\Exception\UnsupportedTypeException;
 use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Model\Builder;
 
-use Box\Spout\Common\Exception\UnsupportedTypeException;
+use OpenSpout\Common\Exception\UnsupportedTypeException;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;

@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Model\Builder;
 
-use Box\Spout\Common\Entity\Row;
-use Box\Spout\Common\Exception\UnsupportedTypeException;
-use Box\Spout\Common\Type;
-use Box\Spout\Reader\Common\Creator\ReaderFactory;
-use Box\Spout\Reader\ReaderInterface;
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Common\Exception\UnsupportedTypeException;
+use OpenSpout\Reader\CSV\Reader as CSVReader;
+use OpenSpout\Reader\ODS\Reader as ODSReader;
+use OpenSpout\Reader\ReaderInterface;
+use OpenSpout\Reader\XLSX\Reader as XLSXReader;
 use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
@@ -128,11 +129,11 @@ class QuickAddRowCollectionBuilder
     {
         switch ($file->getClientOriginalExtension()) {
             case 'csv':
-                return ReaderFactory::createFromType(Type::CSV);
+                return new CSVReader();
             case 'ods':
-                return ReaderFactory::createFromType(Type::ODS);
+                return new ODSReader();
             case 'xlsx':
-                return ReaderFactory::createFromType(Type::XLSX);
+                return new XLSXReader();
         }
 
         throw new UnsupportedTypeException();
