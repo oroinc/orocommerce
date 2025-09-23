@@ -46,8 +46,7 @@ Feature: Check that shipping taxes are used only from the current organization
     Then should see "Tax Jurisdiction has been saved" flash message
 
   Scenario Outline: Create Tax for each organization
-    Given I click on "Organizations switcher"
-    And I click "<Organization>"
+    Given I am logged in under <Organization> organization
 
     Given I go to Taxes/ Product Tax Codes
     And click "Create Product Tax Code"
