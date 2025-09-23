@@ -316,9 +316,6 @@ Feature: Landing Page Drafts
     Then I should see "Draft has been published" flash message
 
   Scenario: Create Draft from View Landing Page global org and check page actions
-    Given I click on "Organizations switcher"
-    And click "Oro"
-    Then I should see "ORO" in the "Current Organization" element
     When I go to Marketing/ Landing Pages
     And I click view "New landing page" in grid
     When I click "Create draft"
@@ -342,9 +339,7 @@ Feature: Landing Page Drafts
       | Title | Draft 1    |
       | Slugs | [/draft-1] |
 
-    Given I click on "Organizations switcher"
-    And click "Test, Inc"
-    Then I should see "Test, Inc" in the "Current Organization" element
+    Given I am logged in under Test, Inc organization
     When I go to Marketing/ Landing Pages
     And I click view "New landing page" in grid
     And I should see following grid:
