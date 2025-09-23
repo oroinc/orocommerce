@@ -59,6 +59,9 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\PaymentBundle\Entity\RequestLogsAwareInterface` to mark entities that can store transaction request and response logs.
 * Added `\Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodGroupAwareProvider` that provides a filtered list of payment methods that are applicable for a specific payment method group.
 * Added the ability to refund `purchase` and `charge` payment transactions in `oro_payment_transaction_refund`.
+* Added `\Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses` class with constants for each payment status available out-of-the-box.
+* Added `\Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\PaymentStatusCalculator` and implementations for each payment status.
+* Added `\Oro\Bundle\PaymentBundle\Event\PaymentStatusUpdatedEvent` dispatched in `\Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager` after payment status is changed.
 
 #### PricingBundle
 * Added `\Oro\Bundle\PricingBundle\Layout\DataProvider\TotalsProvider` layout data provider.
@@ -80,6 +83,17 @@ The current file describes significant changes in the code that may affect the u
 #### PaymentBundle
 * Implemented `\Oro\Bundle\PaymentBundle\Entity\RequestLogsAwareInterface` in `\Oro\Bundle\PaymentBundle\Entity\PaymentTransaction`.
 * Fixed the broken styling in the dialog of `oro_payment_transaction_cancel`.
+* Updated `\Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager` with new methods:
+  * Added: getPaymentStatus, setPaymentStatus, updatePaymentStatus
+  * Deprecated: updateStatus, updateStatusForEntity, getPaymentStatusForEntity
+
+### Removed
+
+#### OrderBundle
+* Removed `\Oro\Bundle\OrderBundle\Provider\OrderPaymentStatusProvider`, added `\Oro\Bundle\OrderBundle\EventListener\PaymentStatusUpdatedListener` instead.
+
+#### PaymentBundle
+* Deprecated `\Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider` and interface. Added `\Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\PaymentStatusCalculator` and implementations for each payment status instead.
 
 ## 6.1.0 (2025-03-31)
 [Show detailed list of changes](incompatibilities-6-1.md)
