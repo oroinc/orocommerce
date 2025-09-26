@@ -128,6 +128,20 @@ system_configuration:
             options:
                 label: oro.address_validation.system_configuration.fields.validate_billing_addresses.backoffice.order_page.label
 
+        oro_order.enable_order_pdf_download_in_storefront:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.order.system_configuration.fields.enable_order_pdf_download_in_storefront.title
+                tooltip: oro.order.system_configuration.fields.enable_order_pdf_download_in_storefront.tooltip
+
+        oro_order.generate_order_pdf_on_checkout_finish:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.order.system_configuration.fields.generate_order_pdf_on_checkout_finish.title
+                tooltip: oro.order.system_configuration.fields.generate_order_pdf_on_checkout_finish.tooltip
+
     tree:
         system_configuration:
             commerce:
@@ -156,6 +170,8 @@ system_configuration:
                                     order_creation:
                                         children:
                                             - oro_order.order_creation_new_internal_order_status
+                                            - oro_order.enable_order_pdf_download_in_storefront
+                                            - oro_order.generate_order_pdf_on_checkout_finish
                             purchase_history:
                                 children:
                                     purchase_history:

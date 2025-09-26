@@ -51,6 +51,16 @@ layout:
               optionName: route_name
               optionValue: oro_order_frontend_index
 
+        -   '@add':
+                id: order_generate_pdf_button
+                blockType: block
+                parentId: order_view_top_bar_actions_list
+                prepend: true
+                options:
+                    visible: '=data["system_config_provider"].getValue("oro_order.enable_order_pdf_download_in_storefront")'
+                    vars:
+                        order: '=data["order"]'
+
         - '@add':
               id: order_created_by
               blockType: block

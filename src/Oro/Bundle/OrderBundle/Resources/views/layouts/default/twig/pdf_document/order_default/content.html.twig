@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ entity|oro_format_name }}</title>
+    {% block order_content_style %}
+        <link rel="stylesheet" media="all" href="{{ asset('build/default/css/order-print.css') }}">
+    {% endblock %}
+</head>
+<body>
+<div class="order-header">
+    {% block order_header_logo %}
+        <div>
+            <img src="{{ asset(oro_theme_definition_value('logo_high_res')) }}"
+                 alt="{{ 'oro.order.pdf_file.company_logo.label'|trans }}"
+                 width="106"
+                 height="16"
+            >
+        </div>
+    {% endblock %}
+    <div class="document-info">
+        <div class="document-info-item">
+            <b>{{ 'oro.order.pdf_file.order_number'|trans }}:</b>
+            <span>{{ entity.identifier }}</span>
+        </div>
+        <div class="document-info-item">
+            <b>{{ 'oro.order.pdf_file.order_date'|trans }}:</b>
+            <span>{{ entity.createdAt|oro_format_datetime_medium }}</span>
+        </div>
+    </div>
+</div>
+
+<table class="order-root">
+    {% block order_header_placeholder %}
+        <thead>
+        <tr>
+            <td>
+                <div class="header-space">&nbsp;</div>
+            </td>
+        </tr>
+        </thead>
+    {% endblock %}
+    <tbody>
+    <tr>
+        <td>
+            <div class="order-content">
+                <div class="order-grid order-grid--column order-grid--r-gap-24">
+                    <div class="order-grid order-grid--column order-grid--r-gap-44">
+                        <div class="order-grid">
+                            {% block order_logo %}
+                                <div class="order-grid-item order-grid-item--width-50">
+                                    <span class="logo">
+                                        <img src="{{ asset(oro_theme_definition_value('logo_high_res')) }}"
+                                             width="300"
+                                             height="38"
+                                             alt={{ 'oro.order.pdf_file.company_logo.label'|trans }}>
+                                    </span>
+                                </div>
+                            {% endblock %}
+                        </div>
+                        <div class="order-grid-item order-grid-item--width-100 order-grid-item--justify-center">
+                            <h1 class="title">{{ entity|oro_format_name }}</h1>
+                        </div>
+                    </div>
+                    <div class="order-grid">
+                        <div class="order-grid-item order-grid-item--width-50">
+                            <div class="order-grid order-grid--column order-grid--r-gap-12">
+                                <div class="order-grid order-grid--column order-grid--r-gap-0">
+                                    <div class="order-grid-item">
+                                        <b class="font-w-600">{{ 'oro.order.pdf_file.order_date'|trans }}</b>
+                                    </div>
+                                    <div class="order-grid-item">
+                                        <p class="info">{{ entity.createdAt|oro_format_datetime_medium }}</p>
+                                    </div>
+                                </div>
+                                <div class="order-grid order-grid--column order-grid--r-gap-0">
+                                    <div class="order-grid-item">
+                                        <b class="font-w-600">{{ 'oro.order.internal_status.label'|trans }}</b>
+                                    </div>
+                                    <div class="order-grid-item">
+                                        <p class="info">{{ entity.internal_status.id|trans_enum }}</p>
+                                    </div>
+                                </div>
+                                {% if entity.shippingMethod and entity.shippingMethodType %}
+                                    <div class="order-grid order-grid--column order-grid--r-gap-0">
+                                        <div class="order-grid-item">
+                                            <b class="font-w-600">{{ 'oro.order.pdf_file.shipping_method'|trans }}</b>
+                                        </div>
+                                        <div class="order-grid-item">
+                                            <p class="info">{{ oro_order_shipping_method_label(entity.shippingMethod, entity.shippingMethodType, entity.organization) }}</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if entity.shipUntil %}
+                                    <div class="order-grid order-grid--column order-grid--r-gap-0">
+                                        <div class="order-grid-item">
+                                            <b class="font-w-600">{{ 'oro.order.pdf_file.ship_by'|trans }}</b>
+                                        </div>
+                                        <div class="order-grid-item">
+                                            <p class="info">{{ entity.shipUntil|oro_format_datetime_medium }}</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if entity.shippingStatus %}
+                                <div class="order-grid order-grid--column order-grid--r-gap-0">
+                                    <div class="order-grid-item">
+                                        <b class="font-w-600">{{ 'oro.order.shipping_status.label'|trans }}</b>
+                                    </div>
+                                    <div class="order-grid-item">
+                                        <p class="info">{{ entity.shippingStatus.id|trans_enum }}</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if entity.shippingTrackings|length %}
+                                    <div class="order-grid order-grid--column order-grid--r-gap-0">
+                                        <div class="order-grid-item">
+                                            <b class="font-w-600">{{ 'oro.order.pdf_file.shipping_tracking'|trans }}</b>
+                                        </div>
+                                        <div class="order-grid-item">
+                                            {% for shippingTracking in entity.shippingTrackings %}
+                                                <p class="info">
+                                                    {{ oro_order_format_shipping_tracking_method(shippingTracking.method)|trans }}:
+                                                    {% if shippingTracking.number and shippingTracking.method %}
+                                                        {% set link = oro_order_format_shipping_tracking_link(shippingTracking.method, shippingTracking.number) %}
+                                                        {% if shippingTracking.number != link %}
+                                                            <a target="_blank"
+                                                               href="{{ link }}">{{ shippingTracking.number }}</a>
+                                                        {% else %}
+                                                            {{ shippingTracking.number }}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="order-grid-item order-grid-item--width-50">
+                            <div class="order-grid order-grid--column order-grid--r-gap-12">
+                                {% if entity.poNumber is not empty %}
+                                    <div class="order-grid order-grid--column order-grid--r-gap-0">
+                                        <div class="order-grid-item">
+                                            <b class="font-w-600">{{ 'oro.order.pdf_file.po_number'|trans }}</b>
+                                        </div>
+                                        <div class="order-grid-item">
+                                            <p class="info">{{ entity.poNumber }}</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if paymentMethods|default([])|length %}
+                                    <div class="order-grid order-grid--column order-grid--r-gap-0">
+                                        <div class="order-grid-item">
+                                            <b class="font-w-600">{{ 'oro.order.pdf_file.payment_method'|trans }}</b>
+                                        </div>
+                                        <div class="order-grid-item">
+                                            {% for paymentMethod in paymentMethods %}
+                                                <p class="info">{{ get_payment_method_label(paymentMethod) }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if paymentTerm is defined and paymentTerm is not empty %}
+                                    <div class="order-grid order-grid--column order-grid--r-gap-0">
+                                        <div class="order-grid-item">
+                                            <b class="font-w-600">{{ 'oro.order.pdf_file.payment_term'|trans }}</b>
+                                        </div>
+                                        <div class="order-grid-item">
+                                            <p class="info">{{ paymentTerm.label|escape }}</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if paymentStatus is defined and paymentStatus is not empty %}
+                                    <div class="order-grid order-grid--column order-grid--r-gap-0">
+                                        <div class="order-grid-item">
+                                            <b class="font-w-600">{{ 'oro.order.pdf_file.payment_status'|trans }}</b>
+                                        </div>
+                                        <div class="order-grid-item">
+                                            <p class="info">{{ get_payment_status_label(paymentStatus) }}</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-grid">
+                        {% if entity.shippingAddress is not empty %}
+                        <div class="order-grid-item order-grid-item--width-50 order-grid-item--colored">
+                            <div class="order-grid order-grid--column order-grid--r-gap-8">
+                                <div class="order-grid-item">
+                                    <b class="font-w-600">{{ 'oro.order.pdf_file.shipping_address'|trans }}</b>
+                                </div>
+                                <div class="order-grid-item">
+                                    <p class="info">{{ entity.shippingAddress|oro_format_address_html }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if entity.billingAddress is not empty %}
+                        <div class="order-grid-item order-grid-item--width-50 order-grid-item--colored">
+                            <div class="order-grid order-grid--column order-grid--r-gap-8">
+                                <div class="order-grid-item">
+                                    <b class="font-w-600">{{ 'oro.order.pdf_file.billing_address'|trans }}</b>
+                                </div>
+                                <div class="order-grid-item">
+                                    <p class="info">{{ entity.billingAddress|oro_format_address_html }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="order-grid order-grid--column order-grid--r-gap-0">
+                        <div class="order-grid-item">
+                            {% block order_line_items %}
+                                <table class="order-table">
+                                    <thead>
+                                    <tr class="order-table-tr-head">
+                                        <th class="order-table-th text-align-l short-cell">{{ 'oro.order.pdf_file.line_items.header.id'|trans }}</th>
+                                        <th class="order-table-th text-align-l">{{ 'oro.order.pdf_file.line_items.header.product'|trans }}</th>
+                                        <th class="order-table-th text-align-r">{{ 'oro.order.pdf_file.line_items.header.qty'|trans }}</th>
+                                        <th class="order-table-th text-align-r">{{ 'oro.order.pdf_file.line_items.header.unit_price'|trans }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="order-table-body">
+                                    {% if entity.lineItems|length %}
+                                        {% for lineItem in entity.lineItems %}
+                                            <tr class="order-table-tr">
+                                                <td class="order-table-td short-cell">{{ loop.index }}</td>
+                                                <td class="order-table-td">
+                                                    <div class="order-grid order-grid--column">
+                                                        {% set isFreeFormProduct = lineItem.productName is empty and lineItem.freeFormProduct is not empty %}
+
+                                                        <div class="product-name">
+                                                            {% if isFreeFormProduct %}
+                                                                {% set productName = lineItem.freeFormProduct|oro_html_sanitize_basic %}
+                                                            {% elseif lineItem.product %}
+                                                                {% if lineItem.product.isConfigurable %}
+                                                                    {% set productName = lineItem.parentProduct.names|localized_value|e %}
+                                                                {% else %}
+                                                                    {% set productName = lineItem.product.names|localized_value|e %}
+                                                                {% endif %}
+                                                            {% else %}
+                                                                {% set productName = lineItem.productName %}
+                                                            {% endif %}
+                                                            {{ lineItem.productSku }} - {{ productName }}
+                                                        </div>
+
+                                                        {% if lineItem.product.isConfigurable ?? false %}
+                                                            <div class="product-configurable-fields">
+                                                                {% for field in lineItem.productVariantFields %}
+                                                                    <div class="product-configurable-fields__item">
+                                                                        <span class="product-configurable-fields__item-field">{{ field.label|trans }}:</span>
+                                                                        <span class="product-configurable-fields__item-field">{{ field.value }}</span>
+                                                                    </div>
+                                                                {% endfor %}
+                                                            </div>
+                                                        {% endif %}
+
+                                                        {% if lineItem.product.isKit ?? false %}
+                                                            <div class="product-kit-line-items">
+                                                                {% if lineItem.kitItemLineItems|length %}
+                                                                    {%- for kitItemLineItem in lineItem.kitItemLineItems %}
+                                                                        <div class="product-kit-line-items__item">
+                                                                            {% set kitItemLabel = kitItemLineItem.kitItem ? kitItemLineItem.kitItem.labels|localized_value : kitItemLineItem.kitItemLabel %}
+                                                                            <div>
+                                                                                <strong class="product-kit-line-items__item-name">{{ kitItemLabel|e }}</strong>
+                                                                                <span class="product-kit-line-items__item-quantity">{{ kitItemLineItem.quantity|oro_format_product_unit_code(kitItemLineItem.productUnitCode) }}</span>
+                                                                                <strong class="product-kit-line-items__item-price">{{ kitItemLineItem.price|oro_format_price }}</strong>
+                                                                            </div>
+                                                                            {% set productId = kitItemLineItem.product.id|default(0) %}
+                                                                            {% if productId and is_visible_product(productId) %}
+                                                                                {% set kitItemProductName = kitItemLineItem.product.names|localized_value|e %}
+                                                                            {% else %}
+                                                                                {% set kitItemProductName = kitItemLineItem.product_name|e %}
+                                                                            {% endif %}
+                                                                            <span class="product-kit-line-items__item-product-name">{{ kitItemLineItem.productSku }} - {{ kitItemProductName }}</span>
+                                                                        </div>
+                                                                    {%- endfor %}
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endif %}
+
+                                                        {% if lineItem.shipBy is not empty %}
+                                                            <span>{{ 'oro.order.pdf_file.line_items.product.ship_by'|trans }}: {{ lineItem.shipBy|oro_format_datetime_medium }}</span>
+                                                        {% endif %}
+
+                                                        {% if lineItem.comment is not empty %}
+                                                            <span>{{ 'oro.order.pdf_file.line_items.product.notes'|trans }}: {{ lineItem.comment|oro_html_sanitize_basic }}</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                                <td class="order-table-td text-align-r">
+                                                    {% if oro_is_unit_code_visible(lineItem.productUnitCode) %}
+                                                        {{ lineItem.quantity|oro_format_product_unit_value(lineItem.productUnit) }}
+                                                    {% else %}
+                                                        {{ lineItem.quantity|oro_format_decimal }}
+                                                    {% endif %}
+                                                </td>
+                                                <td class="order-table-td text-align-r">{{ lineItem.price|oro_format_price }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+                                    </tbody>
+                                </table>
+                            {% endblock %}
+                        </div>
+                    </div>
+                    <div class="order-grid-item order-grid-item--self-end">
+                        {% block order_summary %}
+                            <table class="summary-table avoid-break-inside">
+                                <tbody>
+                                {% for subtotal in totals.subtotals %}
+                                    <tr class="summary-table-tr{% if loop.first %} summary-table-top-tr{% endif %}">
+                                        <th class="summary-table-th font-w-500"
+                                            scope="row">{{ subtotal.label }}</th>
+                                        <td class="summary-table-td font-w-500">{{ subtotal.signedAmount|oro_format_currency({'currency': subtotal.currency}) }}</td>
+                                    </tr>
+                                {% endfor %}
+                                <tr class="summary-table-tr summary-table-bottom-tr">
+                                    <th class="summary-table-th font-w-600"
+                                        scope="row">{{ totals.total.label }}</th>
+                                    <td>
+                                        <b class="summary-table-td font-w-600">{{ totals.total.amount|oro_format_currency({'currency': totals.total.currency}) }}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        {% endblock %}
+                    </div>
+                    {% if entity.customerNotes %}
+                        <div class="order-grid-item order-grid-item--width-100">
+                            {% block order_main_note %}
+                                <p class="note">
+                                    <span class="font-w-600">{{ 'oro.order.pdf_file.customer_notes.title'|trans }}:</span>
+                                    <span>{{ entity.customerNotes|oro_html_sanitize_basic }}</span>
+                                </p>
+                            {% endblock %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

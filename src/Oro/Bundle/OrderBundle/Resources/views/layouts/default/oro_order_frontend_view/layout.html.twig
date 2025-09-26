@@ -265,3 +265,14 @@
         }
     }) }}
 {% endblock %}
+
+{% block _order_generate_pdf_button_widget %}
+    {% import '@OroUI/layouts/macros.html.twig' as LayoutUI %}
+
+    {{ LayoutUI.link({
+        'path': path('oro_order_frontend_pdf_document_download', { 'id': order.id }),
+        'aCss': 'btn hide-on-print btn--flat',
+        'icon': 'download',
+        'label': 'oro.frontend.order.download_pdf.label'|trans
+    }) }}
+{% endblock %}

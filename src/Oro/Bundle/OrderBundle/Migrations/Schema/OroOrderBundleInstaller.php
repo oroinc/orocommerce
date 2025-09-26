@@ -45,7 +45,7 @@ class OroOrderBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v6_1_5_0';
+        return 'v6_1_6_0';
     }
 
     #[\Override]
@@ -60,6 +60,7 @@ class OroOrderBundleInstaller implements
         $this->createOroOrderProductKitItemLineItemTable($schema);
         $this->createOroOrderDiscountTable($schema);
         $this->createOroOrderShippingTrackingTable($schema);
+        $this->createOroOrderPdfDocumentTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroLineItemsForeignKeys($schema);
@@ -310,6 +311,33 @@ class OroOrderBundleInstaller implements
         $table->addColumn('method', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('number', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
+    }
+
+    private function createOroOrderPdfDocumentTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_order_pdf_document');
+
+        $table->addColumn('order_id', 'integer');
+        $table->addColumn('pdf_document_id', 'integer');
+
+        $table->setPrimaryKey(['order_id', 'pdf_document_id']);
+        $table->addUniqueIndex(['pdf_document_id'], 'oro_order_pdf_document_uidx');
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_order'),
+            ['order_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE'],
+            'oro_order_pdf_document_order_id_fk'
+        );
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_pdf_generator_pdf_document'),
+            ['pdf_document_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE'],
+            'oro_order_pdf_document_pdf_document_id_fk'
+        );
     }
 
     /**

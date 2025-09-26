@@ -1,0 +1,43 @@
+/* @theme: default; */
+
+$order-root-margin-top: .625in !default;
+$order-root-margin-end: .625in !default;
+$order-root-margin-start: .625in !default;
+$order-root-margin-bottom: .625in !default;
+
+$order-root-footer-margin-top: 0 !default;
+$order-root-footer-margin-end: .72in !default;
+$order-root-footer-margin-start: .72in !default;
+$order-root-footer-margin-bottom: 0 !default;
+
+$order-footer-font-size: 12px !default;
+$order-footer-line-height: 1.3 !default;
+
+$order-root-margin: (
+    $order-root-margin-top $order-root-margin-end $order-root-margin-bottom $order-root-margin-start
+) !default;
+$order-root-font-family: $base-font !default;
+$order-root-font-size: 14px !default;
+$order-root-line-height: 1.57 !default;
+
+$order-header-space-offset: 64px !default;
+$order-first-page-offset: 80px !default;
+
+$order-root-color: get-color('text', 'primary') !default;
+
+$order-grid-bg-color: get-color('neutral', 'grey1') !default;
+
+$order-header-border: 1px solid get-color('neutral', 'dark') !default;
+
+$order-table-th-bg-color: get-color('neutral', 'grey1') !default;
+$order-table-th-color: get-color('text', 'secondary') !default;
+
+$order-table-color: #d2d3d7 !default;
+
+$order-table-tr-head-border: 1px solid $order-table-color !default;
+
+$order-table-tr-border: 1px solid get-color('neutral', 'grey2') !default;
+
+$order-note-border: 1px solid $order-table-color !default;
+
+$order-bullet-color: get-color('neutral', 'grey3') !default;

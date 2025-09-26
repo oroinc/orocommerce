@@ -52,6 +52,21 @@
     {% endif %}
 {% endblock breadcrumbs %}
 
+{% block navButtons %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {{ parent() }}
+
+    <div class="btn-group">
+        {{ UI.button({
+            'path': path('oro_order_pdf_document_download', { 'id': entity.id }),
+            'iCss': 'fa-file-pdf-o',
+            'label': 'oro.order.btn.download_pdf.label'|trans,
+            'title': 'oro.order.btn.download_pdf.title'|trans,
+            'target': '_blank'
+        }) }}
+    </div>
+{% endblock navButtons %}
+
 {% block content_data %}
     {% import '@OroUI/macros.html.twig' as UI %}
 
