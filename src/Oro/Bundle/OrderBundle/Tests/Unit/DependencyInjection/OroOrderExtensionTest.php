@@ -49,6 +49,8 @@ class OroOrderExtensionTest extends \PHPUnit\Framework\TestCase
                         'validate_shipping_addresses__backoffice_order_page' => ['value' => true, 'scope' => 'app'],
                         'validate_billing_addresses__backoffice_order_page' => ['value' => false, 'scope' => 'app'],
                         'enable_external_order_import' => ['value' => false, 'scope' => 'app'],
+                        'enable_order_pdf_download_in_storefront' => ['value' => true, 'scope' => 'app'],
+                        'generate_order_pdf_on_checkout_finish' => ['value' => true, 'scope' => 'app'],
                     ]
                 ]
             ],

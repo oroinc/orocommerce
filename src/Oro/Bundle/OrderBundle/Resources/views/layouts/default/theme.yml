@@ -1,0 +1,6 @@
+config:
+    pdf_document:
+        order_default:
+            content_template: '@OroOrder/layouts/default/twig/pdf_document/order_default/content.html.twig'
+            header_template: '@OroOrder/layouts/default/twig/pdf_document/order_default/header.html.twig'
+            footer_template: '@OroOrder/layouts/default/twig/pdf_document/order_default/footer.html.twig'

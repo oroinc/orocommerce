@@ -29,6 +29,12 @@ The current file describes significant changes in the code that may affect the u
 
 #### OrderBundle
 * Added `\Oro\Bundle\OrderBundle\Provider\OrderEntityNameProvider` so that an order entity name can now be retrieved from `\Oro\Bundle\EntityBundle\Provider\EntityNameResolver`.
+* Added order PDF generation functionality:
+    * Added `\Oro\Bundle\OrderBundle\Entity\Order::$pdfDocuments` to-many relation that stores order PDF documents;
+    * Added `\Oro\Bundle\OrderBundle\PdfDocument\Manager\OrderPdfDocumentManager` as the main service to manage order PDF documents;
+    * Added `\Oro\Bundle\OrderBundle\PdfDocument\UrlGenerator\OrderPdfDocumentUrlGenerator` as the main service to generate URLs for order PDF documents;
+    * Added `\Oro\Bundle\OrderBundle\Twig\OrderPdfDocumentUrlExtension` twig extension to provide the ability to generate URLs for order PDF documents in twig templates;
+    * Added `\Oro\Bundle\OrderBundle\Provider\EmailTemplate\OrderPdfFileVariableProcessor` and `\Oro\Bundle\OrderBundle\Provider\EmailTemplate\OrderPdfFileVariableProvider` to enable the use of order PDF documents in email templates;
 
 #### PaymentBundle
 * Added `paymentAction` option to the `\Oro\Bundle\PaymentBundle\Action\PurchaseAction` allowing to pass the action name to perform, e.g. purchase/charge/authorize.

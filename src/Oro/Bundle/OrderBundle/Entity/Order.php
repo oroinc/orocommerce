@@ -27,6 +27,9 @@ use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Oro\Bundle\OrderBundle\Model\DiscountAwareInterface;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\PdfGeneratorBundle\Entity\PdfDocument;
+use Oro\Bundle\PdfGeneratorBundle\PdfDocument\AbstractPdfDocument;
+use Oro\Bundle\PdfGeneratorBundle\PdfDocument\PdfDocumentContainerInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -103,6 +106,7 @@ class Order implements
     CheckoutSourceEntityInterface,
     ProductLineItemsHolderInterface,
     PreConfiguredShippingMethodConfigurationInterface,
+    PdfDocumentContainerInterface,
     ExtendEntityInterface
 {
     use AuditableUserAwareTrait;
@@ -369,12 +373,23 @@ class Order implements
     #[ORM\Column(name: 'is_external', type: Types::BOOLEAN, options: ['default' => false])]
     private bool $external = false;
 
+    /**
+     * Contains PDF documents associated with the order.
+     */
+    #[ORM\ManyToMany(targetEntity: PdfDocument::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_order_pdf_document')]
+    #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'pdf_document_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected Collection $pdfDocuments;
+
     public function __construct()
     {
         $this->lineItems = new ArrayCollection();
         $this->discounts = new ArrayCollection();
         $this->shippingTrackings = new ArrayCollection();
         $this->subOrders = new ArrayCollection();
+        $this->pdfDocuments = new ArrayCollection();
         $this->loadMultiCurrencyFields();
     }
 
@@ -1363,5 +1378,29 @@ class Order implements
     public function setExternal(bool $external): void
     {
         $this->external = $external;
+    }
+
+    #[\Override]
+    public function addPdfDocument(AbstractPdfDocument $pdfDocument): self
+    {
+        if (!$this->pdfDocuments->contains($pdfDocument)) {
+            $this->pdfDocuments->add($pdfDocument);
+        }
+
+        return $this;
+    }
+
+    #[\Override]
+    public function removePdfDocument(AbstractPdfDocument $pdfDocument): self
+    {
+        $this->pdfDocuments->removeElement($pdfDocument);
+
+        return $this;
+    }
+
+    #[\Override]
+    public function getPdfDocuments(): Collection
+    {
+        return $this->pdfDocuments;
     }
 }
