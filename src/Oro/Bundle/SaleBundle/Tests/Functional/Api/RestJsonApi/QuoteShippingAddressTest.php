@@ -34,6 +34,44 @@ class QuoteShippingAddressTest extends RestJsonApiTestCase
         $this->assertResponseContains('cget_quote_shipping_address.yml', $response);
     }
 
+    public function testGetListFilterByCountry(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'quoteshippingaddresses'],
+            ['filter' => ['country' => ['neq' => '<toString(@country.US->iso2Code)>']]]
+        );
+
+        $this->assertResponseContains(['data' => []], $response);
+    }
+
+    public function testGetListFilterByRegion(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'quoteshippingaddresses'],
+            ['filter' => ['region' => '<toString(@region.US-IN->combinedCode)>']]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'quoteshippingaddresses', 'id' => '<toString(@sale.quote.1.shipping_address->id)>'],
+                    ['type' => 'quoteshippingaddresses', 'id' => '<toString(@sale.quote.6.shipping_address->id)>']
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListFilterByCustomRegion(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'quoteshippingaddresses'],
+            ['filter' => ['customRegion' => ['exists' => true]]]
+        );
+
+        $this->assertResponseContains(['data' => []], $response);
+    }
+
     public function testGet(): void
     {
         $response = $this->get(
