@@ -54,6 +54,54 @@ class OrderAddressTest extends RestJsonApiTestCase
         $this->assertResponseContains('cget_address.yml', $response);
     }
 
+    public function testGetListFilterByCountry(): void
+    {
+        $response = $this->cget(
+            ['entity' => self::ENTITY_TYPE],
+            ['filter' => ['country' => ['neq' => '<toString(@order_address.office->country->iso2Code)>']]]
+        );
+
+        $this->assertResponseContains(['data' => []], $response);
+    }
+
+    public function testGetListFilterByRegion(): void
+    {
+        $response = $this->cget(
+            ['entity' => self::ENTITY_TYPE],
+            ['filter' => ['region' => '<toString(@order_address.office->region->combinedCode)>']]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => self::ENTITY_TYPE, 'id' => '<toString(@order_address.office->id)>'],
+                    ['type' => self::ENTITY_TYPE, 'id' => '<toString(@order_address.order2.billing->id)>']
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListFilterByCustomRegion(): void
+    {
+        $response = $this->cget(
+            ['entity' => self::ENTITY_TYPE],
+            ['filter' => ['customRegion' => ['exists' => false]]]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => self::ENTITY_TYPE, 'id' => '<toString(@order_address.office->id)>'],
+                    ['type' => self::ENTITY_TYPE, 'id' => '<toString(@order_address.warehouse->id)>'],
+                    ['type' => self::ENTITY_TYPE, 'id' => '<toString(@order_address.order2.billing->id)>'],
+                    ['type' => self::ENTITY_TYPE, 'id' => '<toString(@order_address.order2.shipping->id)>']
+                ]
+            ],
+            $response
+        );
+    }
+
     public function testGet()
     {
         $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
