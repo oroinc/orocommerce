@@ -28,23 +28,19 @@ final class UpdateProductPageTemplateFallbackData extends AbstractFixture
 
         $iterator = new BufferedQueryResultIterator($query);
         $iterator->setBufferSize(self::BATCH_SIZE);
+        $iterator->setPageCallback(function () use ($manager) {
+            $manager->flush();
+            $manager->clear();
+        });
 
-        $counter = 0;
         foreach ($iterator as $product) {
             $fallback = new EntityFieldFallbackValue();
             $fallback->setFallback(ThemeConfigurationFallbackProvider::FALLBACK_ID);
             $product->setPageTemplate($fallback);
             $manager->persist($product);
-            $counter++;
-            if (($counter % self::BATCH_SIZE) === 0) {
-                $manager->flush();
-                $manager->clear();
-                $counter = 0;
-            }
         }
-        if ($counter > 0) {
-            $manager->flush();
-            $manager->clear();
-        }
+
+        $manager->flush();
+        $manager->clear();
     }
 }
