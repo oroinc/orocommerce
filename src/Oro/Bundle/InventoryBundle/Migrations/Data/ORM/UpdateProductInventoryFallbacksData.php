@@ -44,8 +44,11 @@ final class UpdateProductInventoryFallbacksData extends AbstractFixture implemen
 
         $iterator = new BufferedQueryResultIterator($query);
         $iterator->setBufferSize(self::BATCH_SIZE);
+        $iterator->setPageCallback(function () use ($manager) {
+            $manager->flush();
+            $manager->clear();
+        });
 
-        $counter = 0;
         foreach ($iterator as $product) {
             $needsUpdate = false;
             foreach (self::FIELDS as $field) {
@@ -58,17 +61,10 @@ final class UpdateProductInventoryFallbacksData extends AbstractFixture implemen
             }
             if ($needsUpdate) {
                 $manager->persist($product);
-                $counter++;
-                if (($counter % self::BATCH_SIZE) === 0) {
-                    $manager->flush();
-                    $manager->clear();
-                    $counter = 0;
-                }
             }
         }
-        if ($counter > 0) {
-            $manager->flush();
-            $manager->clear();
-        }
+
+        $manager->flush();
+        $manager->clear();
     }
 }
