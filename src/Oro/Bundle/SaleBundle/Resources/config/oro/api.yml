@@ -74,6 +74,10 @@ api:
                 quote:
                     data_type: unidirectionalAssociation:shippingAddress
                     target_class: Oro\Bundle\SaleBundle\Entity\Quote
+            filters:
+                fields:
+                    customRegion:
+                        exclude: false
             actions:
                 update:
                     fields:
