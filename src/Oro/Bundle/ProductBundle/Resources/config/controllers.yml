@@ -97,3 +97,13 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+
+    Oro\Bundle\ProductBundle\Controller\Frontend\QuickAddValidationController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_product.model.builder.quick_add_row_collection, key: Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder }
+            - { name: container.service_subscriber, id: oro_product.quick_add.quick_add_collection_validator, key: Oro\Bundle\ProductBundle\QuickAdd\QuickAddCollectionValidator }
+            - { name: container.service_subscriber, id: oro_product.quick_add.quick_add_collection_issues_normalizer, key: Oro\Bundle\ProductBundle\QuickAdd\Normalizer\QuickAddCollectionIssuesNormalizer }
+            - { name: container.service_subscriber, id: oro_product.component_processor.registry, key: Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry }

@@ -136,8 +136,13 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
         $quickAddRowWithError = new QuickAddRow(2, 'sku2', 242, 'kg');
         $quickAddRowWithError->addError('sample quick add row error');
 
+        $quickAddRowWithWarning = new QuickAddRow(3, 'sku3', 342, 'kg');
+        $quickAddRowWithWarning->addWarning('sample quick add row warning');
+
         $quickAddRowCollectionWithError = new QuickAddRowCollection([$quickAddRowWithError]);
         $quickAddRowCollectionWithError->addError('sample error');
+
+        $quickAddRowCollectionWithWarning = new QuickAddRowCollection([$quickAddRowWithWarning]);
 
         $emptyQuickAddRowCollectionWithError = new QuickAddRowCollection();
         $emptyQuickAddRowCollectionWithError->addError('sample error');
@@ -166,6 +171,10 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'quickAddRowCollection' => new QuickAddRowCollection([$quickAddRowWithError, $quickAddRowWithError]),
+                'expected' => false,
+            ],
+            [
+                'quickAddRowCollection' => $quickAddRowCollectionWithWarning,
                 'expected' => false,
             ],
         ];

@@ -709,6 +709,11 @@ oro_behat_extension:
         type: 'css'
         locator: "input[name='oro_product_quick_add[products][0][quantity]']"
 
+    Quick Order Form > QTY2:
+      selector:
+        type: 'css'
+        locator: "input[name='oro_product_quick_add[products][1][quantity]']"
+
     Quick Add Price Field:
       selector:
         type: 'xpath'
@@ -723,6 +728,36 @@ oro_behat_extension:
       selector:
         type: 'xpath'
         locator: "//form[@name='oro_product_quick_add']//span[@class='validation-failed']//span//span[2]"
+
+    Quick Add Form Validation Row1 Warning:
+      selector:
+        type: 'xpath'
+        locator: "//form[@name='oro_product_quick_add']//div[@data-content='oro_product_quick_add[products][0]']//div[contains(@class, 'quick-order-add__warning')]//span[@class='validation-warning']/span[not(contains(@class, 'validation-warning__icon'))]"
+
+    Quick Add Form Validation Row1 Error:
+      selector:
+        type: 'xpath'
+        locator: "//form[@name='oro_product_quick_add']//div[@data-content='oro_product_quick_add[products][0]']//div[contains(@class, 'quick-order-add__error')]//span[@class='validation-failed']//span[@class='validation-failed__content']/span[not(contains(@class, 'validation-failed__icon'))]"
+
+    Quick Add Form Validation Row2 Warning:
+      selector:
+        type: 'xpath'
+        locator: "//form[@name='oro_product_quick_add']//div[@data-content='oro_product_quick_add[products][1]']//div[contains(@class, 'quick-order-add__warning')]//div[contains(@class, 'quick-order-add__warning')]//span[@class='validation-warning']/span[not(contains(@class, 'validation-warning__icon'))]"
+
+    Quick Add Form Validation Row2 Error:
+      selector:
+        type: 'xpath'
+        locator: "//form[@name='oro_product_quick_add']//div[@data-content='oro_product_quick_add[products][1]']//div[contains(@class, 'quick-order-add__error')]//span[@class='validation-failed']//span[@class='validation-failed__content']/span[not(contains(@class, 'validation-failed__icon'))]"
+
+    Quick Add Form Validation Row3 Warning:
+      selector:
+        type: 'xpath'
+        locator: "//form[@name='oro_product_quick_add']//div[@data-content='oro_product_quick_add[products][2]']//div[contains(@class, 'quick-order-add__warning')]//div[contains(@class, 'quick-order-add__warning')]//span[@class='validation-warning']/span[not(contains(@class, 'validation-warning__icon'))]"
+
+    Quick Add Form Validation Row3 Error:
+      selector:
+        type: 'xpath'
+        locator: "//form[@name='oro_product_quick_add']//div[@data-content='oro_product_quick_add[products][2]']//div[contains(@class, 'quick-order-add__error')]//span[@class='validation-failed']//span[@class='validation-failed__content']/span[not(contains(@class, 'validation-failed__icon'))]"
 
     Quick Add Copy Paste Form:
       selector: "form[name='oro_product_quick_add_copy_paste']"

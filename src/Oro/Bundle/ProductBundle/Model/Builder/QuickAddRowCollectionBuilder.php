@@ -7,6 +7,7 @@ use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Common\Creator\ReaderFactory;
 use Box\Spout\Reader\ReaderInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
@@ -19,6 +20,7 @@ class QuickAddRowCollectionBuilder
 {
     private QuickAddRowInputParser $quickAddRowInputParser;
     private ProductMapperInterface $productMapper;
+    private RoundingServiceInterface $quantityRoundingService;
 
     public function __construct(
         QuickAddRowInputParser $quickAddRowInputParser,
@@ -26,6 +28,11 @@ class QuickAddRowCollectionBuilder
     ) {
         $this->quickAddRowInputParser = $quickAddRowInputParser;
         $this->productMapper = $productMapper;
+    }
+
+    public function setQuantityRoundingService(RoundingServiceInterface $quantityRoundingService): void
+    {
+        $this->quantityRoundingService = $quantityRoundingService;
     }
 
     public function buildFromArray(array $products): QuickAddRowCollection
@@ -74,6 +81,7 @@ class QuickAddRowCollectionBuilder
 
         if (!$collection->isEmpty()) {
             $this->productMapper->mapProducts($collection);
+            $this->normalizeQuantities($collection);
         }
 
         return $collection;
@@ -99,9 +107,40 @@ class QuickAddRowCollectionBuilder
 
         if (!$collection->isEmpty()) {
             $this->productMapper->mapProducts($collection);
+            $this->normalizeQuantities($collection);
         }
 
         return $collection;
+    }
+
+    private function normalizeQuantities(QuickAddRowCollection $collection): void
+    {
+        if (!isset($this->quantityRoundingService)) {
+            return;
+        }
+
+        /**
+         * @var QuickAddRow $row
+         */
+        foreach ($collection as $row) {
+            $product = $row->getProduct();
+            $productUnitPrecision = $row->getProductUnitPrecision();
+            $quantity = $row->getQuantity();
+
+            if (!$product || !$productUnitPrecision || !$quantity) {
+                continue;
+            }
+
+            $precision = $productUnitPrecision->getPrecision();
+
+            $quantity = $this->quantityRoundingService->round(
+                $quantity,
+                $precision,
+                RoundingServiceInterface::ROUND_DOWN
+            );
+
+            $row->setQuantity($quantity);
+        }
     }
 
     private function detectDelimiter(string $line): string

@@ -66,6 +66,13 @@ oro_product_frontend_quick_add:
     options:
         frontend: true
 
+oro_product_frontend_quick_add_validation:
+    resource:     "@OroProductBundle/Controller/Frontend/QuickAddValidationController.php"
+    type:         attribute
+    prefix:       /customer/product/quick-add/validate
+    options:
+        frontend: true
+
 oro_brand:
     resource:     "@OroProductBundle/Controller/BrandController.php"
     type:         annotation

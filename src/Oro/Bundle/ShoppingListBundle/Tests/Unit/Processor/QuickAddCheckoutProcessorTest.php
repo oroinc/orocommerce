@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CheckoutBundle\Condition\IsWorkflowStartFromShoppingListAllowed;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartQuickOrderCheckoutInterface;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
@@ -21,6 +22,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -58,6 +60,12 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     private StartQuickOrderCheckoutInterface|MockObject $startQuickOrderCheckout;
 
+    /** @var AuthorizationCheckerInterface|MockObject */
+    private $authorizationChecker;
+
+    /** @var IsWorkflowStartFromShoppingListAllowed|MockObject */
+    private $isWorkflowStartFromShoppingListAllowed;
+
     /** @var QuickAddCheckoutProcessor */
     private $processor;
 
@@ -74,6 +82,10 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
         $this->dateFormatter = $this->createMock(DateTimeFormatterInterface::class);
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->startQuickOrderCheckout = $this->createMock(StartQuickOrderCheckoutInterface::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->isWorkflowStartFromShoppingListAllowed = $this->createMock(
+            IsWorkflowStartFromShoppingListAllowed::class
+        );
 
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects(self::any())
@@ -94,7 +106,7 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testIsAllowed(): void
+    public function testIsAllowedWithoutAuthCheckerAndSsWorkflowStartFromShoppingListAllowed(): void
     {
         $this->shoppingListLineItemHandler->expects(self::once())
             ->method('isAllowed')
@@ -108,6 +120,9 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
      */
     public function testProcessWithNotValidData(array $data): void
     {
+        $this->processor->setAuthorizationChecker($this->authorizationChecker);
+        $this->processor->setIsWorkflowStartFromShoppingListAllowed($this->isWorkflowStartFromShoppingListAllowed);
+
         $request = $this->createMock(Request::class);
 
         self::assertNull($this->processor->process($data, $request));
@@ -136,6 +151,9 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWhenCommitted(): void
     {
+        $this->processor->setAuthorizationChecker($this->authorizationChecker);
+        $this->processor->setIsWorkflowStartFromShoppingListAllowed($this->isWorkflowStartFromShoppingListAllowed);
+
         $data = $this->getProductData([
             ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'kg'],
             ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'liter'],
@@ -199,6 +217,9 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWhenCommittedAndSameProductsCoupleOfTimes(): void
     {
+        $this->processor->setAuthorizationChecker($this->authorizationChecker);
+        $this->processor->setIsWorkflowStartFromShoppingListAllowed($this->isWorkflowStartFromShoppingListAllowed);
+
         $data = $this->getProductData([
             ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'item'],
             ['productSku' => 'sku1Абв', 'productQuantity' => 3, 'productUnit' => 'kg'],
@@ -267,6 +288,9 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWhenCommittedWithLimit(): void
     {
+        $this->processor->setAuthorizationChecker($this->authorizationChecker);
+        $this->processor->setIsWorkflowStartFromShoppingListAllowed($this->isWorkflowStartFromShoppingListAllowed);
+
         $data = $this->getProductData([
             ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'kg'],
             ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'liter'],
@@ -330,6 +354,9 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWhenActionGroupFailedWithErrors(): void
     {
+        $this->processor->setAuthorizationChecker($this->authorizationChecker);
+        $this->processor->setIsWorkflowStartFromShoppingListAllowed($this->isWorkflowStartFromShoppingListAllowed);
+
         $data = $this->getProductData([
             ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'kg'],
             ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'liter'],
@@ -382,6 +409,9 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWhenHandlerThrowsException(): void
     {
+        $this->processor->setAuthorizationChecker($this->authorizationChecker);
+        $this->processor->setIsWorkflowStartFromShoppingListAllowed($this->isWorkflowStartFromShoppingListAllowed);
+
         $data = $this->getProductData([
             ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'kg'],
             ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'liter'],
@@ -419,6 +449,9 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWhenNoItemsCreatedForShoppingList(): void
     {
+        $this->processor->setAuthorizationChecker($this->authorizationChecker);
+        $this->processor->setIsWorkflowStartFromShoppingListAllowed($this->isWorkflowStartFromShoppingListAllowed);
+
         $data = $this->getProductData([
             ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'kg'],
             ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'liter'],
@@ -456,6 +489,36 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
         $this->expectsFailedFlashMessage($request);
 
         self::assertNull($this->processor->process($data, $request));
+    }
+
+    public function testNotAllowedWhenEntityCreationNotAllowed(): void
+    {
+        $this->processor->setAuthorizationChecker($this->authorizationChecker);
+        $this->processor->setIsWorkflowStartFromShoppingListAllowed($this->isWorkflowStartFromShoppingListAllowed);
+
+        $this->authorizationChecker->expects(self::once())
+            ->method('isGranted')
+            ->with('CREATE', 'entity:commerce@Oro\Bundle\CheckoutBundle\Entity\Checkout')
+            ->willReturn(false);
+
+
+        self::assertFalse($this->processor->isAllowed());
+    }
+
+    public function testNotAllowedWhenShoppingListNotAllowed(): void
+    {
+        $this->processor->setAuthorizationChecker($this->authorizationChecker);
+        $this->processor->setIsWorkflowStartFromShoppingListAllowed($this->isWorkflowStartFromShoppingListAllowed);
+
+        $this->authorizationChecker->expects(self::once())
+            ->method('isGranted')
+            ->willReturn(true);
+
+        $this->isWorkflowStartFromShoppingListAllowed->expects(self::once())
+            ->method('isAllowedForAny')
+            ->willReturn(false);
+
+        self::assertFalse($this->processor->isAllowed());
     }
 
     private function expectsMapProducts(array $productMap): void

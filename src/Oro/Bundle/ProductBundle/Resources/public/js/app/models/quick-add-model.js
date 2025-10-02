@@ -25,7 +25,8 @@ const QuickAddModel = BaseModel.extend({
             inventoryStatus: null,
             inventoryStatusLabel: null,
 
-            errors: []
+            errors: [],
+            warnings: []
         };
     },
 

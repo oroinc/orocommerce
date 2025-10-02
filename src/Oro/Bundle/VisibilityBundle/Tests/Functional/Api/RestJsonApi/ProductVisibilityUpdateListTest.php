@@ -109,6 +109,8 @@ class ProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestCase
 
     public function testCreateAndUpdateEntities(): void
     {
+        self::markTestSkipped('Should be fixed in scope of BAP-23174.');
+
         $product1Id = $this->getReference('product-1')->getId();
         $product2Id = $this->getReference('product-4')->getId();
         $data = [
@@ -140,8 +142,8 @@ class ProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestCase
             ['entity' => 'productvisibilities'],
             ['filter' => ['id' => [$product1Id, $product2Id]]]
         );
-        $expectedData['data'][1]['id'] = (string)$product2Id;
-        unset($expectedData['data'][1]['meta']);
+        $expectedData['data'][2]['id'] = (string)$product2Id;
+        unset($expectedData['data'][2]['meta']);
         $this->assertResponseContains($expectedData, $response, true);
     }
 

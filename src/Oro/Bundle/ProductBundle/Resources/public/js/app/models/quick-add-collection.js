@@ -1,5 +1,8 @@
 import QuickAddModel from 'oroproduct/js/app/models/quick-add-model';
 import BaseCollection from 'oroui/js/app/models/base/collection';
+import routing from 'routing';
+import $ from 'jquery';
+import _ from 'underscore';
 
 const QuickAddCollection = BaseCollection.extend({
     /**
@@ -11,8 +14,18 @@ const QuickAddCollection = BaseCollection.extend({
 
     model: QuickAddModel,
 
+    validationRoute: 'oro_product_frontend_quick_add_validate_rows',
+
+    options: {
+        validatedForComponent: null
+    },
+
+    VALIDATION_TIMEOUT: 500,
+
     constructor: function QuickAddCollection(data, options) {
         this._index = {__: []};
+
+        this.validateModels = _.throttle(this.validateModels.bind(this), this.VALIDATION_TIMEOUT);
 
         this.listenTo(this, {
             add: this.onModelAdd,
@@ -45,6 +58,46 @@ const QuickAddCollection = BaseCollection.extend({
             this._removeFromIndex(previousKey, model);
             this._addToIndex(key, model);
         }
+    },
+
+    /**
+     * Validate model
+     * @param {Array<QuickAddModel>} models
+     * @param {Object} options
+     */
+    validateModels(models, options = {}) {
+        this.xhr && this.xhr.abort();
+
+        const items = models.map(model => ({
+            index: model.get('index'),
+            sku: model.get('sku'),
+            quantity: model.get('quantity'),
+            unit: model.get('unit'),
+            organization: model.get('organization')
+        }));
+
+        const ajaxOptions = {
+            url: routing.generate(this.validationRoute),
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({items, component: this.options.validatedForComponent}),
+            ...options,
+            success: response => {
+                if (!response.success && response.items) {
+                    models.forEach(model => {
+                        const item = response.items.find(item => item.index === model.get('index'));
+                        if (item) {
+                            model.set({errors: item.errors, warnings: item.warnings});
+                        }
+                    });
+                } else {
+                    models.forEach(model => model.set({errors: [], warnings: []}));
+                }
+            }
+        };
+
+        this.xhr = $.ajax(ajaxOptions);
+        return this.xhr;
     },
 
     onReset(collection, options) {
@@ -171,12 +224,16 @@ const QuickAddCollection = BaseCollection.extend({
 
             // Reset errors to make sure that 'error' event will be triggered even if errors are not changed
             if (model.get('errors') !== void 0) {
-                model.set('errors', [], {silent: true});
+                model.set('errors', []);
             }
 
-            const {additional = {}, errors = []} = attrs;
+            if (model.get('warnings') !== void 0) {
+                model.set('warnings', []);
+            }
+
+            const {additional = {}, errors = [], warnings = []} = attrs;
             // update rest of attributes
-            model.set({errors, ...additional});
+            model.set({errors, warnings, ...additional});
         });
 
         this.trigger('quick-add-rows');

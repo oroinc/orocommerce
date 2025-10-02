@@ -12,7 +12,10 @@ use Oro\Bundle\ProductBundle\Model\Grouping\QuickAddRowGrouper;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\QuickAdd\Normalizer\QuickAddCollectionNormalizerInterface;
+use Oro\Bundle\ProductBundle\QuickAdd\QuickAddCollectionValidator;
 use Oro\Bundle\ProductBundle\QuickAdd\QuickAddRowCollectionViolationsMapper;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormErrorIterator;
@@ -21,28 +24,23 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class QuickAddImportFromPlainTextHandlerTest extends \PHPUnit\Framework\TestCase
+final class QuickAddImportFromPlainTextHandlerTest extends TestCase
 {
-    /** @var QuickAddRowCollectionBuilder|\PHPUnit\Framework\MockObject\MockObject */
-    private $quickAddRowCollectionBuilder;
+    private QuickAddRowCollectionBuilder&MockObject $quickAddRowCollectionBuilder;
 
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $eventDispatcher;
+    private EventDispatcherInterface&MockObject $eventDispatcher;
 
-    /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $validator;
+    private ValidatorInterface&MockObject $validator;
 
-    /** @var QuickAddRowCollectionViolationsMapper|\PHPUnit\Framework\MockObject\MockObject */
-    private $quickAddRowCollectionViolationsMapper;
+    private QuickAddRowCollectionViolationsMapper&MockObject $quickAddRowCollectionViolationsMapper;
 
-    /** @var QuickAddCollectionNormalizerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $quickAddCollectionNormalizer;
+    private QuickAddCollectionNormalizerInterface&MockObject $quickAddCollectionNormalizer;
 
-    /** @var PreloadingManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $preloadingManager;
+    private PreloadingManager&MockObject $preloadingManager;
 
-    /** @var QuickAddImportFromPlainTextHandler */
-    private $handler;
+    private QuickAddCollectionValidator&MockObject $quickAddCollectionValidator;
+
+    private QuickAddImportFromPlainTextHandler $handler;
 
     #[\Override]
     protected function setUp(): void
@@ -53,6 +51,7 @@ class QuickAddImportFromPlainTextHandlerTest extends \PHPUnit\Framework\TestCase
         $this->quickAddRowCollectionViolationsMapper = $this->createMock(QuickAddRowCollectionViolationsMapper::class);
         $this->quickAddCollectionNormalizer = $this->createMock(QuickAddCollectionNormalizerInterface::class);
         $this->preloadingManager = $this->createMock(PreloadingManager::class);
+        $this->quickAddCollectionValidator = $this->createMock(QuickAddCollectionValidator::class);
 
         $this->handler = new QuickAddImportFromPlainTextHandler(
             $this->quickAddRowCollectionBuilder,
@@ -117,7 +116,72 @@ class QuickAddImportFromPlainTextHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testProcessWhenValid(): void
+    /**
+     * @dataProvider componentDataProvider
+     */
+    public function testProcessWhenValid(?string $component): void
+    {
+        $request = new Request();
+        $form = $this->createMock(FormInterface::class);
+        $form->expects(self::once())
+            ->method('handleRequest')
+            ->with($request);
+        $form->expects(self::once())
+            ->method('isSubmitted')
+            ->willReturn(true);
+        $form->expects(self::once())
+            ->method('isValid')
+            ->willReturn(true);
+        $form->expects(self::once())
+            ->method('getData')
+            ->willReturn([
+                'component' => $component,
+            ]);
+        $copyPasteForm = $this->createMock(FormInterface::class);
+        $form->expects(self::once())
+            ->method('get')
+            ->with(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)
+            ->willReturn($copyPasteForm);
+        $plainText = 'sku1 42 item';
+        $copyPasteForm->expects(self::once())
+            ->method('getData')
+            ->willReturn($plainText);
+
+        $quickAddRow = new QuickAddRow(1, 'sku1', 42, 'item');
+        $product = new Product();
+        $quickAddRow->setProduct($product);
+        $quickAddRowCollection = new QuickAddRowCollection([$quickAddRow]);
+        $this->quickAddRowCollectionBuilder->expects(self::once())
+            ->method('buildFromCopyPasteText')
+            ->with($plainText)
+            ->willReturn($quickAddRowCollection);
+
+        $this->quickAddCollectionValidator->expects(self::once())
+            ->method('validate')
+            ->with($quickAddRowCollection, $component);
+
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(
+                new QuickAddRowsCollectionReadyEvent($quickAddRowCollection),
+                QuickAddRowsCollectionReadyEvent::NAME
+            );
+
+        $normalizedCollection = ['errors' => [], 'items' => [['sample_key' => 'sample_value']]];
+        $this->quickAddCollectionNormalizer->expects(self::once())
+            ->method('normalize')
+            ->with($quickAddRowCollection)
+            ->willReturn($normalizedCollection);
+
+        $this->handler->setQuickAddCollectionValidator($this->quickAddCollectionValidator);
+
+        self::assertEquals(
+            ['success' => true, 'collection' => $normalizedCollection],
+            json_decode($this->handler->process($form, $request)->getContent(), true)
+        );
+    }
+
+    public function testProcessWhenValidAndQuickAddCollectionValidatorNotSet(): void
     {
         $request = new Request();
         $form = $this->createMock(FormInterface::class);
@@ -190,5 +254,13 @@ class QuickAddImportFromPlainTextHandlerTest extends \PHPUnit\Framework\TestCase
             ['success' => true, 'collection' => $normalizedCollection],
             json_decode($this->handler->process($form, $request)->getContent(), true)
         );
+    }
+
+    public static function componentDataProvider(): array
+    {
+        return [
+            'no component' => [null],
+            'with component' => ['test']
+        ];
     }
 }

@@ -58,6 +58,10 @@ abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcess
         }
         $productIds = array_values(array_unique($productIds));
 
+        if (empty($productIds)) {
+            return 0;
+        }
+
         try {
             return $this->shoppingListLineItemHandler->createForShoppingList(
                 $shoppingList,

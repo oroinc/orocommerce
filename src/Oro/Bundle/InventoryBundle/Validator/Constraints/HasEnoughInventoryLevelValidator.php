@@ -10,7 +10,9 @@ use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -48,8 +50,12 @@ class HasEnoughInventoryLevelValidator extends ConstraintValidator
             return;
         }
 
-        if (!$value instanceof ProductLineItemInterface) {
-            throw new UnexpectedValueException($value, ProductLineItemInterface::class);
+        if (!$value instanceof ProductHolderInterface) {
+            throw new UnexpectedValueException($value, ProductHolderInterface::class);
+        }
+
+        if (!$value instanceof ProductUnitHolderInterface) {
+            throw new UnexpectedValueException($value, ProductUnitHolderInterface::class);
         }
 
         if (!$constraint instanceof HasEnoughInventoryLevel) {

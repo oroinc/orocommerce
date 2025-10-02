@@ -93,11 +93,14 @@ const QuickAddFormView = BaseView.extend({
             .filter(item => item.sku !== '');
         formData.append(`${this.$el.attr('name')}[products]`, JSON.stringify(quickAddRows));
 
+        this.productsCollection.options.validatedForComponent = this.$(this.componentSelector).val();
+
         $.ajax({
             type: 'POST',
             url: this.$el.attr('action'),
             contentType: false,
             beforeSend(xhr, options) {
+                messenger.clear();
                 options.data = formData;
             },
             success: response => {

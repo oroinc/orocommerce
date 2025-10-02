@@ -43,6 +43,9 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
+
     /** @var DataStorageComponentProcessor */
     private $processor;
 
@@ -56,6 +59,7 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->productAvailabilityProvider = $this->createMock(ProductRFPAvailabilityProvider::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $requestStack = $this->createMock(RequestStack::class);
         $requestStack->expects(self::any())
@@ -72,7 +76,7 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
         $this->processor = new DataStorageComponentProcessor(
             $this->storage,
             $this->productMapper,
-            $this->createMock(AuthorizationCheckerInterface::class),
+            $this->authorizationChecker,
             $this->tokenAccessor,
             $requestStack,
             $translator,
@@ -212,5 +216,30 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         self::assertTrue($this->processor->isAllowedForGuest());
+    }
+
+    public function testNotAllowedProcessorWhenResourceNotEnabled(): void
+    {
+        $this->featureChecker->expects(self::once())
+            ->method('isResourceEnabled')
+            ->with('oro_rfp_frontend_request_a_quote', 'operations')
+            ->willReturn(false);
+
+        self::assertFalse($this->processor->isAllowed());
+    }
+
+    public function testNotAllowedProcessorWhenEntityCreationNotAllowed(): void
+    {
+        $this->featureChecker->expects(self::once())
+            ->method('isResourceEnabled')
+            ->willReturn(true);
+
+        $this->authorizationChecker->expects(self::once())
+            ->method('isGranted')
+            ->with('CREATE', 'entity:commerce@Oro\Bundle\RFPBundle\Entity\Request')
+            ->willReturn(false);
+
+
+        self::assertFalse($this->processor->isAllowed());
     }
 }

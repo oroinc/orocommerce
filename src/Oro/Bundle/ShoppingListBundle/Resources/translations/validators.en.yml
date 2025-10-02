@@ -58,3 +58,11 @@ oro:
 
     product_unavailable: "This item is unavailable"
     non_valid_precision: "This value should be decimal with a precision {{ precision }}"
+
+    product:
+        frontend:
+            quick_add:
+                validation:
+                    component:
+                        oro_shopping_list_quick_add_processor:
+                            error: 'Some selected items need a quick review. Update or remove them to proceed to the shopping list.'

@@ -75,6 +75,16 @@ The current file describes significant changes in the code that may affect the u
 #### SalesBundle
 * Added the support for `data-clear-if` and `data-clear-element` attributes in the `dependent-field-component.js`.
 
+#### ProductBundle
+* Added `\Oro\Bundle\ProductBundle\Controller\Frontend\QuickAddValidationController` for real-time validation of quick order form rows.
+* Added `\Oro\Bundle\ProductBundle\QuickAdd\QuickAddCollectionValidator` to centralize validation logic for quick add collections.
+* Added component-specific validation groups for quick add processors:
+  * `oro_shopping_list_to_checkout_quick_add_processor`;
+  * `oro_rfp_quick_add_processor`.
+
+#### FormBundle
+* Added `\Oro\Bundle\FormBundle\Resources\public\templates\warning-template.html` for displaying validation warnings in forms.
+
 ### Changed
 
 #### CommerceBundle
@@ -101,6 +111,20 @@ The current file describes significant changes in the code that may affect the u
 #### PaymentBundle
 * Deprecated `\Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider` and interface. Added `\Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\PaymentStatusCalculator` and implementations for each payment status instead.
 
+
+#### ProductBundle
+* Updated `\Oro\Bundle\ProductBundle\Model\QuickAddRow` to implement `ProductUnitHolderInterface` for enhanced validation compatibility.
+* Updated `\Oro\Bundle\ProductBundle\Form\Type\QuickAddType` to make component field required for validation.
+* Updated `\Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder` to round quantities according to product unit precision.
+
+#### OrderBundle
+* Added new validation groups for quick add processors in `validation.yml`:
+  * `oro_shopping_list_to_checkout_quick_add_processor`;
+  * `oro_rfp_quick_add_processor`.
+
+#### InventoryBundle
+* Added new validation groups for quick add processors in `validation.yml`:
+  * `oro_shopping_list_to_checkout_quick_add_processor`.
 
 ## 6.1.0 (2025-03-31)
 [Show detailed list of changes](incompatibilities-6-1.md)

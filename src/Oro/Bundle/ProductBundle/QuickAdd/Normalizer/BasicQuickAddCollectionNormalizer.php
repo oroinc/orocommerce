@@ -60,6 +60,17 @@ class BasicQuickAddCollectionNormalizer implements QuickAddCollectionNormalizerI
                     ],
                     $quickAddRow->getErrors()
                 ),
+                'warnings' => array_map(
+                    fn (array $warning) => [
+                        'message' => $this->translator->trans(
+                            $warning['message'],
+                            $warning['parameters'],
+                            'validators'
+                        ),
+                        'propertyPath' => $warning['propertyPath'] ?? '',
+                    ],
+                    $quickAddRow->getWarnings()
+                ),
                 'additional' => [],
             ];
 

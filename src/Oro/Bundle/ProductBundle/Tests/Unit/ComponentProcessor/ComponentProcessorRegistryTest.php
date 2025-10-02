@@ -74,4 +74,20 @@ class ComponentProcessorRegistryTest extends \PHPUnit\Framework\TestCase
 
         self::assertFalse($this->registry->hasAllowedProcessors());
     }
+
+    public function testGetAllowedProcessorsNames(): void
+    {
+        $this->processor1->expects(self::once())
+            ->method('isAllowed')
+            ->willReturn(true);
+
+        $this->processor2->expects(self::once())
+            ->method('isAllowed')
+            ->willReturn(false);
+
+        self::assertEquals(
+            ['processor1'],
+            $this->registry->getAllowedProcessorsNames()
+        );
+    }
 }
