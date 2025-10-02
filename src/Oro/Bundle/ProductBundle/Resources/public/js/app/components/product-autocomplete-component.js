@@ -5,6 +5,7 @@ define(function(require) {
     const _ = require('underscore');
     const routing = require('routing');
     const mediator = require('oroui/js/mediator');
+    const __ = require('orotranslation/js/translator');
     const ProductHelper = require('oroproduct/js/app/product-helper');
     const autocompleteErrorTemplate = require('tpl-loader!oroproduct/templates/product-autocomplete-error.html');
     const AutocompleteComponent = require('oro/autocomplete-component');
@@ -243,6 +244,14 @@ define(function(require) {
         },
 
         showError: function() {
+            if (this.$row.data('model')) {
+                return this.$row.data('model').set('errors', [{
+                    propertyPath: 'product',
+                    source: 'autocomplete',
+                    message: __('oro.product.validation.sku.not_found')
+                }]);
+            }
+
             // remove validation message for hidden SKU input, if it is shown,
             // since it duplicates autocomplete validation message
             this.$row.find('.fields-row-error [id*=productSku].validation-failed').remove();
@@ -255,6 +264,11 @@ define(function(require) {
         },
 
         hideError: function() {
+            if (this.$row.data('model')) {
+                const errors = this.$row.data('model').get('errors');
+                return this.$row.data('model').set('errors', errors.filter(err => err.source !== 'autocomplete'));
+            }
+
             if (this.$error) {
                 this.$error.hide();
             }

@@ -8,6 +8,7 @@
         "product_name": "product-1.names.default",
         "quantity": 1,
         "errors": [],
+        "warnings": [],
         "additional": [],
         "units": {
           "milliliter": 0,
@@ -24,6 +25,7 @@
         "product_name": "product-1.names.default",
         "quantity": 1.4,
         "errors": [],
+        "warnings": [],
         "additional": [],
         "units": {
           "milliliter": 0,
@@ -45,6 +47,7 @@
             "propertyPath": "unit"
           }
         ],
+        "warnings": [],
         "additional": [],
         "units": {
           "milliliter": 0,
@@ -59,13 +62,9 @@
       {
         "sku": "product-2",
         "product_name": "product-2.names.default",
-        "quantity": 2.55,
-        "errors": [
-          {
-            "message": "Invalid precision for unit 'milliliter'.",
-            "propertyPath": "quantity"
-          }
-        ],
+        "quantity": 2,
+        "errors": [],
+        "warnings": [],
         "additional": [],
         "units": {
           "milliliter": 0,
@@ -83,6 +82,7 @@
         "product_name": "product-3.names.default",
         "quantity": 3,
         "errors": [],
+        "warnings": [],
         "additional": [],
         "units": {
           "milliliter": 0,
@@ -103,6 +103,7 @@
             "propertyPath": "unit"
           }
         ],
+        "warnings": [],
         "additional": [],
         "units": {
           "milliliter": 0,
@@ -127,6 +128,7 @@
             "propertyPath": "unit"
           }
         ],
+        "warnings": [],
         "additional": [],
         "index": 7,
         "unit_label": "",
@@ -150,6 +152,7 @@
             "propertyPath": "unit"
           }
         ],
+        "warnings": [],
         "additional": [],
         "index": 8,
         "unit_label": "",
@@ -173,6 +176,7 @@
             "propertyPath": "unit"
           }
         ],
+        "warnings": [],
         "additional": [],
         "index": 9,
         "unit_label": "",
@@ -183,6 +187,12 @@
         "product_name": "Product Kit with Single Kit Item",
         "quantity": 3,
         "errors": [],
+        "warnings": [
+          {
+            "message": "This product cannot be added through the quick order form. Use the product details page instead.",
+            "propertyPath": "product"
+          }
+        ],
         "additional": [],
         "units": {
           "milliliter": 0
@@ -197,6 +207,12 @@
         "product_name": "Product Kit Utilizing Sort Order",
         "quantity": 1,
         "errors": [],
+        "warnings": [
+          {
+            "message": "This product cannot be added through the quick order form. Use the product details page instead.",
+            "propertyPath": "product"
+          }
+        ],
         "additional": [],
         "units": {
           "milliliter": 0
@@ -205,6 +221,26 @@
         "unit_label": "milliliter",
         "organization": "",
         "type": "kit"
+      },
+      {
+        "sku": "product-5",
+        "product_name": "",
+        "quantity": 1,
+        "errors": [
+          {
+            "message": "Item number cannot be found.",
+            "propertyPath": "product"
+          },
+          {
+            "message": "Unit cannot be blank.",
+            "propertyPath": "unit"
+          }
+        ],
+        "warnings": [],
+        "additional": [],
+        "index": 14,
+        "unit_label": "",
+        "organization": ""
       }
     ]
   }

@@ -131,6 +131,8 @@ services:
             - '@translator'
             - '@oro_locale.formatter.date_time'
             - '@oro_checkout.action_group.start_quick_order_checkout'
+            - '@security.authorization_checker'
+            - '@oro_checkout.condition.is_workflow_start_from_shopping_list_allowed'
         tags:
             - { name: oro_product.quick_add_processor, processor_name: oro_shopping_list_to_checkout_quick_add_processor }
 

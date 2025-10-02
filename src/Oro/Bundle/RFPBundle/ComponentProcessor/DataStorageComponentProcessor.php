@@ -79,6 +79,22 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
     #[\Override]
     public function isAllowed(): bool
     {
+        $isFeatureEnabled = $this->featureChecker->isResourceEnabled(
+            'oro_rfp_frontend_request_a_quote',
+            'operations'
+        );
+
+        if (!$isFeatureEnabled) {
+            return false;
+        }
+
+        if (!$this->authorizationChecker->isGranted(
+            'CREATE',
+            'entity:commerce@Oro\Bundle\RFPBundle\Entity\Request'
+        )) {
+            return false;
+        }
+
         return parent::isAllowed() || $this->isAllowedForGuest();
     }
 

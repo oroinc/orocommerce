@@ -48,29 +48,12 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testNullProductUnit(): void
-    {
-        $value = $this->createMock(ProductLineItemInterface::class);
-        $value->expects($this->once())
-            ->method('getProductUnit')
-            ->willReturn(null);
-
-        $this->validator->validate($value, new ProductUnitExists());
-
-        $this->assertNoViolation();
-    }
-
     public function testNullProductUnitCode(): void
     {
-        $productUnit = $this->createMock(ProductUnit::class);
-        $productUnit->expects($this->once())
-            ->method('getCode')
-            ->willReturn(null);
-
         $value = $this->createMock(ProductLineItemInterface::class);
         $value->expects($this->once())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
+            ->method('getProductUnitCode')
+            ->willReturn(null);
 
         $this->validator->validate($value, new ProductUnitExists());
 
@@ -79,15 +62,10 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
 
     public function testNullProduct(): void
     {
-        $productUnit = $this->createMock(ProductUnit::class);
-        $productUnit->expects($this->once())
-            ->method('getCode')
-            ->willReturn('item');
-
         $value = $this->createMock(ProductLineItemInterface::class);
         $value->expects($this->once())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
+            ->method('getProductUnitCode')
+            ->willReturn('item');
         $value->expects($this->once())
             ->method('getProduct')
             ->willReturn(null);
@@ -101,10 +79,6 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
     {
         $unitCode = 'item';
 
-        $productUnit = $this->createMock(ProductUnit::class);
-        $productUnit->expects($this->once())
-            ->method('getCode')
-            ->willReturn($unitCode);
         $product = $this->createMock(Product::class);
         $product->expects($this->once())
             ->method('getUnitPrecisions')
@@ -112,8 +86,8 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
 
         $value = $this->createMock(ProductLineItemInterface::class);
         $value->expects($this->once())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
+            ->method('getProductUnitCode')
+            ->willReturn($unitCode);
         $value->expects($this->once())
             ->method('getProduct')
             ->willReturn($product);
@@ -128,10 +102,6 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
         $sku = 'SKU1';
         $unitCode = 'item';
 
-        $productUnit = $this->createMock(ProductUnit::class);
-        $productUnit->expects($this->once())
-            ->method('getCode')
-            ->willReturn($unitCode);
         $product = $this->createMock(Product::class);
         $product->expects($this->once())
             ->method('getUnitPrecisions')
@@ -142,8 +112,8 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
 
         $value = $this->createMock(ProductLineItemInterface::class);
         $value->expects($this->once())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
+            ->method('getProductUnitCode')
+            ->willReturn($unitCode);
         $value->expects($this->once())
             ->method('getProduct')
             ->willReturn($product);
@@ -160,10 +130,6 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
     {
         $unitCode = 'set';
 
-        $productUnit = $this->createMock(ProductUnit::class);
-        $productUnit->expects($this->once())
-            ->method('getCode')
-            ->willReturn($unitCode);
         $product = $this->createMock(Product::class);
         $product->expects($this->once())
             ->method('getUnitPrecisions')
@@ -171,8 +137,8 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
 
         $value = $this->createMock(ProductLineItemInterface::class);
         $value->expects($this->once())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
+            ->method('getProductUnitCode')
+            ->willReturn($unitCode);
         $value->expects($this->once())
             ->method('getProduct')
             ->willReturn($product);
@@ -187,10 +153,6 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
         $sku = 'SKU1';
         $unitCode = 'item';
 
-        $productUnit = $this->createMock(ProductUnit::class);
-        $productUnit->expects($this->once())
-            ->method('getCode')
-            ->willReturn($unitCode);
         $product = $this->createMock(Product::class);
         $product->expects($this->once())
             ->method('getUnitPrecisions')
@@ -201,8 +163,8 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
 
         $value = $this->createMock(ProductLineItemInterface::class);
         $value->expects($this->once())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
+            ->method('getProductUnitCode')
+            ->willReturn($unitCode);
         $value->expects($this->once())
             ->method('getProduct')
             ->willReturn($product);
@@ -236,6 +198,7 @@ class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
         $unitCode = 'item';
 
         $product = $this->createMock(Product::class);
+
         $product->expects($this->once())
             ->method('getUnitPrecisions')
             ->willReturn([$this->getUnitPrecision('set')]);

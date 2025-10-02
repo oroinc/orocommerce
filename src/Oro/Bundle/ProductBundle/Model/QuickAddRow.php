@@ -3,11 +3,13 @@
 namespace Oro\Bundle\ProductBundle\Model;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 /**
  * A model that represents a row in {@see QuickAddRowCollection}.
  */
-class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
+class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface, ProductUnitHolderInterface
 {
     public const INDEX = 'index';
     public const SKU = 'sku';
@@ -23,6 +25,8 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
     private ?string $organization;
     /** @var array [['message' => string, 'parameters' => array, 'propertyPath' => string], ...] */
     private array $errors = [];
+    /** @var array [['message' => string, 'parameters' => array, 'propertyPath' => string], ...] */
+    private array $warnings = [];
     /** @var QuickAddField[] [name => field, ...] */
     private $additionalFields = [];
 
@@ -126,6 +130,20 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
         return $this;
     }
 
+    public function addWarning(string $errorMessage, array $additionalParameters = [], string $propertyPath = ''): self
+    {
+        $this->warnings[] = [
+            'message' => $errorMessage,
+            'parameters' => array_merge($additionalParameters, [
+                '{{ index }}' => $this->index,
+                '{{ sku }}' => $this->sku
+            ]),
+            'propertyPath' => $propertyPath ?? '',
+        ];
+
+        return $this;
+    }
+
     /**
      * @return array [['message' => string, 'parameters' => array, 'propertyPath' => string], ...]
      */
@@ -134,9 +152,22 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
         return $this->errors;
     }
 
+    /**
+     * @return array [['message' => string, 'parameters' => array, 'propertyPath' => string], ...]
+     */
+    public function getWarnings(): array
+    {
+        return $this->warnings;
+    }
+
     public function hasErrors(): bool
     {
         return !empty($this->errors);
+    }
+
+    public function hasWarnings(): bool
+    {
+        return !empty($this->warnings);
     }
 
     public function addAdditionalField(QuickAddField $field): self
@@ -157,5 +188,32 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
     public function getAdditionalField(string $name): ?QuickAddField
     {
         return $this->additionalFields[$name] ?? null;
+    }
+
+    #[\Override]
+    public function getProductHolder(): ?Product
+    {
+        return $this->product;
+    }
+
+    #[\Override]
+    public function getProductUnit(): ?ProductUnit
+    {
+        return $this->getProductUnitPrecision()?->getUnit();
+    }
+
+    public function getProductUnitPrecision(): ?ProductUnitPrecision
+    {
+        if (!$this->product || !$this->unit) {
+            return null;
+        }
+
+        return $this->product->getUnitPrecision($this->unit);
+    }
+
+    #[\Override]
+    public function getProductUnitCode(): ?string
+    {
+        return $this->unit;
     }
 }

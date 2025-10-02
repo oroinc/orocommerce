@@ -661,6 +661,7 @@ services:
         arguments:
             - '@oro_product.model.builder.quick_add_row_input_parser'
             - '@oro_product.model.builder.quick_add_row_product_mapper'
+            - '@oro_product.service.quantity_rounding'
 
     oro_product.model.quick_add_row_product_grouper:
         class: 'Oro\Bundle\ProductBundle\Model\Grouping\QuickAddRowGrouper'
@@ -2091,28 +2092,26 @@ services:
 
     oro_product.quick_add.violations_mapper:
         class: Oro\Bundle\ProductBundle\QuickAdd\QuickAddRowCollectionViolationsMapper
+        calls:
+            - [ setExcludedGroupsFromMultiGroupValidation, [ [ 'oro_shopping_list_quick_add_processor' ] ] ]
 
     oro_product.form_handler.quick_add_import_from_file:
         class: Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromFileHandler
         arguments:
             - '@oro_product.model.builder.quick_add_row_collection'
             - '@event_dispatcher'
-            - '@validator'
             - '@oro_product.model.quick_add_row_product_grouper'
-            - '@oro_product.quick_add.violations_mapper'
             - '@oro_product.quick_add.normalizer'
-            - '@oro_entity.manager.preloading_manager'
+            - '@oro_product.quick_add.quick_add_collection_validator'
 
     oro_product.form_handler.quick_add_import_from_plain_text:
         class: Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromPlainTextHandler
         arguments:
             - '@oro_product.model.builder.quick_add_row_collection'
             - '@event_dispatcher'
-            - '@validator'
             - '@oro_product.model.quick_add_row_product_grouper'
-            - '@oro_product.quick_add.violations_mapper'
             - '@oro_product.quick_add.normalizer'
-            - '@oro_entity.manager.preloading_manager'
+            - '@oro_product.quick_add.quick_add_collection_validator'
 
     oro_product.form_handler.quick_add_process:
         class: Oro\Bundle\ProductBundle\Form\Handler\QuickAddProcessHandler
@@ -2122,7 +2121,7 @@ services:
             - '@oro_product.model.quick_add_row_product_grouper'
             - '@oro_product.quick_add.violations_mapper'
             - '@oro_product.quick_add.normalizer'
-            - '@oro_entity.manager.preloading_manager'
+            - '@oro_product.quick_add.quick_add_collection_validator'
 
     oro_product.form.data_transformer.quick_add_row_collection:
         class: Oro\Bundle\ProductBundle\Form\DataTransformer\QuickAddRowCollectionTransformer
@@ -2461,6 +2460,19 @@ services:
         class: Oro\Bundle\ProductBundle\EventListener\ProductPageTemplateListener
         tags:
             - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\Product, event: prePersist }
+
+    oro_product.quick_add.quick_add_collection_validator:
+        class: Oro\Bundle\ProductBundle\QuickAdd\QuickAddCollectionValidator
+        arguments:
+            - '@validator'
+            - '@oro_entity.manager.preloading_manager'
+            - '@oro_product.quick_add.violations_mapper'
+            - '@oro_product.component_processor.registry'
+
+    oro_product.quick_add.quick_add_collection_issues_normalizer:
+        class: Oro\Bundle\ProductBundle\QuickAdd\Normalizer\QuickAddCollectionIssuesNormalizer
+        arguments:
+            - '@translator'
 
     oro_product.listener.product_category_search_listener:
         class: Oro\Bundle\ProductBundle\EventListener\ProductCategorySearchListener

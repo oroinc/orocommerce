@@ -87,7 +87,7 @@ class QuickAddRowCollection extends ArrayCollection
         return
             !$this->hasErrors()
             && $this->forAll(function ($key, QuickAddRow $row) {
-                return !$row->hasErrors();
+                return !$row->hasErrors() && !$row->hasWarnings();
             });
     }
 

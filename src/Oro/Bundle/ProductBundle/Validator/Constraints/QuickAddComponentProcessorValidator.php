@@ -27,6 +27,10 @@ class QuickAddComponentProcessorValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, QuickAddComponentProcessor::class);
         }
 
+        if (null === $value || '' === $value) {
+            return;
+        }
+
         if (!is_scalar($value)) {
             throw new UnexpectedValueException($value, 'string');
         }

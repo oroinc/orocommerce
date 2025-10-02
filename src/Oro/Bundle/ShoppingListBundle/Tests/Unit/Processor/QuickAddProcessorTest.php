@@ -201,9 +201,9 @@ class QuickAddProcessorTest extends \PHPUnit\Framework\TestCase
                     ]
                 ],
                 new Request(),
-                [],
-                [],
-                []
+                [1, 1],
+                [1],
+                [1 => ['item' => 11, 'kg' => 12]]
             ],
             'existing shopping list' => [
                 [

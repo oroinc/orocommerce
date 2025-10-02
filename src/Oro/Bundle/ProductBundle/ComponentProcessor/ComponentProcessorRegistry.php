@@ -49,4 +49,19 @@ class ComponentProcessorRegistry
 
         return false;
     }
+
+    public function getAllowedProcessorsNames(): array
+    {
+        $result = [];
+
+        foreach ($this->processorNames as $name) {
+            /** @var ComponentProcessorInterface $processor */
+            $processor = $this->processorContainer->get($name);
+            if ($processor->isAllowed()) {
+                $result[] = $name;
+            }
+        }
+
+        return $result;
+    }
 }

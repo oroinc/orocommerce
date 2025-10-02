@@ -85,9 +85,13 @@ const QuickAddImportFormView = BaseView.extend({
             return false;
         }
 
+        const formName = this.$el.attr('name');
+        const componentField = this.$el.find(`input[name="${formName}[component]"]`);
+
+        componentField.val(this.productsCollection.options.validatedForComponent || null);
+
         event.preventDefault();
-        this.submitForm()
-            .always(() => this.resetFileInput());
+        this.submitForm().always(() => this.resetFileInput());
     },
 
     submitForm(options) {

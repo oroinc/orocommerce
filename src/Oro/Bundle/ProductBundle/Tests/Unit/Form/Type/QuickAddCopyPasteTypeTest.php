@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
+use Oro\Bundle\ProductBundle\Validator\Constraints\QuickAddComponentProcessorValidator;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 
@@ -14,6 +15,16 @@ class QuickAddCopyPasteTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension([], []),
             $this->getValidatorExtension(true)
+        ];
+    }
+
+    #[\Override]
+    protected function getValidators(): array
+    {
+        $quickAddComponentProcessorValidator = $this->createMock(QuickAddComponentProcessorValidator::class);
+
+        return [
+            QuickAddComponentProcessorValidator::class => $quickAddComponentProcessorValidator,
         ];
     }
 
@@ -54,17 +65,20 @@ class QuickAddCopyPasteTypeTest extends FormIntegrationTestCase
             'empty string' => [
                 'data' => [
                     QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME => '',
+                    QuickAddCopyPasteType::COMPONENT_FIELD_NAME => null,
                 ],
                 'isValid' => true
             ],
             'invalid string' => [
                 'data' => [
                     QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME => 'abcdef',
+                    QuickAddCopyPasteType::COMPONENT_FIELD_NAME => null,
                 ],
                 'isValid' => false
             ],
             'valid string with comma separator' => [
                 'data' => [
+                    QuickAddCopyPasteType::COMPONENT_FIELD_NAME => 'test',
                     QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME => <<<TEXT
 ABC,1,item
 DEF,4.5,item
@@ -75,6 +89,7 @@ TEXT
             ],
             'valid string with tab separator' => [
                 'data' => [
+                    QuickAddCopyPasteType::COMPONENT_FIELD_NAME => null,
                     QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME => <<<TEXT
 ABC	1	item
 DEF	4.5	item
@@ -85,6 +100,7 @@ TEXT
             ],
             'valid string with space separator' => [
                 'data' => [
+                    QuickAddCopyPasteType::COMPONENT_FIELD_NAME => null,
                     QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME => <<<TEXT
 ABC 1 item
 DEF 4.5 item
@@ -95,6 +111,7 @@ TEXT
             ],
             'valid comma separated string without optional field' => [
                 'data' => [
+                    QuickAddCopyPasteType::COMPONENT_FIELD_NAME => null,
                     QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME => <<<TEXT
 ABC,1,item
 DEC,1
@@ -106,6 +123,7 @@ TEXT
             ],
             'valid semicolon separated string without optional field' => [
                 'data' => [
+                    QuickAddCopyPasteType::COMPONENT_FIELD_NAME => null,
                     QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME => <<<TEXT
 ABC;1;item
 DEC;1
@@ -117,6 +135,7 @@ TEXT
             ],
             'valid tab separated string without optional field' => [
                 'data' => [
+                    QuickAddCopyPasteType::COMPONENT_FIELD_NAME => null,
                     QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME => <<<TEXT
 ABC	1	item
 DEC	1
@@ -128,6 +147,7 @@ TEXT
             ],
             'tab separated string with negative quantity' => [
                 'data' => [
+                    QuickAddCopyPasteType::COMPONENT_FIELD_NAME => null,
                     QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME => <<<TEXT
 ABC	-1	item
 DEC	-1
@@ -139,6 +159,7 @@ TEXT
             ],
             'semicolon separated string with negative quantity' => [
                 'data' => [
+                    QuickAddCopyPasteType::COMPONENT_FIELD_NAME => null,
                     QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME => <<<TEXT
 ABC;-1;item
 DEC;-1
@@ -150,6 +171,7 @@ TEXT
             ],
             'string with space separator and negative quantity' => [
                 'data' => [
+                    QuickAddCopyPasteType::COMPONENT_FIELD_NAME => null,
                     QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME => <<<TEXT
 ABC -1 item
 DEF -4.5 item
@@ -160,6 +182,7 @@ TEXT
             ],
             'multiple rows in one line' => [
                 'data' => [
+                    QuickAddCopyPasteType::COMPONENT_FIELD_NAME => null,
                     QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME => <<<TEXT
 tag1 1 itemtag1 1 itemtag1 1 item
 TEXT

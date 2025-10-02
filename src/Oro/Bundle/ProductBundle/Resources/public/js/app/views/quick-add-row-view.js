@@ -4,6 +4,7 @@ import UnitsUtil from 'oroproduct/js/app/units-util';
 import QuantityHelper from 'oroproduct/js/app/quantity-helper';
 import __ from 'orotranslation/js/translator';
 import errorMessageTemplate from 'tpl-loader!oroform/templates/error-template.html';
+import warningMessageTemplate from 'tpl-loader!oroform/templates/warning-template.html';
 
 const QuickAddRowView = BaseView.extend({
     optionNames: BaseView.prototype.optionNames.concat([
@@ -32,7 +33,8 @@ const QuickAddRowView = BaseView.extend({
             'change:product_units model': () => this.updateUnitsSelector(),
             'removed model': 'onModelRemoved',
             'change model': 'updateUI',
-            'change:errors model': 'onErrorsChange'
+            'change:errors model': 'onErrorsChange',
+            'change:warnings model': 'onWarningsChange'
         };
     },
 
@@ -98,10 +100,12 @@ const QuickAddRowView = BaseView.extend({
             // or new model
             this.model = productsCollection.add({index: this.getRowNumber()});
         }
+        this.$el.parent().data('model', this.model);
         this.updateUnitsSelector(true);
         this._writeDOMValues(true);
         this.updateRemoveRowButton();
         this.showErrors();
+        this.showWarnings();
     },
 
     getRowNumber() {
@@ -170,7 +174,8 @@ const QuickAddRowView = BaseView.extend({
             quantity,
             quantity_changed_manually: true
         });
-        this.removeErrorForAttribute('quantity');
+
+        this.model.collection.validateModels([this.model]);
     },
 
     onUnitChange() {
@@ -227,7 +232,7 @@ const QuickAddRowView = BaseView.extend({
             ...extraAttrs
         };
         this.model.set(attrs);
-        this.removeErrorForAttribute('product');
+        this.model.collection.validateModels([this.model]);
     },
 
     onProductNotFound(event) {
@@ -277,6 +282,22 @@ const QuickAddRowView = BaseView.extend({
         });
     },
 
+    showWarnings() {
+        const warnings = this.model.get('warnings');
+        if (!warnings || !warnings.length) {
+            return;
+        }
+        const $rowWarningsContainer = this.$el.parent().find('.fields-row-warning');
+        warnings.map(({propertyPath, message}) => {
+            const $input = this.$(this.attrElem[propertyPath]);
+            $input.addClass(`${$input[0].tagName.toLowerCase()}--warning`);
+            const id = $input.attr('id');
+            $rowWarningsContainer.append(
+                `<span id="${id}-warning" class="validation-warning">${warningMessageTemplate({message})}</span>`
+            );
+        });
+    },
+
     onErrorsChange() {
         const previousErrors = this.model.previous('errors');
         previousErrors.map(({propertyPath}) => {
@@ -286,6 +307,17 @@ const QuickAddRowView = BaseView.extend({
             this.$el.parent().find(`#${id}-error`).remove();
         });
         this.showErrors();
+    },
+
+    onWarningsChange() {
+        const previousWarnings = this.model.previous('warnings');
+        previousWarnings.map(({propertyPath}) => {
+            const $input = this.$(this.attrElem[propertyPath]);
+            $input.removeClass(`${$input[0].tagName.toLowerCase()}--warning`);
+            const id = $input.attr('id');
+            this.$el.parent().find(`#${id}-warning`).remove();
+        });
+        this.showWarnings();
     },
 
     /**

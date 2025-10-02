@@ -8,6 +8,7 @@ use OpenSpout\Reader\CSV\Reader as CSVReader;
 use OpenSpout\Reader\ODS\Reader as ODSReader;
 use OpenSpout\Reader\ReaderInterface;
 use OpenSpout\Reader\XLSX\Reader as XLSXReader;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
@@ -18,15 +19,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class QuickAddRowCollectionBuilder
 {
-    private QuickAddRowInputParser $quickAddRowInputParser;
-    private ProductMapperInterface $productMapper;
-
     public function __construct(
-        QuickAddRowInputParser $quickAddRowInputParser,
-        ProductMapperInterface $productMapper
+        private readonly QuickAddRowInputParser $quickAddRowInputParser,
+        private readonly ProductMapperInterface $productMapper,
+        private readonly RoundingServiceInterface $quantityRoundingService
     ) {
-        $this->quickAddRowInputParser = $quickAddRowInputParser;
-        $this->productMapper = $productMapper;
     }
 
     public function buildFromArray(array $products): QuickAddRowCollection
@@ -75,6 +72,7 @@ class QuickAddRowCollectionBuilder
 
         if (!$collection->isEmpty()) {
             $this->productMapper->mapProducts($collection);
+            $this->normalizeQuantities($collection);
         }
 
         return $collection;
@@ -100,9 +98,36 @@ class QuickAddRowCollectionBuilder
 
         if (!$collection->isEmpty()) {
             $this->productMapper->mapProducts($collection);
+            $this->normalizeQuantities($collection);
         }
 
         return $collection;
+    }
+
+    private function normalizeQuantities(QuickAddRowCollection $collection): void
+    {
+        /**
+         * @var QuickAddRow $row
+         */
+        foreach ($collection as $row) {
+            $product = $row->getProduct();
+            $productUnitPrecision = $row->getProductUnitPrecision();
+            $quantity = $row->getQuantity();
+
+            if (!$product || !$productUnitPrecision || !$quantity) {
+                continue;
+            }
+
+            $precision = $productUnitPrecision->getPrecision();
+
+            $quantity = $this->quantityRoundingService->round(
+                $quantity,
+                $precision,
+                RoundingServiceInterface::ROUND_DOWN
+            );
+
+            $row->setQuantity($quantity);
+        }
     }
 
     private function detectDelimiter(string $line): string
