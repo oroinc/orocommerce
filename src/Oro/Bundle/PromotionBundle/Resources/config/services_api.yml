@@ -24,4 +24,4 @@ services:
             - '@oro_tax.api.order_line_item_taxes_provider'
             - '@oro_api.value_transformer'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem }
+            - { name: oro.api.processor, action: customize_loaded_data, collection: true, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem }
