@@ -574,3 +574,11 @@ services:
             - '@oro_security.token_accessor'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-quotes-grid, method: onBuildBefore }
+
+    oro_sale.migration.enumerable_config_keys_provider:
+        parent: oro_entity_extend.migration.enumerable_config_keys_provider
+        arguments:
+            - [ 'oro_sale.backend_product_visibility' ]
+            - 'prod_inventory_status'
+        tags:
+            - { name: migration.update_enumerable_system_config }

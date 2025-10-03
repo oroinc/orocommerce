@@ -882,3 +882,11 @@ services:
             - 'Oro\Bundle\OrderBundle\Entity\Order'
         tags:
             - { name: 'oro_datagrid.column_options_guesser' }
+
+    oro_order.migration.enumerable_config_keys_provider:
+        parent: oro_entity_extend.migration.enumerable_config_keys_provider
+        arguments:
+            - [ 'oro_order.frontend_product_visibility', 'oro_order.backend_product_visibility' ]
+            - 'prod_inventory_status'
+        tags:
+            - { name: migration.update_enumerable_system_config }

@@ -2479,3 +2479,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_search.prepare_entity_map, method: prepareEntityMapEvent, priority: 100 }
             - { name: kernel.event_listener, event: oro_search.search_mapping_collect, method: collectEntityMapEvent, priority: -100 }
+
+    oro_product.migration.enumerable_config_keys_provider:
+        parent: oro_entity_extend.migration.enumerable_config_keys_provider
+        arguments:
+            - [ 'oro_product.general_frontend_product_visibility', 'oro_product.inventory_filter_in_stock_statuses_for_simple_filter' ]
+            - 'prod_inventory_status'
+        tags:
+            - { name: migration.update_enumerable_system_config }

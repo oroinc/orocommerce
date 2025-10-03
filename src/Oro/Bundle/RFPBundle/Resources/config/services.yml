@@ -341,3 +341,11 @@ services:
             - '@oro_rfp.provider.request_product_price'
             - '@oro_pricing.provider.product_line_item_product_price'
             - '@oro_pricing.user_currency_manager'
+
+    oro_rfp.migration.enumerable_config_keys_provider:
+        parent: oro_entity_extend.migration.enumerable_config_keys_provider
+        arguments:
+            - [ 'oro_rfp.frontend_product_visibility', 'oro_rfp.backend_product_visibility' ]
+            - 'prod_inventory_status'
+        tags:
+            - { name: migration.update_enumerable_system_config }
