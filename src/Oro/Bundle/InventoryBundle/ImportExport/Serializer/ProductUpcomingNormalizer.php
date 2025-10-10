@@ -5,12 +5,12 @@ namespace Oro\Bundle\InventoryBundle\ImportExport\Serializer;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 /**
  * Transforms scalar value from csv file to fallback value.
  */
-class ProductUpcomingNormalizer implements ContextAwareDenormalizerInterface
+class ProductUpcomingNormalizer implements DenormalizerInterface
 {
     protected UpcomingProductProvider $productUpcomingProvider;
 
@@ -29,7 +29,7 @@ class ProductUpcomingNormalizer implements ContextAwareDenormalizerInterface
     }
 
     #[\Override]
-    public function denormalize($data, string $type, ?string $format = null, array $context = [])
+    public function denormalize($data, string $type, ?string $format = null, array $context = []): mixed
     {
         if ($data === '1') {
             $fallbackEntity = new EntityFieldFallbackValue();
@@ -39,5 +39,10 @@ class ProductUpcomingNormalizer implements ContextAwareDenormalizerInterface
         }
 
         return $fallbackEntity;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [EntityFieldFallbackValue::class => true];
     }
 }

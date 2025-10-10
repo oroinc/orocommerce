@@ -3,21 +3,24 @@
 namespace Oro\Bundle\TaxBundle\ImportExport\Serializer;
 
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
-use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * Serializer implementation for AbstractTaxCode instances
  */
-class TaxCodeNormalizer implements ContextAwareNormalizerInterface, ContextAwareDenormalizerInterface
+class TaxCodeNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     /**
      * @param AbstractTaxCode $object
      *
      */
     #[\Override]
-    public function normalize($object, ?string $format = null, array $context = [])
-    {
+    public function normalize(
+        mixed $object,
+        ?string $format = null,
+        array $context = []
+    ): float|int|bool|\ArrayObject|array|string|null {
         if (!$object instanceof AbstractTaxCode) {
             return null;
         }
@@ -35,7 +38,7 @@ class TaxCodeNormalizer implements ContextAwareNormalizerInterface, ContextAware
     }
 
     #[\Override]
-    public function denormalize($data, string $type, ?string $format = null, array $context = [])
+    public function denormalize($data, string $type, ?string $format = null, array $context = []): mixed
     {
         /** @var AbstractTaxCode $object */
         $object = new $type();
@@ -62,5 +65,10 @@ class TaxCodeNormalizer implements ContextAwareNormalizerInterface, ContextAware
     public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof AbstractTaxCode;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [AbstractTaxCode::class => true];
     }
 }
