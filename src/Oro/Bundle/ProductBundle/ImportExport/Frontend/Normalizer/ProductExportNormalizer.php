@@ -44,8 +44,11 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
     }
 
     #[\Override]
-    public function normalize($object, ?string $format = null, array $context = [])
-    {
+    public function normalize(
+        mixed $object,
+        ?string $format = null,
+        array $context = []
+    ): float|int|bool|\ArrayObject|array|string|null {
         $result = parent::normalize($object, $format, $context);
 
         $result[ProductExportDataConverter::PRODUCT_NAME_FIELD] = $this->localizationHelper->getLocalizedValue(

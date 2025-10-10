@@ -3,12 +3,12 @@
 namespace Oro\Bundle\ProductBundle\ImportExport\Normalizer;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * Normalizes product inventory status.
  */
-class InventoryStatusNormalizer implements ContextAwareNormalizerInterface
+class InventoryStatusNormalizer implements NormalizerInterface
 {
     #[\Override]
     public function supportsNormalization($data, ?string $format = null, array $context = []): bool
@@ -24,8 +24,11 @@ class InventoryStatusNormalizer implements ContextAwareNormalizerInterface
     }
 
     #[\Override]
-    public function normalize($object, ?string $format = null, array $context = [])
-    {
+    public function normalize(
+        mixed $object,
+        ?string $format = null,
+        array $context = []
+    ): float|int|bool|\ArrayObject|array|string|null {
         return [
             'product' => [
                 'sku' => $object->getSku(),
@@ -33,5 +36,10 @@ class InventoryStatusNormalizer implements ContextAwareNormalizerInterface
                 'inventoryStatus' => ($object->getInventoryStatus()) ? $object->getInventoryStatus()->getName() : null
             ]
         ];
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [Product::class => true];
     }
 }

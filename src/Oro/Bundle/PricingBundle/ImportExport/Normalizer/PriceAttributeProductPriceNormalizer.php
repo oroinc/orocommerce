@@ -5,6 +5,9 @@ namespace Oro\Bundle\PricingBundle\ImportExport\Normalizer;
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ConfigurableEntityNormalizer;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
+/**
+ * Normalizes PriceAttributeProductPrice entities for export by excluding quantity data
+ */
 class PriceAttributeProductPriceNormalizer extends ConfigurableEntityNormalizer
 {
     /**
@@ -12,8 +15,11 @@ class PriceAttributeProductPriceNormalizer extends ConfigurableEntityNormalizer
      *
      */
     #[\Override]
-    public function normalize($object, ?string $format = null, array $context = [])
-    {
+    public function normalize(
+        mixed $object,
+        ?string $format = null,
+        array $context = []
+    ): float|int|bool|\ArrayObject|array|string|null {
         $data = parent::normalize($object, $format, $context);
 
         if (array_key_exists('quantity', $data)) {

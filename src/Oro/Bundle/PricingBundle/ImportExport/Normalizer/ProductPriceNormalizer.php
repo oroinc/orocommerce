@@ -5,6 +5,9 @@ namespace Oro\Bundle\PricingBundle\ImportExport\Normalizer;
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ConfigurableEntityNormalizer;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
+/**
+ * Normalizes ProductPrice entities for export operations by excluding sensitive price list information
+ */
 class ProductPriceNormalizer extends ConfigurableEntityNormalizer
 {
     /**
@@ -12,8 +15,11 @@ class ProductPriceNormalizer extends ConfigurableEntityNormalizer
      *
      */
     #[\Override]
-    public function normalize($object, ?string $format = null, array $context = [])
-    {
+    public function normalize(
+        mixed $object,
+        ?string $format = null,
+        array $context = []
+    ): float|int|bool|\ArrayObject|array|string|null {
         $data = parent::normalize($object, $format, $context);
 
         if (array_key_exists('priceList', $data)) {

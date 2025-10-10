@@ -24,7 +24,7 @@ class RelatedProductNormalizer extends ConfigurableEntityNormalizer
     }
 
     #[\Override]
-    public function denormalize($data, string $type, ?string $format = null, array $context = [])
+    public function denormalize($data, string $type, ?string $format = null, array $context = []): mixed
     {
         if (!isset($data['sku'], $data['relatedItem'])) {
             return null;

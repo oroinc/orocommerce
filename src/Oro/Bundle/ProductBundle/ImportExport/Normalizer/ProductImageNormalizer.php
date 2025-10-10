@@ -50,8 +50,11 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
      *
      */
     #[\Override]
-    public function normalize(mixed $productImage, ?string $format = null, array $context = [])
-    {
+    public function normalize(
+        mixed $productImage,
+        ?string $format = null,
+        array $context = []
+    ): float|int|bool|\ArrayObject|array|string|null {
         $data = parent::normalize($productImage, $format, $context);
 
         $name = $productImage->getImage()->getOriginalFileName();
@@ -83,8 +86,12 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     }
 
     #[\Override]
-    public function denormalize(mixed $productImageData, string $type, ?string $format = null, array $context = [])
-    {
+    public function denormalize(
+        mixed $productImageData,
+        string $type,
+        ?string $format = null,
+        array $context = []
+    ): mixed {
         $imageTypes = $this->imageTypeProvider->getImageTypes();
         foreach ($productImageData['types'] as $imageType => $value) {
             if (!array_key_exists($imageType, $imageTypes) || !boolval($value)) {
