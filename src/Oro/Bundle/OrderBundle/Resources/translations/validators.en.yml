@@ -71,3 +71,8 @@ oro:
         order_limits:
             minimum_order_amount: 'A minimum order subtotal of %amount% is required to check out. Please add %difference% more to proceed.'
             maximum_order_amount: 'The order subtotal cannot exceed %amount%. Please remove at least %difference% to proceed.'
+    shoppinglist:
+        lineitem:
+            inventory_status:
+                checkout_not_supported: "This product's inventory status does not allow adding it to checkout."
+                rfq_not_supported: "This product's inventory status does not allow adding it to an RFQ."

@@ -194,6 +194,9 @@ oro:
             label: Customer Documents
             storefront_label: Documents
             description: Customer related documents. These files will be visible to the customer in the storefront.
+        pdf_documents:
+            label: PDF Documents
+            description: PDF documents associated with the order.
 
         shipping_tracking:
             entity_label: Shipping Tracking
@@ -512,7 +515,9 @@ oro:
             remove_seller_notes: 'Remove Seller Notes'
             create_order: 'Create Order'
             calculate_shipping: 'Calculate Shipping'
-
+            download_pdf:
+                label: 'Download'
+                title: 'Download Order PDF Document'
         menu:
             sales_tab.label: Sales
             order_list.description: List of existing orders
@@ -628,6 +633,16 @@ oro:
                 order_creation_new_order_owner:
                     label: 'Default Owner for New Orders'
                     tooltip: 'A user that should be used as an owner for newly created orders when the owner cannot be determined.'
+                generate_order_pdf_on_checkout_finish:
+                    title: 'Generate PDF When Order Is Created'
+                    tooltip: >-
+                        A PDF file will be generated once the order is placed, allowing it to be attached 
+                        to the order confirmation email sent to the customer.
+                enable_order_pdf_download_in_storefront:
+                    title: 'Enable Order PDF Download in Storefront'
+                    tooltip: >-
+                        Allows customers to download a PDF version of the order from order pages in the storefront.
+                        A PDF is generated with the current order data at the time of download.
             groups:
                 orders.title: 'Orders'
                 orders_history.title: 'Orders History'
@@ -663,6 +678,10 @@ oro:
                     label: Shipping Cost
                 shipping_method:
                     label: Shipping Method
+
+        email_template:
+            variables:
+                order_default_pdf_file: 'Order Default PDF File'
 
         dashboard:
             widget:
@@ -704,6 +723,36 @@ oro:
             columns_notice: The input file should be in JSON format.
             button.label: JSON Orders
 
+        pdf_file:
+            order_number: 'Order Number'
+            order_date: 'Order Date'
+            po_number: 'PO Number'
+            payment_method: 'Payment Method'
+            payment_status: 'Payment Status'
+            payment_term: 'Payment Term'
+            shipping_method: 'Shipping Method'
+            shipping_cost: 'Shipping Cost'
+            shipping_tracking: 'Shipping Tracking Numbers'
+            ship_by: 'Ship By'
+            billing_address: 'Billing Address'
+            shipping_address: 'Shipping Address'
+            line_items:
+                header:
+                    id: '#'
+                    product: 'Product'
+                    qty: 'QTY'
+                    unit_price: 'Unit price'
+                product:
+                    notes: 'Notes'
+                    ship_by: 'Ship By'
+            customer_notes:
+                title: 'Customer Notes'
+            footer:
+                page: 'Page'
+                of: 'of'
+            company_logo:
+                label: 'Company logo'
+
     frontend:
         order:
             entity_plural_label: Orders
@@ -724,6 +773,7 @@ oro:
                 kitConfiguration.label: Configuration
             created_by_seller:
                 label: This order was created on your behalf by a member of our staff.
+            download_pdf.label: 'Download'
 
 oro.address_validation.system_configuration:
     fields:

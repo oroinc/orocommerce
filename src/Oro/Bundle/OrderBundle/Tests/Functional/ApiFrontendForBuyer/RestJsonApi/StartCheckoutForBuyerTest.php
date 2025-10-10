@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontendForBuyer\RestJsonApi;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadBuyerCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class StartCheckoutForBuyerTest extends FrontendRestJsonApiTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -20,6 +23,15 @@ class StartCheckoutForBuyerTest extends FrontendRestJsonApiTestCase
 
     public function testStartCheckout(): void
     {
+        self::getConfigManager()->set(
+            'oro_order.frontend_product_visibility',
+            [
+                'prod_inventory_status.in_stock',
+                'prod_inventory_status.out_of_stock'
+            ]
+        );
+        self::getConfigManager()->flush();
+
         $response = $this->postSubresource(
             ['entity' => 'orders', 'id' => '<toString(@order4->id)>', 'association' => 'checkout']
         );

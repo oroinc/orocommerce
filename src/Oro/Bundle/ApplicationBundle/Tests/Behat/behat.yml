@@ -550,6 +550,9 @@ oro_behat_extension:
       options:
         mapping:
           Enable Guest RFQ Default: 'rfq[oro_rfp___guest_rfp][use_parent_scope_value]'
+          Enable Guest RFQ: 'rfq[oro_rfp___guest_rfp][value]'
+          Enable RFQ Default: 'rfq[oro_rfp___feature_enabled][use_parent_scope_value]'
+          Enable RFQ: 'rfq[oro_rfp___feature_enabled][value]'
 
     Checkout Configuration Form:
       selector: 'form[name="checkout"]'

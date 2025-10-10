@@ -1,0 +1,52 @@
+include:
+    - '@OroShoppingListBundle:ShoppingListFixture.yml'
+    - '@OroOrderBundle:OrderStatusesFixture.yml'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order_success:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'PdfSuccessOrder'
+        website: '@website1'
+        currency: USD
+        poNumber: 'ORD1'
+        shipUntil: '<(new DateTime("2022-09-26T19:27:00Z"))>'
+        lineItems: [ '@simpleOrderLineItem' ]
+
+    order_failure:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'PdfFailureOrder'
+        website: '@website1'
+        currency: USD
+        poNumber: 'ORD2'
+        lineItems: [ '@secondOrderLineItem' ]
+        status: '@orderStatusWaitForApproval'
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    simpleOrderLineItem:
+        product: '@product1'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item
+        __calls:
+            -   addOrder: [ '@order_success' ]
+
+    secondOrderLineItem:
+        product: '@product1'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item
+        __calls:
+            -   addOrder: [ '@order_failure' ]

@@ -29,6 +29,12 @@ The current file describes significant changes in the code that may affect the u
 
 #### OrderBundle
 * Added `\Oro\Bundle\OrderBundle\Provider\OrderEntityNameProvider` so that an order entity name can now be retrieved from `\Oro\Bundle\EntityBundle\Provider\EntityNameResolver`.
+* Added order PDF generation functionality:
+    * Added `\Oro\Bundle\OrderBundle\Entity\Order::$pdfDocuments` to-many relation that stores order PDF documents;
+    * Added `\Oro\Bundle\OrderBundle\PdfDocument\Manager\OrderPdfDocumentManager` as the main service to manage order PDF documents;
+    * Added `\Oro\Bundle\OrderBundle\PdfDocument\UrlGenerator\OrderPdfDocumentUrlGenerator` as the main service to generate URLs for order PDF documents;
+    * Added `\Oro\Bundle\OrderBundle\Twig\OrderPdfDocumentUrlExtension` twig extension to provide the ability to generate URLs for order PDF documents in twig templates;
+    * Added `\Oro\Bundle\OrderBundle\Provider\EmailTemplate\OrderPdfFileVariableProcessor` and `\Oro\Bundle\OrderBundle\Provider\EmailTemplate\OrderPdfFileVariableProvider` to enable the use of order PDF documents in email templates;
 
 #### PaymentBundle
 * Added `paymentAction` option to the `\Oro\Bundle\PaymentBundle\Action\PurchaseAction` allowing to pass the action name to perform, e.g. purchase/charge/authorize.
@@ -36,12 +42,25 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\PaymentBundle\Entity\RequestLogsAwareInterface` to mark entities that can store transaction request and response logs.
 * Added `\Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodGroupAwareProvider` that provides a filtered list of payment methods that are applicable for a specific payment method group.
 * Added the ability to refund `purchase` and `charge` payment transactions in `oro_payment_transaction_refund`.
+* Added `\Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses` class with constants for each payment status available out-of-the-box.
+* Added `\Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\PaymentStatusCalculator` and implementations for each payment status.
+* Added `\Oro\Bundle\PaymentBundle\Event\PaymentStatusUpdatedEvent` dispatched in `\Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager` after payment status is changed.
 
 #### PricingBundle
 * Added `\Oro\Bundle\PricingBundle\Layout\DataProvider\TotalsProvider` layout data provider.
 
 #### SalesBundle
 * Added the support for `data-clear-if` and `data-clear-element` attributes in the `dependent-field-component.js`.
+
+#### ProductBundle
+* Added `\Oro\Bundle\ProductBundle\Controller\Frontend\QuickAddValidationController` for real-time validation of quick order form rows.
+* Added `\Oro\Bundle\ProductBundle\QuickAdd\QuickAddCollectionValidator` to centralize validation logic for quick add collections.
+* Added component-specific validation groups for quick add processors:
+  * `oro_shopping_list_to_checkout_quick_add_processor`;
+  * `oro_rfp_quick_add_processor`.
+
+#### FormBundle
+* Added `\Oro\Bundle\FormBundle\Resources\public\templates\warning-template.html` for displaying validation warnings in forms.
 
 ### Changed
 
@@ -56,9 +75,31 @@ The current file describes significant changes in the code that may affect the u
 * Renamed the `$.paymentMethodAction` to `$.refundPaymentMethodAction` attribute in `oro_payment_transaction_refund`.
 * Renamed the `$.refundAction` to `$.refundPaymentMethodAction` attribute in `oro_payment_transaction_refund`.
 * Fixed the broken styling in the dialog of `oro_payment_transaction_cancel`.
+* Updated `\Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager` with new methods:
+  * Added: getPaymentStatus, setPaymentStatus, updatePaymentStatus
+  * Deleted: updateStatus, updateStatusForEntity, getPaymentStatusForEntity
+
+#### ProductBundle
+* Updated `\Oro\Bundle\ProductBundle\Model\QuickAddRow` to implement `ProductUnitHolderInterface` for enhanced validation compatibility.
+* Updated `\Oro\Bundle\ProductBundle\Form\Type\QuickAddType` to make component field required for validation.
+* Updated `\Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder` to round quantities according to product unit precision.
+
+#### OrderBundle
+* Added new validation groups for quick add processors in `validation.yml`:
+    * `oro_shopping_list_to_checkout_quick_add_processor`;
+    * `oro_rfp_quick_add_processor`.
+
+#### InventoryBundle
+* Added new validation groups for quick add processors in `validation.yml`:
+    * `oro_shopping_list_to_checkout_quick_add_processor`.
 
 ### Removed
 
+#### OrderBundle
+* Removed `\Oro\Bundle\OrderBundle\Provider\OrderPaymentStatusProvider`, added `\Oro\Bundle\OrderBundle\EventListener\PaymentStatusUpdatedListener` instead.
+
+#### PaymentBundle
+* Removed `\Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider` and interface. Added `\Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\PaymentStatusCalculator` and implementations for each payment status instead.
 
 ## 6.1.0 (2025-03-31)
 [Show detailed list of changes](incompatibilities-6-1.md)

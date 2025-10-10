@@ -1,0 +1,124 @@
+parameters:
+    # Default order PDF document parameters:
+    oro_order.pdf_document.order_default.pdf_document_type: !php/const 'Oro\Bundle\OrderBundle\PdfDocument\OrderPdfDocumentType::DEFAULT'
+    oro_order.pdf_document.order_default.pdf_options_preset: !php/const 'Oro\Bundle\PdfGeneratorBundle\PdfOptionsPreset\PdfOptionsPreset::DEFAULT'
+
+services:
+
+    oro_order.pdf_document.generator.default:
+        class: 'Oro\Bundle\OrderBundle\PdfDocument\Generator\OrderPdfDocumentGenerator'
+        arguments:
+            $orderPdfDocumentGenerator: '@oro_pdf_generator.pdf_document.generator.generic'
+            $doctrine: '@doctrine'
+            $websiteManager: '@oro_website.manager'
+            $preferredLocalizationProvider: '@oro_locale.provider.preferred_localization_provider'
+            $localizationProvider: '@oro_locale.provider.current_localization'
+            $pdfDocumentType: '%oro_order.pdf_document.order_default.pdf_document_type%'
+        tags:
+            - { name: 'oro_pdf_generator.pdf_document.generator' }
+
+    # Order PDF document manager that manages PDF documents generating them later on demand.
+    oro_order.pdf_document.manager.deferred:
+        class: 'Oro\Bundle\OrderBundle\PdfDocument\Manager\OrderPdfDocumentManager'
+        arguments:
+            $singlePdfDocumentBySourceEntityProvider: '@oro_pdf_generator.pdf_document.provider.single_pdf_document_by_source_entity'
+            $pdfDocumentOperatorRegistry: '@oro_pdf_generator.pdf_document.operator.registry'
+            $pdfDocumentNameProvider: '@oro_pdf_generator.pdf_document.name.provider.generic'
+            $pdfDocumentGenerationMode: !php/const 'Oro\Bundle\PdfGeneratorBundle\PdfDocument\PdfDocumentGenerationMode::DEFERRED'
+
+    # Order PDF document manager that manages PDF documents generating them instantly.
+    oro_order.pdf_document.manager.instant:
+        class: 'Oro\Bundle\OrderBundle\PdfDocument\Manager\OrderPdfDocumentManager'
+        arguments:
+            $singlePdfDocumentBySourceEntityProvider: '@oro_pdf_generator.pdf_document.provider.single_pdf_document_by_source_entity'
+            $pdfDocumentOperatorRegistry: '@oro_pdf_generator.pdf_document.operator.registry'
+            $pdfDocumentNameProvider: '@oro_pdf_generator.pdf_document.name.provider.generic'
+            $pdfDocumentGenerationMode: !php/const 'Oro\Bundle\PdfGeneratorBundle\PdfDocument\PdfDocumentGenerationMode::INSTANT'
+
+    # Order PDF document manager that manages PDF documents generated externally.
+    oro_order.pdf_document.manager.external:
+        class: 'Oro\Bundle\OrderBundle\PdfDocument\Manager\OrderPdfDocumentManager'
+        arguments:
+            $singlePdfDocumentBySourceEntityProvider: '@oro_pdf_generator.pdf_document.provider.single_pdf_document_by_source_entity'
+            $pdfDocumentOperatorRegistry: '@oro_pdf_generator.pdf_document.operator.registry'
+            $pdfDocumentNameProvider: '@oro_pdf_generator.pdf_document.name.provider.generic'
+            $pdfDocumentGenerationMode: !php/const 'Oro\Bundle\PdfGeneratorBundle\PdfDocument\PdfDocumentGenerationMode::EXTERNAL'
+
+    oro_order.pdf_document.url_generator.back_office:
+        class: 'Oro\Bundle\OrderBundle\PdfDocument\UrlGenerator\OrderPdfDocumentUrlGenerator'
+        arguments:
+            $orderPdfDocumentManager: '@oro_order.pdf_document.manager.deferred'
+            $pdfDocumentUrlGenerator: '@oro_pdf_generator.pdf_document.url_generator'
+
+    oro_order.pdf_document.url_generator.storefront:
+        class: 'Oro\Bundle\OrderBundle\PdfDocument\UrlGenerator\OrderPdfDocumentUrlGenerator'
+        arguments:
+            $orderPdfDocumentManager: '@oro_order.pdf_document.manager.deferred'
+            $pdfDocumentUrlGenerator: '@oro_frontend_pdf_generator.pdf_document.url_generator'
+
+    oro_order.twig.order_pdf_document_url:
+        class: 'Oro\Bundle\OrderBundle\Twig\OrderPdfDocumentUrlExtension'
+        arguments:
+            $container: '@oro_platform.twig.service_locator'
+        tags:
+            - { name: 'twig.extension' }
+
+    oro_order.event_listener.pdf_document.create_pdf_document_on_checkout_finish:
+        class: 'Oro\Bundle\OrderBundle\EventListener\PdfDocument\CreatePdfDocumentOnCheckoutFinishListener'
+        arguments:
+            $orderPdfDocumentManager: '@oro_order.pdf_document.manager.deferred'
+            $doctrine: '@doctrine'
+            $configManager: '@oro_config.manager'
+            $pdfDocumentType: '%oro_order.pdf_document.order_default.pdf_document_type%'
+            $pdfOptionsPreset: '%oro_order.pdf_document.order_default.pdf_options_preset%'
+        tags:
+            - { name: 'kernel.event_listener', event: 'extendable_action.finish_checkout', method: 'onCheckoutFinish' }
+
+    oro_order.provider.email_template.order_default_pdf_file_variable_provider:
+        class: 'Oro\Bundle\OrderBundle\Provider\EmailTemplate\OrderPdfFileVariableProvider'
+        arguments:
+            $translator: '@translator'
+            $pdfFileVariableName: 'orderDefaultPdfFile'
+        tags:
+            - { name: 'oro_email.emailtemplate.variable_provider', scope: 'entity' }
+
+    oro_order.provider.email_template.order_default_pdf_file_variable_processor:
+        class: 'Oro\Bundle\OrderBundle\Provider\EmailTemplate\OrderPdfFileVariableProcessor'
+        arguments:
+            $orderPdfDocumentManager: '@oro_order.pdf_document.manager.instant'
+            $doctrine: '@doctrine'
+            $pdfDocumentType: '%oro_order.pdf_document.order_default.pdf_document_type%'
+        tags:
+            - { name: 'oro_email.emailtemplate.variable_processor', alias: 'order_default_pdf_file' }
+
+    oro_order.event_listener.pdf_document.add_totals_to_pdf_document_payload_listener:
+        class: 'Oro\Bundle\OrderBundle\EventListener\PdfDocument\AddTotalsToPdfDocumentPayloadListener'
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+        tags:
+            - { name: 'kernel.event_listener', event: 'Oro\Bundle\PdfGeneratorBundle\Event\BeforePdfDocumentGeneratedEvent', method: 'onBeforePdfDocumentGenerated' }
+
+    oro_order.event_listener.pdf_document.add_payment_methods_to_pdf_document_payload_listener:
+        class: 'Oro\Bundle\OrderBundle\EventListener\PdfDocument\AddPaymentMethodsToPdfDocumentPayloadListener'
+        arguments:
+            - '@doctrine'
+            - '@oro_payment.provider.payment_transaction'
+        tags:
+            - { name: 'kernel.event_listener', event: 'Oro\Bundle\PdfGeneratorBundle\Event\BeforePdfDocumentGeneratedEvent', method: 'onBeforePdfDocumentGenerated' }
+
+    oro_order.event_listener.pdf_document.add_payment_status_to_pdf_document_payload_listener:
+        class: 'Oro\Bundle\OrderBundle\EventListener\PdfDocument\AddPaymentStatusToPdfDocumentPayloadListener'
+        arguments:
+            - '@doctrine'
+            - '@oro_payment.manager.payment_status'
+        tags:
+            - { name: 'kernel.event_listener', event: 'Oro\Bundle\PdfGeneratorBundle\Event\BeforePdfDocumentGeneratedEvent', method: 'onBeforePdfDocumentGenerated' }
+
+    oro_order.event_listener.pdf_document.add_payment_term_to_pdf_document_payload_listener:
+        class: 'Oro\Bundle\OrderBundle\EventListener\PdfDocument\AddPaymentTermToPdfDocumentPayloadListener'
+        arguments:
+            - '@doctrine'
+            - '@oro_payment_term.provider.payment_term_association'
+        tags:
+            - { name: 'kernel.event_listener', event: 'Oro\Bundle\PdfGeneratorBundle\Event\BeforePdfDocumentGeneratedEvent', method: 'onBeforePdfDocumentGenerated' }

@@ -3,13 +3,10 @@
 
 Feature: Create Order from Quick order form with Product Kits
 
-  Scenario: Product Kit can be selected in Quick Order Form
+  Scenario: Add Product Kit inline
     Given I login as AmandaRCole@example.org buyer
     When I click "Quick Order"
-    Then I should see an "Enabled Create Order Button" element
-    And "Quick Order Form Buttons" should contains "Enabled Create Order Button Wrapper" with attributes:
-      | title | ~ |
-    When I fill "Quick Order Form" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | product-kit-01 |
     And I wait for products to load
     And I click on empty space
@@ -18,112 +15,29 @@ Feature: Create Order from Quick order form with Product Kits
       | QTY1      | 1                               |
       | UNIT1     | piece                           |
       | SUBTOTAL1 | N/A                             |
-    And I should see a "Disabled Create Order Button" element
-    And "Quick Order Form Buttons" should contains "Disabled Create Order Button Wrapper" with attributes:
-      | title | Some products require additional configuration before creating an order. Please add all products to a shopping list to complete configuration, or request a quote instead. |
-    When I click on "Disabled Create Order Button Wrapper"
-    Then Page title equals to "Quick Order"
+    And I should see that "Quick Add Form Validation Row1 Warning" contains "This product cannot be added through the quick order form. Use the product details page instead."
+    When I click "Create Order"
+    Then I should see "Some selected items need a quick review. Update or remove them to proceed to checkout." flash message
+    And I close all flash messages
 
-  Scenario: Add simple product
-    When I fill "Quick Add Copy Paste Form" with:
-      | Paste your order | simple-product-01 2 |
-    And I click "Verify Order"
-    Then "Quick Order Form" must contains values:
-      | SKU1      | product-kit-01 - Product Kit 01       |
-      | QTY1      | 1                                     |
-      | UNIT1     | piece                                 |
-      | SUBTOTAL1 | N/A                                   |
-      | SKU2      | SIMPLE-PRODUCT-01 - Simple Product 01 |
-      | QTY2      | 2                                     |
-      | UNIT2     | piece                                 |
-      | SUBTOTAL2 | $2.469                                |
-    And I should see a "Disabled Create Order Button" element
-    And "Quick Order Form Buttons" should contains "Disabled Create Order Button Wrapper" with attributes:
-      | title | Some products require additional configuration before creating an order. Please add all products to a shopping list to complete configuration, or request a quote instead. |
-    When I click on "Disabled Create Order Button Wrapper"
-    Then Page title equals to "Quick Order"
-
-  Scenario: Remove Product Kit
+  Scenario: Add Product Kit via copy-paste
     When I click on "Quick Order Form > DeleteRow1"
-    Then "Quick Order Form" must contains values:
-      | SKU2      | SIMPLE-PRODUCT-01 - Simple Product 01 |
-      | QTY2      | 2                                     |
-      | UNIT2     | piece                                 |
-      | SUBTOTAL2 | $2.469                                |
-    And I should see an "Enabled Create Order Button" element
-    And "Quick Order Form Buttons" should contains "Enabled Create Order Button Wrapper" with attributes:
-      | title | ~ |
-
-  Scenario: Add Product Kit (copy paste)
-    When I fill "Quick Add Copy Paste Form" with:
-      | Paste your order | product-kit-01 1 |
+    And I fill "Quick Add Copy Paste Form" with:
+      | Paste your order | product-kit-01,1 |
     And I click "Verify Order"
     Then "Quick Order Form" must contains values:
-      | SKU2      | SIMPLE-PRODUCT-01 - Simple Product 01 |
-      | QTY2      | 2                                     |
-      | UNIT2     | piece                                 |
-      | SUBTOTAL2 | $2.469                                |
-      | SKU3      | PRODUCT-KIT-01 - Product Kit 01       |
-      | QTY3      | 1                                     |
-      | UNIT3     | piece                                 |
-      | SUBTOTAL3 | N/A                                   |
-    And I should see a "Disabled Create Order Button" element
-    And "Quick Order Form Buttons" should contains "Disabled Create Order Button Wrapper" with attributes:
-      | title | Some products require additional configuration before creating an order. Please add all products to a shopping list to complete configuration, or request a quote instead.|
-    When I click on "Disabled Create Order Button Wrapper"
-    Then Page title equals to "Quick Order"
+      | SKU2      | PRODUCT-KIT-01 - Product Kit 01 |
+      | QTY2      | 1                               |
+      | UNIT2     | piece                           |
+      | SUBTOTAL2 | N/A                             |
+    And I should see that "Quick Add Form Validation Row2 Error" contains "This product cannot be added through the quick order form. Use the product details page instead."
+    When I click "Create Order"
+    Then I should see "Some selected items need a quick review. Update or remove them to proceed to checkout." flash message
+    And I close all flash messages
 
-  Scenario: Select Simple Product instead of Product Kit
-    When I fill "Quick Order Form" with:
-      | SKU3 | simple-product-02 |
-    And I wait for products to load
-    And I click on empty space
-    Then "Quick Order Form" must contains values:
-      | SKU2      | SIMPLE-PRODUCT-01 - Simple Product 01 |
-      | QTY2      | 2                                     |
-      | UNIT2     | piece                                 |
-      | SUBTOTAL2 | $2.469                                |
-      | SKU3      | simple-product-02 - Simple Product 02 |
-      | QTY3      | 1                                     |
-      | UNIT3     | piece                                 |
-      | SUBTOTAL3 | $2.469                                |
-    And I should see an "Enabled Create Order Button" element
-    And "Quick Order Form Buttons" should contains "Enabled Create Order Button Wrapper" with attributes:
-      | title | ~ |
-
-  Scenario: Select Product Kit instead of Simple Product
-    When I fill "Quick Order Form" with:
-      | SKU2 | product-kit-01 |
-    And I wait for products to load
-    And I click on empty space
-    Then "Quick Order Form" must contains values:
-      | SKU2      | product-kit-01 - Product Kit 01       |
-      | QTY2      | 2                                     |
-      | UNIT2     | piece                                 |
-      | SUBTOTAL2 | N/A                                   |
-      | SKU3      | simple-product-02 - Simple Product 02 |
-      | QTY3      | 1                                     |
-      | UNIT3     | piece                                 |
-      | SUBTOTAL3 | $2.469                                |
-    And I should see a "Disabled Create Order Button" element
-    And "Quick Order Form Buttons" should contains "Disabled Create Order Button Wrapper" with attributes:
-      | title | Some products require additional configuration before creating an order. Please add all products to a shopping list to complete configuration, or request a quote instead. |
-    When I click on "Disabled Create Order Button Wrapper"
-    Then Page title equals to "Quick Order"
-
-  Scenario: Remove Product Kit
+  Scenario: Import Product Kit via file
     When I click on "Quick Order Form > DeleteRow2"
-    Then "Quick Order Form" must contains values:
-      | SKU3      | simple-product-02 - Simple Product 02 |
-      | QTY3      | 1                                     |
-      | UNIT3     | piece                                 |
-      | SUBTOTAL3 | $2.469                                |
-    And I should see an "Enabled Create Order Button" element
-    And "Quick Order Form Buttons" should contains "Enabled Create Order Button Wrapper" with attributes:
-      | title | ~ |
-
-  Scenario: Add Product Kit (import)
-    When I click "What File Structure Is Accepted"
+    And I click "What File Structure Is Accepted"
     Then I should see that "UiDialog Title" contains "Import Excel .CSV File"
     When I download "the CSV template"
     And I close ui dialog
@@ -132,23 +46,11 @@ Feature: Create Order from Quick order form with Product Kits
       | product-kit-01 | 1        | piece |
     And I import file for quick order
     Then "Quick Order Form" must contains values:
-      | SKU3      | simple-product-02 - Simple Product 02 |
-      | QTY3      | 1                                     |
-      | UNIT3     | piece                                 |
-      | SUBTOTAL3 | $2.469                                |
-      | SKU4      | PRODUCT-KIT-01 - Product Kit 01       |
-      | QTY4      | 1                                     |
-      | UNIT4     | piece                                 |
-      | SUBTOTAL4 | N/A                                   |
-    And I should see a "Disabled Create Order Button" element
-    And "Quick Order Form Buttons" should contains "Disabled Create Order Button Wrapper" with attributes:
-      | title | Some products require additional configuration before creating an order. Please add all products to a shopping list to complete configuration, or request a quote instead. |
-    When I click on "Disabled Create Order Button Wrapper"
-    Then Page title equals to "Quick Order"
-
-  Scenario: Remove all products
-    When I click on "Quick Order Form > DeleteRow3"
-    And I click on "Quick Order Form > DeleteRow4"
-    Then I should see an "Enabled Create Order Button" element
-    And "Quick Order Form Buttons" should contains "Enabled Create Order Button Wrapper" with attributes:
-      | title | ~ |
+      | SKU3      | PRODUCT-KIT-01 - Product Kit 01 |
+      | QTY3      | 1                               |
+      | UNIT3     | piece                           |
+      | SUBTOTAL3 | N/A                             |
+    And I should see that "Quick Add Form Validation Row3 Error" contains "This product cannot be added through the quick order form. Use the product details page instead."
+    When I click "Create Order"
+    Then I should see "Some selected items need a quick review. Update or remove them to proceed to checkout." flash message
+    And I close all flash messages

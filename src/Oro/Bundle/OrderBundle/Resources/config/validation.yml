@@ -553,3 +553,20 @@ Oro\Bundle\ProductBundle\Entity\Product:
                     groups:
                         # Used by oro_order.product_kit.checker.product_kit_item_product_availability_checker
                         - product_kit_item_product_is_available_for_order
+
+Oro\Bundle\ProductBundle\Model\QuickAddRow:
+    properties:
+        product:
+            # constraint_group_key is defined in \Oro\Bundle\ProductBundle\QuickAdd\QuickAddRowCollectionViolationsMapper::CONSTRAINT_GROUP_KEY
+            -   Oro\Bundle\OrderBundle\Validator\Constraints\HasSupportedInventoryStatus:
+                    message: 'oro.shoppinglist.lineitem.inventory_status.checkout_not_supported'
+                    configurationPath: 'oro_order.frontend_product_visibility'
+                    groups: [ oro_shopping_list_to_checkout_quick_add_processor ]
+                    payload:
+                        constraint_group_key: HasSupportedInventoryStatus
+            -   Oro\Bundle\OrderBundle\Validator\Constraints\HasSupportedInventoryStatus:
+                    message: 'oro.shoppinglist.lineitem.inventory_status.rfq_not_supported'
+                    configurationPath: 'oro_rfp.frontend_product_visibility'
+                    groups: [ oro_rfp_quick_add_processor ]
+                    payload:
+                        constraint_group_key: HasSupportedInventoryStatus

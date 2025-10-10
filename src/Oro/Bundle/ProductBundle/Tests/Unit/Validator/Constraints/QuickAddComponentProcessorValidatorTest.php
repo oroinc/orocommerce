@@ -30,6 +30,24 @@ class QuickAddComponentProcessorValidatorTest extends ConstraintValidatorTestCas
         return new QuickAddComponentProcessorValidator($this->processorRegistry);
     }
 
+    /**
+     * @dataProvider emptyValueDataProvider
+     */
+    public function testEmptyValue(?string $emptyValue): void
+    {
+        $this->validator->validate($emptyValue, new QuickAddComponentProcessor());
+
+        $this->assertNoViolation();
+    }
+
+    public static function emptyValueDataProvider(): array
+    {
+        return [
+            'null' => [null],
+            'empty string' => [''],
+        ];
+    }
+
     public function testValidateWhenInvalidValue(): void
     {
         $value = new \stdClass();

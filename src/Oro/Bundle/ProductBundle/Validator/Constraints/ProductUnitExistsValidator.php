@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -28,12 +28,20 @@ class ProductUnitExistsValidator extends ConstraintValidator
             return;
         }
 
+        if (!$value instanceof ProductUnitHolderInterface) {
+            throw new UnexpectedTypeException($value, ProductUnitHolderInterface::class);
+        }
+
+        if (!$value instanceof ProductHolderInterface) {
+            throw new UnexpectedTypeException($value, ProductHolderInterface::class);
+        }
+
         $unitCode = $this->getUnitCode($value);
         if (null === $unitCode || '' === $unitCode) {
             return;
         }
 
-        $product = $this->getProduct($value);
+        $product = $value->getProduct();
         if (null === $product) {
             return;
         }
@@ -65,20 +73,12 @@ class ProductUnitExistsValidator extends ConstraintValidator
         return false;
     }
 
-    private function getUnitCode(object $value): ?string
+    private function getUnitCode(ProductUnitHolderInterface $value): ?string
     {
-        $unit = $value instanceof ProductUnitHolderInterface
-            ? $value->getProductUnit()
-            : $value->getUnit();
-        if ($unit instanceof ProductUnit) {
-            $unit = $unit->getCode();
+        if ($value->getProductUnit() !== null) {
+            return $value->getProductUnit()->getCode();
         }
 
-        return $unit;
-    }
-
-    private function getProduct(object $value): ?Product
-    {
-        return $value->getProduct();
+        return $value->getProductUnitCode();
     }
 }

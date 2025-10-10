@@ -13,7 +13,6 @@ Feature: Guest should not see not own shopping lists
     And I enable configuration options:
       | oro_shopping_list.availability_for_guests |
       | oro_checkout.guest_checkout               |
-    And I wait for a "search_reindex" job
 
   Scenario: Check access to Amanda's shopping list from the guest
     Given I login as AmandaRCole@example.org buyer

@@ -8,6 +8,7 @@ features:
             - oro_product_frontend_quick_add_import
             - oro_product_frontend_quick_add_copy_paste
             - oro_product_frontend_quick_add_import_help
+            - oro_product_frontend_quick_add_validate_rows
         configuration:
             - guest_quick_order_form
 

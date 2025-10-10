@@ -49,3 +49,22 @@ services:
             - { name: container.service_subscriber }
             - { name: container.service_subscriber, id: oro_order.form.factory.address_validation.address_form.order_page.shipping_address, key: Oro\Bundle\AddressValidationBundle\Form\Factory\AddressValidationAddressFormFactoryInterface }
             - { name: container.service_subscriber, id: oro_order.address_validation.result_handler.address_book_aware.shipping, key: Oro\Bundle\AddressValidationBundle\AddressValidationResultHandler\AddressValidationResultHandlerInterface }
+
+    oro_order.controller.pdf_document_download.back_office:
+        class: Oro\Bundle\OrderBundle\Controller\OrderPdfDocumentDownloadController
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_order.pdf_document.manager.instant, key: Oro\Bundle\OrderBundle\PdfDocument\Manager\OrderPdfDocumentManagerInterface }
+            - { name: container.service_subscriber, id: oro_order.pdf_document.url_generator.back_office, key: Oro\Bundle\OrderBundle\PdfDocument\UrlGenerator\OrderPdfDocumentUrlGeneratorInterface }
+
+    oro_order.controller.pdf_document_download.frontend:
+        class: Oro\Bundle\OrderBundle\Controller\Frontend\FrontendOrderPdfDocumentDownloadController
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_order.pdf_document.manager.instant, key: Oro\Bundle\OrderBundle\PdfDocument\Manager\OrderPdfDocumentManagerInterface }
+            - { name: container.service_subscriber, id: oro_order.pdf_document.url_generator.storefront, key: Oro\Bundle\OrderBundle\PdfDocument\UrlGenerator\OrderPdfDocumentUrlGeneratorInterface }
+            - { name: container.service_subscriber, id: oro_config.manager, key: Oro\Bundle\ConfigBundle\Config\ConfigManager }

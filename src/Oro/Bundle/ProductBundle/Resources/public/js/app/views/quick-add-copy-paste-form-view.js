@@ -87,6 +87,10 @@ const QuickAddCopyPasteFormView = BaseView.extend({
             return false;
         }
 
+        const formName = this.$el.attr('name');
+        const componentField = this.$el.find(`input[name="${formName}[component]"]`);
+
+        componentField.val(this.productsCollection.options.validatedForComponent || null);
 
         this.submitForm({
             beforeSend: () => {

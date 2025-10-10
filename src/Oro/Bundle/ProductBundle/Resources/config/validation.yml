@@ -199,26 +199,33 @@ Oro\Bundle\ProductBundle\Model\QuickAddRow:
             sell: true
             message: oro.product.frontend.quick_add.validation.invalid_unit
             path: 'unit'
-            groups: [ProductUnit]
+            groups: [ProductUnit, oro_shopping_list_to_checkout_quick_add_processor, oro_rfp_quick_add_processor, oro_shopping_list_quick_add_processor]
         - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
             message: oro.product.frontend.quick_add.validation.invalid_precision
             path: 'quantity'
-            groups: [QuantityUnitPrecision]
+            groups: [QuantityUnitPrecision, oro_shopping_list_to_checkout_quick_add_processor, oro_rfp_quick_add_processor]
     properties:
         product:
             - NotNull:
                 message: oro.product.frontend.quick_add.validation.product_not_found
+                groups: [ Default, oro_shopping_list_to_checkout_quick_add_processor, oro_rfp_quick_add_processor, oro_shopping_list_quick_add_processor ]
+            - Expression:
+                message: 'oro.product.frontend.quick_add.validation.invalid_product_type'
+                expression: 'value === null || value.isKit() === false'
+                groups: [ oro_shopping_list_to_checkout_quick_add_processor ]
         quantity:
             - NotBlank: ~
-            - Range:
-                min: 0
-                max: 999999999
-                notInRangeMessage: oro.product.frontend.quick_add.validation.not_in_range_message
+            - LessThan:
+                value: 999999999
+                message: oro.product.frontend.quick_add.validation.quantity_max
+                groups: [oro_shopping_list_to_checkout_quick_add_processor, oro_rfp_quick_add_processor, oro_shopping_list_quick_add_processor]
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
-                  message: oro.product.frontend.quick_add.validation.quantity_min
+                message: oro.product.frontend.quick_add.validation.quantity_min
+                groups: [Default, oro_shopping_list_to_checkout_quick_add_processor, oro_rfp_quick_add_processor, oro_shopping_list_quick_add_processor]
         unit:
             - NotBlank:
                 message: oro.product.frontend.quick_add.validation.unit_not_blank
+                groups: [ Default, oro_shopping_list_to_checkout_quick_add_processor, oro_rfp_quick_add_processor, oro_shopping_list_quick_add_processor ]
 
 Oro\Bundle\ProductBundle\Entity\Brand:
     properties:

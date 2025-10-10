@@ -45,8 +45,6 @@ const QuickOrderFromView = BaseView.extend({
 
     topButtons: null,
 
-    collectionHasProductKitMessage: _.__('oro.product.frontend.quick_add.form.has_non_configured_product_kit'),
-
     constructor: function QuickOrderFromView(options) {
         this.checkRowsQuantity = _.debounce(this.checkRowsQuantity.bind(this), 25);
         this.onProductSkuUpdate = _.debounce(this.onProductSkuUpdate.bind(this), 25);
@@ -213,38 +211,14 @@ const QuickOrderFromView = BaseView.extend({
 
     onProductSkuUpdate() {
         this.$(this.elem.collectionValidation).valid();
-        this._toggleCreateOrderButton();
     },
 
     onUpdateCollection(collection, options) {
         this.checkRowsQuantity(collection, options);
-        this._toggleCreateOrderButton();
-    },
-
-    /**
-     * @param {boolean} disable
-     * @private
-     */
-    _toggleCreateOrderButton: function(disable) {
-        const disabled = disable || this.isCollectionHasProductKit();
-        const $createOrderButton = this.$(this.elem.createOrderButton);
-
-        if (disabled === true) {
-            $createOrderButton.addClass('disabled');
-            $createOrderButton.parent()
-                .attr('title', this.collectionHasProductKitMessage);
-        } else {
-            $createOrderButton.removeClass('disabled');
-            $createOrderButton.parent().attr('title', null);
-        }
     },
 
     _moveClearButton() {
         this.$(this.elem.clear).appendTo(this.$('.add-list-item').parent());
-    },
-
-    isCollectionHasProductKit() {
-        return this.collection.filter(model => model.attributes.type === 'kit').length > 0;
     }
 });
 

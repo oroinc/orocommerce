@@ -36,3 +36,15 @@ oro_order_address_validation_shipping_address:
     controller: 'oro_order.controller.address_validation.shipping_address::addressValidationAction'
     path: /order/address-validation/{id<\d+>}/shipping
     methods: [POST]
+
+oro_order_pdf_document_download:
+    controller: 'oro_order.controller.pdf_document_download.back_office::__invoke'
+    path: /order/pdf-document/{id<\d+>}/download
+    methods: [GET]
+
+oro_order_frontend_pdf_document_download:
+    controller: 'oro_order.controller.pdf_document_download.frontend::__invoke'
+    path: /customer/order/pdf-document/{id<\d+>}/download
+    methods: [GET]
+    options:
+        frontend: true

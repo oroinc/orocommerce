@@ -118,10 +118,18 @@
     &__error-autocomplete {
         .validation-failed,
         .notification--error {
-            // override platform styles
-            margin: $quick-order-add-error-margins;
-
             background: none;
+        }
+        .validation-failed + .validation-failed[id] {
+            display: flex;
+        }
+    }
+
+    &__warning {
+        .validation-warning,
+        .notification--warning {
+            background: none;
+            padding: spacing('xs') 0 0;
         }
     }
 }
@@ -199,15 +207,6 @@
 
         &__row {
             border-bottom: $quick-order-add-mobile-row-border;
-        }
-
-        &__error,
-        &__error-autocomplete {
-            .validation-failed,
-            .notification--error {
-                // override platform styles
-                margin: $quick-order-add-mobile-error-margins;
-            }
         }
     }
 }

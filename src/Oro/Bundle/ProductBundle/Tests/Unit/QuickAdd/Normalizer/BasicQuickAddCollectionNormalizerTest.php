@@ -103,6 +103,7 @@ class BasicQuickAddCollectionNormalizerTest extends TestCase
         $errorMessageParameters = ['sample_key' => 'sample_value'];
         $errorPropertyPath = 'samplePath';
         $quickAddRowWithErrors->addError($errorMessage, $errorMessageParameters, $errorPropertyPath);
+        $quickAddRowWithErrors->addWarning($errorMessage, $errorMessageParameters, $errorPropertyPath);
 
         $quickAddRowWithInvalidUnit = new QuickAddRow(5, $product->getSku(), 46, 'invalid_unit');
         $quickAddRowWithInvalidUnit->setProduct($product);
@@ -123,6 +124,7 @@ class BasicQuickAddCollectionNormalizerTest extends TestCase
                             'unit_label' => $quickAddRowWithoutProductAndAdditional->getUnit(),
                             'quantity' => $quickAddRowWithoutProductAndAdditional->getQuantity(),
                             'errors' => [],
+                            'warnings' => [],
                             'additional' => [],
                             'organization' => null,
                         ],
@@ -145,6 +147,7 @@ class BasicQuickAddCollectionNormalizerTest extends TestCase
                             'quantity' => $quickAddRowWithoutAdditionalFields->getQuantity(),
                             'errors' => [],
                             'additional' => [],
+                            'warnings' => [],
                             'organization' => null,
                             'type' => Product::TYPE_SIMPLE,
                         ],
@@ -166,6 +169,7 @@ class BasicQuickAddCollectionNormalizerTest extends TestCase
                             ],
                             'quantity' => $quickAddRowWithAdditionalFields->getQuantity(),
                             'errors' => [],
+                            'warnings' => [],
                             'additional' => [
                                 $quickAddField1->getName() => $quickAddField1->getValue(),
                                 $quickAddField2->getName() => $quickAddField2->getValue(),
@@ -176,7 +180,7 @@ class BasicQuickAddCollectionNormalizerTest extends TestCase
                     ],
                 ],
             ],
-            'items with errors' => [
+            'items with errors and warnings' => [
                 new QuickAddRowCollection([$quickAddRowWithErrors]),
                 [
                     'errors' => [],
@@ -191,6 +195,12 @@ class BasicQuickAddCollectionNormalizerTest extends TestCase
                             ],
                             'quantity' => $quickAddRowWithErrors->getQuantity(),
                             'errors' => [
+                                [
+                                    'message' => $errorMessage . ' [trans]',
+                                    'propertyPath' => $errorPropertyPath,
+                                ],
+                            ],
+                            'warnings' => [
                                 [
                                     'message' => $errorMessage . ' [trans]',
                                     'propertyPath' => $errorPropertyPath,
@@ -218,6 +228,7 @@ class BasicQuickAddCollectionNormalizerTest extends TestCase
                             ],
                             'quantity' => $quickAddRowWithInvalidUnit->getQuantity(),
                             'errors' => [],
+                            'warnings' => [],
                             'additional' => [],
                             'organization' => null,
                             'type' => Product::TYPE_SIMPLE,

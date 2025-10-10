@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Processor;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CheckoutBundle\Condition\IsWorkflowStartFromShoppingListAllowed;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartQuickOrderCheckoutInterface;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
@@ -18,6 +19,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -33,6 +35,8 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     private TranslatorInterface $translator;
     private DateTimeFormatterInterface $dateFormatter;
     private StartQuickOrderCheckoutInterface $startQuickOrderCheckout;
+    private AuthorizationCheckerInterface $authorizationChecker;
+    private IsWorkflowStartFromShoppingListAllowed $isWorkflowStartFromShoppingListAllowed;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -47,7 +51,9 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
         CurrentShoppingListManager $currentShoppingListManager,
         TranslatorInterface $translator,
         DateTimeFormatterInterface $dateFormatter,
-        StartQuickOrderCheckoutInterface $startQuickOrderCheckout
+        StartQuickOrderCheckoutInterface $startQuickOrderCheckout,
+        AuthorizationCheckerInterface $authorizationChecker,
+        IsWorkflowStartFromShoppingListAllowed $isWorkflowStartFromShoppingListAllowed
     ) {
         parent::__construct($shoppingListLineItemHandler, $productMapper);
         $this->doctrine = $doctrine;
@@ -58,6 +64,8 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
         $this->translator = $translator;
         $this->dateFormatter = $dateFormatter;
         $this->startQuickOrderCheckout = $startQuickOrderCheckout;
+        $this->authorizationChecker = $authorizationChecker;
+        $this->isWorkflowStartFromShoppingListAllowed = $isWorkflowStartFromShoppingListAllowed;
     }
 
     #[\Override]
@@ -118,6 +126,14 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
         $em->rollback();
 
         return null;
+    }
+
+    public function isAllowed(): bool
+    {
+        return $this->authorizationChecker->isGranted(
+            'CREATE',
+            'entity:commerce@Oro\Bundle\CheckoutBundle\Entity\Checkout'
+        ) && $this->isWorkflowStartFromShoppingListAllowed->isAllowedForAny();
     }
 
     private function getShoppingListLabel(): string

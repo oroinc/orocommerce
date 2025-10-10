@@ -1,0 +1,16 @@
+body {
+    font-size: $order-footer-font-size;
+    line-height: $order-footer-line-height;
+    color: $order-root-color;
+    padding-left: $order-root-footer-margin-end;
+    padding-right: $order-root-footer-margin-end;
+}
+
+.order-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}

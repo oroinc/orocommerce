@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ entity|oro_format_name }}</title>
+    {% block order_footer_style %}
+        <style>
+            {{ asset_source('build/default/css/order-footer-pdf.css') }}
+        </style>
+    {% endblock %}
+</head>
+<body>
+{% block order_footer_content %}
+    <div class="order-footer">
+        <div>{{ 'now'|date('YmdHi', oro_timezone()) }}</div>
+        <div>{{ 'oro.order.pdf_file.footer.page'|trans }} <span class="pageNumber"></span> {{ 'oro.order.pdf_file.footer.of'|trans }} <span class="totalPages"></span></div>
+    </div>
+{% endblock %}
+</body>
+</html>

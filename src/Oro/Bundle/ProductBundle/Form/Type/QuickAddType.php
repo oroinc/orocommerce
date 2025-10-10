@@ -37,7 +37,10 @@ class QuickAddType extends AbstractType
             ->add(
                 self::COMPONENT_FIELD_NAME,
                 HiddenType::class,
-                ['constraints' => [new QuickAddComponentProcessor()]]
+                [
+                    'required' => true,
+                    'constraints' => [new QuickAddComponentProcessor()]
+                ]
             )
             ->add(
                 self::ADDITIONAL_FIELD_NAME,

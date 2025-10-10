@@ -344,13 +344,21 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
     {
         $unitCode = 'item';
 
+        $productUnit = $this->createMock(ProductUnit::class);
+        $productUnit->expects($this->once())
+            ->method('getCode')
+            ->willReturn($unitCode);
+
         $unitPrecision = $this->createMock(ProductUnitPrecision::class);
         $unitPrecision->expects($this->once())
             ->method('getPrecision')
             ->willReturn($precision);
+        $unitPrecision->expects($this->once())
+            ->method('getUnit')
+            ->willReturn($productUnit);
 
         $product = $this->createMock(Product::class);
-        $product->expects($this->once())
+        $product->expects($this->any())
             ->method('getUnitPrecision')
             ->with($unitCode)
             ->willReturn($unitPrecision);
@@ -369,13 +377,21 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
         $precision = 2;
         $quantity = 2.345;
 
+        $productUnit = $this->createMock(ProductUnit::class);
+        $productUnit->expects($this->once())
+            ->method('getCode')
+            ->willReturn($unitCode);
+
         $unitPrecision = $this->createMock(ProductUnitPrecision::class);
         $unitPrecision->expects($this->once())
             ->method('getPrecision')
             ->willReturn($precision);
+        $unitPrecision->expects($this->once())
+            ->method('getUnit')
+            ->willReturn($productUnit);
 
         $product = $this->createMock(Product::class);
-        $product->expects($this->once())
+        $product->expects($this->any())
             ->method('getUnitPrecision')
             ->with($unitCode)
             ->willReturn($unitPrecision);

@@ -12,6 +12,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\PdfGeneratorBundle\Entity\PdfDocument;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -276,5 +277,14 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         $order->addLineItem($orderLineItem2);
 
         self::assertEquals([$firstProduct, $secondProduct], $order->getProductsFromLineItems());
+    }
+
+    public function testPdfDocumentsCollection(): void
+    {
+        self::assertPropertyCollection(
+            new Order(),
+            'pdfDocuments',
+            new PdfDocument()
+        );
     }
 }

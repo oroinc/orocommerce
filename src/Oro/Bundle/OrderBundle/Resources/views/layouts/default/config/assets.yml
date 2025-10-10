@@ -3,3 +3,24 @@ styles:
         - 'bundles/oroorder/default/scss/variables/orders-created-by-config.scss'
 
         - 'bundles/oroorder/default/scss/styles.scss'
+
+order_pdf:
+    inputs:
+        - 'bundles/oroorder/default/scss/variables/pdf/order.scss'
+
+        - 'bundles/oroorder/default/scss/components/pdf/base.scss'
+
+        - 'bundles/oroorder/default/scss/components/pdf/order.scss'
+    output: 'css/order-print.css'
+    auto_rtl_inputs:
+        - 'bundles/oro*/**'
+
+order_footer_pdf:
+    inputs:
+        - 'bundles/oroorder/default/scss/variables/pdf/order.scss'
+
+        - 'bundles/oroorder/default/scss/components/pdf/order-footer.scss'
+
+    output: 'css/order-footer-pdf.css'
+    auto_rtl_inputs:
+        - 'bundles/oro*/**'
