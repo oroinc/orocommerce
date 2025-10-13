@@ -125,7 +125,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                 null,
                 $customerUserAddress
             ],
-            'do not override value from existing with empty one' => [
+            'do override value for existing with empty one' => [
                 $customerUserAddress = (new CustomerUserAddress())
                     ->setCountry($country)
                     ->setRegion($region)
@@ -133,7 +133,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                     ->setCity('City'),
                 (new QuoteAddress())
                     ->setCustomerUserAddress($customerUserAddress)
-                    ->setLabel('ExistingLabel')
+                    ->setLabel(null)
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
