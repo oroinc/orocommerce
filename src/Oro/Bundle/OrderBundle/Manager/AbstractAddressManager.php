@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
@@ -69,10 +68,6 @@ class AbstractAddressManager
 
         try {
             $value = $this->propertyAccessor->getValue($from, $property);
-            if (!$value || ($value instanceof Collection && $value->isEmpty())) {
-                return;
-            }
-
             $this->propertyAccessor->setValue($to, $property, $value);
         } catch (NoSuchPropertyException $e) {
         }
