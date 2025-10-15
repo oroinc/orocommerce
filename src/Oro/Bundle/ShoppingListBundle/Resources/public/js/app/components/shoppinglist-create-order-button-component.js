@@ -1,7 +1,7 @@
 define(function(require) {
     'use strict';
 
-    const ButtonComponent = require('oroworkflow/js/app/components/button-component');
+    const ButtonComponent = require('oroworkflow/js/app/components/button-component').default;
     const StandardConfirmation = require('oroui/js/standart-confirmation');
     const __ = require('orotranslation/js/translator');
     const mediator = require('oroui/js/mediator');
