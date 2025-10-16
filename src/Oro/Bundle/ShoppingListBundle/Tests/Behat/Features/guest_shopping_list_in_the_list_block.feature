@@ -17,7 +17,6 @@ Feature: Guest shopping list in the list block
     And I enable configuration options:
       | oro_shopping_list.availability_for_guests |
       | oro_checkout.guest_checkout               |
-    And I wait for a "search_reindex" job
 
   Scenario: Create shopping list on frontend
     Given I proceed as the Buyer

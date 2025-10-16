@@ -15,7 +15,6 @@ Feature: Merging shopping list and checkout
       | oro_shopping_list.availability_for_guests              |
       | oro_checkout.guest_checkout                            |
       | oro_checkout.allow_checkout_without_email_confirmation |
-    And I wait for a "search_reindex" job
 
   Scenario: Create payment and shipping integration
     Given I proceed as the Admin
