@@ -9,6 +9,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
@@ -19,7 +20,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 class PaymentStatusListenerTest extends WebTestCase
 {
     protected ManagerRegistry $managerRegistry;
-    private PaymentStatusProvider $paymentStatusProvider;
+    private PaymentStatusProviderInterface $paymentStatusProvider;
     private PaymentTransactionProvider $paymentTransactionProvider;
 
     protected function setUp(): void
