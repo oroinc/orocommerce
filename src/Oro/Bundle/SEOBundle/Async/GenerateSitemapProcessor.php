@@ -10,6 +10,7 @@ use Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProviderInterface;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -41,6 +42,8 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
 
     private LoggerInterface $logger;
 
+    private WebsiteProviderInterface $allWebsiteProvider;
+
     public function __construct(
         JobRunner $jobRunner,
         DependentJobService $dependentJob,
@@ -49,7 +52,8 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         WebsiteForSitemapProviderInterface $websiteProvider,
         PublicSitemapFilesystemAdapter $fileSystemAdapter,
         CanonicalUrlGenerator $canonicalUrlGenerator,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        WebsiteProviderInterface $allWebsiteProvider
     ) {
         $this->jobRunner = $jobRunner;
         $this->dependentJob = $dependentJob;
@@ -59,6 +63,7 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         $this->fileSystemAdapter = $fileSystemAdapter;
         $this->canonicalUrlGenerator = $canonicalUrlGenerator;
         $this->logger = $logger;
+        $this->allWebsiteProvider = $allWebsiteProvider;
     }
 
     #[\Override]
@@ -79,7 +84,7 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
             $result = $this->jobRunner->runUniqueByMessage(
                 $message,
                 function (JobRunner $jobRunner, Job $job) use ($version, $websites) {
-                    $this->createFinishJob($job, $version, $websites);
+                    $this->createFinishJob($job, $version, $this->allWebsiteProvider->getWebsites());
                     $this->scheduleGeneratingSitemap($jobRunner, $version, $websites);
 
                     return true;

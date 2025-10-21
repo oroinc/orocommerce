@@ -3,9 +3,9 @@
 namespace Oro\Bundle\SEOBundle\Sitemap\EventListener;
 
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
+use Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProviderInterface;
 use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
 use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
-use Oro\Bundle\SEOBundle\Sitemap\Exception\LogicException;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Manager\RobotsTxtSitemapManager;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
@@ -24,6 +24,9 @@ class DumpRobotsTxtListener
     /** @var SitemapFilesystemAdapter */
     private $sitemapFilesystemAdapter;
 
+    /** @var WebsiteForSitemapProviderInterface $websiteForSitemapProvider */
+    private $websiteForSitemapProvider;
+
     /** @var string */
     private $sitemapDir;
 
@@ -31,25 +34,29 @@ class DumpRobotsTxtListener
         RobotsTxtSitemapManager $robotsTxtSitemapManager,
         CanonicalUrlGenerator $canonicalUrlGenerator,
         SitemapFilesystemAdapter $sitemapFilesystemAdapter,
+        WebsiteForSitemapProviderInterface $websiteForSitemapProvider,
         string $sitemapDir
     ) {
         $this->robotsTxtSitemapManager = $robotsTxtSitemapManager;
         $this->canonicalUrlGenerator = $canonicalUrlGenerator;
         $this->sitemapFilesystemAdapter = $sitemapFilesystemAdapter;
+        $this->websiteForSitemapProvider = $websiteForSitemapProvider;
         $this->sitemapDir = $sitemapDir;
     }
 
     public function onSitemapDumpStorage(OnSitemapDumpFinishEvent $event): void
     {
         $website = $event->getWebsite();
+        $awailableWebsites = $this->websiteForSitemapProvider->getAvailableWebsites();
+
+        if (!in_array($website, $awailableWebsites, true)) {
+            return;
+        }
+
         $files = $this->sitemapFilesystemAdapter->getSitemapFiles(
             $website,
             SitemapDumper::getFilenamePattern(SitemapStorageFactory::TYPE_SITEMAP_INDEX)
         );
-
-        if (empty($files)) {
-            throw new LogicException('Cannot find sitemap index file.');
-        }
 
         foreach ($files as $file) {
             $url = sprintf(
