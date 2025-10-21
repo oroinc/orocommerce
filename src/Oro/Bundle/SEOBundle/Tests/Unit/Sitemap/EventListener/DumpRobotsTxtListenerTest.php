@@ -4,37 +4,39 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\EventListener;
 
 use Gaufrette\File;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
+use Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProviderInterface;
 use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
 use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
 use Oro\Bundle\SEOBundle\Sitemap\EventListener\DumpRobotsTxtListener;
-use Oro\Bundle\SEOBundle\Sitemap\Exception\LogicException;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Manager\RobotsTxtSitemapManager;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 use Oro\Component\Website\WebsiteInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class DumpRobotsTxtListenerTest extends \PHPUnit\Framework\TestCase
+class DumpRobotsTxtListenerTest extends TestCase
 {
     private const SITEMAP_VERSION = '14543456';
     private const SITEMAP_DIR     = 'sitemap';
 
-    /** @var RobotsTxtSitemapManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $robotsTxtSitemapManager;
+    private RobotsTxtSitemapManager|MockObject $robotsTxtSitemapManager;
 
-    /** @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject */
-    private $canonicalUrlGenerator;
+    private CanonicalUrlGenerator|MockObject $canonicalUrlGenerator;
 
-    /** @var SitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject */
-    private $sitemapFilesystemAdapter;
+    private SitemapFilesystemAdapter|MockObject $sitemapFilesystemAdapter;
 
-    /** @var DumpRobotsTxtListener */
-    private $listener;
+    private WebsiteForSitemapProviderInterface|MockObject $websiteForSitemapProvider;
+
+    private DumpRobotsTxtListener $listener;
 
     protected function setUp(): void
     {
         $this->robotsTxtSitemapManager = $this->createMock(RobotsTxtSitemapManager::class);
         $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);
         $this->sitemapFilesystemAdapter = $this->createMock(SitemapFilesystemAdapter::class);
+        $this->sitemapFilesystemAdapter = $this->createMock(SitemapFilesystemAdapter::class);
+        $this->websiteForSitemapProvider = $this->createMock(WebsiteForSitemapProviderInterface::class);
 
         $this->listener = new DumpRobotsTxtListener(
             $this->robotsTxtSitemapManager,
@@ -42,6 +44,7 @@ class DumpRobotsTxtListenerTest extends \PHPUnit\Framework\TestCase
             $this->sitemapFilesystemAdapter,
             self::SITEMAP_DIR
         );
+        $this->listener->setWebsiteForSitemapProvider($this->websiteForSitemapProvider);
     }
 
     private function getWebsite(int $id, bool $isDefault): WebsiteInterface
@@ -67,11 +70,14 @@ class DumpRobotsTxtListenerTest extends \PHPUnit\Framework\TestCase
         return $file;
     }
 
-    public function testOnSitemapDumpStorageWhenThrowsException()
+    public function testOnSitemapDumpStorageWhenNotAvailableWebsites(): void
     {
         $website = $this->getWebsite(1, true);
         $event = new OnSitemapDumpFinishEvent($website, self::SITEMAP_VERSION);
-        $this->sitemapFilesystemAdapter->expects($this->once())
+        $this->websiteForSitemapProvider->expects($this->once())
+            ->method('getAvailableWebsites')
+            ->willReturn([]);
+        $this->sitemapFilesystemAdapter->expects($this->never())
             ->method('getSitemapFiles')
             ->with(
                 $website,
@@ -85,17 +91,18 @@ class DumpRobotsTxtListenerTest extends \PHPUnit\Framework\TestCase
         $this->robotsTxtSitemapManager->expects($this->never())
             ->method('flush');
 
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Cannot find sitemap index file.');
         $this->listener->onSitemapDumpStorage($event);
     }
 
-    public function testOnSitemapDumpStorage()
+    public function testOnSitemapDumpStorage(): void
     {
         $websiteId = 777;
         $website = $this->getWebsite($websiteId, true);
         $event = new OnSitemapDumpFinishEvent($website, self::SITEMAP_VERSION);
         $filename = 'some_file_name.txt';
+        $this->websiteForSitemapProvider->expects($this->once())
+            ->method('getAvailableWebsites')
+            ->willReturn([$website]);
         $this->sitemapFilesystemAdapter->expects($this->once())
             ->method('getSitemapFiles')
             ->with(

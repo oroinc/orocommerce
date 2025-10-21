@@ -274,6 +274,8 @@ services:
             - '@oro_seo.sitemap.public_filesystem_adapter'
             - '@oro_redirect.generator.canonical_url'
             - '@logger'
+        calls:
+            - [ setAllWebsiteProvider, ['@oro_website.website.provider']]
         tags:
             - { name: oro_message_queue.client.message_processor }
 
@@ -336,6 +338,8 @@ services:
             - '@oro_redirect.generator.canonical_url'
             - '@oro_seo.sitemap.filesystem_adapter'
             - '%oro_seo.sitemap_directory%'
+        calls:
+            - [ setWebsiteForSitemapProvider, ['@oro_seo.provider.website_provider'] ]
         tags:
             - { name: kernel.event_listener, event: oro_seo.sitemap.event.on_sitemap_dump_finish.index, method: onSitemapDumpStorage, priority: -255 }
 
@@ -343,6 +347,8 @@ services:
         class: Oro\Bundle\SEOBundle\Sitemap\EventListener\DumpVersionListener
         arguments:
             - '@oro_seo.sitemap.filesystem_adapter'
+        calls:
+            - [ setWebsiteForSitemapProvider, ['@oro_seo.provider.website_provider'] ]
         tags:
             - { name: kernel.event_listener, event: oro_seo.sitemap.event.on_sitemap_dump_finish.index, method: onSitemapDumpStorage }
 
