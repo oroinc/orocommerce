@@ -88,6 +88,15 @@ oro_behat_extension:
       selector: "div[id^='grid-order-payment-transactions-grid']"
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    Create Order Message:
+      selector: '.checkout__success__order p:first-child'
+
+    Main Order Payment Transaction Grid:
+      selector:
+        locator: "//div[starts-with(@id, 'grid-order-payment-transactions-grid') and not(ancestor::*[contains(concat(' ', normalize-space(@class), ' '), ' oro-tabs ')])]"
+        type: xpath
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
     First Sub Order Payment Transaction Grid:
       selector: "div[data-page-component-name='order-payment-transactions-grid:2']"
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
