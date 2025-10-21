@@ -12,6 +12,7 @@ use Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProviderInterface;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\DependentJobContext;
@@ -21,25 +22,29 @@ use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
+class GenerateSitemapProcessorTest extends TestCase
 {
-    private JobRunner|\PHPUnit\Framework\MockObject\MockObject $jobRunner;
+    private JobRunner|MockObject $jobRunner;
 
-    private DependentJobService|\PHPUnit\Framework\MockObject\MockObject $dependentJob;
+    private DependentJobService|MockObject $dependentJob;
 
-    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $producer;
+    private MessageProducerInterface|MockObject $producer;
 
-    private WebsiteUrlProvidersServiceInterface|\PHPUnit\Framework\MockObject\MockObject $websiteUrlProvidersService;
+    private WebsiteUrlProvidersServiceInterface|MockObject $websiteUrlProvidersService;
 
-    private WebsiteForSitemapProviderInterface|\PHPUnit\Framework\MockObject\MockObject $websiteProvider;
+    private WebsiteForSitemapProviderInterface|MockObject $websiteProvider;
 
-    private PublicSitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject $fileSystemAdapter;
+    private PublicSitemapFilesystemAdapter|MockObject $fileSystemAdapter;
 
-    private CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject $canonicalUrlGenerator;
+    private CanonicalUrlGenerator|MockObject $canonicalUrlGenerator;
 
-    private LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger;
+    private LoggerInterface|MockObject $logger;
+
+    private WebsiteProviderInterface|MockObject $allWebsiteProvider;
 
     private GenerateSitemapProcessor $processor;
 
@@ -54,6 +59,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $this->fileSystemAdapter = $this->createMock(PublicSitemapFilesystemAdapter::class);
         $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->allWebsiteProvider = $this->createMock(WebsiteProviderInterface::class);
 
         $this->processor = new GenerateSitemapProcessor(
             $this->jobRunner,
@@ -65,6 +71,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
             $this->canonicalUrlGenerator,
             $this->logger
         );
+        $this->processor->setAllWebsiteProvider($this->allWebsiteProvider);
     }
 
     private function getSession(): SessionInterface
@@ -128,6 +135,9 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $this->websiteProvider->expects(self::once())
             ->method('getAvailableWebsites')
             ->willReturn([$website]);
+        $this->allWebsiteProvider->expects(self::once())
+            ->method('getWebsites')
+            ->willReturn([$website]);
 
         $job = $this->getJobAndRunUnique($message);
 
@@ -182,6 +192,9 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->websiteProvider->expects(self::once())
             ->method('getAvailableWebsites')
+            ->willReturn($websites);
+        $this->allWebsiteProvider->expects(self::once())
+            ->method('getWebsites')
             ->willReturn($websites);
 
         $job = $this->getJobAndRunUnique($message);

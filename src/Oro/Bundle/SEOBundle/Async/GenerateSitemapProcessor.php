@@ -10,6 +10,7 @@ use Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProviderInterface;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -41,6 +42,8 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
 
     private LoggerInterface $logger;
 
+    private WebsiteProviderInterface $allWebsiteProvider;
+
     public function __construct(
         JobRunner $jobRunner,
         DependentJobService $dependentJob,
@@ -61,6 +64,11 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         $this->logger = $logger;
     }
 
+    public function setAllWebsiteProvider(WebsiteProviderInterface $allWebsiteProvider): void
+    {
+        $this->allWebsiteProvider = $allWebsiteProvider;
+    }
+
     #[\Override]
     public static function getSubscribedTopics()
     {
@@ -79,7 +87,7 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
             $result = $this->jobRunner->runUniqueByMessage(
                 $message,
                 function (JobRunner $jobRunner, Job $job) use ($version, $websites) {
-                    $this->createFinishJob($job, $version, $websites);
+                    $this->createFinishJob($job, $version, $this->allWebsiteProvider->getWebsites());
                     $this->scheduleGeneratingSitemap($jobRunner, $version, $websites);
 
                     return true;
