@@ -275,14 +275,15 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
                   max: 2147483647
 
 Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\NotBlankProductKitItemLabelString:
+              groups: [ Import ]
     properties:
         fallback:
             - Length:
                   max: 64
             - Choice: { callback: getFallbacks }
         string:
-            - NotBlank:
-                  groups: [ Import ]
             - Length:
                   max: 255
         kitItem:
