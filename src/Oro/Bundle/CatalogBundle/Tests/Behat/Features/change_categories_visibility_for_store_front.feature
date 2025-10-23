@@ -19,7 +19,7 @@ Feature: Change categories visibility for store front
     When I go to Products/Master Catalog
     And I click "Medical Apparel"
     And I click "Visibility" in scrollspy
-    And I fill form with:
+    And I fill "Category Form" with:
       | Visibility to All | Hidden |
     And I save form
     Then I should see "Category has been saved" flash message
@@ -29,7 +29,7 @@ Feature: Change categories visibility for store front
     And I expand "Retail Supplies" in tree
     And I click "Fax"
     And I click "Visibility" in scrollspy
-    And I fill form with:
+    And I fill "Category Form" with:
       | Visibility to All | Hidden |
     And I save form
     Then I should see "Category has been saved" flash message
@@ -56,7 +56,7 @@ Feature: Change categories visibility for store front
     When I go to Products/Master Catalog
     And I click "All Products"
     And I click "Visibility" in scrollspy
-    And I fill form with:
+    And I fill "Category Form" with:
       | Visibility to All | Visible |
     And I save form
     Then I should see "Category has been saved" flash message
@@ -69,7 +69,7 @@ Feature: Change categories visibility for store front
       | Title    | Should be visible |
       | URL Slug | should-be-visible |
     And I click "Visibility" in scrollspy
-    And I fill form with:
+    And I fill "Category Form" with:
       | Visibility to All | Parent Category |
     And I save form
     Then I should see "Category has been saved" flash message

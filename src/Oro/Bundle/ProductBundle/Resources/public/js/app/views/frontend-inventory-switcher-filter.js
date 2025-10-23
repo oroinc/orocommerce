@@ -49,6 +49,8 @@ define(function(require) {
          */
         setDropdownContainer: void 0,
 
+        wrappable: false,
+
         /**
          * @inheritdoc
          */
@@ -68,13 +70,10 @@ define(function(require) {
 
         render() {
             this.resetFlags();
+
             // render only wrapper (a button and a dropdown container e.g.)
             this._renderCriteria();
             this._updateDOMValue();
-
-            if (!this.visible) {
-                this.hide();
-            }
 
             return this;
         },
@@ -114,6 +113,8 @@ define(function(require) {
             this.setElement($filter);
         },
 
+        _onClickCriteriaSelector() {},
+
         onCriteriaToggle(e) {
             if (
                 e.keyCode === KEYBOARD_CODES.ENTER ||
@@ -138,6 +139,10 @@ define(function(require) {
             const $checkbox = this.$('[data-role="inventory-checkbox"]');
 
             $checkbox.prop('checked', $checkbox.val() === this.getSelectedValue()?.value[0]);
+        },
+
+        getSelectedValue() {
+            return Object.assign({}, this.emptyValue, this.value);
         },
 
         /**

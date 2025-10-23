@@ -20,7 +20,7 @@ class MultipleChoice extends BaseMultipleChoice
         $widgets = $this->getPage()
             ->findAll(
                 'css',
-                'body div.filter-box ul.ui-multiselect-checkboxes'
+                'body div.filter-box .multiselect__list'
             );
 
         /** @var NodeElement $widget */
@@ -50,7 +50,7 @@ class MultipleChoice extends BaseMultipleChoice
         $this->getDriver()->waitForAjax();
 
         $widget = $this->getWidget();
-        $inputs = $widget->findAll('css', 'li span');
+        $inputs = $widget->findAll('css', '.multiselect__item span');
 
         $choices = [];
         /** @var Element $input */

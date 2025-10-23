@@ -7,23 +7,7 @@
             </div>
 
             <div class="filter-container-manager">
-                <div class="filter-actions" data-role="filter-actions">
-                    <% if (obj.enableMultiselectWidget) { %>
-                        <div data-role="filter-container-manager">
-                            <select data-action="add-filter-select" data-skip-input-widgets multiple>
-                                <% _.each(filters, function (filter, name) { %>
-                                    <% if (filter.visible) { %>
-                                        <option class="<%- filter.visible ? '' : 'hidden' %>"
-                                            title="<%- filter.label %>"
-                                            value="<%- name %>"
-                                        <% if (filter.renderable) { %>selected<% } %>
-                                        ><%- filter.label %></option>
-                                    <% } %>
-                                <% }); %>
-                            </select>
-                        </div>
-                    <% } %>
-                </div>
+                <div class="filter-actions" data-role="filter-actions"></div>
             </div>
 
             <div class="filter-container-additional">

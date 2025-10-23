@@ -116,13 +116,13 @@ oro_behat_extension:
     SubcategoriesFilter:
       selector:
         type: xpath
-        locator: '//div[contains(@class,"filter-item")]/*[contains(@class,"filter-select")]/span[contains(text(),"Sub-Categories")]/..'
+        locator: '//div[contains(@class,"filter-item")]//*[contains(@class,"filter-item-label")][contains(normalize-space(),"Sub-Categories")]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\MultipleChoice
 
     SubcategoriesFilterSelect:
       selector:
         type: xpath
-        locator: '//div[contains(@class,"filter-item")]/*[contains(@class,"filter-select")]/span[ contains(text(),"Sub-Categories")]/../../select'
+        locator: '//div[contains(@class,"filter-item")]//*[contains(@class,"filter-item-label")][contains(normalize-space(),"Sub-Categories")]/../..//select'
 
     Uploaded Featured Category Image:
       selector:
