@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\AbstractLoadMultipleUserData;
 
@@ -35,6 +36,19 @@ class LoadChargeAuthorizedPaymentsPermissionUserData extends AbstractLoadMultipl
                         [
                             AbstractLoadMultipleUserData::ACL_PERMISSION
                                 => self::CHARGE_AUTHORIZED_PAYMENTS_PERMISSION_NAME,
+                            AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
+                        ],
+                    ],
+                ],
+                [
+                    'class' => Channel::class,
+                    'acls' => [
+                        [
+                            AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
+                            AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
+                        ],
+                        [
+                            AbstractLoadMultipleUserData::ACL_PERMISSION => self::VIEW_PAYMENT_HISTORY_PERMISSION_NAME,
                             AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
                         ],
                     ],
