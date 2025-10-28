@@ -111,6 +111,15 @@ class SingleCplProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $em->beginTransaction();
         $this->indexationTriggerHandler->startCollect($job->getRootJob()->getId());
         try {
+            if (!$cpl->isPricesCalculated()) {
+                // Do full rebuild for CPLs marked as not calculated
+                $products = [];
+                // Schedule re-indexation for records already present in CPL to clear stale data in the search index.
+                // For a new empty CPL it will do nothing, for CPLs reactivated after price addition into empty PL
+                // it will reindex all records that were present in CPL before reactivation.
+                $this->combinedPriceListsBuilderFacade->triggerProductIndexation($cpl, $assignTo);
+            }
+
             if ($products || empty($messageData['collection']) || !$cpl->isPricesCalculated()) {
                 $this->buildCombinedPriceList($cpl, $products, $assignTo);
             }

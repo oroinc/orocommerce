@@ -45,6 +45,35 @@ class CombinedPriceListBuildTriggerHandler
         return false;
     }
 
+    public function handleMassPriceCreation(array $productPrices): bool
+    {
+        $pricesByPriceList = [];
+        foreach ($productPrices as $productPrice) {
+            $pricesByPriceList[$productPrice->getPriceList()->getId()][] = $productPrice;
+        }
+
+        /** @var CombinedPriceListToPriceListRepository $combinedPriceToPriceListRepository */
+        $combinedPriceToPriceListRepository = $this->doctrine->getRepository(CombinedPriceListToPriceList::class);
+        /** @var ProductPriceRepository $productPriceRepository */
+        $productPriceRepository = $this->doctrine->getRepository(ProductPrice::class);
+
+        $hasChanges = false;
+        foreach ($pricesByPriceList as $prices) {
+            $priceList = $prices[0]->getPriceList();
+
+            if ($priceList->isActive()
+                && $combinedPriceToPriceListRepository->hasCombinedPriceListWithPriceList($priceList)
+                && $productPriceRepository->areAllPricesNewInPriceList($this->shardManager, $priceList, $prices)
+            ) {
+                $this->rebuildCombinedPrices($priceList);
+
+                $hasChanges = true;
+            }
+        }
+
+        return $hasChanges;
+    }
+
     public function handlePriceCreation(ProductPrice $productPrice): bool
     {
         $priceList = $productPrice->getPriceList();

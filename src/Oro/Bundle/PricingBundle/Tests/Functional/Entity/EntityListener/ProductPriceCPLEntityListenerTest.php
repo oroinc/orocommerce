@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
+use Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
@@ -13,16 +16,21 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsForFallback;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListWithCustomerRelation;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ProductPriceCPLEntityListenerTest extends WebTestCase
 {
@@ -33,13 +41,18 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures([LoadProductPrices::class, LoadCombinedPriceListWithCustomerRelation::class]);
+        $this->loadFixtures([
+            LoadProductPrices::class,
+            LoadCombinedPriceListWithCustomerRelation::class,
+            LoadCombinedPriceListsForFallback::class,
+            LoadPriceListRelations::class
+        ]);
 
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_price_cpl');
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_prices');
 
-        $this->enableMessageBuffering();
+        self::enableMessageBuffering();
     }
 
     public function testOnCreate()
@@ -68,7 +81,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
 
         // assert that needed productPriceRelationCreated
         $plToProductRelations = $this->getPriceListToProductRepository()->findBy([
-            'product'   => $this->getReference(LoadProductData::PRODUCT_5),
+            'product' => $this->getReference(LoadProductData::PRODUCT_5),
             'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_1),
         ]);
         $this->assertCount(1, $plToProductRelations);
@@ -92,6 +105,263 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $this->assertMessagesEmpty(ResolveCombinedPriceByPriceListTopic::getName());
     }
 
+    public function testCplRubiltOnNewSinglePriceAdditionToEmptyPriceList()
+    {
+        $priceManager = $this->getPriceManager();
+
+        $newPrice1 = $this->getProductPrice(
+            LoadProductData::PRODUCT_5,
+            LoadPriceLists::PRICE_LIST_5,
+            Price::create(10, 'USD'),
+            10
+        );
+
+        $this->clearMessageCollector();
+
+        $priceManager->persist($newPrice1);
+        $priceManager->flush();
+
+        $singleRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+            RebuildCombinedPriceListsTopic::getName()
+        );
+        $massRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+            MassRebuildCombinedPriceListsTopic::getName()
+        );
+
+        $this->assertGreaterThan(
+            0,
+            count($singleRebuildMessages) + count($massRebuildMessages),
+            'No CPL rebuild messages sent'
+        );
+    }
+
+    public function testCplRubiltOnNewSinglePriceWithGeneratedIdAdditionToEmptyPriceList()
+    {
+        $priceManager = $this->getPriceManager();
+
+        $newPrice1 = $this->getProductPrice(
+            LoadProductData::PRODUCT_5,
+            LoadPriceLists::PRICE_LIST_5,
+            Price::create(10, 'USD'),
+            10
+        );
+        // Cover Batch API scenario when IDs for prices are pre-filled
+        $newPrice1->setId(UUIDGenerator::v4());
+
+        $this->clearMessageCollector();
+
+        $priceManager->persist($newPrice1);
+        $priceManager->flush();
+
+        $singleRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+            RebuildCombinedPriceListsTopic::getName()
+        );
+        $massRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+            MassRebuildCombinedPriceListsTopic::getName()
+        );
+
+        $this->assertGreaterThan(
+            0,
+            count($singleRebuildMessages) + count($massRebuildMessages),
+            'No CPL rebuild messages sent'
+        );
+    }
+
+    public function testCplRubiltOnNewSinglePriceAdditionToEmptyPriceListWithDisabledFeature()
+    {
+        [$configManager, $savedStorage] = $this->disableCplFeature();
+        try {
+            $priceManager = $this->getPriceManager();
+
+            $newPrice1 = $this->getProductPrice(
+                LoadProductData::PRODUCT_5,
+                LoadPriceLists::PRICE_LIST_5,
+                Price::create(10, 'USD'),
+                10
+            );
+
+            $this->clearMessageCollector();
+
+            $priceManager->persist($newPrice1);
+            $priceManager->flush();
+
+            $singleRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+                RebuildCombinedPriceListsTopic::getName()
+            );
+            $massRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+                MassRebuildCombinedPriceListsTopic::getName()
+            );
+        } finally {
+            $configManager->set('oro_pricing.price_storage', $savedStorage);
+            $configManager->flush();
+        }
+
+        $this->assertEquals(0, count($singleRebuildMessages) + count($massRebuildMessages));
+    }
+
+    public function testCplRubiltOnNewPricesAdditionToEmptyPriceList()
+    {
+        $priceManager = $this->getPriceManager();
+
+        $newPrice1 = $this->getProductPrice(
+            LoadProductData::PRODUCT_5,
+            LoadPriceLists::PRICE_LIST_5,
+            Price::create(10, 'USD'),
+            10
+        );
+        $newPrice2 = $this->getProductPrice(
+            LoadProductData::PRODUCT_5,
+            LoadPriceLists::PRICE_LIST_5,
+            Price::create(20, 'USD'),
+            20
+        );
+
+        $this->clearMessageCollector();
+
+        $priceManager->persist($newPrice1);
+        $priceManager->persist($newPrice2);
+        $priceManager->flush();
+
+        $singleRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+            RebuildCombinedPriceListsTopic::getName()
+        );
+        $massRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+            MassRebuildCombinedPriceListsTopic::getName()
+        );
+
+        $this->assertGreaterThan(
+            0,
+            count($singleRebuildMessages) + count($massRebuildMessages),
+            'No CPL rebuild messages sent'
+        );
+    }
+
+    public function testCplRubiltOnNewPricesWithGeneratedIdsAdditionToEmptyPriceList()
+    {
+        $priceManager = $this->getPriceManager();
+
+        $newPrice1 = $this->getProductPrice(
+            LoadProductData::PRODUCT_5,
+            LoadPriceLists::PRICE_LIST_5,
+            Price::create(10, 'USD'),
+            10
+        );
+        $newPrice2 = $this->getProductPrice(
+            LoadProductData::PRODUCT_5,
+            LoadPriceLists::PRICE_LIST_5,
+            Price::create(20, 'USD'),
+            20
+        );
+        // Cover Batch API scenario when IDs for prices are pre-filled
+        $newPrice1->setId(UUIDGenerator::v4());
+        $newPrice2->setId(UUIDGenerator::v4());
+
+        $this->clearMessageCollector();
+
+        $priceManager->persist($newPrice1);
+        $priceManager->persist($newPrice2);
+
+        // Emulate the current Batch API behavior START >>
+        // Batch API incorrectly processes ProductPrices and flushes to the DB with default EntityManager
+        // instead of PriceManager. This approach breaks the current shards implementation abd will be addressed
+        // in the BB-26243
+        /** @var EntityManagerInterface $em */
+        $em = self::getContainer()->get('doctrine')->getManagerForClass(ProductPrice::class);
+        $em->persist($newPrice1);
+        $em->persist($newPrice2);
+        $em->flush([$newPrice1, $newPrice2]);
+        // << END of the workaround
+
+        $priceManager->flush();
+
+        $singleRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+            RebuildCombinedPriceListsTopic::getName()
+        );
+        $massRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+            MassRebuildCombinedPriceListsTopic::getName()
+        );
+
+        $this->assertGreaterThan(
+            0,
+            count($singleRebuildMessages) + count($massRebuildMessages),
+            'No CPL rebuild messages sent'
+        );
+    }
+
+    public function testCplRubiltOnNewPricesAdditionToEmptyPriceListWithDisabledListener()
+    {
+        $this->disableListener();
+        $priceManager = $this->getPriceManager();
+
+        $newPrice1 = $this->getProductPrice(
+            LoadProductData::PRODUCT_5,
+            LoadPriceLists::PRICE_LIST_5,
+            Price::create(10, 'USD'),
+            10
+        );
+        $newPrice2 = $this->getProductPrice(
+            LoadProductData::PRODUCT_5,
+            LoadPriceLists::PRICE_LIST_5,
+            Price::create(20, 'USD'),
+            20
+        );
+
+        $this->clearMessageCollector();
+
+        $priceManager->persist($newPrice1);
+        $priceManager->persist($newPrice2);
+        $priceManager->flush();
+
+        $singleRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+            RebuildCombinedPriceListsTopic::getName()
+        );
+        $massRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+            MassRebuildCombinedPriceListsTopic::getName()
+        );
+
+        $this->assertEquals(0, count($singleRebuildMessages) + count($massRebuildMessages));
+    }
+
+    public function testCplRubiltOnNewPricesAdditionToEmptyPriceListWithDisabledFeature()
+    {
+        [$configManager, $savedStorage] = $this->disableCplFeature();
+
+        try {
+            $priceManager = $this->getPriceManager();
+
+            $newPrice1 = $this->getProductPrice(
+                LoadProductData::PRODUCT_5,
+                LoadPriceLists::PRICE_LIST_5,
+                Price::create(10, 'USD'),
+                10
+            );
+            $newPrice2 = $this->getProductPrice(
+                LoadProductData::PRODUCT_5,
+                LoadPriceLists::PRICE_LIST_5,
+                Price::create(20, 'USD'),
+                20
+            );
+
+            $this->clearMessageCollector();
+
+            $priceManager->persist($newPrice1);
+            $priceManager->persist($newPrice2);
+            $priceManager->flush();
+
+            $singleRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+                RebuildCombinedPriceListsTopic::getName()
+            );
+            $massRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+                MassRebuildCombinedPriceListsTopic::getName()
+            );
+        } finally {
+            $configManager->set('oro_pricing.price_storage', $savedStorage);
+            $configManager->flush();
+        }
+
+        $this->assertEquals(0, count($singleRebuildMessages) + count($massRebuildMessages));
+    }
+
     public function testOnUpdateChangeTriggerCreated()
     {
         $priceList = $this->getReference(LoadCombinedPriceListWithCustomerRelation::DEFAULT_PRICE_LIST);
@@ -101,7 +371,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
             $priceList,
             [
                 'priceList' => $priceList,
-                'product'   => $product
+                'product' => $product
             ]
         );
         $productPrice = $productPrices[0];
@@ -115,28 +385,28 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
 
     public function testOnUpdateFeatureDisabled()
     {
-        $configManager = self::getConfigManager('global');
-        $savedStorage = $configManager->get('oro_pricing.price_storage');
-        $configManager->set('oro_pricing.price_storage', 'flat');
-        $this->getContainer()->get('oro_featuretoggle.checker.feature_checker')->resetCache();
+        [$configManager, $savedStorage] = $this->disableCplFeature();
 
-        $priceList = $this->getReference('price_list_2');
-        $productPrices = $this->getProductPriceRepository()->findByPriceList(
-            $this->getShardManager(),
-            $priceList,
-            [
-                'priceList' => $priceList,
-                'product'   => $this->getReference(LoadProductData::PRODUCT_2)
-            ]
-        );
-        $productPrice = $productPrices[0];
-        $productPrice->setPrice(Price::create(1000, 'EUR'));
+        try {
+            $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_2);
+            $productPrices = $this->getProductPriceRepository()->findByPriceList(
+                $this->getShardManager(),
+                $priceList,
+                [
+                    'priceList' => $priceList,
+                    'product' => $this->getReference(LoadProductData::PRODUCT_2)
+                ]
+            );
+            $productPrice = $productPrices[0];
+            $productPrice->setPrice(Price::create(1000, 'EUR'));
 
-        $priceManager = $this->getPriceManager();
-        $priceManager->persist($productPrice);
-        $priceManager->flush();
-
-        $configManager->set('oro_pricing.price_storage', $savedStorage);
+            $priceManager = $this->getPriceManager();
+            $priceManager->persist($productPrice);
+            $priceManager->flush();
+        } finally {
+            $configManager->set('oro_pricing.price_storage', $savedStorage);
+            $configManager->flush();
+        }
 
         self::assertEmpty(self::getSentMessages());
     }
@@ -145,13 +415,13 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
     {
         $this->disableListener();
 
-        $priceList = $this->getReference('price_list_2');
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_2);
         $productPrices = $this->getProductPriceRepository()->findByPriceList(
             $this->getShardManager(),
             $priceList,
             [
                 'priceList' => $priceList,
-                'product'   => $this->getReference(LoadProductData::PRODUCT_2)
+                'product' => $this->getReference(LoadProductData::PRODUCT_2)
             ]
         );
         $productPrice = $productPrices[0];
@@ -177,7 +447,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
             $this->getReference(LoadPriceLists::PRICE_LIST_1),
             [
                 'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_1),
-                'product'   => $this->getReference(LoadProductData::PRODUCT_1)
+                'product' => $this->getReference(LoadProductData::PRODUCT_1)
             ]
         );
         $productPrice1 = $productPrices[0];
@@ -187,7 +457,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
             $this->getReference(LoadPriceLists::PRICE_LIST_2),
             [
                 'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_2),
-                'product'   => $this->getReference(LoadProductData::PRODUCT_2)
+                'product' => $this->getReference(LoadProductData::PRODUCT_2)
             ]
         );
         $productPrice2 = $productPrices[0];
@@ -197,7 +467,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
             $this->getReference(LoadPriceLists::PRICE_LIST_2),
             [
                 'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_2),
-                'product'   => $this->getReference(LoadProductData::PRODUCT_1)
+                'product' => $this->getReference(LoadProductData::PRODUCT_1)
             ]
         );
         $productPrice3 = $productPrices[0];
@@ -220,13 +490,13 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
 
         // new relation should be created when new product specified
         $this->assertCount(1, $this->getPriceListToProductRepository()->findBy([
-            'product'   => $this->getReference(LoadProductData::PRODUCT_2),
+            'product' => $this->getReference(LoadProductData::PRODUCT_2),
             'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_1),
         ]));
 
         // new relation should be created when new price list specified
         $this->assertCount(1, $this->getPriceListToProductRepository()->findBy([
-            'product'   => $this->getReference(LoadProductData::PRODUCT_2),
+            'product' => $this->getReference(LoadProductData::PRODUCT_2),
             'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_5),
         ]));
 
@@ -246,7 +516,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
             $this->getReference(LoadPriceLists::PRICE_LIST_1),
             [
                 'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_1),
-                'product'   => $this->getReference(LoadProductData::PRODUCT_1)
+                'product' => $this->getReference(LoadProductData::PRODUCT_1)
             ]
         );
         $productPrice1 = $productPrices[0];
@@ -312,9 +582,9 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
     }
 
     /**
-     * @param string  $productReference
-     * @param string  $priceListReference
-     * @param Price   $price
+     * @param string $productReference
+     * @param string $priceListReference
+     * @param Price $price
      * @param integer $quantity
      *
      * @return ProductPrice
@@ -322,7 +592,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
     private function getProductPrice($productReference, $priceListReference, Price $price, $quantity)
     {
         /** @var ProductUnit $productUnit */
-        $productUnit = $this->getReference('product_unit.liter');
+        $productUnit = $this->getReference(LoadProductUnits::LITER);
         /** @var Product $product */
         $product = $this->getReference($productReference);
         /** @var PriceList $priceList */
@@ -341,26 +611,36 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
 
     private function disableListener()
     {
-        $this->getContainer()->get('oro_pricing.entity_listener.product_price_cpl')->setEnabled(false);
+        self::getContainer()->get('oro_pricing.entity_listener.product_price_cpl')->setEnabled(false);
     }
 
     private function getPriceManager(): PriceManager
     {
-        return $this->getContainer()->get('oro_pricing.manager.price_manager');
+        return self::getContainer()->get('oro_pricing.manager.price_manager');
     }
 
     private function getShardManager(): ShardManager
     {
-        return $this->getContainer()->get('oro_pricing.shard_manager');
+        return self::getContainer()->get('oro_pricing.shard_manager');
     }
 
     private function getProductPriceRepository(): ProductPriceRepository
     {
-        return $this->getContainer()->get('doctrine')->getRepository(ProductPrice::class);
+        return self::getContainer()->get('doctrine')->getRepository(ProductPrice::class);
     }
 
     private function getPriceListToProductRepository(): PriceListToProductRepository
     {
-        return $this->getContainer()->get('doctrine')->getRepository(PriceListToProduct::class);
+        return self::getContainer()->get('doctrine')->getRepository(PriceListToProduct::class);
+    }
+
+    private function disableCplFeature(): array
+    {
+        $configManager = self::getConfigManager('global');
+        $savedStorage = $configManager->get('oro_pricing.price_storage');
+        $configManager->set('oro_pricing.price_storage', 'flat');
+        $this->getContainer()->get('oro_featuretoggle.checker.feature_checker')->resetCache();
+
+        return [$configManager, $savedStorage];
     }
 }

@@ -146,6 +146,7 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
     {
         $productIds = [1, 10];
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 11]);
+        $cpl->setPricesCalculated(true);
         $website = $this->getEntity(Website::class, ['id' => 100]);
 
         return [
@@ -160,6 +161,67 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
                 'productIds' => $productIds,
                 'website' => null,
                 'expected' => [$cpl, $productIds]
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider productIndexationNonCalculatedCplProvider
+     */
+    public function testTriggerProductIndexationForNotCalculatedCpl(
+        CombinedPriceList $cpl,
+        array $productIds,
+        ?Website $website,
+        array $expected
+    ) {
+        $assignTo = [
+            'config' => true,
+            'website' => [
+                'ids' => [1, 2],
+                'id:1' => [
+                    'customer_group' => ['ids' => [3]],
+                    'customer' => ['ids' => [5]]
+                ]
+            ]
+        ];
+
+        $this->dispatcher->expects($this->once())
+            ->method('dispatch')
+            ->willReturnCallback(function (GetAssociatedWebsitesEvent $event, string $name) use ($website) {
+                $this->assertEquals($event::NAME, $name);
+                if ($website) {
+                    $event->addWebsiteAssociation($website);
+                }
+
+                return $event;
+            });
+
+        $this->triggerHandler->expects($this->once())
+            ->method('massProcess')
+            ->with(...$expected);
+
+        $this->facade->triggerProductIndexation($cpl, $assignTo, $productIds);
+    }
+
+    public function productIndexationNonCalculatedCplProvider(): array
+    {
+        $productIds = [1, 10];
+        $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 11]);
+        $cpl->setPricesCalculated(false);
+        $website = $this->getEntity(Website::class, ['id' => 100]);
+
+        return [
+            [
+                'cpl' => $cpl,
+                'productIds' => $productIds,
+                'website' => $website,
+                'expected' => [[$cpl], $website]
+            ],
+            [
+                'cpl' => $cpl,
+                'productIds' => $productIds,
+                'website' => null,
+                'expected' => [[$cpl]]
             ]
         ];
     }
