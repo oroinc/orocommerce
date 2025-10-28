@@ -5,7 +5,10 @@ namespace Oro\Bundle\PayPalBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Entity\Repository\PayPalSettingsRepository;
 use Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPayPalChannelData;
+use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 
 class PayPalSettingsRepositoryTest extends WebTestCase
 {
@@ -26,6 +29,15 @@ class PayPalSettingsRepositoryTest extends WebTestCase
      */
     public function testGetEnabledSettingsByType(string $type, int $expectedCount)
     {
+        $organization = $this->getReference(LoadOrganization::ORGANIZATION);
+        $adminToken = new UsernamePasswordOrganizationToken(
+            $this->getReference(LoadUser::USER),
+            'key',
+            $organization
+        );
+
+        $this->getContainer()->get('security.token_storage')->setToken($adminToken);
+
         $enabledSettings = $this->repository->getEnabledSettingsByType($type);
         $this->assertCount($expectedCount, $enabledSettings);
     }
