@@ -189,6 +189,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_pricing.shard_manager'
+            - '@event_dispatcher'
         public: false
         tags:
             - { name: kernel.event_listener, event: oro.import_export.before_import_chunks, method: onBeforeImportChunks }

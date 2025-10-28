@@ -27,6 +27,7 @@ oro_behat_extension:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ConsoleContext
         - Oro\Bundle\PricingBundle\Tests\Behat\Context\PriceCalculationDetailsContext
         - Oro\Bundle\CMSBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ApiBundle\Tests\Behat\Context\ApiContext
       paths:
         - '@OroPricingBundle/Tests/Behat/Features'
 
@@ -348,3 +349,27 @@ oro_behat_extension:
       selector:
         locator: '//input[@type="checkbox" and contains(@name, "[2][mergeAllowed]")]'
         type: 'xpath'
+
+    # API sandbox elements
+    API List Operations for productprices:
+      selector:
+        locator: "//li[h1[normalize-space(text())='productprices']]//a[contains(@class, 'action-list')]"
+        type: 'xpath'
+    API Create or update a list of Product Prices:
+      selector:
+        locator: "//li[normalize-space(text())='Create or update a list of Product Prices']"
+        type: 'xpath'
+    API Delete Product Prices:
+      selector:
+        locator: "//li[normalize-space(text())='Delete Product Prices']"
+        type: 'xpath'
+    API Active Section Sandbox:
+      selector: 'li.section.active li[data-pane="sandbox"]'
+    API PriceList filter value:
+      selector:
+        locator: "//div[contains(@class, 'sandbox') and contains(@class, 'selected')]//p[input[@value='filter[priceList]']]//input[contains(@class, 'value')]"
+        type: 'xpath'
+    API Content:
+      selector: 'div.sandbox.selected textarea.content'
+    API Try:
+      selector: 'div.sandbox.selected input[type="submit"]'

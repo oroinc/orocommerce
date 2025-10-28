@@ -11,23 +11,23 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveAfter;
+use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveBefore;
 use Oro\Bundle\PricingBundle\ImportExport\EventListener\BeforeImportChunksListener;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class BeforeImportChunksListenerTest extends TestCase
 {
     private ManagerRegistry|MockObject $doctrine;
-
     private ShardManager|MockObject $shardManager;
-
     private EntityRepository|MockObject $priceListRepository;
-
     private ProductPriceRepository|MockObject $productPriceRepository;
-
     private PriceListToProductRepository|MockObject $pl2pRepository;
+    private EventDispatcherInterface $eventDispatcher;
 
     private BeforeImportChunksListener $listener;
 
@@ -39,8 +39,9 @@ class BeforeImportChunksListenerTest extends TestCase
         $this->priceListRepository = $this->createMock(EntityRepository::class);
         $this->productPriceRepository = $this->createMock(ProductPriceRepository::class);
         $this->pl2pRepository = $this->createMock(PriceListToProductRepository::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->listener = new BeforeImportChunksListener($this->doctrine, $this->shardManager);
+        $this->listener = new BeforeImportChunksListener($this->doctrine, $this->shardManager, $this->eventDispatcher);
     }
 
     /**
@@ -133,6 +134,13 @@ class BeforeImportChunksListenerTest extends TestCase
             ->method('find')
             ->with(16)
             ->willReturn($priceList);
+
+        $this->eventDispatcher->expects($this->exactly(2))
+            ->method('dispatch')
+            ->withConsecutive(
+                [$this->isInstanceOf(ProductPricesRemoveBefore::class), ProductPricesRemoveBefore::NAME],
+                [$this->isInstanceOf(ProductPricesRemoveAfter::class), ProductPricesRemoveAfter::NAME],
+            );
 
         $this->productPriceRepository->expects($this->once())
             ->method('deleteByPriceList')

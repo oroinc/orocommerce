@@ -550,11 +550,46 @@ class ProductPriceRepository extends BaseProductPriceRepository
         ShardManager $shardManager,
         ProductPrice $productPrice
     ): bool {
-        $priceList = $productPrice->getPriceList();
+        return $this->areAllPricesNewInPriceList(
+            $shardManager,
+            $productPrice->getPriceList(),
+            [$productPrice]
+        );
+    }
 
+    public function areAllPricesNewInPriceList(
+        ShardManager $shardManager,
+        PriceList $priceList,
+        array $productPrices
+    ): bool {
         $qb = $this->getPricesCheckQueryBuilder($shardManager, $priceList);
-        $qb->andWhere($qb->expr()->neq('pp.id', ':priceId'))
-            ->setParameter('priceId', $productPrice->getId());
+        $qb->andWhere($qb->expr()->notIn('pp.id', ':prices'))
+            ->setParameter(
+                'prices',
+                array_map(static function (ProductPrice $productPrices) {
+                    return $productPrices->getId();
+                }, $productPrices),
+                Connection::PARAM_STR_ARRAY
+            );
+
+        $foundPrice = (bool)$qb->execute()->fetchOne();
+
+        return !$foundPrice;
+    }
+
+    public function areAllVersionedPricesNewInPriceList(
+        ShardManager $shardManager,
+        PriceList $priceList,
+        int $version
+    ): bool {
+        $qb = $this->getPricesCheckQueryBuilder($shardManager, $priceList);
+        $qb->andWhere(
+            $qb->expr()->or(
+                $qb->expr()->neq('pp.version', ':version'),
+                $qb->expr()->isNull('pp.version')
+            )
+        );
+        $qb->setParameter('version', $version, Types::INTEGER);
 
         $foundPrice = (bool)$qb->execute()->fetchOne();
 

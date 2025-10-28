@@ -12,12 +12,17 @@ use Oro\Bundle\PricingBundle\Handler\CombinedPriceListBuildTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class CombinedPriceListBuildTriggerHandlerTest extends \PHPUnit\Framework\TestCase
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class CombinedPriceListBuildTriggerHandlerTest extends TestCase
 {
-    private ManagerRegistry $doctrine;
-    private PriceListRelationTriggerHandler $priceListRelationTriggerHandler;
-    private ShardManager $shardManager;
+    private ManagerRegistry|MockObject $doctrine;
+    private PriceListRelationTriggerHandler|MockObject $priceListRelationTriggerHandler;
+    private ShardManager|MockObject $shardManager;
     private CombinedPriceListBuildTriggerHandler $combinedPriceListBuildTriggerHandler;
 
     #[\Override]
@@ -222,6 +227,250 @@ class CombinedPriceListBuildTriggerHandlerTest extends \PHPUnit\Framework\TestCa
             ->with($priceList);
 
         self::assertFalse($this->combinedPriceListBuildTriggerHandler->handlePriceCreation($productPrice));
+    }
+
+    public function testHandleMassPriceCreation(): void
+    {
+        $priceList1 = new PriceList();
+        $priceList1->setActive(true);
+        ReflectionUtil::setId($priceList1, 1);
+
+        $priceList2 = new PriceList();
+        $priceList2->setActive(true);
+        ReflectionUtil::setId($priceList2, 2);
+
+        $productPrice1 = new ProductPrice();
+        $productPrice1->setId(1);
+        $productPrice1->setPriceList($priceList1);
+
+        $productPrice2 = new ProductPrice();
+        $productPrice2->setId(2);
+        $productPrice2->setPriceList($priceList1);
+
+        $productPrice3 = new ProductPrice();
+        $productPrice3->setId(3);
+        $productPrice3->setPriceList($priceList2);
+
+        $productPrices = [$productPrice1, $productPrice2, $productPrice3];
+
+        $combinedPriceToPriceListRepository = $this->createMock(CombinedPriceListToPriceListRepository::class);
+        $combinedPriceToPriceListRepository->expects(self::exactly(2))
+            ->method('hasCombinedPriceListWithPriceList')
+            ->withConsecutive([$priceList1], [$priceList2])
+            ->willReturn(true);
+
+        $productPriceRepository = $this->createMock(ProductPriceRepository::class);
+        $productPriceRepository->expects(self::exactly(2))
+            ->method('areAllPricesNewInPriceList')
+            ->withConsecutive(
+                [$this->shardManager, $priceList1, [$productPrice1, $productPrice2]],
+                [$this->shardManager, $priceList2, [$productPrice3]]
+            )
+            ->willReturn(true);
+
+        $this->doctrine->expects(self::any())
+            ->method('getRepository')
+            ->willReturnMap([
+                [CombinedPriceListToPriceList::class, null, $combinedPriceToPriceListRepository],
+                [ProductPrice::class, null, $productPriceRepository]
+            ]);
+
+        $this->priceListRelationTriggerHandler->expects(self::exactly(2))
+            ->method('handlePriceListStatusChange')
+            ->withConsecutive([$priceList1], [$priceList2]);
+
+        self::assertTrue($this->combinedPriceListBuildTriggerHandler->handleMassPriceCreation($productPrices));
+    }
+
+    public function testHandleMassPriceCreationWithInactivePriceList(): void
+    {
+        $priceList = new PriceList();
+        $priceList->setActive(false);
+        ReflectionUtil::setId($priceList, 1);
+
+        $productPrice = new ProductPrice();
+        $productPrice->setId(1);
+        $productPrice->setPriceList($priceList);
+
+        $productPrices = [$productPrice];
+
+        $combinedPriceToPriceListRepository = $this->createMock(CombinedPriceListToPriceListRepository::class);
+        $combinedPriceToPriceListRepository->expects(self::never())
+            ->method('hasCombinedPriceListWithPriceList');
+
+        $productPriceRepository = $this->createMock(ProductPriceRepository::class);
+        $productPriceRepository->expects(self::never())
+            ->method('areAllPricesNewInPriceList');
+
+        $this->doctrine->expects(self::any())
+            ->method('getRepository')
+            ->willReturnMap([
+                [CombinedPriceListToPriceList::class, null, $combinedPriceToPriceListRepository],
+                [ProductPrice::class, null, $productPriceRepository]
+            ]);
+
+        $this->priceListRelationTriggerHandler->expects(self::never())
+            ->method('handlePriceListStatusChange');
+
+        self::assertFalse($this->combinedPriceListBuildTriggerHandler->handleMassPriceCreation($productPrices));
+    }
+
+    public function testHandleMassPriceCreationWithNoCombinedPriceList(): void
+    {
+        $priceList = new PriceList();
+        $priceList->setActive(true);
+        ReflectionUtil::setId($priceList, 1);
+
+        $productPrice = new ProductPrice();
+        $productPrice->setId(1);
+        $productPrice->setPriceList($priceList);
+
+        $productPrices = [$productPrice];
+
+        $combinedPriceToPriceListRepository = $this->createMock(CombinedPriceListToPriceListRepository::class);
+        $combinedPriceToPriceListRepository->expects(self::once())
+            ->method('hasCombinedPriceListWithPriceList')
+            ->with($priceList)
+            ->willReturn(false);
+
+        $productPriceRepository = $this->createMock(ProductPriceRepository::class);
+        $productPriceRepository->expects(self::never())
+            ->method('areAllPricesNewInPriceList');
+
+        $this->doctrine->expects(self::any())
+            ->method('getRepository')
+            ->willReturnMap([
+                [CombinedPriceListToPriceList::class, null, $combinedPriceToPriceListRepository],
+                [ProductPrice::class, null, $productPriceRepository]
+            ]);
+
+        $this->priceListRelationTriggerHandler->expects(self::never())
+            ->method('handlePriceListStatusChange');
+
+        self::assertFalse($this->combinedPriceListBuildTriggerHandler->handleMassPriceCreation($productPrices));
+    }
+
+    public function testHandleMassPriceCreationWithNotAllPricesNew(): void
+    {
+        $priceList = new PriceList();
+        $priceList->setActive(true);
+        ReflectionUtil::setId($priceList, 1);
+
+        $productPrice = new ProductPrice();
+        $productPrice->setId(1);
+        $productPrice->setPriceList($priceList);
+
+        $productPrices = [$productPrice];
+
+        $combinedPriceToPriceListRepository = $this->createMock(CombinedPriceListToPriceListRepository::class);
+        $combinedPriceToPriceListRepository->expects(self::once())
+            ->method('hasCombinedPriceListWithPriceList')
+            ->with($priceList)
+            ->willReturn(true);
+
+        $productPriceRepository = $this->createMock(ProductPriceRepository::class);
+        $productPriceRepository->expects(self::once())
+            ->method('areAllPricesNewInPriceList')
+            ->with($this->shardManager, $priceList, [$productPrice])
+            ->willReturn(false);
+
+        $this->doctrine->expects(self::any())
+            ->method('getRepository')
+            ->willReturnMap([
+                [CombinedPriceListToPriceList::class, null, $combinedPriceToPriceListRepository],
+                [ProductPrice::class, null, $productPriceRepository]
+            ]);
+
+        $this->priceListRelationTriggerHandler->expects(self::never())
+            ->method('handlePriceListStatusChange');
+
+        self::assertFalse($this->combinedPriceListBuildTriggerHandler->handleMassPriceCreation($productPrices));
+    }
+
+    public function testHandleMassPriceCreationWithEmptyArray(): void
+    {
+        $productPrices = [];
+
+        $combinedPriceToPriceListRepository = $this->createMock(CombinedPriceListToPriceListRepository::class);
+        $combinedPriceToPriceListRepository->expects(self::never())
+            ->method('hasCombinedPriceListWithPriceList');
+
+        $productPriceRepository = $this->createMock(ProductPriceRepository::class);
+        $productPriceRepository->expects(self::never())
+            ->method('areAllPricesNewInPriceList');
+
+        $this->doctrine->expects(self::any())
+            ->method('getRepository')
+            ->willReturnMap([
+                [CombinedPriceListToPriceList::class, null, $combinedPriceToPriceListRepository],
+                [ProductPrice::class, null, $productPriceRepository]
+            ]);
+
+        $this->priceListRelationTriggerHandler->expects(self::never())
+            ->method('handlePriceListStatusChange');
+
+        self::assertFalse($this->combinedPriceListBuildTriggerHandler->handleMassPriceCreation($productPrices));
+    }
+
+    public function testHandleMassPriceCreationMixedScenarios(): void
+    {
+        // Price list 1: Active, has combined price list, all prices are new -> should trigger rebuild
+        $priceList1 = new PriceList();
+        $priceList1->setActive(true);
+        ReflectionUtil::setId($priceList1, 1);
+
+        // Price list 2: Active, has combined price list, but not all prices are new -> should NOT trigger rebuild
+        $priceList2 = new PriceList();
+        $priceList2->setActive(true);
+        ReflectionUtil::setId($priceList2, 2);
+
+        // Price list 3: Inactive -> should NOT trigger rebuild
+        $priceList3 = new PriceList();
+        $priceList3->setActive(false);
+        ReflectionUtil::setId($priceList3, 3);
+
+        $productPrice1 = new ProductPrice();
+        $productPrice1->setId(1);
+        $productPrice1->setPriceList($priceList1);
+
+        $productPrice2 = new ProductPrice();
+        $productPrice2->setId(2);
+        $productPrice2->setPriceList($priceList2);
+
+        $productPrice3 = new ProductPrice();
+        $productPrice3->setId(3);
+        $productPrice3->setPriceList($priceList3);
+
+        $productPrices = [$productPrice1, $productPrice2, $productPrice3];
+
+        $combinedPriceToPriceListRepository = $this->createMock(CombinedPriceListToPriceListRepository::class);
+        $combinedPriceToPriceListRepository->expects(self::exactly(2))
+            ->method('hasCombinedPriceListWithPriceList')
+            ->withConsecutive([$priceList1], [$priceList2])
+            ->willReturn(true);
+
+        $productPriceRepository = $this->createMock(ProductPriceRepository::class);
+        $productPriceRepository->expects(self::exactly(2))
+            ->method('areAllPricesNewInPriceList')
+            ->withConsecutive(
+                [$this->shardManager, $priceList1, [$productPrice1]],
+                [$this->shardManager, $priceList2, [$productPrice2]]
+            )
+            ->willReturnOnConsecutiveCalls(true, false);
+
+        $this->doctrine->expects(self::any())
+            ->method('getRepository')
+            ->willReturnMap([
+                [CombinedPriceListToPriceList::class, null, $combinedPriceToPriceListRepository],
+                [ProductPrice::class, null, $productPriceRepository]
+            ]);
+
+        // Only price list 1 should trigger rebuild
+        $this->priceListRelationTriggerHandler->expects(self::once())
+            ->method('handlePriceListStatusChange')
+            ->with($priceList1);
+
+        self::assertTrue($this->combinedPriceListBuildTriggerHandler->handleMassPriceCreation($productPrices));
     }
 
     private function setDoctrineExpectations(

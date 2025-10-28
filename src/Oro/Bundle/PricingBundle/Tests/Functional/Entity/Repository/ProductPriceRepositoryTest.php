@@ -22,6 +22,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
+ * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
@@ -378,7 +379,7 @@ class ProductPriceRepositoryTest extends WebTestCase
 
         /** @var PriceList $priceList2 */
         $priceList2 = $this->getReference(LoadPriceLists::PRICE_LIST_2);
-        $this->assertEquals(3, $this->repository->countByPriceList($this->shardManager, $priceList2));
+        $this->assertEquals(4, $this->repository->countByPriceList($this->shardManager, $priceList2));
 
         $this->repository->deleteByPriceList($this->shardManager, $priceList2);
         $this->assertEquals(0, $this->repository->countByPriceList($this->shardManager, $priceList2));
@@ -462,7 +463,7 @@ class ProductPriceRepositoryTest extends WebTestCase
 
     public function testDeleteInvalidPricesByProducts()
     {
-        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_4);
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
         $product2 = $this->getReference(LoadProductData::PRODUCT_2);
 
@@ -494,7 +495,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $this->prepareDetachedPrices($priceList, $product1, $unit, $price);
         $this->prepareDetachedPrices($priceList, $product2, $unit, $price);
         $prices = $this->repository->findByPriceList($this->shardManager, $priceList, []);
-        $this->assertCount(2, $prices);
+        $this->assertCount(6, $prices);
 
         $this->repository->deleteInvalidPrices($this->shardManager, $priceList);
 
@@ -557,6 +558,97 @@ class ProductPriceRepositoryTest extends WebTestCase
 
         self::assertTrue($this->repository->isFirstPriceAdded($this->shardManager, $productPrice17));
         self::assertFalse($this->repository->isFirstPriceAdded($this->shardManager, $productPrice1));
+    }
+
+    public function testAreAllPricesNewInPriceList()
+    {
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
+
+        $productPrice15 = $this->getReference(LoadProductPrices::PRODUCT_PRICE_15);
+        $productPrice16 = $this->getReference(LoadProductPrices::PRODUCT_PRICE_16);
+
+        self::assertTrue(
+            $this->repository->areAllPricesNewInPriceList(
+                $this->shardManager,
+                $priceList,
+                [$productPrice15, $productPrice16]
+            )
+        );
+    }
+
+    public function testAreAllPricesNewInPriceListFalse()
+    {
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+
+        $productPrice7 = $this->getReference(LoadProductPrices::PRODUCT_PRICE_7);
+        $productPrice8 = $this->getReference(LoadProductPrices::PRODUCT_PRICE_8);
+
+        self::assertFalse(
+            $this->repository->areAllPricesNewInPriceList(
+                $this->shardManager,
+                $priceList,
+                [$productPrice7, $productPrice8]
+            )
+        );
+    }
+
+    public function testAreAllVersionedPricesNewInPriceList()
+    {
+        $version = 100;
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
+
+        $productPrice15 = $this->getReference(LoadProductPrices::PRODUCT_PRICE_15);
+        $productPrice16 = $this->getReference(LoadProductPrices::PRODUCT_PRICE_16);
+
+        $productPrice15->setVersion($version);
+        $productPrice16->setVersion($version);
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
+        $priceManager->persist($productPrice15);
+        $priceManager->persist($productPrice16);
+        $priceManager->flush();
+
+        self::assertTrue(
+            $this->repository->areAllVersionedPricesNewInPriceList(
+                $this->shardManager,
+                $priceList,
+                $version
+            )
+        );
+    }
+
+    public function testAreAllVersionedPricesNewInPriceListFalse()
+    {
+        $version = 100;
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
+
+        $productPrice15 = $this->getReference(LoadProductPrices::PRODUCT_PRICE_15);
+
+        $productPrice15->setVersion($version);
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
+        $priceManager->persist($productPrice15);
+        $priceManager->flush();
+
+        self::assertFalse(
+            $this->repository->areAllVersionedPricesNewInPriceList(
+                $this->shardManager,
+                $priceList,
+                $version
+            )
+        );
+    }
+
+    public function testAreAllVersionedPricesNewInPriceListFalseNoVersion()
+    {
+        $version = 100;
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
+
+        self::assertFalse(
+            $this->repository->areAllVersionedPricesNewInPriceList(
+                $this->shardManager,
+                $priceList,
+                $version
+            )
+        );
     }
 
     private function getPriceIds(array $prices): array

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
@@ -156,6 +157,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
     ): void {
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
         $selectQb = $this->getUnusedCombinedPriceListsQueryBuilder($exceptPriceLists);
+        $unusedPriceListsSql = $selectQb->getQuery()->getSQL();
         $selectQb->addSelect((string)$selectQb->expr()->literal($now->format('Y-m-d H:i:s')));
 
         $selectQuery = $selectQb->getQuery();
@@ -167,6 +169,25 @@ class CombinedPriceListRepository extends BasePriceListRepository
             $selectQuery->getSQL()
         );
         $this->_em->getConnection()->executeStatement($sql, $params, $types);
+
+        // Mark CPLs scheduled for removal as not calculated
+        $this->_em->getConnection()->executeStatement(
+            sprintf(
+                'UPDATE oro_price_list_combined SET is_prices_calculated = ? WHERE id IN (%s)',
+                $unusedPriceListsSql
+            ),
+            array_merge([false], $params),
+            array_merge([Types::BOOLEAN], $types)
+        );
+    }
+
+    public function setAsNotCalculated(array $cplIds): void
+    {
+        $this->_em->getConnection()->executeStatement(
+            'UPDATE oro_price_list_combined SET is_prices_calculated = ? WHERE id IN (?)',
+            [false, $cplIds],
+            [Types::BOOLEAN, Connection::PARAM_INT_ARRAY]
+        );
     }
 
     public function getPriceListsScheduledForRemoval(

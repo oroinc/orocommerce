@@ -8,7 +8,10 @@ use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveAfter;
+use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveBefore;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Clears the price list before the import for the reset import strategy
@@ -17,13 +20,11 @@ class BeforeImportChunksListener
 {
     public const RESET_PROCESSOR_ALIAS = 'oro_pricing_product_price.reset';
 
-    private ManagerRegistry $doctrine;
-    private ShardManager $shardManager;
-
-    public function __construct(ManagerRegistry $doctrine, ShardManager $shardManager)
-    {
-        $this->doctrine = $doctrine;
-        $this->shardManager = $shardManager;
+    public function __construct(
+        private ManagerRegistry $doctrine,
+        private ShardManager $shardManager,
+        private EventDispatcherInterface $eventDispatcher
+    ) {
     }
 
     public function onBeforeImportChunks(BeforeImportChunksEvent $event): void
@@ -33,10 +34,16 @@ class BeforeImportChunksListener
             $priceListId = (int)$body['options']['price_list_id'];
             $priceList = $this->getPriceListById($priceListId);
             if (null !== $priceList) {
+                $beforeEvent = new ProductPricesRemoveBefore(['priceList' => $priceList]);
+                $this->eventDispatcher->dispatch($beforeEvent, ProductPricesRemoveBefore::NAME);
+
                 $this->doctrine->getRepository(ProductPrice::class)
                     ->deleteByPriceList($this->shardManager, $priceList);
                 $this->doctrine->getRepository(PriceListToProduct::class)
                     ->deleteManualRelations($priceList);
+
+                $afterEvent = new ProductPricesRemoveAfter(['priceList' => $priceList]);
+                $this->eventDispatcher->dispatch($afterEvent, ProductPricesRemoveAfter::NAME);
             }
         }
     }
