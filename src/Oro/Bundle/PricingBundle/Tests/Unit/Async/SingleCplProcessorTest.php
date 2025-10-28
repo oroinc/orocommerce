@@ -258,8 +258,9 @@ class SingleCplProcessorTest extends TestCase
     public function testProcess(array $products)
     {
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
+        $cpl->setPricesCalculated(true);
         $assignTo = ['config' => true];
-        $message = $this->getMessage($products, $assignTo);
+        $message = $this->getMessage($products, $assignTo, [], $cpl);
 
         $this->assertJobRunnerCalls();
         $this->assertActivityRecordsRemoval($products, $cpl);
@@ -284,12 +285,55 @@ class SingleCplProcessorTest extends TestCase
         );
     }
 
+    public function testProcessNotCalculatedCplWithPassedProducts()
+    {
+        $products = [1, 2];
+        $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
+        $cpl->setPricesCalculated(false);
+        $assignTo = ['config' => true];
+        $message = $this->getMessage($products, $assignTo, [], $cpl);
+
+        $this->assertJobRunnerCalls();
+        $this->assertActivityRecordsRemoval([], $cpl);
+        $this->assertTransactionCommit();
+
+        $this->statusHandler->expects($this->once())
+            ->method('isReadyForBuild')
+            ->with($cpl)
+            ->willReturn(true);
+        $this->combinedPriceListsBuilderFacade->expects($this->exactly(2))
+            ->method('triggerProductIndexation')
+            ->with($cpl, $assignTo, []);
+        $this->combinedPriceListsBuilderFacade->expects($this->once())
+            ->method('rebuild')
+            ->with([$cpl], []);
+        $this->dispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                new CombinedPriceListsUpdateEvent([$cpl->getId()]),
+                CombinedPriceListsUpdateEvent::NAME
+            );
+
+        $this->combinedPriceListsBuilderFacade->expects($this->once())
+            ->method('processAssignments')
+            ->with($cpl, $assignTo);
+
+        $this->logger->expects($this->never())
+            ->method('error');
+
+        $this->assertEquals(
+            $this->processor::ACK,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
+        );
+    }
+
     public function testProcessOfNotReadyCpl()
     {
         $products = [];
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
+        $cpl->setPricesCalculated(true);
         $assignTo = ['config' => true];
-        $message = $this->getMessage($products, $assignTo);
+        $message = $this->getMessage($products, $assignTo, [], $cpl);
 
         $this->assertJobRunnerCalls();
         $this->assertActivityRecordsRemoval($products, $cpl);
@@ -325,8 +369,9 @@ class SingleCplProcessorTest extends TestCase
     public function testProcessNotReadyCpl(array $products)
     {
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
+        $cpl->setPricesCalculated(true);
         $assignTo = ['config' => true];
-        $message = $this->getMessage($products, $assignTo);
+        $message = $this->getMessage($products, $assignTo, [], $cpl);
 
         $this->assertJobRunnerCalls();
         $this->assertActivityRecordsRemoval($products, $cpl);
@@ -466,10 +511,9 @@ class SingleCplProcessorTest extends TestCase
     private function getMessage(
         array $products,
         array $assignTo,
-        array $collection = [],
-        ?CombinedPriceList $cpl = null
+        array $collection,
+        CombinedPriceList $cpl
     ): MessageInterface {
-        $cpl = $cpl ?? $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')

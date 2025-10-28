@@ -18,6 +18,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\PriceListToProductSaveAfterEvent;
 use Oro\Bundle\PricingBundle\Event\ProductPriceRemove;
 use Oro\Bundle\PricingBundle\Event\ProductPriceSaveAfterEvent;
+use Oro\Bundle\PricingBundle\Event\ProductPricesUpdatedAfter;
 use Oro\Bundle\PricingBundle\Handler\CombinedPriceListBuildTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -61,9 +62,35 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
         $productPrice = $event->getEventArgs()->getEntity();
         $this->addPriceListToProductRelation($productPrice);
 
-        $this->combinedPriceListBuildTriggerHandler->handlePriceCreation($productPrice);
+        if ($this->isFeaturesEnabled()) {
+            $this->combinedPriceListBuildTriggerHandler->handlePriceCreation($productPrice);
+        }
 
         $this->handleChanges($productPrice);
+    }
+
+    public function onUpdateAfter(ProductPricesUpdatedAfter $event): void
+    {
+        if (!$this->enabled) {
+            return;
+        }
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
+        $changeSets = $event->getChangeSets();
+        $newPrices = array_filter($event->getUpdated(), static function (ProductPrice $price) use ($changeSets) {
+            return !array_key_exists($price->getId(), $changeSets)
+                || (!empty($changeSets[$price->getId()]['id']) && !isset($changeSets[$price->getId()]['id'][0]));
+        });
+        $newPrices = array_merge($event->getSaved(), $newPrices);
+
+        // Single price creation is processed in onSave method. Skip mass save logic to prevent conflicts.
+        if (count($newPrices) < 2) {
+            return;
+        }
+
+        $this->combinedPriceListBuildTriggerHandler->handleMassPriceCreation($newPrices);
     }
 
     public function onRemove(ProductPriceRemove $event)

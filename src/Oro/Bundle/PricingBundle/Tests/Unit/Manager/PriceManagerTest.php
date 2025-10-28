@@ -112,7 +112,7 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
             });
         $this->unitOfWork->expects($this->once())
             ->method('registerManaged')
-            ->with($this->identicalTo($price), ['id' => $priceId], $changeSet);
+            ->with($this->identicalTo($price), ['id' => $priceId], ['value' => '1.0000']);
 
         $this->repository->expects($this->never())
             ->method('remove');
@@ -162,7 +162,7 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo($this->shardManager), $this->identicalTo($price));
         $this->unitOfWork->expects($this->once())
             ->method('registerManaged')
-            ->with($this->identicalTo($price), ['id' => $price->getId()], $changeSet);
+            ->with($this->identicalTo($price), ['id' => $price->getId()], ['value' => '2.0000']);
 
         $this->repository->expects($this->never())
             ->method('remove');
@@ -213,7 +213,7 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo($this->shardManager), $this->identicalTo($price));
         $this->unitOfWork->expects($this->once())
             ->method('registerManaged')
-            ->with($this->identicalTo($price), ['id' => $price->getId()], $this->identicalTo($changeSet));
+            ->with($this->identicalTo($price), ['id' => $price->getId()], ['value' => '2.0000']);
 
         $this->repository->expects($this->never())
             ->method('remove');
