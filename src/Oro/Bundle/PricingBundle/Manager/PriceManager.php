@@ -77,7 +77,11 @@ class PriceManager
             }
 
             if ($price->getId() && !$uow->isInIdentityMap($price)) {
-                $uow->registerManaged($price, ['id' => $price->getId()], $changeSet);
+                $data = array_map(static function ($value) {
+                    return $value[1];
+                }, $changeSet);
+
+                $uow->registerManaged($price, ['id' => $price->getId()], $data);
                 $changeSet = $this->getChangeSet($uow, $classMetadata, $price);
             }
         }

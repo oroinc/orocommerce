@@ -113,17 +113,21 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
     public function testDeleteUnusedPriceLists()
     {
+        $manager = $this->getManager();
+
         $combinedPriceList = new CombinedPriceList();
         $combinedPriceList->setEnabled(true);
+        $combinedPriceList->setPricesCalculated(true);
         $combinedPriceList->setName('test_cpl');
-        $this->getManager()->persist($combinedPriceList);
-        $this->getManager()->flush();
+        $manager->persist($combinedPriceList);
+        $manager->flush();
 
         $combinedPriceList2 = new CombinedPriceList();
         $combinedPriceList2->setEnabled(true);
+        $combinedPriceList2->setPricesCalculated(true);
         $combinedPriceList2->setName('test_cpl2');
-        $this->getManager()->persist($combinedPriceList2);
-        $this->getManager()->flush();
+        $manager->persist($combinedPriceList2);
+        $manager->flush();
 
         $combinedPriceListRepository = $this->getRepository();
 
@@ -139,6 +143,13 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $combinedPriceListRepository->scheduleUnusedPriceListsRemoval($helper, $exceptPriceLists);
         // Check that there are CPLs planned for removal after scheduleUnusedPriceListsRemoval call
         $this->assertTrue($combinedPriceListRepository->hasPriceListsScheduledForRemoval());
+
+        // Check that price lists planned for removal have is_prices_calculated set to false
+        // and except price lists are not affected
+        $manager->refresh($combinedPriceList);
+        $manager->refresh($combinedPriceList2);
+        $this->assertTrue($combinedPriceList->isPricesCalculated());
+        $this->assertFalse($combinedPriceList2->isPricesCalculated());
 
         $requestedAt = new \DateTime('now', new \DateTimeZone('UTC'));
         // Check that clearUnusedPriceListRemovalSchedule actually clears scheduled removals.
@@ -156,6 +167,33 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl2']);
         $this->assertEmpty($priceLists);
+    }
+
+    public function testSetAsNotCalculated(): void
+    {
+        $manager = $this->getManager();
+
+        $combinedPriceList = new CombinedPriceList();
+        $combinedPriceList->setEnabled(true);
+        $combinedPriceList->setPricesCalculated(true);
+        $combinedPriceList->setName('test_cpl');
+        $manager->persist($combinedPriceList);
+        $manager->flush();
+
+        $combinedPriceList2 = new CombinedPriceList();
+        $combinedPriceList2->setEnabled(true);
+        $combinedPriceList2->setPricesCalculated(true);
+        $combinedPriceList2->setName('test_cpl2');
+        $manager->persist($combinedPriceList2);
+        $manager->flush();
+
+        $combinedPriceListRepository = $this->getRepository();
+
+        $combinedPriceListRepository->setAsNotCalculated([$combinedPriceList2->getId()]);
+        $manager->refresh($combinedPriceList);
+        $manager->refresh($combinedPriceList2);
+        $this->assertTrue($combinedPriceList->isPricesCalculated());
+        $this->assertFalse($combinedPriceList2->isPricesCalculated());
     }
 
     /**

@@ -74,10 +74,18 @@ class CombinedPriceListsBuilderFacade
         $this->dispatcher->dispatch($event, $event::NAME);
         $websites = $event->getWebsites();
         if (empty($websites)) {
-            $this->triggerHandler->processByProduct($cpl, $productIds);
+            if ($cpl->isPricesCalculated()) {
+                $this->triggerHandler->processByProduct($cpl, $productIds);
+            } else {
+                $this->triggerHandler->massProcess([$cpl]);
+            }
         }
         foreach ($event->getWebsites() as $website) {
-            $this->triggerHandler->processByProduct($cpl, $productIds, $website);
+            if ($cpl->isPricesCalculated()) {
+                $this->triggerHandler->processByProduct($cpl, $productIds, $website);
+            } else {
+                $this->triggerHandler->massProcess([$cpl], $website);
+            }
         }
     }
 }

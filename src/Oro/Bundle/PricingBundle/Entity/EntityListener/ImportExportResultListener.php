@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\Async\Topic\ResolveVersionedFlatPriceTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
@@ -27,6 +28,7 @@ class ImportExportResultListener implements FeatureToggleableInterface
     private PriceRuleLexemeTriggerHandler $lexemeTriggerHandler;
     private ShardManager $shardManager;
     private MessageProducerInterface $producer;
+    private PriceListRelationTriggerHandler $priceListRelationTriggerHandler;
 
     public function __construct(
         ManagerRegistry $doctrine,
@@ -38,6 +40,11 @@ class ImportExportResultListener implements FeatureToggleableInterface
         $this->lexemeTriggerHandler = $lexemeTriggerHandler;
         $this->shardManager = $shardManager;
         $this->producer = $producer;
+    }
+
+    public function setPriceListRelationTriggerHandler(PriceListRelationTriggerHandler $handler): void
+    {
+        $this->priceListRelationTriggerHandler = $handler;
     }
 
     public function postPersist(ImportExportResult $importExportResult)
@@ -102,10 +109,19 @@ class ImportExportResultListener implements FeatureToggleableInterface
 
     private function emitCplTriggers(PriceList $priceList, int $version): void
     {
-        $this->producer->send(
-            ResolveCombinedPriceByVersionedPriceListTopic::getName(),
-            ['priceLists' => [$priceList->getId()], 'version' => $version]
-        );
+        if (!$priceList->isActive()) {
+            return;
+        }
+
+        $priceRepo = $this->getProductPriceRepository();
+        if ($priceRepo->areAllVersionedPricesNewInPriceList($this->shardManager, $priceList, $version)) {
+            $this->priceListRelationTriggerHandler->handlePriceListStatusChange($priceList);
+        } else {
+            $this->producer->send(
+                ResolveCombinedPriceByVersionedPriceListTopic::getName(),
+                ['priceLists' => [$priceList->getId()], 'version' => $version]
+            );
+        }
     }
 
     private function emitFlatTriggers(PriceList $priceList, int $version): void
