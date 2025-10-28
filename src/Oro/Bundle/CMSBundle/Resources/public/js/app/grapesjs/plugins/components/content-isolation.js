@@ -1,4 +1,4 @@
-import {uniqueId, each} from 'underscore';
+import _ from 'underscore';
 import CONSTANTS from 'orocms/js/app/grapesjs/constants';
 import {unescapeTwigExpression} from '../../utils';
 
@@ -68,7 +68,7 @@ export const getWrapperAttrs = html => {
     const attrs = {};
     if (hasIsolation(html)) {
         const body = convertHtmlStringToNodes(stripRestrictedAttrs(html));
-        each(body.firstChild.attributes, attr => attrs[attr.name] = body.firstChild.getAttribute(attr.name));
+        _.each(body.firstChild.attributes, attr => attrs[attr.name] = body.firstChild.getAttribute(attr.name));
     }
     delete attrs.id;
     if (attrs.class) {
@@ -86,7 +86,7 @@ export const stripRestrictedAttrs = html => {
 };
 
 function randomId(length = 20) {
-    return uniqueId(
+    return _.uniqueId(
         [...Array(length)].map(i => (~~(Math.random() * 36)).toString(36)).join('')
     );
 }

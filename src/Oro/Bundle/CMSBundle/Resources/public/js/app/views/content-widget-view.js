@@ -1,140 +1,136 @@
-define([
-    'jquery',
-    'backbone',
-    'underscore',
-    'orotranslation/js/translator',
-    'oroui/js/mediator',
-    'oroui/js/delete-confirmation'
-], function($, Backbone, _, __, mediator, DeleteConfirmation) {
-    'use strict';
+import $ from 'jquery';
+import Backbone from 'backbone';
+import _ from 'underscore';
+import __ from 'orotranslation/js/translator';
+import mediator from 'oroui/js/mediator';
+import DeleteConfirmation from 'oroui/js/delete-confirmation';
+
+/**
+ * @export  orointegration/js/channel-view
+ * @class   orointegration.channelView
+ * @extends Backbone.View
+ */
+const ContentWidgetView = Backbone.View.extend({
+    /**
+     * @type {Object}
+     */
+    options: {
+        updateMarker: 'formUpdateMarker',
+        formSelector: null,
+        typeSelector: null,
+        fieldsSets: [] // array of fields that should be submitted for form update
+    },
 
     /**
-     * @export  orointegration/js/channel-view
-     * @class   orointegration.channelView
-     * @extends Backbone.View
+     * @type {Array}
      */
-    const ContentWidgetView = Backbone.View.extend({
-        /**
-         * @type {Object}
-         */
-        options: {
-            updateMarker: 'formUpdateMarker',
-            formSelector: null,
-            typeSelector: null,
-            fieldsSets: [] // array of fields that should be submitted for form update
-        },
+    requiredOptions: ['formSelector', 'typeSelector'],
 
-        /**
-         * @type {Array}
-         */
-        requiredOptions: ['formSelector', 'typeSelector'],
+    /**
+     * @inheritdoc
+     */
+    constructor: function ContentWidgetView(options) {
+        ContentWidgetView.__super__.constructor.call(this, options);
+    },
 
-        /**
-         * @inheritdoc
-         */
-        constructor: function ContentWidgetView(options) {
-            ContentWidgetView.__super__.constructor.call(this, options);
-        },
+    /**
+     * @param options Object
+     */
+    initialize: function(options) {
+        const requiredMissed = this.requiredOptions.filter(function(option) {
+            return _.isUndefined(options[option]);
+        });
+        if (requiredMissed.length) {
+            throw new TypeError('Missing required option(s): ' + requiredMissed.join(','));
+        }
 
-        /**
-         * @param options Object
-         */
-        initialize: function(options) {
-            const requiredMissed = this.requiredOptions.filter(function(option) {
-                return _.isUndefined(options[option]);
-            });
-            if (requiredMissed.length) {
-                throw new TypeError('Missing required option(s): ' + requiredMissed.join(','));
-            }
+        this.options = _.defaults(options || {}, this.options);
 
-            this.options = _.defaults(options || {}, this.options);
+        $(this.options.typeSelector).on('change', this.changeHandler.bind(this));
 
-            $(this.options.typeSelector).on('change', this.changeHandler.bind(this));
+        this.memoizeValue(this.options.typeSelector);
+    },
 
-            this.memoizeValue(this.options.typeSelector);
-        },
+    /**
+     * Check whenever form change and shows confirmation
+     * @param {$.Event} e
+     */
+    changeHandler: function(e) {
+        const $el = $(e.currentTarget);
 
-        /**
-         * Check whenever form change and shows confirmation
-         * @param {$.Event} e
-         */
-        changeHandler: function(e) {
-            const $el = $(e.currentTarget);
+        if ($el.data('cancelled') === true) {
+            $el.data('cancelled', false);
+        } else {
+            const prevVal = $el.data('current');
 
-            if ($el.data('cancelled') === true) {
-                $el.data('cancelled', false);
+            if (this.isEmpty()) {
+                this.processChange($el);
             } else {
-                const prevVal = $el.data('current');
-
-                if (this.isEmpty()) {
-                    this.processChange($el);
-                } else {
-                    const confirm = new DeleteConfirmation({
-                        title: __('oro.cms.change_type.confirmation.title'),
-                        okText: __('Yes'),
-                        content: __('oro.cms.change_type.confirmation.body')
-                    });
-
-                    confirm.on('ok', () => {
-                        this.processChange($el);
-                    });
-
-                    confirm.on('cancel', () => {
-                        $el.data('cancelled', true).val(prevVal).trigger('change');
-                        this.memoizeValue($el);
-                    });
-
-                    confirm.open();
-                }
-            }
-        },
-
-        /**
-         * Updates form via ajax, renders dynamic fields
-         *
-         * @param {$.element} $el
-         */
-        processChange: function($el) {
-            this.memoizeValue($el);
-
-            const $form = $(this.options.formSelector);
-            const url = $form.attr('action');
-            const fieldsSet = this.options.fieldsSets;
-
-            const data = _.filter($form.serializeArray(), function(field) {
-                return _.indexOf(fieldsSet, field.name) !== -1;
-            });
-            data.push({name: this.options.updateMarker, value: $el.attr('name')});
-
-            mediator.execute('submitPage', {url: url, type: $form.attr('method'), data: $.param(data)});
-        },
-
-        /**
-         * Check whenever form fields are empty
-         *
-         * @returns {boolean}
-         */
-        isEmpty: function() {
-            const fieldsSet = this.options.fieldsSets;
-            const fields = $(this.options.formSelector)
-                .find('input[type="text"],textarea')
-                .filter(function() {
-                    return this.name && _.indexOf(fieldsSet, this.name) === -1 && this.value !== '';
+                const confirm = new DeleteConfirmation({
+                    title: __('oro.cms.change_type.confirmation.title'),
+                    okText: __('Yes'),
+                    content: __('oro.cms.change_type.confirmation.body')
                 });
 
-            return !fields.length;
-        },
+                confirm.on('ok', () => {
+                    this.processChange($el);
+                });
 
-        /**
-         * Remember current value in case if in future we will need to undo changes
-         *
-         * @param {$.element} el
-         */
-        memoizeValue: function(el) {
-            const $el = $(el);
-            $el.data('current', $el.val());
+                confirm.on('cancel', () => {
+                    $el.data('cancelled', true).val(prevVal).trigger('change');
+                    this.memoizeValue($el);
+                });
+
+                confirm.open();
+            }
         }
-    });
+    },
 
-    return ContentWidgetView;
+    /**
+     * Updates form via ajax, renders dynamic fields
+     *
+     * @param {$.element} $el
+     */
+    processChange: function($el) {
+        this.memoizeValue($el);
+
+        const $form = $(this.options.formSelector);
+        const url = $form.attr('action');
+        const fieldsSet = this.options.fieldsSets;
+
+        const data = _.filter($form.serializeArray(), function(field) {
+            return _.indexOf(fieldsSet, field.name) !== -1;
+        });
+        data.push({name: this.options.updateMarker, value: $el.attr('name')});
+
+        mediator.execute('submitPage', {url: url, type: $form.attr('method'), data: $.param(data)});
+    },
+
+    /**
+     * Check whenever form fields are empty
+     *
+     * @returns {boolean}
+     */
+    isEmpty: function() {
+        const fieldsSet = this.options.fieldsSets;
+        const fields = $(this.options.formSelector)
+            .find('input[type="text"],textarea')
+            .filter(function() {
+                return this.name && _.indexOf(fieldsSet, this.name) === -1 && this.value !== '';
+            });
+
+        return !fields.length;
+    },
+
+    /**
+     * Remember current value in case if in future we will need to undo changes
+     *
+     * @param {$.element} el
+     */
+    memoizeValue: function(el) {
+        const $el = $(el);
+        $el.data('current', $el.val());
+    }
 });
+
+export default ContentWidgetView;

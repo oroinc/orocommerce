@@ -3,7 +3,7 @@
  *
  * @param {document|Element} context
  */
-export function getLegacyBreakpoints(context) {
+export default function getLegacyBreakpoints(context) {
     const breakpoint = {};
     const regexp = /(--[\w-]*:)/g;
     const regexpVal = /:\s?[\w\d-(): ]*/g;
