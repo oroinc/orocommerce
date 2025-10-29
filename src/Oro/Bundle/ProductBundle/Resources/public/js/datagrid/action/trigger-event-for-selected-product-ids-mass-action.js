@@ -1,10 +1,9 @@
-define([
-    'oro/datagrid/action/mass-action',
-    'oroui/js/mediator',
-    'oroui/js/standart-confirmation',
-    'underscore'
-], function(MassAction, mediator, StandardConfirmation, _) {
+define(function(require) {
     'use strict';
+
+    const MassAction = require('oro/datagrid/action/mass-action').default;
+    const mediator = require('oroui/js/mediator');
+    const StandardConfirmation = require('oroui/js/standart-confirmation');
 
     const TriggerEventForSelectedProductIdsMassAction = MassAction.extend({
 

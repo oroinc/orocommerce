@@ -3,7 +3,7 @@ define(function(require) {
 
     const $ = require('jquery');
     const __ = require('orotranslation/js/translator');
-    const ActionsPanel = require('orodatagrid/js/datagrid/actions-panel');
+    const ActionsPanel = require('orodatagrid/js/datagrid/actions-panel').default;
     const DropdownSearch = require('orofrontend/default/js/app/views/dropdown-search').default;
 
     const BUTTONS_ORDER = require('oroproduct/js/app/buttons-order').default;

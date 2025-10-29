@@ -2,7 +2,7 @@ define(function(require) {
     'use strict';
 
     const _ = require('underscore');
-    const SelectStateModel = require('orodatagrid/js/datagrid/select-state-model');
+    const SelectStateModel = require('orodatagrid/js/datagrid/select-state-model').default;
 
     const ProductsSelectStateModel = SelectStateModel.extend({
         /**

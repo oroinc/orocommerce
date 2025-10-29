@@ -3,7 +3,7 @@ define(function(require) {
 
     const mediator = require('oroui/js/mediator');
     const viewportManager = require('oroui/js/viewport-manager').default;
-    const SortingDropdown = require('orodatagrid/js/datagrid/sorting/dropdown');
+    const SortingDropdown = require('orodatagrid/js/datagrid/sorting/dropdown').default;
     const Select2View = require('oroform/js/app/views/select2-view');
     const FullscreenSorting = require('oroproduct/js/app/datagrid/sorting/fullscreen-sorting');
 

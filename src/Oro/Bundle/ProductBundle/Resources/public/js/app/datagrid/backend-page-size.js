@@ -2,7 +2,7 @@ define(function(require) {
     'use strict';
 
     const _ = require('underscore');
-    const PageSize = require('orodatagrid/js/datagrid/page-size');
+    const PageSize = require('orodatagrid/js/datagrid/page-size').default;
 
     const BackendPageSize = PageSize.extend({
         /** @property */

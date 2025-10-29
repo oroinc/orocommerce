@@ -4,7 +4,7 @@ define(function(require) {
     const $ = require('jquery');
     const _ = require('underscore');
     const mediator = require('oroui/js/mediator');
-    const PageableCollection = require('orodatagrid/js/pageable-collection');
+    const PageableCollection = require('orodatagrid/js/pageable-collection').default;
     const LayoutSubtreeManager = require('oroui/js/layout-subtree-manager');
     const tools = require('oroui/js/tools');
     const error = require('oroui/js/error');
