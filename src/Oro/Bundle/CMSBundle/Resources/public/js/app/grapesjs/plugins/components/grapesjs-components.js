@@ -1,4 +1,4 @@
-import {wrap} from 'underscore';
+import _ from 'underscore';
 import GrapesJS from 'grapesjs';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import traitManagerExtends from 'orocms/js/app/grapesjs/plugins/components/trait-manager-extends';
@@ -28,10 +28,10 @@ export default GrapesJS.plugins.add('grapesjs-components', function(editor, opti
         }
     });
 
-    editor.getHtml = wrap(editor.getHtml, (func, ...args) => unescapeTwigExpression(func.apply(editor, args)));
-    editor.getCss = wrap(editor.getCss, (func, ...args) => twigSafeCssFilter(func.apply(editor, args)));
+    editor.getHtml = _.wrap(editor.getHtml, (func, ...args) => unescapeTwigExpression(func.apply(editor, args)));
+    editor.getCss = _.wrap(editor.getCss, (func, ...args) => twigSafeCssFilter(func.apply(editor, args)));
 
-    editor.editor.runDefault = wrap(editor.editor.runDefault, (func, opts = {}) => {
+    editor.editor.runDefault = _.wrap(editor.editor.runDefault, (func, opts = {}) => {
         if (!editor.editor.get('Commands')) {
             return;
         }

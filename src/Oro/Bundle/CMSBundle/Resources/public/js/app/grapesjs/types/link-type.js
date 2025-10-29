@@ -80,7 +80,7 @@ const LinkType = BaseType.extend({
             run(editor, sender, opts = {}) {
                 const dialogOptions = {
                     ...{controlsValues: this.getAttributes(opts.link)},
-                    ...opts.dialogOptions || {}
+                    ...(opts.dialogOptions || {})
                 };
 
                 this.openDialog(editor, opts.link, dialogOptions);
