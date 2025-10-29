@@ -2,7 +2,7 @@ define(function(require) {
     'use strict';
 
     const _ = require('underscore');
-    const PaginationInput = require('orodatagrid/js/datagrid/pagination-input');
+    const PaginationInput = require('orodatagrid/js/datagrid/pagination-input').default;
 
     const BackendPaginationInput = PaginationInput.extend({
         themeOptions: {

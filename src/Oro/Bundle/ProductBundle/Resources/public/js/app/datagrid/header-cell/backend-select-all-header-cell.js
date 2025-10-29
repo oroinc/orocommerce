@@ -4,7 +4,7 @@ define(function(require) {
     const _ = require('underscore');
     const $ = require('jquery');
     const template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-all-header-cell.html');
-    const SelectAllHeaderCell = require('orodatagrid/js/datagrid/header-cell/select-all-header-cell');
+    const SelectAllHeaderCell = require('orodatagrid/js/datagrid/header-cell/select-all-header-cell').default;
 
     const BackendSelectAllHeaderCell = SelectAllHeaderCell.extend({
         /** @property */

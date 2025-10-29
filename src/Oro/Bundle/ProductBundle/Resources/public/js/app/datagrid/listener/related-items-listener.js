@@ -1,9 +1,8 @@
-define([
-    'underscore',
-    'oroui/js/mediator',
-    'orodatagrid/js/datagrid/listener/abstract-listener'
-], function(_, mediator, AbstractListener) {
+define(function(require) {
     'use strict';
+
+    const mediator = require('oroui/js/mediator');
+    const AbstractListener = require('orodatagrid/js/datagrid/listener/abstract-listener').default;
 
     /**
      * @export  oroproduct/js/datagrid/listener/related-product-listener

@@ -1,7 +1,8 @@
 define(function(require) {
     'use strict';
 
-    const DataGridComponent = require('orodatagrid/js/app/components/datagrid-component');
+    const DataGridComponentModule = require('orodatagrid/js/app/components/datagrid-component');
+    const DataGridComponent = DataGridComponentModule.default ?? DataGridComponentModule;
     const mapCustomModuleName = require('oroproduct/js/app/datagrid/map-custom-module-name');
 
     const ProductDataGidComponent = DataGridComponent.extend({

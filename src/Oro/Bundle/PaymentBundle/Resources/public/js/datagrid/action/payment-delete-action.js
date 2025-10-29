@@ -1,11 +1,9 @@
-define([
-    'underscore',
-    'oroui/js/messenger',
-    'orotranslation/js/translator',
-    'oroui/js/delete-confirmation',
-    'oro/datagrid/action/delete-action'
-], function(_, messenger, __, DeleteConfirmation, DeleteAction) {
+define(function(require) {
     'use strict';
+
+    const __ = require('orotranslation/js/translator');
+    const DeleteConfirmation = require('oroui/js/delete-confirmation');
+    const DeleteAction = require('oro/datagrid/action/delete-action').default;
 
     /**
      * Delete action with confirm dialog, triggers REST DELETE request

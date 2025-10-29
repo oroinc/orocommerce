@@ -6,7 +6,8 @@ define(function(require, exports, module) {
     const __ = require('orotranslation/js/translator');
     const mediator = require('oroui/js/mediator');
     const pageStateChecker = require('oronavigation/js/app/services/page-state-checker').default;
-    const Grid = require('orodatagrid/js/datagrid/grid');
+    const GridModule = require('orodatagrid/js/datagrid/grid');
+    const Grid = GridModule.default ?? GridModule;
     const BackendToolbar = require('oroproduct/js/app/datagrid/backend-toolbar');
     const BackendSelectAllHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-select-all-header-cell');
     const BackendActionHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-action-header-cell');

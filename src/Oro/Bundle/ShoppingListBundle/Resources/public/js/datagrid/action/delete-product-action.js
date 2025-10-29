@@ -6,7 +6,7 @@ define(function(require) {
     const mediator = require('oroui/js/mediator');
     const messenger = require('oroui/js/messenger');
     const routing = require('routing');
-    const DeleteAction = require('oro/datagrid/action/delete-action');
+    const DeleteAction = require('oro/datagrid/action/delete-action').default;
 
     /**
      * Delete action with confirm dialog, triggers REST DELETE request

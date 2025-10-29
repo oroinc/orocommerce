@@ -8,7 +8,8 @@ define(function(require, exports, module) {
     const __ = require('orotranslation/js/translator');
     const template = require('tpl-loader!oroproduct/templates/datagrid/backend-action-header-cell.html');
     const viewportManager = require('oroui/js/viewport-manager').default;
-    const ActionHeaderCell = require('orodatagrid/js/datagrid/header-cell/action-header-cell');
+    const ActionHeaderCellModule = require('orodatagrid/js/datagrid/header-cell/action-header-cell');
+    const ActionHeaderCell = ActionHeaderCellModule.default ?? ActionHeaderCellModule;
     const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
     const ActionsPanel = require('oroproduct/js/app/datagrid/backend-actions-panel');
     const FullscreenPopupView = require('orofrontend/default/js/app/views/fullscreen-popup-view');

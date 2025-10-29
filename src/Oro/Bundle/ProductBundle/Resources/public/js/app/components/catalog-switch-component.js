@@ -2,7 +2,7 @@ define(function(require) {
     'use strict';
 
     const BaseComponent = require('oroui/js/app/components/base/component');
-    const UrlHelper = require('orodatagrid/js/url-helper');
+    const UrlHelper = require('orodatagrid/js/url-helper').default;
     const $ = require('jquery');
     const _ = require('underscore');
     const tools = require('oroui/js/tools');

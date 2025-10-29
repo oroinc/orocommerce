@@ -1,7 +1,7 @@
 define(function(require) {
     'use strict';
 
-    const MassAction = require('oro/datagrid/action/mass-action');
+    const MassAction = require('oro/datagrid/action/mass-action').default;
     const mediator = require('oroui/js/mediator');
     const _ = require('underscore');
     const loadModules = require('oroui/js/app/services/load-modules');

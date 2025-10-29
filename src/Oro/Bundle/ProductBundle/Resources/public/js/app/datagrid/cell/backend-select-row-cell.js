@@ -3,7 +3,7 @@ define(function(require) {
 
     const $ = require('jquery');
     const template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-row-cell.html');
-    const SelectRowCell = require('oro/datagrid/cell/select-row-cell');
+    const SelectRowCell = require('oro/datagrid/cell/select-row-cell').default;
 
     /**
      * Renders a checkbox for row selection.
