@@ -1,23 +1,19 @@
-define(function(require) {
-    'use strict';
+import mediator from 'oroui/js/mediator';
+import CheckoutContentView from 'orocheckout/js/app/views/checkout-content-view';
 
-    const mediator = require('oroui/js/mediator');
-    const CheckoutContentView = require('orocheckout/js/app/views/checkout-content-view');
+const CheckoutInnerContentView = CheckoutContentView.extend({
+    /**
+     * @inheritdoc
+     */
+    constructor: function CheckoutInnerContentView(options) {
+        CheckoutInnerContentView.__super__.constructor.call(this, options);
+    },
 
-    const CheckoutInnerContentView = CheckoutContentView.extend({
-        /**
-         * @inheritdoc
-         */
-        constructor: function CheckoutInnerContentView(options) {
-            CheckoutInnerContentView.__super__.constructor.call(this, options);
-        },
-
-        _onContentUpdated: function() {
-            this.initLayout().then(function() {
-                mediator.trigger('checkout-content:initialized');
-            });
-        }
-    });
-
-    return CheckoutInnerContentView;
+    _onContentUpdated: function() {
+        this.initLayout().then(function() {
+            mediator.trigger('checkout-content:initialized');
+        });
+    }
 });
+
+export default CheckoutInnerContentView;
