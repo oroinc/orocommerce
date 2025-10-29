@@ -1,43 +1,39 @@
-define(function(require) {
-    'use strict';
+import BaseView from 'oroui/js/app/views/base/view';
 
-    const BaseView = require('oroui/js/app/views/base/view');
+const SinglePageCheckoutSubmitButtonView = BaseView.extend({
+    events: {
+        mouseover: 'onHover',
+        mouseout: 'onHoverOut'
+    },
 
-    const SinglePageCheckoutSubmitButtonView = BaseView.extend({
-        events: {
-            mouseover: 'onHover',
-            mouseout: 'onHoverOut'
-        },
+    isHoveredFlag: false, // Marks submit button hovered if true
 
-        isHoveredFlag: false, // Marks submit button hovered if true
+    /**
+     * @inheritdoc
+     */
+    constructor: function SinglePageCheckoutSubmitButtonView(options) {
+        SinglePageCheckoutSubmitButtonView.__super__.constructor.call(this, options);
+    },
 
-        /**
-         * @inheritdoc
-         */
-        constructor: function SinglePageCheckoutSubmitButtonView(options) {
-            SinglePageCheckoutSubmitButtonView.__super__.constructor.call(this, options);
-        },
+    onToggleState: function() {
+        this.$el.prop('disabled', 'disabled');
+    },
 
-        onToggleState: function() {
-            this.$el.prop('disabled', 'disabled');
-        },
+    onEnableState: function() {
+        this.$el.prop('disabled', false);
+    },
 
-        onEnableState: function() {
-            this.$el.prop('disabled', false);
-        },
+    onHover: function() {
+        this.isHoveredFlag = true;
+    },
 
-        onHover: function() {
-            this.isHoveredFlag = true;
-        },
+    onHoverOut: function() {
+        this.isHoveredFlag = false;
+    },
 
-        onHoverOut: function() {
-            this.isHoveredFlag = false;
-        },
-
-        isHovered: function() {
-            return this.isHoveredFlag;
-        }
-    });
-
-    return SinglePageCheckoutSubmitButtonView;
+    isHovered: function() {
+        return this.isHoveredFlag;
+    }
 });
+
+export default SinglePageCheckoutSubmitButtonView;
