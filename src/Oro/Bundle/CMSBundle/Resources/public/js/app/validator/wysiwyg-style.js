@@ -1,30 +1,26 @@
-define(function() {
-    'use strict';
+import __ from 'orotranslation/js/translator';
+import $ from 'jquery';
 
-    const __ = require('orotranslation/js/translator');
-    const $ = require('jquery');
-
-    return [
-        'Oro\\Bundle\\CMSBundle\\Validator\\Constraints\\WYSIWYGStyle',
-        function(value, element) {
-            const validation = $(element).data('wysiwyg:validation');
-            if (!validation) {
-                return true;
-            }
-
-            return !validation.contentValidate().length;
-        },
-        function({message}, element) {
-            const validation = $(element).data('wysiwyg:validation');
-            if (!validation) {
-                return true;
-            }
-
-            const res = validation.contentValidate();
-
-            if (res.length) {
-                return __(message, {errorsList: res.join(', ')});
-            }
+export default [
+    'Oro\\Bundle\\CMSBundle\\Validator\\Constraints\\WYSIWYGStyle',
+    function(value, element) {
+        const validation = $(element).data('wysiwyg:validation');
+        if (!validation) {
+            return true;
         }
-    ];
-});
+
+        return !validation.contentValidate().length;
+    },
+    function({message}, element) {
+        const validation = $(element).data('wysiwyg:validation');
+        if (!validation) {
+            return true;
+        }
+
+        const res = validation.contentValidate();
+
+        if (res.length) {
+            return __(message, {errorsList: res.join(', ')});
+        }
+    }
+];
