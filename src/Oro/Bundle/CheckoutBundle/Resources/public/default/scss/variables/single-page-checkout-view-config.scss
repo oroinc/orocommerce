@@ -3,6 +3,7 @@
 $checkout-view-position: relative !default;
 $checkout-view-display: grid !default;
 $checkout-view-margin: 0 !default;
+$checkout-view-grid-template-columns: minmax(0, 1fr) !default;
 
 $checkout-view-column-gap: spacing('xl') !default;
 

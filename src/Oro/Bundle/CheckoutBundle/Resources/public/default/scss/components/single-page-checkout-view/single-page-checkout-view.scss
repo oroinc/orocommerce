@@ -126,10 +126,9 @@
 
 .single-page-checkout-view {
     position: $checkout-view-position;
-
     display: $checkout-view-display;
-
     margin: $checkout-view-margin;
+    grid-template-columns: $checkout-view-grid-template-columns;
 
     &__title {
         display: flex;
@@ -260,7 +259,7 @@
 @include breakpoint('desktop-small') {
     .single-page-checkout-view {
         gap: spacing('sm') spacing('xl');
-        grid-template-columns: 1fr 752px;
+        grid-template-columns: minmax(0, 1fr) 752px;
         grid-template-rows: auto 1fr;
 
         &__columns {
