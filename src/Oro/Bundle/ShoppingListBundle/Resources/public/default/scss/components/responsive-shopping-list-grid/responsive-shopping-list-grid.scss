@@ -239,6 +239,7 @@
     .grid-header-cell-inventoryStatus,
     .grid-header-cell-sku,
     .grid-header-cell-quantity,
+    .grid-header-cell-shippingMethods,
     // Skip cells with error messages as they have same class
     .grid-body-cell-sku:not(:has(.notification-container)),
     .grid-body-cell-inventoryStatus {

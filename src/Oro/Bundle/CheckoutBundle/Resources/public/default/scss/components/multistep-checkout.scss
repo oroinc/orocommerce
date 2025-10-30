@@ -26,6 +26,7 @@
         .checkout-order-summary-container {
             display: grid;
             gap: $multistep-checkout-main-summary-container-gap;
+            grid-template-columns: minmax(0, 1fr);
         }
     }
 
