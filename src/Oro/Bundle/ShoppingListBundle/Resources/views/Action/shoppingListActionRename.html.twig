@@ -1,5 +1,11 @@
 {% extends '@OroAction/Operation/form.html.twig' %}
 
+{% block form %}
+    <div class="ui-widget-form">
+        {{ parent() }}
+    </div>
+{% endblock %}
+
 {% if form is defined %}
     {% form_theme form '@OroFrontend/layouts/default/form_theme.html.twig' %}
 {% endif %}
