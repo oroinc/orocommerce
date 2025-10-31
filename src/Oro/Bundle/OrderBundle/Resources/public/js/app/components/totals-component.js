@@ -1,99 +1,94 @@
-define(function(require) {
-    'use strict';
+import mediator from 'oroui/js/mediator';
+import _ from 'underscore';
+import PricingTotalsComponent from 'oropricing/js/app/components/totals-component';
+import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
 
-    const mediator = require('oroui/js/mediator');
-    const $ = require('jquery');
-    const _ = require('underscore');
-    const PricingTotalsComponent = require('oropricing/js/app/components/totals-component');
-    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+/**
+ * @export oroorder/js/app/components/totals-component
+ * @extends oropricing.app.components.TotalsComponent
+ * @class oroorder.app.components.TotalsComponent
+ */
+const TotalsComponent = PricingTotalsComponent.extend({
+    /**
+     * @property {Object}
+     */
+    currentTotals: {},
 
     /**
-     * @export oroorder/js/app/components/totals-component
-     * @extends oropricing.app.components.TotalsComponent
-     * @class oroorder.app.components.TotalsComponent
+     * @inheritdoc
      */
-    const TotalsComponent = PricingTotalsComponent.extend({
-        /**
-         * @property {Object}
-         */
-        currentTotals: {},
+    constructor: function TotalsComponent(options) {
+        TotalsComponent.__super__.constructor.call(this, options);
+    },
 
-        /**
-         * @inheritdoc
-         */
-        constructor: function TotalsComponent(options) {
-            TotalsComponent.__super__.constructor.call(this, options);
-        },
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this._deferredInit();
+        Promise.all(Object.values(options._subPromises).filter(Boolean)).then(() => {
+            this.handleSubLayoutInit();
+            this._resolveDeferredInit();
+        });
 
-        /**
-         * @inheritdoc
-         */
-        initialize: function(options) {
-            this._deferredInit();
-            $.when(..._.compact(options._subPromises)).then(() => {
-                this.handleSubLayoutInit();
-                this._resolveDeferredInit();
-            });
+        this.options = _.defaults(options || {}, this.options);
+    },
 
-            this.options = _.defaults(options || {}, this.options);
-        },
+    /**
+     * Handles sub-layout initialization
+     */
+    handleSubLayoutInit: function() {
+        this.currentTotals = this._getDefaultTotals();
 
-        /**
-         * Handles sub-layout initialization
-         */
-        handleSubLayoutInit: function() {
-            this.currentTotals = this._getDefaultTotals();
+        this.listenTo(mediator, {
+            'entry-point:order:load:before': this.showLoadingMask,
+            'entry-point:order:load': this.setTotals,
+            'entry-point:order:load:after': this.hideLoadingMask,
 
-            this.listenTo(mediator, {
-                'entry-point:order:load:before': this.showLoadingMask,
-                'entry-point:order:load': this.setTotals,
-                'entry-point:order:load:after': this.hideLoadingMask,
+            'line-items-totals:update': this.updateTotals,
+            'shipping-cost:updated': this.setTotals,
+            'order:totals:get:current': this.getCurrentTotals
+        });
 
-                'line-items-totals:update': this.updateTotals,
-                'shipping-cost:updated': this.setTotals,
-                'order:totals:get:current': this.getCurrentTotals
-            });
+        this.$totals = this.options._sourceElement.find(this.options.selectors.totals);
 
-            this.$totals = this.options._sourceElement.find(this.options.selectors.totals);
+        this.resolveTemplates();
 
-            this.resolveTemplates();
+        this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
 
-            this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
+        this.setTotals(this.options);
+    },
 
-            this.setTotals(this.options);
-        },
+    _getDefaultTotals: function() {
+        return {totals: {total: {}, subtotals: {}}};
+    },
 
-        _getDefaultTotals: function() {
-            return {totals: {total: {}, subtotals: {}}};
-        },
+    /**
+     * @param {Object} data
+     */
+    getCurrentTotals: function(data) {
+        data.result = this.currentTotals;
+    },
 
-        /**
-         * @param {Object} data
-         */
-        getCurrentTotals: function(data) {
-            data.result = this.currentTotals;
-        },
+    /**
+     * @param {Object} data
+     */
+    setTotals: function(data) {
+        this.currentTotals = _.defaults(data, this._getDefaultTotals()).totals;
 
-        /**
-         * @param {Object} data
-         */
-        setTotals: function(data) {
-            this.currentTotals = _.defaults(data, this._getDefaultTotals()).totals;
+        mediator.trigger('entry-point:order:trigger:totals', this.currentTotals);
 
-            mediator.trigger('entry-point:order:trigger:totals', this.currentTotals);
+        TotalsComponent.__super__.triggerTotalsUpdateEvent.call(this, data.totals);
 
-            TotalsComponent.__super__.triggerTotalsUpdateEvent.call(this, data.totals);
+        this.render(this.currentTotals);
+    },
 
-            this.render(this.currentTotals);
-        },
-
-        /**
-         * @inheritdoc
-         */
-        updateTotals: function() {
-            mediator.trigger('entry-point:order:trigger');
-        }
-    });
-
-    return TotalsComponent;
+    /**
+     * @inheritdoc
+     */
+    updateTotals: function() {
+        mediator.trigger('entry-point:order:trigger');
+    }
 });
+
+export default TotalsComponent;

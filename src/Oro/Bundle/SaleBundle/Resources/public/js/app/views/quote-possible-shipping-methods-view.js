@@ -2,7 +2,7 @@ define(function(require) {
     'use strict';
 
     const $ = require('jquery');
-    const PossibleShippingMethodsView = require('oroorder/js/app/views/possible-shipping-methods-view');
+    const PossibleShippingMethodsView = require('oroorder/js/app/views/possible-shipping-methods-view').default;
 
     const QuotePossibleShippingMethodsView = PossibleShippingMethodsView.extend({
         /**

@@ -1,195 +1,191 @@
-define(function(require) {
-    'use strict';
+import $ from 'jquery';
+import _ from 'underscore';
+import routing from 'routing';
+import mediator from 'oroui/js/mediator';
+import BaseComponent from 'oroui/js/app/components/base/component';
 
-    const $ = require('jquery');
-    const _ = require('underscore');
-    const routing = require('routing');
-    const mediator = require('oroui/js/mediator');
-    const BaseComponent = require('oroui/js/app/components/base/component');
+/**
+ * @export oroorder/js/app/components/entry-point-component
+ * @extends oroui.app.components.base.Component
+ * @class oroorder.app.components.EntryPointComponent
+ */
+const EntryPointComponent = BaseComponent.extend({
+    /**
+     * @property {Object}
+     */
+    options: {
+        route: null,
+        routeParams: {},
+        events: {
+            before: 'entry-point:order:load:before',
+            load: 'entry-point:order:load',
+            after: 'entry-point:order:load:after',
+            trigger: 'entry-point:order:trigger',
+            triggerDelayed: 'entry-point:order:trigger-delayed',
+            init: 'entry-point:order:init',
+            listenersOff: 'entry-point:listeners:off',
+            listenersOn: 'entry-point:listeners:on',
+            interruptPostpone: 'entry-point:interrupt:postpone'
+        },
+        triggerTimeout: 1500
+    },
+
+    listenerEnabled: null,
 
     /**
-     * @export oroorder/js/app/components/entry-point-component
-     * @extends oroui.app.components.base.Component
-     * @class oroorder.app.components.EntryPointComponent
+     * Flag that shows there were some changes in `[data-entry-point-trigger]` fields
+     * while the listener was turned off
+     * @property {boolean}
      */
-    const EntryPointComponent = BaseComponent.extend({
-        /**
-         * @property {Object}
-         */
-        options: {
-            route: null,
-            routeParams: {},
-            events: {
-                before: 'entry-point:order:load:before',
-                load: 'entry-point:order:load',
-                after: 'entry-point:order:load:after',
-                trigger: 'entry-point:order:trigger',
-                triggerDelayed: 'entry-point:order:trigger-delayed',
-                init: 'entry-point:order:init',
-                listenersOff: 'entry-point:listeners:off',
-                listenersOn: 'entry-point:listeners:on',
-                interruptPostpone: 'entry-point:interrupt:postpone'
-            },
-            triggerTimeout: 1500
-        },
+    postponedEntryPointAction: false,
 
-        listenerEnabled: null,
+    /**
+     * @property {Number}
+     */
+    timeoutId: null,
 
-        /**
-         * Flag that shows there were some changes in `[data-entry-point-trigger]` fields
-         * while the listener was turned off
-         * @property {boolean}
-         */
-        postponedEntryPointAction: false,
+    listen() {
+        return {
+            [`${this.options.events.init} mediator`]: 'listenerOn',
+            [`${this.options.events.trigger} mediator`]: 'callEntryPoint',
+            [`${this.options.events.triggerDelayed} mediator`]: 'callEntryPointDelayed',
+            [`${this.options.events.listenersOff} mediator`]: 'listenerOff',
+            [`${this.options.events.listenersOn} mediator`]: 'listenerOn',
+            [`${this.options.events.interruptPostpone} mediator`]: 'interruptPostpone'
+        };
+    },
 
-        /**
-         * @property {Number}
-         */
-        timeoutId: null,
+    /**
+     * @inheritdoc
+     */
+    constructor: function EntryPointComponent(options) {
+        EntryPointComponent.__super__.constructor.call(this, options);
+    },
 
-        listen() {
-            return {
-                [`${this.options.events.init} mediator`]: 'listenerOn',
-                [`${this.options.events.trigger} mediator`]: 'callEntryPoint',
-                [`${this.options.events.triggerDelayed} mediator`]: 'callEntryPointDelayed',
-                [`${this.options.events.listenersOff} mediator`]: 'listenerOff',
-                [`${this.options.events.listenersOn} mediator`]: 'listenerOn',
-                [`${this.options.events.interruptPostpone} mediator`]: 'interruptPostpone'
-            };
-        },
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this.options = $.extend(true, {}, this.options, options || {});
+        this.request = null;
+        this.callEntryPoint = _.debounce(this.callEntryPoint.bind(this), 100);
 
-        /**
-         * @inheritdoc
-         */
-        constructor: function EntryPointComponent(options) {
-            EntryPointComponent.__super__.constructor.call(this, options);
-        },
+        this.initializeListener();
+    },
 
-        /**
-         * @inheritdoc
-         */
-        initialize: function(options) {
-            this.options = $.extend(true, {}, this.options, options || {});
-            this.request = null;
-            this.callEntryPoint = _.debounce(this.callEntryPoint.bind(this), 100);
+    initializeListener: function() {
+        this.options._sourceElement
+            .on('change', '[data-entry-point-trigger]', this.callEntryPoint.bind(this))
+            .on('keyup', '[data-entry-point-trigger]', this.callEntryPointDelayed.bind(this));
+    },
 
-            this.initializeListener();
-        },
+    interruptPostpone() {
+        this.postponedEntryPointAction = false;
+    },
 
-        initializeListener: function() {
-            this.options._sourceElement
-                .on('change', '[data-entry-point-trigger]', this.callEntryPoint.bind(this))
-                .on('keyup', '[data-entry-point-trigger]', this.callEntryPointDelayed.bind(this));
-        },
+    listenerOff: function() {
+        this.listenerEnabled = false;
+    },
 
-        interruptPostpone() {
+    listenerOn: function() {
+        this.listenerEnabled = true;
+        if (this.postponedEntryPointAction) {
             this.postponedEntryPointAction = false;
-        },
+            this.callEntryPoint();
+        }
+    },
 
-        listenerOff: function() {
-            this.listenerEnabled = false;
-        },
+    clearTimeout: function() {
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
 
-        listenerOn: function() {
-            this.listenerEnabled = true;
-            if (this.postponedEntryPointAction) {
-                this.postponedEntryPointAction = false;
-                this.callEntryPoint();
-            }
-        },
+            this.timeoutId = null;
+        }
+    },
 
-        clearTimeout: function() {
-            if (this.timeoutId) {
-                clearTimeout(this.timeoutId);
+    callEntryPointDelayed: function(e) {
+        if (!this.listenerEnabled && e instanceof $.Event) {
+            // user input event -- register postponed action
+            this.postponedEntryPointAction = true;
+            return;
+        }
 
-                this.timeoutId = null;
-            }
-        },
-
-        callEntryPointDelayed: function(e) {
-            if (!this.listenerEnabled && e instanceof $.Event) {
-                // user input event -- register postponed action
-                this.postponedEntryPointAction = true;
-                return;
-            }
-
-            mediator.trigger(this.options.events.before);
-            const callback = () => {
-                this._sendEntryPointAjax();
-            };
-
-            this.clearTimeout();
-            this.timeoutId = setTimeout(callback.bind(this), this.options.triggerTimeout);
-        },
-
-        callEntryPoint: function(e) {
-            if (!this.listenerEnabled && e instanceof $.Event) {
-                // user input event -- register postponed action
-                this.postponedEntryPointAction = true;
-                return;
-            }
-
-            mediator.trigger(this.options.events.before);
+        mediator.trigger(this.options.events.before);
+        const callback = () => {
             this._sendEntryPointAjax();
-        },
+        };
 
-        /**
-         * @private
-         */
-        _sendEntryPointAjax: function() {
-            if (this.disposed || this.request && this.request.readyState !== 4) {
-                return;
-            }
+        this.clearTimeout();
+        this.timeoutId = setTimeout(callback.bind(this), this.options.triggerTimeout);
+    },
 
-            this.listenerOff();
+    callEntryPoint: function(e) {
+        if (!this.listenerEnabled && e instanceof $.Event) {
+            // user input event -- register postponed action
+            this.postponedEntryPointAction = true;
+            return;
+        }
 
-            this.request = $.post(
-                routing.generate(this.options.route, this.options.routeParams),
-                $.param(this.getData())
-            ).done(response => {
-                mediator.trigger(this.options.events.load, response);
-            }).fail(() => {
-                mediator.trigger(this.options.events.load, {});
-            }).always(() => {
-                mediator.trigger(this.options.events.after);
+        mediator.trigger(this.options.events.before);
+        this._sendEntryPointAjax();
+    },
 
-                if (this.disposed) {
-                    return;
-                }
+    /**
+     * @private
+     */
+    _sendEntryPointAjax: function() {
+        if (this.disposed || this.request && this.request.readyState !== 4) {
+            return;
+        }
 
-                this.clearTimeout();
-                this.request = null;
-                this.listenerOn();
-            });
-        },
+        this.listenerOff();
 
-        /**
-         * @return {Object}
-         */
-        getData: function() {
-            const disabled = this.options._sourceElement.find('input:disabled[data-entry-point-trigger]')
-                .prop('disabled', false);
+        this.request = $.post(
+            routing.generate(this.options.route, this.options.routeParams),
+            $.param(this.getData())
+        ).done(response => {
+            mediator.trigger(this.options.events.load, response);
+        }).fail(() => {
+            mediator.trigger(this.options.events.load, {});
+        }).always(() => {
+            mediator.trigger(this.options.events.after);
 
-            const data = this.options._sourceElement.serializeArray();
-
-            disabled.attr('disabled', 'disabled');
-
-            return data;
-        },
-
-        /**
-         * @inheritdoc
-         */
-        dispose: function() {
             if (this.disposed) {
                 return;
             }
 
-            this.listenerOff();
+            this.clearTimeout();
+            this.request = null;
+            this.listenerOn();
+        });
+    },
 
-            EntryPointComponent.__super__.dispose.call(this);
+    /**
+     * @return {Object}
+     */
+    getData: function() {
+        const disabled = this.options._sourceElement.find('input:disabled[data-entry-point-trigger]')
+            .prop('disabled', false);
+
+        const data = this.options._sourceElement.serializeArray();
+
+        disabled.attr('disabled', 'disabled');
+
+        return data;
+    },
+
+    /**
+     * @inheritdoc
+     */
+    dispose: function() {
+        if (this.disposed) {
+            return;
         }
-    });
 
-    return EntryPointComponent;
+        this.listenerOff();
+
+        EntryPointComponent.__super__.dispose.call(this);
+    }
 });
+
+export default EntryPointComponent;

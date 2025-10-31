@@ -1,55 +1,51 @@
-define(function(require) {
-    'use strict';
+import $ from 'jquery';
+import mediator from 'oroui/js/mediator';
+import BaseComponent from 'oroui/js/app/components/base/component';
+import FormView from 'orofrontend/js/app/views/form-view';
 
-    const $ = require('jquery');
-    const mediator = require('oroui/js/mediator');
-    const BaseComponent = require('oroui/js/app/components/base/component');
-    const FormView = require('orofrontend/js/app/views/form-view');
+/**
+ * @export oroorder/js/app/components/related-data-component
+ * @extends oroui.app.components.base.Component
+ * @class oroorder.app.components.RelatedDataComponent
+ */
+const RelatedDataComponent = BaseComponent.extend({
+    /**
+     * @property {Object}
+     */
+    options: {},
 
     /**
-     * @export oroorder/js/app/components/related-data-component
-     * @extends oroui.app.components.base.Component
-     * @class oroorder.app.components.RelatedDataComponent
+     * @inheritdoc
      */
-    const RelatedDataComponent = BaseComponent.extend({
-        /**
-         * @property {Object}
-         */
-        options: {},
+    constructor: function RelatedDataComponent(options) {
+        RelatedDataComponent.__super__.constructor.call(this, options);
+    },
 
-        /**
-         * @inheritdoc
-         */
-        constructor: function RelatedDataComponent(options) {
-            RelatedDataComponent.__super__.constructor.call(this, options);
-        },
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this.options = $.extend(true, {}, this.options, options || {});
+        this.view = new FormView(this.options);
 
-        /**
-         * @inheritdoc
-         */
-        initialize: function(options) {
-            this.options = $.extend(true, {}, this.options, options || {});
-            this.view = new FormView(this.options);
+        this.listenTo(mediator, {
+            'customer-customer-user:change': this.onChangeCustomerUser,
+            'entry-point:order:load': this.loadRelatedData
+        });
+    },
 
-            this.listenTo(mediator, {
-                'customer-customer-user:change': this.onChangeCustomerUser,
-                'entry-point:order:load': this.loadRelatedData
-            });
-        },
+    onChangeCustomerUser: function() {
+        mediator.trigger('order:load:related-data');
 
-        onChangeCustomerUser: function() {
-            mediator.trigger('order:load:related-data');
+        mediator.trigger('entry-point:order:trigger');
+    },
 
-            mediator.trigger('entry-point:order:trigger');
-        },
-
-        /**
-         * @param {Object} response
-         */
-        loadRelatedData: function(response) {
-            mediator.trigger('order:loaded:related-data', response);
-        }
-    });
-
-    return RelatedDataComponent;
+    /**
+     * @param {Object} response
+     */
+    loadRelatedData: function(response) {
+        mediator.trigger('order:loaded:related-data', response);
+    }
 });
+
+export default RelatedDataComponent;
