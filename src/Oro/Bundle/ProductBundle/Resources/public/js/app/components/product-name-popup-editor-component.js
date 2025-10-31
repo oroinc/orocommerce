@@ -2,7 +2,7 @@ define(function(require) {
     'use strict';
 
     const CellPopupEditorComponent = require('orodatagrid/js/app/components/cell-popup-editor-component').default;
-    const ConfirmSlugChangeModal = require('ororedirect/js/confirm-slug-change-modal');
+    const ConfirmSlugChangeModal = require('ororedirect/js/confirm-slug-change-modal').default;
     const mediator = require('oroui/js/mediator');
     const messenger = require('oroui/js/messenger');
     const routing = require('routing');

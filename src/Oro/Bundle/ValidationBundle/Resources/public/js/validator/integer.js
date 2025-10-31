@@ -1,7 +1,8 @@
-define([
-    'underscore', 'oroform/js/validator/regex', 'orolocale/js/locale-settings'
-], function(_, regexConstraint, localeSettings) {
+define(function(require) {
     'use strict';
+
+    const regexConstraint = require('oroform/js/validator/regex');
+    const localeSettings = require('orolocale/js/locale-settings');
 
     const options = localeSettings.getNumberFormats('decimal');
     const groupingSeparator = options.grouping_separator_symbol;

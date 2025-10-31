@@ -1,32 +1,28 @@
-define(function(require) {
-    'use strict';
+import BaseSlugifyComponent from 'ororedirect/js/app/components/base-slugify-component';
+import $ from 'jquery';
 
-    const BaseSlugifyComponent = require('ororedirect/js/app/components/base-slugify-component');
-    const $ = require('jquery');
+const TextFieldSlugifyComponent = BaseSlugifyComponent.extend({
 
-    const TextFieldSlugifyComponent = BaseSlugifyComponent.extend({
+    /**
+     * @inheritdoc
+     */
+    constructor: function TextFieldSlugifyComponent(options) {
+        TextFieldSlugifyComponent.__super__.constructor.call(this, options);
+    },
 
-        /**
-         * @inheritdoc
-         */
-        constructor: function TextFieldSlugifyComponent(options) {
-            TextFieldSlugifyComponent.__super__.constructor.call(this, options);
-        },
+    /**
+     * @param {Object} options
+     */
+    syncField: function(event) {
+        const $source = $(event.target);
 
-        /**
-         * @param {Object} options
-         */
-        syncField: function(event) {
-            const $source = $(event.target);
-
-            if (!this.doSync) {
-                return;
-            }
-
-            const $target = this.$targets;
-            this.slugifySourceToTarget($source, $target);
+        if (!this.doSync) {
+            return;
         }
-    });
 
-    return TextFieldSlugifyComponent;
+        const $target = this.$targets;
+        this.slugifySourceToTarget($source, $target);
+    }
 });
+
+export default TextFieldSlugifyComponent;

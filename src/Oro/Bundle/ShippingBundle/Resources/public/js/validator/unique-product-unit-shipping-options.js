@@ -1,84 +1,80 @@
-define([
-    'underscore',
-    'orotranslation/js/translator',
-    'jquery'
-], function(_, __, $) {
-    'use strict';
+import _ from 'underscore';
+import __ from 'orotranslation/js/translator';
+import $ from 'jquery';
 
-    const defaultParam = {
-        message: 'All product units should be unique.'
+const defaultParam = {
+    message: 'All product units should be unique.'
+};
+
+/**
+ * @param {Element} element
+ */
+function getRealElement(element) {
+    return $(element).closest('.product-shipping-options-collection');
+}
+
+/**
+ * @param {Element} element
+ */
+function getShippingOptionValues(element) {
+    const shippingOption = $(element);
+    const unit = shippingOption.find('select[name$="[productUnit]"] option:selected');
+
+    return {
+        unit: unit ? unit.val() : undefined
     };
+}
+
+/**
+ * @param {Array} shippingOptions
+ * @param {Object} search
+ * @returns {Object}
+ */
+function findDuplication(shippingOptions, search) {
+    return _.find(shippingOptions, function(obj) {
+        return obj.unit === search.unit;
+    });
+}
+
+/**
+ * @export oroshipping/js/validator/unique-product-unit-shipping-options
+ */
+export default [
+    'Oro\\Bundle\\ShippingBundle\\Validator\\Constraints\\UniqueProductUnitShippingOptions',
 
     /**
+     * @param {String} value
      * @param {Element} element
+     * @returns {Boolean}
      */
-    function getRealElement(element) {
-        return $(element).closest('.product-shipping-options-collection');
-    }
+    function(value, element) {
+        let noDuplicationFound = true;
+        const processedShippingOptions = [];
 
-    /**
-     * @param {Element} element
-     */
-    function getShippingOptionValues(element) {
-        const shippingOption = $(element);
-        const unit = shippingOption.find('select[name$="[productUnit]"] option:selected');
+        _.each(getRealElement(element).find('.list-item'), function(shippingOption) {
+            const data = getShippingOptionValues(shippingOption);
 
-        return {
-            unit: unit ? unit.val() : undefined
-        };
-    }
+            if (_.isEmpty(data.unit.trim())) {
+                return;
+            }
 
-    /**
-     * @param {Array} shippingOptions
-     * @param {Object} search
-     * @returns {Object}
-     */
-    function findDuplication(shippingOptions, search) {
-        return _.find(shippingOptions, function(obj) {
-            return obj.unit === search.unit;
+            if (findDuplication(processedShippingOptions, data) === undefined) {
+                processedShippingOptions.push(data);
+            } else {
+                noDuplicationFound = false;
+            }
         });
-    }
+
+        return noDuplicationFound;
+    },
 
     /**
-     * @export oroshipping/js/validator/unique-product-unit-shipping-options
+     * @param {Object} param
+     * @returns {String}
      */
-    return [
-        'Oro\\Bundle\\ShippingBundle\\Validator\\Constraints\\UniqueProductUnitShippingOptions',
+    function(param) {
+        param = _.extend({}, defaultParam, param);
 
-        /**
-         * @param {String} value
-         * @param {Element} element
-         * @returns {Boolean}
-         */
-        function(value, element) {
-            let noDuplicationFound = true;
-            const processedShippingOptions = [];
-
-            _.each(getRealElement(element).find('.list-item'), function(shippingOption) {
-                const data = getShippingOptionValues(shippingOption);
-
-                if (_.isEmpty(data.unit.trim())) {
-                    return;
-                }
-
-                if (findDuplication(processedShippingOptions, data) === undefined) {
-                    processedShippingOptions.push(data);
-                } else {
-                    noDuplicationFound = false;
-                }
-            });
-
-            return noDuplicationFound;
-        },
-
-        /**
-         * @param {Object} param
-         * @returns {String}
-         */
-        function(param) {
-            param = _.extend({}, defaultParam, param);
-
-            return __(param.message, {});
-        }
-    ];
-});
+        return __(param.message, {});
+    }
+];

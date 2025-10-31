@@ -1,51 +1,46 @@
-define(function(require) {
-    'use strict';
+import BaseProductView from 'oroproduct/js/app/views/base-product-view';
+import _ from 'underscore';
 
-    const BaseProductView = require('oroproduct/js/app/views/base-product-view');
+const LineItemOfferView = BaseProductView.extend({
+    /**
+     * @inheritdoc
+     */
+    constructor: function LineItemOfferView(options) {
+        LineItemOfferView.__super__.constructor.call(this, options);
+    },
 
-    const _ = require('underscore');
+    /**
+     * @param {Object} options
+     */
+    initialize: function(options) {
+        this.$el.trigger('options:set:lineItemModel', options);
+        this.deferredInitializeCheck(options, ['lineItemModel']);
+    },
 
-    const LineItemOfferView = BaseProductView.extend({
-        /**
-         * @inheritdoc
-         */
-        constructor: function LineItemOfferView(options) {
-            LineItemOfferView.__super__.constructor.call(this, options);
-        },
+    deferredInitialize: function(options) {
+        this.lineItemModel = options.lineItemModel;
+        this.lineItemModel.on('change', this.updateModel, this);
+        this.updateModel();
 
-        /**
-         * @param {Object} options
-         */
-        initialize: function(options) {
-            this.$el.trigger('options:set:lineItemModel', options);
-            this.deferredInitializeCheck(options, ['lineItemModel']);
-        },
+        options.modelAttr = _.defaults(options.modelAttr || {}, {
+            sku: this.lineItemModel.get('sku')
+        });
 
-        deferredInitialize: function(options) {
-            this.lineItemModel = options.lineItemModel;
-            this.lineItemModel.on('change', this.updateModel, this);
-            this.updateModel();
+        LineItemOfferView.__super__.initialize.call(this, options);
+    },
 
-            options.modelAttr = _.defaults(options.modelAttr || {}, {
+    updateModel: function() {
+        if (this.model) {
+            this.model.set({
+                id: this.lineItemModel.get('productId'),
+                product_units: this.lineItemModel.get('product_units'),
                 sku: this.lineItemModel.get('sku')
             });
-
-            LineItemOfferView.__super__.initialize.call(this, options);
-        },
-
-        updateModel: function() {
-            if (this.model) {
-                this.model.set({
-                    id: this.lineItemModel.get('productId'),
-                    product_units: this.lineItemModel.get('product_units'),
-                    sku: this.lineItemModel.get('sku')
-                });
-            } else {
-                this.modelAttr.id = this.lineItemModel.get('productId');
-                this.modelAttr.product_units = this.lineItemModel.get('product_units');
-            }
+        } else {
+            this.modelAttr.id = this.lineItemModel.get('productId');
+            this.modelAttr.product_units = this.lineItemModel.get('product_units');
         }
-    });
-
-    return LineItemOfferView;
+    }
 });
+
+export default LineItemOfferView;

@@ -1,279 +1,275 @@
-define(function(require) {
-    'use strict';
+import BaseView from 'oroui/js/app/views/base/view';
+import ElementsHelper from 'orofrontend/js/app/elements-helper';
+import UnitsUtil from 'oroproduct/js/app/units-util';
+import $ from 'jquery';
+import _ from 'underscore';
+import __ from 'orotranslation/js/translator';
+import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
+import routing from 'routing';
 
-    const BaseView = require('oroui/js/app/views/base/view');
-    const ElementsHelper = require('orofrontend/js/app/elements-helper');
-    const UnitsUtil = require('oroproduct/js/app/units-util');
-    const $ = require('jquery');
-    const _ = require('underscore');
-    const __ = require('orotranslation/js/translator');
-    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    const routing = require('routing');
+/**
+ * @export ororfp/js/app/views/line-item-view
+ * @extends oroui.app.views.base.View
+ * @class ororfp.app.views.LineItemView
+ */
+const LineItemView = BaseView.extend(_.extend({}, ElementsHelper, {
+    /**
+     * @property {Object}
+     */
+    options: {
+        ftid: '',
+        selectors: {
+            quantitySelector: '[data-name="field__quantity"]',
+            unitSelector: '[data-name="field__product-unit"]'
+        },
+        syncClass: 'synchronized',
+        unitsRoute: 'oro_product_frontend_ajaxproductunit_productunits',
+        compactUnits: false,
+        kitItemLineItemsRoute: 'oro_rfp_request_product_kit_item_line_item_entry_point',
+        itemWidget: '[data-role="lineitem"]',
+        skipLoadingMask: false,
+        offerLineItems: '.rfp-lineitem-requested-item',
+        addOfferLineItemButton: '.rfp-lineitem-requested-item-add',
+        removeOfferLineItemButton: '.rfp-lineitem-requested-remove .removeRow'
+    },
 
     /**
-     * @export ororfp/js/app/views/line-item-view
-     * @extends oroui.app.views.base.View
-     * @class ororfp.app.views.LineItemView
+     * @property {Object}
      */
-    const LineItemView = BaseView.extend(_.extend({}, ElementsHelper, {
-        /**
-         * @property {Object}
-         */
-        options: {
-            ftid: '',
-            selectors: {
-                quantitySelector: '[data-name="field__quantity"]',
-                unitSelector: '[data-name="field__product-unit"]'
-            },
-            syncClass: 'synchronized',
-            unitsRoute: 'oro_product_frontend_ajaxproductunit_productunits',
-            compactUnits: false,
-            kitItemLineItemsRoute: 'oro_rfp_request_product_kit_item_line_item_entry_point',
-            itemWidget: '[data-role="lineitem"]',
-            skipLoadingMask: false,
-            offerLineItems: '.rfp-lineitem-requested-item',
-            addOfferLineItemButton: '.rfp-lineitem-requested-item-add',
-            removeOfferLineItemButton: '.rfp-lineitem-requested-remove .removeRow'
-        },
+    $el: null,
 
-        /**
-         * @property {Object}
-         */
-        $el: null,
+    /**
+     * @property {array}
+     */
+    units: {},
 
-        /**
-         * @property {array}
-         */
-        units: {},
+    /**
+     * @property {LoadingMaskView|null}
+     */
+    loadingMask: null,
 
-        /**
-         * @property {LoadingMaskView|null}
-         */
-        loadingMask: null,
+    elements: {
+        productId: '[data-name="field__product"]',
+        kitItemLineItems: '.rfp-lineitem-product .rfp-lineitem-kit-item-line-items'
+    },
 
-        elements: {
-            productId: '[data-name="field__product"]',
-            kitItemLineItems: '.rfp-lineitem-product .rfp-lineitem-kit-item-line-items'
-        },
+    modelElements: {
+        productId: 'productId'
+    },
 
-        modelElements: {
-            productId: 'productId'
-        },
+    modelAttr: {
+        productId: 0,
+        productType: 'simple',
+        sku: '',
+        product_units: {}
+    },
 
-        modelAttr: {
-            productId: 0,
-            productType: 'simple',
-            sku: '',
-            product_units: {}
-        },
+    modelEvents: {
+        productId: ['change', 'onProductChanged']
+    },
 
-        modelEvents: {
-            productId: ['change', 'onProductChanged']
-        },
+    /**
+     * @inheritdoc
+     */
+    constructor: function LineItemView(options) {
+        LineItemView.__super__.constructor.call(this, options);
+    },
 
-        /**
-         * @inheritdoc
-         */
-        constructor: function LineItemView(options) {
-            LineItemView.__super__.constructor.call(this, options);
-        },
+    /**
+     * @param {Object} options
+     */
+    initialize: function(options) {
+        this.options = $.extend(true, {}, this.options, options || {});
+        if (!this.options.ftid) {
+            this.options.ftid = this.$el.data('content').toString()
+                .replace(/[^a-zA-Z0-9]+/g, '_').replace(/_+$/, '');
+        }
 
-        /**
-         * @param {Object} options
-         */
-        initialize: function(options) {
-            this.options = $.extend(true, {}, this.options, options || {});
-            if (!this.options.ftid) {
-                this.options.ftid = this.$el.data('content').toString()
-                    .replace(/[^a-zA-Z0-9]+/g, '_').replace(/_+$/, '');
-            }
+        this.delegate('click', '.removeLineItem', this.removeRow);
 
-            this.delegate('click', '.removeLineItem', this.removeRow);
+        this.loadingMask = new LoadingMaskView({container: this.$el});
 
-            this.loadingMask = new LoadingMaskView({container: this.$el});
+        this.$el.on('content:changed', this.onContentChanged.bind(this));
+        this.$el.on('click', this.options.removeOfferLineItemButton, this.onRemoveOfferLineItem.bind(this));
 
-            this.$el.on('content:changed', this.onContentChanged.bind(this));
-            this.$el.on('click', this.options.removeOfferLineItemButton, this.onRemoveOfferLineItem.bind(this));
+        this.initModel(options);
+        this.initializeElements(options);
+        this.model.set('product_units', this.options.units[this.model.get('productId')] || {});
+        this.model.set('productType', this.options?.productType || 'simple');
 
-            this.initModel(options);
-            this.initializeElements(options);
-            this.model.set('product_units', this.options.units[this.model.get('productId')] || {});
-            this.model.set('productType', this.options?.productType || 'simple');
+        this.$el.on('options:set:lineItemModel', (e, options) => {
+            options.lineItemModel = this.model;
+        });
 
-            this.$el.on('options:set:lineItemModel', (e, options) => {
-                options.lineItemModel = this.model;
-            });
+        this.initializeSubviews({
+            lineItemModel: this.model
+        });
 
-            this.initializeSubviews({
-                lineItemModel: this.model
-            });
+        this.updateKitOfferLineItems();
+    },
 
-            this.updateKitOfferLineItems();
-        },
+    removeRow: function() {
+        this.$el.trigger('content:remove');
+        this.remove();
+    },
 
-        removeRow: function() {
-            this.$el.trigger('content:remove');
-            this.remove();
-        },
+    /**
+     * Handle change
+     */
+    onProductChanged: function(data) {
+        if (data !== void 0 && data.event) {
+            this.model.set('sku', data.event.added.sku);
+            this.model.set('productType', data.event.added.type || 'simple');
+        }
 
-        /**
-         * Handle change
-         */
-        onProductChanged: function(data) {
-            if (data !== void 0 && data.event) {
-                this.model.set('sku', data.event.added.sku);
-                this.model.set('productType', data.event.added.type || 'simple');
-            }
+        const productId = this.model.get('productId');
 
-            const productId = this.model.get('productId');
-
-            if (productId) {
-                const self = this;
-                const routeParams = {id: productId};
-
-                $.ajax({
-                    url: routing.generate(this.options.kitItemLineItemsRoute, routeParams),
-                    type: 'POST',
-                    data: $.param(this.getData()),
-                    beforeSend: function() {
-                        if (!self.options.skipLoadingMask) {
-                            self.loadingMask.show();
-                        }
-                    },
-                    success: function(response) {
-                        self.updateKitItemLineItems(response);
-                        self.loadingMask.hide();
-                    },
-                    complete: function() {
-                        self.loadingMask.hide();
-                    },
-                    errorHandlerMessage: __(this.options.errorMessage)
-                });
-            }
-        },
-
-        updateKitItemLineItems: function(response) {
-            this.getElement('kitItemLineItems')
-                .html(response || '')
-                .trigger('content:changed');
-        },
-
-        /**
-         * Handle change
-         *
-         * @param {jQuery.Event} e
-         */
-        onContentChanged: function(e) {
-            this.updateContent(false);
-        },
-
-        /**
-         * @param {Boolean} force
-         */
-        updateContent: function(force) {
-            const productId = this.model.get('productId');
-            const productUnits = this.units[productId];
-
-            this.updateKitOfferLineItems();
-
-            if (!productId || productUnits) {
-                this.updateProductUnits(productUnits, force || false);
-            } else {
-                const self = this;
-                const routeParams = {id: productId};
-
-                if (this.options.compactUnits) {
-                    routeParams.short = true;
-                }
-
-                $.ajax({
-                    url: routing.generate(this.options.unitsRoute, routeParams),
-                    type: 'GET',
-                    beforeSend: function() {
-                        if (!self.options.skipLoadingMask) {
-                            self.loadingMask.show();
-                        }
-                    },
-                    success: function(response) {
-                        self.units[productId] = response.units;
-                        self.updateProductUnits(response.units, true);
-                    },
-                    complete: function() {
-                        self.loadingMask.hide();
-                    },
-                    errorHandlerMessage: __(this.options.errorMessage)
-                });
-            }
-        },
-
-        /**
-         * @param {jQuery.Event} event
-         */
-        onRemoveOfferLineItem: function(event) {
-            if (this.model.get('productType') === 'kit' && this.$el.find(this.options.offerLineItems).length <= 1) {
-                this.$el.find(this.options.addOfferLineItemButton).toggleClass('hide', false);
-            }
-        },
-
-        /**
-         * Update available ProductUnit select
-         *
-         * @param {Object} units
-         * @param {Boolean} force
-         */
-        updateProductUnits: function(units, force) {
+        if (productId) {
             const self = this;
+            const routeParams = {id: productId};
 
-            this.model.set('product_units', units);
-
-            const widgets = self.$el.find(self.options.itemWidget);
-            $.each(widgets, function(index, widget) {
-                const $select = $(widget).find(self.options.selectors.unitSelector);
-
-                if (!force && $select.hasClass(self.options.syncClass)) {
-                    return;
-                }
-
-                UnitsUtil.updateSelect(self.model, $select);
-                $select.addClass(self.options.syncClass);
+            $.ajax({
+                url: routing.generate(this.options.kitItemLineItemsRoute, routeParams),
+                type: 'POST',
+                data: $.param(this.getData()),
+                beforeSend: function() {
+                    if (!self.options.skipLoadingMask) {
+                        self.loadingMask.show();
+                    }
+                },
+                success: function(response) {
+                    self.updateKitItemLineItems(response);
+                    self.loadingMask.hide();
+                },
+                complete: function() {
+                    self.loadingMask.hide();
+                },
+                errorHandlerMessage: __(this.options.errorMessage)
             });
+        }
+    },
 
-            if (force) {
-                this.$el.find('select').inputWidget('refresh');
-            }
-        },
+    updateKitItemLineItems: function(response) {
+        this.getElement('kitItemLineItems')
+            .html(response || '')
+            .trigger('content:changed');
+    },
 
-        updateKitOfferLineItems: function() {
+    /**
+     * Handle change
+     *
+     * @param {jQuery.Event} e
+     */
+    onContentChanged: function(e) {
+        this.updateContent(false);
+    },
+
+    /**
+     * @param {Boolean} force
+     */
+    updateContent: function(force) {
+        const productId = this.model.get('productId');
+        const productUnits = this.units[productId];
+
+        this.updateKitOfferLineItems();
+
+        if (!productId || productUnits) {
+            this.updateProductUnits(productUnits, force || false);
+        } else {
             const self = this;
+            const routeParams = {id: productId};
 
-            const addOfferLineItem = self.$el.find(self.options.addOfferLineItemButton);
-            const offerLineItems = self.$el.find(self.options.offerLineItems);
-
-            if (self.model.get('productType') === 'kit' && offerLineItems.length >= 1) {
-                offerLineItems.find(self.options.removeOfferLineItemButton).slice(1).trigger('click');
-                addOfferLineItem.toggleClass('hide', true);
-            } else {
-                addOfferLineItem.toggleClass('hide', false);
+            if (this.options.compactUnits) {
+                routeParams.short = true;
             }
-        },
 
-        /**
-         * @return {Object}
-         */
-        getData: function() {
-            return this.$elements.productId.serializeArray();
-        },
+            $.ajax({
+                url: routing.generate(this.options.unitsRoute, routeParams),
+                type: 'GET',
+                beforeSend: function() {
+                    if (!self.options.skipLoadingMask) {
+                        self.loadingMask.show();
+                    }
+                },
+                success: function(response) {
+                    self.units[productId] = response.units;
+                    self.updateProductUnits(response.units, true);
+                },
+                complete: function() {
+                    self.loadingMask.hide();
+                },
+                errorHandlerMessage: __(this.options.errorMessage)
+            });
+        }
+    },
 
-        /**
-         * @inheritdoc
-         */
-        dispose: function() {
-            if (this.disposed) {
+    /**
+     * @param {jQuery.Event} event
+     */
+    onRemoveOfferLineItem: function(event) {
+        if (this.model.get('productType') === 'kit' && this.$el.find(this.options.offerLineItems).length <= 1) {
+            this.$el.find(this.options.addOfferLineItemButton).toggleClass('hide', false);
+        }
+    },
+
+    /**
+     * Update available ProductUnit select
+     *
+     * @param {Object} units
+     * @param {Boolean} force
+     */
+    updateProductUnits: function(units, force) {
+        const self = this;
+
+        this.model.set('product_units', units);
+
+        const widgets = self.$el.find(self.options.itemWidget);
+        $.each(widgets, function(index, widget) {
+            const $select = $(widget).find(self.options.selectors.unitSelector);
+
+            if (!force && $select.hasClass(self.options.syncClass)) {
                 return;
             }
-            LineItemView.__super__.dispose.call(this);
-        }
-    }));
 
-    return LineItemView;
-});
+            UnitsUtil.updateSelect(self.model, $select);
+            $select.addClass(self.options.syncClass);
+        });
+
+        if (force) {
+            this.$el.find('select').inputWidget('refresh');
+        }
+    },
+
+    updateKitOfferLineItems: function() {
+        const self = this;
+
+        const addOfferLineItem = self.$el.find(self.options.addOfferLineItemButton);
+        const offerLineItems = self.$el.find(self.options.offerLineItems);
+
+        if (self.model.get('productType') === 'kit' && offerLineItems.length >= 1) {
+            offerLineItems.find(self.options.removeOfferLineItemButton).slice(1).trigger('click');
+            addOfferLineItem.toggleClass('hide', true);
+        } else {
+            addOfferLineItem.toggleClass('hide', false);
+        }
+    },
+
+    /**
+     * @return {Object}
+     */
+    getData: function() {
+        return this.$elements.productId.serializeArray();
+    },
+
+    /**
+     * @inheritdoc
+     */
+    dispose: function() {
+        if (this.disposed) {
+            return;
+        }
+        LineItemView.__super__.dispose.call(this);
+    }
+}));
+
+export default LineItemView;

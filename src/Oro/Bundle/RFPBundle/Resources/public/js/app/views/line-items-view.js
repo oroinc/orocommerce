@@ -1,32 +1,28 @@
-define(function(require) {
-    'use strict';
+import $ from 'jquery';
+import _ from 'underscore';
+import BaseView from 'oroui/js/app/views/base/view';
+import ElementsHelper from 'orofrontend/js/app/elements-helper';
 
-    const $ = require('jquery');
-    const _ = require('underscore');
-    const BaseView = require('oroui/js/app/views/base/view');
-    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+/**
+ * @export ororfp/js/app/views/line-items-view
+ * @extends oroui.app.views.base.View
+ * @class ororfp.app.views.LineItemsView
+ */
+const LineItemsView = BaseView.extend(_.extend({}, ElementsHelper, {
+    constructor: function LineItemsView(options) {
+        LineItemsView.__super__.constructor.call(this, options);
+    },
 
     /**
-     * @export ororfp/js/app/views/line-items-view
-     * @extends oroui.app.views.base.View
-     * @class ororfp.app.views.LineItemsView
+     * @param {Object} options
      */
-    const LineItemsView = BaseView.extend(_.extend({}, ElementsHelper, {
-        constructor: function LineItemsView(options) {
-            LineItemsView.__super__.constructor.call(this, options);
-        },
+    initialize: function(options) {
+        this.options = $.extend(true, {}, this.options, options || {});
 
-        /**
-         * @param {Object} options
-         */
-        initialize: function(options) {
-            this.options = $.extend(true, {}, this.options, options || {});
+        LineItemsView.__super__.initialize.call(this, options);
 
-            LineItemsView.__super__.initialize.call(this, options);
+        this.initializeSubviews();
+    }
+}));
 
-            this.initializeSubviews();
-        }
-    }));
-
-    return LineItemsView;
-});
+export default LineItemsView;
