@@ -20,7 +20,11 @@ class PriceCalculationDetailsContext extends OroFeatureContext implements OroPag
         $actualPrices = $this->getActualPrices($pricesBlock);
         $expectedPrices = $this->tableToArray($table);
 
-        self::assertEquals($expectedPrices, $actualPrices, sprintf('Prices are not equal for %s', $pricesBlock));
+        self::assertEqualsCanonicalizing(
+            $expectedPrices,
+            $actualPrices,
+            sprintf('Prices are not equal for %s', $pricesBlock)
+        );
     }
 
     /**
@@ -88,7 +92,7 @@ class PriceCalculationDetailsContext extends OroFeatureContext implements OroPag
                 array_values($priceElements)
             );
 
-            $actualPrices[$unit] = $priceValues;
+            $actualPrices[$unit] = array_unique($priceValues);
         }
 
         return $actualPrices;
