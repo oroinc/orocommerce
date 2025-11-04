@@ -51,7 +51,9 @@ define(function(require) {
          * @inheritdoc
          */
         doDelete() {
-            const success = __(this.messages.success, this.model.toJSON());
+            const success = __(this.messages.success,
+                _.mapObject(this.model.toJSON(), value => _.isString(value) ? _.escape(value) : value)
+            );
 
             for (const subModel of this.model.subModels()) {
                 subModel.toggleLoadingOverlay(true);

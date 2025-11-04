@@ -3,6 +3,7 @@ import GrapesJS from 'grapesjs';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import ComponentManager from 'orocms/js/app/grapesjs/plugins/components/component-manager';
 import traitManagerExtends from 'orocms/js/app/grapesjs/plugins/components/trait-manager-extends';
+import styleManagerExtends from 'orocms/js/app/grapesjs/plugins/components/style-manager-extends';
 import {unescapeTwigExpression, twigSafeCssFilter} from '../../utils';
 import fullscreenCommand from '../../commands/fullscreen';
 import clearCanvasCommand from '../../commands/clear-canvas';
@@ -43,6 +44,7 @@ export default GrapesJS.plugins.add('grapesjs-components', function(editor, opti
     Commands.add('core:canvas-clear', clearCanvasCommand);
 
     traitManagerExtends(editor);
+    styleManagerExtends(editor);
 
     editor.ComponentRestriction = new ComponentRestriction(editor, options);
 
