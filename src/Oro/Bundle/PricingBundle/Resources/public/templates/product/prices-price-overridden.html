@@ -4,14 +4,10 @@
        data-placement="bottom"
        data-close="false"
        data-class="product-price-hint"
-       data-content="<%= [
-            '<div class=\'hint-title\'>',
-            _.__('oro.pricing.product_prices.price_is_overridden'),
-            '</div>',
-            '<a class=\'btn\' href=\'#\'>',
-            '<span class=\'fa-refresh\'></span>',
-            _.__('oro.pricing.product_prices.reset_price'),
-            '</a>'
-       ].join('') %>">
+       data-content="<div class='hint-title'><%= _.escape(_.__('oro.pricing.product_prices.price_is_overridden')) %></div>
+                     <a class='btn' href='#'>
+                         <span class='fa-refresh'></span>
+                         <%= _.escape(_.__('oro.pricing.product_prices.reset_price')) %>
+                     </a>">
     </i>
 </div>
