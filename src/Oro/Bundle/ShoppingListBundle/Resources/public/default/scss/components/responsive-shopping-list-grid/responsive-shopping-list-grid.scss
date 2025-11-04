@@ -208,7 +208,12 @@
     .label-on-tablet-end::after {
         content: attr(data-label);
         color: $grid-line-field-label-color;
+    }
+    .label-on-tablet-start::before {
         margin-right: $grid-line-field-label-offset;
+    }
+    .label-on-tablet-end::after {
+        margin-left: $grid-line-field-label-offset;
     }
 
     .sub-row {
