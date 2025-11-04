@@ -890,3 +890,19 @@ services:
             - 'prod_inventory_status'
         tags:
             - { name: migration.update_enumerable_system_config }
+
+    Oro\Bundle\OrderBundle\Manager\OrderCancellationManager:
+        arguments:
+            $doctrine: '@doctrine'
+            $configManager: '@oro_config.manager'
+            $paymentStatusManager: '@oro_payment.manager.payment_status'
+            $translator: '@translator'
+            $internalStatusesAllowingCancellation:
+                - !php/const Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                - !php/const Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface::INTERNAL_STATUS_PENDING
+            $shippingStatusesAllowingCancellation:
+                - 'not_shipped'
+            $paymentStatusesAllowingCancellation:
+                - !php/const Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses::PENDING
+                - !php/const Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses::DECLINED
+                - !php/const Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses::CANCELED
