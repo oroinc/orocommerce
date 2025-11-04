@@ -753,6 +753,17 @@ oro:
             company_logo:
                 label: 'Company logo'
 
+        cannot_be_canceled_reason:
+            not_allowed_internal_status: >-
+                The order cannot be canceled because its internal status "%status%" does not allow cancellation.
+                Only orders with the following internal statuses can be canceled: %allowedStatuses%.
+            not_allowed_shipping_status: >-
+                The order cannot be canceled because its shipping status "%status%" does not allow cancellation.
+                Only orders with the following shipping statuses can be canceled: %allowedStatuses%.
+            not_allowed_payment_status: >-
+                The order cannot be canceled because its payment status "%status%" does not allow cancellation.
+                Only orders with the following payment statuses can be canceled: %allowedStatuses%.
+
     frontend:
         order:
             entity_plural_label: Orders

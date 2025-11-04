@@ -910,3 +910,19 @@ services:
             - 'Oro\Bundle\OrderBundle\Entity\Order'
         tags:
             - { name: 'oro_datagrid.column_options_guesser' }
+
+    Oro\Bundle\OrderBundle\Manager\OrderCancellationManager:
+        arguments:
+            $doctrine: '@doctrine'
+            $configManager: '@oro_config.manager'
+            $orderPaymentStatusProvider: '@oro_order.provider.payment_status_provider'
+            $translator: '@translator'
+            $internalStatusesAllowingCancellation:
+                - !php/const Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                - !php/const Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface::INTERNAL_STATUS_PENDING
+            $shippingStatusesAllowingCancellation: 
+                - 'not_shipped'
+            $paymentStatusesAllowingCancellation:
+                - !php/const Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses::PENDING
+                - !php/const Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses::DECLINED
+                - !php/const Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses::CANCELED
