@@ -6,3 +6,9 @@ oro_entity:
     entity_name_representation:
         Oro\Bundle\OrderBundle\Entity\Order:
             full: [ identifier ]
+
+oro_frontend:
+    storefront_entity_routes:
+        Oro\Bundle\OrderBundle\Entity\Order:
+            index: oro_order_frontend_index
+            view: oro_order_frontend_view
