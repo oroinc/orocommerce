@@ -1,11 +1,7 @@
-define(function(require) {
-    'use strict';
+import $ from 'jquery';
 
-    const $ = require('jquery');
+const shoppingListCollectionService = {
+    shoppingListCollection: $.Deferred()
+};
 
-    const shoppingListCollectionService = {
-        shoppingListCollection: $.Deferred()
-    };
-
-    return shoppingListCollectionService;
-});
+export default shoppingListCollectionService;

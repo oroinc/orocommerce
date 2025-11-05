@@ -3,7 +3,7 @@ import routing from 'routing';
 import mediator from 'oroui/js/mediator';
 import $ from 'jquery';
 import _ from 'underscore';
-const __ = require('orotranslation/js/translator');
+import __ from 'orotranslation/js/translator';
 
 const ProductKitAddToShoppingListView = ProductAddToShoppingListView.extend({
     /**

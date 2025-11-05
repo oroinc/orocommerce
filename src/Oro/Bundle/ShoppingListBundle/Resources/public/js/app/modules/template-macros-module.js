@@ -1,8 +1,20 @@
-import {macros} from 'underscore';
+import _ from 'underscore';
 import quantityHelper from 'oroproduct/js/app/quantity-helper';
 import routing from 'routing';
+import renderProductItemImage from 'tpl-loader!oroshoppinglist/templates/macros/product-item__image.html';
+import renderProductItemName from 'tpl-loader!oroshoppinglist/templates/macros/product-item__name.html';
+import renderInventoryStatus from 'tpl-loader!oroshoppinglist/templates/macros/product-item__inventory_status.html';
+import renderInventoryTooltipStatus
+    from 'tpl-loader!oroshoppinglist/templates/macros/product-item__inventory_tooltip_status.html';
+import renderNotes from 'tpl-loader!oroshoppinglist/templates/macros/product-item__notes.html';
+import renderUpcoming from 'tpl-loader!oroshoppinglist/templates/macros/product-item__upcoming.html';
+import renderErrors from 'tpl-loader!oroshoppinglist/templates/macros/product-item__errors.html';
+import renderWarnings from 'tpl-loader!oroshoppinglist/templates/macros/product-item__warnings.html';
+import renderMoreVariantsButton from 'tpl-loader!oroshoppinglist/templates/macros/product-item__variants-btn.html';
+import renderUnit from 'tpl-loader!oroshoppinglist/templates/macros/product-item__unit.html';
+import renderExpandKitsButton from 'tpl-loader!oroshoppinglist/templates/macros/product-kit__expand-btn.html';
 
-macros('oroshoppinglist', {
+_.macros('oroshoppinglist', {
     /**
      * Renders image with gallery popup, or image placeholder
      *
@@ -13,7 +25,7 @@ macros('oroshoppinglist', {
      * @param {string} data.title
      * @param {string} data.alt
      */
-    renderProductItemImage: require('tpl-loader!oroshoppinglist/templates/macros/product-item__image.html'),
+    renderProductItemImage,
 
     /**
      * Renders title block for product item
@@ -25,7 +37,7 @@ macros('oroshoppinglist', {
      * @param {string?} data.popover_image_src
      * @param {array} data.popover_image_sources
      */
-    renderProductItemName: require('tpl-loader!oroshoppinglist/templates/macros/product-item__name.html'),
+    renderProductItemName,
 
     /**
      * Renders inventory status block for product item
@@ -33,7 +45,7 @@ macros('oroshoppinglist', {
      * @param {string} name
      * @param {string} label
      */
-    renderInventoryStatus: require('tpl-loader!oroshoppinglist/templates/macros/product-item__inventory_status.html'),
+    renderInventoryStatus,
 
     /**
      * Renders inventory status as tooltip for product item
@@ -41,8 +53,7 @@ macros('oroshoppinglist', {
      * @param {string} name
      * @param {string} label
      */
-    renderInventoryTooltipStatus:
-        require('tpl-loader!oroshoppinglist/templates/macros/product-item__inventory_tooltip_status.html'),
+    renderInventoryTooltipStatus,
 
     /**
      * Renders notes for product item
@@ -50,7 +61,7 @@ macros('oroshoppinglist', {
      * @param {string} notes
      * @param {number?} [clipLength = 30]
      */
-    renderNotes: require('tpl-loader!oroshoppinglist/templates/macros/product-item__notes.html'),
+    renderNotes,
 
     /**
      * Renders upcoming warning for product item
@@ -58,21 +69,21 @@ macros('oroshoppinglist', {
      * @param {boolean} isUpcoming
      * @param {string?} availabilityDate
      */
-    renderUpcoming: require('tpl-loader!oroshoppinglist/templates/macros/product-item__upcoming.html'),
+    renderUpcoming,
 
     /**
      * Renders errors for product item
      *
      * @param {array} errors
      */
-    renderErrors: require('tpl-loader!oroshoppinglist/templates/macros/product-item__errors.html'),
+    renderErrors,
 
     /**
      * Renders warnings for product item
      *
      * @param {array} errors
      */
-    renderWarnings: require('tpl-loader!oroshoppinglist/templates/macros/product-item__warnings.html'),
+    renderWarnings,
 
     /**
      * Renders button to show more hidden product variants
@@ -82,7 +93,7 @@ macros('oroshoppinglist', {
      * @param {string} data.groupName
      * @param {string?} data.hideClass
      */
-    renderMoreVariantsButton: require('tpl-loader!oroshoppinglist/templates/macros/product-item__variants-btn.html'),
+    renderMoreVariantsButton,
 
     /**
      * Include quantityHelper to templates
@@ -101,7 +112,7 @@ macros('oroshoppinglist', {
      * @param {string} unit
      * @param {number} quantity
      */
-    renderUnit: require('tpl-loader!oroshoppinglist/templates/macros/product-item__unit.html'),
+    renderUnit,
 
     /**
      * Renders button to expand or collapse product kit items
@@ -112,5 +123,5 @@ macros('oroshoppinglist', {
      * @param {string} data.productName
      * @param {boolean} data.showLabel
      */
-    renderExpandKitsButton: require('tpl-loader!oroshoppinglist/templates/macros/product-kit__expand-btn.html')
+    renderExpandKitsButton
 });

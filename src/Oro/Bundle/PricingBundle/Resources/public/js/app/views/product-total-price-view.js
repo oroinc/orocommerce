@@ -5,7 +5,7 @@ define(function(require) {
     const PricesHelper = require('oropricing/js/app/prices-helper');
     const NumberFormatter = require('orolocale/js/formatter/number');
     const ElementsHelper = require('orofrontend/js/app/elements-helper');
-    const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
+    const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service').default;
     const _ = require('underscore');
 
     const ProductTotalPriceView = BaseView.extend(_.extend({}, ElementsHelper, {

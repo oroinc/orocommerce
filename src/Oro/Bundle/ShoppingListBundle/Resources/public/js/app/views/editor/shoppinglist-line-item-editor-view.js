@@ -1,8 +1,9 @@
 import _ from 'underscore';
 import $ from 'jquery';
 import TextEditorView from 'oroform/js/app/views/editor/text-editor-view';
-const NumberFormatter = require('orofilter/js/formatter/number-formatter');
+import NumberFormatter from 'orofilter/js/formatter/number-formatter';
 import NumberFormat from 'orolocale/js/formatter/number';
+import template from 'tpl-loader!oroshoppinglist/templates/editor/shoppinglist-line-item-editor.html';
 
 const ShoppinglistLineItemEditorView = TextEditorView.extend({
     events: {
@@ -15,7 +16,7 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
         }
     },
 
-    template: require('tpl-loader!oroshoppinglist/templates/editor/shoppinglist-line-item-editor.html'),
+    template,
 
     /**
      * Determines whether use stepper buttons for quantity input

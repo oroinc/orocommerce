@@ -5,8 +5,8 @@
      data-page-component-init-on="click,focusin"
 >
     <div class="product-item__preview"
-         data-page-component-module="orofrontend/js/app/components/popup-gallery-widget"
-         data-page-component-options="<%- JSON.stringify({
+         data-page-component-view="<%- JSON.stringify({
+                view: 'orofrontend/js/app/components/popup-gallery-widget',
                 ajaxMode: true,
                 ajaxRoute: 'oro_product_frontend_ajax_images_by_id',
                 id: productId,

@@ -10,7 +10,7 @@ define(function(require, exports, module) {
     const viewportManager = require('oroui/js/viewport-manager').default;
     const ActionHeaderCellModule = require('orodatagrid/js/datagrid/header-cell/action-header-cell');
     const ActionHeaderCell = ActionHeaderCellModule.default ?? ActionHeaderCellModule;
-    const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
+    const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service').default;
     const ActionsPanel = require('oroproduct/js/app/datagrid/backend-actions-panel');
     const FullscreenPopupView = require('orofrontend/default/js/app/views/fullscreen-popup-view');
     const oroui = _.macros('oroui');
