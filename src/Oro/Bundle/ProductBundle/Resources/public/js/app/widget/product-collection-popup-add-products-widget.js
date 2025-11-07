@@ -1,7 +1,8 @@
 define(function(require) {
     'use strict';
 
-    const DialogWidget = require('oro/dialog-widget');
+    const DialogWidgetModule = require('oro/dialog-widget');
+    const DialogWidget = DialogWidgetModule.default ?? DialogWidgetModule;
     const $ = require('jquery');
     const _ = require('underscore');
     const mediator = require('oroui/js/mediator');

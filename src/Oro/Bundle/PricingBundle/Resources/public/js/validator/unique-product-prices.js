@@ -1,69 +1,65 @@
-define(function(require) {
-    'use strict';
+import _ from 'underscore';
+import $ from 'jquery';
+import __ from 'orotranslation/js/translator';
+import messenger from 'oroui/js/messenger';
 
-    const _ = require('underscore');
-    const $ = require('jquery');
-    const __ = require('orotranslation/js/translator');
-    const messenger = require('oroui/js/messenger');
+const defaultParam = {
+    message: 'All product prices should be unique.'
+};
 
-    const defaultParam = {
-        message: 'All product prices should be unique.'
-    };
+/**
+ * @param {HTMLElement} element
+ * @return {string}
+ */
+function getStringifiedValues(element) {
+    const price = $(element);
 
-    /**
-     * @param {HTMLElement} element
-     * @return {string}
-     */
-    function getStringifiedValues(element) {
-        const price = $(element);
+    const priceList = price.find('input[name$="[priceList]"]').val();
+    const quantity = price.find('input[name$="[quantity]"]').val();
+    const unit = price.find('select[name$="[unit]"] option:selected').val();
+    const currency = price.find('select[name$="[currency]"] option:selected').val();
 
-        const priceList = price.find('input[name$="[priceList]"]').val();
-        const quantity = price.find('input[name$="[quantity]"]').val();
-        const unit = price.find('select[name$="[unit]"] option:selected').val();
-        const currency = price.find('select[name$="[currency]"] option:selected').val();
-
-        if (
-            !priceList || !priceList.trim() ||
-            !quantity || !quantity.trim() ||
-            !unit || !unit.trim() ||
-            !currency || !currency.trim()
-        ) {
-            return '';
-        }
-
-        return [priceList, parseFloat(quantity), unit, currency].join(':');
+    if (
+        !priceList || !priceList.trim() ||
+        !quantity || !quantity.trim() ||
+        !unit || !unit.trim() ||
+        !currency || !currency.trim()
+    ) {
+        return '';
     }
 
-    /**
-     * @export oropricing/js/validator/unique-product-prices
-     */
-    return [
-        'Oro\\Bundle\\PricingBundle\\Validator\\Constraints\\UniqueProductPrices',
-        function(value, element) {
-            const processedPrices = [];
-            const $container = $(element).closest('.oro-item-collection');
+    return [priceList, parseFloat(quantity), unit, currency].join(':');
+}
 
-            const duplicate = _.find($container.find('.oro-multiselect-holder'), function(price) {
-                const stringifiedPrice = getStringifiedValues(price);
+/**
+ * @export oropricing/js/validator/unique-product-prices
+ */
+export default [
+    'Oro\\Bundle\\PricingBundle\\Validator\\Constraints\\UniqueProductPrices',
+    function(value, element) {
+        const processedPrices = [];
+        const $container = $(element).closest('.oro-item-collection');
 
-                if (stringifiedPrice === '') {
-                    return;
-                }
-                if (processedPrices.indexOf(stringifiedPrice) !== -1) {
-                    // duplicates are found
-                    return true;
-                } else {
-                    processedPrices.push(stringifiedPrice);
-                }
-            });
+        const duplicate = _.find($container.find('.oro-multiselect-holder'), function(price) {
+            const stringifiedPrice = getStringifiedValues(price);
 
-            return duplicate === void 0;
-        },
-        function(param) {
-            param = _.extend({}, defaultParam, param);
-            messenger.notificationFlashMessage('error', __(param.message, {}));
+            if (stringifiedPrice === '') {
+                return;
+            }
+            if (processedPrices.indexOf(stringifiedPrice) !== -1) {
+                // duplicates are found
+                return true;
+            } else {
+                processedPrices.push(stringifiedPrice);
+            }
+        });
 
-            return false;
-        }
-    ];
-});
+        return duplicate === void 0;
+    },
+    function(param) {
+        param = _.extend({}, defaultParam, param);
+        messenger.notificationFlashMessage('error', __(param.message, {}));
+
+        return false;
+    }
+];
