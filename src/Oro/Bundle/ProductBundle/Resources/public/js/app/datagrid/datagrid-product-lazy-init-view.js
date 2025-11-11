@@ -1,42 +1,38 @@
-define(function(require) {
-    'use strict';
+import LazyInitView from 'orofrontend/js/app/views/lazy-init-view';
 
-    const LazyInitView = require('orofrontend/js/app/views/lazy-init-view');
+/**
+ * @class DataGridProductLazyInitView
+ * @extends LazyInitView
+ */
+const DataGridProductLazyInitView = LazyInitView.extend({
+    constructor: function DataGridProductLazyInitView(options) {
+        DataGridProductLazyInitView.__super__.constructor.call(this, options);
+    },
 
     /**
-     * @class DataGridProductLazyInitView
-     * @extends LazyInitView
+     * Initialize
+     *
+     * @param {Object} options
      */
-    const DataGridProductLazyInitView = LazyInitView.extend({
-        constructor: function DataGridProductLazyInitView(options) {
-            DataGridProductLazyInitView.__super__.constructor.call(this, options);
-        },
+    initialize: function(options) {
+        DataGridProductLazyInitView.__super__.initialize.call(this, options);
 
-        /**
-         * Initialize
-         *
-         * @param {Object} options
-         */
-        initialize: function(options) {
-            DataGridProductLazyInitView.__super__.initialize.call(this, options);
-
-            if (this.lazy === 'scroll') {
-                this.listenToOnce(this.collection, {
-                    'reset': this.dispose,
-                    'backgrid:selectAllVisible': this._onSelectAllVisible
-                });
-            }
-        },
-
-        /**
-         * Bind MassAction selectAllVisible trigger with lazy-view
-         */
-        _onSelectAllVisible: function() {
-            this.initLazyView().then(() => {
-                this.collection.trigger('backgrid:selectAllVisible');
+        if (this.lazy === 'scroll') {
+            this.listenToOnce(this.collection, {
+                'reset': this.dispose,
+                'backgrid:selectAllVisible': this._onSelectAllVisible
             });
         }
-    });
+    },
 
-    return DataGridProductLazyInitView;
+    /**
+     * Bind MassAction selectAllVisible trigger with lazy-view
+     */
+    _onSelectAllVisible: function() {
+        this.initLazyView().then(() => {
+            this.collection.trigger('backgrid:selectAllVisible');
+        });
+    }
 });
+
+export default DataGridProductLazyInitView;

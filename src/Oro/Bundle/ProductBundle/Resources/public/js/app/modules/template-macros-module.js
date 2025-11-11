@@ -1,5 +1,7 @@
 import {macros} from 'underscore';
 import unitsUtil from 'oroproduct/js/app/units-util';
+import renderUnitsAsRadioGroup from 'tpl-loader!orofrontend/templates/units-as-radio-group.html';
+import renderGroupedUnits from 'tpl-loader!oroproduct/templates/units-group.html';
 
 macros('oroproduct', {
     /**
@@ -9,12 +11,12 @@ macros('oroproduct', {
      * @param {Object} data.units
      * @param {string} data.selectedValue
      */
-    renderUnitsAsRadioGroup: require('tpl-loader!orofrontend/templates/units-as-radio-group.html'),
+    renderUnitsAsRadioGroup,
 
     /**
      * Renders group of units as radio group, select element or label
      */
-    renderGroupedUnits: require('tpl-loader!oroproduct/templates/units-group.html'),
+    renderGroupedUnits,
 
     /**
      * Determines to show units as a radio group

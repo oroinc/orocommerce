@@ -1,103 +1,99 @@
-define(function(require) {
-    'use strict';
+import _ from 'underscore';
+import FrontendToolbar from 'orofrontend/js/datagrid/frontend-toolbar';
+import BackendPaginationView from './backend-pagination-view';
+import BackendPageSize from 'oroproduct/js/app/datagrid/backend-page-size';
+import BackendSortingDropdown from 'oroproduct/js/app/datagrid/sorting/backend-dropdown';
 
-    const _ = require('underscore');
-    const FrontendToolbar = require('orofrontend/js/datagrid/frontend-toolbar').default;
-    const BackendPaginationView = require('./backend-pagination-view').default;
-    const BackendPageSize = require('oroproduct/js/app/datagrid/backend-page-size');
-    const BackendSortingDropdown = require('oroproduct/js/app/datagrid/sorting/backend-dropdown');
+const BackendToolbar = FrontendToolbar.extend({
+    /** @property */
+    template: null,
 
-    const BackendToolbar = FrontendToolbar.extend({
-        /** @property */
-        template: null,
+    /** @property */
+    pagination: BackendPaginationView,
 
-        /** @property */
-        pagination: BackendPaginationView,
+    /** @property */
+    pageSize: BackendPageSize,
 
-        /** @property */
-        pageSize: BackendPageSize,
+    /** @property */
+    sortingDropdown: BackendSortingDropdown,
 
-        /** @property */
-        sortingDropdown: BackendSortingDropdown,
+    /** @property */
+    themeOptions: {
+        optionPrefix: 'backendtoolbar'
+    },
 
-        /** @property */
-        themeOptions: {
-            optionPrefix: 'backendtoolbar'
-        },
+    /**
+     * @inheritdoc
+     */
+    constructor: function BackendToolbar(options) {
+        BackendToolbar.__super__.constructor.call(this, options);
+    },
 
-        /**
-         * @inheritdoc
-         */
-        constructor: function BackendToolbar(options) {
-            BackendToolbar.__super__.constructor.call(this, options);
-        },
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        options = options || {};
 
-        /**
-         * @inheritdoc
-         */
-        initialize: function(options) {
-            options = options || {};
-
-            if (!options.collection) {
-                throw new TypeError('"collection" is required');
-            }
-
-            this.collection = options.collection;
-
-            const optionsPagination = _.defaults({collection: this.collection}, options.pagination);
-            const optionsPageSize = _.defaults({collection: this.collection}, options.pageSize);
-
-            options.columns.trigger('configureInitializeOptions', this.pagination, optionsPagination, this);
-            options.columns.trigger('configureInitializeOptions', this.pageSize, optionsPageSize, this);
-
-            options.pagination = optionsPagination;
-            options.pageSize = optionsPageSize;
-
-            if (options.className) {
-                this.$el.addClass(options.className);
-            }
-            BackendToolbar.__super__.initialize.call(this, options);
-        },
-
-        /**
-         *  @inheritdoc
-         */
-        render: function() {
-            let $pagination;
-
-            if (this.subviews.pagination) {
-                $pagination = this.subviews.pagination.render().$el;
-                $pagination.attr('class', this.$(this.selector.pagination).attr('class'));
-                this.$(this.selector.pagination).replaceWith($pagination);
-            }
-
-            if (this.subviews.pageSize) {
-                this.$(this.selector.pagesize).append(this.subviews.pageSize.render().$el);
-            }
-
-            if (this.subviews.actionsPanel) {
-                this.$(this.selector.actionsPanel).append(this.subviews.actionsPanel.render().$el);
-            }
-
-            if (this.subviews.itemsCounter) {
-                this.$(this.selector.itemsCounter).append(this.subviews.itemsCounter.render().$el);
-            }
-
-            if (this.subviews.sortingDropdown) {
-                this.$(this.selector.sortingDropdown).append(this.subviews.sortingDropdown.render().$el);
-            }
-
-            if (this.subviews.extraActionsPanel) {
-                if (this.subviews.extraActionsPanel.haveActions()) {
-                    this.$(this.selector.extraActionsPanel).append(this.subviews.extraActionsPanel.render().$el);
-                } else {
-                    this.$(this.selector.extraActionsPanel).hide();
-                }
-            }
-
-            return this;
+        if (!options.collection) {
+            throw new TypeError('"collection" is required');
         }
-    });
 
-    return BackendToolbar;
+        this.collection = options.collection;
+
+        const optionsPagination = _.defaults({collection: this.collection}, options.pagination);
+        const optionsPageSize = _.defaults({collection: this.collection}, options.pageSize);
+
+        options.columns.trigger('configureInitializeOptions', this.pagination, optionsPagination, this);
+        options.columns.trigger('configureInitializeOptions', this.pageSize, optionsPageSize, this);
+
+        options.pagination = optionsPagination;
+        options.pageSize = optionsPageSize;
+
+        if (options.className) {
+            this.$el.addClass(options.className);
+        }
+        BackendToolbar.__super__.initialize.call(this, options);
+    },
+
+    /**
+     *  @inheritdoc
+     */
+    render: function() {
+        let $pagination;
+
+        if (this.subviews.pagination) {
+            $pagination = this.subviews.pagination.render().$el;
+            $pagination.attr('class', this.$(this.selector.pagination).attr('class'));
+            this.$(this.selector.pagination).replaceWith($pagination);
+        }
+
+        if (this.subviews.pageSize) {
+            this.$(this.selector.pagesize).append(this.subviews.pageSize.render().$el);
+        }
+
+        if (this.subviews.actionsPanel) {
+            this.$(this.selector.actionsPanel).append(this.subviews.actionsPanel.render().$el);
+        }
+
+        if (this.subviews.itemsCounter) {
+            this.$(this.selector.itemsCounter).append(this.subviews.itemsCounter.render().$el);
+        }
+
+        if (this.subviews.sortingDropdown) {
+            this.$(this.selector.sortingDropdown).append(this.subviews.sortingDropdown.render().$el);
+        }
+
+        if (this.subviews.extraActionsPanel) {
+            if (this.subviews.extraActionsPanel.haveActions()) {
+                this.$(this.selector.extraActionsPanel).append(this.subviews.extraActionsPanel.render().$el);
+            } else {
+                this.$(this.selector.extraActionsPanel).hide();
+            }
+        }
+
+        return this;
+    }
 });
+
+export default BackendToolbar;

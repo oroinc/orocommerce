@@ -1,106 +1,103 @@
-define(function(require) {
-    'use strict';
+import mediator from 'oroui/js/mediator';
+import viewportManager from 'oroui/js/viewport-manager';
+import SortingDropdown from 'orodatagrid/js/datagrid/sorting/dropdown';
+import Select2View from 'oroform/js/app/views/select2-view';
+import FullscreenSorting from 'oroproduct/js/app/datagrid/sorting/fullscreen-sorting';
+import template from 'tpl-loader!oroproduct/templates/datagrid/backend-sorting-dropdown.html';
 
-    const mediator = require('oroui/js/mediator');
-    const viewportManager = require('oroui/js/viewport-manager').default;
-    const SortingDropdown = require('orodatagrid/js/datagrid/sorting/dropdown').default;
-    const Select2View = require('oroform/js/app/views/select2-view');
-    const FullscreenSorting = require('oroproduct/js/app/datagrid/sorting/fullscreen-sorting');
+const BackendSortingDropdown = SortingDropdown.extend({
+    optionNames: SortingDropdown.prototype.optionNames.concat([
+        'fullscreenMode'
+    ]),
 
-    const BackendSortingDropdown = SortingDropdown.extend({
-        optionNames: SortingDropdown.prototype.optionNames.concat([
-            'fullscreenMode'
-        ]),
+    /** @property */
+    hasSortingOrderButton: false,
 
-        /** @property */
-        hasSortingOrderButton: false,
+    /** @property */
+    inlineSortingLabel: true,
 
-        /** @property */
-        inlineSortingLabel: true,
+    /** @property */
+    className: '',
 
-        /** @property */
-        className: '',
+    /** @property */
+    template,
 
-        /** @property */
-        template: require('tpl-loader!oroproduct/templates/datagrid/backend-sorting-dropdown.html'),
+    /**
+     * @inheritdoc
+     */
+    attributes: {
+        'data-grid-sorting': ''
+    },
 
-        /**
-         * @inheritdoc
-         */
-        attributes: {
-            'data-grid-sorting': ''
-        },
+    /** @property */
+    dropdownClassName: 'oro-select2__dropdown',
 
-        /** @property */
-        dropdownClassName: 'oro-select2__dropdown',
+    /** @property */
+    themeOptions: {
+        optionPrefix: 'backendsortingdropdown',
+        el: '[data-grid-sorting]'
+    },
 
-        /** @property */
-        themeOptions: {
-            optionPrefix: 'backendsortingdropdown',
-            el: '[data-grid-sorting]'
-        },
+    /**
+     * Viewports for switch to FullScreen mode
+     */
+    fullscreenMode: 'tablet',
 
-        /**
-         * Viewports for switch to FullScreen mode
-         */
-        fullscreenMode: 'tablet',
+    /**
+     * @inheritdoc
+     */
+    constructor: function BackendSortingDropdown(options) {
+        BackendSortingDropdown.__super__.constructor.call(this, options);
+    },
 
-        /**
-         * @inheritdoc
-         */
-        constructor: function BackendSortingDropdown(options) {
-            BackendSortingDropdown.__super__.constructor.call(this, options);
-        },
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        BackendSortingDropdown.__super__.initialize.call(this, options);
+        mediator.on(`viewport:${this.fullscreenMode}`, this.onViewportChange, this);
+    },
 
-        /**
-         * @inheritdoc
-         */
-        initialize: function(options) {
-            BackendSortingDropdown.__super__.initialize.call(this, options);
-            mediator.on(`viewport:${this.fullscreenMode}`, this.onViewportChange, this);
-        },
+    /**
+     * @inheritdoc
+     */
+    onChangeSorting: function() {
+        const obj = {};
+        this.collection.trigger('backgrid:checkUnSavedData', obj);
 
-        /**
-         * @inheritdoc
-         */
-        onChangeSorting: function() {
-            const obj = {};
-            this.collection.trigger('backgrid:checkUnSavedData', obj);
-
-            if (obj.live) {
-                BackendSortingDropdown.__super__.onChangeSorting.call(this);
-            } else {
-                this.render();
-            }
-        },
-
-        onViewportChange: function() {
-            this.disposeSubview();
-            this.initSubview();
-        },
-
-        /**
-         * @inheritdoc
-         */
-        initSubview: function() {
-            if (viewportManager.isApplicable(this.fullscreenMode)) {
-                this.subview('sortingView', new FullscreenSorting({
-                    el: this.$('select')
-                }));
-            } else {
-                this.subview('sortingView', new Select2View({
-                    el: this.$('select'),
-                    select2Config: this.select2Config
-                }));
-            }
-        },
-
-        disposeSubview: function() {
-            if (this.subview('sortingView')) {
-                this.removeSubview('sortingView');
-            }
+        if (obj.live) {
+            BackendSortingDropdown.__super__.onChangeSorting.call(this);
+        } else {
+            this.render();
         }
-    });
+    },
 
-    return BackendSortingDropdown;
+    onViewportChange: function() {
+        this.disposeSubview();
+        this.initSubview();
+    },
+
+    /**
+     * @inheritdoc
+     */
+    initSubview: function() {
+        if (viewportManager.isApplicable(this.fullscreenMode)) {
+            this.subview('sortingView', new FullscreenSorting({
+                el: this.$('select')
+            }));
+        } else {
+            this.subview('sortingView', new Select2View({
+                el: this.$('select'),
+                select2Config: this.select2Config
+            }));
+        }
+    },
+
+    disposeSubview: function() {
+        if (this.subview('sortingView')) {
+            this.removeSubview('sortingView');
+        }
+    }
 });
+
+export default BackendSortingDropdown;
