@@ -181,4 +181,27 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
+
+    public function testGetCategoryPathWithIncorrectCategoryId()
+    {
+        $categoryId = 123;
+        $category = null;
+
+        $this->requestProductHandler->expects(self::once())
+            ->method('getCategoryId')
+            ->willReturn($categoryId);
+
+        $this->categoryRepository->expects(self::once())
+            ->method('find')
+            ->with($categoryId)
+            ->willReturn(null);
+
+        $this->categoryTreeProvider->expects(self::never())
+            ->method('getParentCategories');
+
+        self::assertSame(
+            [],
+            $this->categoryProvider->getCategoryPath()
+        );
+    }
 }

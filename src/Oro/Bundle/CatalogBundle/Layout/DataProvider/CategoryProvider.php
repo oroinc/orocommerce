@@ -55,7 +55,11 @@ class CategoryProvider
      */
     public function getCategoryPath(): array
     {
-        return $this->categoryTreeProvider->getParentCategories($this->getCustomerUser(), $this->getCurrentCategory());
+        $category = $this->getCurrentCategory();
+
+        return $category ?
+            $this->categoryTreeProvider->getParentCategories($this->getCustomerUser(), $category) :
+            [];
     }
 
     /**
