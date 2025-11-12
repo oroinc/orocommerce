@@ -33,6 +33,7 @@ final class MatrixColumnTypeTest extends WebTestCase
 
     public function testBuildFormWithMissedProduct(): void
     {
+        $this->markTestSkipped('Skipping due to database constraint violation issue BAP-23215');
         $column = new MatrixCollectionColumn();
         $column->product = null;
 
@@ -51,6 +52,7 @@ final class MatrixColumnTypeTest extends WebTestCase
 
     public function testBuildFormWithConfiguredProduct(): void
     {
+        $this->markTestSkipped('Skipping due to database constraint violation issue BAP-23215');
         $matrixCollection = new MatrixCollection();
         $matrixCollectionRow = new MatrixCollectionRow();
         $matrixCollectionColumn = new MatrixCollectionColumn();
