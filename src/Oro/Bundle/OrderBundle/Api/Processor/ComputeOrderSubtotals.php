@@ -92,8 +92,10 @@ class ComputeOrderSubtotals implements ProcessorInterface
         if ($orderIds) {
             /** @var Order[] $orders */
             $orders = $this->doctrineHelper->createQueryBuilder(Order::class, 'o')
-                ->select('o, li')
+                ->select('o, li, p, c')
                 ->innerJoin('o.lineItems', 'li')
+                ->leftJoin('o.parent', 'p')
+                ->leftJoin('o.subOrders', 'c')
                 ->andWhere('o.id IN (:ids)')
                 ->setParameter('ids', $orderIds)
                 ->getQuery()
