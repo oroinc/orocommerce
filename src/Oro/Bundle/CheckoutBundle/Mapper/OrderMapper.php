@@ -58,10 +58,6 @@ class OrderMapper implements MapperInterface
 
         $this->assignData($order, $data, $skipped);
 
-        if (!empty($data['paymentTerm'])) {
-            $this->assignPaymentTerm($order, $data['paymentTerm']);
-        }
-
         return $order;
     }
 
