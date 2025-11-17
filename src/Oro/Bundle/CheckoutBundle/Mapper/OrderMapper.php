@@ -6,8 +6,6 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Security\Acl\Util\ClassUtils;
@@ -17,23 +15,10 @@ use Symfony\Component\Security\Acl\Util\ClassUtils;
  */
 class OrderMapper implements MapperInterface
 {
-    /** @var PropertyAccessorInterface */
-    private $propertyAccessor;
-
-    /** @var FieldHelper */
-    private $entityFieldHelper;
-
-    /** @var PaymentTermAssociationProvider */
-    private $paymentTermAssociationProvider;
-
     public function __construct(
-        FieldHelper $entityFieldHelper,
-        PropertyAccessorInterface $propertyAccessor,
-        PaymentTermAssociationProvider $paymentTermAssociationProvider
+        private FieldHelper $entityFieldHelper,
+        private PropertyAccessorInterface $propertyAccessor,
     ) {
-        $this->entityFieldHelper = $entityFieldHelper;
-        $this->propertyAccessor = $propertyAccessor;
-        $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
     }
 
     #[\Override]
@@ -57,10 +42,6 @@ class OrderMapper implements MapperInterface
         }
 
         $this->assignData($order, $data, $skipped);
-
-        if (!empty($data['paymentTerm'])) {
-            $this->assignPaymentTerm($order, $data['paymentTerm']);
-        }
 
         return $order;
     }
@@ -123,10 +104,5 @@ class OrderMapper implements MapperInterface
         $staticFields = ['shippingCost'];
 
         return array_merge($fieldsNames, $staticFields);
-    }
-
-    protected function assignPaymentTerm(Order $order, PaymentTerm $paymentTerm)
-    {
-        $this->paymentTermAssociationProvider->setPaymentTerm($order, $paymentTerm);
     }
 }

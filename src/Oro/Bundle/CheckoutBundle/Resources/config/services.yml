@@ -503,7 +503,6 @@ services:
         arguments:
             - '@oro_entity.helper.field_helper'
             - '@property_accessor'
-            - '@oro_payment_term.provider.payment_term_association'
 
     oro_checkout.model.action.create_order:
         class: 'Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder'

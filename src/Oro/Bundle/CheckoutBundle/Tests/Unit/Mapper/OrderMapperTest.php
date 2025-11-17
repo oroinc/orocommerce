@@ -12,8 +12,6 @@ use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -25,9 +23,6 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
     /** @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $fieldHelper;
 
-    /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentTermAssociationProvider;
-
     /** @var OrderMapper */
     private $mapper;
 
@@ -35,12 +30,10 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->fieldHelper = $this->createMock(FieldHelper::class);
-        $this->paymentTermAssociationProvider = $this->createMock(PaymentTermAssociationProvider::class);
 
         $this->mapper = new OrderMapper(
             $this->fieldHelper,
-            PropertyAccess::createPropertyAccessor(),
-            $this->paymentTermAssociationProvider
+            PropertyAccess::createPropertyAccessor()
         );
     }
 
@@ -58,7 +51,6 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
                 [
                     ['name' => 'id', 'identifier' => true],
                     ['name' => 'website'],
-                    ['name' => 'paymentTerm'],
                     ['name' => 'shippingAddress'],
                     ['name' => 'billingAddress'],
                     ['name' => 'currency'],
@@ -81,14 +73,8 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
         $newAddress = new OrderAddress();
         $newAddress->setLabel('address2');
 
-        $paymentTerm = new PaymentTerm();
-        $this->paymentTermAssociationProvider->expects(self::once())
-            ->method('setPaymentTerm')
-            ->with(self::isInstanceOf(Order::class), $paymentTerm);
-
         $data = [
             'shippingAddress' => $newAddress,
-            'paymentTerm' => $paymentTerm,
             'skipMe' => true
         ];
 

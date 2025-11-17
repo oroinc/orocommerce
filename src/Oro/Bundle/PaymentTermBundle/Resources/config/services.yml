@@ -140,3 +140,13 @@ services:
             - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
+
+    oro_payment_term.mapper.order_mapper_decorator:
+        class: 'Oro\Bundle\PaymentTermBundle\Mapper\OrderMapperDecorator'
+        public: false
+        decorates: oro_checkout.mapper.order_mapper
+        decoration_priority: 255
+        arguments:
+            - '@.inner'
+            - '@oro_payment_term.provider.payment_term_association'
+            - '%oro_payment_term.type%'
