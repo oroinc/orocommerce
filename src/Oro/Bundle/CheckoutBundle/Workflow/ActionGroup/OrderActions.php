@@ -119,11 +119,25 @@ class OrderActions implements OrderActionsInterface
             $action,
             [
                 'from' => ['email' => $orderOwner->getEmail(), 'name' => $orderOwner],
-                'to' => [$order->getCustomerUser(), $checkout->getRegisteredCustomerUser()],
+                'to' => $this->getUniqueRecipients($order, $checkout),
                 'template' => self::ORDER_CONFIRMATION_EMAIL_TEMPLATE,
                 'entity' => $order
             ]
         );
+    }
+
+    private function getUniqueRecipients(Order $order, Checkout $checkout): array
+    {
+        $recipients = [$order->getCustomerUser(), $checkout->getRegisteredCustomerUser()];
+        $uniqueRecipients = [];
+
+        foreach ($recipients as $recipient) {
+            if ($recipient !== null && !in_array($recipient, $uniqueRecipients, true)) {
+                $uniqueRecipients[] = $recipient;
+            }
+        }
+
+        return $uniqueRecipients;
     }
 
     private function getShippingAddress(Checkout $checkout): OrderAddress

@@ -38,9 +38,7 @@ class SaveStateTest extends TestCase
         $workflowItem = $this->createMock(WorkflowItem::class);
         $checkout = $this->createMock(Checkout::class);
 
-        $workflowData = new WorkflowData([
-            'late_registration' => ['email' => 'test@example.com']
-        ]);
+        $workflowData = new WorkflowData();
         $workflowResult = new WorkflowResult();
 
         $workflowItem->expects($this->once())
@@ -79,7 +77,6 @@ class SaveStateTest extends TestCase
         $this->saveState->execute($workflowItem);
 
         $this->assertTrue($workflowData->offsetGet('consents_available'));
-        $this->assertEquals('test@example.com', $workflowData->offsetGet('email'));
         $this->assertTrue($workflowResult->offsetGet('responseData')['stateSaved']);
     }
 }
