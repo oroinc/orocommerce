@@ -69,10 +69,6 @@ workflows:
                                 - '@is_consents_accepted':
                                     acceptedConsents: $customerConsents
                         parameters: [$consents_available, true]
-                    - '@assign_value':
-                        conditions:
-                            '@not_empty': $late_registration.email
-                        parameters: [$email, $late_registration.email]
                     - '@assign_value': [$billing_address_has_shipping, $ship_to_billing_address]
                     - '@tree':
                         conditions:

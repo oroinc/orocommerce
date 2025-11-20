@@ -32,11 +32,6 @@ class SaveState extends TransitionServiceAbstract
             $data->offsetSet('consents_available', true);
         }
 
-        $lateRegistration = $data->offsetGet('late_registration');
-        if (!empty($lateRegistration['email'])) {
-            $data->offsetSet('email', $lateRegistration['email']);
-        }
-
         if (null === $checkout->getShippingCost()) {
             $checkout->setShippingMethod(null);
             $this->defaultShippingMethodSetter->setDefaultShippingMethod($checkout);
