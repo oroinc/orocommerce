@@ -147,21 +147,24 @@ class SuggestionRepository extends EntityRepository
 
     public function getSuggestionIdsWithEmptyProductsQB(): QueryBuilder
     {
+        $queryBuilder = $this->createQueryBuilder('s');
+
         $subQueryBuilder = $this
             ->getEntityManager()
             ->getRepository(ProductSuggestion::class)
             ->createQueryBuilder('ps');
 
         $subQueryDql = $subQueryBuilder
-            ->select('IDENTITY(ps.suggestion)')
+            ->select('1')
+            ->where('ps.suggestion = s.id')
             ->getQuery()
             ->getDQL();
 
-        $queryBuilder = $this->createQueryBuilder('s');
-
-        return $queryBuilder
+        $queryBuilder
             ->select(['s.id'])
-            ->where($queryBuilder->expr()->notIn('s.id', $subQueryDql));
+            ->where($queryBuilder->expr()->not($queryBuilder->expr()->exists($subQueryDql)));
+
+        return $queryBuilder;
     }
 
     /**
