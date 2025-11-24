@@ -54,11 +54,17 @@ class ProductSuggestionRepository extends EntityRepository
         $valuesInString = implode(', ', $values);
 
         $query = <<<SQL
-            INSERT INTO 
-                oro_website_search_suggestion_product (suggestion_id, product_id) 
-            VALUES 
-                {$valuesInString}
-            ON CONFLICT DO NOTHING RETURNING id; 
+            INSERT INTO
+                oro_website_search_suggestion_product (suggestion_id, product_id)
+            SELECT suggestion_id, product_id
+            FROM (
+                VALUES {$valuesInString}
+            ) AS input(suggestion_id, product_id)
+            WHERE EXISTS (
+                SELECT 1 FROM oro_website_search_suggestion WHERE id = input.suggestion_id
+            )
+            ON CONFLICT DO NOTHING
+            RETURNING id;
         SQL;
 
         return $this->_em->getConnection()->executeQuery($query)->fetchAllAssociative();

@@ -71,4 +71,20 @@ final class ProductSuggestionRepositoryTest extends WebTestCase
 
         self::assertCount(0, $insertedIds);
     }
+
+    public function testInsertProductSuggestionsWithNonExistentSuggestionIds(): void
+    {
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+        $validSuggestion = $this->getReference(LoadProductSuggestionsData::SUGGESTION_WITHOUT_PRODUCT);
+
+        // Mix of valid and non-existent suggestion IDs to simulate race condition scenario
+        $insertedIds = $this->productSuggestionRepository->insertProductSuggestions([
+            $validSuggestion->getId() => [$product1->getId(), $product2->getId()],
+            PHP_INT_MAX => [$product1->getId()],
+        ]);
+
+        // Should insert only the valid suggestions, silently ignoring non-existent ones
+        self::assertCount(2, $insertedIds);
+    }
 }
