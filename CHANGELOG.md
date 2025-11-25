@@ -27,6 +27,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Added
 
+#### CMSBundle
+* Added `orocms/js/app/views/content-widget-collection-variant` view component
+
 #### OrderBundle
 * Added `\Oro\Bundle\OrderBundle\Provider\OrderEntityNameProvider` so that an order entity name can now be retrieved from `\Oro\Bundle\EntityBundle\Provider\EntityNameResolver`.
 * Added order PDF generation functionality:
@@ -63,6 +66,10 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\FormBundle\Resources\public\templates\warning-template.html` for displaying validation warnings in forms.
 
 ### Changed
+
+#### CMSBundle
+* Changed the `oro_cms_tabbed_content_item_collection_row` block markup. Added collapsable markup.
+* Changed the `oro_cms_tabbed_content_collection_item_prototype` macro
 
 #### OrderBundle
 * Changed the order total amount label appearance on the order view back-office page.
@@ -109,7 +116,7 @@ The current file describes significant changes in the code that may affect the u
 #### OrderBundle
 * Moved logic for address copying from `\Oro\Bundle\OrderBundle\Manager\AbstractAddressManager` to `\Oro\Bundle\CustomerBundle\Utils\AddressCopier`.
 * Made `\Oro\Bundle\OrderBundle\Provider\OrderAddressProvider` resettable.
-* Changed logic from readonly to disabled fields when no custom address is selected in address book address component. 
+* Changed logic from readonly to disabled fields when no custom address is selected in address book address component.
 * Updated `Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository` by removing the required `$customerId` argument from the `getOrdersPurchaseVolume` and `getOrdersPurchaseVolumeQueryBuilder` methods.
 
 #### CheckoutBundle
@@ -123,7 +130,7 @@ The current file describes significant changes in the code that may affect the u
 * Changed logic of `\Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutListener` that executes restart the for guest checkout after user login.
 * Decoupled the following form types to separate storefront and backoffice:
   - `\Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType` and `\Oro\Bundle\OrderBundle\Form\Type\OrderAddressType`
-  - `\Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType` and `\Oro\Bundle\OrderBundle\Form\Type\OrderAddressSelectType`  
+  - `\Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType` and `\Oro\Bundle\OrderBundle\Form\Type\OrderAddressSelectType`
 * Fixed billing and shipping address duplicating on single-page checkout.
 * Added support for `data-transition-name` attributes on blocks that should be updated during checkout page transitions.
 
@@ -211,7 +218,7 @@ Previously known as GOD Object
   - `oro_sale.validate_shipping_addresses__backoffice_quote_page`
 * Added validatedAt field to `\Oro\Bundle\SaleBundle\Entity\QuoteAddress` entity.
 * Added validatedAt field to `\Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType` form type.
-* Added `\Oro\Bundle\SaleBundle\Form\Type\QuoteAddressSelectType` that should be used for address book address component for quote form on backoffice.  
+* Added `\Oro\Bundle\SaleBundle\Form\Type\QuoteAddressSelectType` that should be used for address book address component for quote form on backoffice.
 * Added `oroquote/js/app/views/quote-address-validated-at-view` that intercepts form submit and address book address change to validate address via Address Validation feature on backoffice quote create and edit pages.
 
 #### CheckoutBundle
@@ -236,7 +243,7 @@ Previously known as GOD Object
 * Added an `orderSubtotals` relation for the backend `orders` API resource.
 * Enabled an `enable_validation` flag for the backend `orders` API resource.
 * Relation between Order and OrderLineItem entities changed to ManyToMany. Reports and segments that use `order`
-  relation of OrderLineItem entity should be manually updated after update. 
+  relation of OrderLineItem entity should be manually updated after update.
 * Relation between Order and OrderShippingTracking entities changed to ManyToMany. Reports and segments that use `order`
   relation of OrderShippingTracking entity should be manually updated after update.
 * Added the following system config options to enable/disable address validation scenarios for order billing and shipping addresses on backoffice:
@@ -254,7 +261,7 @@ Previously known as GOD Object
 
 #### ProductBundle
 * Added a new frontend `inventory-switcher` filter.
-* Added a default variant field for the Product entity. This allows to choose a default variant from the product variants for a configurable product. This variant will be selected by default on the product view page. It can be set on product create and edit pages as well as via API or product import.  
+* Added a default variant field for the Product entity. This allows to choose a default variant from the product variants for a configurable product. This variant will be selected by default on the product view page. It can be set on product create and edit pages as well as via API or product import.
 
 #### PricingBundle
 * Added a new backend `customerprices` API resource.
@@ -559,7 +566,7 @@ Previously known as GOD Object
 * Updated `\Oro\Bundle\RFPBundle\Twig\RequestProductsExtension` to add kit item line items data to the `rfp_products` TWIG function used in email templates.
 
 #### SaleBundle
-* Changed `\Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\FirstOffers\FirstOffersQuoteToShippingLineItemConverter` and `\Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\SelectedOffers\SelectedOffersQuoteToShippingLineItemConverter` to make them work with the new shipping line item factory `\Oro\Bundle\SaleBundle\Quote\Shipping\Context\LineItem\Factory\ShippingLineItemFromQuoteProductDemandFactory`. 
+* Changed `\Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\FirstOffers\FirstOffersQuoteToShippingLineItemConverter` and `\Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\SelectedOffers\SelectedOffersQuoteToShippingLineItemConverter` to make them work with the new shipping line item factory `\Oro\Bundle\SaleBundle\Quote\Shipping\Context\LineItem\Factory\ShippingLineItemFromQuoteProductDemandFactory`.
 * Changed `\Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineItemConverterInterface::convertLineItems` so it returns a collection `\Doctrine\Common\Collections\Collection` of `\Oro\Bundle\ShippingBundle\Context\ShippingLineItem` instead of the removed `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface`.
 * Updated `\Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter` to enable the start of a checkout from a quote with product kits.
 * Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface` in `\Oro\Bundle\SaleBundle\Entity\QuoteProduct` so it has the field `$kitItemLineItems` with a collection of kit item line items.
@@ -680,7 +687,7 @@ Previously known as GOD Object
 * Added `\Oro\Bundle\WebCatalogBundle\Menu\MenuContentNodesProviderInterface`, `\Oro\Bundle\WebCatalogBundle\Menu\MenuContentNodesProvider`, `\Oro\Bundle\WebCatalogBundle\Menu\StorefrontMenuContentNodesProvider` and `\Oro\Bundle\WebCatalogBundle\Menu\CompositeMenuContentNodesProvider` to provide an ability of getting resolved content nodes for showing in menu.
 
 #### PricingBundle
-* Added Organization ownership type to the `Oro\Bundle\PricingBundle\Entity\PriceList` entity. All existing prices was moved to the first organization. 
+* Added Organization ownership type to the `Oro\Bundle\PricingBundle\Entity\PriceList` entity. All existing prices was moved to the first organization.
 
 #### CatalogBundle
 * Category. Added sort order management for Products in categories:
@@ -733,7 +740,7 @@ Previously known as GOD Object
 
 #### ShippingBundle
 * Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface` and all classes that implement this interface.[[f]](#upgrade-toolkit-coverage)
-* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface` and all classes that implement this interface.[[f]](#upgrade-toolkit-coverage) 
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface` and all classes that implement this interface.[[f]](#upgrade-toolkit-coverage)
 * Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface` and all classes that implement this interface.[[f]](#upgrade-toolkit-coverage)
 * Added strict types to `Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface` and all classes that implement this interface.[[f]](#upgrade-toolkit-coverage)
 * Removed unneeded classes that implement `Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface` and replace them with `Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider`.
@@ -780,7 +787,7 @@ Previously known as GOD Object
 
 #### WebCatalogBundle
 * Removed block type `menu_item`; It was updated and moved to `CommerceMenuBundle`
-* Removed `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache::deleteForNode`, the method is moved to `\Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor`. 
+* Removed `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache::deleteForNode`, the method is moved to `\Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor`.
 * Removed `Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeResolver`. New resolvers are used instead - `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCachingResolver` and `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeMergingResolver`.
 
 #### CatalogBundle
@@ -826,7 +833,7 @@ Previously known as GOD Object
 `single-page-checkout:after-force-change` - triggered after the forced form change
 
 #### CMSBundle
-* Created `optimized` layout theme with `landing` extra js build utilized on oro_cms_frontend_page_view page, see article [How to Create Extra JS Build for a Landing Page](https://doc.oroinc.com/master/frontend/storefront/how-to/how-to-create-extra-js-build-for-landing-page/).  
+* Created `optimized` layout theme with `landing` extra js build utilized on oro_cms_frontend_page_view page, see article [How to Create Extra JS Build for a Landing Page](https://doc.oroinc.com/master/frontend/storefront/how-to/how-to-create-extra-js-build-for-landing-page/).
 
 
 
@@ -900,7 +907,7 @@ Previously known as GOD Object
     - `frontend-checkout-line-items-grid`
     - `frontend-single-page-checkout-line-items-grid`.
   For more details on datagrid customizations please see the [datagrid documentation](https://doc.oroinc.com/backend/entities/customize-datagrids/)
-  
+
 #### PricingBundle
 * `oropricing/js/app/views/quick-add-item-price-view` js module is re-developed and renamed to `oropricing/js/app/views/quick-add-row-price-view`
 
@@ -937,9 +944,9 @@ etc. related to the old design.
 #### WebsiteSearchBundle
 * `oro_website_search.event.website_search_mapping.configuration` event dispatches
 with `Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent` event class
-that have configuration loaded from config files. So event have full access to configuration. 
+that have configuration loaded from config files. So event have full access to configuration.
 * The merge of website search mapping config after the `oro_website_search.event.website_search_mapping.configuration` event
-was dispatched has been removed. At listeners please add full configuration that do not need additional processing with config processor. 
+was dispatched has been removed. At listeners please add full configuration that do not need additional processing with config processor.
 
 ### Removed
 
@@ -960,7 +967,7 @@ was dispatched has been removed. At listeners please add full configuration that
 * Removed the `oro_product.matrix_form_on_shopping_list` option from the system configuration.
 
 #### PricingBundle
-* The `unique_job_slug` option was removed during sending the import price list MQ message. 
+* The `unique_job_slug` option was removed during sending the import price list MQ message.
 
 #### ShoppingListBundle
 * Method `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::findDuplicate()` is removed, use
@@ -982,7 +989,7 @@ was dispatched has been removed. At listeners please add full configuration that
 
 #### WebsiteSearchBundle
 
-* Removed `Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent` event class and used 
+* Removed `Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent` event class and used
 `Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent` class instead of.[[f]](#upgrade-toolkit-coverage)
 * Removed `Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider` and used
 `\Oro\Bundle\SearchBundle\Provider\SearchMappingProvider` class instead of.[[f]](#upgrade-toolkit-coverage)
@@ -1001,12 +1008,12 @@ was dispatched has been removed. At listeners please add full configuration that
 #### WebCatalog component
 * Methods `getApiResourceClassName()` and `getApiResourceIdentifierDqlExpression()` were added to
   `Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType`.
-  
+
 #### CMSBundle
 * A new "home-page-slider" content widget is added which makes possible to dynamically modify slider settings as well
 as content of each slide. If you install application from a scratch new slider will be available out of the box. But
 you should consider to upgrade custom slider while application update. For this you need to modify "home-page-slider"
-widget to have same look as old one. And replace content of "home-page-slider" content block to 
+widget to have same look as old one. And replace content of "home-page-slider" content block to
 "<div data-title="home-page-slider" data-type="image_slider" class="content-widget content-placeholder">{{ widget("home-page-slider") }}</div>".
 It will render slider via widget.
 
@@ -1022,7 +1029,7 @@ It will render slider via widget.
 * The `current_website` request attribute was removed.
   To get the current website from HTTP request `Oro\Bundle\WebsiteBundle\Provider\RequestWebsiteProvider` was added.
   This class loads the website on demand.
-  
+
 ### Removed
 
 * `*.class` parameters for all entities were removed from the dependency injection container.
@@ -1062,40 +1069,40 @@ instead of `'%oro_email.email.entity.class%'` (in service definitions, datagrid 
 ### Changed
 
 #### PaymentBundle
-* In `Oro\Bundle\PaymentBundle\Controller\Api\Rest\PaymentMethodsConfigsRuleController::enableAction` 
+* In `Oro\Bundle\PaymentBundle\Controller\Api\Rest\PaymentMethodsConfigsRuleController::enableAction`
  (`/paymentrules/{id}/enable` path)
- action the request method was changed to POST. 
-* In `Oro\Bundle\PaymentBundle\Controller\Api\Rest\PaymentMethodsConfigsRuleController::disableAction` 
+ action the request method was changed to POST.
+* In `Oro\Bundle\PaymentBundle\Controller\Api\Rest\PaymentMethodsConfigsRuleController::disableAction`
  (`/paymentrules/{id}/disable` path)
  action the request method was changed to POST.
 #### PricingBundle
-* In `Oro\Bundle\PricingBundle\Controller\AjaxPriceListController::defaultAction` 
+* In `Oro\Bundle\PricingBundle\Controller\AjaxPriceListController::defaultAction`
  (`oro_pricing_price_list_default` route)
  action the request method was changed to POST.
-* In `Oro\Bundle\PricingBundle\Controller\AjaxProductPriceController::deleteAction` 
+* In `Oro\Bundle\PricingBundle\Controller\AjaxProductPriceController::deleteAction`
  (`oro_pricing_price_list_default` route)
  action the request method was changed to DELETE.
 * Introduced concept of import/export owner. Applied approach with role-based owner-based permissions to the export and import functionality.
 * Option `--email` has become required for `oro:import:price-list:file` command.
 * `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface`:
  	- all methods from the removed `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface` except `getFilterStorageFieldType` and `getFilterableFieldName` are moved to this interface.
- 
+
  #### SaleBundle
- * In `Oro\Bundle\SaleBundle\Controller\AjaxQuoteController::entryPointAction` 
+ * In `Oro\Bundle\SaleBundle\Controller\AjaxQuoteController::entryPointAction`
   (`oro_quote_entry_point` route)
   action the request method was changed to POST.
  #### ShippingBundle
- * In `Oro\Bundle\ShippingBundle\Controller\Api\Rest\ShippingMethodsConfigsRuleController::enableAction` 
+ * In `Oro\Bundle\ShippingBundle\Controller\Api\Rest\ShippingMethodsConfigsRuleController::enableAction`
   (`/shippingrules/{id}/enable` path)
   action the request method was changed to POST.
- * In `Oro\Bundle\ShippingBundle\Controller\Api\Rest\ShippingMethodsConfigsRuleController::disableAction` 
+ * In `Oro\Bundle\ShippingBundle\Controller\Api\Rest\ShippingMethodsConfigsRuleController::disableAction`
   (`/shippingrules/{id}/disable` path)
   action the request method was changed to POST.
- 
+
 #### ShoppingListBundle
 
 * The `removeProductFromViewAction` in `Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController` (`oro_shopping_list_frontend_remove_product` route) now support only `DELETE` method insteadof `POST`.
-* In `Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController::addProductFromViewAction` 
+* In `Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController::addProductFromViewAction`
  (`oro_shopping_list_frontend_add_product` route)
  action the request method was changed to POST.
 
@@ -1148,7 +1155,7 @@ instead of `'%oro_email.email.entity.class%'` (in service definitions, datagrid 
 ### Added
 #### CatalogBundle
 * Improved caching of home page, added `Oro\Component\Cache\Layout\DataProviderCacheTrait` to the following layout data providers:
-    * `Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoriesProductsProvider` (`=data["featured_categories"].getAll()`) 
+    * `Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoriesProductsProvider` (`=data["featured_categories"].getAll()`)
     * `Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider` (`=data["categories_products"].getCountByCategories()`)
 
 #### PricingBundle
@@ -1173,9 +1180,9 @@ instead of `'%oro_email.email.entity.class%'` (in service definitions, datagrid 
 * Layout data provider method `=data["featured_categories"].getAll()` returns data in format `[['id' => %d, 'title' => %s, 'small_image' => %s], [...], ...]`
 * Relation between Category and Product has been changed from ManyToMany unidirectional with joining table to ManyToOne bidirectional.
 * Class `Oro\Bundle\CatalogBundle\Entity\Category`:
-    * method `setProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
-    * method `getProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
-    * method `addProduct` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory` 
+    * method `setProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory`
+    * method `getProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory`
+    * method `addProduct` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory`
     * method `removeProducts` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory`
     * property `products` was moved to `Oro\Bundle\CatalogBundle\Model\ExtendCategory`
 
@@ -1250,14 +1257,14 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
 #### RedirectBundle
  - Service `oro_redirect.url_cache` must be used instead `oro_redirect.url_storage_cache`
  - Interface `Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface` must be used as dependency instead of `Oro\Bundle\RedirectBundle\Cache\UrlStorageCache`
- - URL cache format for `storage` cache type was improved to decrease files size and speed up caches loading. 
- Old caches should be recalculated. Old caches format is still supported to simplify migration, to be able to use existing URL caches set `oro_redirect.url_storage_cache.split_deep` to 1. 
- To improve page rendering speed and decrease memory usage recommended to recalculate caches with `oro_redirect.url_storage_cache.split_deep` set to 2 (default value) or 3. Value depends on number of slugs in system 
+ - URL cache format for `storage` cache type was improved to decrease files size and speed up caches loading.
+ Old caches should be recalculated. Old caches format is still supported to simplify migration, to be able to use existing URL caches set `oro_redirect.url_storage_cache.split_deep` to 1.
+ To improve page rendering speed and decrease memory usage recommended to recalculate caches with `oro_redirect.url_storage_cache.split_deep` set to 2 (default value) or 3. Value depends on number of slugs in system
  - By default if there are no pre-calculated URLs in cache them will be fetched from database on the fly and put to cache.
 
 #### ShippingBundle
 * Interface `Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface`:
-   * Interface lost his `addLineItem` method. All line item collection should be processed with `setLineItems` and related interface `Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface`. 
+   * Interface lost his `addLineItem` method. All line item collection should be processed with `setLineItems` and related interface `Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface`.
 
 #### WebsiteSearchBundle
 * Entity `Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal`:
@@ -1296,12 +1303,12 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
 * Enabled API for ProductImage and ProductImageType and added documentation of usage in Product API.
 #### RedirectBundle
 * Added method to `SlugRepository`:
-    * `getRawSlug` method to retrieve slug URL data 
+    * `getRawSlug` method to retrieve slug URL data
 * Added new interface:
     * `SluggableUrlProviderInterface`
 * Added new URL providers:
     * `SluggableUrlCacheAwareProvider` takes slug URLs from persistent cache
-    * `SluggableUrlDatabaseAwareProvider` takes slug URLs from the database  
+    * `SluggableUrlDatabaseAwareProvider` takes slug URLs from the database
 ### Changed
 #### OrderBundle
 * Form type `OrderDiscountItemType`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.4.0/src/Oro/Bundle/OrderBundle/Form/Type/OrderDiscountItemType.php "Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType")</sup> was changed for use in popup.
@@ -1311,7 +1318,7 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
 * Some inline underscore templates were moved to separate .html file for each template.
 * Required option for layout block type 'product_prices' renamed from 'productUnitSelectionVisible' to 'isPriceUnitsVisible'
 #### ProductBundle
-* Product images and unit information for the grid are now part of the search index. In order to see image changes, for example, immediate reindexation is required. 
+* Product images and unit information for the grid are now part of the search index. In order to see image changes, for example, immediate reindexation is required.
 * Some inline underscore templates were moved to separate .html file for each template.
 #### PromotionBundle
 * Interface `DiscountInterface`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.4.0/src/Oro/Bundle/PromotionBundle/Discount/DiscountInterface.php "Oro\Bundle\PromotionBundle\Discount\DiscountInterface")</sup> now is fluent, please make sure that all classes which implement it return `$this` for `setPromotion` and  `setMatchingProducts` methods
@@ -1367,7 +1374,7 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
 #### ProductBundle
 * new class `VariantFieldProvider`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/ProductBundle/Provider/VariantFieldProvider.php "Oro\Bundle\ProductBundle\Provider\VariantFieldProvider")</sup> was added it introduces logic to fetch variant field for certain family calling `getVariantFields(AttributeFamily $attributeFamily)` method
 * Brand functionality to ProductBundle was added
-* adding skuUppercase to Product entity - the read-only property that consists uppercase version of sku, used to improve performance of searching by SKU 
+* adding skuUppercase to Product entity - the read-only property that consists uppercase version of sku, used to improve performance of searching by SKU
 #### SEOBundle
 * metaTitles for `Product`, `Category`, `Page`, `WebCatalog`, `Brand` were added. MetaTitle is displayed as default view page title.
 #### SaleBundle
@@ -1500,7 +1507,7 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
 * capture button for payment authorize transactions was added in Payment History section, Capture button for order was removed
 #### ShippingBundle
 * if you have implemented a form that helps configure your custom shipping method (like the UPS integration form that is designed for the system UPS shipping method), you might need your custom shipping method validation. The `ShippingMethodValidatorInterface`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/ShippingBundle/Method/Validator/ShippingMethodValidatorInterface.php "Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface")</sup> and `oro_shipping.method_validator.basic` service were created to handle this. To add a custom logics, add a decorator for this service. Please refer to `oro_shipping.method_validator.decorator.basic_enabled_shipping_methods_by_rules` example.
-* the `ShippingRuleViewMethodTemplateListener`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/ShippingBundle/EventListener/ShippingRuleViewMethodTemplateListener.php "Oro\Bundle\ShippingBundle\EventListener\ShippingRuleViewMethodTemplateListener")</sup> was created, and can be used for providing template of a shipping method on a shipping rule view page. 
+* the `ShippingRuleViewMethodTemplateListener`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/ShippingBundle/EventListener/ShippingRuleViewMethodTemplateListener.php "Oro\Bundle\ShippingBundle\EventListener\ShippingRuleViewMethodTemplateListener")</sup> was created, and can be used for providing template of a shipping method on a shipping rule view page.
 ### Changed
 #### PricingBundle
 * `productUnitSelectionVisible` option of the `ProductPricesType`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Layout/Block/Type/ProductPricesType.php "Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType")</sup> is required now.
@@ -1550,8 +1557,8 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
    - `$unitOfWeight`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L84 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$unitOfWeight")</sup> is removed, use `$upsUnitOfWeight` instead
    - `$country`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L92 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$country")</sup> is removed, us `$upsCountry` instead
    - `$invalidateCacheAt`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L138 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$invalidateCacheAt")</sup> is removed, use `$upsInvalidateCacheAt` instead
-   
-   
+
+
 ## 1.1.0 (2017-03-31)
 [Show detailed list of changes](incompatibilities-1-1.md)
 
@@ -1620,7 +1627,7 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
     - provides information about assigned `WebCatalogs` to given entities (passed as an argument)
     - provides information about usage of `WebCatalog` by id
 #### WebCatalogBundle
-* the `WebCatalogBreadcrumbDataProvider` class was created. 
+* the `WebCatalogBreadcrumbDataProvider` class was created.
     - `getItems` method returns breadcrumbs array
 ### Changed
 #### CatalogBundle
@@ -1645,13 +1652,13 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
   ```
 * the construction signature of the [`CustomerExtension`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CustomerBundle/Twig/CustomerExtension.php "Oro\Bundle\CustomerBundle\Twig\CustomerExtension") class was changed and the constructor accepts only one `ContainerInterface $container` parameter.
 #### FlatRateBundle
-* the bundle <sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/FlatRateBundle/ "Oro\Bundle\FlatRateBundle") was renamed to [`FlatRateShippingBundle`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/FlatRateShippingBundle/ "Oro\Bundle\FlatRateShippingBundle") 
+* the bundle <sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/FlatRateBundle/ "Oro\Bundle\FlatRateBundle") was renamed to [`FlatRateShippingBundle`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/FlatRateShippingBundle/ "Oro\Bundle\FlatRateShippingBundle")
 
 #### FrontendBundle
 * the bundle <sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/FrontendBundle "Oro\Bundle\FrontendBundle") moved from the [`OroCommerce`](https://github.com/orocommerce/orocommerce) package into the [`OroCRM Customer Portal`](https://github.com/orocrm/customer-portal) package.
 
 #### FrontendLocalizationBundle
-* the service definition for `oro_frontend_localization.extension.transtation_packages_provider` was updated in a following way: 
+* the service definition for `oro_frontend_localization.extension.transtation_packages_provider` was updated in a following way:
     - the class changed to `UPSTransport`
     - the publicity set to `false`
 #### MoneyOrderBundle
@@ -1682,7 +1689,7 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
 * class `PriceListToWebsiteRepository`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/PriceListToWebsiteRepository.php "Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository")</sup> changes:
     - changed the return type of `getWebsiteIteratorByDefaultFallback` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
 #### TaxBundle
-* the following methods were updated: 
+* the following methods were updated:
   - [`AbstractTaxCode::setCreatedAt`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/Entity/AbstractTaxCode.php "Oro\Bundle\TaxBundle\Entity\AbstractTaxCode") (pass `\DateTime` as a first argument of the method instead of `mixed`)
   - [`AbstractTaxCode::setUpdatedAt`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/Entity/AbstractTaxCode.php "Oro\Bundle\TaxBundle\Entity\AbstractTaxCode") (pass `\DateTime` as a first argument of the method instead of `mixed`)
   - [`Tax::setCreatedAt`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/Entity/Tax.php "Oro\Bundle\TaxBundle\Entity\Tax") (pass `\DateTime` as a first argument of the method instead of `mixed`)
@@ -1745,8 +1752,8 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
   - [`StatusMassActionHandler`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Datagrid/Extension/MassAction/StatusMassActionHandler.php "Oro\Bundle\PaymentBundle\Datagrid\Extension\MassAction\StatusMassActionHandler") (is replaced with [`StatusMassActionHandler`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RuleBundle/Datagrid/Extension/MassAction/StatusMassActionHandler.php "Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\StatusMassActionHandler") in the [`RuleBundle`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RuleBundle "Oro\Bundle\RuleBundle"))
   - [`PaymentRuleActionsVisibilityProvider`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Datagrid/PaymentRuleActionsVisibilityProvider.php "Oro\Bundle\PaymentBundle\Datagrid\PaymentRuleActionsVisibilityProvider") (is replaced with [`PaymentRuleActionsVisibilityProvider`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RuleBundle/Datagrid/PaymentRuleActionsVisibilityProvider.php "Oro\Bundle\RuleBundle\Datagrid\PaymentRuleActionsVisibilityProvider") in the [`RuleBundle`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RuleBundle "Oro\Bundle\RuleBundle"))
 * the following classes (that are related to decorating [`Product`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ProductBundle/Entity/Product.php "Oro\Bundle\ProductBundle\Entity\Product") with virtual fields) were abstracted and moved to the [`ProductBundle`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle "Oro\Bundle\ProductBundle") (see the [`ProductBundle`](#ProductBundle) section for more information):
-  - [`SelectQueryConverter`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/QueryDesigner/SelectQueryConverter.php "Oro\Bundle\PaymentBundle\QueryDesigner\SelectQueryConverter") 
-  - [`PaymentProductQueryDesigner`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/QueryDesigner/PaymentProductQueryDesigner.php "Oro\Bundle\PaymentBundle\QueryDesigner\PaymentProductQueryDesigner") 
+  - [`SelectQueryConverter`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/QueryDesigner/SelectQueryConverter.php "Oro\Bundle\PaymentBundle\QueryDesigner\SelectQueryConverter")
+  - [`PaymentProductQueryDesigner`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/QueryDesigner/PaymentProductQueryDesigner.php "Oro\Bundle\PaymentBundle\QueryDesigner\PaymentProductQueryDesigner")
   - [`ProductDecorator`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/ExpressionLanguage/ProductDecorator.php "Oro\Bundle\PaymentBundle\ExpressionLanguage\ProductDecorator")
 * in order to have possibility to create more than one payment method of the same type, the PaymentBundle was significantly changed **with backward compatibility break**:
     - The [`PaymentMethodRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/PaymentMethodRegistry.php "Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry") class was replaced with the [`PaymentMethodProvidersRegistry`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/Registry/PaymentMethodProvidersRegistry.php "Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry") which implements a [`PaymentMethodProvidersRegistryInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/Registry/PaymentMethodProvidersRegistryInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface") and this registry is responsible for collecting data from all payment method providers.
@@ -1776,10 +1783,10 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
 * removed property `website` in favour of `scopes` collection using  from `Redirect`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Entity/Redirect.php "Oro\Bundle\RedirectBundle\Entity\Redirect")</sup> class
 #### ShippingBundle
 * the following classes that are related to decorating [`Product`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ProductBundle/Entity/Product.php "Oro\Bundle\ProductBundle\Entity\Product") with virtual fields) were abstracted and moved to the [`ProductBundle`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle "Oro\Bundle\ProductBundle") (see the [`ProductBundle`](#ProductBundle) section for more information):
-  - [`SelectQueryConverter`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/QueryDesigner/SelectQueryConverter.php "Oro\Bundle\ShippingBundle\QueryDesigner\SelectQueryConverter") 
-  - [`ShippingProductQueryDesigner`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/QueryDesigner/ShippingProductQueryDesigner.php "Oro\Bundle\ShippingBundle\QueryDesigner\ShippingProductQueryDesigner") 
+  - [`SelectQueryConverter`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/QueryDesigner/SelectQueryConverter.php "Oro\Bundle\ShippingBundle\QueryDesigner\SelectQueryConverter")
+  - [`ShippingProductQueryDesigner`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/QueryDesigner/ShippingProductQueryDesigner.php "Oro\Bundle\ShippingBundle\QueryDesigner\ShippingProductQueryDesigner")
   - [`ProductDecorator`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/ExpressionLanguage/ProductDecorator.php "Oro\Bundle\ShippingBundle\ExpressionLanguage\ProductDecorator")
-  - In the [`DecoratedProductLineItemFactory`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/ExpressionLanguage/DecoratedProductLineItemFactory.php "Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory") class, the only dependency is now 
+  - In the [`DecoratedProductLineItemFactory`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/ExpressionLanguage/DecoratedProductLineItemFactory.php "Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory") class, the only dependency is now
 [`VirtualFieldsProductDecoratorFactory`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/VirtualFields/VirtualFieldsProductDecoratorFactory.php "Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory").
 * the classes that are related to actions that disable/enable [`ShippingMethodsConfigsRule`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/Entity/ShippingMethodsConfigsRule.php "Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule") were abstracted and moved to the [`RuleBundle`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RuleBundle "Oro\Bundle\RuleBundle") (see the [`RuleBundle`](#RuleBundle)) section for more information):
   - Removed [`StatusDisableMassAction`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/Datagrid/Extension/MassAction/Actions/StatusDisableMassAction.php "Oro\Bundle\ShippingBundle\Datagrid\Extension\MassAction\Actions\StatusDisableMassAction") and switched definition to [`StatusEnableMassAction`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RuleBundle/Datagrid/Extension/MassAction/Actions/StatusEnableMassAction.php "Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction") in the [`RuleBundle`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RuleBundle "Oro\Bundle\RuleBundle")
@@ -1795,7 +1802,7 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
 * the `protected $websiteManager` property was removed from `OroWebsiteExtension`
 * the `protected $websiteUrlResolver` property was removed from `WebsitePathExtension`
 #### WebsiteSearchBundle
-* the following method [`IndexationRequestListener::getEntitiesWithUpdatedIndexedFields`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/WebsiteSearchBundle/EventListener/IndexationRequestListener.php "Oro\Bundle\WebsiteSearchBundle\EventListener\IndexationRequestListener") was removed 
+* the following method [`IndexationRequestListener::getEntitiesWithUpdatedIndexedFields`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/WebsiteSearchBundle/EventListener/IndexationRequestListener.php "Oro\Bundle\WebsiteSearchBundle\EventListener\IndexationRequestListener") was removed
 
 ---
 ###### Upgrade-Toolkit coverage

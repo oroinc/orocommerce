@@ -17,6 +17,7 @@ dynamic-imports:
         - orocms/js/app/validator/wysiwyg
         - orocms/js/app/validator/wysiwyg-style
         - orocms/js/app/views/content-widget-view
+        - orocms/js/app/views/content-widget-collection-variant
         - orocms/js/app/views/default-variant-collection-view
         - orocms/js/app/views/variants-collection-view
     wysiwyg_plugins:
