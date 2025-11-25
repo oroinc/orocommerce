@@ -3,7 +3,7 @@ import ProductKitInShoppingListRefreshPlugin
 import ProductKitResetShoppingListsPlugin
     from 'oroshoppinglist/js/datagrid/plugins/product-kit-reset-shopping-lists-plugin';
 import ShoppingListMessageRow from '../row/shopping-list-message-row';
-import {addClass, isError, isHighlight, messageModel} from './utils';
+import {addClass, isError, isHighlight, isUpcoming, messageModel} from './utils';
 import productKitItemMessage from 'tpl-loader!oroshoppinglist/templates/datagrid/cell/product-kit-item-message.html';
 
 const rowsClassesModify = data => {
@@ -20,9 +20,13 @@ const rowsClassesModify = data => {
             addClass(item, 'highlight-error');
         }
 
+        if (isUpcoming(item)) {
+            addClass(item, 'highlight-upcoming');
+        }
+
         finishData.push(item);
 
-        if (isError(item) || isHighlight(item)) {
+        if (isError(item) || isHighlight(item) || isUpcoming(item)) {
             finishData.push(messageModel(item, 'kitConfiguration', {
                 rowView: ShoppingListMessageRow,
                 kitConfiguration: productKitItemMessage({obj: item})

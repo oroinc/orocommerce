@@ -34,6 +34,7 @@ class ShoppingListItemForBuyerTest extends FrontendRestJsonApiTestCase
                 true
             );
         }
+        self::getConfigManager()->set('oro_shopping_list.saved_for_later_enabled', true);
     }
 
     #[\Override]
@@ -47,7 +48,7 @@ class ShoppingListItemForBuyerTest extends FrontendRestJsonApiTestCase
         $response = $this->cget(['entity' => 'shoppinglistitems'], [], ['HTTP_X-Include' => 'totalCount']);
 
         $this->assertResponseContains('cget_line_item_buyer.yml', $response);
-        self::assertEquals(4, $response->headers->get('X-Include-Total-Count'));
+        self::assertEquals(5, $response->headers->get('X-Include-Total-Count'));
     }
 
     public function testGet()
@@ -318,5 +319,10 @@ class ShoppingListItemForBuyerTest extends FrontendRestJsonApiTestCase
             $response,
             Response::HTTP_FORBIDDEN
         );
+    }
+
+    protected function tearDown(): void
+    {
+        self::getConfigManager()->set('oro_shopping_list.saved_for_later_enabled', false);
     }
 }

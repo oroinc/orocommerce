@@ -63,6 +63,10 @@ class RemoveParentProductsFromShoppingListLineItemListenerTest extends TestCase
 
     public function testPrePersist(): void
     {
+        self::markTestSkipped(
+            'Deprecated: replaced by RemoveParentAndVariantLineItemsFromShoppingListListener, will be removed in master'
+        );
+
         $lineItems = [
             $this->getLineItem(1),
             $this->getLineItem(2)
@@ -114,6 +118,10 @@ class RemoveParentProductsFromShoppingListLineItemListenerTest extends TestCase
 
     public function testPrePersistWhenNoParentProduct(): void
     {
+        self::markTestSkipped(
+            'Deprecated: replaced by RemoveParentAndVariantLineItemsFromShoppingListListener, will be removed in master'
+        );
+
         $lineItems = [
             $this->getLineItem(1),
             $this->getLineItem(2)

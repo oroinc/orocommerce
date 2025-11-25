@@ -1,0 +1,54 @@
+{% block __shopping_list_errors_modal__wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-lists-errors-modal-widget'
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __shopping_list_errors_modal__validation_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-lists-errors-validation-container'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block __shopping_list_errors_modal__errors_datagrid_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-lists-errors-datagrid-container'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block __shopping_list_errors_modal__actions_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' form-actions widget-actions'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block __shopping_list_errors_modal__proceed_button_widget %}
+    {% set buttonLabelKey = action == 'save_for_later'
+        ? 'oro.shoppinglist.shopping_list_errors_modal.button.label'
+        : 'oro.shoppinglist.shopping_list_errors_modal.button_delete.label'
+    %}
+    <div {{ block('block_attributes') }}>
+        <button class="btn btn--default" type="submit">{{ buttonLabelKey|trans }}</button>
+    </div>
+{% endblock %}
+
+{% block __shopping_list_errors_modal__button_notification_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' ui-dialog-footer-text',
+        'data-role': 'footer-element'
+    }) %}
+    {% set notificationKey = action == 'save_for_later'
+        ? 'oro.shoppinglist.shopping_list_errors_modal.button.notification'
+        : 'oro.shoppinglist.shopping_list_errors_modal.button_delete.notification'
+    %}
+    <div {{ block('block_attributes') }}>
+        {{ notificationKey|trans }}
+    </div>
+{% endblock %}

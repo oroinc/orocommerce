@@ -4,12 +4,12 @@ data:
         customerNotes: 'checkout.ready_for_completion'
         shipUntil: null
         currency: 'USD'
-        subtotalWithDiscounts: '90.5000'
-        subtotalValue: '100.5000'
-        totalValue: '100.5000'
+        subtotalWithDiscounts: '111.4000'
+        subtotalValue: '121.4000'
+        totalValue: '121.4000'
         shippingCostAmount: '10.0000'
-        totalIncludingTax: "110.5000"
-        totalExcludingTax: "110.5000"
+        totalIncludingTax: "131.4000"
+        totalExcludingTax: "131.4000"
         totalTaxAmount: "0.0000"
         paymentTerm: 'net 10'
         paymentStatus:

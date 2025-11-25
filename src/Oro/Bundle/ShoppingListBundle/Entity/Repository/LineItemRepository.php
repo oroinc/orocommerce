@@ -35,13 +35,18 @@ class LineItemRepository extends ServiceEntityRepository
             ->where('li.product = :product')
             ->andWhere('li.unit = :unit')
             ->andWhere('li.checksum = :checksum')
-            ->andWhere('li.shoppingList = :shoppingList')
             ->setParameter('product', $lineItem->getProduct())
             ->setParameter('unit', $lineItem->getUnit())
             ->setParameter('checksum', $lineItem->getChecksum())
             ->setParameter('shoppingList', $shoppingListId)
             ->addOrderBy($qb->expr()->asc('li.id'))
             ->setMaxResults(1);
+
+        if ($lineItem->isSavedForLaterList()) {
+            $qb->andWhere('li.savedForLaterList = :shoppingList');
+        } else {
+            $qb->andWhere('li.shoppingList = :shoppingList');
+        }
 
         if ($lineItem->getId()) {
             $qb
@@ -50,6 +55,45 @@ class LineItemRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function getAllProductItemsWithShoppingListNames(
+        AclHelper $aclHelper,
+        array|Product $products,
+        ?CustomerUser $customerUser = null
+    ): array {
+        $qb = $this->createQueryBuilder('li');
+        $qb->select('li')
+            ->join('li.product', 'product')
+            ->leftJoin(
+                'li.product',
+                'productExpr',
+                Join::WITH,
+                'li.product = productExpr AND productExpr IN (:products)'
+            )
+            ->leftJoin(
+                'product.parentVariantLinks',
+                'parentVariantLinksExpr',
+                Join::WITH,
+                'product = parentVariantLinksExpr.parentProduct'.
+                ' AND parentVariantLinksExpr.parentProduct IN (:products)'
+            );
+
+        if ($customerUser) {
+            $qb->where($qb->expr()->eq('li.customerUser', ':customerUser'))
+                ->setParameter('customerUser', $customerUser);
+        }
+
+        $qb->andWhere($qb->expr()->orX(
+            $qb->expr()->isNull('li.parentProduct'),
+            $qb->expr()->in('li.parentProduct', ':products'),
+            $qb->expr()->isNotNull('productExpr'),
+            $qb->expr()->isNotNull('parentVariantLinksExpr')
+        ))
+            ->setParameter('products', $products)
+            ->addOrderBy($qb->expr()->asc('li.id'));
+
+        return $aclHelper->apply($qb, BasicPermission::EDIT)->getResult();
     }
 
     /**
@@ -98,17 +142,20 @@ class LineItemRepository extends ServiceEntityRepository
         return $aclHelper->apply($qb, BasicPermission::EDIT)->getResult();
     }
 
-    public function hasEmptyMatrix(int $shoppingListId): bool
+    public function checkEmptyMatrix(int $shoppingListId, bool $savedForLater = false): bool
     {
         $qb = $this->createQueryBuilder('li');
         $qb->select('li.quantity, p.type, p.id, IDENTITY(li.parentProduct) as parent')
             ->join('li.product', 'p')
-            ->where($qb->expr()->eq('li.shoppingList', ':shoppingListId'))
             ->setParameter('shoppingListId', $shoppingListId);
 
-        $configurable = [];
-        $simple = [];
+        if ($savedForLater) {
+            $qb->where($qb->expr()->eq('li.savedForLaterList', ':shoppingListId'));
+        } else {
+            $qb->where($qb->expr()->eq('li.shoppingList', ':shoppingListId'));
+        }
 
+        $configurable = [];
         foreach ($qb->getQuery()->getArrayResult() as $row) {
             if ($row['type'] === Product::TYPE_CONFIGURABLE) {
                 $configurable[] = $row['id'];
@@ -123,7 +170,7 @@ class LineItemRepository extends ServiceEntityRepository
         }
 
         foreach ($configurable as $id) {
-            if (!isset($simple[$id]) || !count($simple[$id])) {
+            if (!isset($simple[$id]) || !\count($simple[$id])) {
                 return true;
             }
         }
@@ -131,36 +178,99 @@ class LineItemRepository extends ServiceEntityRepository
         return false;
     }
 
-    public function canBeGrouped(int $shoppingListId): bool
+    public function hasEmptyMatrix(int $shoppingListId): bool
+    {
+        return $this->checkEmptyMatrix($shoppingListId);
+    }
+
+    public function checkCanBeGrouped(int $shoppingListId, bool $savedForLater = false): bool
     {
         $qb = $this->createQueryBuilder('li');
         $qb->resetDQLPart('select')
             ->select($qb->expr()->count('li.id'))
-            ->where(
-                $qb->expr()->in('li.shoppingList', ':shopping_list'),
-                $qb->expr()->isNotNull('li.parentProduct')
-            )
             ->setParameter('shopping_list', $shoppingListId)
             ->groupBy('li.parentProduct')
             ->having($qb->expr()->gt($qb->expr()->count('li.id'), 1))
             ->setMaxResults(1);
 
+        if ($savedForLater) {
+            $qb->where(
+                $qb->expr()->in('li.savedForLaterList', ':shopping_list'),
+                $qb->expr()->isNotNull('li.parentProduct'),
+            );
+        } else {
+            $qb->where(
+                $qb->expr()->in('li.shoppingList', ':shopping_list'),
+                $qb->expr()->isNotNull('li.parentProduct')
+            );
+        }
+
         return (bool) $qb->getQuery()->getOneOrNullResult();
     }
 
+    public function canBeGrouped(int $shoppingListId): bool
+    {
+        return $this->checkCanBeGrouped($shoppingListId);
+    }
+
     /**
-     * @param ShoppingList $shoppingList
      * @return array|LineItem[]
      */
-    public function getItemsWithProductByShoppingList(ShoppingList $shoppingList)
-    {
+    public function getAllItemsWithProductByShoppingList(
+        ShoppingList $shoppingList,
+        bool $withSavedForLater = true
+    ): array {
         $qb = $this->createQueryBuilder('li');
         $qb->select('li, product, names')
             ->join('li.product', 'product')
             ->join('product.names', 'names')
-            ->where('li.shoppingList = :shoppingList')
             ->setParameter('shoppingList', $shoppingList)
             ->addOrderBy($qb->expr()->asc('li.id'));
+
+        if ($withSavedForLater) {
+            $qb->where(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('li.shoppingList', ':shoppingList'),
+                    $qb->expr()->eq('li.savedForLaterList', ':shoppingList')
+                )
+            );
+        } else {
+            $qb->where('li.shoppingList = :shoppingList');
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return array|LineItem[]
+     */
+    public function getItemsWithProductByShoppingList(ShoppingList $shoppingList)
+    {
+        return $this->getAllItemsWithProductByShoppingList($shoppingList, false);
+    }
+
+    public function getAllItemsByShoppingListAndProducts(
+        ShoppingList $shoppingList,
+        array $products,
+        bool $withSavedForLater = true
+    ): array {
+        $qb = $this->createQueryBuilder('li');
+        $qb->select('li')
+            ->andWhere($qb->expr()->in('li.product', ':products'))
+            ->setParameter('shoppingList', $shoppingList)
+            ->setParameter('products', $products)
+            ->addOrderBy('li.id', 'ASC');
+
+        if ($withSavedForLater) {
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('li.shoppingList', ':shoppingList'),
+                    $qb->expr()->eq('li.savedForLaterList', ':shoppingList')
+                )
+            );
+        } else {
+            $qb->andWhere('li.shoppingList = :shoppingList');
+        }
 
         return $qb->getQuery()->getResult();
     }
@@ -172,14 +282,7 @@ class LineItemRepository extends ServiceEntityRepository
      */
     public function getItemsByShoppingListAndProducts(ShoppingList $shoppingList, $products)
     {
-        $qb = $this->createQueryBuilder('li');
-        $qb->select('li')
-            ->where('li.shoppingList = :shoppingList', $qb->expr()->in('li.product', ':product'))
-            ->setParameter('shoppingList', $shoppingList)
-            ->setParameter('product', $products)
-            ->addOrderBy($qb->expr()->asc('li.id'));
-
-        return $qb->getQuery()->getResult();
+        return $this->getAllItemsByShoppingListAndProducts($shoppingList, $products, false);
     }
 
     /**
@@ -302,7 +405,10 @@ class LineItemRepository extends ServiceEntityRepository
                     ),
                     $lineItemsQb->expr()->eq('product.status', ':status')
                 ),
-                $lineItemsQb->expr()->eq('line_item.shoppingList', ':shoppingList')
+                $lineItemsQb->expr()->orX(
+                    $lineItemsQb->expr()->eq('line_item.shoppingList', ':shoppingList'),
+                    $lineItemsQb->expr()->eq('line_item.savedForLaterList', ':shoppingList')
+                )
             )
             ->setParameter('allowedInventoryStatuses', $allowedInventoryStatuses)
             ->setParameter('status', Product::STATUS_DISABLED)
@@ -329,22 +435,60 @@ class LineItemRepository extends ServiceEntityRepository
         return $deletedCount;
     }
 
-    public function findLineItemsByParentProductAndUnit(int $shoppingListId, int $productId, string $unitCode): array
-    {
-        $expr = $this->getEntityManager()->getExpressionBuilder();
-
-        return $this
-            ->createQueryBuilder('line_item')
-            ->where($expr->eq('IDENTITY(line_item.shoppingList)', ':shopping_list_id'))
+    public function findItemsByParentProductAndUnit(
+        int $shoppingListId,
+        int $productId,
+        string $unitCode,
+        bool $savedForLater = false
+    ): array {
+        $qb = $this->createQueryBuilder('li');
+        $qb
+            ->select('li')
             ->andWhere(
-                $expr->orX(
-                    $expr->eq('line_item.parentProduct', ':product_id'),
-                    $expr->eq('line_item.product', ':product_id')
+                $qb->expr()->orX(
+                    $qb->expr()->eq('li.parentProduct', ':product_id'),
+                    $qb->expr()->eq('li.product', ':product_id')
                 )
             )
-            ->andWhere($expr->eq('line_item.unit', ':unit_code'))
-            ->getQuery()
-            ->execute(['shopping_list_id' => $shoppingListId, 'product_id' => $productId, 'unit_code' => $unitCode]);
+            ->andWhere($qb->expr()->eq('li.unit', ':unit_code'))
+            ->setParameter('shopping_list_id', $shoppingListId)
+            ->setParameter('product_id', $productId)
+            ->setParameter('unit_code', $unitCode);
+
+        if ($savedForLater) {
+            $qb->andWhere($qb->expr()->eq('IDENTITY(li.savedForLaterList)', ':shopping_list_id'));
+        } else {
+            $qb->andWhere($qb->expr()->eq('IDENTITY(li.shoppingList)', ':shopping_list_id'));
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findLineItemsByParentProductAndUnit(int $shoppingListId, int $productId, string $unitCode): array
+    {
+        return $this->findItemsByParentProductAndUnit($shoppingListId, $productId, $unitCode);
+    }
+
+    public function getParentItemsByParentProduct(LineItem $lineItem): array
+    {
+        $field = $lineItem->isSavedForLaterList() ? 'savedForLaterList' : 'shoppingList';
+
+        return $this->findBy([
+            'unit' => $lineItem->getProductUnitCode(),
+            'product' => $lineItem->getParentProduct(),
+            $field => $lineItem->getAssociatedList(),
+        ]);
+    }
+
+    public function getVariantsItemsByParentProduct(LineItem $lineItem): array
+    {
+        $field = $lineItem->isSavedForLaterList() ? 'savedForLaterList' : 'shoppingList';
+
+        return $this->findBy([
+            'unit' => $lineItem->getProductUnitCode(),
+            'parentProduct' => $lineItem->getProduct(),
+            $field => $lineItem->getAssociatedList(),
+        ]);
     }
 
     public function unsetRemovedProductVariant(ProductVariantLink $productVariantLink): void

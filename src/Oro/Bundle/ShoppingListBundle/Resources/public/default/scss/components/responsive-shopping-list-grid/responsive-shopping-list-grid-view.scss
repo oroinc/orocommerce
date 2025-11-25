@@ -231,6 +231,7 @@
 
         .grid-body-cell-quantity {
             padding-left: $responsive-shopping-body-cell-offset-x-mobile;
+            padding-right: $responsive-shopping-body-cell-offset-x-mobile;
         }
 
         .grid-row-product-kit {
@@ -278,6 +279,13 @@
                     padding-bottom: $responsive-shopping-extension-row-offset-bottom-mobile;
                     border-top: none;
                 }
+            }
+        }
+
+        .notification-row {
+            .grid-body-cell-sku {
+                grid-column: product / subtotal;
+                padding-left: spacing('base');
             }
         }
 

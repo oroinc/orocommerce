@@ -1,0 +1,69 @@
+layout:
+    imports:
+        -
+            id: shopping_list_errors_modal
+            root: widget_content
+            namespace: shopping_list_errors_modal
+
+    actions:
+        - '@setOption':
+            id: shopping_list_errors_modal_shopping_list_errors_datagrid_datagrid
+            optionName: grid_name
+            optionValue: frontend-customer-user-shopping-list-invalid-line-items-grid
+
+        - '@appendOption':
+            id: shopping_list_errors_modal_shopping_list_errors_datagrid_datagrid
+            optionName: grid_parameters
+            optionValue:
+                shopping_list_id: '=data["entity"].getId()'
+                triggered_by: '=data["triggered_by"]'
+                invalid_items_ids: '=data["oro_shopping_list_invalid_line_items"].getInvalidLineItemsIds(data["entity"], data["triggered_by"])'
+
+        - '@setOption':
+            id: shopping_list_errors_modal_shopping_list_errors_datagrid_datagrid
+            optionName: grid_render_parameters.responsiveGrids.enable
+            optionValue: false
+
+        - '@appendOption':
+            id: shopping_list_errors_modal_shopping_list_errors_datagrid_datagrid
+            optionName: grid_render_parameters.enableFilters
+            optionValue: false
+
+        - '@appendOption':
+            id: shopping_list_errors_modal_shopping_list_errors_datagrid_datagrid
+            optionName: grid_render_parameters.toolbarOptions
+            optionValue:
+                addDatagridSettingsManager: false
+                addRefreshAction: false
+                addResetAction: false
+                stickyToolbarThreshold: 1
+
+        - '@appendOption':
+            id: shopping_list_errors_modal_shopping_list_errors_datagrid_datagrid
+            optionName: grid_render_parameters.themeOptions
+            optionValue:
+                hide: true
+                singleUnitMode: '=data["oro_product_single_unit_mode"].isSingleUnitMode()'
+                singleUnitModeCodeVisible: '=data["oro_product_single_unit_mode"].isSingleUnitModeCodeVisible()'
+                cellActionsHideCount: 4
+                cellLauncherOptions:
+                    launcherMode: 'icon-only'
+                    dropdownLauncherMode: 'icon-text'
+                shoppingListEditItemPrefixEventName: 'frontend-customer-user-shopping-list-invalid-line-items-grid'
+                selectVariantButtonClass: 'btn btn--flat btn--size-small btn-select-variants'
+                selectCellEventActionName: 'backgrid:selectAllVisible'
+
+        - '@appendOption':
+            id: shopping_list_errors_modal_shopping_list_errors_datagrid_datagrid
+            optionName: grid_render_parameters.cssClass
+            optionValue: 'responsive-shopping-list-grid-dialog-mode grid-side-effects blank-content-text'
+
+        - '@setOption':
+            id: shopping_list_errors_modal_proceed_button
+            optionName: vars.action
+            optionValue: '=data["action"]'
+
+        - '@setOption':
+            id: shopping_list_errors_modal_button_notification
+            optionName: vars.action
+            optionValue: '=data["action"]'

@@ -70,7 +70,7 @@ macros('oroshoppinglist', {
     /**
      * Renders warnings for product item
      *
-     * @param {array} errors
+     * @param {array} warnings
      */
     renderWarnings: require('tpl-loader!oroshoppinglist/templates/macros/product-item__warnings.html'),
 
@@ -112,5 +112,18 @@ macros('oroshoppinglist', {
      * @param {string} data.productName
      * @param {boolean} data.showLabel
      */
-    renderExpandKitsButton: require('tpl-loader!oroshoppinglist/templates/macros/product-kit__expand-btn.html')
+    renderExpandKitsButton: require('tpl-loader!oroshoppinglist/templates/macros/product-kit__expand-btn.html'),
+
+    /**
+     * Render line item quantity and unit input
+     *
+     * @param {Object} obj
+     * @param {number} quantity
+     * @param {number} precision
+     * @param {Array} units
+     * @param {string} unitCode
+     * @param {Object} gridThemeOptions
+     */
+    renderLineItemQuantityUnitInput:
+        require('tpl-loader!oroshoppinglist/templates/macros/line-item-quantity-unit__input.html')
 });

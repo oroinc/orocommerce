@@ -1,0 +1,28 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroShoppingList/layouts/default/imports/shopping_list_validation/shopping_list_validation.html.twig'
+
+        - '@addTree':
+            items:
+                __shopping_list_validation:
+                    blockType: layout_subtree_update
+                    siblingId: shopping_list_notes
+                    prepend: true
+                    options:
+                        reloadEvents:
+                            - 'shopping-list:refresh'
+                        showLoading: false
+                        onLoadingCssClass: 'loading-blur'
+                __shopping_list_validation_container:
+                    blockType: container
+                __shopping_list_validation_message:
+                    blockType: text
+                    options:
+                        text: 'oro.shoppinglist.validators.line_items.message'
+                        visible: '=data["oro_shopping_list_invalid_line_items"].getInvalidLineItemsIds(data["entity"])'
+            tree:
+                __root:
+                    __shopping_list_validation:
+                        __shopping_list_validation_container:
+                            __shopping_list_validation_message: ~

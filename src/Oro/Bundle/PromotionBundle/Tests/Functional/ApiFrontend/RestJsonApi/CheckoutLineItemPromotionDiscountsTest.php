@@ -51,11 +51,11 @@ class CheckoutLineItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
                         'id' => '<toString(@checkout.ready_for_completion.line_item.2->id)>',
                         'attributes' => [
                             'quantity' => 1,
-                            'currency' => null,
-                            'price' => null,
-                            'subTotal' => null,
-                            'totalValue' => null,
-                            'discount' => '0.0000'
+                            'currency' => 'USD',
+                            'price' => '20.9000',
+                            'subTotal' => '20.9000',
+                            'totalValue' => '19.9000',
+                            'discount' => '-1.0000'
                         ]
                     ],
                     [
@@ -116,7 +116,7 @@ class CheckoutLineItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
                         'type' => 'checkoutlineitems',
                         'id' => '<toString(@checkout.ready_for_completion.line_item.2->id)>',
                         'attributes' => [
-                            'totalValue' => null
+                            'totalValue' => '19.9000'
                         ]
                     ],
                     [
@@ -167,7 +167,7 @@ class CheckoutLineItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
                         'type' => 'checkoutlineitems',
                         'id' => '<toString(@checkout.ready_for_completion.line_item.2->id)>',
                         'attributes' => [
-                            'discount' => '0.0000'
+                            'discount' => '-1.0000'
                         ]
                     ],
                     [

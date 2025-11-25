@@ -8,12 +8,12 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem as LineItemConstraint;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class LineItemValidatorTest extends ConstraintValidatorTestCase
+final class LineItemValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    private ManagerRegistry&MockObject $doctrine;
 
     #[\Override]
     protected function setUp(): void
@@ -32,17 +32,17 @@ class LineItemValidatorTest extends ConstraintValidatorTestCase
     {
         $shoppingList = $this->createMock(ShoppingList::class);
         $lineItem = $this->createMock(LineItem::class);
-        $lineItem->expects($this->any())
-            ->method('getShoppingList')
+        $lineItem->expects(self::any())
+            ->method('getAssociatedList')
             ->willReturn($shoppingList);
 
         $repository = $this->createMock(LineItemRepository::class);
-        $repository->expects($this->once())
+        $repository->expects(self::once())
             ->method('findDuplicateInShoppingList')
             ->with($lineItem, $shoppingList)
             ->willReturn(null);
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getRepository')
             ->with(LineItem::class)
             ->willReturn($repository);
@@ -57,17 +57,17 @@ class LineItemValidatorTest extends ConstraintValidatorTestCase
     {
         $shoppingList = $this->createMock(ShoppingList::class);
         $lineItem = $this->createMock(LineItem::class);
-        $lineItem->expects($this->any())
-            ->method('getShoppingList')
+        $lineItem->expects(self::any())
+            ->method('getAssociatedList')
             ->willReturn($shoppingList);
 
         $repository = $this->createMock(LineItemRepository::class);
-        $repository->expects($this->once())
+        $repository->expects(self::once())
             ->method('findDuplicateInShoppingList')
             ->with($lineItem, $shoppingList)
             ->willReturn($this->createMock(LineItem::class));
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getRepository')
             ->with(LineItem::class)
             ->willReturn($repository);

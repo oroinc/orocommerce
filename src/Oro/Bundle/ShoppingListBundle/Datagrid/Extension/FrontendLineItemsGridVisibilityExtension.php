@@ -16,14 +16,10 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class FrontendLineItemsGridVisibilityExtension extends AbstractExtension
 {
-    /** @var string[] */
-    private const SUPPORTED_GRIDS = [
-        'frontend-customer-user-shopping-list-grid',
-        'frontend-customer-user-shopping-list-edit-grid',
-    ];
-    const HIDDEN_LINE_ITEMS_OPTION = '[options][hiddenLineItems]';
+    public const string HIDDEN_LINE_ITEMS_OPTION = '[options][hiddenLineItems]';
 
     private array $cache = [];
+    private array $supportedGrids = [];
 
     public function __construct(
         private readonly ManagerRegistry $doctrine,
@@ -32,10 +28,15 @@ class FrontendLineItemsGridVisibilityExtension extends AbstractExtension
     ) {
     }
 
+    public function setSupportedGrids(array $supportedGrids): void
+    {
+        $this->supportedGrids = $supportedGrids;
+    }
+
     #[\Override]
     public function isApplicable(DatagridConfiguration $config): bool
     {
-        return \in_array($config->getName(), static::SUPPORTED_GRIDS, true) && parent::isApplicable($config);
+        return \in_array($config->getName(), $this->supportedGrids, true) && parent::isApplicable($config);
     }
 
     #[\Override]
@@ -51,7 +52,8 @@ class FrontendLineItemsGridVisibilityExtension extends AbstractExtension
             return;
         }
 
-        $lineItems = $this->doctrine->getRepository(LineItem::class)->getItemsWithProductByShoppingList($shoppingList);
+        $lineItems = $this->doctrine->getRepository(LineItem::class)
+            ->getAllItemsWithProductByShoppingList($shoppingList);
         $this->prefetchProductsVisibility($lineItems);
 
         $manager = $this->doctrine->getManagerForClass(LineItem::class);
@@ -60,7 +62,7 @@ class FrontendLineItemsGridVisibilityExtension extends AbstractExtension
         foreach ($lineItems as $lineItem) {
             if (!$this->isVisible($lineItem)) {
                 $removeProdSkus[] = $lineItem->getProduct()->getSkuUppercase();
-                $shoppingList->removeLineItem($lineItem);
+                $lineItem->removeFromAssociatedList();
 
                 $manager->remove($lineItem);
             }

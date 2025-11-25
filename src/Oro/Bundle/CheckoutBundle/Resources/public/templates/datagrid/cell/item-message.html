@@ -1,16 +1,20 @@
 <% let oroshoppinglist = _.macros('oroshoppinglist') %>
-
+<% const oroui = _.macros('oroui'); %>
 <% if (obj.isUpcoming || obj.errors && obj.errors.length || obj.warnings && obj.warnings.length || (obj.success && obj.message)) { %>
-    <div class="notification-container">
-        <% if (obj.sku) { %>
-            <%= oroshoppinglist.renderErrors({errors: obj.errors, obj: obj}) %>
-        <% } %>
-        <%= oroshoppinglist.renderWarnings({warnings: obj.warnings}) %>
-        <% if (obj.success && obj.message) { %>
-            <div class="notification--success" role="alert">
-                <span class="fa-check" aria-hidden="true"></span>
-                <span class="notification__text"><%- obj.message %></span>
-            </div>
-        <% } %>
-    </div>
+<div class="notification-container">
+    <% if (obj.sku) { %>
+        <%= oroshoppinglist.renderErrors({errors: obj.errors, obj: obj}) %>
+    <% } %>
+    <%= oroshoppinglist.renderWarnings({warnings: obj.warnings}) %>
+    <%= oroshoppinglist.renderUpcoming({isUpcoming: obj.isUpcoming, availabilityDate: obj.availabilityDate}) %>
+    <% if (obj.success && obj.message) { %>
+        <div class="notification--success" role="alert">
+            <%= oroui.renderIcon({
+                name: 'check-circle',
+                class: 'theme-icon theme-icon--small'
+            }) %>
+            <span class="notification__text"><%- obj.message %></span>
+        </div>
+    <% } %>
+</div>
 <% } %>

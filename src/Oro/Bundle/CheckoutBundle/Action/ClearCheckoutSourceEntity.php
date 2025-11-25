@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Action;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutSourceEntityClearEvent;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
@@ -20,6 +21,13 @@ class ClearCheckoutSourceEntity extends AbstractAction
      * @var mixed
      */
     protected $target;
+
+    private readonly ManagerRegistry $registry;
+
+    public function setRegistry(ManagerRegistry $registry): void
+    {
+        $this->registry = $registry;
+    }
 
     #[\Override]
     protected function executeAction($context)
@@ -67,6 +75,10 @@ class ClearCheckoutSourceEntity extends AbstractAction
             CheckoutSourceEntityClearEvent::NAME
         );
 
+        $em = $this->registry->getManager();
+        foreach ($checkoutSourceEntity->getLineItems() as $lineItem) {
+            $em->remove($lineItem);
+        }
         $checkoutSourceEntity->getLineItems()->clear();
     }
 

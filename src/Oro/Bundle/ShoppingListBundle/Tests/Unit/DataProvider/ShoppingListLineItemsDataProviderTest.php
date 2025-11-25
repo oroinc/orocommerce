@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
@@ -16,15 +15,13 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class ShoppingListLineItemsDataProviderTest extends TestCase
+final class ShoppingListLineItemsDataProviderTest extends TestCase
 {
     use EntityTrait;
 
-    /** @var ManagerRegistry|MockObject */
-    private $registry;
+    private ManagerRegistry&MockObject $registry;
 
-    /** @var ShoppingListLineItemsDataProvider */
-    private $provider;
+    private ShoppingListLineItemsDataProvider $provider;
 
     #[\Override]
     protected function setUp(): void
@@ -32,6 +29,88 @@ class ShoppingListLineItemsDataProviderTest extends TestCase
         $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->provider = new ShoppingListLineItemsDataProvider($this->registry);
+    }
+
+    public function testGetAllShoppingListLineItemsWhenNotInitialized(): void
+    {
+        /** @var LineItem[] $lineItems */
+        $lineItems = [
+            $this->getEntity(LineItem::class, ['id' => 1]),
+        ];
+
+        $lazyCollection = $this->createMock(AbstractLazyCollection::class);
+        $lazyCollection->expects(self::exactly(2))
+            ->method('isInitialized')
+            ->willReturn(false);
+
+        $shoppingList = $this->createMock(ShoppingList::class);
+        $shoppingList->expects(self::once())
+            ->method('getLineItems')
+            ->willReturn($lazyCollection);
+
+        $shoppingList->expects(self::once())
+            ->method('getSavedForLaterLineItems')
+            ->willReturn($lazyCollection);
+
+        $repo = $this->createMock(LineItemRepository::class);
+        $repo->expects(self::once())
+            ->method('getAllItemsWithProductByShoppingList')
+            ->with($shoppingList)
+            ->willReturn($lineItems);
+
+        $this->registry->expects(self::once())
+            ->method('getRepository')
+            ->willReturn($repo);
+
+        self::assertEquals($lineItems, $this->provider->getAllShoppingListLineItems($shoppingList));
+        // Second assert are using to be sure that local cache is used
+        self::assertEquals($lineItems, $this->provider->getAllShoppingListLineItems($shoppingList));
+    }
+
+    public function testGetAllShoppingListLineItemsWhenArrayCollection(): void
+    {
+        $shoppingList = $this->createMock(ShoppingList::class);
+        $shoppingList->expects(self::exactly(2))
+            ->method('getLineItems')
+            ->willReturn(new ArrayCollection());
+
+        $shoppingList->expects(self::exactly(2))
+            ->method('getSavedForLaterLineItems')
+            ->willReturn(new ArrayCollection());
+
+        $this->registry->expects(self::never())
+            ->method('getRepository');
+
+        self::assertEquals([], $this->provider->getAllShoppingListLineItems($shoppingList));
+        // Second assert are using to be sure that local cache is used
+        self::assertEquals([], $this->provider->getAllShoppingListLineItems($shoppingList));
+    }
+
+    public function testGetAllShoppingListLineItemsWhenEmptyPersistentCollection(): void
+    {
+        $lazyCollection = $this->createMock(AbstractLazyCollection::class);
+        $lazyCollection->expects(self::exactly(2))
+            ->method('isInitialized')
+            ->willReturn(true);
+        $lazyCollection->expects(self::exactly(2))
+            ->method('toArray')
+            ->willReturn([]);
+
+        $shoppingList = $this->createMock(ShoppingList::class);
+        $shoppingList->expects(self::exactly(2))
+            ->method('getLineItems')
+            ->willReturn($lazyCollection);
+
+        $shoppingList->expects(self::exactly(2))
+            ->method('getSavedForLaterLineItems')
+            ->willReturn($lazyCollection);
+
+        $this->registry->expects(self::never())
+            ->method('getRepository');
+
+        self::assertEquals([], $this->provider->getAllShoppingListLineItems($shoppingList));
+        // Second assert are using to be sure that local cache is used
+        self::assertEquals([], $this->provider->getAllShoppingListLineItems($shoppingList));
     }
 
     public function testGetShoppingListLineItemsWhenNotInitialized(): void
@@ -42,70 +121,66 @@ class ShoppingListLineItemsDataProviderTest extends TestCase
         ];
 
         $lazyCollection = $this->createMock(AbstractLazyCollection::class);
-        $lazyCollection->expects($this->once())
+        $lazyCollection->expects(self::once())
             ->method('isInitialized')
             ->willReturn(false);
 
         $shoppingList = $this->createMock(ShoppingList::class);
-        $shoppingList->expects($this->any())
+        $shoppingList->expects(self::once())
             ->method('getLineItems')
             ->willReturn($lazyCollection);
 
         $repo = $this->createMock(LineItemRepository::class);
-        $repo->expects($this->once())
+        $repo->expects(self::once())
             ->method('getItemsWithProductByShoppingList')
             ->with($shoppingList)
             ->willReturn($lineItems);
 
-        $em = $this->createMock(EntityManager::class);
-        $em->expects($this->once())
+        $this->registry->expects(self::once())
             ->method('getRepository')
             ->willReturn($repo);
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn($em);
 
-        $this->assertEquals($lineItems, $this->provider->getShoppingListLineItems($shoppingList));
+        self::assertEquals($lineItems, $this->provider->getShoppingListLineItems($shoppingList));
         // Second assert are using to be sure that local cache is used
-        $this->assertEquals($lineItems, $this->provider->getShoppingListLineItems($shoppingList));
+        self::assertEquals($lineItems, $this->provider->getShoppingListLineItems($shoppingList));
     }
 
     public function testGetShoppingListLineItemsWhenArrayCollection(): void
     {
         $shoppingList = $this->createMock(ShoppingList::class);
-        $shoppingList->expects($this->any())
+        $shoppingList->expects(self::exactly(2))
             ->method('getLineItems')
             ->willReturn(new ArrayCollection());
 
-        $this->registry->expects($this->never())
-            ->method('getManagerForClass');
+        $this->registry->expects(self::never())
+            ->method('getRepository');
 
-        $this->assertEquals([], $this->provider->getShoppingListLineItems($shoppingList));
+        self::assertEquals([], $this->provider->getShoppingListLineItems($shoppingList));
         // Second assert are using to be sure that local cache is used
-        $this->assertEquals([], $this->provider->getShoppingListLineItems($shoppingList));
+        self::assertEquals([], $this->provider->getShoppingListLineItems($shoppingList));
     }
 
     public function testGetShoppingListLineItemsWhenEmptyPersistentCollection(): void
     {
         $lazyCollection = $this->createMock(AbstractLazyCollection::class);
-        $lazyCollection->expects($this->once())
+        $lazyCollection->expects(self::once())
             ->method('isInitialized')
             ->willReturn(true);
-        $lazyCollection->expects($this->once())
+        $lazyCollection->expects(self::once())
             ->method('toArray')
             ->willReturn([]);
 
         $shoppingList = $this->createMock(ShoppingList::class);
-        $shoppingList->expects($this->any())
+        $shoppingList->expects(self::exactly(2))
             ->method('getLineItems')
             ->willReturn($lazyCollection);
 
-        $this->registry->expects($this->never())
-            ->method('getManagerForClass');
+        $this->registry->expects(self::never())
+            ->method('getRepository');
 
-        $this->assertEquals([], $this->provider->getShoppingListLineItems($shoppingList));
+        self::assertEquals([], $this->provider->getShoppingListLineItems($shoppingList));
         // Second assert are using to be sure that local cache is used
-        $this->assertEquals([], $this->provider->getShoppingListLineItems($shoppingList));
+        self::assertEquals([], $this->provider->getShoppingListLineItems($shoppingList));
     }
 
     /**
@@ -115,7 +190,7 @@ class ShoppingListLineItemsDataProviderTest extends TestCase
      */
     public function testGetProductsWithConfigurableVariants(array $lineItems, array $expectedProducts): void
     {
-        $this->assertSame(
+        self::assertSame(
             $expectedProducts,
             $this->provider->getProductsWithConfigurableVariants($lineItems)
         );

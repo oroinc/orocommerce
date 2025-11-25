@@ -81,7 +81,7 @@
         }
 
         .ui-dialog & {
-            z-index: z();
+            z-index: var(--toolbar-z-index-dialog, #{z()});
             padding: spacing('sm') spacing('lg') + spacing('md');
             margin: 0 -#{spacing('lg') + spacing('md')} spacing('base');
         }
@@ -130,6 +130,11 @@
         &.in-sticky {
             padding: spacing('sm') spacing('base');
             margin: 0 -#{spacing('base')};
+
+            .ui-dialog & {
+                padding: spacing('sm') spacing('base');
+                margin: 0 -#{spacing('base')};
+            }
         }
     }
 }

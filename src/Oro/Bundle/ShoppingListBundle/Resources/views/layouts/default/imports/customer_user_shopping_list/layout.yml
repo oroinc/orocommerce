@@ -3,6 +3,12 @@ layout:
         -
             id: customer_user_shopping_list_line_items_grid
             root: __line_items
+
+        -
+            id: customer_user_shopping_list_line_items_grid
+            root: __saved_for_later_line_items
+            namespace: saved_for_later
+
         -
             id: customer_user_shopping_list_actions
             root: __header
@@ -22,6 +28,11 @@ layout:
             id: page_main_content
             optionName: attr.class
             optionValue: 'responsive-shopping-list-layout'
+
+        - '@setOption':
+            id: __combined_button
+            optionName: vars.always_outlined
+            optionValue: '=context["is_xml_http_request"] && data["oro_shopping_list_invalid_line_items_modal_button"].isVisibleCheckoutButton(data["entity"])'
 
         - '@addTree':
             items:
@@ -80,7 +91,31 @@ layout:
                         visible: '=data["entity"].getCustomerUser()!=null'
                         shoppingList: '=data["entity"]'
                 __line_items:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents:
+                            - 'product:removed-from-saved-for-later'
+                            - 'products:removed-from-saved-for-later'
+                        showLoading: false
+                        onLoadingCssClass: 'loading-blur'
+                __saved_for_later_wrapper:
                     blockType: container
+                    options:
+                        visible: '=data["feature"].isFeatureEnabled("saved_for_later")'
+                __saved_for_later_title:
+                    blockType: container
+                    options:
+                        vars:
+                            text: 'oro.shoppinglist.saved_for_later.shopping_list.title'
+
+                __saved_for_later_line_items:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents:
+                            - 'product:saved-for-later'
+                            - 'products:saved-for-later'
+                        showLoading: false
+                        onLoadingCssClass: 'loading-blur'
                 __summary_wrapper:
                     blockType: container
                 __collapse_container:
@@ -96,7 +131,7 @@ layout:
                 __totals_wrapper:
                     blockType: layout_subtree_update
                     options:
-                        reloadEvents: ['datagrid_create_before', 'shopping-list:refresh']
+                        reloadEvents: ['page:afterChange', 'shopping-list:refresh']
                         showLoading: false
                         onLoadingCssClass: 'loading-blur'
                 __totals:
@@ -123,14 +158,28 @@ layout:
                     options:
                         attr:
                             class: 'summary-widget__combined-bottons-wrapper'
-                        reloadEvents: ['datagrid_create_before', 'shopping-list:refresh']
+                        reloadEvents: ['page:afterChange', 'shopping-list:refresh']
                         showLoading: false
                         disableControls: true
                         onLoadingCssClass: 'loading-blur'
+                __checkout_errors_modal_button:
+                    blockType: block
+                    options:
+                        visible: '=context["is_xml_http_request"] && data["oro_shopping_list_invalid_line_items_modal_button"].isVisibleCheckoutButton(data["entity"])'
+                        vars:
+                            shoppingList: '=data["entity"]'
+                            invalidIds: '=data["oro_shopping_list_invalid_line_items"].getInvalidLineItemsIds(data["entity"], "checkout")'
                 __order_limit_disabled_checkout_button:
                     blockType: block
                     options:
                         visible: '=context["is_xml_http_request"] && !data["oro_shopping_list_order_limit"].isOrderLimitsMet(data["entity"])'
+                __rfq_errors_modal_button:
+                    blockType: block
+                    options:
+                        visible: '=context["is_xml_http_request"] && data["oro_shopping_list_invalid_line_items_modal_button"].isVisibleRfqButton(data["entity"])'
+                        vars:
+                            shoppingList: '=data["entity"]'
+                            invalidIds: '=data["oro_shopping_list_invalid_line_items"].getInvalidLineItemsIds(data["entity"], "rfq")'
                 __combined_button:
                     blockType: combined_buttons
                     options:
@@ -153,6 +202,9 @@ layout:
                                     __header_owner: ~
                                 __header_owner_actions_wrapper: ~
                             __line_items: ~
+                            __saved_for_later_wrapper:
+                                __saved_for_later_title: ~
+                                __saved_for_later_line_items: ~
                         __sidebar:
                             __summary_wrapper:
                                 __collapse_container:
@@ -163,8 +215,10 @@ layout:
                                                     __totals: ~
                                                     __totals_placeholder: ~
                                                 __combined_button_wrapper:
+                                                    __checkout_errors_modal_button: ~
                                                     __order_limit_disabled_checkout_button: ~
                                                     __combined_button: ~
+                                                    __rfq_errors_modal_button: ~
                                                     __combined_button_placeholder: ~
 
         - '@move':

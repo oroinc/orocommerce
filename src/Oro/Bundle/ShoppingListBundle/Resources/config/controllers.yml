@@ -33,3 +33,15 @@ services:
             - '@validator'
 
     Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxMassActionController: ~
+
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxShoppingListErrorsModalController:
+        arguments:
+            - '@oro_shopping_list.manager.shopping_list'
+            - '@oro_shopping_list.manager.shopping_list_total'
+            - '@oro_checkout.action_group.start_from_shopping_list'
+            - '@oro_shopping_list.service.product_data_storage'
+            - '@translator'
+            - '@logger'
+        tags:
+            - { name: oro_featuretogle.feature, feature: saved_for_later }
+

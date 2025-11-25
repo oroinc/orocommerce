@@ -168,6 +168,7 @@ datagrids:
             jsmodules:
                 - orodatagrid/js/datagrid/builder/html-templates-preloader
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-flat-data-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-plugins-builder
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-options-builder
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-rfp-confirmation-builder
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-representation-builder
@@ -682,3 +683,264 @@ datagrids:
                     confirm_title: oro.shoppinglist.actions.delete_line_item.confirm_title
                     confirm_content: oro.shoppinglist.actions.delete_line_item.confirm_content
                     success: oro.shoppinglist.actions.delete_line_item.success
+
+    frontend-customer-user-shopping-list-saved-for-later-grid:
+        extends: frontend-customer-user-shopping-list-grid
+        options:
+            toolbarOptions:
+                pagination:
+                    onePage: true
+            savedForLaterGrid: true
+
+    frontend-customer-user-shopping-list-saved-for-later-edit-grid:
+        extends: frontend-customer-user-shopping-list-edit-grid
+        options:
+            disableRefreshPlugin: true
+            toolbarOptions:
+                pagination:
+                    onePage: true
+            savedForLaterGrid: true
+        mass_actions:
+            remove_from_saved_for_later:
+                order: 10
+                type: remove-from-saved-for-later
+                label: oro.shoppinglist.actions.remove_from_saved_for_later.label
+                icon: bookmark-unsave
+                entity_name: Oro\Bundle\ShoppingListBundle\Entity\LineItem
+                acl_resource: oro_shopping_list_frontend_update
+                data_identifier: lineItem.id
+                className: 'btn btn--flat'
+                attributes:
+                    data-responsive-styler: ''
+                    data-input-widget-options:
+                        responsive:
+                            mobile-big:
+                                classes: 'dropdown-item text-nowrap'
+                defaultMessages:
+                    confirm_title: oro.shoppinglist.mass_actions.remove_from_saved_for_later.confirm_title
+                    confirm_content: oro.shoppinglist.mass_actions.remove_from_saved_for_later.confirm_content
+                    confirm_ok: oro.shoppinglist.mass_actions.remove_from_saved_for_later.confirm_ok
+                messages:
+                    success: oro.shoppinglist.mass_actions.remove_from_saved_for_later.success_message
+
+    frontend-customer-user-shopping-list-invalid-line-items-grid:
+        acl_resource: oro_shopping_list_frontend_update
+        extended_entity_name: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem'
+        options:
+            entityHint: oro.shoppinglist.lineitem.entity_plural_label
+            frontend: true
+            jsmodules:
+                - orodatagrid/js/datagrid/builder/html-templates-preloader
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-flat-data-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-editing-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-product-kit-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-editing-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-invalid-items-builder
+            toolbarOptions:
+                pageSize:
+                    items: [99999]
+                    default_per_page: 99999
+        inline_editing:
+            enable: true
+            mobile_enabled: true
+            entity_name: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem'
+            plugin: 'oroshoppinglist/js/datagrid/plugins/shopping-list-inline-editing-plugin'
+            cell_editor:
+                component: 'oroshoppinglist/js/app/components/shopping-list-cell-popup-editor-component'
+            save_api_accessor:
+                http_method: PUT
+                route: oro_shopping_list_frontend_line_item_batch_update
+                query_parameter_names:
+                    - _wid
+        source:
+            type: orm
+            skip_acl_apply: true # Access to line items is checked by the ShoppingListLineItemsAccessListener based on the Shopping List access
+            query:
+                select:
+                    - IDENTITY(lineItem.shoppingList) as shoppingListId
+                    - COALESCE(parentProduct.type, product.type) as type
+                    - COALESCE(parentProduct.id, product.id) as mainProductId
+                    - COALESCE(parentProduct.sku, product.sku) as sku
+                    - GROUP_CONCAT(lineItem.id ORDER BY lineItem.id ASC) as displayedLineItemsIds
+                    - MAX(lineItem.id) as sortId
+                    - >
+                        UPPER(
+                            CASE WHEN MAX(CASE WHEN product.type = 'kit' THEN 1 ELSE 0 END) = 1
+                            THEN
+                                CONCAT_WS(
+                                    '',
+                                    '',
+                                    GROUP_CONCAT(DISTINCT product.sku SEPARATOR ''),
+                                    GROUP_CONCAT(kitItemLineItemProduct.sku SEPARATOR ''),
+                                    ''
+                                )
+                            ELSE
+                                CONCAT_WS(
+                                    '',
+                                    '',
+                                    GROUP_CONCAT(product.sku SEPARATOR ''),
+                                    ''
+                                )
+                            END
+                        ) as composedSku
+                from:
+                    - { table: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem', alias: lineItem }
+                join:
+                    inner:
+                        - { join: lineItem.product, alias: product }
+                        - { join: Oro\Bundle\EntityExtendBundle\Entity\EnumOption, conditionType: WITH,  alias: invStatus, condition: "JSON_EXTRACT(product.serialized_data, 'inventory_status') = invStatus" }
+                    left:
+                        - { join: lineItem.parentProduct, alias: parentProduct }
+                        - { join: lineItem.unit, alias: unit }
+                        - { join: lineItem.kitItemLineItems, alias: kitItemLineItem }
+                        - { join: kitItemLineItem.product, alias: kitItemLineItemProduct }
+                where:
+                    and:
+                        - IDENTITY(lineItem.shoppingList) = :shopping_list_id
+                        - lineItem.id IN (:invalid_items_ids)
+                groupBy: mainProductId, unit.code, product.type
+            bind_parameters:
+                shopping_list_id:
+                    default: 0
+                invalid_items_ids:
+                    default: 0
+        columns:
+            sku:
+                frontend_type: shoppinglist-sku
+                frontend_template:
+                    default: tpl-loader!oroshoppinglist/templates/datagrid/cell/sku.html
+                    message: tpl-loader!oroshoppinglist/templates/datagrid/cell/sku-message.html
+            item:
+                label:         oro.frontend.shoppinglist.lineitem.item.label
+                frontend_type: shoppinglist-item
+                notMarkAsBlank: true
+                frontend_template:
+                    default: tpl-loader!oroshoppinglist/templates/datagrid/invalid-items/cell/item.html
+                    message: tpl-loader!oroshoppinglist/templates/datagrid/cell/item-message.html
+                image_placeholder: "@oro_product.provider.product_image_placeholder->getPath('product_small')"
+                inventory_statuses: "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses()"
+            quantity:
+                frontend_type: shoppinglist-line-item
+                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/invalid-items/cell/line-item.html
+                inline_editing:
+                    enable: true
+                    editor:
+                        view: oroshoppinglist/js/app/views/editor/shoppinglist-line-item-editor-view
+                    validation_groups: [update]
+            unit:
+                renderable: false
+            price:
+                frontend_type: shoppinglist-html-template
+                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/price.html
+            subtotal:
+                frontend_type: shoppinglist-html-template
+                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/invalid-items/cell/subtotal.html
+        properties:
+            id: ~
+            productId: ~
+            variantId: ~
+            kitItemLabel: ~
+            name: ~
+            image: ~
+            imageWebp: ~
+            notes: ~
+            initialSubtotal: ~
+            discount: ~
+            isConfigurable:
+                frontend_type: boolean
+            isKit:
+                frontend_type: boolean
+            isVisible:
+                frontend_type: boolean
+            isUpcoming:
+                frontend_type: boolean
+            isLowInventory:
+                frontend_type: boolean
+            availabilityDate:
+                frontend_type: datetime
+            minimumQuantityToOrder:
+                frontend_type: number
+            maximumQuantityToOrder:
+                frontend_type: number
+            inventoryStatus: ~
+            productConfiguration:
+                frontend_type: row_array
+            subData:
+                frontend_type: row_array
+            errors:
+                frontend_type: row_array
+            warnings:
+                frontend_type: row_array
+            units:
+                frontend_type: row_array
+            kitHasGeneralError:
+                frontend_type: boolean
+            action_configuration:
+                frontend_type: row_array
+            validationMetadata:
+                frontend_type: row_array
+        actions:
+            delete:
+                type: delete-product
+                label: oro.shoppinglist.actions.delete_line_item.label
+                link: deleteLink
+                icon: trash
+                launcherOptions:
+                    className: 'dropdown-item--destructive'
+                    dropdownActionWithDivider: true
+                defaultMessages:
+                    confirm_title: oro.shoppinglist.actions.delete_line_item.confirm_title
+                    confirm_content: oro.shoppinglist.actions.delete_line_item.confirm_content
+                    success: oro.shoppinglist.actions.delete_line_item.success
+            update_configurable:
+                type: update-configurable-product
+                label: oro.shoppinglist.actions.update_configurable_line_item.label
+                icon: settings
+        mass_actions:
+            save_for_later:
+                type: save-for-later
+                label: oro.shoppinglist.actions.save_for_later.label
+                icon: bookmark
+                entity_name: Oro\Bundle\ShoppingListBundle\Entity\LineItem
+                acl_resource: oro_shopping_list_frontend_update
+                data_identifier: lineItem.id
+                className: 'btn btn--flat'
+                attributes:
+                    data-responsive-styler: ''
+                    data-input-widget-options:
+                        responsive:
+                            mobile-big:
+                                classes: 'dropdown-item text-nowrap'
+                launcherMode: 'icon-only'
+                defaultMessages:
+                    confirm_title: oro.shoppinglist.mass_actions.save_for_later.confirm_title
+                    confirm_content: oro.shoppinglist.mass_actions.save_for_later.confirm_content
+                    confirm_ok: oro.shoppinglist.mass_actions.save_for_later.confirm_ok
+                messages:
+                    success: oro.shoppinglist.mass_actions.save_for_later.success_message
+            delete:
+                type: delete
+                icon: trash
+                className: 'btn btn--flat btn--destructive-flat'
+                attributes:
+                    data-responsive-styler: ''
+                    data-input-widget-options:
+                        responsive:
+                            mobile-big:
+                                classes: 'dropdown-item dropdown-item--destructive'
+                label: oro.shoppinglist.mass_actions.delete_line_items.label
+                route: oro_datagrid_front_mass_action
+                entity_name: Oro\Bundle\ShoppingListBundle\Entity\LineItem
+                acl_resource: oro_shopping_list_line_item_frontend_delete
+                data_identifier: lineItem.id
+                handler: oro_shopping_list.datagrid.mass_action.handler.delete
+                defaultMessages:
+                    confirm_content: oro.shoppinglist.mass_actions.delete_line_items.confirm_content
+                    confirm_ok: oro.shoppinglist.mass_actions.delete_line_items.confirm_ok
+                    confirm_title: oro.shoppinglist.mass_actions.delete_line_items.confirm_title
+                confirmMessages:
+                    selected_message: oro.shoppinglist.mass_actions.delete_line_items.selected_message
+                messages:
+                    success: oro.shoppinglist.mass_actions.delete_line_items.success_message
+                successMessageOptions:
+                    namespace: shopping_list

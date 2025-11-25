@@ -69,6 +69,7 @@ operations:
                     - [[setNull], [propertyName, [id]]]
                     - [[emptyCollection], [propertyName, [totals]]] # Totals may vary for different customer users.
                     - [[collection], [propertyName, [lineItems]]]
+                    - [[collection], [propertyName, [savedForLaterLineItems]]]
                     - [[collection], [propertyName, [visitors]]]
                     - [[replaceValue, $.currentUser], [propertyName, [customerUser]]]
                     - [[replaceValue, $.currentUser.customer], [propertyName, [customer]]]

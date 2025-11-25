@@ -308,4 +308,14 @@ class MatrixGridOrderManager
             $this->emptyMatrixGridManager->addEmptyMatrix($shoppingList, $product);
         }
     }
+
+    public function addEmptyMatrixForSavedForLaterListIfAllowed(
+        ShoppingList $shoppingList,
+        Product $product,
+        array $lineItems
+    ): void {
+        if ($this->emptyMatrixGridManager->isAddEmptyMatrixAllowed($lineItems)) {
+            $this->emptyMatrixGridManager->addSavedForLaterListEmptyMatrix($shoppingList, $product);
+        }
+    }
 }

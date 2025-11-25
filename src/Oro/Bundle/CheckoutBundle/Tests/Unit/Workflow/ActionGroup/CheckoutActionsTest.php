@@ -14,6 +14,7 @@ use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Action\Action\ExtendableAction;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -152,12 +153,15 @@ class CheckoutActionsTest extends TestCase
                 'order' => $order,
                 'workflow' => 'b2b_flow_checkout'
             ]);
-        $this->actionExecutor->expects($this->once())
+        $this->actionExecutor->expects(self::exactly(2))
             ->method('executeAction')
-            ->with(ExtendableAction::NAME, [
-                'events' => ['extendable_action.checkout_complete'],
-                'eventData' => ['checkout' => $checkout, 'order' => $order]
-            ]);
+            ->withConsecutive(
+                [ExtendableAction::NAME, [
+                    'events' => ['extendable_action.checkout_complete'],
+                    'eventData' => ['checkout' => $checkout, 'order' => $order]
+                ]],
+                ['remove_checkout_source_entity', [$checkout]]
+            );
 
         $this->entityAliasResolver->expects($this->once())
             ->method('getAlias')
@@ -168,7 +172,82 @@ class CheckoutActionsTest extends TestCase
             ->with($sourceEntity)
             ->willReturn('SL1');
 
-        $this->checkoutActions->finishCheckout($checkout, $order);
+        $this->checkoutActions->finishCheckout($checkout, $order, autoRemoveSource: true, clearSource: true);
+
+        $this->assertTrue($checkout->isCompleted());
+
+        $completedData = $checkout->getCompletedData();
+        $this->assertEquals(1, $completedData->offsetGet('itemsCount'));
+        $this->assertEquals(
+            [['entityAlias' => 'order_alias', 'entityId' => ['id' => 2]]],
+            $completedData->offsetGet('orders')
+        );
+        $this->assertEquals('USD', $completedData->offsetGet('currency'));
+        $this->assertEquals(100, $completedData->offsetGet('subtotal'));
+        $this->assertEquals(100, $completedData->offsetGet('total'));
+        $this->assertEquals('SL1', $completedData->offsetGet('startedFrom'));
+    }
+
+    public function testFinishCheckoutWithSavedForLaterItems(): void
+    {
+        $checkout = $this->getEntity(Checkout::class, ['id' => 1]);
+        $order = $this->getEntity(Order::class, ['id' => 2]);
+        $order->addLineItem(new OrderLineItem());
+        $order->setCurrency('USD');
+        $totalObject = MultiCurrency::create(100, 'USD');
+        $subtotalObject = MultiCurrency::create(100, 'USD');
+        $order->setTotalObject($totalObject);
+        $order->setSubtotalObject($subtotalObject);
+
+        $sourceEntity = $this->getEntity(ShoppingList::class, ['id' => 3]);
+        $sourceEntity->addSavedForLaterLineItem(new LineItem());
+
+        $checkoutSource = $this->createMock(CheckoutSource::class);
+        $checkoutSource->expects($this->any())
+            ->method('getEntity')
+            ->willReturn($sourceEntity);
+        $checkout->setSource($checkoutSource);
+
+        $this->addressActions->expects($this->once())
+            ->method('actualizeAddresses')
+            ->with($checkout, $order);
+
+        $this->actionExecutor->expects($this->once())
+            ->method('executeActionGroup')
+            ->with('b2b_flow_checkout_send_order_confirmation_email', [
+                'checkout' => $checkout,
+                'order' => $order,
+                'workflow' => 'b2b_flow_checkout'
+            ]);
+
+        $calls = [];
+        $this->actionExecutor->expects(self::exactly(2))
+            ->method('executeAction')
+            ->withConsecutive(
+                [ExtendableAction::NAME, [
+                    'events' => ['extendable_action.checkout_complete'],
+                    'eventData' => ['checkout' => $checkout, 'order' => $order]
+                ]],
+                ['clear_checkout_source_entity', [$checkout]]
+            )
+            ->willReturnCallback(function (...$args) use (&$calls) {
+                $calls[] = $args;
+            });
+
+        $this->entityAliasResolver->expects($this->once())
+            ->method('getAlias')
+            ->with(Order::class)
+            ->willReturn('order_alias');
+        $this->entityNameResolver->expects($this->once())
+            ->method('getName')
+            ->with($sourceEntity)
+            ->willReturn('SL1');
+
+        $this->checkoutActions->finishCheckout($checkout, $order, autoRemoveSource: true, clearSource: true);
+
+        foreach ($calls as $call) {
+            self::assertNotEquals(['remove_checkout_source_entity', [$checkout]], $call);
+        }
 
         $this->assertTrue($checkout->isCompleted());
 

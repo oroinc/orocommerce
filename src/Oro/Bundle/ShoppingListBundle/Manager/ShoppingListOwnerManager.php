@@ -48,5 +48,8 @@ class ShoppingListOwnerManager
         foreach ($shoppingList->getLineItems() as $lineItem) {
             $lineItem->setCustomerUser($user);
         }
+        foreach ($shoppingList->getSavedForLaterLineItems() as $savedForLaterLineItem) {
+            $savedForLaterLineItem->setCustomerUser($user);
+        }
     }
 }

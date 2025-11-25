@@ -33,7 +33,8 @@ class RecalculateShoppingListTotals implements ProcessorInterface
         if ($entity instanceof ShoppingList) {
             $this->recalculateTotals($entity, $context, false);
         } elseif ($entity instanceof LineItem) {
-            $shoppingList = $entity->getShoppingList();
+            $shoppingList = $entity->getAssociatedList();
+
             if (null !== $shoppingList) {
                 $this->recalculateTotals($shoppingList, $context, true);
             }

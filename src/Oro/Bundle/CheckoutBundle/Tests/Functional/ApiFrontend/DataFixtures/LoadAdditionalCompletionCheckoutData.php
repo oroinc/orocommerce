@@ -21,7 +21,7 @@ class LoadAdditionalCompletionCheckoutData extends AbstractLoadCheckoutData
                 'customerUser' => 'customer_user',
                 'shoppingListLineItems' => [
                     ['product' => LoadProductData::PRODUCT_1],
-                    ['product' => LoadProductData::PRODUCT_6]
+                    ['product' => LoadProductData::PRODUCT_2]
                 ],
                 'shipToBillingAddress' => true,
                 'billingAddress' => $this->createCheckoutAddress([

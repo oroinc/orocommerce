@@ -30,9 +30,11 @@ Feature: Shopping List Line Items Single Unit Mode
     When I click "Shopping List Actions"
     And I click "Edit"
     Then I should see following grid:
-      | SKU | Qty Update All |
-      | AA1 | 1              |
-      | AA1 | 2              |
+      | SKU                                                                     | Qty Update All |
+      | AA1                                                                     | 1              |
+      | This item can't be added to checkout because the price is not available |                |
+      | AA1                                                                     | 2              |
+      | This item can't be added to checkout because the price is not available |                |
     When I click on "Shopping List Line Item 2 Quantity"
     And I fill "Shopping List Line Item Form" with:
       | Quantity | 1 |
@@ -41,9 +43,11 @@ Feature: Shopping List Line Items Single Unit Mode
       | Quantity | 3 |
     And I click "Update All"
     Then I should see following grid:
-      | SKU | Qty Update All |
-      | AA1 | 3              |
-      | AA1 | 1              |
+      | SKU                                                                     | Qty Update All |
+      | AA1                                                                     | 3              |
+      | This item can't be added to checkout because the price is not available |                |
+      | AA1                                                                     | 1              |
+      | This item can't be added to checkout because the price is not available |                |
 
   Scenario: Check Units In The Shopping List Widget With Disabled Units
     Given I open shopping list widget
@@ -60,9 +64,11 @@ Feature: Shopping List Line Items Single Unit Mode
     Given I proceed as the Buyer
     And I reload the page
     Then I should see following grid:
-      | SKU | Qty Update All |
-      | AA1 | 3 set          |
-      | AA1 | 1 item         |
+      | SKU                                                                     | Qty Update All |
+      | AA1                                                                     | 3 set          |
+      | This item can't be added to checkout because the price is not available |                |
+      | AA1                                                                     | 1 item         |
+      | This item can't be added to checkout because the price is not available |                |
     When I click on "Shopping List Line Item 2 Quantity"
     And I fill "Shopping List Line Item Form" with:
       | Quantity | 4 |
@@ -71,9 +77,11 @@ Feature: Shopping List Line Items Single Unit Mode
       | Quantity | 5 |
     And I click "Update All"
     Then I should see following grid:
-      | SKU | Qty Update All |
-      | AA1 | 5 set          |
-      | AA1 | 4 item         |
+      | SKU                                                                     | Qty Update All |
+      | AA1                                                                     | 5 set          |
+      | This item can't be added to checkout because the price is not available |                |
+      | AA1                                                                     | 4 item         |
+      | This item can't be added to checkout because the price is not available |                |
 
   Scenario: Check Units In The Shopping List Widget With Enabled Units
     Given I open shopping list widget
@@ -84,9 +92,11 @@ Feature: Shopping List Line Items Single Unit Mode
     And I click on "Shopping Lists"
     And I click view "Shopping List 5" in grid
     And I should see following grid:
-      | Sku | Product  | Availability | Qty |       | Price | Subtotal |
-      | AA1 | Product1 | In Stock     | 5   | sets  |       |          |
-      | AA1 | Product1 | In Stock     | 4   | items |       |          |
+      | Sku                                                                     | Product  | Availability | Qty |       | Price | Subtotal |
+      | AA1                                                                     | Product1 | In Stock     | 5   | sets  |       |          |
+      | This item can't be added to checkout because the price is not available |          |              |     |       |       |          |
+      | AA1                                                                     | Product1 | In Stock     | 4   | items |       |          |
+      | This item can't be added to checkout because the price is not available |          |              |     |       |       |          |
 
   Scenario: Disable Show Single Unit
     Given I proceed as the Admin
@@ -98,6 +108,8 @@ Feature: Shopping List Line Items Single Unit Mode
     Given I proceed as the Buyer
     And I reload the page
     And I should see following grid:
-      | Sku | Product  | Availability | Qty | Price | Subtotal |
-      | AA1 | Product1 | In Stock     | 5   |       |          |
-      | AA1 | Product1 | In Stock     | 4   |       |          |
+      | Sku                                                                     | Product  | Availability | Qty | Price | Subtotal |
+      | AA1                                                                     | Product1 | In Stock     | 5   |       |          |
+      | This item can't be added to checkout because the price is not available |          |              |     |       |          |
+      | AA1                                                                     | Product1 | In Stock     | 4   |       |          |
+      | This item can't be added to checkout because the price is not available |          |              |     |       |          |

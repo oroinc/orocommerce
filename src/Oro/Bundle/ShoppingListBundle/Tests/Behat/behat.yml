@@ -97,6 +97,10 @@ oro_behat_extension:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ProductTable
       selector: 'div[id^="grid-frontend-customer-user-shopping-list"]'
 
+    Shopping List Line Items Edit Table:
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ProductTable
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]'
+
     Shopping List Line Item Product Attribute:
       selector:
         type: 'xpath'
@@ -149,16 +153,24 @@ oro_behat_extension:
       selector: '.grid-body .grid-row:first-child form button[data-action="cancel"]'
 
     Shopping List Line Item 2 Quantity:
-      selector: '.grid-body .grid-row:nth-child(2) div.input-qty, .grid-body .grid-row:nth-child(2) .form-quantity-row'
+      selector:
+        type: 'xpath'
+        locator: "//tbody[@class='grid-body']//tr[contains(@class, 'grid-row') and not(contains(@class, 'notification-row'))][2]//div[contains(@class, 'input-qty')] | //tbody[@class='grid-body']//tr[contains(@class, 'grid-row') and not(contains(@class, 'notification-row'))][2]//*[contains(@class, 'form-quantity-row')]"
 
     Shopping List Line Item 2 Quantity Input:
-      selector: '.grid-body .grid-row:nth-child(2) form input[name="quantity"]'
+      selector:
+        type: 'xpath'
+        locator: "//tbody[@class='grid-body']//tr[contains(@class, 'grid-row') and not(contains(@class, 'notification-row'))][2]//form//input[@name='quantity']"
 
     Shopping List Line Item 2 Save Changes Button:
-      selector: '.grid-body .grid-row:nth-child(2) form button[type="submit"]'
+      selector:
+        type: 'xpath'
+        locator: "//tbody[@class='grid-body']//tr[contains(@class, 'grid-row') and not(contains(@class, 'notification-row'))][2]//form//button[@type='submit']"
 
     Shopping List Line Item 2 Cancel Button:
-      selector: '.grid-body .grid-row:nth-child(2) form button[data-action="cancel"]'
+      selector:
+        type: 'xpath'
+        locator: "//tbody[@class='grid-body']//tr[contains(@class, 'grid-row') and not(contains(@class, 'notification-row'))][2]//form//button[data-action='cancel']"
 
     Shopping List Line Item 3 Quantity:
       selector: '.grid-body .grid-row:nth-child(3) div.input-qty, .grid-body .grid-row:nth-child(3) .form-quantity-row'
@@ -297,11 +309,20 @@ oro_behat_extension:
     Add to Shopping List:
       selector: '.add-to-shopping-list-button.btn-main:contains("Add to Shopping List")'
 
+    Update Shopping List:
+        selector: '.add-to-shopping-list-button.btn-main:contains("Update Shopping List")'
+
     Configure and Add to Shopping List:
       selector: '.add-to-shopping-list-button:contains("Configure and Add to Shopping List")'
 
     Add To Another Shopping List:
       selector: '.add-to-shopping-list-button:contains("Add To Another Shopping List")'
+
+    Add to Shopping List 1:
+        selector: '.add-to-shopping-list-button:contains("Add to Shopping List 1")'
+
+    Add to Product Kit Shopping List:
+        selector: '.add-to-shopping-list-button:contains("Add to Product Kit Shopping List")'
 
     Add a Note to This Shopping List:
       selector: 'input[name=addANote]'
@@ -371,6 +392,56 @@ oro_behat_extension:
     Shopping list Line items Grid:
       selector: 'div[data-page-component-name="shopping-list-line-items-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Shopping List Saved For Later Line Items Grid:
+        selector: 'div[data-page-component-name="shopping-list-saved-for-later-line-items-grid"]'
+        class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Shopping List Saved For Later Line Items GridFilters:
+        selector: 'div[data-page-component-name="shopping-list-saved-for-later-line-items-grid"] div.filter-box'
+        class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    Shopping List Saved For Later Line Items GridToolbarActions:
+        selector: 'div[data-page-component-name="shopping-list-saved-for-later-line-items-grid"] div.toolbar div.actions-panel'
+        class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    Shopping List Saved For Later Line Items GridFiltersState:
+        selector: 'div[data-page-component-name="shopping-list-saved-for-later-line-items-grid"] .filters-state'
+
+    Frontend Shopping List Saved For Later Line Items Grid:
+        selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-saved-for-later-edit-grid"]'
+        class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    Frontend Shopping List Saved For Later Line Items GridFilters:
+        selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-saved-for-later-edit-grid"] div.filter-box'
+        class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
+
+    Frontend Shopping List Saved For Later Line Items GridToolbarActions:
+        selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-saved-for-later-edit-grid"] div.toolbar div.actions-panel'
+        class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    Frontend Shopping List Saved For Later Line Items GridFiltersState:
+        selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-saved-for-later-edit-grid"] .filters-state'
+
+    Frontend Shopping List Saved For Later Line Items Edit Note:
+        selector:
+            locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-saved-for-later-edit-grid"]//a[contains(@title, "Edit a note")]'
+            type: 'xpath'
+
+    Frontend Shopping List Saved For Later Line Items Product Quantity:
+        selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-saved-for-later-edit-grid"] div.form-quantity-row'
+
+    Frontend Shopping List Saved For Later Line Item 1 Product Quantity Input:
+        selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-saved-for-later-edit-grid"] .grid-row:first-child form input[name="quantity"]'
+
+    Frontend Shopping List Saved For Later Line Items Product Quantity Increment:
+        selector:
+            locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-saved-for-later-edit-grid"]//button[@data-type="increment"]'
+            type: 'xpath'
+
+    Frontend Shopping List Saved For Later Line Items Save Changes Button:
+        selector: '.grid-body .grid-row form button[type="submit"]'
+
 
     Default Guest Shopping List Owner:
       selector: 'input[name="shopping_list[oro_shopping_list___default_guest_shopping_list_owner][value]"]'
@@ -499,9 +570,56 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
 
+    Frontend Customer User Shopping List Edit GridFilters:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-edit-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    Frontend Customer User Shopping List Edit GridToolbarActions:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-edit-grid"] div.toolbar div.actions-panel'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    Frontend Customer User Shopping List Edit GridFiltersState:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-edit-grid"] .filters-state'
+
     Frontend Customer User Shopping List View Grid:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-grid"]'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    Frontend Customer User Shopping List View GridFilters:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    Frontend Customer User Shopping List View GridToolbarActions:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-grid"] div.toolbar div.actions-panel'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    Frontend Customer User Shopping List View GridFiltersState:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-grid"] .filters-state'
+
+    Frontend Customer User Shopping List Invalid Line Items Grid:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-invalid-line-items-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    Frontend Customer User Shopping List Invalid Line Items Table:
+        selector: '.os-viewport .grid-container table.grid-main-container'
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+
+    Frontend Customer User Shopping List Invalid Line Items Product Quantity:
+        selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-invalid-line-items-grid"] div.form-quantity-row'
+
+    Frontend Customer User Shopping List Invalid Line Items Product Quantity Increment:
+            selector:
+                locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-invalid-line-items-grid"]//button[@data-type="increment"]'
+                type: 'xpath'
+
+    Frontend Customer User Shopping List Invalid Line Item 1 Product Quantity Input:
+            selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-invalid-line-items-grid"] .grid-row:first-child form input[name="quantity"]'
+
+    Frontend Customer User Shopping List Invalid Line Items Save Changes Button:
+            selector: '.grid-body .grid-row form button[type="submit"]'
+
+    Frontend Customer User Shopping List Invalid Line Items Cancel Changes Button:
+        selector: '.grid-body .grid-row form button[data-action="cancel"]'
 
     Shopping List Edit Grid Header Input:
       selector:
@@ -518,9 +636,24 @@ oro_behat_extension:
         locator: '//tr[@aria-rowindex="2"]//a[contains(@title, "Edit a note")]'
         type: 'xpath'
 
-    Shopping List Edit Grid Select Row 1 Delete:
+    Frontend Shopping List Line Items Edit Note:
+        selector:
+            locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//a[contains(@title, "Edit a note")]'
+            type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Actions:
       selector:
-        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[contains(@class, "action-cell")]//a[contains(@title, "Delete")]'
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[contains(@class, "action-cell")]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Save For Later:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[contains(@class, "action-cell")]//a[contains(@title, "Save For Later")]'
+        type: 'xpath'
+
+    Shopping List Invalid Line Items Grid Select Row 1 Delete:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-invalid-line-items-grid"]//*[@aria-rowindex="1"]/td[contains(@class, "action-cell")]//a[contains(@title, "Delete")]'
         type: 'xpath'
 
     Shopping List Edit Grid Edit Note Row 2:
@@ -596,6 +729,11 @@ oro_behat_extension:
     Shopping List Edit Grid Select Row 25 Action:
       selector:
         locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="26"]/td[@aria-colindex="10"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Delete:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[contains(@class, "action-cell")]//a[contains(@title, "Delete")]'
         type: 'xpath'
 
     In Shopping Lists:
@@ -730,6 +868,8 @@ oro_behat_extension:
       selector: 'tr:nth-child(1) form [data-role="unit-label"]'
     Shopping List 1 Kit Line Item Save Changes Button:
       selector: 'tr:nth-child(1) form button[type="submit"]'
+    Shopping List 1 Kit Line Item Edit Button:
+      selector: 'tr:nth-child(1) td.action-cell a[title="Configure"]'
     Shopping List 1 Kit Line Item Delete Button:
       selector: 'tr:nth-child(1) td.action-cell a[title="Delete"]'
 

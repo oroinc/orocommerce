@@ -3,15 +3,19 @@
 namespace Oro\Bundle\ShoppingListBundle\Condition;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider;
+use Oro\Bundle\RFPBundle\Resolver\ShoppingListToRequestQuoteValidationGroupResolver;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 /**
- * Checks whether at least one of products can be added to RFP.
+ * Checks whether products can be added to RFP.
  * Usage:
  * @rfp_allowed: items
  */
@@ -21,10 +25,16 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
 
     private ProductRFPAvailabilityProvider $productAvailabilityProvider;
     private PropertyPathInterface $propertyPath;
+    private InvalidShoppingListLineItemsProvider $provider;
 
     public function __construct(ProductRFPAvailabilityProvider $productAvailabilityProvider)
     {
         $this->productAvailabilityProvider = $productAvailabilityProvider;
+    }
+
+    public function setInvalidShoppingListLineItemsProvider(InvalidShoppingListLineItemsProvider $provider): void
+    {
+        $this->provider = $provider;
     }
 
     #[\Override]
@@ -40,13 +50,21 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
             ));
         }
 
-        if (!empty($lineItems)) {
-            $productsIds = [];
-            /** @var LineItem $lineItem */
-            foreach ($lineItems as $lineItem) {
-                $productsIds[] = $lineItem->getProduct()->getId();
-            }
+        if (empty($lineItems) || ($lineItems instanceof PersistentCollection && $lineItems->count() === 0)) {
+            return false;
+        }
 
+        $productsIds = [];
+        /** @var LineItem $lineItem */
+        foreach ($lineItems as $lineItem) {
+            $productsIds[] = $lineItem->getProduct()->getId();
+        }
+
+        if ($lineItem?->getShoppingList() && $this->isInvalidShoppingList($lineItem->getShoppingList())) {
+            return false;
+        }
+
+        if ($productsIds) {
             return $this->productAvailabilityProvider->hasProductsAllowedForRFP($productsIds);
         }
 
@@ -87,5 +105,15 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->propertyPath], $factoryAccessor);
+    }
+
+    private function isInvalidShoppingList(ShoppingList $shoppingList): bool
+    {
+        $invalidIds = $this->provider->getInvalidLineItemsIds(
+            $shoppingList->getLineItems(),
+            ShoppingListToRequestQuoteValidationGroupResolver::TYPE
+        );
+
+        return !empty($invalidIds);
     }
 }

@@ -14,8 +14,9 @@ use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use PHPUnit\Framework\TestCase;
 
-class ShoppingListTest extends \PHPUnit\Framework\TestCase
+final class ShoppingListTest extends TestCase
 {
     use EntityTestCaseTrait;
 
@@ -37,7 +38,8 @@ class ShoppingListTest extends \PHPUnit\Framework\TestCase
 
         self::assertPropertyAccessors(new ShoppingList(), $properties);
         self::assertPropertyCollections(new ShoppingList(), [
-            ['lineItems', new LineItem()]
+            ['lineItems', new LineItem()],
+            ['savedForLaterLineItems', new LineItem()]
         ]);
 
         $label = 'label-test-775';
@@ -104,5 +106,53 @@ class ShoppingListTest extends \PHPUnit\Framework\TestCase
         self::assertSame($total, $shoppingList->getTotals()->get($currency));
         $shoppingList->removeTotal($total);
         self::assertCount(0, $shoppingList->getTotals());
+    }
+
+    public function testSetLineItem(): void
+    {
+        $lineItem = new LineItem();
+        $lineItem2 = new LineItem();
+        $shoppingList = new ShoppingList();
+        $shoppingList->addLineItem($lineItem);
+
+        self::assertCount(1, $shoppingList->getLineItems());
+        self::assertTrue($shoppingList->getSavedForLaterLineItems()->isEmpty());
+
+        $shoppingList->addSavedForLaterLineItem($lineItem);
+
+        self::assertTrue($shoppingList->getLineItems()->isEmpty());
+        self::assertCount(1, $shoppingList->getSavedForLaterLineItems());
+
+        $shoppingList->addLineItem($lineItem2);
+
+        self::assertCount(1, $shoppingList->getLineItems());
+        self::assertCount(1, $shoppingList->getSavedForLaterLineItems());
+    }
+
+    public function testAddAndRemoveAssociatedListLineItem(): void
+    {
+        $lineItem = new LineItem();
+        $shoppingList = new ShoppingList();
+        $shoppingList->addAssociatedListLineItem($lineItem);
+
+        self::assertCount(1, $shoppingList->getLineItems());
+        self::assertTrue($shoppingList->getSavedForLaterLineItems()->isEmpty());
+
+        $lineItem2 = new LineItem();
+        $lineItem2->setSavedForLaterList(new ShoppingList());
+        $shoppingList->addAssociatedListLineItem($lineItem2);
+
+        self::assertCount(1, $shoppingList->getLineItems());
+        self::assertCount(1, $shoppingList->getSavedForLaterLineItems());
+
+        $shoppingList->removeAssociatedListLineItem($lineItem);
+
+        self::assertTrue($shoppingList->getLineItems()->isEmpty());
+        self::assertCount(1, $shoppingList->getSavedForLaterLineItems());
+
+        $shoppingList->removeAssociatedListLineItem($lineItem2);
+
+        self::assertTrue($shoppingList->getLineItems()->isEmpty());
+        self::assertTrue($shoppingList->getSavedForLaterLineItems()->isEmpty());
     }
 }

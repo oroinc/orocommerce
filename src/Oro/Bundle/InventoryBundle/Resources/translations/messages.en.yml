@@ -125,6 +125,7 @@ oro:
             choice:
                 'true': 'Yes'
                 'false': 'No'
+            coming_soon: 'Coming Soon'
         availability_date.label: 'Availability Date'
         availability_date.warning: 'This order contains upcoming products without availability date'
         inventory_threshold:

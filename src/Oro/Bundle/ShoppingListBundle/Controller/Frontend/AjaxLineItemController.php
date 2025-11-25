@@ -108,10 +108,11 @@ class AjaxLineItemController extends AbstractLineItemController
         }
 
         $shoppingListManager = $this->container->get(ShoppingListManager::class);
+        $shoppingList = $lineItem->getAssociatedList();
         $isRemoved = $shoppingListManager->removeLineItem($lineItem);
         if ($isRemoved > 0) {
             $result = $this->getSuccessResponse(
-                $lineItem->getShoppingList(),
+                $shoppingList,
                 $lineItem->getProduct(),
                 'oro.frontend.shoppinglist.lineitem.product.removed.label'
             );

@@ -79,6 +79,10 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
         return $result;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     private function doHandle(MassActionHandlerArgs $args): MassActionResponse
     {
         $shoppingList = $this->getTargetShoppingList($args);
@@ -108,9 +112,15 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
                 continue;
             }
 
-            $origShoppingList = $entity->getShoppingList();
+            $origShoppingList = $entity->getAssociatedList();
             if ($origShoppingList->getId() === $shoppingList->getId() || !$this->isEditAllowed($origShoppingList)) {
                 continue;
+            }
+
+            /** After a line item is moved, it must no longer be marked as ‘saved for later’ */
+            if ($entity->isSavedForLaterList()) {
+                $entity->setShoppingList($entity->getSavedForLaterList());
+                $entity->removeSavedForLaterList();
             }
 
             $origShoppingList->removeLineItem($entity);
@@ -127,7 +137,9 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
             $manager->flush();
         }
 
-        $this->recalculateTotals($manager, $affectedShoppingLists);
+        if ($affectedShoppingLists) {
+            $this->recalculateTotals($manager, $affectedShoppingLists);
+        }
 
         return $this->getResponse($args->getMassAction(), $updated);
     }

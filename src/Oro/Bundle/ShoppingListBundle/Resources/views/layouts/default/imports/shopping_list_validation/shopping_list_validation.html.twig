@@ -1,0 +1,27 @@
+{% block __shopping_list_validation__shopping_list_validation_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-list-validation'
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block __shopping_list_validation__shopping_list_validation_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {'~class': ' shopping-list-validation__container'}) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block __shopping_list_validation__shopping_list_validation_message_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' notification-flash notification-flash--error',
+        'role': 'alert'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <div class="notification-flash__content">
+            {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+            {{ renderIcon.icon({name: 'alert-circle', extraClass: 'notification-flash__icon'}) }}
+            <div class="notification-flash__text notification-flash__text--normal">
+                {{ block_widget(block) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

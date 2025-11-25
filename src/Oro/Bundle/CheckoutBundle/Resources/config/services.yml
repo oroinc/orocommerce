@@ -57,6 +57,14 @@ parameters:
             productUnit: []
 
 services:
+    oro_checkout.resolver.shopping_list_to_checkout_validation_group:
+        class: Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+        arguments:
+            - '@security.authorization_checker'
+            - '@oro_checkout.condition.is_workflow_start_from_shopping_list_allowed'
+        tags:
+            - { name: oro_shopping_list.validation_group, priority: 10 }
+
     oro_checkout.access_rule.frontend_checkout_line_item:
         class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
         arguments:
@@ -953,6 +961,8 @@ services:
         class: Oro\Bundle\CheckoutBundle\Action\ClearCheckoutSourceEntity
         arguments:
             - '@oro_action.expression.context_accessor'
+        calls:
+            - ['setRegistry', ['@doctrine']]
         tags:
             - { name: oro_action.action, alias: clear_checkout_source_entity }
 
@@ -1094,9 +1104,13 @@ services:
         arguments:
             - '@validator'
             - '@oro_checkout.provider.checkout_validation_groups_by_source_entity'
+        calls:
+            - [ setInvalidShoppingListLineItemsProvider, [ '@oro_shopping_list.provider.invalid_shopping_list_line_items' ] ]
+            - [ setCheckoutValidationGroupResolver, [ '@oro_checkout.resolver.shopping_list_to_checkout_validation_group' ] ]
         tags:
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStart }
             - { name: kernel.event_listener, event: extendable_condition.shopping_list_start, method: onStartFromShoppingList }
+            - { name: oro_featuretogle.feature, feature: enforce_separate_shopping_list_validations }
 
     oro_checkout.provider.checkout_validation_groups_by_source_entity:
         class: Oro\Bundle\CheckoutBundle\Provider\CheckoutValidationGroupsBySourceEntityProvider

@@ -190,6 +190,12 @@
     .grid-row-product-kit-error.extension-row .select-row-cell::after {
         content: none;
     }
+
+    .toolbar-top .datagrid-toolbar.datagrid-toolbar-bottom {
+        .datagrid-toolbar__end {
+            flex-grow: 0;
+        }
+    }
 }
 
 @include breakpoint('desktop-small') {

@@ -33,6 +33,8 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * Shopping List entity
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @method ArrayCollection|CustomerVisitor[] getVisitors()
  * @mixin OroShoppingListBundle_Entity_ShoppingList
  */
@@ -101,7 +103,7 @@ class ShoppingList implements
     /**
      * @var Collection<int, LineItem>
      **/
-    #[ORM\OneToMany(mappedBy: 'shoppingList', targetEntity: LineItem::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'shoppingList', targetEntity: LineItem::class, cascade: ['ALL'])]
     #[ORM\OrderBy(['id' => Criteria::ASC])]
     protected ?Collection $lineItems = null;
 
@@ -147,10 +149,17 @@ class ShoppingList implements
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?string $currency = null;
 
+    /**
+     * @var Collection<int, LineItem>
+     **/
+    #[ORM\OneToMany(mappedBy: 'savedForLaterList', targetEntity: LineItem::class, cascade: ['ALL'])]
+    #[ORM\OrderBy(['id' => Criteria::ASC])]
+    protected ?Collection $savedForLaterLineItems = null;
 
     public function __construct()
     {
         $this->lineItems = new ArrayCollection();
+        $this->savedForLaterLineItems = new ArrayCollection();
         $this->totals = new ArrayCollection();
     }
 
@@ -218,6 +227,10 @@ class ShoppingList implements
      */
     public function addLineItem(LineItem $item)
     {
+        if ($item->getSavedForLaterList()) {
+            $this->removeSavedForLaterLineItem($item);
+        }
+
         if (!$this->lineItems->contains($item)) {
             $item->setShoppingList($this);
             $this->lineItems->add($item);
@@ -438,6 +451,7 @@ class ShoppingList implements
         if ($this->id) {
             $this->id = null;
             $this->lineItems = clone $this->lineItems;
+            $this->savedForLaterLineItems = clone $this->savedForLaterLineItems;
             $this->totals = clone $this->totals;
             $this->cloneExtendEntityStorage();
         }
@@ -452,5 +466,61 @@ class ShoppingList implements
     {
         $this->currency = $currency;
         return $this;
+    }
+
+    public function getSavedForLaterLineItems(): Collection
+    {
+        return $this->savedForLaterLineItems;
+    }
+
+    public function addSavedForLaterLineItem(LineItem $item): self
+    {
+        if ($item->getShoppingList()) {
+            $this->removeLineItem($item);
+        }
+
+        if (!$this->savedForLaterLineItems->contains($item)) {
+            $item->setSavedForLaterList($this);
+            $this->savedForLaterLineItems->add($item);
+        }
+
+        return $this;
+    }
+
+    public function removeSavedForLaterLineItem(LineItem $item): self
+    {
+        if ($item->getId() === null) {
+            if ($this->savedForLaterLineItems->contains($item)) {
+                $this->savedForLaterLineItems->removeElement($item);
+            }
+
+            return $this;
+        }
+
+        foreach ($this->savedForLaterLineItems as $lineItem) {
+            if ($item->getId() === $lineItem->getId()) {
+                $this->savedForLaterLineItems->removeElement($lineItem);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addAssociatedListLineItem(LineItem $lineItem): void
+    {
+        if ($lineItem->isSavedForLaterList()) {
+            $this->addSavedForLaterLineItem($lineItem);
+        } else {
+            $this->addLineItem($lineItem);
+        }
+    }
+
+    public function removeAssociatedListLineItem(LineItem $lineItem): void
+    {
+        if ($lineItem->isSavedForLaterList()) {
+            $this->removeSavedForLaterLineItem($lineItem);
+        } else {
+            $this->removeLineItem($lineItem);
+        }
     }
 }

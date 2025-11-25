@@ -23,7 +23,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.LongClassName)
  */
-class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
+final class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
 {
     private ManagerRegistry&MockObject $registry;
     private AuthorizationCheckerInterface&MockObject $authorizationChecker;
@@ -53,6 +53,10 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
             $this->resolvedProductVisibilityProvider
         );
         $this->extension->setParameters($this->parameters);
+        $this->extension->setSupportedGrids([
+            'frontend-customer-user-shopping-list-grid',
+            'frontend-customer-user-shopping-list-edit-grid'
+        ]);
 
         $this->registry
             ->method('getRepository')
@@ -83,7 +87,7 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
         $shoppingList->addLineItem($lineItem2);
 
         $this->lineItemRepository->expects(self::once())
-            ->method('getItemsWithProductByShoppingList')
+            ->method('getAllItemsWithProductByShoppingList')
             ->with($shoppingList)
             ->willReturn([$lineItem1, $lineItem2]);
 

@@ -4,10 +4,9 @@
     map: {
         'prod_inventory_status.in_stock': 'success',
         'prod_inventory_status.out_of_stock': 'destructive',
-        'prod_inventory_status.discontinued': 'destructive'
+        'prod_inventory_status.discontinued': 'destructive',
+        'prod_inventory_status.is_low_inventory': 'warning',
+        'prod_inventory_status.is_upcoming': 'warning'
     },
     currentStatus: name
 }) %>
-<% if (isLowInventory) { %>
-    <p class="product-low-inventory"><%- _.__('oro.inventory.low_inventory.label')  %></p>
-<% } %>

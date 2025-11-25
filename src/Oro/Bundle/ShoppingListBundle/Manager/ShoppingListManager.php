@@ -114,14 +114,14 @@ class ShoppingListManager
                     $entityManager->flush($duplicate);
                 } else {
                     $this->mergeLineItems($lineItem, $duplicate, $concatNotes);
-                    $shoppingList->removeLineItem($lineItem);
+                    $shoppingList->removeAssociatedListLineItem($lineItem);
                     $entityManager->remove($lineItem);
                     $lineItem->setQuantity(0);
                 }
             }
 
             if ($lineItem->getQuantity() > 0 || !$lineItem->getProduct()->isSimple()) {
-                $shoppingList->addLineItem($lineItem);
+                $shoppingList->addAssociatedListLineItem($lineItem);
                 $entityManager->persist($lineItem);
             }
         }
@@ -177,7 +177,7 @@ class ShoppingListManager
         $products[] = $product;
 
         $lineItems = $this->getLineItemRepository($this->getEntityManager())
-            ->getItemsByShoppingListAndProducts($shoppingList, $products);
+            ->getAllItemsByShoppingListAndProducts($shoppingList, $products);
         $this->deleteLineItems($lineItems, $flush);
 
         return \count($lineItems);
@@ -200,7 +200,7 @@ class ShoppingListManager
             return 1;
         }
 
-        return $this->removeProduct($lineItem->getShoppingList(), $parentProduct ?: $product);
+        return $this->removeProduct($lineItem->getAssociatedList(), $parentProduct ?: $product);
     }
 
     /**
@@ -256,8 +256,10 @@ class ShoppingListManager
     /**
      * Removes shopping list line items containing products with unavailable inventory statuses.
      * Recalculates subtotals if line items were removed.
+     *
+     * Return true if the shopping list was changed, false otherwise
      */
-    public function actualizeLineItems(ShoppingList $shoppingList): void
+    public function actualizeLineItems(ShoppingList $shoppingList): bool
     {
         /** @var LineItemRepository $repository */
         $repository = $this->doctrine
@@ -265,9 +267,13 @@ class ShoppingListManager
             ->getRepository(LineItem::class);
 
         $allowedStatuses = $this->configManager->get('oro_product.general_frontend_product_visibility');
-        if ($repository->deleteNotAllowedLineItemsFromShoppingList($shoppingList, $allowedStatuses)) {
+        $count = $repository->deleteNotAllowedLineItemsFromShoppingList($shoppingList, $allowedStatuses);
+
+        if ($count) {
             $this->totalManager->recalculateTotals($shoppingList, true);
         }
+
+        return (bool)$count;
     }
 
     private function mergeLineItems(LineItem $lineItem, LineItem $duplicate, bool $concatNotes): void
@@ -304,10 +310,10 @@ class ShoppingListManager
 
     private function prepareLineItem(LineItem $lineItem, ShoppingList $shoppingList): void
     {
-        if (null === $lineItem->getCustomerUser() && $shoppingList->getCustomerUser()) {
+        if ($shoppingList->getCustomerUser() && $lineItem->getCustomerUser() !== $shoppingList->getCustomerUser()) {
             $lineItem->setCustomerUser($shoppingList->getCustomerUser());
         }
-        if (null === $lineItem->getOrganization() && $shoppingList->getOrganization()) {
+        if ($shoppingList->getOrganization() && $lineItem->getOrganization() !== $shoppingList->getOrganization()) {
             $lineItem->setOrganization($shoppingList->getOrganization());
         }
 
@@ -326,9 +332,9 @@ class ShoppingListManager
             $em->remove($lineItem);
             // Ensures that ShoppingList::$lineItems collection is up-to-date. Required, for example for correct
             // subtotal calculations.
-            $shoppingList->removeLineItem($lineItem);
+            $shoppingList->removeAssociatedListLineItem($lineItem);
         } elseif ($lineItem->getQuantity() > 0 || !$lineItem->getProduct()->isSimple()) {
-            $shoppingList->addLineItem($lineItem);
+            $shoppingList->addAssociatedListLineItem($lineItem);
             $em->persist($lineItem);
         }
     }

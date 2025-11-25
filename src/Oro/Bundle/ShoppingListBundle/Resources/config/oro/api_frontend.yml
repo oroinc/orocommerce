@@ -19,6 +19,11 @@ api:
                 items:
                     property_path: lineItems
                     max_results: -1
+                savedForLaterItems:
+                    property_path: savedForLaterLineItems
+                    max_results: -1
+                    form_options:
+                        mapped: false
                 currency:
                     data_type: string
                     form_options:
@@ -64,6 +69,12 @@ api:
                         update_relationship: false
                         add_relationship: false
                         delete_relationship: false
+                savedForLaterItems:
+                    actions:
+                        add_subresource: false
+                        update_relationship: false
+                        add_relationship: false
+                        delete_relationship: false
                 customer:
                     actions:
                         update_relationship: false
@@ -98,6 +109,12 @@ api:
                 customerUser:
                     exclude: true
                 shoppingList:
+                    form_options:
+                        constraints:
+                            - Oro\Bundle\ApiBundle\Validator\Constraints\AccessGranted:
+                                permission: EDIT
+                                groups: [api]
+                savedForLaterList:
                     form_options:
                         constraints:
                             - Oro\Bundle\ApiBundle\Validator\Constraints\AccessGranted:

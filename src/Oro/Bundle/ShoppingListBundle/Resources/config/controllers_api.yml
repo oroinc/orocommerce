@@ -16,3 +16,4 @@ services:
             - { name: container.service_subscriber, id: oro_shopping_list.line_item.manager.api, key: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager }
             - { name: container.service_subscriber, id: oro_shopping_list.manager.shopping_list, key: Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager }
             - { name: container.service_subscriber, id: oro_shopping_list.manager.current_shopping_list, key: Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager }
+            - { name: oro_featuretogle.feature, feature: saved_for_later }

@@ -4,7 +4,7 @@ import ProductKitInShoppingListRefreshPlugin
     from 'oroshoppinglist/js/datagrid/plugins/product-kit-in-shopping-list-refresh-plugin';
 import ProductKitExpandCollapseItems
     from 'oroshoppinglist/js/datagrid/plugins/product-kit-expand-collapse-items';
-import {addClass, removeClass, isError, isHighlight} from './utils';
+import {addClass, removeClass, isError, isHighlight, isUpcoming} from './utils';
 
 const useKitSubItemRow = item => {
     if (!item.isMessage && !item.isAuxiliary) {
@@ -19,7 +19,7 @@ const productKitData = data => data.map(item => {
         addClass(item, 'grid-row-product-kit');
         item.rowView = ShoppingListProductKitRow;
 
-        if (isError(item) || isHighlight(item)) {
+        if (isError(item) || isHighlight(item) || isUpcoming(item)) {
             addClass(item, 'grid-row-product-kit-error');
             removeClass(item, 'group-row');
         }

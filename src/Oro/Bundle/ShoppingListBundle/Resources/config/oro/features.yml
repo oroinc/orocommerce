@@ -48,3 +48,17 @@ features:
             - oro_shopping_list_frontend_view
             - oro_shopping_list_frontend_update
             - oro_shopping_list_frontend_create
+
+    enforce_separate_shopping_list_validations:
+        label: oro.shoppinglist.feature.enforce_separate_shopping_list_validations.label
+        description: oro.shoppinglist.feature.enforce_separate_shopping_list_validations.description
+        toggle: oro_shopping_list.enforce_separate_shopping_list_validations_enabled
+        strategy: affirmative
+        routes:
+            - oro_shopping_list_frontend_errors_modal
+
+    saved_for_later:
+        label: oro.shoppinglist.feature.saved_for_later.label
+        description: oro.shoppinglist.feature.saved_for_later.description
+        toggle: oro_shopping_list.saved_for_later_enabled
+        strategy: affirmative

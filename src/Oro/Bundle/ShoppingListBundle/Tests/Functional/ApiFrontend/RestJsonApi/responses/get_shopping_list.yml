@@ -30,3 +30,8 @@ data:
             data:
                 type: customers
                 id: '<toString(@customer->id)>'
+        savedForLaterItems:
+            data:
+                -
+                    type: shoppinglistitems
+                    id: '<toString(@saved_for_later_line_item1->id)>'

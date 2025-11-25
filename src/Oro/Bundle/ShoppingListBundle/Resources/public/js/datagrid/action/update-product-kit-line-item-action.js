@@ -31,6 +31,9 @@ const UpdateProductKitLineItemAction = DialogAction.extend({
             productModel: this.model
         };
         this.widgetOptions.options.url = this.getLink();
+        this.widgetOptions.options.widgetData = {
+            savedForLaterGrid: this.model.collection.options?.savedForLaterGrid ?? false
+        };
 
         UpdateProductKitLineItemAction.__super__.run.call(this);
     },

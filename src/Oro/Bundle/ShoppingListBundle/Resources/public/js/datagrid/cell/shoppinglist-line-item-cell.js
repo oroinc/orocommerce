@@ -23,6 +23,7 @@ const ShoppinglistLineItemCell = HtmlTemplateCell.extend({
     useInputStepper: true,
 
     defaultGridThemeOptions: {
+        selectVariantButtonClass: 'btn btn--flat btn-select-variants',
         singleUnitMode: false,
         singleUnitModeCodeVisible: false
     },
@@ -92,7 +93,7 @@ const ShoppinglistLineItemCell = HtmlTemplateCell.extend({
             });
 
             const launcher = this.updateConfigurableAction.createLauncher({
-                className: 'btn btn--flat btn-select-variants',
+                className: this.gridThemeOptions.selectVariantButtonClass,
                 label: __('oro.frontend.shoppinglist.actions.update_configurable_line_item.select_variant_label')
             });
 

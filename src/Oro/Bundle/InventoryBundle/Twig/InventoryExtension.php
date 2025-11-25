@@ -61,11 +61,30 @@ class InventoryExtension extends AbstractExtension implements ServiceSubscriberI
                 'oro_inventory_status_label',
                 [$this, 'getInventoryStatusLabel']
             ),
+            new TwigFunction(
+                'oro_inventory_availability_code',
+                [$this, 'getInventoryAvailabilityCode']
+            ),
+            new TwigFunction(
+                'oro_inventory_availability_label',
+                [$this, 'getInventoryAvailabilityLabel']
+            ),
         ];
     }
 
     public function isUpcomingProduct(Product $product): bool
     {
+        return $this->getUpcomingProductProvider()->isUpcoming($product);
+    }
+
+    public function isUpcomingItem(Product|ProductView|array $product): bool
+    {
+        if ($product instanceof ProductView && $product->has('is_upcoming')) {
+            return \filter_var($product->get('is_upcoming'), FILTER_VALIDATE_BOOLEAN);
+        } elseif (is_array($product) && isset($product['is_upcoming'])) {
+            return \filter_var($product['is_upcoming'], FILTER_VALIDATE_BOOLEAN);
+        }
+
         return $this->getUpcomingProductProvider()->isUpcoming($product);
     }
 
@@ -79,6 +98,17 @@ class InventoryExtension extends AbstractExtension implements ServiceSubscriberI
         return $this->getLowInventoryProvider()->isLowInventoryProduct($product);
     }
 
+    public function isLowInventoryItem(Product|ProductView|array $product): bool
+    {
+        if ($product instanceof ProductView && $product->has('low_inventory')) {
+            return \filter_var($product->get('low_inventory'), FILTER_VALIDATE_BOOLEAN);
+        } elseif (is_array($product) && isset($product['low_inventory'])) {
+            return \filter_var($product['low_inventory'], FILTER_VALIDATE_BOOLEAN);
+        }
+
+        return $this->getLowInventoryProvider()->isLowInventoryProduct($product);
+    }
+
     public function getInventoryStatusCode(Product|ProductView|array $product): ?string
     {
         return $this->getInventoryStatusProvider()->getCode($product);
@@ -87,6 +117,43 @@ class InventoryExtension extends AbstractExtension implements ServiceSubscriberI
     public function getInventoryStatusLabel(Product|ProductView|array $product): ?string
     {
         return $this->getInventoryStatusProvider()->getLabel($product);
+    }
+
+    public function getInventoryAvailabilityCode(Product|ProductView|array $product): ?string
+    {
+        $statusCode = $this->getInventoryStatusProvider()->getCode($product);
+        $isInStock = $statusCode == 'prod_inventory_status.in_stock';
+        $isLowInventory = $this->isLowInventoryItem($product);
+        $isUpcoming = $this->isUpcomingItem($product);
+
+        if ($isLowInventory && $isInStock) {
+            $statusCode = 'prod_inventory_status.is_low_inventory';
+        }
+
+        if ($isUpcoming) {
+            $statusCode = 'prod_inventory_status.is_upcoming';
+        }
+
+        return $statusCode;
+    }
+
+    public function getInventoryAvailabilityLabel(Product|ProductView|array $product): ?string
+    {
+        $statusLabel = $this->getInventoryStatusProvider()->getLabel($product);
+        $statusCode = $this->getInventoryStatusProvider()->getCode($product);
+        $isInStock = $statusCode == 'prod_inventory_status.in_stock';
+        $isLowInventory = $this->isLowInventoryItem($product);
+        $isUpcoming = $this->isUpcomingItem($product);
+
+        if ($isLowInventory && $isInStock) {
+            $statusLabel = 'oro.frontend.shoppinglist.lineitem.status.is_low_inventory';
+        }
+
+        if ($isUpcoming) {
+            $statusLabel = 'oro.frontend.shoppinglist.lineitem.status.is_upcoming';
+        }
+
+        return $statusLabel;
     }
 
     #[\Override]

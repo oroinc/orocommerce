@@ -275,6 +275,8 @@ services:
             - '@oro_security.acl_helper'
             - '@oro_security.token_accessor'
             - '@oro_config.manager'
+        calls:
+            - [setRequestStack, ['@request_stack']]
 
     Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider:
         alias: 'oro_shopping_list.data_provider.product_shopping_lists'
@@ -354,6 +356,8 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Condition\RfpAllowed'
         arguments:
             - '@oro_rfp.provider.product_rfp_availability'
+        calls:
+            - [setInvalidShoppingListLineItemsProvider, ['@oro_shopping_list.provider.invalid_shopping_list_line_items']]
         tags:
             - { name: oro_action.condition, alias: 'rfp_allowed' }
 
@@ -512,8 +516,32 @@ services:
             - '@doctrine'
             - '@oro_config.manager'
             - '@oro_security.token_accessor'
+        calls:
+            -
+                method: setSupportedGrids
+                arguments:
+                    -
+                        - 'frontend-customer-user-shopping-list-grid'
+                        - 'frontend-customer-user-shopping-list-edit-grid'
+                        - 'frontend-customer-user-shopping-list-saved-for-later-grid'
+                        - 'frontend-customer-user-shopping-list-saved-for-later-edit-grid'
+                        - 'frontend-customer-user-shopping-list-invalid-line-items-grid'
+            -
+                method: setSavedForLaterGrids
+                arguments:
+                    -
+                        - 'frontend-customer-user-shopping-list-saved-for-later-grid'
+                        - 'frontend-customer-user-shopping-list-saved-for-later-edit-grid'
         tags:
             - { name: oro_datagrid.extension, priority: 10 }
+
+    oro_shopping_list.datagrid.extension.invalid_line_items:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\InvalidShoppingListLineItemsExtension'
+        arguments:
+            - '@doctrine'
+            - '@oro_shopping_list.provider.invalid_shopping_list_line_items'
+        tags:
+            - { name: oro_datagrid.extension, priority: -200 }
 
     oro_shopping_list.line_item.factory.configurable_product:
         class: 'Oro\Bundle\ShoppingListBundle\LineItem\Factory\ConfigurableProductLineItemFactory'
@@ -532,6 +560,12 @@ services:
         public: false
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem', event: prePersist }
+
+    oro_shopping_list.entity_listener.line_item.remove_parent_and_variant_line_items_from_shopping_list:
+        class: 'Oro\Bundle\ShoppingListBundle\Entity\EntityListener\LineItem\RemoveParentAndVariantLineItemsFromShoppingListListener'
+        public: false
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
 
     oro_shopping_list.async.invalidate_totals_by_inventory_status_per_product_processor:
         class: Oro\Bundle\ShoppingListBundle\Async\InvalidateTotalsByInventoryStatusPerProductProcessor
@@ -600,9 +634,10 @@ services:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, frontend: true }
 
     oro_shopping_list.access_rule.frontend_shopping_list_item:
-        class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
+        class: Oro\Bundle\ShoppingListBundle\Acl\AccessRule\LineItemAssociationAwareAccessRule
         arguments:
             - 'shoppingList'
+            - 'savedForLaterList'
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem, frontend: true }
 
@@ -628,12 +663,14 @@ services:
         tags:
             # Should be executed earlier than others because it adds data required by other listeners.
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter, priority: 1024 }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-invalid-line-items-grid, method: onResultAfter, priority: 1024 }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkout-line-items-grid, method: onResultAfter, priority: 1024 }
 
     oro_shopping_list.datagrid.event_listener.frontend_line_items_grid.simple:
         class: Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsSimpleOnResultAfterListener
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter, priority: 768 }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-invalid-line-items-grid, method: onResultAfter, priority: 768 }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkout-line-items-grid, method: onResultAfter, priority: 768 }
 
     oro_shopping_list.datagrid.event_listener.frontend_line_items_grid.grouped:
@@ -644,6 +681,7 @@ services:
             - '@oro_visibility.provider.resolved_product_visibility_provider'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter, priority: 512 }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-invalid-line-items-grid, method: onResultAfter, priority: 512 }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkout-line-items-grid, method: onResultAfter, priority: 512 }
 
     oro_shopping_list.datagrid.event_listener.frontend_line_items_grid.matrix_form:
@@ -652,6 +690,7 @@ services:
             - '@oro_product.provider.product_matrix_availability_provider'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-edit-grid, method: onResultAfter, priority: 256 }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-invalid-line-items-grid, method: onResultAfter, priority: 256 }
 
     oro_shopping_list.datagrid.event_listener.frontend_line_items_grid.actions:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendLineItemsGrid\LineItemsActionsOnResultAfterListener
@@ -659,6 +698,13 @@ services:
             - '@security.authorization_checker'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-edit-grid, method: onResultAfter, priority: 128 }
+
+    oro_shopping_list.datagrid.event_listener.frontend_invalid_line_items_grid.actions:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendLineItemsGrid\InvalidLineItemsActionsOnResultAfterListener
+        arguments:
+            - '@security.authorization_checker'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-invalid-line-items-grid, method: onResultAfter, priority: 100 }
 
     oro_shopping_list.datagrid.shopping_list_line_items_access_listener:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendLineItemsGrid\ShoppingListLineItemsAccessListener
@@ -668,6 +714,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-list-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-list-edit-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-list-invalid-line-items-grid, method: onBuildBefore }
 
     oro_shopping_list.datagrid.event_listener.frontend-customer-user-shopping-lists-base-grid:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendShoppingListsGridEventListener
@@ -770,6 +817,16 @@ services:
             - '@doctrine'
             - '@security.authorization_checker'
             - '@oro_visibility.provider.resolved_product_visibility_provider'
+        calls:
+            -
+                method: setSupportedGrids
+                arguments:
+                    -
+                        - 'frontend-customer-user-shopping-list-grid'
+                        - 'frontend-customer-user-shopping-list-edit-grid'
+                        - 'frontend-customer-user-shopping-list-saved-for-later-grid'
+                        - 'frontend-customer-user-shopping-list-saved-for-later-edit-grid'
+                        - 'frontend-customer-user-shopping-list-invalid-line-items-grid'
         tags:
             - { name: oro_datagrid.extension, priority: 10 }
 
@@ -918,7 +975,57 @@ services:
     oro_shopping_list.migration.enumerable_config_keys_provider:
         parent: oro_entity_extend.migration.enumerable_config_keys_provider
         arguments:
-            - [ 'oro_shopping_list.backend_product_visibility' ]
+            - ['oro_shopping_list.backend_product_visibility']
             - 'prod_inventory_status'
         tags:
             - { name: migration.update_enumerable_system_config }
+
+    oro_shopping_list.provider.shopping_list_validation_groups:
+        class: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListValidationGroupsProvider
+        arguments:
+            - !tagged_iterator oro_shopping_list.validation_group
+
+    oro_shopping_list.provider.invalid_shopping_list_line_items:
+        class: Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
+        public: true
+        arguments:
+            - '@validator'
+            - '@oro_product.model.product_line_items_holder_factory'
+            - '@oro_shopping_list.mapper.shopping_list_invalid_line_items'
+            - '@oro_shopping_list.provider.shopping_list_validation_groups'
+
+    oro_shopping_list.layout.data_provider.invalid_shopping_list_line_items:
+        class: Oro\Bundle\ShoppingListBundle\Layout\DataProvider\InvalidShoppingListLineItemsDataProvider
+        arguments:
+            - '@oro_shopping_list.provider.invalid_shopping_list_line_items'
+        tags:
+            - { name: layout.data_provider, alias: oro_shopping_list_invalid_line_items }
+            - { name: oro_featuretogle.feature, feature: enforce_separate_shopping_list_validations }
+
+    oro_shopping_list.validator.only_one_required_list:
+        class: 'Oro\Bundle\ShoppingListBundle\Validator\Constraints\OnlyOneRequiredListValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_shopping_list_only_one_required_list_validator }
+
+    oro_shopping_list.validator.line_item_has_price:
+        class: Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemHasPriceValidator
+        arguments:
+            - '@oro_pricing.provider.product_price'
+            - '@oro_pricing.model.product_price_scope_criteria_request_handler'
+            - '@oro_pricing.product_price_criteria_factory'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_shopping_list.mapper.shopping_list_invalid_line_items:
+        class: 'Oro\Bundle\ShoppingListBundle\Mapper\ShoppingListInvalidLineItemsMapper'
+
+    oro_shopping_list.layout.data_provider.invalid_line_items_modal_button:
+        class: Oro\Bundle\ShoppingListBundle\Layout\DataProvider\InvalidLineItemsModalButtonDataProvider
+        arguments:
+            - '@oro_shopping_list.provider.invalid_shopping_list_line_items'
+            - '@oro_shopping_list.layout.data_provider.order_limit'
+            - '@oro_checkout.resolver.shopping_list_to_checkout_validation_group'
+            - '@oro_rfp.resolver.shopping_list_to_request_quote_validation_group'
+        tags:
+            - { name: layout.data_provider, alias: oro_shopping_list_invalid_line_items_modal_button }
+            - { name: oro_featuretogle.feature, feature: enforce_separate_shopping_list_validations }

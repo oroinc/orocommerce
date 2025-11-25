@@ -128,7 +128,7 @@ Feature: Product kits on shopping list page
     And I should see "Total: $354.31"
 
   Scenario: Check SKU filter
-    When I filter SKU as contains "kit"
+    When I filter SKU as contains "kit" in "Frontend Customer User Shopping List Edit Grid" grid
     Then I should see following grid:
       | SKU               | Product                                       | Availability | Qty Update All | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 1 Product Kit 1 Line Item 1 Notes | In Stock     | 2 piece        | $124.6845 | $249.37 -$124.6845 $124.69 |
@@ -140,7 +140,7 @@ Feature: Product kits on shopping list page
       | simple-product-02 | Base Unit: Product 2                          |              | 1 piece        | $24.6912  |                            |
 
     When I reset grid
-    And I filter SKU as is any of "product-kit-01,simple-product-02"
+    And I filter SKU as is any of "product-kit-01,simple-product-02" in "Frontend Customer User Shopping List Edit Grid" grid
     Then I should see following grid:
       | SKU               | Product                                       | Availability | Qty Update All | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 1 Product Kit 1 Line Item 1 Notes | In Stock     | 2 piece        | $124.6845 | $249.37 -$124.6845 $124.69 |
@@ -153,7 +153,7 @@ Feature: Product kits on shopping list page
       | simple-product-02 | Product 2                                     | In Stock     | 1 piece        | $24.6912  | $24.69 -$12.3456 $12.34    |
 
     When I reset grid
-    And I filter SKU as is any of "simple-product-01,simple-product-02,simple-product-06"
+    And I filter SKU as is any of "simple-product-01,simple-product-02,simple-product-06" in "Frontend Customer User Shopping List Edit Grid" grid
     Then I should see following grid:
       | SKU               | Product                                       | Availability | Qty Update All | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 1 Product Kit 1 Line Item 1 Notes | In Stock     | 2 piece        | $124.6845 | $249.37 -$124.6845 $124.69 |
@@ -167,7 +167,7 @@ Feature: Product kits on shopping list page
       | simple-product-06 | Configurable Product 1 Blue S                 | Out of Stock | 3 piece        | $74.0736  | $222.22 -$111.1104 $111.11 |
 
     When I reset grid
-    And I filter SKU as does not contain "kit"
+    And I filter SKU as does not contain "kit" in "Frontend Customer User Shopping List Edit Grid" grid
     Then I should see following grid:
       | SKU               | Product                        | Availability | Qty Update All | Price    | Subtotal                   |
       | simple-product-02 | Product 2                      | In Stock     | 1 piece        | $24.6912 | $24.69 -$12.3456 $12.34    |
@@ -176,7 +176,7 @@ Feature: Product kits on shopping list page
       | simple-product-06 | Configurable Product 1 Blue S  | Out of Stock | 3 piece        | $74.0736 | $222.22 -$111.1104 $111.11 |
 
     When I reset grid
-    And I filter SKU as is not any of "simple-product-01,simple-product-02,simple-product-03"
+    And I filter SKU as is not any of "simple-product-01,simple-product-02,simple-product-03" in "Frontend Customer User Shopping List Edit Grid" grid
     Then I should see following grid:
       | SKU               | Product                        | Availability | Qty Update All | Price    | Subtotal                   |
       | simple-product-04 | Configurable Product 1 Red M   | In Stock     | 1 piece        | $49.3824 | $49.38 -$24.6912 $24.69    |
@@ -184,7 +184,7 @@ Feature: Product kits on shopping list page
       | simple-product-06 | Configurable Product 1 Blue S  | Out of Stock | 3 piece        | $74.0736 | $222.22 -$111.1104 $111.11 |
 
     When I reset grid
-    And I filter SKU as is not any of "product-kit-01,simple-product-03,simple-product-06"
+    And I filter SKU as is not any of "product-kit-01,simple-product-03,simple-product-06" in "Frontend Customer User Shopping List Edit Grid" grid
     Then I should see following grid:
       | SKU               | Product                        | Availability | Qty Update All | Price    | Subtotal                |
       | simple-product-02 | Product 2                      | In Stock     | 1 piece        | $24.6912 | $24.69 -$12.3456 $12.34 |
@@ -194,7 +194,7 @@ Feature: Product kits on shopping list page
   Scenario: Check SKU filter for grouped product variants
     When I reset grid
     And I click "Group Product Variants"
-    And I filter SKU as contains "kit"
+    And I filter SKU as contains "kit" in "Frontend Customer User Shopping List Edit Grid" grid
     Then I should see following grid:
       | SKU               | Product                                       | Availability | Qty Update All | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 1 Product Kit 1 Line Item 1 Notes | In Stock     | 2 piece        | $124.6845 | $249.37 -$124.6845 $124.69 |
@@ -207,7 +207,7 @@ Feature: Product kits on shopping list page
 
     When I reset grid
     And I click "Group Product Variants"
-    And I filter SKU as is any of "product-kit-01,simple-product-02"
+    And I filter SKU as is any of "product-kit-01,simple-product-02" in "Frontend Customer User Shopping List Edit Grid" grid
     Then I should see following grid:
       | SKU               | Product                                       | Availability | Qty Update All | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 1 Product Kit 1 Line Item 1 Notes | In Stock     | 2 piece        | $124.6845 | $249.37 -$124.6845 $124.69 |
@@ -221,7 +221,7 @@ Feature: Product kits on shopping list page
 
     When I reset grid
     And I click "Group Product Variants"
-    And I filter SKU as is any of "simple-product-01,simple-product-02,simple-product-04"
+    And I filter SKU as is any of "simple-product-01,simple-product-02,simple-product-04" in "Frontend Customer User Shopping List Edit Grid" grid
     Then I should see following grid:
       | SKU               | Product                                       | Availability | Qty Update All | Price     | Subtotal                     |
       | product-kit-01    | Product Kit 1 Product Kit 1 Line Item 1 Notes | In Stock     | 2 piece        | $124.6845 | $249.37 -$124.6845 $124.69   |
@@ -239,7 +239,7 @@ Feature: Product kits on shopping list page
 
     When I reset grid
     And I click "Group Product Variants"
-    And I filter SKU as is not any of "product-kit-01,simple-product-03"
+    And I filter SKU as is not any of "product-kit-01,simple-product-03" in "Frontend Customer User Shopping List Edit Grid" grid
     Then I should see following grid:
       | SKU               | Product                | Availability | Qty Update All | Price    | Subtotal                     |
       | simple-product-02 | Product 2              | In Stock     | 1 piece        | $24.6912 | $24.69 -$12.3456 $12.34      |
@@ -250,7 +250,7 @@ Feature: Product kits on shopping list page
 
     When I reset grid
     And I click "Group Product Variants"
-    And I filter SKU as is not any of "simple-product-01,simple-product-02,simple-product-03"
+    And I filter SKU as is not any of "simple-product-01,simple-product-02,simple-product-03" in "Frontend Customer User Shopping List Edit Grid" grid
     Then I should see following grid:
       | SKU               | Product                | Availability | Qty Update All | Price    | Subtotal                     |
       |                   | Configurable Product 1 |              | 6 pieces       |          | $395.0596 -$197.5296 $197.53 |
@@ -260,7 +260,7 @@ Feature: Product kits on shopping list page
 
     When I reset grid
     And I click "Group Product Variants"
-    And I filter SKU as is not any of "product-kit-01,simple-product-01,simple-product-03,simple-product-04"
+    And I filter SKU as is not any of "product-kit-01,simple-product-01,simple-product-03,simple-product-04" in "Frontend Customer User Shopping List Edit Grid" grid
     Then I should see following grid:
       | SKU               | Product   | Availability | Qty Update All | Price    | Subtotal                |
       | simple-product-02 | Product 2 | In Stock     | 1 piece        | $24.6912 | $24.69 -$12.3456 $12.34 |

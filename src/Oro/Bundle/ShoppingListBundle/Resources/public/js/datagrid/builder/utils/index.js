@@ -29,7 +29,8 @@ export const removeClass = (item, classNames = []) => {
         .filter(className => !classNames.split(' ').includes(className)).join(' ');
 };
 
-export const isHighlight = item => item.isUpcoming || (item.warnings && item.warnings.length > 0);
+export const isUpcoming = item => item.isUpcoming;
+export const isHighlight = item => item.warnings && item.warnings.length > 0;
 
 export const isError = item => item.errors && item.errors.length > 0;
 

@@ -52,11 +52,6 @@
                 // reduce offset between rows
                 padding-bottom: $responsive-shopping-extension-row-offset-top-mobile;
             }
-
-            // There is no padding image cell, so that the quantity cell has a default offset
-            .grid-body-cell-quantity {
-                padding-left: spacing('md');
-            }
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\DataProvider;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -14,31 +15,48 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
  */
 class ShoppingListLineItemsDataProvider
 {
-    /**
-     * @var array
-     */
-    protected $lineItems = [];
+    protected array $lineItems = [];
+    protected array $allLineItems = [];
 
     public function __construct(private ManagerRegistry $registry)
     {
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @return LineItem[]
-     */
-    public function getShoppingListLineItems(ShoppingList $shoppingList): array
+    public function getAllShoppingListLineItems(ShoppingList $shoppingList): array
     {
         $shoppingListId = $shoppingList->getId();
-        if (array_key_exists($shoppingListId, $this->lineItems)) {
-            return $this->lineItems[$shoppingListId];
+        if (\array_key_exists($shoppingListId, $this->allLineItems)) {
+            return $this->allLineItems[$shoppingListId];
         }
 
         if ($this->isInitializedWithProducts($shoppingList)) {
             $lineItems = $shoppingList->getLineItems()->toArray();
+            $savedForLaterLineItems = $shoppingList->getSavedForLaterLineItems()->toArray();
+            $lineItems = \array_merge($lineItems, $savedForLaterLineItems);
         } else {
-            $repository = $this->registry->getManagerForClass(LineItem::class)->getRepository(LineItem::class);
-            $lineItems = $repository->getItemsWithProductByShoppingList($shoppingList);
+            $lineItems = $this->registry
+                ->getRepository(LineItem::class)
+                ->getAllItemsWithProductByShoppingList($shoppingList);
+        }
+
+        $this->allLineItems[$shoppingListId] = $lineItems;
+
+        return $lineItems;
+    }
+
+    public function getShoppingListLineItems(ShoppingList $shoppingList): array
+    {
+        $shoppingListId = $shoppingList->getId();
+        if (\array_key_exists($shoppingListId, $this->lineItems)) {
+            return $this->lineItems[$shoppingListId];
+        }
+
+        if ($this->isInitializedCollection($shoppingList->getLineItems())) {
+            $lineItems = $shoppingList->getLineItems()->toArray();
+        } else {
+            $lineItems = $this->registry
+                ->getRepository(LineItem::class)
+                ->getItemsWithProductByShoppingList($shoppingList);
         }
 
         $this->lineItems[$shoppingListId] = $lineItems;
@@ -47,26 +65,6 @@ class ShoppingListLineItemsDataProvider
     }
 
     /**
-     * Checks if shopping list line items collection is initialized along with their products.
-     */
-    private function isInitializedWithProducts(ShoppingList $shoppingList): bool
-    {
-        $isInitialized = true;
-        $lineItems = $shoppingList->getLineItems();
-        if ($lineItems instanceof AbstractLazyCollection && !$lineItems->isInitialized()) {
-            $isInitialized = false;
-        } elseif ($lineItems->count()) {
-            $product = $lineItems->first()->getProduct();
-            if ($product instanceof Proxy && !$product->__isInitialized()) {
-                $isInitialized = false;
-            }
-        }
-
-        return $isInitialized;
-    }
-
-    /**
-     * @param LineItem[] $lineItems
      * @return Product[]
      */
     public function getProductsWithConfigurableVariants(array $lineItems)
@@ -92,11 +90,10 @@ class ShoppingListLineItemsDataProvider
             $productsWithVariants[$product->getId()] = $product;
         }
 
-        return array_values($productsWithVariants);
+        return \array_values($productsWithVariants);
     }
 
     /**
-     * @param Product $product
      * @return Product[]
      */
     protected function getProductVariants(Product $product)
@@ -108,5 +105,31 @@ class ShoppingListLineItemsDataProvider
         }
 
         return $variants;
+    }
+
+    /**
+     * Checks if shopping list line items collection is initialized along with their products.
+     */
+    private function isInitializedWithProducts(ShoppingList $shoppingList): bool
+    {
+        $isInitializedItems = $this->isInitializedCollection($shoppingList->getLineItems());
+        $isInitializedSavedForLaterItems = $this->isInitializedCollection($shoppingList->getSavedForLaterLineItems());
+
+        return $isInitializedItems && $isInitializedSavedForLaterItems;
+    }
+
+    private function isInitializedCollection(Collection $lineItems): bool
+    {
+        $isInitialized = true;
+        if ($lineItems instanceof AbstractLazyCollection && !$lineItems->isInitialized()) {
+            $isInitialized = false;
+        } elseif ($lineItems->count()) {
+            $product = $lineItems->first()->getProduct();
+            if ($product instanceof Proxy && !$product->__isInitialized()) {
+                $isInitialized = false;
+            }
+        }
+
+        return $isInitialized;
     }
 }

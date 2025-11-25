@@ -1,10 +1,7 @@
 import _ from 'underscore';
-import FilteredProductVariantsPlugin from 'oroshoppinglist/js/datagrid/plugins/filtered-product-variants-plugin';
-import ShoppingListRefreshPlugin from 'oroshoppinglist/js/datagrid/plugins/shopping-list-refresh-plugin';
-import HighlightRelatedRowsPlugin from 'oroshoppinglist/js/datagrid/plugins/highlight-related-rows-plugin';
 import quantityHelper from 'oroproduct/js/app/quantity-helper';
 import ShoppingListRow from 'oroshoppinglist/js/datagrid/row/shopping-list-row';
-import {isHighlight, isError, messageModel} from './utils';
+import {isHighlight, isError, isUpcoming, messageModel} from './utils';
 
 export const flattenData = (data, options) => {
     const errorColumn = shoppingListFlatDataBuilder.errorColumn;
@@ -28,6 +25,10 @@ export const flattenData = (data, options) => {
             itemClassName.push('highlight-error');
         }
 
+        if (isUpcoming(item)) {
+            itemClassName.push('highlight-upcoming');
+        }
+
         if (!item.sku) {
             itemClassName.push('no-product-sku-row');
         }
@@ -42,7 +43,7 @@ export const flattenData = (data, options) => {
             item._hasVariants = false;
             item._isVariant = false;
 
-            if (isError(item) || isHighlight(item)) {
+            if (isError(item) || isHighlight(item) || isUpcoming(item)) {
                 flatData.push(messageModel(item, errorColumn));
             }
         } else {
@@ -80,7 +81,7 @@ export const flattenData = (data, options) => {
                     precisions.push(subItem.units[item.unit].precision);
                 }
 
-                if (isHighlight(subItem)) {
+                if (isHighlight(subItem) || isUpcoming(subItem)) {
                     className.push('highlight');
                 }
 
@@ -98,6 +99,14 @@ export const flattenData = (data, options) => {
 
                 if (isError(item)) {
                     className.push('parent-row-has-highlight-error');
+                }
+
+                if (isUpcoming(subItem)) {
+                    className.push('highlight-upcoming');
+                }
+
+                if (isUpcoming(item)) {
+                    className.push('parent-row-has-highlight-upcoming');
                 }
 
                 if (subData.length - 1 === index) {
@@ -122,7 +131,7 @@ export const flattenData = (data, options) => {
 
                 subDataCollection.push(subItem);
 
-                if ((isError(subItem) && subItem.sku) || isHighlight(subItem)) {
+                if ((isError(subItem) && subItem.sku) || isHighlight(subItem) || isUpcoming(subItem)) {
                     subDataCollection.push(messageModel(subItem, 'item'));
                 }
 
@@ -146,7 +155,7 @@ export const flattenData = (data, options) => {
             }
 
             flatData.push(...flatSubData);
-            if (isError(item) || isHighlight(item)) {
+            if (isError(item) || isHighlight(item) || isUpcoming(item)) {
                 const itemMessageModel = messageModel(item, errorColumn);
                 flatData.push(itemMessageModel);
             }
@@ -206,15 +215,6 @@ const shoppingListFlatDataBuilder = {
                 };
             }
         });
-
-        if (!options.metadata.plugins) {
-            options.metadata.plugins = [];
-        }
-        options.metadata.plugins.push(
-            FilteredProductVariantsPlugin,
-            ShoppingListRefreshPlugin,
-            HighlightRelatedRowsPlugin
-        );
 
         this.setErrorColumn(options.metadata.columns);
         options.data.data = flattenData(options.data.data, options);

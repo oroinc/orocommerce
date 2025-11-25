@@ -178,20 +178,6 @@ operations:
             - oro_shopping_list_frontend_update
         acl_resource: oro_rfp_frontend_request_create
         order: 220
-        frontend_options:
-            confirmation:
-                title: oro.shoppinglist.create_rfp_confirmation.title
-                message: oro.shoppinglist.create_rfp_confirmation.message
-                okText: oro.shoppinglist.create_rfp_confirmation.accept_button_title
-                cancelText: oro.shoppinglist.create_rfp_confirmation.cancel_button_title
-                hasEmptyMatrix: $.result.shoppingListHasEmptyMatrix
-                component: oroshoppinglist/js/shoppinglist-request-quote-confirmation
-        preactions:
-            - '@call_service_method':
-                service: oro_shopping_list.manager.empty_matrix_grid
-                method: hasEmptyMatrix
-                method_parameters: [$.data]
-                attribute: $.result.shoppingListHasEmptyMatrix
         preconditions:
             '@and':
                 - '@has_elements': $lineItems
@@ -218,6 +204,8 @@ operations:
             - frontend-customer-user-shopping-list-assign-grid
             - frontend-customer-user-shopping-list-edit-grid
             - frontend-customer-user-shopping-list-select-grid
+            - frontend-customer-user-shopping-list-saved-for-later-grid
+            - frontend-customer-user-shopping-list-saved-for-later-edit-grid
 
     DELETE:
         exclude_entities:
@@ -230,6 +218,8 @@ operations:
             - frontend-customer-user-shopping-list-assign-grid
             - frontend-customer-user-shopping-list-edit-grid
             - frontend-customer-user-shopping-list-select-grid
+            - frontend-customer-user-shopping-list-saved-for-later-grid
+            - frontend-customer-user-shopping-list-saved-for-later-edit-grid
 
     oro_shoppinglist_delete:
         extends: DELETE
@@ -271,11 +261,44 @@ operations:
             '@not_blank': $.data
         datagrids:
             - shopping-list-line-items-grid
+        preactions:
+            - '@assign_value': [$.shoppingList, $.data.shoppingList]
         actions:
             - '@call_service_method':
                 service: oro_shopping_list.manager.shopping_list_total
                 method: recalculateTotals
-                method_parameters: [$.data.shoppingList, true]
+                method_parameters: [$.shoppingList, true]
+
+    oro_shoppinglist_update_saved_for_later_line_item:
+        extends: oro_shoppinglist_updatelineitem
+        replace:
+            - for_all_datagrids
+            - for_all_entities
+            - datagrids
+            - form_init
+            - actions
+        datagrids:
+            - shopping-list-saved-for-later-line-items-grid
+        form_init:
+            - '@assign_value': [$.lineItem, $.data]
+            - '@assign_value': [$.lineItem.savedForLaterList, $.data.savedForLaterList]
+        actions:
+            - '@flush_entity': $.lineItem
+            - '@flash_message':
+                message: oro.shoppinglist.lineitem.flash.updated
+                type: 'success'
+            - '@refresh_grid': shopping-list-saved-for-later-line-items-grid
+
+    oro_shoppinglist_delete_saved_for_later_line_item:
+        extends: DELETE
+        replace:
+            - for_all_datagrids
+            - for_all_entities
+            - preconditions
+        preconditions:
+            '@not_blank': $.data
+        datagrids:
+            - shopping-list-saved-for-later-line-items-grid
 
     oro_shoppinglist_duplicate:
         label: oro.shoppinglist.duplicate.list.label
@@ -336,6 +359,7 @@ operations:
                           - [[setNull], [propertyName, [id]]]
                           - [[collection], [propertyName, [totals]]]
                           - [[collection], [propertyName, [lineItems]]]
+                          - [[collection], [propertyName, [savedForLaterLineItems]]]
                           - [[emptyCollection], [propertyName, [visitors]]]
                           - [[keep], [propertyName, [customerUser]]]
                           - [[keep], [propertyName, [customer]]]
@@ -357,6 +381,125 @@ operations:
                         route: 'oro_shopping_list_view'
                         route_parameters:
                             id: $.newShoppingList.id
+
+    oro_shoppinglist_line_item_save_for_later:
+        label: oro.shoppinglist.actions.save_for_later.label
+        acl_resource: oro_shopping_list_frontend_update
+        order: 10
+        datagrids:
+            - frontend-customer-user-shopping-list-edit-grid
+        preconditions:
+            '@feature_enabled': 'saved_for_later'
+        button_options:
+            icon: bookmark
+        frontend_options:
+            show_dialog: true
+            confirmation:
+                title: oro.shoppinglist.actions.save_for_later.confirm_title
+                message: oro.shoppinglist.actions.save_for_later.confirm_content
+                message_parameters:
+                    name: $.data.product.name.string
+                okText: oro.shoppinglist.actions.save_for_later.confirm_ok
+        actions:
+            - '@call_method':
+                object: $.data
+                method: setSavedForLaterList
+                method_parameters:
+                    - $.data.shoppingList
+            - '@call_method':
+                object: $.data.savedForLaterList
+                method: removeLineItem
+                method_parameters:
+                    - $.data
+            - '@call_service_method':
+                service: oro_shopping_list.manager.shopping_list
+                method: addLineItem
+                method_parameters: [$.data, $.data.savedForLaterList]
+            - '@flash_message':
+                message: oro.shoppinglist.actions.save_for_later.success
+                type: 'success'
+                message_parameters:
+                    name: $.data.product.name.string
+            - '@refresh_grid':
+                - frontend-customer-user-shopping-list-edit-grid
+                - frontend-customer-user-shopping-list-saved-for-later-edit-grid
+
+    oro_shoppinglist_invalid_line_item_save_for_later:
+        label: oro.shoppinglist.actions.save_for_later.label
+        acl_resource: oro_shopping_list_frontend_update
+        order: 10
+        page_reload: false
+        datagrids:
+            - frontend-customer-user-shopping-list-invalid-line-items-grid
+        preconditions:
+            '@feature_enabled': 'saved_for_later'
+        button_options:
+            icon: bookmark
+        frontend_options:
+            show_dialog: true
+            confirmation:
+                title: oro.shoppinglist.actions.save_for_later.confirm_title
+                message: oro.shoppinglist.actions.save_for_later.confirm_content
+                message_parameters:
+                    name: $.data.product.name.string
+                okText: oro.shoppinglist.actions.save_for_later.confirm_ok
+        actions:
+            - '@call_method':
+                object: $.data
+                method: setSavedForLaterList
+                method_parameters:
+                    - $.data.shoppingList
+            - '@call_method':
+                object: $.data.savedForLaterList
+                method: removeLineItem
+                method_parameters:
+                    - $.data
+            - '@call_service_method':
+                service: oro_shopping_list.manager.shopping_list
+                method: addLineItem
+                method_parameters: [$.data, $.data.savedForLaterList]
+            - '@flash_message':
+                message: oro.shoppinglist.actions.save_for_later.success
+                type: 'success'
+                message_parameters:
+                    name: $.data.product.name.string
+            - '@refresh_grid':
+                - frontend-customer-user-shopping-list-invalid-line-items-grid
+
+    oro_shoppinglist_line_item_remove_from_saved_for_later:
+        label: oro.shoppinglist.actions.remove_from_saved_for_later.label
+        acl_resource: oro_shopping_list_frontend_update
+        order: 10
+        datagrids:
+            - frontend-customer-user-shopping-list-saved-for-later-edit-grid
+        button_options:
+            icon: bookmark-unsave
+        frontend_options:
+            show_dialog: true
+            confirmation:
+                title: oro.shoppinglist.actions.remove_from_saved_for_later.confirm_title
+                message: oro.shoppinglist.actions.remove_from_saved_for_later.confirm_content
+                message_parameters:
+                    name: $.data.product.name.string
+                okText: oro.shoppinglist.actions.remove_from_saved_for_later.confirm_ok
+        actions:
+            - '@call_method':
+                object: $.data
+                method: setShoppingList
+                method_parameters:
+                    - $.data.savedForLaterList
+            - '@call_service_method':
+                service: oro_shopping_list.manager.shopping_list
+                method: addLineItem
+                method_parameters: [$.data, $.data.shoppingList]
+            - '@flash_message':
+                message: oro.shoppinglist.actions.remove_from_saved_for_later.success
+                type: 'success'
+                message_parameters:
+                    name: $.data.product.name.string
+            - '@refresh_grid':
+                - frontend-customer-user-shopping-list-edit-grid
+                - frontend-customer-user-shopping-list-saved-for-later-edit-grid
 
 action_groups:
     oro_shoppinglist_frontend_addlineitem:

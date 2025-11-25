@@ -31,7 +31,7 @@ Feature: Users can perform mass delete in the shopping list grid
     And click "Add to Shopping List" for "PSKU2" product
     And I open shopping list widget
     And click "Open List"
-    When I filter "SKU" as contains "PSKU2"
+    When I filter SKU as contains "PSKU2" in "Frontend Customer User Shopping List Edit Grid" grid
     And check first 1 records in grid
     And click "Delete"
     And click "Yes, Delete" in confirmation dialogue

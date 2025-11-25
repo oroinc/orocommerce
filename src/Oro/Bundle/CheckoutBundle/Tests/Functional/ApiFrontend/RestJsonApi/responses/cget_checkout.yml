@@ -16,12 +16,12 @@ data:
             completed: false
             createdAt: '@checkout.ready_for_completion->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@checkout.ready_for_completion->updatedAt->format("Y-m-d\TH:i:s\Z")'
-            totalValue: '90.5000'
+            totalValue: '111.4000'
             totals:
                 -
                     subtotalType: subtotal
                     description: Subtotal
-                    amount: '100.5000'
+                    amount: '121.4000'
                 -
                     subtotalType: discount
                     description: Discount

@@ -37,13 +37,13 @@ data:
         type: checkoutlineitems
         id: '<toString(@checkout.ready_for_completion.line_item.2->id)>'
         attributes:
-            productSku: product-6
+            productSku: product-2
             freeFormProduct: null
             quantity: 1
-            currency: null
+            currency: USD
             priceFixed: false
-            price: null
-            subTotal: null
+            price: '20.9000'
+            subTotal: '20.9000'
             comment: null
             shippingMethod: null
             shippingMethodType: null
@@ -56,7 +56,7 @@ data:
             product:
                 data:
                     type: products
-                    id: '<toString(@product-6->id)>'
+                    id: '<toString(@product-2->id)>'
             parentProduct:
                 data: null
             productUnit:

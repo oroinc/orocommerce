@@ -7,6 +7,8 @@ use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
 use Oro\Bundle\ApiBundle\Request\ValueTransformer;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerAwareInterface;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
@@ -18,8 +20,10 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 /**
  * Computes values for "currency", "value" and "subTotal" fields for a shopping list items.
  */
-class ComputeShoppingListLineItemPrice implements ProcessorInterface
+class ComputeShoppingListLineItemPrice implements ProcessorInterface, FeatureCheckerAwareInterface
 {
+    use FeatureCheckerHolderTrait;
+
     public function __construct(
         private readonly ProductLineItemPriceProviderInterface $productLineItemPriceProvider,
         private readonly ProductPriceScopeCriteriaFactoryInterface $productPriceScopeCriteriaFactory,
@@ -111,7 +115,7 @@ class ComputeShoppingListLineItemPrice implements ProcessorInterface
         $lineItems = $this->getLineItems($lineItemIds);
         foreach ($lineItems as $lineItem) {
             /** @var ShoppingList $shoppingList */
-            $shoppingList = $lineItem->getShoppingList();
+            $shoppingList = $lineItem->getAssociatedList();
             if (!isset($mapOfLineItems[$shoppingList->getId()])) {
                 $mapOfLineItems[$shoppingList->getId()] = [[], $shoppingList];
             }
@@ -126,15 +130,26 @@ class ComputeShoppingListLineItemPrice implements ProcessorInterface
      */
     private function getLineItems(array $lineItemIds): array
     {
-        return $this->doctrineHelper->createQueryBuilder(LineItem::class, 'li')
+        $qb = $this->doctrineHelper->createQueryBuilder(LineItem::class, 'li')
             ->select('li, sl, p, pu, ki, kii')
-            ->leftJoin('li.shoppingList', 'sl')
             ->leftJoin('li.product', 'p')
             ->leftJoin('li.unit', 'pu')
             ->leftJoin('li.kitItemLineItems', 'ki')
             ->leftJoin('ki.kitItem', 'kii')
             ->where('li.id IN (:ids)')
-            ->setParameter('ids', $lineItemIds)
+            ->setParameter('ids', $lineItemIds);
+
+        if ($this->isFeaturesEnabled()) {
+            $qb
+                ->addSelect(['sfl'])
+                ->leftJoin('li.savedForLaterList', 'sfl')
+                ->leftJoin('li.shoppingList', 'sl');
+        } else {
+            $qb
+                ->innerJoin('li.shoppingList', 'sl');
+        }
+
+        return $qb
             ->getQuery()
             ->setHint(Query::HINT_REFRESH, true)
             ->getResult();

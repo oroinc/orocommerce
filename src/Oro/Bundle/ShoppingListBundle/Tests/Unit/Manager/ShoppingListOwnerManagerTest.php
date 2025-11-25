@@ -45,8 +45,10 @@ class ShoppingListOwnerManagerTest extends TestCase
         $shoppingList = new ShoppingList();
         $lineItem1 = new LineItem();
         $lineItem2 = new LineItem();
+        $lineItem3 = new LineItem();
         $shoppingList->addLineItem($lineItem1);
         $shoppingList->addLineItem($lineItem2);
+        $shoppingList->addSavedForLaterLineItem($lineItem3);
 
         $this->ownerChecker->expects($this->once())
             ->method('isOwnerCanBeSet')
@@ -64,7 +66,8 @@ class ShoppingListOwnerManagerTest extends TestCase
         $this->manager->setOwner(1, $shoppingList);
         self::assertSame($user, $shoppingList->getCustomerUser());
         self::assertSame($user, $lineItem1->getCustomerUser());
-        self::assertSame($user, $lineItem1->getCustomerUser());
+        self::assertSame($user, $lineItem2->getCustomerUser());
+        self::assertSame($user, $lineItem3->getCustomerUser());
     }
 
     public function testSetSameOwner(): void

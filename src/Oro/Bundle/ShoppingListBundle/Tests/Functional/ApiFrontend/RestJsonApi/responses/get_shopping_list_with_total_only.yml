@@ -16,6 +16,11 @@ data:
                 -
                     type: shoppinglistitems
                     id: '<toString(@line_item2->id)>'
+        savedForLaterItems:
+            data:
+                -
+                    type: shoppinglistitems
+                    id: '<toString(@saved_for_later_line_item1->id)>'
 included:
     -
         type: shoppinglistkititems
@@ -54,6 +59,14 @@ included:
         id: '<toString(@line_item2->id)>'
         attributes:
             subTotal: '23.4000'
+        relationships:
+            kitItems:
+                data: []
+    -
+        type: shoppinglistitems
+        id: '<toString(@saved_for_later_line_item1->id)>'
+        attributes:
+            subTotal: '6.1500'
         relationships:
             kitItems:
                 data: []

@@ -22,6 +22,10 @@ oro:
         line_items:
             label: Line Items
             description: The collection of shopping list items.
+        saved_for_later_line_items:
+            label: Saved For Later Line Items
+            description: The collection of shopping saved for later list items.
+            entity_grid_all_view_label: All Saved For Later Line Items
         line_items_count.label: Line Items Count
         current.label: Current
         default.label: 'Shopping List'
@@ -38,6 +42,28 @@ oro:
             success: 'Shopping list "%shoppinglist%" was created successfully'
             update_success: 'Shopping list "%shoppinglist%" was updated successfully'
             merge: 'Upon signing in, any previously added items have been combined with the contents of your current shopping list.'
+
+        validators:
+            line_items:
+                message: 'Some items in your shopping list need a quick review. Take a moment to update them before continuing.'
+            product:
+                inventory_status:
+                    message: 'Some products are not available and have been removed from the shopping list.'
+            line_item_has_price:
+                message: "This item can't be added to checkout because the price is not available"
+            dialog:
+                checkout: 'Some items in your shopping list need a quick review. Take a moment to update them before continuing. All changes will be applied immediately.'
+                rfq: 'Some items in your shopping list need a quick review. Take a moment to update them so you can continue to request a quote. All changes will be applied immediately.'
+            success:
+                checkout:
+                    title: All issues have been fixed.
+                    message: You can now proceed to checkout.
+                rfq:
+                    title: All issues have been fixed.
+                    message: You can now proceed to request a quote.
+                submit_btn:
+                    checkout: 'Proceed'
+                    rfq: 'Proceed'
 
         create_new_form:
             input_label: Shopping List Name
@@ -86,6 +112,12 @@ oro:
             delete_product_kit_line_item:
                 label: Delete
             in_shopping_list: "In Shopping List"
+            save_for_later:
+                label: Save For Later
+                success: 'The "%name%" product was saved for later.'
+            remove_from_saved_for_later:
+                label: Remove From "Saved For Later"
+                success: 'The "%name%" product was removed from "Saved For Later".'
 
         mass_actions:
             delete_line_items:
@@ -95,6 +127,17 @@ oro:
                 label: Move to
                 success_message: '{0} No items were moved.|{1} One entity has been moved successfully.|]1,Inf[ %count% items have been moved successfully.'
                 no_edit_permission_message: 'You do not have permission to edit the target shopping list.'
+            save_for_later:
+                label: Save For Later
+                success_message: "{0} Can't save for later selected product(s).|[1,Inf[%count% product(s) have been saved for later successfully."
+                no_edit_permission_message: 'You do not have permission to edit the target shopping list.'
+            remove_from_saved_for_later:
+                label: Remove From "Saved For Later"
+                success_message: "{0} Can't remove from \"Saved For Later\" selected product(s).|[1,Inf[%count% product(s) have been removed from \"Saved For Later\" successfully."
+
+        saved_for_later:
+            shopping_list:
+                title: 'Saved For Later'
 
         menu:
             sales_tab.label: Sales
@@ -125,6 +168,12 @@ oro:
             shopping_list_create:
                 label: Shopping Lists in the Storefront
                 description: Enables access to and management of the shopping lists in the storefront.
+            enforce_separate_shopping_list_validations:
+                label: Enforce separate shopping list validations for checkout and RFQ
+                description: When enabled, checkout- and RFQ-related validation issues will be shown in separate pop-ups when each action is started to require users to address them before continuing. Some checkout-blocking rules, for example minimum and maximum order amount limits, always prevent starting checkout, regardless of this configuration option.
+            saved_for_later:
+                label: Saved For Later
+                description: Allows customers to set items in the shopping list as saved for later without removing them.
         lineitem:
             entity_label: Shopping List Line Item
             entity_plural_label: Shopping List Line Items
@@ -150,6 +199,9 @@ oro:
             shopping_list:
                 label: Shopping List
                 description: The shopping list that contains the line item.
+            saved_for_later_list:
+                label: Saved For Later List
+                description: The shopping list that contains the saved for later line item.
             unit:
                 label: Unit
                 description: The unit of quantity the product to be purchased in.
@@ -159,6 +211,9 @@ oro:
             checksum:
                 label: Checksum
                 description: Differentiates the unique constraint allowing to add the same product with the same unit code multiple times.
+            saved_for_later:
+                label: Saved For Later
+                description: Indicates the line item stored for potential future purchase and excluded from the checkout process.
             organization.label: Organization
             owner.label: Owner
             customer_user.label: Customer User
@@ -232,6 +287,12 @@ oro:
                 show_all_in_shopping_list_widget:
                     label: 'Show All Lists in Shopping List Widgets'
                     tooltip: 'Select the option to enable customers to view all the shopping lists that they are allowed to access, besides their own, in the shopping list widgets.'
+                saved_for_later_enabled:
+                    label: 'Enable Saved For Later'
+                    tooltip: 'Allows customers to set items in the shopping list as saved for later without removing them.'
+                enforce_separate_shopping_list_validations_enabled:
+                    label: 'Enforce separate shopping list validations for checkout and RFQ'
+                    tooltip: 'When enabled, checkout- and RFQ-related validation issues will be shown in separate pop-ups when each action is started to require users to address them before continuing. Some checkout-blocking rules, for example minimum and maximum order amount limits, always prevent starting checkout, regardless of this configuration option.'
 
         privilege:
             category.shopping.label: 'Shopping'
@@ -256,6 +317,17 @@ oro:
         edit:
             action.label: Edit
         visitors.label: 'Visitors'
+
+        shopping_list_errors_modal:
+            title: 'Invalid Items In The Order'
+            button:
+                label: 'Save For Later & Proceed'
+                notification: "* All items listed above will be saved for later and won't be included in the current order."
+            button_delete:
+                label: 'Delete All & Proceed'
+                notification: "* All items listed above will be deleted and won't be included in the current order."
+            rfq:
+                title: 'Invalid Items In The Request For Quote'
 
     customer:
         customervisitor:
@@ -313,6 +385,8 @@ oro:
                 line_item_deleted: 'Shopping list item has been deleted'
                 cannot_create_order_no_line_item_with_price: 'Cannot create order because Shopping List has no items with price'
                 cannot_create_order_no_line_item_with_quantity: 'Cannot create order because Shopping List has no items'
+                cannot_process_checkout_or_rfq: 'We could not process your request. Please try again later.'
+                cannot_process_shopping_list_no_items: 'Cannot process because the Shopping List has no items.'
             open_modal_btn:
                 aria_label: 'Manage current product in the Shopping List'
             btn:
@@ -371,6 +445,9 @@ oro:
                     inventory_status.label: 'Availability'
                     quantity.label: 'Quantity'
                     unit.label: 'Unit'
+                status:
+                    is_upcoming: 'Coming Soon'
+                    is_low_inventory: 'Low Inventory'
             note:
                 textarea:
                     aria_label: 'Notes for %shoppinglist%'

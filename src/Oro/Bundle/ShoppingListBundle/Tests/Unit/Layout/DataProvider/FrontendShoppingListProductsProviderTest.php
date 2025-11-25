@@ -21,7 +21,7 @@ use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class FrontendShoppingListProductsProviderTest extends TestCase
+final class FrontendShoppingListProductsProviderTest extends TestCase
 {
     private LineItemRepository&MockObject $lineItemRepository;
     private FrontendProductPricesDataProvider&MockObject $frontendProductPricesDataProvider;
@@ -60,7 +60,7 @@ class FrontendShoppingListProductsProviderTest extends TestCase
         $expected = ['price_1', 'price_2'];
 
         $this->shoppingListLineItemsDataProvider->expects(self::once())
-            ->method('getShoppingListLineItems')
+            ->method('getAllShoppingListLineItems')
             ->with($shoppingList)
             ->willReturn($lineItems);
 
@@ -81,7 +81,7 @@ class FrontendShoppingListProductsProviderTest extends TestCase
     public function testGetAllPricesWithoutShoppingList(): void
     {
         $this->shoppingListLineItemsDataProvider->expects(self::never())
-            ->method('getShoppingListLineItems');
+            ->method('getAllShoppingListLineItems');
         $this->frontendProductPricesDataProvider->expects(self::never())
             ->method('getAllPricesForLineItems');
         $this->productPriceFormatter->expects(self::never())
@@ -109,7 +109,7 @@ class FrontendShoppingListProductsProviderTest extends TestCase
         $productLineItemPrice2 = new ProductLineItemPrice($lineItem2, Price::create(34.5678, 'USD'), 34.5678 * 2);
 
         $this->shoppingListLineItemsDataProvider->expects(self::once())
-            ->method('getShoppingListLineItems')
+            ->method('getAllShoppingListLineItems')
             ->with($shoppingList1)
             ->willReturn([$lineItem1, $lineItem2]);
 
@@ -151,7 +151,7 @@ class FrontendShoppingListProductsProviderTest extends TestCase
         $productLineItemPrice2 = new ProductLineItemPrice($lineItem2, Price::create(34.5678, 'USD'), 34.5678 * 2);
 
         $this->shoppingListLineItemsDataProvider->expects(self::exactly(2))
-            ->method('getShoppingListLineItems')
+            ->method('getAllShoppingListLineItems')
             ->willReturnMap([
                 [$shoppingList1, [$lineItem1, $lineItem2]],
                 [$shoppingList2, []]
@@ -193,7 +193,7 @@ class FrontendShoppingListProductsProviderTest extends TestCase
         $productLineItemPrice2 = $this->createMock(ProductLineItemPrice::class);
 
         $this->shoppingListLineItemsDataProvider->expects(self::exactly(2))
-            ->method('getShoppingListLineItems')
+            ->method('getAllShoppingListLineItems')
             ->willReturnMap([
                 [$shoppingList1, [$lineItem1, $lineItem2]],
                 [$shoppingList2, []]
@@ -228,7 +228,7 @@ class FrontendShoppingListProductsProviderTest extends TestCase
     public function testThatProductsReturnedFromShoppingList()
     {
         $this->shoppingListLineItemsDataProvider->expects(self::once())
-            ->method('getShoppingListLineItems')
+            ->method('getAllShoppingListLineItems')
             ->with($shoppingList = $this->createMock(ShoppingList::class))
             ->willReturn([$lineItem = $this->createMock(LineItem::class)]);
 

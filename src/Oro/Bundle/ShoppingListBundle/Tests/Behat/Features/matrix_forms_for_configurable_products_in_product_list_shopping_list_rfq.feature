@@ -58,6 +58,22 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I filter Key as equal to "oro.frontend.shoppinglist.lineitem.unit.label"
     And I edit "oro.frontend.shoppinglist.lineitem.unit.label" Translated Value as "Unit"
 
+  Scenario: Enable Save For Later Feature
+    When I go to System/Configuration
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
+    And I fill "Shopping List Configuration Form" with:
+      | Enable Save For Later Use default | false |
+      | Enable Save For Later             | true  |
+    And I save setting
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Enable Enforce separate shopping list validations for checkout and RFQ Feature
+    When I fill "Shopping List Configuration Form" with:
+      | Enable Enforce separate shopping list validations for checkout and RFQ Use default | false |
+      | Enable Enforce separate shopping list validations for checkout and RFQ             | true  |
+    And I save setting
+    Then I should see "Configuration saved" flash message
+
   Scenario: Check prices container on configurable product view is visible only when there are prices
     Given I proceed as the User
     Given I signed in as AmandaRCole@example.org on the store frontend
@@ -281,13 +297,23 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     When I click "Clear All"
     And I click "Save Changes" in modal window
     And I click "Create Order"
-    Then I should see "This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
-    When I click "Proceed"
-    Then I should see "Cannot create order because Shopping List has no items" flash message
-    And click on "Flash Message Close Button"
+    Then I should see next rows in "Frontend Customer User Shopping List Invalid Line Items Table" table without headers
+      | ConfigurableProductB CNFB Select Variants                                     |
+      | Please select product variants before placing an order or requesting a quote. |
+    When I click "Save For Later & Proceed"
+    Then I should see "Cannot process because the Shopping List has no items." flash message and I close it
+    And I should see following "Frontend Shopping List Saved For Later Line Items Grid" grid:
+      | SKU                                                                           | Product              |
+      | CNFB                                                                          | ConfigurableProductB |
+      | Please select product variants before placing an order or requesting a quote. |                      |
 
   Scenario: Check quantity and unit for empty configurable product
-    And I click "Account Dropdown"
+    When I click "Remove From "Saved For Later"" on row "CNFB" in grid
+    And I click "Yes, Remove"
+    Then I should see following "Frontend Customer User Shopping List Edit Grid" grid:
+      | SKU  | Product              | Qty             | Price | Subtotal |
+      | CNFB | ConfigurableProductB | Select Variants |       |          |
+    When I click "Account Dropdown"
     And I click on "Shopping Lists"
     And I click view Shopping List in grid
     Then I should see following grid:
@@ -297,29 +323,45 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
   Scenario: Create request for quote with empty matrix form
     When I click "Shopping List Actions"
     And click "Edit"
-    And I should not see "Request Quote"
+    And I should see "Request Quote"
+    When I click "Request Quote"
+    Then I should see next rows in "Frontend Customer User Shopping List Invalid Line Items Table" table without headers
+      | ConfigurableProductB CNFB Select Variants                                     |
+      | Please select product variants before placing an order or requesting a quote. |
+    When I click "Save For Later & Proceed"
+    Then I should see "Cannot process because the Shopping List has no items." flash message and I close it
+    And I should see following "Frontend Shopping List Saved For Later Line Items Grid" grid:
+      | SKU                                                                           | Product              |
+      | CNFB                                                                          | ConfigurableProductB |
+      | Please select product variants before placing an order or requesting a quote. |                      |
+    And I click "Remove From "Saved For Later"" on row "CNFB" in grid
+    And I click "Yes, Remove"
 
   Scenario: Order empty matrix form and a simple product
     Given type "SKU123" in "search"
-    And click "Search Button"
+    And I click "Search Button"
     And I click "Add to Shopping List" for "SKU123" product
-    And I follow "Shopping List" link within flash message "Product has been added to \"Shopping List\""
-    Given I click "Create Order"
-    Then I should see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
-    And I click "Proceed"
-    Then I should see "Some products have not been added to this order." flash message
-    And I should see "Checkout"
-    And I click "Order products"
-    And I should see "400-Watt Bulb Work Light"
+    Then I follow "Shopping List" link within flash message "Product has been added to \"Shopping List\""
+    When I click "Create Order"
+    Then I should see next rows in "Frontend Customer User Shopping List Invalid Line Items Table" table without headers
+      | ConfigurableProductB CNFB Select Variants                                     |
+      | Please select product variants before placing an order or requesting a quote. |
+    When I click "Save For Later & Proceed"
+    Then I should see "Checkout"
+    When I click "Order products"
+    Then I should see "400-Watt Bulb Work Light"
     And I should not see "ConfigurableProductB"
-    And click on "Flash Message Close Button"
 
   Scenario: Create request for quote with empty configurable product and a simple product
     Given I open shopping list widget
     And I click "View Details"
+    And I click "Remove From "Saved For Later"" on row "CNFB" in grid
+    And I click "Yes, Remove"
     And I click "Request Quote"
-    Then I should see "Confirmation This shopping list contains configurable products with no variations. Proceed to RFQ without these products?"
-    And I click "Proceed"
+    Then I should see next rows in "Frontend Customer User Shopping List Invalid Line Items Table" table without headers
+      | ConfigurableProductB CNFB Select Variants                                     |
+      | Please select product variants before placing an order or requesting a quote. |
+    When I click "Save For Later & Proceed"
     Then I should see "Request A Quote"
     And I should see "400-Watt Bulb Work Light" in the "RequestAQuoteProducts" element
     And I should not see "ConfigurableProductB" in the "RequestAQuoteProducts" element
@@ -328,6 +370,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Given I reload the page
     When I open shopping list widget
     And I click "View Details"
+    And I click "Remove From "Saved For Later"" on row "CNFB" in grid
+    And I click "Yes, Remove"
     And I click "Select Variants" on row "CNFB" in grid
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |

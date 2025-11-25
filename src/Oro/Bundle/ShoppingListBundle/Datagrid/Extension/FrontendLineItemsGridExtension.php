@@ -19,19 +19,13 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
  */
 class FrontendLineItemsGridExtension extends AbstractExtension
 {
-    /** @var string[] */
-    private const SUPPORTED_GRIDS = [
-        'frontend-customer-user-shopping-list-grid',
-        'frontend-customer-user-shopping-list-edit-grid',
-    ];
-
     private ManagerRegistry $registry;
-
     private ConfigManager $configManager;
-
     private TokenAccessorInterface $tokenAccessor;
 
     private array $cache = [];
+    private array $supportedGrids = [];
+    private array $savedForLaterGrids = [];
 
     public function __construct(
         ManagerRegistry $registry,
@@ -43,10 +37,20 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         $this->tokenAccessor = $tokenAccessor;
     }
 
+    public function setSupportedGrids(array $supportedGrids): void
+    {
+        $this->supportedGrids = $supportedGrids;
+    }
+
+    public function setSavedForLaterGrids(array $savedForLaterGrids): void
+    {
+        $this->savedForLaterGrids = $savedForLaterGrids;
+    }
+
     #[\Override]
     public function isApplicable(DatagridConfiguration $config): bool
     {
-        return \in_array($config->getName(), static::SUPPORTED_GRIDS, true) && parent::isApplicable($config);
+        return \in_array($config->getName(), $this->supportedGrids, true) && parent::isApplicable($config);
     }
 
     #[\Override]
@@ -69,23 +73,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
     #[\Override]
     public function processConfigs(DatagridConfiguration $config): void
     {
-        if ($this->isLineItemsGrouped()) {
-            $queryParts[] = '(SELECT GROUP_CONCAT(innerItem.id ORDER BY innerItem.id ASC) ' .
-                'FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerItem ' .
-                'WHERE ('.
-                '  innerItem.parentProduct = lineItem.parentProduct OR '.
-                '  (innerItem.product = lineItem.product AND innerItem.checksum = lineItem.checksum)'.
-                ') ' .
-                'AND innerItem.shoppingList = lineItem.shoppingList ' .
-                'AND innerItem.unit = lineItem.unit) as allLineItemsIds';
-            $queryParts[] = 'GROUP_CONCAT(' .
-                '  COALESCE(CONCAT(parentProduct.sku, \':\', product.sku), product.sku)' .
-                ') as sortSku';
-        } else {
-            $queryParts[] = 'lineItem.id';
-            $queryParts[] = 'product.sku as sortSku';
-        }
-        $config->offsetAddToArrayByPath(OrmQueryConfiguration::SELECT_PATH, $queryParts);
+        $config->offsetAddToArrayByPath(OrmQueryConfiguration::SELECT_PATH, $this->buildSelectPath($config));
 
         if (!$this->tokenAccessor->hasUser() ||
             $this->configManager->get('oro_shopping_list.shopping_list_limit') === 1
@@ -98,8 +86,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
             return;
         }
 
-        $shoppingList = $this->getShoppingList($shoppingListId);
-        $lineItemsCount = $shoppingList ? count($shoppingList->getLineItems()) : 0;
+        $lineItemsCount = $this->getLineItemCount($shoppingListId, $this->isSavedForLaterGrid($config));
         $item = $this->configManager->get('oro_shopping_list.shopping_lists_max_line_items_per_page');
         if ($lineItemsCount <= $item) {
             $item = [
@@ -110,7 +97,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
 
         $config->offsetSetByPath(
             '[options][toolbarOptions][pageSize][items]',
-            array_merge(
+            \array_merge(
                 $config->offsetGetByPath('[options][toolbarOptions][pageSize][items]'),
                 [$item]
             )
@@ -126,7 +113,10 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         }
 
         $data->offsetSetByPath('[hasEmptyMatrix]', $this->hasEmptyMatrix($shoppingListId));
-        $data->offsetSetByPath('[canBeGrouped]', $this->canBeGrouped($shoppingListId));
+        $data->offsetSetByPath(
+            '[canBeGrouped]',
+            $this->canBeGrouped($shoppingListId, $this->isSavedForLaterGrid($config))
+        );
         $data->offsetSetByPath('[shoppingListLabel]', $this->getShoppingList($shoppingListId)->getLabel());
         $data->offsetAddToArrayByPath('[initialState][parameters]', ['group' => false]);
         $data->offsetAddToArrayByPath('[state][parameters]', ['group' => $this->isLineItemsGrouped()]);
@@ -143,8 +133,8 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         $result->offsetAddToArrayByPath(
             '[metadata]',
             [
-                'hasEmptyMatrix' => $this->hasEmptyMatrix($shoppingListId),
-                'canBeGrouped' => $this->canBeGrouped($shoppingListId),
+                'hasEmptyMatrix' => $this->hasEmptyMatrix($shoppingListId, $this->isSavedForLaterGrid($config)),
+                'canBeGrouped' => $this->canBeGrouped($shoppingListId, $this->isSavedForLaterGrid($config)),
             ]
         );
     }
@@ -161,39 +151,80 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         return isset($parameters['group']) ? filter_var($parameters['group'], FILTER_VALIDATE_BOOLEAN) : false;
     }
 
-    private function hasEmptyMatrix(int $shoppingListId): bool
+    private function hasEmptyMatrix(int $shoppingListId, bool $savedForLater = false): bool
     {
         if (!isset($this->cache['hasEmptyMatrix'][$shoppingListId])) {
             $this->cache['hasEmptyMatrix'][$shoppingListId] = $this->registry
-                ->getManagerForClass(LineItem::class)
                 ->getRepository(LineItem::class)
-                ->hasEmptyMatrix($shoppingListId);
+                ->checkEmptyMatrix($shoppingListId, $savedForLater);
         }
 
         return $this->cache['hasEmptyMatrix'][$shoppingListId];
     }
 
-    private function canBeGrouped(int $shoppingListId): bool
+    private function canBeGrouped(int $shoppingListId, bool $savedForLater = false): bool
     {
         if (!isset($this->cache['canBeGrouped'][$shoppingListId])) {
             $this->cache['canBeGrouped'][$shoppingListId] = $this->registry
-                ->getManagerForClass(LineItem::class)
                 ->getRepository(LineItem::class)
-                ->canBeGrouped($shoppingListId);
+                ->checkCanBeGrouped($shoppingListId, $savedForLater);
         }
 
         return $this->cache['canBeGrouped'][$shoppingListId];
+    }
+
+    private function isSavedForLaterGrid(DatagridConfiguration $config): bool
+    {
+        return \in_array($config->getName(), $this->savedForLaterGrids, true);
     }
 
     private function getShoppingList(int $shoppingListId): ?ShoppingList
     {
         if (!isset($this->cache['shoppingLists'][$shoppingListId])) {
             $this->cache['shoppingLists'][$shoppingListId] = $this->registry
-                ->getManagerForClass(ShoppingList::class)
                 ->getRepository(ShoppingList::class)
                 ->find($shoppingListId);
         }
 
         return $this->cache['shoppingLists'][$shoppingListId];
+    }
+
+    private function buildSelectPath(DatagridConfiguration $config): array
+    {
+        if ($this->isLineItemsGrouped()) {
+            if ($this->isSavedForLaterGrid($config)) {
+                $andWhereExpression = 'AND innerItem.savedForLaterList = lineItem.savedForLaterList ';
+            } else {
+                $andWhereExpression = 'AND innerItem.shoppingList = lineItem.shoppingList ';
+            }
+
+            $queryParts[] = '(SELECT GROUP_CONCAT(innerItem.id ORDER BY innerItem.id ASC) ' .
+                'FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerItem ' .
+                'WHERE ('.
+                '  innerItem.parentProduct = lineItem.parentProduct OR '.
+                '  (innerItem.product = lineItem.product AND innerItem.checksum = lineItem.checksum)'.
+                ') ' . $andWhereExpression .
+                'AND innerItem.unit = lineItem.unit) as allLineItemsIds';
+            $queryParts[] = 'GROUP_CONCAT(' .
+                '  COALESCE(CONCAT(parentProduct.sku, \':\', product.sku), product.sku)' .
+                ') as sortSku';
+        } else {
+            $queryParts[] = 'lineItem.id';
+            $queryParts[] = 'product.sku as sortSku';
+        }
+
+        return $queryParts;
+    }
+
+    private function getLineItemCount(int $shoppingListId, bool $savedForLater = false): int
+    {
+        $shoppingList = $this->getShoppingList($shoppingListId);
+        if (!$shoppingList) {
+            return 0;
+        }
+
+        return $savedForLater ?
+            $shoppingList->getSavedForLaterLineItems()->count() :
+            $shoppingList->getLineItems()->count();
     }
 }

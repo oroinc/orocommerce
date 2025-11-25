@@ -33,7 +33,7 @@ Feature: Promotions for multi shipping checkout amount
       | SKU1 | 400-Watt Bulb Work Light            | $2.00 | $10.00   |
       | SKU2 | iPhone 13                           | $2.00 | $20.00   |
       | SKU3 | iPhone X                            | $2.00 | $20.00   |
-      | SKU4 | Round Meeting Table, 30 in. x 30in. |       |          |
+      | SKU4 | Round Meeting Table, 30 in. x 30in. | $0.00 | $0.00    |
     And I should see notification "This product will be available later" for "SKU1" line item "Checkout Line Item"
     And I should see notification "This product will be available later" for "SKU3" line item "Checkout Line Item"
     When I click "Create Order"
@@ -60,7 +60,7 @@ Feature: Promotions for multi shipping checkout amount
     And I should see Checkout Totals with data:
       | Subtotal          | $50.00 |
       | Discount          | -$5.00 |
-      | Shipping          | $9.00  |
+      | Shipping          | $12.00  |
       | Shipping Discount | -$2.00 |
     When I click "Continue"
     Then Page title equals to "Payment - Checkout"
@@ -73,15 +73,15 @@ Feature: Promotions for multi shipping checkout amount
     Given I open Order History page on the store frontend
     Then I should see following "Past Orders Grid" grid:
       | Order Number | Total  |
-      | 1            | $52.00 |
+      | 1            | $55.00 |
     And records in "Past Orders Grid" should be 1
     And I click view "1" in grid
     Then I should see "Subtotal $50.00" in the "Subtotals" element
     And I should see "Discount -$5.00" in the "Subtotals" element
-    And I should see "Shipping $9.00" in the "Subtotals" element
+    And I should see "Shipping $12.00" in the "Subtotals" element
     And I should see "Shipping Discount -$2.00" in the "Subtotals" element
     And I should see "Tax $0.00" in the "Subtotals" element
-    And I should see "Total $52.00" in the "Subtotals" element
+    And I should see "Total $55.00" in the "Subtotals" element
 
   Scenario: Check discounts in created order and sub orders in admin
     Given I proceed as the Admin
@@ -89,9 +89,9 @@ Feature: Promotions for multi shipping checkout amount
     And I go to Sales/Orders
     Then I should see following grid:
       | Order Number | Total  |
-      | 1            | $52.00 |
+      | 1            | $55.00 |
     And number of records should be 1
-    When I click view "$52.00" in grid
+    When I click view "$55.00" in grid
     And I click "Discounts"
     Then I should see following rows in "Promotions" table
       | Code                  | Promotion                               | Type        | Status | Discount |
@@ -101,6 +101,6 @@ Feature: Promotions for multi shipping checkout amount
       | Subtotal          | Amount |
       | Subtotal          | $50.00 |
       | Discount          | -$5.00 |
-      | Shipping          | $9.00  |
+      | Shipping          | $12.00  |
       | Shipping Discount | -$2.00 |
-      | Total             | $52.00 |
+      | Total             | $55.00 |

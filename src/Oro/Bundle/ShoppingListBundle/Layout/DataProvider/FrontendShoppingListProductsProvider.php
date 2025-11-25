@@ -54,7 +54,7 @@ class FrontendShoppingListProductsProvider
             return null;
         }
 
-        $lineItems = $this->shoppingListLineItemsDataProvider->getShoppingListLineItems($shoppingList);
+        $lineItems = $this->shoppingListLineItemsDataProvider->getAllShoppingListLineItems($shoppingList);
         $productPrices = $this->productPriceProvider->getAllPricesForLineItems($lineItems);
 
         return $this->productPriceFormatter->formatProducts($productPrices);
@@ -90,7 +90,7 @@ class FrontendShoppingListProductsProvider
         }
 
         // BC fallback.
-        $lineItems = $this->shoppingListLineItemsDataProvider->getShoppingListLineItems($shoppingList);
+        $lineItems = $this->shoppingListLineItemsDataProvider->getAllShoppingListLineItems($shoppingList);
 
         return $this->productPriceProvider->getProductsMatchedPrice($lineItems);
     }
@@ -166,7 +166,7 @@ class FrontendShoppingListProductsProvider
 
         $productLineItemPrices = [];
         foreach ($shoppingLists as $shoppingList) {
-            $lineItems = $this->shoppingListLineItemsDataProvider->getShoppingListLineItems($shoppingList);
+            $lineItems = $this->shoppingListLineItemsDataProvider->getAllShoppingListLineItems($shoppingList);
             if (!$lineItems) {
                 $productLineItemPrices[$shoppingList->getId()] = [];
                 continue;
@@ -214,7 +214,7 @@ class FrontendShoppingListProductsProvider
      */
     public function getShoppingListProducts(ShoppingList $shoppingList): array
     {
-        $lineItems = $this->shoppingListLineItemsDataProvider->getShoppingListLineItems($shoppingList);
+        $lineItems = $this->shoppingListLineItemsDataProvider->getAllShoppingListLineItems($shoppingList);
 
         return array_map(fn (LineItem $lineItem) => $lineItem->getProduct(), $lineItems);
     }

@@ -86,21 +86,26 @@ Feature: Upcoming product highlights
     And I click "NewCategory" in hamburger menu
     And I click "NewCategory2" in hamburger menu
     Then I should see "This product will be available on 12/1/2040" for "SKU2" product
+    Then I should see "Coming Soon" for "SKU2" product
     Then I should see "This product will be available later" for "SKU3" product
+    Then I should see "Coming Soon" for "SKU3" product
     When I click "View Details" for "SKU2" product
     Then I should see "This product will be available on 12/1/2040"
+    Then I should see "Coming Soon"
 
   Scenario: Check that product`s availability date correctly handled during checkout process
     Given I open page with shopping list List 1
     Then I should see notification "This product will be available on 1/1/2030" for "SKU1" line item "ShoppingListLineItem"
+    And I should see "Coming Soon" for "SKU1" line item "ShoppingListLineItem"
     And I should see notification "This product will be available on 12/1/2040" for "SKU2" line item "ShoppingListLineItem"
+    And I should see "Coming Soon" for "SKU2" line item "ShoppingListLineItem"
     When I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
-    Then I should see notification "This product will be available on 1/1/2030" for "SKU1" line item "ProductLineItem"
-    And I should see notification "This product will be available on 12/1/2040" for "SKU2" line item "ProductLineItem"
+    And I should see "Coming Soon" for "SKU1" line item "Checkout Line Item"
+    And I should see "Coming Soon" for "SKU2" line item "Checkout Line Item"
     When I click on "Do not ship later than Datepicker"
     Then I should see "12/1/2040"
     When I fill "Checkout Order Review Form" with:
@@ -121,8 +126,8 @@ Feature: Upcoming product highlights
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
-    Then I should see notification "This product will be available on 1/1/2030" for "SKU1" line item "ProductLineItem"
-    And I should see notification "This product will be available later" for "SKU3" line item "ProductLineItem"
+    And I should see "Coming Soon" for "SKU1" line item "Checkout Line Item"
+    And I should see "Coming Soon" for "SKU3" line item "Checkout Line Item"
     And I should see "This order contains upcoming products without availability date"
     When I click "Submit Order"
     Then I should see "Thank You For Your Purchase"

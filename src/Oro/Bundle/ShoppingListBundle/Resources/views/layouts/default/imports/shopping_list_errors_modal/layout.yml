@@ -1,0 +1,33 @@
+layout:
+    imports:
+        -
+            id: datagrid
+            root: __errors_datagrid_wrapper
+            namespace: shopping_list_errors_datagrid
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
+        - '@addTree':
+            items:
+                __wrapper:
+                    blockType: container
+                __validation_wrapper:
+                    blockType: container
+                __errors_datagrid_wrapper:
+                    blockType: container
+                __actions_wrapper:
+                    blockType: container
+                __proceed_button:
+                    blockType: block
+                __button_notification:
+                    blockType: block
+            tree:
+                __root:
+                    __wrapper:
+                        __validation_wrapper: ~
+                        __errors_datagrid_wrapper: ~
+                        __actions_wrapper:
+                            __proceed_button: ~
+                        __button_notification: ~

@@ -311,7 +311,7 @@ Feature: My Shopping List
     And I scroll to top
 
   Scenario: Check SKU filter
-    When I filter SKU as contains "CC3"
+    When I filter SKU as contains "CC3" in "Frontend Customer User Shopping List View Grid" grid
     Then I should see following grid:
       | SKU  | Product                 | Availability | Qty | Unit   | Price  | Subtotal |
       | CC30 | Product 30 Note 30 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
@@ -322,7 +322,7 @@ Feature: My Shopping List
       | CC35 | Product 35 Note 35 text | In Stock     | 13  | pieces | $31.00 | $403.00  |
     And I scroll to top
     When I reset grid
-    And I filter SKU as contains "BB04"
+    And I filter SKU as contains "BB04" in "Frontend Customer User Shopping List View Grid" grid
     Then I should see following grid:
       | SKU  | Product                                  | Availability | Qty | Unit  | Price  | Subtotal              |
       | BB04 | Configurable Product 1 Red M Note 4 text | In Stock     | 3   | items | $11.00 | $33.00 -$16.50 $16.50 |
@@ -561,7 +561,7 @@ Feature: My Shopping List
   Scenario: Check Availability filter
     Given I scroll to top
     When I click "Group Product Variants"
-    And I check "Out of Stock" in Availability filter
+    And I check "Out of Stock" in Availability filter in "Frontend Customer User Shopping List View Grid"
     Then I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit   | Price  | Subtotal                 |
       |      | Configurable Product 1                      |              | 13  | items  |        | $227.00 -$113.50 $113.50 |
@@ -609,7 +609,7 @@ Feature: My Shopping List
 
   Scenario: Check Quantity filter
     Given I reset grid
-    When I filter Quantity as less than "10"
+    When I filter Quantity as less than "10" in "Frontend Customer User Shopping List View Grid" grid
     Then I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit   | Price  | Subtotal                 |
       | BB04 | Configurable Product 1 Red M Note 4 text    | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
@@ -630,7 +630,7 @@ Feature: My Shopping List
 
   Scenario: Check Unit filter
     Given I reset grid
-    When I check "set" in Unit filter
+    When I check "set" in Unit filter in "Frontend Customer User Shopping List View Grid"
     Then I should see following grid:
       | SKU  | Product                                     | Availability | Qty | Unit | Price  | Subtotal |
       | BB10 | Configurable Product 3 Red M Note 10 text   | In Stock     | 7   | sets | $19.00 | $133.00  |
@@ -642,7 +642,7 @@ Feature: My Shopping List
 
   Scenario: Check Image preview for configurable row
     Given I reset grid
-    When I filter SKU as is equal "BB04"
+    When I filter SKU as is equal "BB04" in "Frontend Customer User Shopping List View Grid" grid
     And I should not see an "Popup Gallery Widget" element
     And I should see product picture in the "Product Item Preview"
     And I click "Product Item Gallery Trigger"
@@ -653,7 +653,7 @@ Feature: My Shopping List
 
   Scenario: Check Image preview for simple row
     Given I reset grid
-    When I filter SKU as is equal "BB13"
+    When I filter SKU as is equal "BB13" in "Frontend Customer User Shopping List View Grid" grid
     And I should not see an "Popup Gallery Widget" element
     And I should see product picture in the "Product Item Preview"
     And I click "Product Item Gallery Trigger"
@@ -664,7 +664,7 @@ Feature: My Shopping List
 
   Scenario: Check when no image
     Given I reset grid
-    When I filter SKU as is equal "BB14"
+    When I filter SKU as is equal "BB14" in "Frontend Customer User Shopping List View Grid" grid
     And I should not see an "Popup Gallery Widget" element
     And I should see an "Empty Product Image" element
     Then I should not see an "Product Item Gallery Trigger" element
@@ -702,24 +702,25 @@ Feature: My Shopping List
       | Quantity | 10   |
       | Unit     | each |
     And I click on "Shopping List Line Item 2 Save Changes Button"
-    Then I should see following grid containing rows:
-      | SKU  | Product                                  | Availability | Qty Update All   | Price  | Subtotal               |
-      | BB04 | Configurable Product 1 Red M Note 4 text | In Stock     | 10 item ( each ) |        |                        |
-      |      | Configurable Product 1                   |              | 10 items         |        | $194.00 -$97.00 $97.00 |
-      | BB05 | Green L Note 5 text                      | Out of Stock | 3 item           | $11.00 | $33.00 -$16.50 $16.50  |
-      | BB12 | Blue S Note 12 text                      | In Stock     | 7 item           | $23.00 | $161.00 -$80.50 $80.50 |
+    Then I should see following grid:
+      | SKU                                                                     | Product                                  | Availability | Qty Update All   | Price  | Subtotal               |
+      | BB04                                                                    | Configurable Product 1 Red M Note 4 text | In Stock     | 10 item ( each ) |        |                        |
+      | This item can't be added to checkout because the price is not available |                                          |              |                  |        |                        |
+      |                                                                         | Configurable Product 1                   |              | 10 items         |        | $194.00 -$97.00 $97.00 |
+      | BB05                                                                    | Green L Note 5 text                      | Out of Stock | 3 item           | $11.00 | $33.00 -$16.50 $16.50  |
+      | BB12                                                                    | Blue S Note 12 text                      | In Stock     | 7 item           | $23.00 | $161.00 -$80.50 $80.50 |
 
   Scenario: Update all with Group Product Variants
     When I set quantity for shopping list line item with sku "BB04" to "3"
     And I set unit for shopping list line item with sku "BB04" to "item"
     And I set quantity for shopping list line item with sku "BB05" to "5"
     And I click "Update All"
-    Then I should see following grid containing rows:
-      | SKU  | Product                | Availability | Qty Update All  | Price  | Subtotal                 |
-      |      | Configurable Product 1 |              | 15 items        |        | $249.00 -$124.50 $124.50 |
-      | BB04 | Red M Note 4 text      | In Stock     | 3 ( item ) each | $11.00 | $33.00 -$16.50 $16.50    |
-      | BB05 | Green L Note 5 text    | Out of Stock | 5 item          | $11.00 | $55.00 -$27.50 $27.50    |
-      | BB12 | Blue S Note 12 text    | In Stock     | 7 item          | $23.00 | $161.00 -$80.50 $80.50   |
+    Then I should see following grid:
+      | SKU                                                                     | Product                | Availability | Qty Update All  | Price  | Subtotal                 |
+      |                                                                         | Configurable Product 1 |              | 15 items        |        | $249.00 -$124.50 $124.50 |
+      | BB04                                                                    | Red M Note 4 text      | In Stock     | 3 ( item ) each | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB05                                                                    | Green L Note 5 text    | Out of Stock | 5 item          | $11.00 | $55.00 -$27.50 $27.50    |
+      | BB12                                                                    | Blue S Note 12 text    | In Stock     | 7 item          | $23.00 | $161.00 -$80.50 $80.50   |
 
   Scenario: Change VIEW permission
     And I click "Account Dropdown"

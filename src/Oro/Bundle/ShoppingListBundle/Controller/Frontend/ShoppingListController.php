@@ -40,7 +40,15 @@ class ShoppingListController extends AbstractController
         }
 
         if ($shoppingList) {
-            $this->container->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
+            $result = $this->container->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
+
+            if ($result) {
+                $this->addFlash(
+                    'warning',
+                    $this->container->get(TranslatorInterface::class)
+                        ->trans('oro.shoppinglist.validators.product.inventory_status.message')
+                );
+            }
         }
 
         return [
@@ -77,7 +85,15 @@ class ShoppingListController extends AbstractController
         }
 
         if ($shoppingList) {
-            $this->container->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
+            $result = $this->container->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
+
+            if ($result) {
+                $this->addFlash(
+                    'warning',
+                    $this->container->get(TranslatorInterface::class)
+                        ->trans('oro.shoppinglist.validators.product.inventory_status.message')
+                );
+            }
         }
 
         return [

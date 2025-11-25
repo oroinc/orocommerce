@@ -112,7 +112,8 @@ services:
     oro_shopping_list.api.add_line_item_to_shopping_list:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\AddLineItemToShoppingList
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: 40 }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create|update, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: 40 }
+            - { name: oro_featuretogle.feature, feature: saved_for_later }
 
     oro_shopping_list.api.complete_new_shopping_list_line_item:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\CompleteNewShoppingListLineItem
@@ -166,6 +167,7 @@ services:
             - '@oro_api.doctrine_helper'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+            - { name: oro_featuretogle.feature, feature: saved_for_later }
 
     oro_shopping_list.api.compute_shopping_list_product_kit_item_line_item_price:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\ComputeShoppingListProductKitItemLineItemPrice
@@ -176,6 +178,7 @@ services:
             - '@oro_api.doctrine_helper'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem }
+            - { name: oro_featuretogle.feature, feature: saved_for_later }
 
     oro_shopping_list.api.validate_shopping_list_limit:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\ValidateShoppingListLimit
@@ -311,3 +314,15 @@ services:
             - '@oro_website.manager'
         tags:
             - { name: oro.api.processor, action: add_subresource, group: save_data, requestType: frontend, association: checkout, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+
+    oro_shopping_list.api.set_update_line_items_ids_shared_data:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\SetUpdateLineItemsIdsSharedData
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, parentAction: update, event: pre_submit, requestType: 'frontend', class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+
+    oro_shopping_list.api.clean_up_line_items_on_shopping_list:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\CleanUpLineItemsOnShoppingListUpdate
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, parentAction: update, event: pre_validate, requestType: 'frontend', class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }

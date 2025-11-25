@@ -8,6 +8,10 @@ layout:
             id: shopping_list_notes
             root: content
 
+        -
+            id: shopping_list_validation
+            root: content
+
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
@@ -23,11 +27,35 @@ layout:
             optionValue:
                 singleUnitMode: '=data["oro_product_single_unit_mode"].isSingleUnitMode()'
                 singleUnitModeCodeVisible: '=data["oro_product_single_unit_mode"].isSingleUnitModeCodeVisible()'
+                cellActionsHideCount: 4
 
         - '@appendOption':
             id: datagrid
             optionName: grid_render_parameters.cssClass
             optionValue: 'responsive-shopping-list-grid-desktop-alignment responsive-shopping-list-grid-tablet-alignment responsive-shopping-list-grid-edit'
+
+        - '@setOption':
+            id: saved_for_later_datagrid
+            optionName: grid_name
+            optionValue: frontend-customer-user-shopping-list-saved-for-later-edit-grid
+
+        - '@appendOption':
+            id: saved_for_later_datagrid
+            optionName: grid_render_parameters.themeOptions
+            optionValue:
+                singleUnitMode: '=data["oro_product_single_unit_mode"].isSingleUnitMode()'
+                singleUnitModeCodeVisible: '=data["oro_product_single_unit_mode"].isSingleUnitModeCodeVisible()'
+                cellActionsHideCount: 4
+
+        - '@appendOption':
+            id: saved_for_later_datagrid
+            optionName: grid_render_parameters.cssClass
+            optionValue: 'responsive-shopping-list-grid-desktop-alignment responsive-shopping-list-grid-tablet-alignment responsive-shopping-list-grid-edit'
+
+        - '@setOption':
+            id: saved_for_later_datagrid
+            optionName: visible
+            optionValue: '=data["feature"].isFeatureEnabled("saved_for_later")'
 
         - '@setOption':
             id: container

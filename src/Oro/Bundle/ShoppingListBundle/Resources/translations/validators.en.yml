@@ -7,12 +7,23 @@ oro:
             product_kit_item_product_collection_is_available_for_purchase:
                 message: 'There are no products available for purchase in kit item {{ product_kit_item_label }}'
                 empty_message: 'There are no products available for purchase in kit item'
+            line_item_has_price:
+                message: "This item can't be added to checkout because the price is not available"
 
         not_empty: "Shopping List label must not be empty"
 
         lineitem:
             already_exists: "Line Item with the same product and unit already exists"
             quantity.greater_than_zero: "Quantity must be greater than 0"
+            inventory_status:
+                checkout_not_supported: "This item can't be added to checkout because the inventory status is not supported."
+                rfq_not_supported: "This item can't be added to RFQ because the inventory status is not supported."
+            product:
+                type:
+                    configurable:
+                        message: 'Please select product variants before placing an order or requesting a quote.'
+            only_one_required_list:
+                message: 'Line item must be assigned to either the shopping list or the saved for later list.'
 
         subtotal:
             range.not_in_range_message: "Shopping list subtotal amount should be between {{ min }} and {{ max }}."

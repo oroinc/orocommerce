@@ -1,0 +1,112 @@
+include:
+    - '@OroCustomerBundle:CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    simple_product{1..2}:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'simple-product-<sprintf("%02d", $current)>'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@simple_product_precision<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            - addName: ['@simple_product_name<current()>']
+    simple_product{3..4}:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'simple-product-<sprintf("%02d", $current)>'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@simple_product_precision<current()>'
+        inventoryStatus: '@enumInventoryStatusOutOfStock'
+        status: 'enabled'
+        __calls:
+            - addName: ['@simple_product_name<current()>']
+    configurable_product1:
+        type: 'configurable'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'configurable-product-01'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@configurable_product_precision1'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            - addName: ['@configurable_product_name1']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    simple_product_precision{1..4}:
+        unit: '@piece'
+        precision: '1'
+    configurable_product_precision1:
+        unit: '@piece'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    simple_product_name{1..4}:
+        string: 'Product <current()>'
+    configurable_product_name1:
+        string: 'Configurable Product 1'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price_simple_product{1..4}:
+        product: '@simple_product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: '<($current*12.3456)>'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    price_relation_simple_product{1..4}:
+        product: '@simple_product<current()>'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shopping_list:
+        label: 'Shopping List'
+        customer: '@Customer_AmandaRCole'
+        customerUser: '@CustomerUser_AmandaRCole'
+        owner: '@admin'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    configurable_product1_line_item1:
+        product: '@simple_product1'
+        parentProduct: '@configurable_product1'
+        quantity: '1'
+        unit: '@piece'
+        customerUser: '@CustomerUser_AmandaRCole'
+        shoppingList: '@shopping_list'
+        owner: '@admin'
+        organization: '@organization'
+    configurable_product1_line_item2:
+        product: '@simple_product2'
+        parentProduct: '@configurable_product1'
+        quantity: '1'
+        unit: '@piece'
+        customerUser: '@CustomerUser_AmandaRCole'
+        shoppingList: '@shopping_list'
+        owner: '@admin'
+        organization: '@organization'
+    configurable_product1_line_item3:
+        product: '@simple_product3'
+        parentProduct: '@configurable_product1'
+        quantity: '2'
+        unit: '@piece'
+        customerUser: '@CustomerUser_AmandaRCole'
+        shoppingList: '@shopping_list'
+        owner: '@admin'
+        organization: '@organization'
+    configurable_product1_line_item4:
+        product: '@simple_product4'
+        parentProduct: '@configurable_product1'
+        quantity: '3'
+        unit: '@piece'
+        customerUser: '@CustomerUser_AmandaRCole'
+        shoppingList: '@shopping_list'
+        owner: '@admin'
+        organization: '@organization'

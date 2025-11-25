@@ -15,27 +15,22 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
+final class ProductShoppingListsDataProviderTest extends TestCase
 {
-    /** @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $currentShoppingListManager;
+    private CurrentShoppingListManager&MockObject $currentShoppingListManager;
+    private LineItemRepository&MockObject $lineItemRepository;
+    private AclHelper&MockObject $aclHelper;
+    private TokenAccessorInterface&MockObject $tokenAccessor;
+    private ConfigManager&MockObject $configManager;
+    private RequestStack $requestStack;
 
-    /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $lineItemRepository;
-
-    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $aclHelper;
-
-    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenAccessor;
-
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
-
-    /** @var ProductShoppingListsDataProvider */
-    private $provider;
+    private ProductShoppingListsDataProvider $provider;
 
     #[\Override]
     protected function setUp(): void
@@ -53,6 +48,9 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
             $this->tokenAccessor,
             $this->configManager
         );
+
+        $this->requestStack = new RequestStack();
+        $this->provider->setRequestStack($this->requestStack);
     }
 
     private function getShoppingList(int $id, string $label, bool $isCurrent): ShoppingList
@@ -268,7 +266,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetProductUnitsQuantityForGuestUser()
+    public function testGetProductUnitsQuantityForGuestUser(): void
     {
         $shoppingList = new ShoppingList();
 
@@ -286,7 +284,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
         self::assertEquals(null, $this->provider->getProductUnitsQuantity(1));
     }
 
-    public function testGetProductsUnitsQuantity()
+    public function testGetProductsUnitsQuantity(): void
     {
         $shoppingList = $this->getShoppingList(1, 'ShoppingList 1', true);
         $secondShoppingList = $this->getShoppingList(2, 'ShoppingList 2', false);
@@ -372,5 +370,46 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
                 $secondSimpleProduct->getId()
             ])
         );
+    }
+
+    public function testGetProductsUnitsQuantityForSavedForLater(): void
+    {
+        $request = new Request();
+        $request->attributes->set('savedForLaterGrid', true);
+        $this->requestStack->push($request);
+        $shoppingList = $this->getShoppingList(1, 'ShoppingList 1', true);
+
+        $product = $this->getProduct(11);
+
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_shopping_list.show_all_in_shopping_list_widget')
+            ->willReturn(true);
+
+        $this->currentShoppingListManager->expects(self::once())
+            ->method('getCurrent')
+            ->willReturn($shoppingList);
+
+        $lineItems = [$this->getLineItem(1, 'each', 10, $shoppingList, $product),];
+
+        $this->lineItemRepository->expects(self::once())
+            ->method('getAllProductItemsWithShoppingListNames')
+            ->with($this->aclHelper, [$product->getId()])
+            ->willReturn($lineItems);
+
+        $expected = [
+            11 => [
+                [
+                    'id' => 1,
+                    'label' => 'ShoppingList 1',
+                    'is_current' => true,
+                    'line_items' => [
+                        ['id' => 1, 'unit' => 'each', 'quantity' => 10, 'productId' => 11],
+                    ]
+                ]
+            ]
+        ];
+
+        self::assertEquals($expected, $this->provider->getProductsUnitsQuantity([$product->getId()]));
     }
 }

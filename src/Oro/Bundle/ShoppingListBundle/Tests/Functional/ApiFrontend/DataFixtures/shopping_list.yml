@@ -379,6 +379,13 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         owner: '@user'
         __calls:
             - addKitItemLineItem: ['@product_kit_item4_line_item1']
+    saved_for_later_line_item1:
+        product: '@product1'
+        quantity: 5
+        unit: '@item'
+        customerUser: '@customer_user'
+        organization: '@organization'
+        owner: '@user'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shopping_list1:
@@ -390,6 +397,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         owner: '@user'
         organization: '@organization'
         website: '@website'
+        savedForLaterLineItems: ['@saved_for_later_line_item1']
     shopping_list2:
         label: 'Shopping List 2'
         notes: 'Shopping List 2 Notes'

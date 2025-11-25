@@ -160,6 +160,24 @@
     </div>
 {% endblock %}
 
+{% block __customer_user_shopping_list__saved_for_later_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'saved-for-later-wrapper'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{%- block __customer_user_shopping_list__saved_for_later_title_widget -%}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'h2'
+    }) %}
+
+    <h2 {{ block('block_attributes') }}>{{ text|trans }}</h2>
+{%- endblock -%}
+
 {% block __customer_user_shopping_list__summary_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' summary-wrapper',
@@ -214,6 +232,10 @@
 
     {% set mainButtonClass = mainButtonClass|default('btn btn--full direct-link') %}
     {% set additionalButtonClass = additionalButtonClass|default('btn btn--outlined btn--block direct-link') %}
+
+    {% if always_outlined is defined and always_outlined %}
+        {% set mainButtonClass = additionalButtonClass %}
+    {% endif %}
 
     {% set buttonsCount = buttons|length %}
     {% if buttonsCount > 0 %}

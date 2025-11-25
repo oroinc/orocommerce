@@ -82,15 +82,7 @@ class MatrixGridOrderFormHandler implements FormHandlerInterface
 
     protected function saveData(MatrixCollection $data, FormInterface $form, Request $request): void
     {
-        $shoppingList = $request->attributes->get('shoppingList');
-        if (!$shoppingList instanceof ShoppingList) {
-            throw new \InvalidArgumentException('The "shoppingList" request argument should be present');
-        }
-
-        $product = $request->attributes->get('product');
-        if (!$product instanceof Product) {
-            throw new \InvalidArgumentException('The "product" request argument should be present');
-        }
+        [$shoppingList, $product] = $this->getRequestParameters($request);
 
         $this->eventDispatcher->dispatch(new AfterFormProcessEvent($form, $data), Events::BEFORE_FLUSH);
 
@@ -101,11 +93,42 @@ class MatrixGridOrderFormHandler implements FormHandlerInterface
         );
 
         foreach ($lineItems as $lineItem) {
+            if ($this->isSavedForLaterGrid($request)) {
+                $lineItem->removeShoppingList();
+                $lineItem->setSavedForLaterList($shoppingList);
+            }
             $this->shoppingListManager->updateLineItem($lineItem, $shoppingList);
         }
 
-        $this->matrixGridOrderManager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
+        if ($this->isSavedForLaterGrid($request)) {
+            $this->matrixGridOrderManager
+                ->addEmptyMatrixForSavedForLaterListIfAllowed($shoppingList, $product, $lineItems);
+        } else {
+            $this->matrixGridOrderManager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
+        }
 
         $this->eventDispatcher->dispatch(new AfterFormProcessEvent($form, $data), Events::AFTER_FLUSH);
+    }
+
+    private function getRequestParameters(Request $request): array
+    {
+        $shoppingList = $request->attributes->get('shoppingList');
+        if (!$shoppingList instanceof ShoppingList) {
+            throw new \InvalidArgumentException('The "shoppingList" request argument should be present');
+        }
+
+        $product = $request->attributes->get('product');
+        if (!$product instanceof Product) {
+            throw new \InvalidArgumentException('The "product" request argument should be present');
+        }
+
+        return [$shoppingList, $product];
+    }
+
+    private function isSavedForLaterGrid(Request $request): bool
+    {
+        $isSavedForLaterGrid = $request->get('savedForLaterGrid', false);
+
+        return \filter_var($isSavedForLaterGrid, FILTER_VALIDATE_BOOLEAN);
     }
 }

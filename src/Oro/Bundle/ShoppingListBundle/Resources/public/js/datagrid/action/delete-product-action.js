@@ -77,6 +77,8 @@ define(function(require) {
                 this.request.abort();
             }
 
+            const datagridThemeOptions = this.datagrid.themeOptions || {};
+
             this.request = this.model.destroy({
                 url: this.getLink(),
                 wait: true,
@@ -87,7 +89,12 @@ define(function(require) {
                 global: this.configuration.showGlobalLoadingBar ?? true,
                 success: (model, response, options) => {
                     messenger.notificationFlashMessage('success', success, {namespace: 'shopping_list'});
-                    mediator.trigger('shopping-list:refresh', options);
+                    let eventName = 'shopping-list:refresh';
+
+                    if (datagridThemeOptions?.shoppingListEditItemPrefixEventName) {
+                        eventName = `${datagridThemeOptions.shoppingListEditItemPrefixEventName}:delete`;
+                    }
+                    mediator.trigger(eventName, options, model);
                 },
                 complete: () => {
                     $datagridEl.trigger('ajaxComplete');
@@ -103,7 +110,8 @@ define(function(require) {
                 return routing.generate('oro_api_shopping_list_frontend_delete_line_item_configurable', {
                     shoppingListId: this.datagrid.metadata.gridParams.shopping_list_id,
                     productId: this.model.attributes.productId,
-                    unitCode: this.model.attributes.unit
+                    unitCode: this.model.attributes.unit,
+                    savedForLaterGrid: this.model.collection.options?.savedForLaterGrid ?? false
                 });
             } else {
                 return routing.generate('oro_api_shopping_list_frontend_delete_line_item', {

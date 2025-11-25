@@ -166,7 +166,7 @@ Feature: Add Product to Customer User's Own Shopping List
     When I follow "Shopping List 3" link within flash message "Shopping list \"Shopping List 3\" was updated successfully"
     And I click "Next"
     And I scroll to top
-    When I filter SKU as contains "PROD_B"
+    When I filter SKU as contains "PROD_B" in "Frontend Customer User Shopping List Edit Grid" grid
     Then I should see following grid:
       | SKU       | Product                                | Qty Update All |
       | PROD_B_11 | ConfigurableProductB Value 11 Value 21 | 1 item         |

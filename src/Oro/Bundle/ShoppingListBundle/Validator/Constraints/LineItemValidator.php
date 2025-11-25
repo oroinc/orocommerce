@@ -22,13 +22,12 @@ class LineItemValidator extends ConstraintValidator
     /**
      * @param LineItem $value
      * @param Constraint|LineItem $constraint
-     *
      */
     #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         $lineItemRepository = $this->registry->getRepository(LineItem::class);
-        $shoppingList = $value->getShoppingList();
+        $shoppingList = $value->getAssociatedList();
 
         if ($shoppingList && $lineItemRepository->findDuplicateInShoppingList($value, $shoppingList)) {
             $this->context->addViolation($constraint->message);

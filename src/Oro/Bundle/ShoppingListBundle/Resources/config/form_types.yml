@@ -45,3 +45,11 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: form.type }
+
+    oro_shopping_list.form.event_listener.saved_for_later_matrix_form:
+        class: 'Oro\Bundle\ShoppingListBundle\EventListener\SavedForLaterMatrixFormListener'
+        arguments:
+            - '@request_stack'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_data_set.matrix_collection, method: onFormDataSet }

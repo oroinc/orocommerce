@@ -368,10 +368,8 @@ class ShoppingListControllerTest extends WebTestCase
 
         $content = self::jsonToArray($response->getContent());
         $pageCrawler = new Crawler($content['page_content']);
-        $buttonsCrawler = new Crawler($content['combined_button_wrapper']);
 
         self::assertStringContainsString($shoppingList->getLabel(), $pageCrawler->html());
-        self::assertStringContainsString('Checkout', $buttonsCrawler->html());
 
         $response = $this->client->requestFrontendGrid(
             'frontend-customer-user-shopping-list-grid',

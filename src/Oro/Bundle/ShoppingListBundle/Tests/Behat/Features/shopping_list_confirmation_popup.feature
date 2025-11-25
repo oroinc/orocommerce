@@ -27,6 +27,14 @@ Feature: Shopping list confirmation popup
     When I click "Save settings"
     Then the "Enable Guest Shopping List" checkbox should be checked
 
+  Scenario: Enable Enforce separate shopping list validations for checkout and RFQ Feature
+    Given I follow "Commerce/Sales/Shopping List" on configuration sidebar
+    When I fill "Shopping List Configuration Form" with:
+      | Enable Enforce separate shopping list validations for checkout and RFQ Use default | false |
+      | Enable Enforce separate shopping list validations for checkout and RFQ             | true  |
+    And I save setting
+    Then I should see "Configuration saved" flash message
+
   Scenario: Enable guest checkout setting
     Given I follow "Commerce/Sales/Checkout" on configuration sidebar
     And fill "Checkout Configuration Form" with:
@@ -106,19 +114,34 @@ Feature: Shopping list confirmation popup
 
   Scenario: Check create order with configurable product
     Given I type "1GB83" in "search"
-    And click "Search Button"
+    And I click "Search Button"
     When I click "Add to Shopping List"
-    Then should see 'Shopping list "Shopping List" was updated successfully' flash message and I close it
+    Then I should see 'Shopping list "Shopping List" was updated successfully' flash message and I close it
     When I open shopping list widget
-    And click "Checkout"
-    Then I should see "This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
-    And click "Cancel"
-    When I fill "Matrix Grid Form" with:
+    And I click "Open List"
+    Then I should see "Some items in your shopping list need a quick review. Take a moment to update them before continuing."
+    And I should see "Please select product variants before placing an order or requesting a quote."
+    When I click "Checkout"
+    Then I should see next rows in "Frontend Customer User Shopping List Invalid Line Items Table" table without headers
+      | Slip-On Clog 1GB83 Select Variants                                            |
+      | Please select product variants before placing an order or requesting a quote. |
+    And I should not see "This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
+    And I click "Close"
+    When I click "Select Variants"
+    And I fill "Matrix Grid Form" with:
       |       | L | M |
       | Black | 1 | - |
       | White | - | - |
-    And click "Add to Shopping List"
+    And I click "Save Changes"
     Then I should see 'Shopping list "Shopping list" was updated successfully' flash message and I close it
-    When I open shopping list widget
-    And click "Checkout"
+    And I reload the page
+    And I should not see "Some items in your shopping list need a quick review. Take a moment to update them before continuing."
+    And I should not see "Please select product variants before placing an order or requesting a quote."
+    When I click "Create Order"
+    And I click "Proceed to Guest Checkout?"
     Then I should not see "This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
+    When I click "Order products"
+    Then I should see following grid:
+      | SKU            | Product              |
+      | simple-product | Simple product       |
+      | 1GB81          | Slip-On Clog Black L |

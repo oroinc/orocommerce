@@ -41,6 +41,8 @@ class Configuration implements ConfigurationInterface
                 'mass_adding_on_product_listing_enabled' => ['value' => true, 'type' => 'boolean'],
                 'shopping_lists_max_line_items_per_page' => ['value' => 1000, 'type' => 'integer'],
                 'show_all_in_shopping_list_widget' => ['value' => false, 'type' => 'boolean'],
+                'saved_for_later_enabled' => ['value' => false, 'type' => 'boolean'],
+                'enforce_separate_shopping_list_validations_enabled' => ['value' => false, 'type' => 'boolean'],
             ]
         );
 

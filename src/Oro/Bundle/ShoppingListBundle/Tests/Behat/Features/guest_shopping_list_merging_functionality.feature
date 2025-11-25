@@ -76,6 +76,8 @@ Feature: Guest shopping list merging functionality
     And I open shopping list widget
     And I click "Open List"
     And I should see following grid:
-      | SKU      | Qty Update All |
-      | PSKU1    | 2 each         |
-      | CONTROL1 | 1 each         |
+      | SKU                                                                     | Qty Update All |
+      | PSKU1                                                                   | 2 each         |
+      | This item can't be added to checkout because the price is not available |                |
+      | CONTROL1                                                                | 1 each         |
+      | This item can't be added to checkout because the price is not available |                |

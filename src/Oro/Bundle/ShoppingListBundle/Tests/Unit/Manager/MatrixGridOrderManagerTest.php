@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Manager\EmptyMatrixGridInterface;
+use Oro\Bundle\ShoppingListBundle\Manager\EmptyMatrixGridManager;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
@@ -22,10 +22,13 @@ use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class MatrixGridOrderManagerTest extends TestCase
 {
     private ProductVariantAvailabilityProvider&MockObject $variantAvailability;
-    private EmptyMatrixGridInterface&MockObject $emptyMatrixGridManager;
+    private EmptyMatrixGridManager&MockObject $emptyMatrixGridManager;
     private ProductUnitRepository&MockObject $productUnitRepository;
     private MatrixGridOrderManager $manager;
 
@@ -33,7 +36,7 @@ class MatrixGridOrderManagerTest extends TestCase
     protected function setUp(): void
     {
         $this->variantAvailability = $this->createMock(ProductVariantAvailabilityProvider::class);
-        $this->emptyMatrixGridManager = $this->createMock(EmptyMatrixGridInterface::class);
+        $this->emptyMatrixGridManager = $this->createMock(EmptyMatrixGridManager::class);
         $this->productUnitRepository = $this->createMock(ProductUnitRepository::class);
 
         $doctrine = $this->createMock(ManagerRegistry::class);
@@ -711,5 +714,40 @@ class MatrixGridOrderManagerTest extends TestCase
             ->method('addEmptyMatrix');
 
         $this->manager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
+    }
+
+    public function testAddEmptyMatrixForSavedForLaterListIfAllowed(): void
+    {
+        $shoppingList = new ShoppingList();
+        $product = $this->getProduct(1);
+        $lineItems = [$this->getLineItem(1), $this->getLineItem(2)];
+
+        $this->emptyMatrixGridManager->expects(self::once())
+            ->method('isAddEmptyMatrixAllowed')
+            ->with($lineItems)
+            ->willReturn(true);
+
+        $this->emptyMatrixGridManager->expects(self::once())
+            ->method('addSavedForLaterListEmptyMatrix')
+            ->with($shoppingList, $product);
+
+        $this->manager->addEmptyMatrixForSavedForLaterListIfAllowed($shoppingList, $product, $lineItems);
+    }
+
+    public function testAddEmptyMatrixForSavedForLaterListIfNotAllowed(): void
+    {
+        $shoppingList = new ShoppingList();
+        $product = $this->getProduct(1);
+        $lineItems = [$this->getLineItem(1), $this->getLineItem(2)];
+
+        $this->emptyMatrixGridManager->expects(self::once())
+            ->method('isAddEmptyMatrixAllowed')
+            ->with($lineItems)
+            ->willReturn(false);
+
+        $this->emptyMatrixGridManager->expects(self::never())
+            ->method('addSavedForLaterListEmptyMatrix');
+
+        $this->manager->addEmptyMatrixForSavedForLaterListIfAllowed($shoppingList, $product, $lineItems);
     }
 }

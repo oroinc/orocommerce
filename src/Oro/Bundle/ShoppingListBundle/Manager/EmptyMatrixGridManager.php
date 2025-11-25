@@ -33,29 +33,62 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
             return;
         }
 
-        if ($this->isShoppingListHasConfigurableProduct($shoppingList, $product)) {
+        if ($this->hasShoppingListConfigurableProduct($shoppingList, $product)) {
             return;
         }
 
         $this->addConfigurableProductToShoppingList($shoppingList, $product);
     }
 
-    private function isShoppingListHasProductVariants(ShoppingList $shoppingList, Product $product): bool
+    public function addSavedForLaterListEmptyMatrix(ShoppingList $shoppingList, Product $product)
     {
-        return $this->doctrineHelper->getEntityRepository(LineItem::class)->findOneBy([
-            'shoppingList' => $shoppingList,
-            'unit' => $product->getPrimaryUnitPrecision()->getUnit(),
-            'parentProduct' => $product,
-        ]) !== null;
+        if ($this->isShoppingListHasProductVariants($shoppingList, $product, true)) {
+            return;
+        }
+
+        if ($this->hasShoppingListConfigurableProduct($shoppingList, $product, true)) {
+            return;
+        }
+
+        $this->addSavedForLaterConfigurableProductToShoppingList($shoppingList, $product);
     }
 
-    private function isShoppingListHasConfigurableProduct(ShoppingList $shoppingList, Product $product): bool
-    {
-        return $this->doctrineHelper->getEntityRepository(LineItem::class)->findOneBy([
-            'shoppingList' => $shoppingList,
+    private function isShoppingListHasProductVariants(
+        ShoppingList $shoppingList,
+        Product $product,
+        bool $savedForLater = false
+    ): bool {
+        $criteria = [
+            'unit' => $product->getPrimaryUnitPrecision()->getUnit(),
+            'parentProduct' => $product,
+        ];
+
+        if ($savedForLater) {
+            $criteria['savedForLaterList'] = $shoppingList;
+        } else {
+            $criteria['shoppingList'] = $shoppingList;
+        }
+
+        return $this->doctrineHelper->getEntityRepository(LineItem::class)->findOneBy($criteria) !== null;
+    }
+
+    private function hasShoppingListConfigurableProduct(
+        ShoppingList $shoppingList,
+        Product $product,
+        bool $savedForLater = false
+    ): bool {
+        $criteria = [
             'unit' => $product->getPrimaryUnitPrecision()->getUnit(),
             'product' => $product,
-        ]) !== null;
+        ];
+
+        if ($savedForLater) {
+            $criteria['savedForLaterList'] = $shoppingList;
+        } else {
+            $criteria['shoppingList'] = $shoppingList;
+        }
+
+        return $this->doctrineHelper->getEntityRepository(LineItem::class)->findOneBy($criteria) !== null;
     }
 
     private function addConfigurableProductToShoppingList(ShoppingList $shoppingList, Product $product)
@@ -63,6 +96,20 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
         $entityManager = $this->doctrineHelper->getEntityManagerForClass(LineItem::class);
 
         $entityManager->persist($this->lineItemFactory->create($shoppingList, $product));
+        $entityManager->flush();
+    }
+
+    private function addSavedForLaterConfigurableProductToShoppingList(
+        ShoppingList $shoppingList,
+        Product $product
+    ): void {
+        $entityManager = $this->doctrineHelper->getEntityManagerForClass(LineItem::class);
+
+        $lineItem = $this->lineItemFactory->create($shoppingList, $product);
+        $lineItem->setSavedForLaterList($shoppingList);
+        $lineItem->removeShoppingList();
+
+        $entityManager->persist($lineItem);
         $entityManager->flush();
     }
 

@@ -268,3 +268,10 @@ datagrids:
                 icon:          eye
                 acl_resource:  oro_product_view
                 rowAction:     true
+
+    shopping-list-saved-for-later-line-items-grid:
+        extends: shopping-list-line-items-grid
+        options:
+            entityHint: oro.shoppinglist.saved_for_later_line_items.label
+            gridViews:
+                allLabel: oro.shoppinglist.saved_for_later_line_items.entity_grid_all_view_label
