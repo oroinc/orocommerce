@@ -45,6 +45,7 @@ class TabbedContentItemType extends AbstractType
                 'label' => 'oro.cms.tabbedcontentitem.content.label',
                 'tooltip' => 'oro.cms.tabbedcontentitem.content.tooltip',
                 'required' => false,
+                'auto_render' => false
             ]
         );
 

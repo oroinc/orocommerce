@@ -356,28 +356,33 @@
 {% block oro_cms_tabbed_content_item_collection_row %}
     {% import _self as formFields %}
     {% apply spaceless %}
+        {% set id = id ~ '_collection' %}
+        {% set prototype_name = form.vars.prototype_name %}
         {% if prototype is defined %}
-            {% set prototype_html = formFields.oro_cms_tabbed_content_collection_item_prototype(form) %}
+            {% set prototype_html = formFields.oro_cms_tabbed_content_collection_item_prototype(form, {parent_id: id, prototype_name: prototype_name}) %}
         {% endif %}
         {% set attr = attr|merge({
-            'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-image-slide-collection oro-options-collection oro-item-collection collection-fields-list'
+            'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'content-widget-variants oro-options-collection collection-fields-list',
+            'data-page-component-view': 'orocms/js/app/views/content-widget-collection-variant'
         }) %}
 
-        {% set id = id ~ '_collection' %}
-
         <div class="row-oro">
-            {% set prototype_name = form.vars.prototype_name %}
+            {% if allow_add %}
+                <div class="content-widget-variants-control">
+                    <a class="btn add-list-item" href="#" data-method="prepend" role="button">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                </div>
+            {% endif %}
             <div
-                    {{ block('widget_container_attributes') }}
-                    data-last-index="{{ form.children|length}}"
-                    data-row-count-add="{{ form.vars.row_count_add }}"
-                    data-prototype-name="{{ prototype_name }}"
-                    {% if prototype_html is defined %}data-prototype="{{ prototype_html|escape }}"{% endif %}
+                {{ block('widget_container_attributes') }}
+                data-last-index="{{ form.children|length}}"
+                data-row-count-add="{{ form.vars.row_count_add }}"
+                data-prototype-name="{{ prototype_name }}"
+                {% if prototype_html is defined %}data-prototype="{{ prototype_html|escape }}"{% endif %}
             >
                 <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}" data-name="collection-validation" disabled data-validate-element>
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ formFields.oro_cms_tabbed_content_collection_item_prototype(child) }}
+                        {{ formFields.oro_cms_tabbed_content_collection_item_prototype(child, {parent_id: id, prototype_name: prototype_name, expanded: loop.index == 1 }) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {% for i in 0..(form.vars.row_count_initial - 1) %}
@@ -386,13 +391,15 @@
                 {% endif %}
             </div>
             {% if allow_add %}
-                <a class="btn add-list-item" href="#" role="button">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <div class="content-widget-variants-control">
+                    <a class="btn add-list-item" href="#" role="button">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                </div>
             {% endif %}
         </div>
     {% endapply %}
 {% endblock %}
 
-{% macro oro_cms_tabbed_content_collection_item_prototype(widget) %}
+{% macro oro_cms_tabbed_content_collection_item_prototype(widget, params) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.prototype.vars.name %}
@@ -406,35 +413,49 @@
         {% endif %}
     {% endif %}
     <div
-            class="oro-collection-item"
-            data-content="{{ name }}"
-            {% if widget.parent.vars.skip_optional_validation_group is not defined %}
-                data-validation-optional-group
-                {% if form.vars.attr['data-validation-optional-group-handler'] is defined %}
-                    data-validation-optional-group-handler="{{ form.vars.attr['data-validation-optional-group-handler'] }}"
-                {% endif %}
+        class="oro-collection-item content-widget-item"
+        data-content="{{ name }}"
+        {% if widget.parent.vars.skip_optional_validation_group is not defined %}
+            data-validation-optional-group
+            {% if form.vars.attr['data-validation-optional-group-handler'] is defined %}
+                data-validation-optional-group-handler="{{ form.vars.attr['data-validation-optional-group-handler'] }}"
             {% endif %}
+        {% endif %}
     >
-        <div class="row-oro oro-multiselect-holder{% if not allow_delete %} not-removable{% endif %}">
-            {% set text_fields_html %}
-                {{ form_row(form.content) }}
-            {% endset %}
+        <div class="row-oro content-widget-variant-row{% if not allow_delete %} not-removable{% endif %}" data-role="content-variant-item-row">
+            {% set expanded = params.expanded|default(false) %}
+            {% set collapseId = 'content-variant-collapse-'|uniqid ~ params.prototype_name %}
 
-            <div class="section-content">
-                {{ form_rest(form) }}
-            </div>
-            <div class="section-content">
-                {{ text_fields_html }}
-            </div>
+            <button class="btn-toggle-variant btn btn-icon btn-square-light{{ expanded ? '' : ' collapsed' }}"
+                type="button"
+                data-toggle="collapse"
+                data-target="{{ '#' ~ collapseId }}"
+                aria-expanded="{{ expanded }}"
+                title="{{ expanded ? 'Collapse'|trans : 'Expand'|trans }}"
+            >
+                <span class="fa-icon oro-collapse-icon" aria-hidden="true"></span>
+            </button>
+
+            <span class="content-variant-item-title" data-role="content-variant-item-title">{{ form.title.vars.value }}</span>
 
             {% if allow_delete %}
                 <button
-                        class="removeRow btn btn-icon btn-square-light"
-                        aria-label="{{ 'oro.form.collection.remove'|trans }}"
-                        type="button"
-                        data-related="{{ name }}">
+                    class="removeRow btn btn-icon btn-square-light"
+                    aria-label="{{ 'oro.form.collection.remove'|trans }}"
+                    type="button"
+                    data-related="{{ name }}">
                 </button>
             {% endif %}
+
+            <div id="{{ collapseId }}"
+                class="content-widget-item-content collapse{{ expanded ? ' show' : '' }}"
+                data-collapsed-title="{{ 'Expand'|trans }}"
+                data-expanded-title="{{ 'Collapse'|trans }}"
+                data-role="content-variant-item"
+                data-parent="#{{ params.parent_id }}"
+            >
+                {{ form_rest(form) }}
+            </div>
         </div>
     </div>
 {% endmacro %}

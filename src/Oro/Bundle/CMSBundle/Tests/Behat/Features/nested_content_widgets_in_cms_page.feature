@@ -47,13 +47,14 @@ Feature: Nested Content Widgets in CMS Page
 
     When I fill "Content Widget Form" with:
       | Layout | Tabs mode |
-    And click "Add"
     And fill "Tabbed Content Widget Form" with:
       | Tab 1 Title | Tab 1 Title |
       | Tab 1 Order | 1           |
+    And I fill in WYSIWYG "Tabbed Content Widget Tab 1 Content" with "Tab 1 Content"
+    And click "Add"
+    And fill "Tabbed Content Widget Form" with:
       | Tab 2 Title | Tab 2 Title |
       | Tab 2 Order | 2           |
-    And I fill in WYSIWYG "Tabbed Content Widget Tab 1 Content" with "Tab 1 Content"
     And I fill in WYSIWYG "Tabbed Content Widget Tab 2 Content" with "{{ widget('product_mini_block') }} - Tab 2 Content"
     And I save and close form
     Then I should see "Content widget has been saved" flash message

@@ -27,6 +27,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Added
 
+#### CMSBundle
+* Added `orocms/js/app/views/content-widget-collection-variant` view component
+
 #### ShoppingListBundle
 * Added new `savedForLaterList` relation to `\Oro\Bundle\ShoppingListBundle\Entity\LineItem`.
 * Added new `savedForLaterLineItems` relation to `\Oro\Bundle\ShoppingListBundle\Entity\ShoppingList`.
@@ -107,6 +110,10 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\FormBundle\Resources\public\templates\warning-template.html` for displaying validation warnings in forms.
 
 ### Changed
+
+#### CMSBundle
+* Changed the `oro_cms_tabbed_content_item_collection_row` block markup. Added collapsable markup.
+* Changed the `oro_cms_tabbed_content_collection_item_prototype` macro
 
 ##### Product inventory statuses
 * Updated product availability display statuses according to new design:
