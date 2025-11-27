@@ -32,7 +32,12 @@ class AddOrderToCheckout implements Migration
 
         $queries->addPostQuery(
             new ParametrizedSqlMigrationQuery(
-                'UPDATE oro_checkout SET order_id = ((wi.data::jsonb->>\'order\')::jsonb->>\'id\')::integer'
+                'UPDATE oro_checkout SET order_id = '
+                . '(CASE WHEN (wi.data IS NULL OR wi.data NOT LIKE \'{%\') THEN NULL'
+                . ' ELSE ('
+                . 'CASE WHEN wi.data::jsonb->>\'order\' NOT LIKE \'{%\' THEN NULL '
+                . 'ELSE ((wi.data::jsonb->>\'order\')::jsonb->>\'id\')::integer END'
+                . ') END)'
                 . ' FROM oro_workflow_item wi'
                 . ' WHERE wi.entity_class = :entityClass AND wi.entity_id::integer = oro_checkout.id',
                 ['entityClass' => Checkout::class],
