@@ -25,7 +25,9 @@ class AddAdditionalDataToCheckout implements Migration
 
         $queries->addPostQuery(
             new ParametrizedSqlMigrationQuery(
-                'UPDATE oro_checkout SET additional_data = wi.data::jsonb->>\'additional_data\''
+                'UPDATE oro_checkout SET additional_data = '
+                . '(CASE WHEN wi.data IS NULL OR wi.data NOT LIKE \'{%\' THEN NULL'
+                . ' ELSE wi.data::jsonb->>\'additional_data\' END)'
                 . ' FROM oro_workflow_item wi'
                 . ' WHERE wi.entity_class = :entityClass AND wi.entity_id::integer = oro_checkout.id',
                 ['entityClass' => Checkout::class],
