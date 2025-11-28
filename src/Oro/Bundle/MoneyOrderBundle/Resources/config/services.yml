@@ -26,3 +26,10 @@ services:
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_payment.collect_formatted_payment_options, method: onCollectPaymentOptions }
+
+    Oro\Bundle\MoneyOrderBundle\Migration\DataHelper\MoneyOrderHelper:
+        public: true
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@oro_money_order.generator.money_order_config_identifier'
+            - '@oro_config.global'

@@ -22,6 +22,8 @@ use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData;
 use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData;
 use Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData;
 use Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -52,6 +54,8 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
             LoadShoppingListDemoData::class,
             LoadTaxConfigurationDemoData::class,
             LoadOrderLineItemDemoData::class,
+            LoadProductDemoData::class,
+            LoadProductUnitPrecisionDemoData::class,
         ];
     }
 
@@ -93,6 +97,8 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
         $paymentTermAccessor = $this->container->get('oro_payment_term.provider.payment_term_association');
         $website = $this->getWebsite($manager);
 
+        $totalHelper = $this->container->get('oro_order.order.total.total_helper');
+
         $index = 0;
         $timeZone = new \DateTimeZone('UTC');
         foreach ($customerUsers as $customerUser) {
@@ -115,11 +121,16 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
                     ->setBillingAddress($orderAddress)
                     ->setShippingAddress($orderAddress)
                     ->setWebsite($website)
-                    ->addLineItem($this->getOrderLineItem($manager))
                     ->setCurrency(CurrencyConfiguration::DEFAULT_CURRENCY)
                     ->setShipUntil(new \DateTime(sprintf('+%d hours', random_int(0, 100)), $timeZone))
                     ->setCreatedAt($randomDateTime)
                     ->setUpdatedAt($randomDateTime);
+
+                for ($i = 0; $i < 3; $i++) {
+                    $lineItem = $this->getOrderLineItem($manager);
+                    $order->addLineItem($lineItem);
+                }
+                $totalHelper->fill($order);
 
                 $paymentTermAccessor->setPaymentTerm($order, $paymentTerm);
 
