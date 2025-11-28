@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
@@ -24,6 +26,8 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData;
 use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadProductPriceDemoData;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData;
 use Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData;
 use Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -48,7 +52,9 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
             LoadPriceListDemoData::class,
             LoadProductPriceDemoData::class,
             LoadShoppingListDemoData::class,
-            LoadTaxConfigurationDemoData::class
+            LoadTaxConfigurationDemoData::class,
+            LoadProductDemoData::class,
+            LoadProductUnitPrecisionDemoData::class,
         ];
     }
 
