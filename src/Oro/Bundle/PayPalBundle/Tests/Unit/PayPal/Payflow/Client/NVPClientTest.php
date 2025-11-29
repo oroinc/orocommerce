@@ -8,6 +8,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP\EncoderInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class NVPClientTest extends TestCase
 {
@@ -40,10 +41,15 @@ class NVPClientTest extends TestCase
             ->with($options)
             ->willReturn($encodedData);
 
+        $responseStream = $this->createMock(StreamInterface::class);
+        $responseStream->expects(self::once())
+            ->method('__toString')
+            ->willReturn($responseString);
+
         $response = $this->createMock(ResponseInterface::class);
         $response->expects($this->once())
             ->method('getBody')
-            ->willReturn($responseString);
+            ->willReturn($responseStream);
 
         $this->httpClient->expects($this->once())
             ->method('request')
