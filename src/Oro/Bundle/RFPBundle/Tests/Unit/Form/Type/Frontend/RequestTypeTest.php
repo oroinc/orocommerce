@@ -41,7 +41,10 @@ class RequestTypeTest extends AbstractTest
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects(self::once())
             ->method('setDefaults')
-            ->with(['data_class' => Request::class]);
+            ->with([
+                'data_class' => Request::class,
+                'csrf_token_id' => 'oro_rfp_frontend_request',
+            ]);
 
         $this->formType->configureOptions($resolver);
     }

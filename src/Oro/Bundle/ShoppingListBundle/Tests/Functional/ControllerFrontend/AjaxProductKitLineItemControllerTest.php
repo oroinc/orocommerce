@@ -165,6 +165,7 @@ class AjaxProductKitLineItemControllerTest extends WebTestCase
                 'quantity' => 1,
             ],
         ];
+
         $this->ajaxRequest(
             'POST',
             $this->getUrl(
@@ -178,7 +179,7 @@ class AjaxProductKitLineItemControllerTest extends WebTestCase
                     'quantity' => $productKitLineItemQuantity,
                     'unit' => $productKitLineItemUnit,
                     'kitItemLineItems' => $productKitItemLineItems,
-                    '_token' => $this->getCsrfToken('oro_product_kit_line_item')->getValue(),
+                    '_token' => $this->getCsrfToken('submit')->getValue(),
                 ],
             ]
         );
@@ -279,7 +280,7 @@ class AjaxProductKitLineItemControllerTest extends WebTestCase
                             'quantity' => 10,
                         ],
                     ],
-                    '_token' => $this->getCsrfToken('oro_product_kit_line_item')->getValue(),
+                    '_token' => $this->getCsrfToken('submit')->getValue(),
                 ],
             ]
         );

@@ -135,7 +135,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
         string $stateFull,
         array $zipCodes
     ): void {
-        $token = $this->getCsrfToken('oro_tax_jurisdiction_type')->getValue();
+        $token = $this->getCsrfToken('submit')->getValue();
 
         $formData = [
             'oro_tax_jurisdiction_type' => [

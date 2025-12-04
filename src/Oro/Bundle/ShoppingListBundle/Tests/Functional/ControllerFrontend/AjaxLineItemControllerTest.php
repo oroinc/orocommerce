@@ -13,6 +13,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\BrowserKit\Cookie;
 
 class AjaxLineItemControllerTest extends WebTestCase
 {
@@ -50,6 +51,14 @@ class AjaxLineItemControllerTest extends WebTestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference($shoppingListRef);
 
+        $cookieName = '_csrf_token';
+        $tokenValue = bin2hex(random_bytes(18));
+
+        $this->client->getCookieJar()->set(new Cookie(
+            $cookieName . '_' . $tokenValue,
+            $cookieName
+        ));
+
         $this->ajaxRequest(
             'POST',
             $this->getUrl(
@@ -63,7 +72,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'oro_product_frontend_line_item' => [
                     'quantity' => $quantity,
                     'unit' => $unit->getCode(),
-                    '_token' => $this->getCsrfToken('oro_product_frontend_line_item')->getValue()
+                    '_token' => $tokenValue
                 ],
             ]
         );
@@ -434,6 +443,14 @@ class AjaxLineItemControllerTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_3);
         $unit = $this->getReference('product_unit.liter');
 
+        $cookieName = '_csrf_token';
+        $tokenValue = bin2hex(random_bytes(18));
+
+        $this->client->getCookieJar()->set(new Cookie(
+            $cookieName . '_' . $tokenValue,
+            $cookieName
+        ));
+
         $this->ajaxRequest(
             'POST',
             $this->getUrl(
@@ -448,7 +465,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'oro_product_frontend_line_item' => [
                     'quantity' => 10,
                     'unit' => $unit->getCode(),
-                    '_token' => $this->getCsrfToken('oro_product_frontend_line_item')->getValue()
+                    '_token' => $tokenValue
                 ],
             ]
         );

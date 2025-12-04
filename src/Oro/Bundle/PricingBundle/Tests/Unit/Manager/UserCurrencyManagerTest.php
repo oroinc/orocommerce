@@ -347,7 +347,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
         $this->userCurrencyManager->saveSelectedCurrency($currency, $website);
     }
 
-    public function testSaveSelectedCurrencyAnonymousUserAndSessionWasStarted()
+    public function testSaveSelectedCurrencyAnonymousUser()
     {
         $currency = 'USD';
         $sessionCurrencies = [2 => 'GBP'];
@@ -356,9 +356,6 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
-        $this->session->expects($this->once())
-            ->method('isStarted')
-            ->willReturn(true);
         $this->session->expects($this->once())
             ->method('get')
             ->with(UserCurrencyManager::SESSION_CURRENCIES)
@@ -370,26 +367,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
         $this->userCurrencyManager->saveSelectedCurrency($currency, $website);
     }
 
-    public function testSaveSelectedCurrencyAnonymousUserAndSessionWasNotStarted()
-    {
-        $currency = 'USD';
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => 1]);
-
-        $this->websiteManager->expects($this->never())
-            ->method('getCurrentWebsite');
-        $this->session->expects($this->once())
-            ->method('isStarted')
-            ->willReturn(false);
-        $this->session->expects($this->never())
-            ->method('get');
-        $this->session->expects($this->never())
-            ->method('set');
-
-        $this->userCurrencyManager->saveSelectedCurrency($currency, $website);
-    }
-
-    public function testSaveSelectedCurrencyAnonymousUserNoWebsiteAndSessionWasStarted()
+    public function testSaveSelectedCurrencyAnonymousUserNoWebsite()
     {
         $currency = 'USD';
         $sessionCurrencies = [2 => 'GBP'];
@@ -400,35 +378,12 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentWebsite')
             ->willReturn($website);
         $this->session->expects($this->once())
-            ->method('isStarted')
-            ->willReturn(true);
-        $this->session->expects($this->once())
             ->method('get')
             ->with(UserCurrencyManager::SESSION_CURRENCIES)
             ->willReturn($sessionCurrencies);
         $this->session->expects($this->once())
             ->method('set')
             ->with(UserCurrencyManager::SESSION_CURRENCIES, [1 => 'USD', 2 => 'GBP']);
-
-        $this->userCurrencyManager->saveSelectedCurrency($currency);
-    }
-
-    public function testSaveSelectedCurrencyAnonymousUserNoWebsiteAndSessionWasNotStarted()
-    {
-        $currency = 'USD';
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => 1]);
-
-        $this->websiteManager->expects($this->once())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
-        $this->session->expects($this->once())
-            ->method('isStarted')
-            ->willReturn(false);
-        $this->session->expects($this->never())
-            ->method('get');
-        $this->session->expects($this->never())
-            ->method('set');
 
         $this->userCurrencyManager->saveSelectedCurrency($currency);
     }

@@ -257,7 +257,7 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->with(Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS))
             ->willReturn([$localization->getId(), 4]);
-        $this->session->expects(self::once())
+        $this->session->expects(self::exactly(2))
             ->method('isStarted')
             ->willReturn(true);
         $this->session->expects(self::once())
@@ -453,11 +453,36 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testSetCurrentLocalizationNotLoggedUser(): void
+    public function testSetCurrentLocalizationNotLoggedUserNoSessionStarted(): void
+    {
+        $localization = new LocalizationStub(1);
+        $website = new WebsiteStub(4);
+
+        $this->websiteManager->expects(self::once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        $this->session->expects(self::never())
+            ->method('get');
+        $this->session->expects(self::once())
+            ->method('set')
+            ->with(
+                UserLocalizationManager::SESSION_LOCALIZATIONS,
+                [$website->getId() => $localization->getId()]
+            );
+
+        $this->userLocalizationManager->setCurrentLocalization($localization);
+    }
+
+    public function testSetCurrentLocalizationNotLoggedUserSessionStarted(): void
     {
         $localization = new LocalizationStub(1);
         $sessionLocalizations = [2 => 3];
         $website = new WebsiteStub(4);
+
+        $this->session->expects($this->once())
+            ->method('isStarted')
+            ->willReturn(true);
 
         $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')

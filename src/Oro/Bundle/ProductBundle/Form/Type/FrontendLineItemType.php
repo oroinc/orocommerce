@@ -52,6 +52,7 @@ class FrontendLineItemType extends AbstractType
         $resolver->setDefaults(
             [
                 'validation_groups' => ['add_product'],
+                'csrf_token_id' => self::NAME,
             ]
         );
     }

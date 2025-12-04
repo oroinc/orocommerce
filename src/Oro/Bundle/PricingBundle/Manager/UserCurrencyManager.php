@@ -103,7 +103,7 @@ class UserCurrencyManager
             }
             $userWebsiteSettings->setCurrency($currency);
             $this->doctrine->getManagerForClass(CustomerUser::class)->flush();
-        } elseif ($this->session->isStarted()) {
+        } else {
             $sessionCurrencies = $this->getSessionCurrencies();
             $sessionCurrencies[$website->getId()] = $currency;
             $this->session->set(self::SESSION_CURRENCIES, $sessionCurrencies);

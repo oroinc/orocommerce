@@ -12,6 +12,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for request for quote on the storefront.
+ */
 class RequestType extends AbstractType
 {
     const NAME = 'oro_rfp_frontend_request';
@@ -102,7 +105,8 @@ class RequestType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => $this->dataClass
+            'data_class' => $this->dataClass,
+            'csrf_token_id' => self::NAME,
         ]);
     }
 

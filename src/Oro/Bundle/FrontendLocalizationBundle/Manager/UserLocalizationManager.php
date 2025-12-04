@@ -197,6 +197,10 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
      */
     protected function getSessionLocalizations()
     {
+        if (!$this->session->isStarted()) {
+            return [];
+        }
+
         return (array)$this->session->get(self::SESSION_LOCALIZATIONS);
     }
 

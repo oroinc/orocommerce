@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Regex;
 
 /**
@@ -52,6 +53,16 @@ class QuickAddCopyPasteType extends AbstractType
                 ],
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'csrf_token_id' => 'oro_product_quick_add_copy_paste',
+        ]);
     }
 
     /**

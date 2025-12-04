@@ -73,6 +73,7 @@ class MatrixCollectionType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => MatrixCollection::class,
+            'csrf_token_id' => 'oro_product_frontend_line_item',
         ]);
     }
 }

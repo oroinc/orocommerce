@@ -6,6 +6,7 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\QuickAddComponentProcessor;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Count;
 
 /**
@@ -46,6 +47,16 @@ class QuickAddType extends AbstractType
                 self::TRANSITION_FIELD_NAME,
                 HiddenType::class
             );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'csrf_token_id' => self::NAME,
+        ]);
     }
 
     public function getBlockPrefix(): string
