@@ -156,17 +156,11 @@
         picture_attrs: attr
     } %}
 
-    {% if isMobileVersion() %}
-        {# Preload the first image as fast as possible because it affects the Largest Contentful Paint #}
-        {% if rowIterationIndex is defined and rowIterationIndex == 1 %}
-            {% set pictureConfig = pictureConfig|merge({
-                img_attrs: pictureConfig.img_attrs|merge({fetchpriority: 'high'})
-            }) %}
-        {% else %}
-            {% set pictureConfig = pictureConfig|merge({
-                img_attrs: pictureConfig.img_attrs|merge({loading: 'lazy'})
-            }) %}
-        {% endif %}
+    {# Preload the first image as fast as possible because it affects the Largest Contentful Paint #}
+    {% if rowIterationIndex is defined and rowIterationIndex == 1 %}
+        {% set pictureConfig = pictureConfig|merge({
+            img_attrs: pictureConfig.img_attrs|merge({fetchpriority: 'high'})
+        }) %}
     {% else %}
         {% set pictureConfig = pictureConfig|merge({
             img_attrs: pictureConfig.img_attrs|merge({loading: 'lazy'})
