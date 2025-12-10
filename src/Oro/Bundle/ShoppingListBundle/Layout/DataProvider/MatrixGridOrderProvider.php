@@ -12,6 +12,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
+use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 
 /**
  * Provides data for matrix order grid for layouts.
@@ -47,7 +48,9 @@ class MatrixGridOrderProvider
         $totalQuantity = 0;
         foreach ($collection->rows as $row) {
             foreach ($row->columns as $column) {
-                $totalQuantity += $column->quantity;
+                if ($column instanceof MatrixCollectionColumn) {
+                    $totalQuantity += $column->quantity;
+                }
             }
         }
 
@@ -69,7 +72,7 @@ class MatrixGridOrderProvider
 
         foreach ($collection->rows as $row) {
             foreach ($row->columns as $column) {
-                if ($column->product === null || !$column->quantity) {
+                if ($column?->product === null || !$column?->quantity) {
                     continue;
                 }
 

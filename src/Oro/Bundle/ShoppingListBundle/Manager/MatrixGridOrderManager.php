@@ -73,10 +73,12 @@ class MatrixGridOrderManager
                 $row->columns = [$column];
             } else {
                 foreach ($variantFields[1]['values'] as $secondValue) {
-                    $column = new MatrixCollectionColumn();
-                    $column->label = $secondValue['label'];
+                    $column = null;
 
                     if (isset($availableVariants[$firstValue['value']][$secondValue['value']]['_product'])) {
+                        $column = new MatrixCollectionColumn();
+                        $column->label = $secondValue['label'];
+
                         $column->product = $availableVariants[$firstValue['value']][$secondValue['value']]['_product'];
                         $column->quantity = $this->getQuantity(
                             $product->getPrimaryUnitPrecision()->getUnit(),
@@ -133,10 +135,11 @@ class MatrixGridOrderManager
                 $row->columns = [$column];
             } else {
                 foreach ($variantFields[1]['values'] as $secondValue) {
-                    $column = new MatrixCollectionColumn();
-                    $column->label = $secondValue['label'];
+                    $column = null;
 
                     if (isset($availableVariants[$firstValue['value']][$secondValue['value']]['_product'])) {
+                        $column = new MatrixCollectionColumn();
+                        $column->label = $secondValue['label'];
                         $column->product = $availableVariants[$firstValue['value']][$secondValue['value']]['_product'];
                         $column->quantity = $this->getQuantity($unit, $column->product, $shoppingList);
                     }
@@ -250,7 +253,7 @@ class MatrixGridOrderManager
             if (\in_array($rowIndex, $rowIds, true)) {
                 /** @var MatrixCollectionColumn $column */
                 foreach ($row->columns as $column) {
-                    if ($column->product) {
+                    if ($column?->product) {
                         $lineItem = new LineItem();
                         $lineItem->setProduct($column->product);
                         $lineItem->setQuantity((float) $column->quantity);

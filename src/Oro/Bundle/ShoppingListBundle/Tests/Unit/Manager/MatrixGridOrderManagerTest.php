@@ -204,13 +204,9 @@ class MatrixGridOrderManagerTest extends TestCase
             ]);
 
         $columnSmallRed = new MatrixCollectionColumn();
-        $columnSmallGreen = new MatrixCollectionColumn();
-        $columnMediumRed = new MatrixCollectionColumn();
         $columnMediumGreen = new MatrixCollectionColumn();
 
         $columnSmallRed->label = 'Red';
-        $columnSmallGreen->label = 'Green';
-        $columnMediumRed->label = 'Red';
         $columnMediumGreen->label = 'Green';
 
         $columnSmallRed->product = $simpleProductSmallRed;
@@ -220,11 +216,11 @@ class MatrixGridOrderManagerTest extends TestCase
 
         $rowSmall = new MatrixCollectionRow();
         $rowSmall->label = 'Small';
-        $rowSmall->columns = [$columnSmallRed, $columnSmallGreen];
+        $rowSmall->columns = [$columnSmallRed, null];
 
         $rowMedium = new MatrixCollectionRow();
         $rowMedium->label = 'Medium';
-        $rowMedium->columns = [$columnMediumRed, $columnMediumGreen];
+        $rowMedium->columns = [null, $columnMediumGreen];
 
         $expectedCollection = new MatrixCollection();
         $expectedCollection->dimensions = 2;
@@ -298,13 +294,9 @@ class MatrixGridOrderManagerTest extends TestCase
             ]);
 
         $columnSmallRed = new MatrixCollectionColumn();
-        $columnSmallGreen = new MatrixCollectionColumn();
-        $columnMediumRed = new MatrixCollectionColumn();
         $columnMediumGreen = new MatrixCollectionColumn();
 
         $columnSmallRed->label = 'Red';
-        $columnSmallGreen->label = 'Green';
-        $columnMediumRed->label = 'Red';
         $columnMediumGreen->label = 'Green';
 
         $columnSmallRed->product = $simpleProductSmallRed;
@@ -314,11 +306,11 @@ class MatrixGridOrderManagerTest extends TestCase
 
         $rowSmall = new MatrixCollectionRow();
         $rowSmall->label = 'Small';
-        $rowSmall->columns = [$columnSmallRed, $columnSmallGreen];
+        $rowSmall->columns = [$columnSmallRed, null];
 
         $rowMedium = new MatrixCollectionRow();
         $rowMedium->label = 'Medium';
-        $rowMedium->columns = [$columnMediumRed, $columnMediumGreen];
+        $rowMedium->columns = [null, $columnMediumGreen];
 
         $productUnit1 = $this->getProductUnit('item');
         $productUnit2 = $this->getProductUnit('item');
@@ -457,30 +449,24 @@ class MatrixGridOrderManagerTest extends TestCase
             ]);
 
         $columnDiscountInSale = new MatrixCollectionColumn();
-        $columnDiscountNotInSale = new MatrixCollectionColumn();
-        $columnNotDiscountInSale = new MatrixCollectionColumn();
         $columnNotDiscountNotInSale = new MatrixCollectionColumn();
 
         $columnDiscountInSale->label = 'Yes';
-        $columnDiscountNotInSale->label = 'No';
-        $columnNotDiscountInSale->label = 'Yes';
         $columnNotDiscountNotInSale->label = 'No';
 
         $columnDiscountInSale->product = $simpleProductNoDiscountNotInSale;
         $columnNotDiscountNotInSale->product = $simpleProductNoDiscountInSale;
 
         $columnDiscountInSale->quantity = null;
-        $columnDiscountNotInSale->quantity = null;
-        $columnNotDiscountInSale->quantity = null;
         $columnNotDiscountNotInSale->quantity = null;
 
         $rowYes = new MatrixCollectionRow();
         $rowYes->label = 'Yes';
-        $rowYes->columns = [$columnDiscountInSale, $columnDiscountNotInSale];
+        $rowYes->columns = [$columnDiscountInSale, null];
 
         $rowNo = new MatrixCollectionRow();
         $rowNo->label = 'No';
-        $rowNo->columns = [$columnNotDiscountInSale, $columnNotDiscountNotInSale];
+        $rowNo->columns = [null, $columnNotDiscountNotInSale];
 
         $expectedCollection = new MatrixCollection();
         $expectedCollection->dimensions = 2;
@@ -641,14 +627,10 @@ class MatrixGridOrderManagerTest extends TestCase
             ]);
 
         $columnSmallRed = new MatrixCollectionColumn();
-        $columnSmallGreen = new MatrixCollectionColumn();
         $columnMediumRed = new MatrixCollectionColumn();
-        $columnMediumGreen = new MatrixCollectionColumn();
 
         $columnSmallRed->label = 'Red';
-        $columnSmallGreen->label = 'Green';
         $columnMediumRed->label = 'Red';
-        $columnMediumGreen->label = 'Green';
 
         $columnSmallRed->product = $simpleProductSmallRed;
         $columnSmallRed->quantity = 1;
@@ -657,11 +639,11 @@ class MatrixGridOrderManagerTest extends TestCase
 
         $rowSmall = new MatrixCollectionRow();
         $rowSmall->label = 'Small';
-        $rowSmall->columns = [$columnSmallRed, $columnSmallGreen];
+        $rowSmall->columns = [$columnSmallRed, null];
 
         $rowMedium = new MatrixCollectionRow();
         $rowMedium->label = 'Medium';
-        $rowMedium->columns = [$columnMediumRed, $columnMediumGreen];
+        $rowMedium->columns = [$columnMediumRed, null];
 
         $expectedCollection = new MatrixCollection();
         $expectedCollection->dimensions = 2;

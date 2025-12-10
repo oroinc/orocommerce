@@ -52,7 +52,7 @@ class SavedForLaterMatrixFormListener
             foreach ($row->columns as $column) {
                 foreach ($lineItems as $lineItem) {
                     if ($lineItem->getProductUnitCode() !== $data->unit->getCode() ||
-                        $lineItem->getProduct()->getId() !== $column->product?->getId()
+                        $lineItem->getProduct()->getId() !== $column?->product?->getId()
                     ) {
                         continue;
                     }

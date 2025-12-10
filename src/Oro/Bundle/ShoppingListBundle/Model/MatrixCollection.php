@@ -39,7 +39,7 @@ class MatrixCollection
     {
         foreach ($this->rows as $row) {
             foreach ($row->columns as $column) {
-                if ($column->quantity > 0) {
+                if ($column?->quantity && $column?->quantity > 0) {
                     return true;
                 }
             }
