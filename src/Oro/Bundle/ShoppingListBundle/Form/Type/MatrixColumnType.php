@@ -30,7 +30,7 @@ class MatrixColumnType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            /** @var MatrixCollectionColumn $column */
+            /** @var MatrixCollectionColumn|null $column */
             $column = $event->getData();
 
             $quantityConfig = [
@@ -41,7 +41,7 @@ class MatrixColumnType extends AbstractType
                 ],
                 'precision' => 0,
             ];
-            if ($column->product === null) {
+            if ($column?->product === null) {
                 $quantityConfig['disabled'] = true;
             } else {
                 $productUnit = $event->getForm()->getRoot()->getData()->unit;

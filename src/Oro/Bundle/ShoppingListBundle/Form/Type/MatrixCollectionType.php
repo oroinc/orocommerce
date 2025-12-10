@@ -41,8 +41,8 @@ class MatrixCollectionType extends AbstractType
         if ($matrixCollection) {
             foreach ($matrixCollection->rows as $rowKey => $row) {
                 foreach ($row->columns as $columnKey => $column) {
-                    $columnsQty = $this->getQtyByKey($columnsQty, $columnKey, (float) $column->quantity);
-                    $rowsQty = $this->getQtyByKey($rowsQty, $rowKey, (float) $column->quantity);
+                    $columnsQty = $this->getQtyByKey($columnsQty, $columnKey, (float) $column?->quantity);
+                    $rowsQty = $this->getQtyByKey($rowsQty, $rowKey, (float) $column?->quantity);
                 }
             }
         }
