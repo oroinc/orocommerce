@@ -165,6 +165,7 @@ const SearchAutocompleteView = BaseView.extend({
         this.gerSelectedOption().attr('aria-selected', null);
         this.undoFocusStyle();
         this.subview('backdrop').hide();
+        document.body.classList.remove('no-scroll');
     },
 
     showCombobox() {
@@ -286,6 +287,7 @@ const SearchAutocompleteView = BaseView.extend({
                     container: this.$popup.parent(),
                     onClickCallback: () => {
                         this.subview('backdrop').hide();
+                        document.body.classList.remove('no-scroll');
                     }
                 }));
             }
@@ -401,7 +403,7 @@ const SearchAutocompleteView = BaseView.extend({
             ? document.body.classList.add('no-scroll')
             : document.body.classList.remove('no-scroll');
 
-        this.$popup.css('--autocomplete-search-viewport-height', visualViewport.height + 'px');
+        this.$popup?.css('--autocomplete-search-viewport-height', visualViewport.height + 'px');
     },
 
     _onOutsideAction(event) {
