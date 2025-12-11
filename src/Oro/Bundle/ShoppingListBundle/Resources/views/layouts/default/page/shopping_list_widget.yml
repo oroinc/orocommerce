@@ -9,6 +9,8 @@ layout:
                     options:
                         visible: '=data["acl"].isGranted("oro_shopping_list_frontend_view") && (context["is_logged_in"] || (!context["is_logged_in"] && data["feature"].isFeatureEnabled("guest_shopping_list")))'
                         shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
+                        vars:
+                            triggerClass: 'btn btn--inverse'
                 header_row_shopping_toggle:
                     blockType: container
                 main_menu_shopping_lists_dropdown:
