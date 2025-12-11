@@ -32,7 +32,7 @@ class SubOrderViewVoter extends Voter
             $attribute === BasicPermission::VIEW
             && $subject instanceof Order
             && $subject->getParent()
-            && $this->requestStack->getCurrentRequest()->get('_route') === 'oro_order_frontend_view';
+            && $this->requestStack->getCurrentRequest()?->get('_route') === 'oro_order_frontend_view';
     }
 
     #[\Override]
