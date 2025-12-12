@@ -28,16 +28,18 @@ Feature: Promotions Grid With Promotions ACL Enabled
     Then I go to System/User Management/Users
     And click "Create User"
     And fill form with:
-      | Enabled           | Enabled                 |
-      | Username          | Promotions1@example.org |
-      | Password          | Promotions1@example.org |
-      | Re-enter password | Promotions1@example.org |
-      | Primary Email     | Promotions1@example.org |
-      | First name        | Promotions              |
-      | Last name         | User                    |
-      | ORO               | true                    |
-      | Promotions View   | true                    |
-      | Promotions NonView| true                    |
+      | Enabled                     | Enabled                 |
+      | Username                    | Promotions1@example.org |
+      | Password                    | Promotions1@example.org |
+      | Re-enter password           | Promotions1@example.org |
+      | Primary Email               | Promotions1@example.org |
+      | First name                  | Promotions              |
+      | Last name                   | User                    |
+      | Promotions View             | true                    |
+      | Promotions NonView          | true                    |
+    And I click "Organization Business Units Element"
+    And I should see "Oro / Main"
+    And I click "Business Unit First Result Element"
     And save and close form
     And I should see "User saved" flash message
 
