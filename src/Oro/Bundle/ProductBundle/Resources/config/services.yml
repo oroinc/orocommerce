@@ -2492,6 +2492,13 @@ services:
             - { name: kernel.event_listener, event: oro_search.prepare_entity_map, method: prepareEntityMapEvent, priority: 100 }
             - { name: kernel.event_listener, event: oro_search.search_mapping_collect, method: collectEntityMapEvent, priority: -100 }
 
+    oro_product.event_listener.fallback_update_notification_alert:
+        class: Oro\Bundle\ProductBundle\EventListener\FallbackUpdateNotificationAlertListener
+        arguments:
+            - '@oro_product.notification_alert.fallback_update_provider'
+        tags:
+            - { name: kernel.event_subscriber }
+
     oro_product.migration.enumerable_config_keys_provider:
         parent: oro_entity_extend.migration.enumerable_config_keys_provider
         arguments:
@@ -2504,3 +2511,91 @@ services:
         class: Oro\Bundle\ProductBundle\Provider\QuickOrderFormValidationGroupsProvider
         arguments:
             - '@oro_product.component_processor.registry'
+
+    oro_product.provider.fallback_field:
+        class: Oro\Bundle\ProductBundle\Provider\ProductFallbackFieldProvider
+
+    oro_product.provider.fallback_chunk:
+        class: Oro\Bundle\ProductBundle\Provider\ProductFallbackChunkProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_product.provider.fallback_field'
+
+    oro_product.manager.fallback_populator:
+        class: Oro\Bundle\ProductBundle\Manager\ProductFallbackPopulator
+        arguments:
+            - '@property_accessor'
+            - '@oro_product.provider.fallback_field'
+
+    oro_product.manager.fallback_update:
+        class: Oro\Bundle\ProductBundle\Manager\ProductFallbackUpdateManager
+        arguments:
+            - '@doctrine'
+            - '@oro_product.provider.fallback_chunk'
+            - '@oro_product.manager.fallback_populator'
+            - '@logger'
+            - '@oro_platform.optional_listeners.manager'
+        calls:
+            - [disableListener, ['oro_dataaudit.listener.send_changed_entities_to_message_queue']]
+        tags:
+            - { name: monolog.logger, channel: oro_product }
+
+    oro_product.async.fallback_update_processor:
+        class: Oro\Bundle\ProductBundle\Async\ProductFallbackUpdateProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_product.manager.fallback_update'
+            - '@oro_message_queue.job.dependent_job_service'
+        calls:
+            - [ 'setLogger', [ '@logger' ] ]
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_product.async.fallback_process_chunk_processor:
+        class: Oro\Bundle\ProductBundle\Async\ProductFallbackProcessChunkProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_product.manager.fallback_update'
+        calls:
+            - [ 'setLogger', [ '@logger' ] ]
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_product.async.fallback_finalize_processor:
+        class: Oro\Bundle\ProductBundle\Async\ProductFallbackFinalizeProcessor
+        arguments:
+            - '@oro_product.manager.fallback_update'
+            - '@oro_product.notification_alert.fallback_update_provider'
+        calls:
+            - [ 'setLogger', [ '@logger' ] ]
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_product.fallback_notification_alert_manager:
+        class: Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager
+        arguments:
+            - 'Product'
+            - 'product_fallback_update'
+            - '@doctrine'
+            - '@oro_security.token_accessor'
+            - '@logger'
+
+    oro_product.notification_alert.fallback_update_provider:
+        class: Oro\Bundle\ProductBundle\NotificationAlert\ProductFallbackUpdateNotificationAlertProvider
+        public: true
+        arguments:
+            - '@oro_product.fallback_notification_alert_manager'
+            - '@doctrine'
+            - '@oro_product.manager.fallback_update'
+            - '@logger'
+
+    oro_product.post_upgrade.product_fallback_task:
+        class: Oro\Bundle\ProductBundle\PostUpgrade\ProductFallbackUpdateTask
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_product.manager.fallback_update'
+            - '@oro_product.notification_alert.fallback_update_provider'
+        tags:
+            - { name: oro.post_upgrade_task }
+
