@@ -244,3 +244,10 @@ services:
             - '@property_accessor'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\Product', event: prePersist }
+
+    oro_inventory.provider.fallback_field:
+        class: Oro\Bundle\InventoryBundle\Product\Provider\InventoryFallbackFieldProviderDecorator
+        decorates: oro_product.provider.fallback_field
+        arguments:
+            - '@.inner'
+
