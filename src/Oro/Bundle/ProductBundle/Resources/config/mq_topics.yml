@@ -7,6 +7,9 @@ services:
     Oro\Bundle\ProductBundle\Async\Topic\ReindexRequestItemProductsByRelatedJobIdTopic: ~
     Oro\Bundle\ProductBundle\Async\Topic\ReindexProductsByAttributesTopic: ~
     Oro\Bundle\ProductBundle\Async\Topic\ResizeProductImageTopic: ~
+    Oro\Bundle\ProductBundle\Async\Topic\ProductFallbackUpdateTopic: ~
+    Oro\Bundle\ProductBundle\Async\Topic\ProductFallbackProcessChunkTopic: ~
+    Oro\Bundle\ProductBundle\Async\Topic\ProductFallbackFinalizeTopic: ~
 
     Oro\Bundle\ProductBundle\Async\Topic\SearchTermProductCollectionSegmentReindexTopic:
         arguments:
