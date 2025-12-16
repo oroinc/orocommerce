@@ -43,6 +43,30 @@ class ContactInfoWidgetProviderTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expectedResult, $result);
     }
 
+    public function testGetContactInfoBlockWhenCurrentUserIsNotCustomerUser()
+    {
+        $notCustomerUser = new \stdClass();
+        $this->tokenAccessor->expects(self::once())
+            ->method('getUser')
+            ->willReturn($notCustomerUser);
+
+        $contactInfo = new ContactInfo();
+        $this->contactInfoProvider->expects(self::once())
+            ->method('getContactInfo')
+            ->with(null)
+            ->willReturn($contactInfo);
+
+        $expectedResult = [
+            'widget' => '_sales_menu_blank_widget',
+            'attributes' => [
+                'contactInfo' => $contactInfo
+            ],
+        ];
+
+        $result = $this->widgetProvider->getContactInfoBlock();
+        self::assertEquals($expectedResult, $result);
+    }
+
     public function contactInfoBlockDataProvider(): array
     {
         $contactInfo = new ContactInfo();

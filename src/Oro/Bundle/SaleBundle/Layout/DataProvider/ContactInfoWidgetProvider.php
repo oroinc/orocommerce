@@ -2,10 +2,14 @@
 
 namespace Oro\Bundle\SaleBundle\Layout\DataProvider;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Provider\ContactInfoProvider;
 use Oro\Bundle\SaleBundle\Provider\ContactInfoProviderInterface;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
+/**
+ * Layout data provider for contact info layout block.
+ */
 class ContactInfoWidgetProvider
 {
     const WIDGET_VIEW_BLANK = '_sales_menu_blank_widget';
@@ -36,6 +40,10 @@ class ContactInfoWidgetProvider
     public function getContactInfoBlock()
     {
         $currentUser = $this->tokenAccessor->getUser();
+        if (!$currentUser instanceof CustomerUser) {
+            $currentUser = null;
+        }
+
         $contactInfo = $this->contactInfoProvider->getContactInfo($currentUser);
 
         $widget = self::WIDGET_VIEW_BLANK;
