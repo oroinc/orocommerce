@@ -399,20 +399,42 @@ oro.cms:
                     name: 'Easing'
                 perspective:
                     name: 'Perspective'
+                transform_origin:
+                    name: 'Transform Origin'
+                transform_origin_x_offset:
+                    name: 'X Offset'
+                transform_origin_y_offset:
+                    name: 'Y Offset'
                 transform:
                     name: 'Transform'
+                transform_type:
+                    name: 'Type'
+                transform_value:
+                    name: 'Transform value'
+                transform_translate_x:
+                    name: 'Translate X'
+                transform_translate_y:
+                    name: 'Translate Y'
+                transform_translate_z:
+                    name: 'Translate Z'
                 transform_rotate_x:
                     name: 'Rotate X'
                 transform_rotate_y:
                     name: 'Rotate Y'
                 transform_rotate_z:
                     name: 'Rotate Z'
+                transform_rotate:
+                    name: 'Rotate'
                 transform_scale_x:
                     name: 'Scale X'
                 transform_scale_y:
                     name: 'Scale Y'
                 transform_scale_z:
                     name: 'Scale Z'
+                transform_skew_x:
+                    name: 'Skew X'
+                transform_skew_y:
+                    name: 'Skew Y'
                 label_parent_flex:
                     name: 'Flex Parent'
                 label_children_flex:
