@@ -74,7 +74,9 @@
                 {% set showAtStartEnd = 3 %}
             {% endif %}
 
-            <div class="oro-pagination__pager {% if totalPages <= pagination_threshold %}oro-pagination__pager--stepper{% endif %}">
+            {% set pagerHideClass = totalPages <= 1 ? 'hide' : '' %}
+
+            <div class="oro-pagination__pager {{ pagerHideClass }} {% if totalPages <= pagination_threshold %}oro-pagination__pager--stepper{% endif %}">
                 <a
                     role="button" href="{% if currentPage <= 1 %}#{% else %}{{ oro_datagrid_get_page_url(datagrid, currentPage - 1) }}{% endif %}"
                     class="oro-pagination-arrow oro-pagination__prev{% if currentPage <= 1 %} disabled{% endif %}"
@@ -162,8 +164,10 @@
     {% set perPage = metadata.state.pageSize %}
     {% set pageSize = metadata.options.toolbarOptions.pageSize %}
     {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
+    {% set data = oro_datagrid_data(datagrid) %}
+    {% set totalRecords = data.options.totalRecords is defined ? data.options.totalRecords : 0 %}
 
-    {% if pageSize.hide == false and pageSize.items|length > 0 and toolbarPosition == 'bottom' %}
+    {% if pageSize.hide == false and pageSize.items|length > 0 and totalRecords > 0 and toolbarPosition == 'bottom' %}
         <div{{ block('block_attributes') }}>
             <div class="page-size">
                 {% set labelId = 'datagrid-toolbar-label-'|uniqid %}
