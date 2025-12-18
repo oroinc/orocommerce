@@ -11,6 +11,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
  * Provides product ID chunks for fallback processing.
@@ -74,7 +75,7 @@ class ProductFallbackChunkProvider
         $conditions = [];
         foreach ($this->fieldProvider->getFieldsByFallbackId() as $fields) {
             foreach ($fields as $field) {
-                $conditions[] = $expr->isNull(sprintf('p.%s', $field));
+                $conditions[] = $expr->isNull(QueryBuilderUtil::getField('p', $field));
             }
         }
 
