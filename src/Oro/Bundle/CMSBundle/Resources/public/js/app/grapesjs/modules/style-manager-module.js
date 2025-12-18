@@ -1,5 +1,9 @@
 import __ from 'orotranslation/js/translator';
 
+const unitsSize = ['px', '%', 'em', 'rem', 'vh', 'vw'];
+const unitsSizePerc = ['%', 'px'];
+const unitsAngle = ['deg', 'rad', 'grad'];
+
 /**
  *Style Manager property config
  */
@@ -338,7 +342,7 @@ export default [{
 }, {
     id: 'extra',
     open: false,
-    buildProps: ['transition', 'perspective', 'transform'],
+    buildProps: ['transition', 'transform-origin', 'transform'],
     properties: [{
         property: 'transition',
         name: __('oro.cms.wysiwyg.style_manager.properties.transition.name'),
@@ -353,30 +357,98 @@ export default [{
             name: __('oro.cms.wysiwyg.style_manager.properties.transition_timing_function.name')
         }]
     }, {
-        property: 'perspective',
-        name: __('oro.cms.wysiwyg.style_manager.properties.perspective.name')
+        property: 'transform-origin',
+        name: __('oro.cms.wysiwyg.style_manager.properties.transform_origin.name'),
+        type: 'composite',
+        properties: [
+            {
+                'type': 'number',
+                'property': 'x-offset',
+                'default': '50%',
+                'label': __('oro.cms.wysiwyg.style_manager.properties.transform_origin_x_offset.name'),
+                'units': unitsSizePerc
+            },
+            {
+                'type': 'number',
+                'property': 'y-offset',
+                'default': '50%',
+                'label': __('oro.cms.wysiwyg.style_manager.properties.transform_origin_y_offset.name'),
+                'units': unitsSizePerc
+            }
+        ]
     }, {
         property: 'transform',
         name: __('oro.cms.wysiwyg.style_manager.properties.transform.name'),
-        properties: [{
-            property: 'transform-rotate-x',
-            name: __('oro.cms.wysiwyg.style_manager.properties.transform_rotate_x.name')
-        }, {
-            property: 'transform-rotate-y',
-            name: __('oro.cms.wysiwyg.style_manager.properties.transform_rotate_y.name')
-        }, {
-            property: 'transform-rotate-z',
-            name: __('oro.cms.wysiwyg.style_manager.properties.transform_rotate_z.name')
-        }, {
-            property: 'transform-scale-x',
-            name: __('oro.cms.wysiwyg.style_manager.properties.transform_scale_x.name')
-        }, {
-            property: 'transform-scale-y',
-            name: __('oro.cms.wysiwyg.style_manager.properties.transform_scale_y.name')
-        }, {
-            property: 'transform-scale-z',
-            name: __('oro.cms.wysiwyg.style_manager.properties.transform_scale_z.name')
-        }]
+        properties: [
+            {
+                'type': 'select',
+                'property': 'transform-type',
+                'default': 'translateX',
+                'label': __('oro.cms.wysiwyg.style_manager.properties.transform_type.name'),
+                'options': [
+                    {
+                        id: 'translateX',
+                        label: __('oro.cms.wysiwyg.style_manager.properties.transform_translate_x.name'),
+                        propValue: {
+                            units: unitsSize,
+                            step: 1
+                        }
+                    },
+                    {
+                        id: 'translateY',
+                        label: __('oro.cms.wysiwyg.style_manager.properties.transform_translate_y.name'),
+                        propValue: {
+                            units: unitsSize,
+                            step: 1
+                        }
+                    },
+                    {
+                        id: 'rotate',
+                        label: __('oro.cms.wysiwyg.style_manager.properties.transform_rotate.name'),
+                        propValue: {
+                            units: unitsAngle,
+                            step: 1
+                        }
+                    },
+                    {
+                        id: 'scaleX',
+                        label: __('oro.cms.wysiwyg.style_manager.properties.transform_scale_x.name'),
+                        propValue: {
+                            units: [''],
+                            step: 0.1
+                        }
+                    },
+                    {
+                        id: 'scaleY',
+                        label: __('oro.cms.wysiwyg.style_manager.properties.transform_scale_y.name'),
+                        propValue: {
+                            units: [''],
+                            step: 0.1
+                        }
+                    },
+                    {
+                        id: 'skewX',
+                        label: __('oro.cms.wysiwyg.style_manager.properties.transform_skew_x.name'),
+                        propValue: {
+                            units: unitsAngle,
+                            step: 1
+                        }
+                    },
+                    {
+                        id: 'skewY',
+                        label: __('oro.cms.wysiwyg.style_manager.properties.transform_skew_y.name'),
+                        propValue: {
+                            units: unitsAngle,
+                            step: 1
+                        }
+                    }
+                ]
+            },
+            {
+                property: 'transform-value',
+                label: __('oro.cms.wysiwyg.style_manager.properties.transform_value.name')
+            }
+        ]
     }]
 }, {
     id: 'flex',
