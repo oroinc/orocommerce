@@ -59,6 +59,11 @@ class OrderMapper implements MapperInterface
                 continue;
             }
 
+            // Skip createdAt field to allow Order entity to set it to the current datetime
+            if ($field === 'createdAt') {
+                continue;
+            }
+
             try {
                 $value = $this->propertyAccessor->getValue($entity, $field);
                 $result[$field] = $value;

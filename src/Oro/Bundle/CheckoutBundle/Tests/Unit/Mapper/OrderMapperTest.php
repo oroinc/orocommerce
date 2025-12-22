@@ -133,4 +133,29 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
         self::assertInstanceOf(Order::class, $order);
         self::assertNull($order->getId());
     }
+
+    public function testMapCreatedAtNotCopied(): void
+    {
+        $this->fieldHelper->expects(self::once())
+            ->method('getEntityFields')
+            ->with(
+                Order::class,
+                EntityFieldProvider::OPTION_WITH_RELATIONS
+                | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
+                | EntityFieldProvider::OPTION_APPLY_EXCLUSIONS
+            )
+            ->willReturn(
+                [['name' => 'createdAt']]
+            );
+
+        $checkoutCreatedAt = new \DateTime('2023-01-01 10:00:00', new \DateTimeZone('UTC'));
+        $checkout = new Checkout();
+        $checkout->setCreatedAt($checkoutCreatedAt);
+
+        $order = $this->mapper->map($checkout, []);
+
+        self::assertInstanceOf(Order::class, $order);
+        // createdAt should not be copied from checkout, it will be set to the current datetime
+        self::assertNull($order->getCreatedAt());
+    }
 }
