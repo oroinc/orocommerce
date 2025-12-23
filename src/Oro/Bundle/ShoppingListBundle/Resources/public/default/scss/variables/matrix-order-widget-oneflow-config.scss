@@ -3,12 +3,19 @@
 $matrix-order-widget-oneflow-display: grid !default;
 $matrix-order-widget-oneflow-grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !default;
 $matrix-order-widget-oneflow-gap: spacing('lg') !default;
+$matrix-order-widget-oneflow-align-items: start !default;
 
 $matrix-order-widget-oneflow-item-display: grid !default;
-$matrix-order-widget-oneflow-item-grid-template-columns: minmax(0, 60px) minmax(90px, 1fr) !default;
-$matrix-order-widget-oneflow-item-gap: spacing('sm') spacing('base') !default;
+$matrix-order-widget-oneflow-item-grid-template-columns: minmax(0, 60px) minmax(100px, 1fr) !default;
+$matrix-order-widget-oneflow-item-grid-template-rows: 1fr auto !default;
+$matrix-order-widget-oneflow-item-gap: 0 spacing('base') !default;
 $matrix-order-widget-oneflow-item-align-items: center !default;
 
 $matrix-order-widget-oneflow-label-text-align: end !default;
 $matrix-order-widget-oneflow-label-margin: 0 !default;
 $matrix-order-widget-oneflow-label-word-break: break-all !default;
+$matrix-order-widget-oneflow-label-grid-row: #{'1 / 2'} !default;
+
+$matrix-order-widget-oneflow-field-display: grid !default;
+$matrix-order-widget-oneflow-field-grid-template-rows: subgrid !default;
+$matrix-order-widget-oneflow-field-grid-row: #{'1 / 3'} !default;
