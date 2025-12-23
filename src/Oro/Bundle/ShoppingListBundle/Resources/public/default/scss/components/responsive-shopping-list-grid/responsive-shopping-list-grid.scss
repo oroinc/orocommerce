@@ -316,7 +316,9 @@
     .responsive-shopping-list-grid-tablet-alignment {
         @include responsive-shopping-list-grid-tablet-alignment;
     }
+}
 
+@include breakpoint('tablet') {
     .responsive-shopping-list-grid {
         .show-on-tablet-small {
             display: inline-flex;
@@ -362,6 +364,13 @@
             display: none;
         }
 
+        .notification-row {
+            .grid-body-cell-sku {
+                display: initial;
+                grid-column: massAction / action;
+            }
+        }
+
         .grid-row {
             padding-top: $responsive-shopping-grid-row-offset-mobile;
             padding-bottom: $responsive-shopping-grid-row-offset-bottom-mobile;
@@ -385,13 +394,6 @@
             &.parent-row-has-highlight-error.sub-row-last-product-kit {
                 padding-bottom: $responsive-shopping-sub-row-cell-inner-offset;
                 border-bottom-width: 0;
-            }
-        }
-
-        .notification-row {
-            .grid-body-cell-sku {
-                display: initial;
-                grid-column: massAction / action;
             }
         }
 

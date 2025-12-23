@@ -32,7 +32,7 @@
         // stylelint-disable-next-line declaration-no-important
         margin: 0 auto !important;
         // stylelint-disable-next-line declaration-no-important
-        padding: spacing('sm') spacing('sm') !important;
+        padding: spacing('sm') !important;
 
         background: $catalog-filter-controls-toolbar-sticky-container-background;
     }

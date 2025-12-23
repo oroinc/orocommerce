@@ -13,13 +13,14 @@
     }
 }
 
-// stylelint-disable-next-line selector-max-compound-selectors
+// stylelint-disable selector-max-compound-selectors
 .form-horizontal .totals-container .control-group .controls label.control-label,
 .totals-container .form-horizontal .control-group .controls .control-label {
     width: 120px;
     text-align: right;
     color: $additional-lighten;
 }
+// stylelint-enable selector-max-compound-selectors
 
 .totals-container .attribute-item .attribute-item__description .amount {
     width: 120px;

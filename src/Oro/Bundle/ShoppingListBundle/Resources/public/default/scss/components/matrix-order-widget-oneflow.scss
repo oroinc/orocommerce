@@ -4,10 +4,12 @@
     display: $matrix-order-widget-oneflow-display;
     grid-template-columns: $matrix-order-widget-oneflow-grid-template-columns;
     gap: $matrix-order-widget-oneflow-gap;
+    align-items: $matrix-order-widget-oneflow-align-items;
 
     &__item {
         display: $matrix-order-widget-oneflow-item-display;
         grid-template-columns: $matrix-order-widget-oneflow-item-grid-template-columns;
+        grid-template-rows: $matrix-order-widget-oneflow-item-grid-template-rows;
         gap: $matrix-order-widget-oneflow-item-gap;
         align-items: $matrix-order-widget-oneflow-item-align-items;
     }
@@ -16,5 +18,12 @@
         text-align: $matrix-order-widget-oneflow-label-text-align;
         margin: $matrix-order-widget-oneflow-label-margin;
         word-break: $matrix-order-widget-oneflow-label-word-break;
+        grid-row: $matrix-order-widget-oneflow-label-grid-row;
+    }
+
+    &__field {
+        display: $matrix-order-widget-oneflow-field-display;
+        grid-template-rows: $matrix-order-widget-oneflow-field-grid-template-rows;
+        grid-row: $matrix-order-widget-oneflow-field-grid-row;
     }
 }

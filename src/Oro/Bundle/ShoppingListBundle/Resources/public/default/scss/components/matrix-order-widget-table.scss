@@ -66,6 +66,20 @@
             }
         }
 
+        &-row:has(.matrix-order-widget-field__price) & {
+            &-head,
+            &-cell:not(:has(.matrix-order-widget-field__price)) {
+                &::after {
+                    content: '';
+                    font-size: $matrix-order-widget-field-price-font-size;
+                    line-height: $matrix-order-widget-field-line-height;
+                    height: 1lh;
+                    padding-top: $matrix-order-widget-field-price-offset-top;
+                    display: block;
+                }
+            }
+        }
+
         &-row:first-child & {
             &-head,
             &-cell {

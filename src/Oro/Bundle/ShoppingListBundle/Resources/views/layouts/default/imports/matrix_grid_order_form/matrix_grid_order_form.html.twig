@@ -100,7 +100,7 @@
 
 {% block _matrix_collection_widget_table_tbody_body_cell_content %}
     <div class="{{ class_prefix }}-field">
-        {% if cell.vars.isEditable %}
+        {% if cell.vars.isEditable|default(false) %}
             {{ form_widget(cell, {
                 'attr': {
                     'data-product-id': cell.vars.productId,
@@ -187,9 +187,10 @@
 {% endblock %}
 
 {% block _matrix_collection_widget_oneflow_cell %}
-    <div class="{{ class_prefix }}-oneflow__cell">
-        <div class="{{ class_prefix }}-field">
-            {% if cell.vars.isEditable %}
+    <div class="{{ class_prefix }}-oneflow__cell {{ class_prefix }}-oneflow__field">
+        <div class="{{ class_prefix }}-field {{ class_prefix }}-oneflow__field"
+        >
+            {% if cell.vars.isEditable|default(false) %}
                 {{ form_widget(cell, {
                     'attr': {
                         'data-product-id': cell.vars.productId,
