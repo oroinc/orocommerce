@@ -4,7 +4,7 @@
 
 ### discount
 
-The discount applied to the shopping list.
+The discount applied to the shopping list. The discount is represented as **negative value** (e.g., `-10` means $10 off).
 
 #### create, update
 
