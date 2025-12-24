@@ -341,6 +341,20 @@ class SlugRepository extends ServiceEntityRepository
         return array_map('current', $qb->getQuery()->getArrayResult());
     }
 
+    public function getSlugByOrganizationAndHashes(int $organizationId, string $urlHash, string $scopesHash): ?Slug
+    {
+        $qb = $this->createQueryBuilder('slug');
+        $qb->select('slug')
+            ->where($qb->expr()->eq('IDENTITY(slug.organization)', ':organizationId'))
+            ->andWhere($qb->expr()->eq('slug.urlHash', ':urlHash'))
+            ->andWhere($qb->expr()->eq('slug.scopesHash', ':scopesHash'))
+            ->setParameter('organizationId', $organizationId)
+            ->setParameter('urlHash', $urlHash)
+            ->setParameter('scopesHash', $scopesHash);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
     private function getSlugByUrlQueryBuilder(string $url): QueryBuilder
     {
         $qb = $this->createQueryBuilder('slug');

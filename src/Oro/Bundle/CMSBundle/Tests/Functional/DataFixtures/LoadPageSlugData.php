@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 class LoadPageSlugData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -23,7 +24,9 @@ class LoadPageSlugData extends AbstractFixture implements DependentFixtureInterf
     {
         /** @var Page $page */
         $page = $this->getReference(LoadPageData::PAGE_1);
+        $organization = $this->getReference(LoadOrganization::ORGANIZATION);
         $slug = new Slug();
+        $slug->setOrganization($organization);
         $slug->setRouteName('oro_cms_frontend_page_view');
         $slug->setRouteParameters(['id' => $page->getId()]);
         $slug->setUrl('/page1-slug-url');
