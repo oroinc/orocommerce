@@ -223,6 +223,7 @@ services:
             - '@oro_locale.helper.localization'
             - '@oro_redirect.generator.slug_url_differ'
             - '@oro_web_catalog.unique_content_node_slug_prototype_resolver'
+            - '@oro_entity.doctrine_helper'
 
     Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator:
         alias: 'oro_web_catalog.generator.slug_generator'

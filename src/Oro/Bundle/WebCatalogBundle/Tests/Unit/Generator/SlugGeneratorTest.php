@@ -3,10 +3,12 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Generator;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
@@ -21,6 +23,7 @@ use Oro\Bundle\WebCatalogBundle\Resolver\UniqueContentNodeSlugPrototypesResolver
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -29,35 +32,21 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ContentVariantTypeRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $contentVariantTypeRegistry;
+    protected ContentVariantTypeRegistry|MockObject $contentVariantTypeRegistry;
 
-    /**
-     * @var RedirectGenerator|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $redirectGenerator;
+    protected RedirectGenerator|MockObject $redirectGenerator;
 
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $localizationHelper;
+    protected LocalizationHelper|MockObject $localizationHelper;
 
-    /**
-     * @var SlugGenerator
-     */
-    protected $slugGenerator;
+    protected SlugGenerator $slugGenerator;
 
-    /**
-     * @var SlugUrlDiffer|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $slugUrlDiffer;
+    protected SlugUrlDiffer|MockObject $slugUrlDiffer;
 
-    /**
-     * @var UniqueContentNodeSlugPrototypesResolver|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $uniqueSlugPrototypesResolver;
+    private UniqueContentNodeSlugPrototypesResolver|MockObject $uniqueSlugPrototypesResolver;
+
+    private DoctrineHelper|MockObject $doctrineHelper;
+
+    private SlugRepository|MockObject $repository;
 
     #[\Override]
     protected function setUp(): void
@@ -67,13 +56,21 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->slugUrlDiffer = $this->createMock(SlugUrlDiffer::class);
         $this->uniqueSlugPrototypesResolver = $this->createMock(UniqueContentNodeSlugPrototypesResolver::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->repository = $this->createMock(SlugRepository::class);
+
+        $this->doctrineHelper
+            ->method('getEntityRepository')
+            ->with(Slug::class)
+            ->willReturn($this->repository);
 
         $this->slugGenerator = new SlugGenerator(
             $this->contentVariantTypeRegistry,
             $this->redirectGenerator,
             $this->localizationHelper,
             $this->slugUrlDiffer,
-            $this->uniqueSlugPrototypesResolver
+            $this->uniqueSlugPrototypesResolver,
+            $this->doctrineHelper
         );
     }
 
@@ -158,6 +155,44 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($localizedUrl);
 
         $this->doTestGenerate($localization, $parentContentNode);
+    }
+
+    public function testGenerateWithOrphanSlug()
+    {
+        $orphanSlugId = 100;
+        $organization = $this->getEntity(Organization::class, ['id' => 2]);
+        $webCatalog = new WebCatalog();
+        $webCatalog->setOrganization($organization);
+
+        /** @var Localization $localization */
+        $localization = $this->getEntity(Localization::class, ['id' => 42, 'name' => 'test_localization']);
+
+        $parentNodeSlugUrl = '/parent/node';
+        $parentSlug = new Slug();
+        $parentSlug->setUrl($parentNodeSlugUrl);
+        $parentSlug->setLocalization($localization);
+
+        $parentContentVariant = new ContentVariant();
+        $parentContentVariant->addSlug($parentSlug);
+
+        $parentContentNode = new ContentNode();
+        $parentContentNode->setWebCatalog($webCatalog);
+        $localizedUrl = (new LocalizedFallbackValue())->setText($parentNodeSlugUrl);
+        $parentContentNode->addLocalizedUrl($localizedUrl);
+        $parentContentNode->addContentVariant($parentContentVariant);
+
+        $this->localizationHelper
+            ->expects($this->once())
+            ->method('getLocalizedValue')
+            ->with($parentContentNode->getLocalizedUrls(), $localization)
+            ->willReturn($localizedUrl);
+
+        $orphanSlug = $this->getEntity(Slug::class, ['id' => $orphanSlugId]);
+        $this->repository->expects($this->once())
+            ->method('getSlugByOrganizationAndHashes')
+            ->willReturn($orphanSlug);
+
+        $this->doTestGenerate($localization, $parentContentNode, $orphanSlugId);
     }
 
     public function testGenerateEmptyPrototype()
@@ -461,8 +496,11 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(0, $contentVariant->getSlugs());
     }
 
-    protected function doTestGenerate(Localization $localization, ContentNode $parentContentNode)
-    {
+    protected function doTestGenerate(
+        Localization $localization,
+        ContentNode $parentContentNode,
+        ?int $expectedSlugId = null
+    ) {
         $slugPrototype = new LocalizedFallbackValue();
         $slugPrototype->setLocalization($localization);
         $slugPrototype->setString('test-url');
@@ -488,7 +526,14 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
             ->setLocalization($localization)
             ->setOrganization($parentContentNode->getWebCatalog()->getOrganization());
 
-        $expectedUrl = (new LocalizedFallbackValue())->setText('/parent/node/test-url')->setLocalization($localization);
+        if ($expectedSlugId) {
+            $this->setValue($expectedSlug, 'id', $expectedSlugId);
+        }
+
+        $expectedUrl = (new LocalizedFallbackValue())
+            ->setText('/parent/node/test-url')
+            ->setLocalization($localization);
+
         foreach ($contentNode->getLocalizedUrls() as $url) {
             $this->assertEquals($expectedUrl, $url);
         }
