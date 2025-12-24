@@ -99,6 +99,10 @@ body {
     }
 }
 
+[data-gjs-type='custom-code'] iframe {
+    pointer-events: none;
+}
+
 .no-icon-line {
     stroke-width: 5;
     stroke: $primary;

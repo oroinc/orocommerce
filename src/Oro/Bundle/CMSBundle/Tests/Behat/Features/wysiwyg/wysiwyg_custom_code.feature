@@ -86,4 +86,18 @@ Feature: WYSIWYG custom code
     And I select component in canvas by tree:
       | code | 1 |
     And I click on "Delete" action for selected component
+    And I clear canvas in WYSIWYG
 
+  Scenario: Add/update/delete custom source code with video iframe
+    When I add new component "Custom Code" from panel to editor area
+    And I add "<iframe src=\"https://player.vimeo.com/video/38195013?badge=0&autopause=0&player_id=0&app_id=58479\" frameborder=\"0\" allow=\"autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share\" allowfullscreen=\"allowfullscreen\"></iframe>" to dialog code editor with Apply Changes
+    And I check wysiwyg content in "CMS Page Content":
+      | 1 | <div data-type="custom-source-code"> |
+      | 2 | <iframe src="https://player.vimeo.com/video/38195013?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" allowfullscreen="allowfullscreen"></iframe>             |
+      | 3 | </div> |
+    And I click "Save"
+    And I check wysiwyg content in "CMS Page Content":
+      | 1 | <div data-type="custom-source-code"> |
+      | 2 | <iframe src="https://player.vimeo.com/video/38195013?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" allowfullscreen="allowfullscreen"></iframe> |
+      | 3 | </div> |
+    And I clear canvas in WYSIWYG
