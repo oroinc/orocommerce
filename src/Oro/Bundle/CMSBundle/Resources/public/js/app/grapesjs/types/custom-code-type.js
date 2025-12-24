@@ -178,7 +178,8 @@ const CustomCodeType = BaseType.extend({
         ) {
             return {
                 type: this.componentType,
-                content: el.innerHTML
+                content: el.innerHTML,
+                components: []
             };
         }
     }

@@ -59,7 +59,8 @@ describe('orocms/js/app/grapesjs/types/custom-code-type', () => {
             expect(customCodeTypeBuilder.Model.isComponent).toBeDefined();
             expect(customCodeTypeBuilder.Model.isComponent(mockElement)).toEqual({
                 type: customCodeTypeBuilder.componentType,
-                content: '<div><h1>Heading 1</h1></div>'
+                content: '<div><h1>Heading 1</h1></div>',
+                components: []
             });
 
             expect(customCodeTypeBuilder.Model.componentType).toEqual(customCodeTypeBuilder.componentType);
