@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Generator;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
@@ -11,6 +12,7 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
 use Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer;
+use Oro\Bundle\RedirectBundle\Helper\SlugScopeHelper;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
@@ -19,6 +21,7 @@ use Oro\Component\Routing\RouteData;
 
 /**
  * Generates slugs and slug redirects for given content node.
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class SlugGenerator
 {
@@ -48,6 +51,7 @@ class SlugGenerator
      * @var UniqueContentNodeSlugPrototypesResolver
      */
     private $uniqueSlugPrototypesResolver;
+    private DoctrineHelper $doctrineHelper;
 
     public function __construct(
         ContentVariantTypeRegistry $contentVariantTypeRegistry,
@@ -61,6 +65,11 @@ class SlugGenerator
         $this->localizationHelper = $localizationHelper;
         $this->slugUrlDiffer = $slugUrlDiffer;
         $this->uniqueSlugPrototypesResolver = $uniqueSlugPrototypesResolver;
+    }
+
+    public function setDoctrineHelper(DoctrineHelper $doctrineHelper): void
+    {
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -134,7 +143,7 @@ class SlugGenerator
 
             foreach ($slugUrls as $slugUrl) {
                 if (!$this->getExistingSlug($slugUrl, $contentVariant)) {
-                    $slug = new Slug();
+                    $slug = $this->getOrphanOrCreateNewSlug($organization->getId(), $slugUrl, $scopes);
                     $this->fillSlug($slug, $slugUrl, $routeData, $scopes);
                     $slug->setOrganization($organization);
                     $contentVariant->addSlug($slug);
@@ -353,5 +362,31 @@ class SlugGenerator
                 $contentNode->addLocalizedUrl($localizedUrl);
             }
         }
+    }
+
+    /**
+     * This method needed for avoid multiple problems with orphan slugs
+     * that violates constraint oro_redirect_slug_deferrable_uidx,
+     * if we have old orphan slug with organization_id, url_hash and scopes_hash
+     * we take it, fill and reuse it, if not - creates new one
+     *
+     * @param int $organizationId
+     * @param SlugUrl $slugUrl
+     * @param Collection|null $scopes
+     * @return Slug
+     */
+    private function getOrphanOrCreateNewSlug(int $organizationId, SlugUrl $slugUrl, ?Collection $scopes): Slug
+    {
+        $urlHash = md5($slugUrl->getUrl());
+        $scopesHash = SlugScopeHelper::getScopesHash($scopes, $slugUrl->getLocalization());
+
+        $slugRepository = $this->doctrineHelper->getEntityRepository(Slug::class);
+        $slug = $slugRepository->getSlugByOrganizationAndHashes($organizationId, $urlHash, $scopesHash);
+
+        if (!$slug) {
+            $slug = new Slug();
+        }
+
+        return $slug;
     }
 }
