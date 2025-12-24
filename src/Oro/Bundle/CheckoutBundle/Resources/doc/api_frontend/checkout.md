@@ -320,6 +320,8 @@ Each subtotal is an object with the following properties:
 
 Example of data: **\[{"subtotalType": "subtotal", "description": "Subtotal", "amount": "500.0000"}, {"subtotalType": "shipping_cost", "description": "Shipping", "amount": "10.0000"}\]**
 
+Discounts are represented as **negative values** (e.g., `-10` means $10 off).
+
 #### create, update
 
 {@inheritdoc}
