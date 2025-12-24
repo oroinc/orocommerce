@@ -12,6 +12,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Helper\SlugScopeHelper;
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
@@ -321,16 +322,6 @@ class Slug implements OrganizationAwareInterface
 
     public function fillScopesHash(): void
     {
-        $scopeIds = [];
-        foreach ($this->scopes as $scope) {
-            $scopeIds[] = $scope->getId();
-        }
-
-        sort($scopeIds);
-        $this->scopesHash = md5(sprintf(
-            '%s:%s',
-            implode(',', $scopeIds),
-            $this->localization ? $this->localization->getId() : ''
-        ));
+        $this->scopesHash = SlugScopeHelper::getScopesHash($this->scopes, $this->localization);
     }
 }
