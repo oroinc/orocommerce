@@ -1,5 +1,7 @@
 include:
   - '@OroOrderBundle:order.yml'
+# Be aware that we save promotion after order created, so promotion could be applied
+# to existed order only after clicking promotion Activate during updating order data
 
 Oro\Bundle\PromotionBundle\Entity\Coupon:
     coupon:
