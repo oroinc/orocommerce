@@ -169,6 +169,9 @@ services:
         arguments:
             - '@oro_catalog.manager.product_index_scheduler'
             - '@oro_catalog.layout.data_provider.category.cache'
+            - '@doctrine'
+        calls:
+            - [setManagerRegistry,  ["@doctrine"]]
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CatalogBundle\Entity\Category', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CatalogBundle\Entity\Category', event: preRemove }

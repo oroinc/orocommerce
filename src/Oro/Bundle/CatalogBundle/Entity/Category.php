@@ -196,7 +196,7 @@ class Category implements
     /**
      * @var Collection|Category[]
      *
-     * @ORM\OneToMany(targetEntity="Category", mappedBy="parentCategory", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Category", mappedBy="parentCategory", cascade={"persist"})
      * @ORM\OrderBy({"left" = "ASC"})
      * @ConfigField(
      *      defaultValues={
