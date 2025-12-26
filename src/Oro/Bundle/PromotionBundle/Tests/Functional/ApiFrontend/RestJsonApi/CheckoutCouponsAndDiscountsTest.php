@@ -25,6 +25,7 @@ class CheckoutCouponsAndDiscountsTest extends FrontendRestJsonApiTestCase
         parent::setUp();
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
+            LoadCouponData::class,
             LoadCheckoutData::class,
             LoadCompetedCheckoutData::class,
             LoadCheckoutCouponData::class,
