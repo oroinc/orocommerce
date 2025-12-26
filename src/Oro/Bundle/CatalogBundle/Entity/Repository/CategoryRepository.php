@@ -293,4 +293,23 @@ class CategoryRepository extends NestedTreeRepository
             ->setFetchMode(Category::class, "parentCategory", "EAGER")
             ->getSingleResult();
     }
+
+    public function getDescendantSlugIds(Category $category): array
+    {
+        $left = $category->getLeft();
+        $right = $category->getRight();
+        $root = $category->getRoot();
+
+        if (!$left || !$right || !$root) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('category')
+            ->select('slug.id')
+            ->join('category.slugs', 'slug')
+            ->where('category.left > :left AND category.right < :right AND category.root = :root')
+            ->setParameters(['left' => $left, 'right' => $right, 'root' => $root])
+            ->getQuery()
+            ->getSingleColumnResult();
+    }
 }
