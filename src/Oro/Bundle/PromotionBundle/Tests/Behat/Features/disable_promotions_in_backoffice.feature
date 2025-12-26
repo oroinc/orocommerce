@@ -1,6 +1,6 @@
 @ticket-BB-17730
-@fixture-OroPromotionBundle:promotions-with-coupons-on-order-page.yml
 @fixture-OroPromotionBundle:promotions-with-coupons-on-order-view-page.yml
+@fixture-OroPromotionBundle:promotions-with-coupons-on-order-page.yml
 @fixture-OroPromotionBundle:disabled-promotion-order.yml
 
 Feature: Disable promotions in backoffice
