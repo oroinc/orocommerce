@@ -38,11 +38,11 @@ class PromotionExecutorTest extends FrontendWebTestCase
         );
 
         $this->loadFixtures([
+            LoadPromotionDiscountData::class,
+            LoadCouponPromotionDiscountData::class,
             LoadOrderData::class,
             LoadCheckoutData::class,
-            LoadCombinedProductPrices::class,
-            LoadPromotionDiscountData::class,
-            LoadCouponPromotionDiscountData::class
+            LoadCombinedProductPrices::class
         ]);
 
         $this->updateCustomerUserSecurityToken(LoadCustomerUserData::EMAIL);
