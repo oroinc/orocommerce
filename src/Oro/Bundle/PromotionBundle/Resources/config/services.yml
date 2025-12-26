@@ -767,6 +767,13 @@ services:
             - '@.inner'
             - '@oro_promotion.entity_promotion_aware_helper'
 
+    oro_promotion.provider.new_promotion_filter_discounts_provider_decorator:
+        class: Oro\Bundle\PromotionBundle\Provider\NewPromotionFilterDiscountsProviderDecorator
+        decorates: oro_promotion.provider.order_promotion_discounts_provider_decorator
+        arguments:
+            - '@.inner'
+            - '@oro_promotion.entity_promotion_aware_helper'
+
     oro_promotion.event_listener.order_applied_promotion_event_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderAppliedPromotionEventListener
         arguments:

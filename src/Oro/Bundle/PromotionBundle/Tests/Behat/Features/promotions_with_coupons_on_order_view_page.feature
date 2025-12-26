@@ -14,9 +14,16 @@ Feature: Promotions with coupons on Order view page
     And fill "Order Form" with:
       | Product2 | Second Product |
       | Price2   | 5              |
+    # As promotion was created after order, so we are not applied it automatically
+    # We can activate it manually by admin only during order update (add new products, change quantity etc)
+    # It's inactive by default for already existed orders
     Then I should see next rows in "Promotions" table
-      | Promotion       | Type        | Status | Discount |
-      | Order Promotion | Order Total | Active | -$7.00   |
+      | Promotion       | Type        | Status   | Discount |
+      | Order Promotion | Order Total | Inactive | $0.00    |
+    When I click "Activate" on row "Order Promotion" in "Promotions"
+    Then I should see next rows in "Promotions" table
+      | Promotion       | Type        | Status   | Discount |
+      | Order Promotion | Order Total | Active   | -$7.00   |
     And I save and close form
     And click "Save" in modal window
 
@@ -26,6 +33,8 @@ Feature: Promotions with coupons on Order view page
       | Order Promotion | Order Total | Active | -$7.00   |
     When I click "More actions"
     And I click "Add Coupon Code"
+    # Coupon code was added after order created, but it still works for already existed order
+    # And promotion applied (manually by admin) despite was added after order created
     And type "test-1" in "Coupon Code"
     Then I should see a "Highlighted Suggestion" element
     When click on "Highlighted Suggestion"
