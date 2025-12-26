@@ -179,6 +179,20 @@ class SlugRepository extends ServiceEntityRepository
         $queryBuilder->execute();
     }
 
+    public function deleteByIds(array $ids): void
+    {
+        if (!$ids) {
+            return;
+        }
+
+        $this->createQueryBuilder('slug')
+            ->delete()
+            ->where('slug.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->execute();
+    }
+
     /**
      * Doctrine cannot handle searching by "array" columns, therefore
      * we need a low-level query here.

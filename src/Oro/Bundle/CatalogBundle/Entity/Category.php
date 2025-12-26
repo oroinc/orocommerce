@@ -168,7 +168,7 @@ class Category implements
     /**
      * @var Collection<int, Category>
      */
-    #[ORM\OneToMany(mappedBy: 'parentCategory', targetEntity: Category::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'parentCategory', targetEntity: Category::class, cascade: ['persist'])]
     #[ORM\OrderBy(['left' => Criteria::ASC])]
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => true]])]
     protected ?Collection $childCategories = null;
