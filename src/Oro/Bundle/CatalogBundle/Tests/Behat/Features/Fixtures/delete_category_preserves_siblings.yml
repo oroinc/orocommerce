@@ -1,0 +1,54 @@
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryParent:
+        __calls:
+            - addTitle: ['@titleParent']
+            - setParentCategory: ['@root_category']
+        organization: '@organization'
+        slugPrototypes: ['@slugParent']
+
+    categoryToDelete:
+        __calls:
+            - addTitle: ['@titleToDelete']
+            - setParentCategory: ['@categoryParent']
+        organization: '@organization'
+        slugPrototypes: ['@slugToDelete']
+
+    categorySibling:
+        __calls:
+            - addTitle: ['@titleSibling']
+            - setParentCategory: ['@categoryParent']
+        organization: '@organization'
+        slugPrototypes: ['@slugSibling']
+
+    categoryChild:
+        __calls:
+            - addTitle: ['@titleChild']
+            - setParentCategory: ['@categoryToDelete']
+        organization: '@organization'
+        slugPrototypes: ['@slugChild']
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    slugParent:
+        string: 'parent-category'
+
+    slugToDelete:
+        string: 'category-to-delete'
+
+    slugSibling:
+        string: 'sibling-category'
+
+    slugChild:
+        string: 'child-category'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    titleParent:
+        string: 'Parent Category'
+
+    titleToDelete:
+        string: 'Category To Delete'
+
+    titleSibling:
+        string: 'Sibling Category'
+
+    titleChild:
+        string: 'Child Category'

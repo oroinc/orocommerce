@@ -46,6 +46,7 @@ class CategoryTest extends WebTestCase
 
         $this->objectManager->remove($category);
         $this->objectManager->flush();
+        $this->objectManager->clear();
 
         foreach ($childrenSlugs as $slugID) {
             $this->assertNull($this->slugRepository->find($slugID));
