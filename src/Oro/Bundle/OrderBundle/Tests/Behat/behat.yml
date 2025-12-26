@@ -84,6 +84,11 @@ oro_behat_extension:
     OrderTitle:
       selector: 'h1.page-title .page-title__text'
 
+    Order Date:
+      selector:
+        type: xpath
+        locator: '//tr[contains(@class, "customer-info-grid__row--order_date")]//span[@class="customer-info-grid__element-value"]'
+
     Order Payment Transaction Grid:
       selector: "div[id^='grid-order-payment-transactions-grid']"
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
