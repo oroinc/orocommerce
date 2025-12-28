@@ -72,22 +72,22 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'localizations',
-                        'id'         => '<toString(@en_US->id)>',
+                        'type' => 'localizations',
+                        'id' => '<toString(@en_US->id)>',
                         'attributes' => [
-                            'title'          => 'English (United States)',
+                            'title' => 'English (United States)',
                             'formattingCode' => 'en_US',
-                            'languageCode'   => 'en',
-                            'default'        => true,
+                            'languageCode' => 'en',
+                            'default' => true
                         ]
                     ],
                     [
-                        'type'       => 'localizations',
-                        'id'         => '<toString(@es->id)>',
+                        'type' => 'localizations',
+                        'id' => '<toString(@es->id)>',
                         'attributes' => [
                             'title' => 'Spanish',
                             'formattingCode' => 'es',
-                            'languageCode'   => 'es',
+                            'languageCode' => 'es',
                             'default' => false
                         ]
                     ]
@@ -106,12 +106,12 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'localizations',
-                    'id'         => '<toString(@en_US->id)>',
+                    'type' => 'localizations',
+                    'id' => '<toString(@en_US->id)>',
                     'attributes' => [
                         'title' => 'English (United States)',
                         'formattingCode' => 'en_US',
-                        'languageCode'   => 'en',
+                        'languageCode' => 'en',
                         'default' => true
                     ]
                 ]
@@ -131,15 +131,54 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'localizations',
-                    'id'         => '<toString(@en_US->id)>',
+                    'type' => 'localizations',
+                    'id' => '<toString(@en_US->id)>',
                     'attributes' => [
                         'title' => 'English (United States) in Spanish',
                         'formattingCode' => 'en_US',
-                        'languageCode'   => 'en',
+                        'languageCode' => 'en',
                         'default' => true
                     ]
                 ]
+            ],
+            $response
+        );
+    }
+
+    public function testTryToGetForInvalidLocalizationIdInHeader(): void
+    {
+        $response = $this->get(
+            ['entity' => 'localizations', 'id' => '<toString(@en_US->id)>'],
+            [],
+            ['HTTP_X-Localization-ID' => 'invalid'],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'invalid header value exception',
+                'detail' => 'Expected integer value. Given "invalid". Header: X-Localization-ID.'
+            ],
+            $response
+        );
+    }
+
+    public function testTryToGetForUnknownLocalizationIdInHeader(): void
+    {
+        $response = $this->get(
+            ['entity' => 'localizations', 'id' => '<toString(@en_US->id)>'],
+            [],
+            ['HTTP_X-Localization-ID' => '99999'],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'invalid header value exception',
+                'detail' => \sprintf(
+                    'The value "99999" is unknown localization ID. Available values: %s. Header: X-Localization-ID.',
+                    implode(', ', [$this->getReference('es')->getId(), $this->getReference('en_US')->getId()])
+                )
             ],
             $response
         );
@@ -161,8 +200,8 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
     {
         $data = [
             'data' => [
-                'type'       => 'localizations',
-                'id'         => '<toString(@en_US->id)>',
+                'type' => 'localizations',
+                'id' => '<toString(@en_US->id)>',
                 'attributes' => [
                     'title' => 'test'
                 ]
@@ -183,7 +222,7 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
     {
         $data = [
             'data' => [
-                'type'       => 'localizations',
+                'type' => 'localizations',
                 'attributes' => [
                     'title' => 'test'
                 ]

@@ -14,6 +14,8 @@ use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
  */
 class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
 {
+    private ?array $initialEnabledLocalizations;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -45,6 +47,24 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
             $em->persist($translation);
             $em->flush();
         }
+
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            LoadLocalizationData::getLocalizationIds(self::getContainer())
+        );
+        $configManager->flush();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->flush();
+
+        parent::tearDown();
     }
 
     public function testGetList(): void
@@ -57,22 +77,22 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'productinventorystatuses',
-                        'id'         => 'in_stock',
+                        'type' => 'productinventorystatuses',
+                        'id' => 'in_stock',
                         'attributes' => [
                             'name' => 'In Stock'
                         ]
                     ],
                     [
-                        'type'       => 'productinventorystatuses',
-                        'id'         => 'out_of_stock',
+                        'type' => 'productinventorystatuses',
+                        'id' => 'out_of_stock',
                         'attributes' => [
                             'name' => 'Out of Stock'
                         ]
                     ],
                     [
-                        'type'       => 'productinventorystatuses',
-                        'id'         => 'discontinued',
+                        'type' => 'productinventorystatuses',
+                        'id' => 'discontinued',
                         'attributes' => [
                             'name' => 'Discontinued'
                         ]
@@ -115,22 +135,22 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'productinventorystatuses',
-                        'id'         => 'in_stock',
+                        'type' => 'productinventorystatuses',
+                        'id' => 'in_stock',
                         'attributes' => [
                             'name' => 'In Stock (Spanish)'
                         ]
                     ],
                     [
-                        'type'       => 'productinventorystatuses',
-                        'id'         => 'out_of_stock',
+                        'type' => 'productinventorystatuses',
+                        'id' => 'out_of_stock',
                         'attributes' => [
                             'name' => 'Out of Stock'
                         ]
                     ],
                     [
-                        'type'       => 'productinventorystatuses',
-                        'id'         => 'discontinued',
+                        'type' => 'productinventorystatuses',
+                        'id' => 'discontinued',
                         'attributes' => [
                             'name' => 'Discontinued'
                         ]
@@ -151,8 +171,8 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'productinventorystatuses',
-                    'id'         => 'in_stock',
+                    'type' => 'productinventorystatuses',
+                    'id' => 'in_stock',
                     'attributes' => [
                         'name' => 'In Stock'
                     ]
@@ -173,8 +193,8 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'productinventorystatuses',
-                    'id'         => 'in_stock',
+                    'type' => 'productinventorystatuses',
+                    'id' => 'in_stock',
                     'attributes' => [
                         'name' => 'In Stock (Spanish)'
                     ]
@@ -195,8 +215,8 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'productinventorystatuses',
-                    'id'         => 'in_stock',
+                    'type' => 'productinventorystatuses',
+                    'id' => 'in_stock',
                     'attributes' => [
                         'name' => 'In Stock'
                     ]
@@ -210,8 +230,8 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
     {
         $data = [
             'data' => [
-                'type'       => 'productinventorystatuses',
-                'id'         => 'in_stock',
+                'type' => 'productinventorystatuses',
+                'id' => 'in_stock',
                 'attributes' => [
                     'name' => 'test'
                 ]
@@ -232,7 +252,7 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
     {
         $data = [
             'data' => [
-                'type'       => 'productinventorystatuses',
+                'type' => 'productinventorystatuses',
                 'attributes' => [
                     'name' => 'test'
                 ]

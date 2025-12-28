@@ -33,28 +33,28 @@ class UserLocalizationManagerTest extends TestCase
     private const NOT_EXISTENT_LOCALIZATION_ID =  9;
     private const CURRENT_LOCALIZATION_ID =  9;
     private const ENABLED_LOCALIZATION_IDS = [3, 9];
-    private Session|MockObject $session;
-    private RequestStack|MockObject $requestStack;
-    private TokenStorageInterface|MockObject $tokenStorage;
-    private ManagerRegistry|MockObject $doctrine;
-    private WebsiteManager|MockObject $websiteManager;
-    private ConfigManager|MockObject $configManager;
-    private LocalizationManager|MockObject $localizationManager;
+
+    private RequestStack&MockObject $requestStack;
+    private TokenStorageInterface&MockObject $tokenStorage;
+    private ManagerRegistry&MockObject $doctrine;
+    private WebsiteManager&MockObject $websiteManager;
+    private ConfigManager&MockObject $configManager;
+    private LocalizationManager&MockObject $localizationManager;
+    private ApiRequestHelper&MockObject $apiRequestHelper;
+    private Session&MockObject $session;
     private UserLocalizationManager $userLocalizationManager;
-    private ApiRequestHelper|MockObject $apiRequestHelper;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->session = $this->createMock(Session::class);
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
-        $this->configManager = $this->createMock(ConfigManager::class);
         $this->websiteManager = $this->createMock(WebsiteManager::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->localizationManager = $this->createMock(LocalizationManager::class);
         $this->apiRequestHelper = $this->createMock(ApiRequestHelper::class);
+        $this->session = $this->createMock(Session::class);
 
         $this->requestStack->expects(self::any())
             ->method('getSession')
@@ -98,6 +98,31 @@ class UserLocalizationManagerTest extends TestCase
         return $localization;
     }
 
+    private function mockRequest(bool $isApiRequest, bool $hasSession): void
+    {
+        $pathInfo = $isApiRequest ? '/api' : '/test';
+
+        $request = $this->createMock(Request::class);
+        $request->expects(self::any())
+            ->method('getSession')
+            ->willReturn($this->session);
+        $request->expects(self::any())
+            ->method('hasSession')
+            ->willReturn($hasSession);
+        $request->expects(self::any())
+            ->method('getPathInfo')
+            ->willReturn($pathInfo);
+
+        $this->requestStack->expects(self::atLeastOnce())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $this->apiRequestHelper->expects(self::any())
+            ->method('isApiRequest')
+            ->with($pathInfo)
+            ->willReturn($isApiRequest);
+    }
+
     public function testGetCurrentLocalizationAndDefaultWebsiteLocalization(): void
     {
         $website = $this->getWebsite(1);
@@ -120,24 +145,22 @@ class UserLocalizationManagerTest extends TestCase
 
         $this->configManager->expects(self::exactly(2))
             ->method('get')
-            ->willReturnMap(
+            ->willReturnMap([
                 [
-                    [
-                        Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION),
-                        false,
-                        false,
-                        null,
-                        $localization->getId(),
-                    ],
-                    [
-                        Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS),
-                        false,
-                        false,
-                        null,
-                        [$localization->getId()],
-                    ],
+                    Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION),
+                    false,
+                    false,
+                    null,
+                    $localization->getId()
+                ],
+                [
+                    Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS),
+                    false,
+                    false,
+                    null,
+                    [$localization->getId()]
                 ]
-            );
+            ]);
 
         $this->localizationManager->expects(self::once())
             ->method('getLocalization')
@@ -181,24 +204,22 @@ class UserLocalizationManagerTest extends TestCase
 
         $this->configManager->expects(self::exactly(2))
             ->method('get')
-            ->willReturnMap(
+            ->willReturnMap([
                 [
-                    [
-                        Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION),
-                        false,
-                        false,
-                        null,
-                        $localization1->getId(),
-                    ],
-                    [
-                        Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS),
-                        false,
-                        false,
-                        null,
-                        [$localization1->getId(), $localization2->getId()],
-                    ],
+                    Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION),
+                    false,
+                    false,
+                    null,
+                    $localization1->getId()
+                ],
+                [
+                    Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS),
+                    false,
+                    false,
+                    null,
+                    [$localization1->getId(), $localization2->getId()]
                 ]
-            );
+            ]);
 
         $this->localizationManager->expects(self::once())
             ->method('getLocalization')
@@ -337,15 +358,15 @@ class UserLocalizationManagerTest extends TestCase
                     false,
                     false,
                     null,
-                    $localization->getId(),
+                    $localization->getId()
                 ],
                 [
                     Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS),
                     false,
                     false,
                     null,
-                    [$localization->getId()],
-                ],
+                    [$localization->getId()]
+                ]
             ]);
         $this->session->expects(self::never())
             ->method('get');
@@ -419,7 +440,10 @@ class UserLocalizationManagerTest extends TestCase
         $this->localizationManager->expects(self::once())
             ->method('getLocalizations')
             ->with(self::ENABLED_LOCALIZATION_IDS)
-            ->willReturn($this->getEnabledLocalizations());
+            ->willReturn([
+                self::ENABLED_LOCALIZATION_IDS[0] => $this->getLocalization(self::ENABLED_LOCALIZATION_IDS[0]),
+                self::ENABLED_LOCALIZATION_IDS[1] => $this->getLocalization(self::ENABLED_LOCALIZATION_IDS[1])
+            ]);
 
         $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
@@ -505,57 +529,19 @@ class UserLocalizationManagerTest extends TestCase
                 UserLocalizationManager::SESSION_LOCALIZATIONS,
                 [2 => 3, $website->getId() => $localization->getId()]
             );
-        $requestMock = $this->createMock(Request::class);
-        $requestMock->expects(self::exactly(2))
+
+        $request = $this->createMock(Request::class);
+        $request->expects(self::exactly(2))
             ->method('getSession')
             ->willReturn($this->session);
-        $requestMock->expects(self::exactly(2))
+        $request->expects(self::exactly(2))
             ->method('hasSession')
             ->willReturn(true);
+
         $this->requestStack->expects(self::exactly(2))
             ->method('getCurrentRequest')
-            ->willReturn($requestMock);
+            ->willReturn($request);
 
         $this->userLocalizationManager->setCurrentLocalization($localization);
-    }
-
-    private function mockRequest(bool $isApiRequest, bool $hasSession): void
-    {
-        $requestMock = $this->createMock(Request::class);
-        $pathInfo = $isApiRequest ? '/api' : '/test';
-
-        $this->requestStack
-            ->expects(self::atLeastOnce())
-            ->method('getCurrentRequest')
-            ->willReturn($requestMock);
-
-        $requestMock
-            ->expects(self::any())
-            ->method('getSession')
-            ->willReturn($this->session);
-
-        $requestMock
-            ->expects(self::any())
-            ->method('hasSession')
-            ->willReturn($hasSession);
-
-        $requestMock
-            ->expects(self::any())
-            ->method('getPathInfo')
-            ->willReturn($pathInfo);
-
-        $this->apiRequestHelper
-            ->expects(self::any())
-            ->method('isApiRequest')
-            ->with($pathInfo)
-            ->willReturn($isApiRequest);
-    }
-
-    private function getEnabledLocalizations(): array
-    {
-        return [
-            self::ENABLED_LOCALIZATION_IDS[0] => $this->getLocalization(self::ENABLED_LOCALIZATION_IDS[0]),
-            self::ENABLED_LOCALIZATION_IDS[1] => $this->getLocalization(self::ENABLED_LOCALIZATION_IDS[1]),
-        ];
     }
 }

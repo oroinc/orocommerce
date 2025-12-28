@@ -204,10 +204,10 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
     private function isApiRequest(?Request $request): bool
     {
         $pathInfo = $request?->getPathInfo() ?? '';
-        $route = $request?->attributes?->get('_route') ?? '';
-        $isOauth2Request = str_starts_with($route, 'oro_oauth2_server') || str_contains($pathInfo, '/oauth2-token');
-        $isApiRequest = $this->apiRequestHelper->isApiRequest($pathInfo);
 
-        return $isApiRequest || $isOauth2Request;
+        return
+            $this->apiRequestHelper->isApiRequest($pathInfo)
+            || str_starts_with($request?->attributes?->get('_route') ?? '', 'oro_oauth2_server')
+            || str_contains($pathInfo, '/oauth2-token');
     }
 }

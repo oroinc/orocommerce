@@ -14,6 +14,8 @@ use Oro\Bundle\TranslationBundle\Manager\TranslationManager;
  */
 class ProductUnitTest extends FrontendRestJsonApiTestCase
 {
+    private ?array $initialEnabledLocalizations;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -24,29 +26,47 @@ class ProductUnitTest extends FrontendRestJsonApiTestCase
             LoadLocalizationData::class
         ]);
         $this->loadLocalizedProductUnits();
+
+        $configManager = self::getConfigManager();
+        $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
+        $configManager->set(
+            'oro_locale.enabled_localizations',
+            LoadLocalizationData::getLocalizationIds(self::getContainer())
+        );
+        $configManager->flush();
     }
 
-    private function loadLocalizedProductUnits()
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_locale.enabled_localizations', $this->initialEnabledLocalizations);
+        $configManager->flush();
+
+        parent::tearDown();
+    }
+
+    private function loadLocalizedProductUnits(): void
     {
         $productUnitTranslations = [
-            'item'  => [
-                'label.full'         => 'Spanish Item',
-                'label.full_plural'  => 'Spanish Item',
-                'label.short'        => 'Spanish Item',
+            'item' => [
+                'label.full' => 'Spanish Item',
+                'label.full_plural' => 'Spanish Item',
+                'label.short' => 'Spanish Item',
                 'label.short_plural' => 'Spanish Item'
 
             ],
-            'set'   => [
-                'label.full'         => 'Spanish Set',
-                'label.full_plural'  => 'Spanish Set',
-                'label.short'        => 'Spanish Set',
+            'set' => [
+                'label.full' => 'Spanish Set',
+                'label.full_plural' => 'Spanish Set',
+                'label.short' => 'Spanish Set',
                 'label.short_plural' => 'Spanish Set'
 
             ],
             'peace' => [
-                'label.full'         => 'Spanish Peace',
-                'label.full_plural'  => 'Spanish Peace',
-                'label.short'        => 'Spanish Peace',
+                'label.full' => 'Spanish Peace',
+                'label.full_plural' => 'Spanish Peace',
+                'label.short' => 'Spanish Peace',
                 'label.short_plural' => 'Spanish Peace'
             ]
         ];
@@ -67,7 +87,7 @@ class ProductUnitTest extends FrontendRestJsonApiTestCase
         $translationManager->flush();
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'productunits'],
@@ -78,13 +98,13 @@ class ProductUnitTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'productunits',
-                        'id'         => 'item',
+                        'type' => 'productunits',
+                        'id' => 'item',
                         'attributes' => [
                             'defaultPrecision' => 0,
-                            'label'            => 'item',
-                            'shortLabel'       => 'item',
-                            'pluralLabel'      => 'items',
+                            'label' => 'item',
+                            'shortLabel' => 'item',
+                            'pluralLabel' => 'items',
                             'shortPluralLabel' => 'items'
                         ]
                     ]
@@ -94,7 +114,7 @@ class ProductUnitTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetListFilterBySeveralIds()
+    public function testGetListFilterBySeveralIds(): void
     {
         $response = $this->cget(
             ['entity' => 'productunits'],
@@ -105,24 +125,24 @@ class ProductUnitTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'productunits',
-                        'id'         => 'piece',
+                        'type' => 'productunits',
+                        'id' => 'piece',
                         'attributes' => [
                             'defaultPrecision' => 0,
-                            'label'            => 'piece',
-                            'shortLabel'       => 'pc',
-                            'pluralLabel'      => 'pieces',
+                            'label' => 'piece',
+                            'shortLabel' => 'pc',
+                            'pluralLabel' => 'pieces',
                             'shortPluralLabel' => 'pcs'
                         ]
                     ],
                     [
-                        'type'       => 'productunits',
-                        'id'         => 'set',
+                        'type' => 'productunits',
+                        'id' => 'set',
                         'attributes' => [
                             'defaultPrecision' => 0,
-                            'label'            => 'set',
-                            'shortLabel'       => 'set',
-                            'pluralLabel'      => 'sets',
+                            'label' => 'set',
+                            'shortLabel' => 'set',
+                            'pluralLabel' => 'sets',
                             'shortPluralLabel' => 'sets'
                         ]
                     ]
@@ -132,7 +152,7 @@ class ProductUnitTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $response = $this->get(
             ['entity' => 'productunits', 'id' => 'item']
@@ -141,13 +161,13 @@ class ProductUnitTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'productunits',
-                    'id'         => 'item',
+                    'type' => 'productunits',
+                    'id' => 'item',
                     'attributes' => [
                         'defaultPrecision' => 0,
-                        'label'            => 'item',
-                        'shortLabel'       => 'item',
-                        'pluralLabel'      => 'items',
+                        'label' => 'item',
+                        'shortLabel' => 'item',
+                        'pluralLabel' => 'items',
                         'shortPluralLabel' => 'items'
                     ]
                 ]
@@ -156,7 +176,7 @@ class ProductUnitTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetForAnotherLocalization()
+    public function testGetForAnotherLocalization(): void
     {
         $response = $this->get(
             ['entity' => 'productunits', 'id' => 'item'],
@@ -167,13 +187,13 @@ class ProductUnitTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'productunits',
-                    'id'         => 'item',
+                    'type' => 'productunits',
+                    'id' => 'item',
                     'attributes' => [
                         'defaultPrecision' => 0,
-                        'label'            => 'Spanish Item',
-                        'shortLabel'       => 'Spanish Item',
-                        'pluralLabel'      => 'Spanish Item',
+                        'label' => 'Spanish Item',
+                        'shortLabel' => 'Spanish Item',
+                        'pluralLabel' => 'Spanish Item',
                         'shortPluralLabel' => 'Spanish Item'
                     ]
                 ]
@@ -182,12 +202,33 @@ class ProductUnitTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdate()
+    public function testTryToGetForUnknownLocalization(): void
+    {
+        $response = $this->get(
+            ['entity' => 'productunits', 'id' => 'item'],
+            [],
+            ['HTTP_X-Localization-ID' => '99999'],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'invalid header value exception',
+                'detail' => \sprintf(
+                    'The value "99999" is unknown localization ID. Available values: %s. Header: X-Localization-ID.',
+                    implode(', ', LoadLocalizationData::getLocalizationIds(self::getContainer()))
+                )
+            ],
+            $response
+        );
+    }
+
+    public function testTryToUpdate(): void
     {
         $data = [
             'data' => [
-                'type'       => 'productunits',
-                'id'         => 'item',
+                'type' => 'productunits',
+                'id' => 'item',
                 'attributes' => [
                     'defaultPrecision' => 1
                 ]
@@ -204,11 +245,11 @@ class ProductUnitTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToCreate()
+    public function testTryToCreate(): void
     {
         $data = [
             'data' => [
-                'type'       => 'productunits',
+                'type' => 'productunits',
                 'attributes' => [
                     'defaultPrecision' => 1
                 ]
@@ -225,7 +266,7 @@ class ProductUnitTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDelete()
+    public function testTryToDelete(): void
     {
         $response = $this->delete(
             ['entity' => 'productunits', 'id' => 'item'],
@@ -237,7 +278,7 @@ class ProductUnitTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDeleteList()
+    public function testTryToDeleteList(): void
     {
         $response = $this->cdelete(
             ['entity' => 'productunits'],

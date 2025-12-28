@@ -14,11 +14,14 @@ services:
     Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager:
         alias: oro_frontend_localization.manager.user_localization
 
-    oro_frontend_localization.extension.current_localization.request:
-        class: Oro\Bundle\FrontendLocalizationBundle\Extension\RequestCurrentLocalizationExtension
+    oro_frontend_localization.extension.current_localization.frontend_api_request:
+        class: Oro\Bundle\FrontendLocalizationBundle\Extension\FrontendApiRequestCurrentLocalizationExtension
         arguments:
             - '@request_stack'
             - '@oro_locale.manager.localization'
+            - '@oro_config.manager'
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_api.request_helper'
         tags:
             - { name: oro_locale.extension.current_localization }
 
