@@ -112,8 +112,9 @@ class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateList
             ['entity' => 'customergroupproductvisibilities'],
             ['filter' => ['id' => [$visibility1ApiId, $visibility2ApiId]]]
         );
+        $expectedData = $data;
         $expectedData['data'][1]['id'] = $visibility2ApiId;
-        unset($expectedData['data'][1]['meta']);
+        unset($expectedData['data'][0]['meta']);
         $this->assertResponseContains($expectedData, $response, true);
     }
 

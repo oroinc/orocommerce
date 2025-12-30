@@ -140,8 +140,9 @@ class ProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestCase
             ['entity' => 'productvisibilities'],
             ['filter' => ['id' => [$product1Id, $product2Id]]]
         );
+        $expectedData = $data;
         $expectedData['data'][1]['id'] = (string)$product2Id;
-        unset($expectedData['data'][1]['meta']);
+        unset($expectedData['data'][0]['meta']);
         $this->assertResponseContains($expectedData, $response, true);
     }
 

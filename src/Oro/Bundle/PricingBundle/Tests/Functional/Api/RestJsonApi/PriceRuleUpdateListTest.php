@@ -179,8 +179,9 @@ class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
             ['entity' => 'pricerules'],
             ['filter[id][gte]' => '@price_list_3_price_rule_5->id']
         );
-        $expectedData['data'][0]['id'] = 'new';
-        unset($expectedData['data'][1]['meta']);
+        $expectedData = $data;
+        $expectedData['data'][1]['id'] = 'new';
+        unset($expectedData['data'][0]['meta']);
         $responseContent = $this->updateResponseContent($expectedData, $response);
         $this->assertResponseContains($responseContent, $response);
     }
