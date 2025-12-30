@@ -34,7 +34,6 @@ class CustomerProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestC
             ['entity' => 'customerproductvisibilities'],
             ['filter[product][eq]' => '@product-4->id']
         );
-
         $this->assertResponseContains('update_list_create_customer_product_visibilities.yml', $response, true);
     }
 
@@ -121,8 +120,9 @@ class CustomerProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestC
                 ]
             ]
         );
+        $expectedData = $data;
         $expectedData['data'][1]['id'] = '<(implode("-", [@product-4->id, @customer.level_1.1->id]))>';
-        unset($expectedData['data'][1]['meta']);
+        unset($expectedData['data'][0]['meta']);
         $this->assertResponseContains($expectedData, $response, true);
     }
 
@@ -170,6 +170,134 @@ class CustomerProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestC
                 'source' => ['pointer' => '/included']
             ],
             $operationId
+        );
+    }
+
+    public function testCreateEntitiesWithoutMessageQueueAndWithSyncMode(): void
+    {
+        $response = $this->sendUpdateListRequestWithoutMessageQueueAndWithSynchronousMode(
+            CustomerProductVisibility::class,
+            'update_list_create_customer_product_visibilities.yml'
+        );
+
+        $this->assertResponseContains('update_list_create_customer_product_visibilities.yml', $response, true);
+    }
+
+    public function testUpdateEntitiesWithoutMessageQueueAndWithSyncMode(): void
+    {
+        $data = [
+            'data' => [
+                [
+                    'meta' => ['update' => true],
+                    'type' => 'customerproductvisibilities',
+                    'id' => '<(implode("-", [@product-1->id, @customer.orphan->id]))>',
+                    'attributes' => [
+                        'visibility' => 'hidden'
+                    ]
+                ],
+                [
+                    'meta' => ['update' => true],
+                    'type' => 'customerproductvisibilities',
+                    'id' => '<(implode("-", [@product-2->id, @customer.level_1_1->id]))>',
+                    'attributes' => [
+                        'visibility' => 'visible'
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->sendUpdateListRequestWithoutMessageQueueAndWithSynchronousMode(
+            CustomerProductVisibility::class,
+            $data
+        );
+
+        $expectedData = $data;
+        foreach ($expectedData['data'] as $key => $item) {
+            unset($expectedData['data'][$key]['meta']);
+        }
+        $this->assertResponseContains($expectedData, $response, true);
+    }
+
+    public function testCreateAndUpdateEntitiesWithoutMessageQueueAndWithSyncMode(): void
+    {
+        $data = [
+            'data' => [
+                [
+                    'meta' => ['update' => true],
+                    'type' => 'customerproductvisibilities',
+                    'id' => '<(implode("-", [@product-1->id, @customer.orphan->id]))>',
+                    'attributes' => [
+                        'visibility' => 'hidden'
+                    ]
+                ],
+                [
+                    'type' => 'customerproductvisibilities',
+                    'attributes' => [
+                        'visibility' => 'visible'
+                    ],
+                    'relationships' => [
+                        'product' => [
+                            'data' => ['type' => 'products', 'id' => '<toString(@product-4->id)>']
+                        ],
+                        'customer' => [
+                            'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1.1->id)>']
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->sendUpdateListRequestWithoutMessageQueueAndWithSynchronousMode(
+            CustomerProductVisibility::class,
+            $data
+        );
+
+        $expectedData = $data;
+        $expectedData['data'][1]['id'] = '<(implode("-", [@product-4->id, @customer.level_1.1->id]))>';
+        unset($expectedData['data'][0]['meta']);
+        $this->assertResponseContains($expectedData, $response, true);
+    }
+
+    public function testTryToCreateEntitiesWithIncludesWithoutMessageQueueAndWithSyncMode(): void
+    {
+        $data = [
+            'data' => [
+                [
+                    'type' => 'customerproductvisibilities',
+                    'attributes' => [
+                        'visibility' => 'visible'
+                    ],
+                    'relationships' => [
+                        'product' => [
+                            'data' => ['type' => 'products', 'id' => '<toString(@product-4->id)>']
+                        ],
+                        'customer' => [
+                            'data' => ['type' => 'customers', 'id' => 'new_customer']
+                        ]
+                    ]
+                ]
+            ],
+            'included' => [
+                [
+                    'type' => 'customers',
+                    'id' => 'new_customer',
+                    'attributes' => [
+                        'name' => 'New Customer'
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->sendUpdateListRequestWithoutMessageQueueAndWithSynchronousMode(
+            CustomerProductVisibility::class,
+            $data,
+            false
+        );
+
+        $this->assertResponseContainsValidationError(
+            [
+                'title' => 'request data constraint',
+                'detail' => 'The included data are not supported for this resource type.',
+                'source' => ['pointer' => '/included']
+            ],
+            $response
         );
     }
 }
