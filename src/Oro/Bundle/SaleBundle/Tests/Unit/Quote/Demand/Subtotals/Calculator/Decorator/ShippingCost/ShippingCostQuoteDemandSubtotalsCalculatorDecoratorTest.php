@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Quote\Demand\Subtotals\Calculator\Decorator\ShippingCost;
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
@@ -14,7 +14,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfigurationInterface;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
 class ShippingCostQuoteDemandSubtotalsCalculatorDecoratorTest extends \PHPUnit\Framework\TestCase
 {

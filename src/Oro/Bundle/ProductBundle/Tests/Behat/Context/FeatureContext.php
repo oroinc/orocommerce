@@ -204,7 +204,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     {
         $entityConfigForm = $this->createElement('EntityConfigForm');
 
-        // @codingStandardsIgnoreStart
+        // phpcs:disable
         $enumInputWithTooltip = $entityConfigForm->find(
             'xpath',
             sprintf(
@@ -212,7 +212,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
                 $name
             )
         );
-        // @codingStandardsIgnoreEnd
+        // phpcs:enable
 
         static::assertNotEmpty($enumInputWithTooltip);
     }
@@ -691,10 +691,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @codingStandardsIgnoreStart
+     * phpcs:disable
      * Example: I should see product unit selector as "single" for product with SKU "SKU1"
      * @Then /^(?:|I )should see product unit selector as "(?P<selectorType>[^"]*)" for product with SKU "(?P<SKU>[^"]*)"$/
-     * @codingStandardsIgnoreEnd
+     * phpcs:enable
      */
     public function shouldSeeForProductUnit($selectorType, $sku)
     {
@@ -768,10 +768,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @codingStandardsIgnoreStart
+     * phpcs:disable
      * Example: I should see that the "Product Kit Line Item Totals Form Unit" element has a product unit selector of type "single"
      * @Then /^(?:|I )should see that the "(?P<elementName>[^"]*)" element has a product unit selector of type "(?P<selectorType>[^"]*)"$/
-     * @codingStandardsIgnoreEnd
+     * phpcs:enable
      */
     public function shouldSeeThatElementHasProductUnitSelectorOfType($elementName, $unit)
     {
@@ -825,12 +825,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @codingStandardsIgnoreStart
+     * phpcs:disable
      *
      * Example: I should see notification "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" in order
      * @Then /^(?:|I )should see notification "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" in order$/
      *
-     * @codingStandardsIgnoreEnd
+     * phpcs:enable
      */
     public function shouldSeeNotificationForProductWithUnitInOrder($elementNameOrText, $SKU, $unit): void
     {
@@ -863,12 +863,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @codingStandardsIgnoreStart
+     * phpcs:disable
      *
      * Example: I should not see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" in order
      * @Then /^(?:|I )should not see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" in order$/
      *
-     * @codingStandardsIgnoreEnd
+     * phpcs:enable
      */
     public function shouldNotSeeNotificationForProductWithUnitInOrder($elementNameOrText, $SKU, $unit): void
     {
@@ -897,12 +897,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @codingStandardsIgnoreStart
+     * phpcs:disable
      *
      * Example: I should see notification "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" in shopping list
      * @Then /^(?:|I )should see notification "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" in shopping list$/
      *
-     * @codingStandardsIgnoreEnd
+     * phpcs:enable
      */
     public function shouldSeeNotificationForProductWithUnitInShoppingList($elementNameOrText, $SKU, $unit): void
     {
@@ -955,12 +955,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @codingStandardsIgnoreStart
+     * phpcs:disable
      *
      * Example: I should not see notification "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" in shopping list
      * @Then /^(?:|I )should not see notification "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" in shopping list$/
      *
-     * @codingStandardsIgnoreEnd
+     * phpcs:enable
      */
     public function shouldNotSeeNotificationForProductWithUnitInShoppingList($elementNameOrText, $SKU, $unit): void
     {
@@ -1060,11 +1060,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @codingStandardsIgnoreStart
+     * phpcs:disable
      *
      * @Then /^(?:|I )should see notification "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" line item "(?P<element>[^"]*)"$/
      *
-     * @codingStandardsIgnoreEnd
+     * phpcs:enable
      */
     public function shouldSeeNotificationForLineItem($elementName, $SKU, $element): void
     {
@@ -1115,11 +1115,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @codingStandardsIgnoreStart
+     * phpcs:disable
      *
      * @Then /^(?:|I )should not see notification "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" line item "(?P<element>[^"]*)"$/
      *
-     * @codingStandardsIgnoreEnd
+     * phpcs:enable
      */
     public function shouldNotSeeNotificationForLineItem($elementName, $SKU, $element): void
     {
@@ -1837,7 +1837,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $filterItem->checkItemsInFilter($filterItems);
     }
 
-    //@codingStandardsIgnoreStart
+    //phpcs:disable
     /**
      * Options search in multiple select filter
      * Example: When I type "Task" in search field of Activity Type filter in frontend product grid
@@ -1849,7 +1849,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      * @param string $searchTerm
      * @param string $filterName
      */
-    //@codingStandardsIgnoreEnd
+    //phpcs:enable
     public function iSearchForOptionsInFilter($searchTerm, $filterName)
     {
         /** @var MultipleChoice $filterItem */

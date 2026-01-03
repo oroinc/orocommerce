@@ -60,7 +60,6 @@ class ReindexCommand extends Command
                 []
             )
             ->setHelp(
-                // @codingStandardsIgnoreStart
                 <<<'HELP'
 The <info>%command.name%</info> command rebuilds the storefront search index.
 
@@ -90,7 +89,6 @@ by adding a message to the message queue, so ensure that the message consumer pr
 (<info>oro:message-queue:consume</info>) are running for the actual reindexation to happen.
 
 HELP
-                // @codingStandardsIgnoreEnd
             )
             ->addUsage('--scheduled')
             ->addUsage('--website-id=<ID>')

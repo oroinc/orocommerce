@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Configured\Decorator\AllowUnlisted;
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfigurationInterface;
@@ -12,7 +12,7 @@ use Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\AllowUnlisted\
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
 class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {

@@ -218,7 +218,7 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
         $orderForm->saveWithoutDiscountsRecalculation();
     }
 
-    // @codingStandardsIgnoreStart
+    // phpcs:disable
     /**
      * Example: Then I expecting to see alphabetic coupon of 10 symbols with prefix "hello" suffix "kitty" and dashes every 0 symbols
      * Example: Then I expecting to see alphanumeric coupon of 16 symbols with prefix "hello" suffix "kitty" and dashes every 4 symbols
@@ -231,7 +231,7 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
      * @param string $codeSuffix
      * @param int $dashesSequence
      */
-    // @codingStandardsIgnoreEnd
+    // phpcs:enable
     public function assertCouponMatchesGivenOptions(
         $codeType,
         $codeLength,

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\FedexShippingBundle\ShippingMethod;
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
@@ -20,7 +20,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
 /**
  * Represents FedEx shipping method.

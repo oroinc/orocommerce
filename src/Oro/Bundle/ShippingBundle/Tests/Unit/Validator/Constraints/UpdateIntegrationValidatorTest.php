@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Validator\Constraints;
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
@@ -15,7 +15,7 @@ use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\UpdateIntegrationValidator;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
 class UpdateIntegrationValidatorTest extends ConstraintValidatorTestCase
 {

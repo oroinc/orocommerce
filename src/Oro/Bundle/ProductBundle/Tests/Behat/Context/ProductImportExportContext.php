@@ -50,13 +50,13 @@ class ProductImportExportContext extends OroFeatureContext
         );
     }
 
-    //@codingStandardsIgnoreStart
+    //phpcs:disable
     /**
      * Example: Exported file with Product Kits divided by "\n" delimiter contains at least the following data
      *
      * @Given /^Exported file with Product Kits divided by "(?P<delimeter>(?:[^"]+))" delimiter contains at least the following data:$/
      */
-    //@codingStandardsIgnoreEnd
+    //phpcs:enable
     public function exportedFileWithProductKitsDividedByDelimiterContainsAtLeastTheFollowingData(
         $delimiter,
         TableNode $table
@@ -127,13 +127,13 @@ class ProductImportExportContext extends OroFeatureContext
         );
     }
 
-    //@codingStandardsIgnoreStart
+    //phpcs:disable
     /**
      * Example: Given I copy product fixture "000.png" to public directory as "091.png"
      *
      * @Given /^I copy product fixture "(?P<filename>(?:[^"]|\\")*)" to public directory as "(?P<newFilename>(?:[^"]|\\")*)"$/
      */
-    //@codingStandardsIgnoreEnd
+    //phpcs:enable
     public function copyProductFixtureFileToPublicDir(string $filename, string $newFilename): void
     {
         $sourcePath = sprintf(
@@ -148,13 +148,13 @@ class ProductImportExportContext extends OroFeatureContext
         $this->copyFiles($sourcePath, $targetPath);
     }
 
-    //@codingStandardsIgnoreStart
+    //phpcs:disable
     /**
      * Example: Given I copy product fixture "000.png" to import upload dir as "091.png"
      *
      * @Given /^I copy product fixture "(?P<filename>(?:[^"]|\\")*)" to import upload dir as "(?P<newFilename>(?:[^"]|\\")*)"$/
      */
-    //@codingStandardsIgnoreEnd
+    //phpcs:enable
     public function copyProductFixtureFileToImportFilesDir(string $filename, string $newFilename): void
     {
         $this->getProductImportImagesFileManager()->writeFileToStorage(

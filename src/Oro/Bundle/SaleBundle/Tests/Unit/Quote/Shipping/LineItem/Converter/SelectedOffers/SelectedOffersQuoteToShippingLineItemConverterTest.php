@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Quote\Shipping\LineItem\Converter\SelectedOffers;
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -13,7 +13,7 @@ use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\SelectedOffers\Selec
 use Oro\Bundle\SaleBundle\Tests\Unit\Quote\Shipping\LineItem\Converter\AbstractOffersQuoteToShippingLineItemConverterTest;
 use PHPUnit\Framework\MockObject\MockObject;
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
 class SelectedOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQuoteToShippingLineItemConverterTest
 {

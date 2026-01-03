@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Configured\Decorator\OverriddenCost;
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfigurationInterface;
@@ -10,7 +10,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\OverriddenCost\OverriddenCostShippingConfiguredPriceProviderDecorator;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
 class OverriddenCostShippingConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {

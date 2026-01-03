@@ -69,13 +69,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         }
     }
 
-    //@codingStandardsIgnoreStart
+    //phpcs:disable
     /**
      * Example: I should see that "Dashboard Widget Count" contains "5" for "My Checkouts"
      *
      * @Then /^I should see that "Dashboard Widget Count" contains "(?P<expectedCount>\d+)" for "(?P<widgetTitle>[^"]+)"$/
      */
-    //@codingStandardsIgnoreEnd
+    //phpcs:enable
     public function assertWidgetCount($expectedCount, $widgetTitle)
     {
         $locator = sprintf(

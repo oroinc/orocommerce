@@ -21,7 +21,7 @@ class ProductProxyStub extends Product implements Proxy
         $this->initialized = $initialized;
     }
 
-    // @codingStandardsIgnoreStart
+    // phpcs:disable
     #[\Override]
     public function __load()
     {
@@ -33,5 +33,5 @@ class ProductProxyStub extends Product implements Proxy
     {
         return $this->initialized;
     }
-    // @codingStandardsIgnoreEnd
+    // phpcs:enable
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\PaymentStatusCalculationContext;
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -17,7 +17,7 @@ use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
 final class SetPaymentTransactionsForPaymentStatusCalculationContextListenerTest extends TestCase
 {

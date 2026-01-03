@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\FedexShippingBundle\ShippingMethod\Factory;
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactoryInterface;
@@ -15,7 +15,7 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
 /**
  * The factory to create FedEx shipping method.

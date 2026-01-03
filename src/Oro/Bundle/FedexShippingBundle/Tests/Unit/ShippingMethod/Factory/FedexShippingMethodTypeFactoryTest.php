@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\ShippingMethod\Factory;
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactoryInterface;
@@ -14,7 +14,7 @@ use Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIden
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use PHPUnit\Framework\TestCase;
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
 class FedexShippingMethodTypeFactoryTest extends TestCase
 {

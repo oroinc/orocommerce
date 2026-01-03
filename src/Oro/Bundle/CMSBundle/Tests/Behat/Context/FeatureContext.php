@@ -84,7 +84,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @codingStandardsIgnoreStart
+     * phpcs:disable
      *
      * Example: When I should see imported "Content" content in "CMS Page Content" WYSIWYG editor
      *
@@ -93,7 +93,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      * @param string $wysiwygElementName
      * @param string $importDialogName
      *
-     * @codingStandardsIgnoreEnd
+     * phpcs:enable
      */
     public function shouldSeeImportedContent($text, $wysiwygElementName, $importDialogName = "Import Button")
     {
@@ -130,11 +130,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     /**
      * Example: I fill the code type block containing the text "Same text 1" with the value "Same text 2"
      *
-     * @codingStandardsIgnoreStart
+     * phpcs:disable
      *
      * @When /^(?:|I )fill the code type block containing the text "(?P<existingValue>(?:[^"]|\\")*)" with the value "(?P<newValue>(?:[^"]|\\")*)"$/
      *
-     * @codingStandardsIgnoreEnd
+     * phpcs:enable
      */
     public function fillTheCodeTypeBlockContainingTheTextWithTheValue(string $existingValue, string $newValue): void
     {
@@ -449,12 +449,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @codingStandardsIgnoreStart
+     * phpcs:disable
      *
      * @When /^(?:|I )drag and drop the block "(?P<blockElement>(?:[^"]|\\")*)" to the GrapesJs Wysiwyg Root Area$/
      * @When /^(?:|I )drag and drop the block "(?P<blockElement>(?:[^"]|\\")*)" to the "(?P<destinationElement>(?:[^"]|\\")*)"$/
      *
-     * @codingStandardsIgnoreEnd
+     * phpcs:enable
      */
     public function dragAndDropTheBlockToGrapesJs(
         object|string $blockElement,
@@ -496,11 +496,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @codingStandardsIgnoreStart
+     * phpcs:disable
      *
      * @When /^(?:|I )move "(?P<blockElement>(?:[^"]|\\")*)" to "(?P<destinationElement>(?:[^"]|\\")*)" in editor canvas$/
      *
-     * @codingStandardsIgnoreEnd
+     * phpcs:enable
      */
     public function moveComponentTo(string $blockElement, string $destinationElement): void
     {
@@ -843,9 +843,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     /**
      * Example: When I add Home Page Slider widget before content for "About" page
      *
-     * @codingStandardsIgnoreStart
+     * phpcs:disable
      * @When /^(?:|I )add Home Page Slider (widget|content block) (before|after) content for "(?P<name>(?:[^"]|\\")*)" page$/
-     * @codingStandardsIgnoreEnd
+     * phpcs:enable
      */
     public function addHomePageSliderForPage(string $type, string $position, string $pageName): void
     {

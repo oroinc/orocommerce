@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\ShippingMethod\Factory;
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
@@ -19,7 +19,7 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use PHPUnit\Framework\TestCase;
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
 class FedexShippingMethodFactoryTest extends TestCase
 {

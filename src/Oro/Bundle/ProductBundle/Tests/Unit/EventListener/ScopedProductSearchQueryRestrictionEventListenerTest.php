@@ -8,11 +8,9 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-// @codingStandardsIgnoreStart
-// CS-fixer tries to join the class name and extends, and the new line has more than 250 characters
 class ScopedProductSearchQueryRestrictionEventListenerTest extends
+    // phpcs:ignore
     AbstractProductSearchQueryRestrictionEventListenerTest
-    // @codingStandardsIgnoreEnd
 {
     private const SCOPE = 'test_scope';
 

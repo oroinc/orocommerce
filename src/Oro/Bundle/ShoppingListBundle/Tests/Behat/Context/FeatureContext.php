@@ -182,11 +182,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         self::assertNull($link, sprintf('"%s" list item was found in shopping list widget', $name));
     }
 
-    //@codingStandardsIgnoreStart
+    //phpcs:disable
     /**
      * @When /^(?:|I )click on "(?P<sku>[^"]+)" configurable product in "(?P<tableName>[^"]+)"(?:| with the following attributes:)$/
      */
-    //@codingStandardsIgnoreEnd
+    //phpcs:enable
     public function iClickOnConfigurableProductWithAttributes(string $sku, string $tableName, ?TableNode $table = null)
     {
         $attributeLabels = [];

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\ShippingMethod;
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
@@ -18,7 +18,7 @@ use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethod;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethodType;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
 class FedexShippingMethodTypeTest extends \PHPUnit\Framework\TestCase
 {

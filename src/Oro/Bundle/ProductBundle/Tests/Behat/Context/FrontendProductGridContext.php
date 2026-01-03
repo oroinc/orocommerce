@@ -57,14 +57,14 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
      * Example: I reset "ManyToOneField" filter in "product" sidebar
      * Example: I reset "ManyToOneField" with hint "Test" filter in "product" sidebar
      *
-     * @codingStandardsIgnoreStart
+     * phpcs:disable
      *
      * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" filter in frontend product grid$/
      * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" with hint "(?P<filterHint>[\w\s\:\(\)]+)" filter in frontend product grid$/
      * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" filter in "(?P<filterPosition>[\w\s]+)" sidebar$/
      * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" with hint "(?P<filterHint>[\w\s\:\(\)]+)" filter in "(?P<filterPosition>[\w\s]+)" sidebar$/
      *
-     * @codingStandardsIgnoreEnd
+     * phpcs:enable
      *
      * @param string $filterName
      * @param string $filterHint
@@ -86,12 +86,12 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
      * Example: I should see "One, Two" hint for "CountField" filter in frontend product grid
      * Example: I should see "One, Two" hint for "CountField" filter in "product" sidebar
      *
-     * @codingStandardsIgnoreStart
+     * phpcs:disable
      *
      * @When /^(?:|I )should see "(?P<filterHint>[\w\s\,\"\:\(\)]+)" hint for "(?P<filterName>[\w\s\:\(\)]+)" filter in frontend product grid$/
      * @When /^(?:|I )should see "(?P<filterHint>[\w\s\,\"\:\(\)]+)" hint for "(?P<filterName>[\w\s\:\(\)]+)" filter in "(?P<filterPosition>[\w\s]+)" sidebar$/
      *
-     * @codingStandardsIgnoreEnd
+     * phpcs:enable
      *
      * @param string $filterName
      * @param string $filterHint
@@ -114,7 +114,7 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
         }
     }
 
-    //@codingStandardsIgnoreStart
+    //phpcs:disable
     /**
      * Asserts that there's no hint shown for a filter in frontend product grid.
      * Example: I should not see hint for "TagField" filter in frontend product grid
@@ -125,7 +125,7 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
      * @param string $filterName
      * @param string $filterPosition
      */
-    //@codingStandardsIgnoreEnd
+    //phpcs:enable
     public function assertsFilterHasNoHint(
         string $filterName,
         $filterPosition = 'FrontendProductGridFilters'

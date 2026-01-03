@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\FedexShippingBundle\ShippingMethod;
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
@@ -13,7 +13,7 @@ use Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
 /**
  * Represents FedEx shipping method type.

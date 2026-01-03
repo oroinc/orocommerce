@@ -37,7 +37,6 @@ class PriceListStorageReorganizeCommand extends Command
             ->addArgument('entity-alias')
             ->addOption('strategy', null, InputOption::VALUE_REQUIRED, 'Can be "base" or "sharding"')
             ->setHelp(
-                // @codingStandardsIgnoreStart
                 <<<'HELP'
 The <info>%command.name%</info> command reorganizes price list database tables
 to use or forgo sharding. After running this command make sure to modify
@@ -56,7 +55,6 @@ Run the command without arguments to see the list of all supported entities:
   <info>php %command.full_name%</info>
 
 HELP
-                // @codingStandardsIgnoreEnd
             )
             ->addUsage('--strategy=sharding prices')
             ->addUsage('--strategy=base prices')

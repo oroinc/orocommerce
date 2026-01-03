@@ -4,42 +4,42 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor;
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 /**
  * @link https://registration.paypal.com/welcomePage.do?country=US&mode=try#ProcessorSelectionNode
  * @link https://developer.paypal.com/docs/classic/payflow/integration-guide/#processing-platforms-supporting-card-present-transactions
  */
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
 /**
  * Partner option, contains all available partners in PayPal.
  */
 class Partner extends AbstractOption
 {
-    const PARTNER = 'PARTNER';
+    public const PARTNER = 'PARTNER';
 
-    const AMEX = 'AMEX';
-    const MESP = 'MESP';
-    const NOVA = 'NOVA';
-    const NASH = 'NASH';
-    const NORT = 'NORT';
-    const SOUT = 'SOUT';
-    const MAPP = 'MAPP';
-    const NDCE = 'NDCE';
-    const HTLD = 'HTLD';
-    const LITL = 'LITL';
-    const MONE = 'MONE';
-    const PAYT = 'PAYT';
-    const TMPA = 'TMPA';
-    const PPAY = 'PPAY';
-    const SNET = 'SNET';
-    const VITA = 'VITA';
-    const TELN = 'TELN';
-    const FIFT = 'FIFT';
-    const VSA  = 'VSA';
-    const WPAY = 'WPAY';
-    const PAYPAL = Processor\PayPal::CODE;
-    const PAYPALCA = Processor\PayPalCA::CODE;
+    public const AMEX = 'AMEX';
+    public const MESP = 'MESP';
+    public const NOVA = 'NOVA';
+    public const NASH = 'NASH';
+    public const NORT = 'NORT';
+    public const SOUT = 'SOUT';
+    public const MAPP = 'MAPP';
+    public const NDCE = 'NDCE';
+    public const HTLD = 'HTLD';
+    public const LITL = 'LITL';
+    public const MONE = 'MONE';
+    public const PAYT = 'PAYT';
+    public const TMPA = 'TMPA';
+    public const PPAY = 'PPAY';
+    public const SNET = 'SNET';
+    public const VITA = 'VITA';
+    public const TELN = 'TELN';
+    public const FIFT = 'FIFT';
+    public const VSA  = 'VSA';
+    public const WPAY = 'WPAY';
+    public const PAYPAL = Processor\PayPal::CODE;
+    public const PAYPALCA = Processor\PayPalCA::CODE;
 
     /**
      * @var array

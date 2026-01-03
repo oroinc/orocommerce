@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method\Config\ParameterBag\Factory\Settings;
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
@@ -11,7 +11,7 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings;
 use Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBag\Factory\Settings\ParameterBagPaymentTermConfigBySettingsFactory;
 use Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBag\ParameterBagPaymentTermConfig;
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
 class ParameterBagPaymentTermConfigBySettingsFactoryTest extends \PHPUnit\Framework\TestCase
 {

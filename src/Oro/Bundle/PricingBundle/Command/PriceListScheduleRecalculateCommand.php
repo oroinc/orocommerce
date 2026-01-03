@@ -86,14 +86,13 @@ class PriceListScheduleRecalculateCommand extends Command
                 'Recalculate prices for dependent price lists included in the price-list option'
             )
             ->setHelp(
-                // @codingStandardsIgnoreStart
                 <<<'HELP'
 The <info>%command.name%</info> command recalculates combined price lists and product prices.
 
   <info>php %command.full_name%</info>
 
-Use the <info>--customer</info>, <info>--customer-group</info> or <info>--website</info> options to recalculate only the prices
-related to the specified customers, customer groups or websites:
+Use the <info>--customer</info>, <info>--customer-group</info> or <info>--website</info> options to recalculate only
+the prices related to the specified customers, customer groups or websites:
 
   <info>php %command.full_name% --customer=<ID1> --customer=<ID2> --customer=<IDN></info>
   <info>php %command.full_name% --customer-group=<ID1> --customer-group=<ID2> --customer-group=<IDN></info>
@@ -113,7 +112,6 @@ This command can also be used with the <info>--all</info> option to recalculate 
 
   <info>php %command.full_name% --all</info>
 HELP
-                // @codingStandardsIgnoreEnd
             )
             ->addUsage('--customer=<ID1> --customer=<ID2> --customer=<IDN>')
             ->addUsage('--customer-group=<ID1> --customer-group=<ID2> --customer-group=<IDN>')

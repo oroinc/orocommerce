@@ -5,9 +5,9 @@ namespace Oro\Bundle\FedexShippingBundle\Controller;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceRestClient;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceSoapClient;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceValidateConnectionRequestFactory;
-// @codingStandardsIgnoreStart
+// phpcs:disable
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceValidateConnectionRequestSoapFactory;
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponseInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceSoapResponse;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
