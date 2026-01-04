@@ -3,3 +3,9 @@ oro_entity:
         Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
             full: [ label ]
             short: [ label ]
+
+oro_frontend:
+    storefront_entity_routes:
+        Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+            index: oro_shopping_list_frontend_index
+            view: oro_shopping_list_frontend_view

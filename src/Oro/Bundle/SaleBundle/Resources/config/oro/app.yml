@@ -1,0 +1,5 @@
+oro_frontend:
+    storefront_entity_routes:
+        Oro\Bundle\SaleBundle\Entity\Quote:
+            index: oro_sale_quote_frontend_index
+            view: oro_sale_quote_frontend_view

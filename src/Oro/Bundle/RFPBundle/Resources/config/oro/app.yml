@@ -7,3 +7,9 @@ oro_entity:
 oro_email:
     public_email_owners:
         - Oro\Bundle\RFPBundle\Entity\Request
+
+oro_frontend:
+    storefront_entity_routes:
+        Oro\Bundle\RFPBundle\Entity\Request:
+            index: oro_rfp_frontend_request_index
+            view: oro_rfp_frontend_request_view
