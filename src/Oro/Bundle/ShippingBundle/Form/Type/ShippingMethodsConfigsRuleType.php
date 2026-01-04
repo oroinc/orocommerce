@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraint;
  */
 class ShippingMethodsConfigsRuleType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_shipping_methods_configs_rule';
+    public const BLOCK_PREFIX = 'oro_shipping_methods_configs_rule';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

@@ -24,15 +24,15 @@ class LoadCheckoutACLData extends AbstractFixture implements
 {
     use ContainerAwareTrait;
 
-    const CHECKOUT_ACC_1_USER_LOCAL = 'checkout_customer1_user_local';
-    const CHECKOUT_ACC_1_USER_BASIC = 'checkout_customer1_user_basic';
-    const CHECKOUT_ACC_1_USER_DEEP = 'checkout_customer1_user_deep';
+    public const CHECKOUT_ACC_1_USER_LOCAL = 'checkout_customer1_user_local';
+    public const CHECKOUT_ACC_1_USER_BASIC = 'checkout_customer1_user_basic';
+    public const CHECKOUT_ACC_1_USER_DEEP = 'checkout_customer1_user_deep';
 
-    const CHECKOUT_ACC_1_1_USER_LOCAL = 'checkout_customer1.1_user_local';
+    public const CHECKOUT_ACC_1_1_USER_LOCAL = 'checkout_customer1.1_user_local';
 
-    const CHECKOUT_ACC_2_USER_LOCAL = 'checkout_customer2_user_local';
+    public const CHECKOUT_ACC_2_USER_LOCAL = 'checkout_customer2_user_local';
 
-    const SINGLE_STEP_CHECKOUT_ACC_1_USER_LOCAL = 'single_step_checkout_customer1_user_local';
+    public const SINGLE_STEP_CHECKOUT_ACC_1_USER_LOCAL = 'single_step_checkout_customer1_user_local';
 
     /**
      * @var array

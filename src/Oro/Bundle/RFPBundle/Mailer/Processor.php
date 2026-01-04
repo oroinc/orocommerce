@@ -15,8 +15,8 @@ use Psr\Log\NullLogger;
  */
 class Processor implements LoggerAwareInterface
 {
-    const CREATE_REQUEST_TEMPLATE_NAME = 'request_create_notification';
-    const CONFIRM_REQUEST_TEMPLATE_NAME = 'request_create_confirmation';
+    public const CREATE_REQUEST_TEMPLATE_NAME = 'request_create_notification';
+    public const CONFIRM_REQUEST_TEMPLATE_NAME = 'request_create_confirmation';
 
     /**
      * @var UserTemplateEmailSender

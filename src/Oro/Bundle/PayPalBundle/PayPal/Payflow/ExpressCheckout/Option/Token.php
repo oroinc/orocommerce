@@ -8,7 +8,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class Token extends AbstractOption implements OptionsDependentInterface
 {
-    const TOKEN = 'TOKEN';
+    public const TOKEN = 'TOKEN';
 
     #[\Override]
     public function isApplicableDependent(array $options)

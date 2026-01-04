@@ -17,8 +17,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PriceListCollectionType extends AbstractType
 {
-    const NAME = 'oro_pricing_price_list_collection';
-    const DEFAULT_ORDER = Criteria::ASC;
+    public const NAME = 'oro_pricing_price_list_collection';
+    public const DEFAULT_ORDER = Criteria::ASC;
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

@@ -10,7 +10,7 @@ use Oro\Bundle\OrderBundle\Provider\TotalProvider;
  */
 class OrderTotalEventListener
 {
-    const TOTALS_KEY = 'totals';
+    public const TOTALS_KEY = 'totals';
 
     /** @var TotalProvider */
     protected $provider;

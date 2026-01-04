@@ -9,11 +9,11 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const ROOT_NODE = 'oro_catalog';
-    const DIRECT_URL_PREFIX = 'category_direct_url_prefix';
-    const ALL_PRODUCTS_PAGE_ENABLED = 'all_products_page_enabled';
-    const CATEGORY_IMAGE_PLACEHOLDER = 'category_image_placeholder';
-    const SEARCH_AUTOCOMPLETE_MAX_CATEGORIES = 'search_autocomplete_max_categories';
+    public const ROOT_NODE = 'oro_catalog';
+    public const DIRECT_URL_PREFIX = 'category_direct_url_prefix';
+    public const ALL_PRODUCTS_PAGE_ENABLED = 'all_products_page_enabled';
+    public const CATEGORY_IMAGE_PLACEHOLDER = 'category_image_placeholder';
+    public const SEARCH_AUTOCOMPLETE_MAX_CATEGORIES = 'search_autocomplete_max_categories';
 
     #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder

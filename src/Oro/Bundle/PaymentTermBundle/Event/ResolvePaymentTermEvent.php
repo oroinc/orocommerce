@@ -7,7 +7,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ResolvePaymentTermEvent extends Event
 {
-    const NAME = 'oro_payment_term.resolve.payment_term';
+    public const NAME = 'oro_payment_term.resolve.payment_term';
 
     /** @var PaymentTerm|null */
     protected $paymentTerm;

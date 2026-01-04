@@ -11,10 +11,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ShippingDiscount extends AbstractDiscount
 {
-    const NAME = 'shipping';
-    const SHIPPING_OPTIONS = 'shipping_options';
-    const SHIPPING_METHOD = 'shipping_method';
-    const SHIPPING_METHOD_TYPE = 'shipping_method_type';
+    public const NAME = 'shipping';
+    public const SHIPPING_OPTIONS = 'shipping_options';
+    public const SHIPPING_METHOD = 'shipping_method';
+    public const SHIPPING_METHOD_TYPE = 'shipping_method_type';
 
     #[\Override]
     public function apply(DiscountContextInterface $discountContext)

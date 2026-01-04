@@ -10,8 +10,8 @@ use Oro\Bundle\ConsentBundle\Entity\Consent;
  */
 class ConsentConfigConverter
 {
-    const SORT_ORDER_KEY = 'sort_order';
-    const CONSENT_KEY = 'consent';
+    public const SORT_ORDER_KEY = 'sort_order';
+    public const CONSENT_KEY = 'consent';
 
     /** @var ManagerRegistry */
     protected $doctrine;

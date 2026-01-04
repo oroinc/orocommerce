@@ -7,7 +7,7 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 
 class ShoppingListCreateVoter implements VoterInterface
 {
-    const FEATURE_NAME = 'shopping_list_create';
+    public const FEATURE_NAME = 'shopping_list_create';
 
     /**
      * @var ShoppingListLimitManager

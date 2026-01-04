@@ -9,7 +9,7 @@ use Oro\Bundle\SaleBundle\Provider\ContactInfoSourceOptionsProvider as SourceOpt
 
 class ContactInfoUserOptionsProvider implements OptionProviderWithDefaultValueInterface
 {
-    const USE_SYSTEM = 'use_system';
+    public const USE_SYSTEM = 'use_system';
 
     /**
      * @var ContactInfoSourceOptionsProvider

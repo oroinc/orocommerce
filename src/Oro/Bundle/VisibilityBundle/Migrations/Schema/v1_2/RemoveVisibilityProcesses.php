@@ -13,7 +13,7 @@ class RemoveVisibilityProcesses implements Migration
      * List of process definition to remove
      * @var array
      */
-    const NAMES = [
+    public const NAMES = [
         'account_group_product_visibility_change',
         'account_product_visibility_change',
         'change_account_category_visibility',

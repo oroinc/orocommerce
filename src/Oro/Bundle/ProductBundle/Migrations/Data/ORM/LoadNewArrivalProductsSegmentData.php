@@ -21,7 +21,7 @@ class LoadNewArrivalProductsSegmentData extends AbstractFixture implements
     /**
      * @internal
      */
-    const NEW_ARRIVALS_SEGMENT_NAME_PARAMETER_NAME = 'oro_product.segment.new_arrival.name';
+    public const NEW_ARRIVALS_SEGMENT_NAME_PARAMETER_NAME = 'oro_product.segment.new_arrival.name';
 
     /**
      * @var string

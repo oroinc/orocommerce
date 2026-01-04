@@ -17,7 +17,7 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
  */
 class CmsPageSlugRedirectOrganization extends AbstractFixture implements DependentFixtureInterface
 {
-    const BATCH_SIZE = 1000;
+    public const BATCH_SIZE = 1000;
 
     #[\Override]
     public function getDependencies()

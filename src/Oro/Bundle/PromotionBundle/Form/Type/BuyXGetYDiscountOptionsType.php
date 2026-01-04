@@ -16,8 +16,8 @@ use Symfony\Component\Validator\Constraints\Type;
 
 class BuyXGetYDiscountOptionsType extends AbstractType
 {
-    const NAME = 'oro_promotion_buy_x_get_y_discount_options';
-    const APPLY_TO_FIELD_CHOICES = [
+    public const NAME = 'oro_promotion_buy_x_get_y_discount_options';
+    public const APPLY_TO_FIELD_CHOICES = [
         BuyXGetYDiscount::APPLY_TO_EACH_Y,
         BuyXGetYDiscount::APPLY_TO_XY_TOTAL,
     ];

@@ -7,7 +7,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class RateLookup extends AbstractOption
 {
-    const RATELOOKUPID = 'RATELOOKUPID';
+    public const RATELOOKUPID = 'RATELOOKUPID';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

@@ -10,7 +10,7 @@ use Oro\Bundle\TaxBundle\Manager\TaxManager;
  */
 class BuiltInTaxProvider implements TaxProviderInterface
 {
-    const LABEL = 'oro.tax.providers.built_in.label';
+    public const LABEL = 'oro.tax.providers.built_in.label';
 
     /** @var TaxManager $taxManager */
     private $taxManager;

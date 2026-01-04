@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DiscountStrategySelectType extends AbstractType
 {
-    const NAME = 'oro_discount_strategy_select';
+    public const NAME = 'oro_discount_strategy_select';
 
     /**
      * @var StrategyRegistry

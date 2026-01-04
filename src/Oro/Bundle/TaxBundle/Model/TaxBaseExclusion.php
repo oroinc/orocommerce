@@ -12,9 +12,9 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
  */
 class TaxBaseExclusion extends AbstractResult
 {
-    const COUNTRY = 'country';
-    const REGION = 'region';
-    const OPTION = 'option';
+    public const COUNTRY = 'country';
+    public const REGION = 'region';
+    public const OPTION = 'option';
 
     /**
      * @param Country $country

@@ -6,7 +6,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ProductGridWidgetRenderEvent extends Event
 {
-    const NAME = 'product_grid.render';
+    public const NAME = 'product_grid.render';
 
     /**
      * @var array

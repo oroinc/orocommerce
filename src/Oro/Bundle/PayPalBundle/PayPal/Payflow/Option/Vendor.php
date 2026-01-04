@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class Vendor extends AbstractOption
 {
-    const VENDOR = 'VENDOR';
+    public const VENDOR = 'VENDOR';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

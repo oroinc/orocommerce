@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class AppliedPromotionType extends AbstractType
 {
-    const NAME = 'oro_promotion_applied_promotion';
+    public const NAME = 'oro_promotion_applied_promotion';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

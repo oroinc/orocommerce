@@ -4,7 +4,7 @@ namespace Oro\Bundle\TaxBundle\Matcher;
 
 class UnitedStatesHelper
 {
-    const COUNTRY_CODE_USA = 'US';
+    public const COUNTRY_CODE_USA = 'US';
 
     /**
      * @var array

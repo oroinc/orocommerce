@@ -17,12 +17,12 @@ class LoadAttributeForConfigurableImportData extends AbstractFixture implements 
 {
     use ContainerAwareTrait;
 
-    const PRODUCT_ENTITY_CONFIG_MODEL = Product::class;
-    const SKU_ATTRIBUTE = 'sku';
-    const IS_FEATURED_ATTRIBUTE = 'featured';
-    const NEW_ARRIVAL_ATTRIBUTE = 'newArrival';
-    const NAME_ATTRIBUTE = 'denormalizedDefaultName';
-    const INVENTORY_STATUS_ATTRIBUTE = 'inventory_status';
+    public const PRODUCT_ENTITY_CONFIG_MODEL = Product::class;
+    public const SKU_ATTRIBUTE = 'sku';
+    public const IS_FEATURED_ATTRIBUTE = 'featured';
+    public const NEW_ARRIVAL_ATTRIBUTE = 'newArrival';
+    public const NAME_ATTRIBUTE = 'denormalizedDefaultName';
+    public const INVENTORY_STATUS_ATTRIBUTE = 'inventory_status';
 
     /** @var array */
     private static $attributesData = [];

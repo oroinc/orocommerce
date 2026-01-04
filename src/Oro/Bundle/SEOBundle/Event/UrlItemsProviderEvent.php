@@ -7,8 +7,8 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class UrlItemsProviderEvent extends Event
 {
-    const ON_END = 'oro_seo.event.url_items_provider_end';
-    const ON_START = 'oro_seo.event.url_items_provider_start';
+    public const ON_END = 'oro_seo.event.url_items_provider_end';
+    public const ON_START = 'oro_seo.event.url_items_provider_start';
 
     /**
      * @var WebsiteInterface|null

@@ -16,7 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProductImageType extends AbstractType
 {
-    const NAME = 'oro_product_image';
+    public const NAME = 'oro_product_image';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

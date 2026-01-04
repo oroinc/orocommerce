@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class CustomerUserShoppingListsProvider
 {
-    const DATA_SORT_BY_UPDATED = 'updated';
+    public const DATA_SORT_BY_UPDATED = 'updated';
 
     /**
      * @var array

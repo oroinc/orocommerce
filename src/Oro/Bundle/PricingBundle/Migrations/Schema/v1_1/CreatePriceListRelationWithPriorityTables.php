@@ -9,8 +9,8 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class CreatePriceListRelationWithPriorityTables implements Migration, OrderedMigrationInterface
 {
-    const TMP_RELATION_ACCOUNT_TABLE_NAME = 'orob2b_price_list_to_acc_tmp';
-    const TMP_RELATION_WEBSITE_TABLE_NAME = 'orob2b_price_list_to_ws_tmp';
+    public const TMP_RELATION_ACCOUNT_TABLE_NAME = 'orob2b_price_list_to_acc_tmp';
+    public const TMP_RELATION_WEBSITE_TABLE_NAME = 'orob2b_price_list_to_ws_tmp';
 
     /**
      * @var array

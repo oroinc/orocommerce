@@ -20,9 +20,9 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerGroupProduc
 #[Config]
 class CustomerGroupProductVisibility implements VisibilityInterface, ScopeAwareInterface
 {
-    const CURRENT_PRODUCT = 'current_product';
-    const CATEGORY = 'category';
-    const VISIBILITY_TYPE = 'customer_group_product_visibility';
+    public const CURRENT_PRODUCT = 'current_product';
+    public const CATEGORY = 'category';
+    public const VISIBILITY_TYPE = 'customer_group_product_visibility';
 
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\Id]

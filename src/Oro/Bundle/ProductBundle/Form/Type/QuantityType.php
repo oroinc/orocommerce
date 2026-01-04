@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints\Range;
  */
 class QuantityType extends AbstractType
 {
-    const NAME = 'oro_quantity';
+    public const NAME = 'oro_quantity';
 
     /**
      * @var NumberFormatter

@@ -10,9 +10,9 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class ProductDataConverterEvent extends Event
 {
-    const BACKEND_HEADER = 'oro_product.data_converter.backend_header';
-    const CONVERT_TO_EXPORT = 'oro_product.data_converter.convert_to_export';
-    const CONVERT_TO_IMPORT = 'oro_product.data_converter.convert_to_import';
+    public const BACKEND_HEADER = 'oro_product.data_converter.backend_header';
+    public const CONVERT_TO_EXPORT = 'oro_product.data_converter.convert_to_export';
+    public const CONVERT_TO_IMPORT = 'oro_product.data_converter.convert_to_import';
 
     /** @var array */
     protected $data = [];

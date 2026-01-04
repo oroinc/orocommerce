@@ -15,9 +15,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DiscountConfigurationType extends AbstractType
 {
-    const NAME = 'oro_promotion_discount_configuration';
-    const TYPE = 'type';
-    const OPTIONS = 'options';
+    public const NAME = 'oro_promotion_discount_configuration';
+    public const TYPE = 'type';
+    public const OPTIONS = 'options';
 
     /**
      * @var DiscountFormTypeProvider

@@ -8,8 +8,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class WebsiteSearchCompilerPass implements CompilerPassInterface
 {
-    const WEBSITE_SEARCH_PLACEHOLDER_REGISTRY = 'oro_website_search.placeholder.registry';
-    const WEBSITE_SEARCH_PLACEHOLDER_TAG = 'website_search.placeholder';
+    public const WEBSITE_SEARCH_PLACEHOLDER_REGISTRY = 'oro_website_search.placeholder.registry';
+    public const WEBSITE_SEARCH_PLACEHOLDER_TAG = 'website_search.placeholder';
 
     #[\Override]
     public function process(ContainerBuilder $container)

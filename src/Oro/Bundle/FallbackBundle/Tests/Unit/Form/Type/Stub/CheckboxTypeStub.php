@@ -7,7 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CheckboxTypeStub extends CheckboxType
 {
-    const NAME = 'checkbox_stub';
+    public const NAME = 'checkbox_stub';
 
     public function getName()
     {

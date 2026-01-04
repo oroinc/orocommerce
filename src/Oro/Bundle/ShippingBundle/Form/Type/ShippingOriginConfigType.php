@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormView;
 
 class ShippingOriginConfigType extends AbstractType
 {
-    const NAME = 'oro_shipping_origin_config';
+    public const NAME = 'oro_shipping_origin_config';
 
     #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)

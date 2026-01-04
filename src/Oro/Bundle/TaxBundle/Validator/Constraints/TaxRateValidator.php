@@ -12,7 +12,7 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class TaxRateValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_tax_tax_rate';
+    public const ALIAS = 'oro_tax_tax_rate';
 
     /**
      * @param TaxRate $constraint

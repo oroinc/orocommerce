@@ -13,7 +13,7 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadDependentPriceListRelations extends AbstractFixture implements DependentFixtureInterface
 {
-    const DEPENDENT_PRICE_LIST_TO_WEBSITE_1 = 'price_list_6_CA';
+    public const DEPENDENT_PRICE_LIST_TO_WEBSITE_1 = 'price_list_6_CA';
 
     /**
      * @var array

@@ -7,9 +7,9 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class Tender extends AbstractOption
 {
-    const TENDER = 'TENDER';
+    public const TENDER = 'TENDER';
 
-    const PAYPAL = 'P';
+    public const PAYPAL = 'P';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

@@ -12,7 +12,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class ProductPriceRemove extends Event
 {
-    const NAME = 'oro_pricing.product_price.remove';
+    public const NAME = 'oro_pricing.product_price.remove';
 
     /**
      * @var BaseProductPrice

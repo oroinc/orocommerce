@@ -15,7 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class QuoteDemandType extends AbstractType
 {
-    const NAME = 'oro_sale_quote_demand';
+    public const NAME = 'oro_sale_quote_demand';
 
     /**
      * @var QuoteDemandManager

@@ -7,7 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 
 class LineItemForm extends EntityPage
 {
-    const SELECTOR_ITEM_LABEL = '.form-row label';
+    public const SELECTOR_ITEM_LABEL = '.form-row label';
 
     #[\Override]
     public function assertPageContainsValue($label, $value)

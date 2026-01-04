@@ -15,7 +15,7 @@ use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
  */
 class SearchEventListener
 {
-    const SKIP_FILTER_SEARCH_QUERY_KEY = 'skipSearchQuery';
+    public const SKIP_FILTER_SEARCH_QUERY_KEY = 'skipSearchQuery';
 
     /** @var SearchProductHandler */
     private $searchProductHandler;

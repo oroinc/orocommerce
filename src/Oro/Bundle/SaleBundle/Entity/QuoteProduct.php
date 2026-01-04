@@ -35,9 +35,9 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
 {
     use ExtendEntityTrait;
 
-    const TYPE_REQUESTED = 10;
-    const TYPE_OFFER = 20;
-    const TYPE_NOT_AVAILABLE = 30;
+    public const TYPE_REQUESTED = 10;
+    public const TYPE_OFFER = 20;
+    public const TYPE_NOT_AVAILABLE = 30;
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]

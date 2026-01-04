@@ -9,13 +9,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class BuyXGetYDiscount extends AbstractDiscount implements DiscountProductUnitCodeAwareInterface
 {
-    const APPLY_TO_EACH_Y = 'apply_to_each_y';
-    const APPLY_TO_XY_TOTAL = 'apply_to_xy_total';
-    const BUY_X = 'buy_x';
-    const GET_Y = 'get_y';
+    public const APPLY_TO_EACH_Y = 'apply_to_each_y';
+    public const APPLY_TO_XY_TOTAL = 'apply_to_xy_total';
+    public const BUY_X = 'buy_x';
+    public const GET_Y = 'get_y';
 
-    const DISCOUNT_APPLY_TO = 'discount_apply_to';
-    const DISCOUNT_LIMIT = 'discount_limit';
+    public const DISCOUNT_APPLY_TO = 'discount_apply_to';
+    public const DISCOUNT_LIMIT = 'discount_limit';
 
     /**
      * @var integer

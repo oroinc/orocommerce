@@ -17,7 +17,7 @@ class PaymentTransactionWasRefunded extends AbstractCondition implements Context
 {
     use ContextAccessorAwareTrait;
 
-    const NAME = 'payment_transaction_was_refunded';
+    public const NAME = 'payment_transaction_was_refunded';
 
     /** @var PaymentTransaction */
     protected $transaction;

@@ -10,7 +10,7 @@ use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
 class CouponFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
-    const COUPON_CODE = 'example-coupon';
+    public const COUPON_CODE = 'example-coupon';
 
     #[\Override]
     protected function createEntity($key)

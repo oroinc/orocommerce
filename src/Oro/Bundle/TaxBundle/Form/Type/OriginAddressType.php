@@ -16,7 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OriginAddressType extends AbstractType
 {
-    const NAME = 'oro_tax_origin_address';
+    public const NAME = 'oro_tax_origin_address';
 
     /**
      * @var string

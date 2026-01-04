@@ -17,7 +17,7 @@ class LoadOtherWebsite extends AbstractFixture implements ContainerAwareInterfac
 {
     use ContainerAwareTrait;
 
-    const REFERENCE_OTHER_WEBSITE = 'other_website';
+    public const REFERENCE_OTHER_WEBSITE = 'other_website';
 
     #[\Override]
     public function load(ObjectManager $manager)

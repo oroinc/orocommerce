@@ -17,10 +17,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class ProductCategoriesContextConfigurator implements ContextConfiguratorInterface
 {
-    const CATEGORY_IDS_OPTION_NAME = 'category_ids';
-    const CATEGORY_ID_OPTION_NAME = 'category_id';
-    const PRODUCT_LIST_ROUTE = 'oro_product_frontend_product_index';
-    const PRODUCT_VIEW_ROUTE = 'oro_product_frontend_product_view';
+    public const CATEGORY_IDS_OPTION_NAME = 'category_ids';
+    public const CATEGORY_ID_OPTION_NAME = 'category_id';
+    public const PRODUCT_LIST_ROUTE = 'oro_product_frontend_product_index';
+    public const PRODUCT_VIEW_ROUTE = 'oro_product_frontend_product_view';
 
     /**
      * @var  RequestStack

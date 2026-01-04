@@ -15,7 +15,7 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
  */
 class UpdateProductSlugOrganization extends AbstractFixture
 {
-    const BATCH_SIZE = 1000;
+    public const BATCH_SIZE = 1000;
 
     /**
      *

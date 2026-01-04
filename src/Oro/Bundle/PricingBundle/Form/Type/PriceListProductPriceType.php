@@ -18,7 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class PriceListProductPriceType extends AbstractType
 {
-    const NAME = 'oro_pricing_price_list_product_price';
+    public const NAME = 'oro_pricing_price_list_product_price';
 
     /**
      * @var string

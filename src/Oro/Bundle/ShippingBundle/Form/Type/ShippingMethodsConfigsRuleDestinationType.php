@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ShippingMethodsConfigsRuleDestinationType extends AbstractType
 {
-    const NAME = 'oro_shipping_methods_configs_rule_destination';
+    public const NAME = 'oro_shipping_methods_configs_rule_destination';
 
     /**
      * @var AddressCountryAndRegionSubscriber

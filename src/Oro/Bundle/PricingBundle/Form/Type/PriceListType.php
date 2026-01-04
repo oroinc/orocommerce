@@ -18,8 +18,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class PriceListType extends AbstractType
 {
-    const NAME = 'oro_pricing_price_list';
-    const SCHEDULES_FIELD = 'schedules';
+    public const NAME = 'oro_pricing_price_list';
+    public const SCHEDULES_FIELD = 'schedules';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

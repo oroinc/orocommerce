@@ -19,7 +19,7 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class AttributeFamilyUsageInVariantFieldValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_product_attribute_family_usage_in_variant_field';
+    public const ALIAS = 'oro_product_attribute_family_usage_in_variant_field';
 
     /** @var AttributeManager */
     private $attributeManager;

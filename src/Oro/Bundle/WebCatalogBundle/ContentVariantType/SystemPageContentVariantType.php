@@ -14,7 +14,7 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
  */
 class SystemPageContentVariantType implements ContentVariantTypeInterface
 {
-    const TYPE = 'system_page';
+    public const TYPE = 'system_page';
 
     #[\Override]
     public function getName()

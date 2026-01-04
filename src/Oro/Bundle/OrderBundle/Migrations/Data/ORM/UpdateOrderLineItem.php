@@ -17,7 +17,7 @@ class UpdateOrderLineItem extends AbstractFixture implements ContainerAwareInter
 {
     use ContainerAwareTrait;
 
-    const BATCH_SIZE = 200;
+    public const BATCH_SIZE = 200;
 
     #[\Override]
     public function load(ObjectManager $manager)

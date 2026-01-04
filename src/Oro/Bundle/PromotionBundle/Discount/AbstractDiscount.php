@@ -11,9 +11,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractDiscount implements DiscountInterface
 {
-    const DISCOUNT_TYPE = 'discount_type';
-    const DISCOUNT_VALUE = 'discount_value';
-    const DISCOUNT_CURRENCY = 'discount_currency';
+    public const DISCOUNT_TYPE = 'discount_type';
+    public const DISCOUNT_VALUE = 'discount_value';
+    public const DISCOUNT_CURRENCY = 'discount_currency';
 
     /**
      * @var string

@@ -7,7 +7,7 @@ use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInt
 
 class ShippingMethodDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    const DATA_NAME = 'shipping_method';
+    public const DATA_NAME = 'shipping_method';
 
     /**
      * @var CheckoutShippingMethodsProviderInterface

@@ -13,7 +13,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class ProductSearchQueryRestrictionEvent extends Event
 {
-    const NAME = 'oro_product.product_search_query.restriction';
+    public const NAME = 'oro_product.product_search_query.restriction';
 
     /**
      * @var Query

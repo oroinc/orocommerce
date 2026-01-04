@@ -10,9 +10,9 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadCustomerUserData extends AbstractFixture implements DependentFixtureInterface
 {
-    const EMAIL = BaseFixture::EMAIL;
-    const PASSWORD = BaseFixture::PASSWORD;
-    const LEVEL_1_EMAIL = BaseFixture::LEVEL_1_EMAIL;
+    public const EMAIL = BaseFixture::EMAIL;
+    public const PASSWORD = BaseFixture::PASSWORD;
+    public const LEVEL_1_EMAIL = BaseFixture::LEVEL_1_EMAIL;
 
     /**
      * @var array

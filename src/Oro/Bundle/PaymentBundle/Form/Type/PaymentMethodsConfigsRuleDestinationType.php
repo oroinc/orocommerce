@@ -18,7 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PaymentMethodsConfigsRuleDestinationType extends AbstractType
 {
-    const NAME = 'oro_payment_methods_configs_rule_destination';
+    public const NAME = 'oro_payment_methods_configs_rule_destination';
 
     /**
      * @var AddressCountryAndRegionSubscriber

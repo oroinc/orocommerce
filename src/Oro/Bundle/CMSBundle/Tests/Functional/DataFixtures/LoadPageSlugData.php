@@ -11,7 +11,7 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganizatio
 
 class LoadPageSlugData extends AbstractFixture implements DependentFixtureInterface
 {
-    const SLUG1_PAGE1 = 'orocrm.page1.slug1';
+    public const SLUG1_PAGE1 = 'orocrm.page1.slug1';
 
     #[\Override]
     public function getDependencies()

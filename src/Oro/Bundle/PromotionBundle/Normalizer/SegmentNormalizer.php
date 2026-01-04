@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class SegmentNormalizer implements NormalizerInterface
 {
-    const REQUIRED_OPTIONS = [
+    public const REQUIRED_OPTIONS = [
         'definition'
     ];
 

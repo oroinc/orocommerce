@@ -10,7 +10,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class IndexEntityEvent extends Event
 {
-    const NAME = 'oro_website_search.event.index_entity';
+    public const NAME = 'oro_website_search.event.index_entity';
 
     /**
      * @var string

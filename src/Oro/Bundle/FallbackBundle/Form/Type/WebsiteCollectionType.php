@@ -16,7 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class WebsiteCollectionType extends AbstractType
 {
-    const NAME = 'oro_fallback_website_collection';
+    public const NAME = 'oro_fallback_website_collection';
 
     /**
      * @var ManagerRegistry

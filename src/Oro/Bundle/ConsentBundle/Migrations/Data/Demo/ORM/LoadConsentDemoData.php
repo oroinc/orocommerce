@@ -20,10 +20,10 @@ use Oro\Bundle\WebCatalogBundle\Migrations\Data\Demo\ORM\LoadWebCatalogDemoData;
  */
 class LoadConsentDemoData extends AbstractLoadWebCatalogDemoData implements DependentFixtureInterface
 {
-    const NODE1_REFERENCE_NAME = 'terms-and-conditions-node';
-    const NODE2_REFERENCE_NAME = 'email-subscription-node';
-    const MANDATORY_CONSENT = 'Terms and Conditions';
-    const OPTIONAL_CONSENT = 'Email subscription';
+    public const NODE1_REFERENCE_NAME = 'terms-and-conditions-node';
+    public const NODE2_REFERENCE_NAME = 'email-subscription-node';
+    public const MANDATORY_CONSENT = 'Terms and Conditions';
+    public const OPTIONAL_CONSENT = 'Email subscription';
 
     #[\Override]
     public function getDependencies()

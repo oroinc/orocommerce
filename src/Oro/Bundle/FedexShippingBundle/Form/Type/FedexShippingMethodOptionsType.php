@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class FedexShippingMethodOptionsType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_fedex_shipping_method_options';
+    public const BLOCK_PREFIX = 'oro_fedex_shipping_method_options';
 
     /**
      * @var RoundingServiceInterface

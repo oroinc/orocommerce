@@ -18,7 +18,7 @@ use Psr\Log\LoggerInterface;
  */
 class FrontendConsentContentNodeValidFilter implements ConsentFilterInterface
 {
-    const NAME = 'frontend_consent_content_node_valid_filter';
+    public const NAME = 'frontend_consent_content_node_valid_filter';
 
     /**
      * @var WebCatalogProvider

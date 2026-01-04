@@ -23,9 +23,9 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
  */
 class ProductCollectionContentVariantFilteringEventListener
 {
-    const CONTENT_VARIANT_ID_CONFIG_PATH = '[options][urlParams][contentVariantId]';
-    const VIEW_LINK_PARAMS_CONFIG_PATH = '[properties][view_link][direct_params]';
-    const OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH = '[options][urlParams][overrideVariantConfiguration]';
+    public const CONTENT_VARIANT_ID_CONFIG_PATH = '[options][urlParams][contentVariantId]';
+    public const VIEW_LINK_PARAMS_CONFIG_PATH = '[properties][view_link][direct_params]';
+    public const OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH = '[options][urlParams][overrideVariantConfiguration]';
 
     private RequestContentVariantHandler $requestHandler;
 

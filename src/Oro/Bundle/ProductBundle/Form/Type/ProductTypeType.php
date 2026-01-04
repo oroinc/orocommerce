@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProductTypeType extends AbstractType
 {
-    const NAME = 'oro_product_type';
+    public const NAME = 'oro_product_type';
 
     /**
      * @var ProductTypeProvider

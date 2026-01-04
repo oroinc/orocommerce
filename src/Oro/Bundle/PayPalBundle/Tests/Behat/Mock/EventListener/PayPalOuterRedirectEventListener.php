@@ -14,11 +14,11 @@ use Symfony\Component\Routing\RouterInterface;
 
 class PayPalOuterRedirectEventListener
 {
-    const SUCCESS_TRANSACTION_CARD_NUM = '5424000000000015';
-    const CARD_NUM_FIELD = 'ACCT';
-    const SUCCESS_REDIRECT_ROUTE = 'oro_payment_callback_return';
-    const FAILURE_REDIRECT_ROUTE = 'oro_payment_callback_error';
-    const SILENT_POST_NOTIFY_URL = 'oro_payment_callback_notify';
+    public const SUCCESS_TRANSACTION_CARD_NUM = '5424000000000015';
+    public const CARD_NUM_FIELD = 'ACCT';
+    public const SUCCESS_REDIRECT_ROUTE = 'oro_payment_callback_return';
+    public const FAILURE_REDIRECT_ROUTE = 'oro_payment_callback_error';
+    public const SILENT_POST_NOTIFY_URL = 'oro_payment_callback_notify';
 
     /**
      * @var RouterInterface

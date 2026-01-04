@@ -19,7 +19,7 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
 {
     use ContextAccessorAwareTrait;
 
-    const NAME = 'require_payment_redirect';
+    public const NAME = 'require_payment_redirect';
 
     /**
      * @var PaymentMethodProviderInterface

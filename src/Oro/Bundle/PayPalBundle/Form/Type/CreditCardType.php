@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class CreditCardType extends AbstractType
 {
-    const NAME = 'oro_paypal_credit_card';
+    public const NAME = 'oro_paypal_credit_card';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

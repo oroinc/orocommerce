@@ -12,11 +12,11 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class PriceAttributeProductPriceFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
-    const PRODUCT_SKU = 'sku001';
-    const PRICE_ATTRIBUTE = 'MSRP';
-    const UNIT_CODE = 'item';
-    const CURRENCY = 'USD';
-    const PRICE = 10.89;
+    public const PRODUCT_SKU = 'sku001';
+    public const PRICE_ATTRIBUTE = 'MSRP';
+    public const UNIT_CODE = 'item';
+    public const CURRENCY = 'USD';
+    public const PRICE = 10.89;
 
     #[\Override]
     public function getData()

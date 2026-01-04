@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormInterface;
  */
 class ProductPriceUnitSelectorType extends ProductUnitSelectionType
 {
-    const NAME = 'oro_pricing_product_price_unit_selector';
+    public const NAME = 'oro_pricing_product_price_unit_selector';
 
     /**
      * @param FormInterface $form

@@ -21,13 +21,13 @@ use Psr\Log\LoggerInterface;
  */
 class EntityConfigRelationsMigration
 {
-    const NOTE_WAREHOUSE_ASSOCIATION = 'warehouse_c913b87';
-    const NOTE_WAREHOUSE_ASSOCIATION_BETA1 = 'warehouse_6eca7547';
+    public const NOTE_WAREHOUSE_ASSOCIATION = 'warehouse_c913b87';
+    public const NOTE_WAREHOUSE_ASSOCIATION_BETA1 = 'warehouse_6eca7547';
 
-    const ACTIVITY_LIST_WAREHOUSE_ASSOCIATION = 'warehouse_901db874';
-    const ACTIVITY_LIST_WAREHOUSE_ASSOCIATION_BETA1 = 'warehouse_2de8bcd1';
+    public const ACTIVITY_LIST_WAREHOUSE_ASSOCIATION = 'warehouse_901db874';
+    public const ACTIVITY_LIST_WAREHOUSE_ASSOCIATION_BETA1 = 'warehouse_2de8bcd1';
 
-    const ORDER_WAREHOUSE_ASSOCIATION = 'warehouse';
+    public const ORDER_WAREHOUSE_ASSOCIATION = 'warehouse';
 
     /** @var ManagerRegistry */
     private $managerRegistry;

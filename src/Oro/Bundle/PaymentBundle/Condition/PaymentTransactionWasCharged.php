@@ -14,7 +14,7 @@ class PaymentTransactionWasCharged extends AbstractCondition implements ContextA
 {
     use ContextAccessorAwareTrait;
 
-    const NAME = 'payment_transaction_was_charged';
+    public const NAME = 'payment_transaction_was_charged';
 
     /**
      * @var PaymentTransaction

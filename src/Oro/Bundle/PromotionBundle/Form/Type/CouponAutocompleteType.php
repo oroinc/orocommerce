@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CouponAutocompleteType extends AbstractType
 {
-    const NAME = 'oro_promotion_coupon_autocomplete';
+    public const NAME = 'oro_promotion_coupon_autocomplete';
 
     public function getName()
     {

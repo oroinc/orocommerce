@@ -6,7 +6,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    const DATA_NAME = 'ship_to_billing_address';
+    public const DATA_NAME = 'ship_to_billing_address';
 
     #[\Override]
     public function isEntitySupported($entity)

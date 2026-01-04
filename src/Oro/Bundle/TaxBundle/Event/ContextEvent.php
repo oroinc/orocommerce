@@ -6,7 +6,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ContextEvent extends Event
 {
-    const NAME = 'oro_tax.mapper.context';
+    public const NAME = 'oro_tax.mapper.context';
 
     /**
      * @var object

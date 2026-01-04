@@ -23,8 +23,8 @@ use Symfony\Component\Validator\Constraints\Range;
  */
 class OrderDiscountItemType extends AbstractType
 {
-    const NAME = 'oro_order_discount_item';
-    const VALIDATION_GROUP = 'OrderDiscountItemType';
+    public const NAME = 'oro_order_discount_item';
+    public const VALIDATION_GROUP = 'OrderDiscountItemType';
 
     /**
      * @var TotalHelper

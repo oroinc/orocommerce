@@ -15,9 +15,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadRedirects extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
-    const REDIRECT_1 = 'redirect1';
-    const REDIRECT_2 = 'redirect2';
-    const REDIRECT_3 = 'redirect3';
+    public const REDIRECT_1 = 'redirect1';
+    public const REDIRECT_2 = 'redirect2';
+    public const REDIRECT_3 = 'redirect3';
 
     /**
      * @var array

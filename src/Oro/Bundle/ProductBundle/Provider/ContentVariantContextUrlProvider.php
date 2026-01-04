@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class ContentVariantContextUrlProvider implements ContextUrlProviderInterface
 {
-    const USED_SLUG_KEY = '_used_slug';
+    public const USED_SLUG_KEY = '_used_slug';
 
     private RequestStack $requestStack;
 

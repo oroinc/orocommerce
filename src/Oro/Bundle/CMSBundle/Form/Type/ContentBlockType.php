@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class ContentBlockType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_cms_content_block';
+    public const BLOCK_PREFIX = 'oro_cms_content_block';
 
     /**
      * @var DefaultContentVariantScopesResolver

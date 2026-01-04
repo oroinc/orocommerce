@@ -6,8 +6,8 @@ use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
 class ProductNormalizerEventListener
 {
-    const DELIMITER = ',';
-    const VARIANT_FIELDS_KEY = 'variantFields';
+    public const DELIMITER = ',';
+    public const VARIANT_FIELDS_KEY = 'variantFields';
 
     public function onNormalize(ProductNormalizerEvent $event)
     {

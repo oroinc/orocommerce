@@ -25,7 +25,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ProductUnitSelectionType extends AbstractProductAwareType
 {
-    const NAME = 'oro_product_unit_selection';
+    public const NAME = 'oro_product_unit_selection';
 
     /**
      * @var TranslatorInterface

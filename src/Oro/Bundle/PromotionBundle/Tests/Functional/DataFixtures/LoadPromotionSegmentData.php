@@ -13,8 +13,8 @@ use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 
 class LoadPromotionSegmentData extends AbstractFixture implements DependentFixtureInterface
 {
-    const EMPTY_PROMOTION_SEGMENT = 'empty_promotion_segment';
-    const NOT_EMPTY_PROMOTION_SEGMENT = 'not_empty_promotion_segment';
+    public const EMPTY_PROMOTION_SEGMENT = 'empty_promotion_segment';
+    public const NOT_EMPTY_PROMOTION_SEGMENT = 'not_empty_promotion_segment';
 
     /**
      * @var array

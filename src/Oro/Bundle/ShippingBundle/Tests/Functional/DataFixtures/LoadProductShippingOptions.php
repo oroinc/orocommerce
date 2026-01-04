@@ -16,8 +16,8 @@ use Oro\Bundle\ShippingBundle\Model\Weight;
 
 class LoadProductShippingOptions extends AbstractFixture implements DependentFixtureInterface
 {
-    const PRODUCT_SHIPPING_OPTIONS_1 = 'product_shipping_options.1';
-    const PRODUCT_SHIPPING_OPTIONS_2 = 'product_shipping_options.2';
+    public const PRODUCT_SHIPPING_OPTIONS_1 = 'product_shipping_options.1';
+    public const PRODUCT_SHIPPING_OPTIONS_2 = 'product_shipping_options.2';
 
     #[\Override]
     public function getDependencies()

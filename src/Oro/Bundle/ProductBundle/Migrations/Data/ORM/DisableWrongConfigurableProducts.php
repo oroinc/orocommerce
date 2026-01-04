@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class DisableWrongConfigurableProducts extends AbstractFixture implements ContainerAwareInterface
 {
-    const BATCH_SIZE = 200;
+    public const BATCH_SIZE = 200;
 
     /** @var ContainerInterface */
     private $container;

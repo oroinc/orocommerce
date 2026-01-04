@@ -4,9 +4,9 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures;
 
 class LoadCouponPromotionDiscountData extends AbstractLoadCouponData
 {
-    const COUPON_ORDER = 'coupon_order';
-    const COUPON_SHIPPING = 'coupon_shipping';
-    const COUPON_WITH_NOT_APPLICABLE_PROMOTION = 'coupon_with_not_applicable_promotion';
+    public const COUPON_ORDER = 'coupon_order';
+    public const COUPON_SHIPPING = 'coupon_shipping';
+    public const COUPON_WITH_NOT_APPLICABLE_PROMOTION = 'coupon_with_not_applicable_promotion';
 
     #[\Override]
     public function getDependencies()

@@ -13,7 +13,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductAttributePriceCollectionType extends AbstractType
 {
-    const NAME = 'oro_pricing_product_attribute_price_collection';
+    public const NAME = 'oro_pricing_product_attribute_price_collection';
 
     /**
      * @var ObjectManager

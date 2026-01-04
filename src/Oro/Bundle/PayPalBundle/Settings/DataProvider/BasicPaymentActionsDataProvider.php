@@ -7,12 +7,12 @@ class BasicPaymentActionsDataProvider implements PaymentActionsDataProviderInter
     /**
      * @internal
      */
-    const AUTHORIZE = 'authorize';
+    public const AUTHORIZE = 'authorize';
 
     /**
      * @internal
      */
-    const CHARGE = 'charge';
+    public const CHARGE = 'charge';
 
     /**
      * @return string[]

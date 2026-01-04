@@ -8,7 +8,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class LoadOrganizations extends AbstractFixture
 {
-    const ORGANIZATION_1 = 'order.simple_organization_1' ;
+    public const ORGANIZATION_1 = 'order.simple_organization_1' ;
 
     #[\Override]
     public function load(ObjectManager $manager)

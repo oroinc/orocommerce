@@ -6,7 +6,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 
 class CountExpressionLanguageFunction extends ExpressionFunction
 {
-    const FUNCTION_NAME = 'count';
+    public const FUNCTION_NAME = 'count';
 
     public function __construct()
     {

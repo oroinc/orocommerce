@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class FlatRateSettingsType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_flat_rate_settings';
+    public const BLOCK_PREFIX = 'oro_flat_rate_settings';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

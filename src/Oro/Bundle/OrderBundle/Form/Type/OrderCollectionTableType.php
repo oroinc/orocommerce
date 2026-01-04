@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrderCollectionTableType extends AbstractType
 {
-    const NAME = 'oro_order_collection_table';
+    public const NAME = 'oro_order_collection_table';
 
     #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)

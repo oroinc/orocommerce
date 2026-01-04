@@ -18,7 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 abstract class AbstractShippingOptionSelectType extends AbstractType
 {
-    const NAME = '';
+    public const NAME = '';
 
     /** @var MeasureUnitProvider */
     protected $unitProvider;

@@ -7,7 +7,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class OnSitemapDumpFinishEvent extends Event
 {
-    const EVENT_NAME = 'oro_seo.sitemap.event.on_sitemap_dump_finish';
+    public const EVENT_NAME = 'oro_seo.sitemap.event.on_sitemap_dump_finish';
 
     /**
      * @var WebsiteInterface

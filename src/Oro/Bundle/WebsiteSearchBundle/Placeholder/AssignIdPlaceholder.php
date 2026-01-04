@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
 class AssignIdPlaceholder extends AbstractPlaceholder
 {
-    const NAME = 'ASSIGN_ID';
+    public const NAME = 'ASSIGN_ID';
 
     #[\Override]
     public function getPlaceholder()

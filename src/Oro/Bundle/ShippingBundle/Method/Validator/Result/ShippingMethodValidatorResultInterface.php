@@ -9,7 +9,7 @@ use Oro\Bundle\ShippingBundle\Method\Validator\Result;
  */
 interface ShippingMethodValidatorResultInterface
 {
-    const FIELD_ERRORS = 'errors';
+    public const FIELD_ERRORS = 'errors';
 
     /**
      * @return Result\Factory\Common\CommonShippingMethodValidatorResultFactoryInterface

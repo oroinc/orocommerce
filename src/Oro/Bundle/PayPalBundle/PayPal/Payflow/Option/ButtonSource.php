@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class ButtonSource extends AbstractOption
 {
-    const BUTTONSOURCE = 'BUTTONSOURCE';
+    public const BUTTONSOURCE = 'BUTTONSOURCE';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

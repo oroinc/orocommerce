@@ -39,8 +39,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class ProductType extends AbstractType
 {
-    const NAME = 'oro_product';
-    const PAGE_TEMPLATE_ROUTE_NAME = 'oro_product_frontend_product_view';
+    public const NAME = 'oro_product';
+    public const PAGE_TEMPLATE_ROUTE_NAME = 'oro_product_frontend_product_view';
 
     /**
      * @var string

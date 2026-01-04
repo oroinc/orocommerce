@@ -11,12 +11,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ProductImagesConfigurationListener
 {
-    const PRODUCT_IMAGE_WATERMARK_SECTION_PREFIX = 'oro_product.product_image_watermark';
-    const PRODUCT_ORIGINAL_FILE_NAMES_ENABLED = 'oro_product.original_file_names_enabled';
-    const NOTICE_TEXT_TRANS_KEY = 'oro.product.system_configuration.notice.product_image_watermark';
-    const SPACE_NOTICE_TEXT_TRANS_KEY = 'oro.product.system_configuration.notice.storage_check_space';
-    const COMMAND = 'php bin/console product:image:resize-all --force';
-    const MESSAGE_TYPE = 'warning';
+    public const PRODUCT_IMAGE_WATERMARK_SECTION_PREFIX = 'oro_product.product_image_watermark';
+    public const PRODUCT_ORIGINAL_FILE_NAMES_ENABLED = 'oro_product.original_file_names_enabled';
+    public const NOTICE_TEXT_TRANS_KEY = 'oro.product.system_configuration.notice.product_image_watermark';
+    public const SPACE_NOTICE_TEXT_TRANS_KEY = 'oro.product.system_configuration.notice.storage_check_space';
+    public const COMMAND = 'php bin/console product:image:resize-all --force';
+    public const MESSAGE_TYPE = 'warning';
 
     /**
      * @var bool

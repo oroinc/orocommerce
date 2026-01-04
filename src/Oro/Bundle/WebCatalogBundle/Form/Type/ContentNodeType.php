@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class ContentNodeType extends AbstractType
 {
-    const NAME = 'oro_web_catalog_content_node';
+    public const NAME = 'oro_web_catalog_content_node';
 
     /**
      * @var RouterInterface

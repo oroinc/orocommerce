@@ -12,11 +12,11 @@ class LoadEmployeesToIndex extends AbstractFixture implements ContainerAwareInte
 {
     use ContainerAwareTrait;
 
-    const REFERENCE_PERSON1 = 'employee1';
-    const REFERENCE_PERSON2 = 'employee2';
+    public const REFERENCE_PERSON1 = 'employee1';
+    public const REFERENCE_PERSON2 = 'employee2';
 
-    const PERSON_NAME1 = 'Employee name 1';
-    const PERSON_NAME2 = 'Employee name 2';
+    public const PERSON_NAME1 = 'Employee name 1';
+    public const PERSON_NAME2 = 'Employee name 2';
 
     /** @var array */
     protected $data = [

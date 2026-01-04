@@ -14,7 +14,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
  */
 class AdminConsentContentNodeValidFilter implements ConsentFilterInterface
 {
-    const NAME = 'admin_consent_content_node_valid_filter';
+    public const NAME = 'admin_consent_content_node_valid_filter';
 
     /**
      * @var FrontendHelper

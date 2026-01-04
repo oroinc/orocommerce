@@ -14,7 +14,7 @@ use Symfony\Component\Form\FormView;
 
 class OrderLineItemTypeExtension extends AbstractTypeExtension
 {
-    const BASE_ORDER = 50;
+    public const BASE_ORDER = 50;
 
     /** @var TaxationSettingsProvider */
     protected $taxationSettingsProvider;

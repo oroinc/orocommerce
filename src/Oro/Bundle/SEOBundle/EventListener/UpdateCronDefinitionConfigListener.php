@@ -11,7 +11,7 @@ use Oro\Bundle\SEOBundle\Command\GenerateSitemapCommand;
  */
 class UpdateCronDefinitionConfigListener
 {
-    const CONFIG_FIELD = 'oro_seo.sitemap_cron_definition';
+    public const CONFIG_FIELD = 'oro_seo.sitemap_cron_definition';
 
     /**
      * @var DeferredScheduler

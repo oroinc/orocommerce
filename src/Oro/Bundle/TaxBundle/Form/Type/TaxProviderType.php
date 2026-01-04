@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class TaxProviderType extends AbstractType
 {
-    const NAME = 'oro_tax_provider_type';
+    public const NAME = 'oro_tax_provider_type';
 
     /**
      * @var TaxProviderRegistry

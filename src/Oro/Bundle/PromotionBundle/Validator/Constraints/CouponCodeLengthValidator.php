@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class CouponCodeLengthValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_promotion_coupon_code_length';
+    public const ALIAS = 'oro_promotion_coupon_code_length';
 
     /**
      * @param CodeGenerationOptions $entity

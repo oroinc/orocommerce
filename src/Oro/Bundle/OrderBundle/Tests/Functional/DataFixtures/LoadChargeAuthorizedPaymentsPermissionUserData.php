@@ -8,14 +8,14 @@ use Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\AbstractLoadMultipleUserD
 
 class LoadChargeAuthorizedPaymentsPermissionUserData extends AbstractLoadMultipleUserData
 {
-    const USER_WITH_CHARGE_AUTHORIZED_PAYMENTS_PERMISSION = 'order-with-charge-authorized-payments-permission';
-    const USER_PAYMENT_HISTORY_VIEWER = 'order-payment-history-viewer';
+    public const USER_WITH_CHARGE_AUTHORIZED_PAYMENTS_PERMISSION = 'order-with-charge-authorized-payments-permission';
+    public const USER_PAYMENT_HISTORY_VIEWER = 'order-payment-history-viewer';
 
-    const VIEW_PAYMENT_HISTORY_PERMISSION_NAME = 'VIEW_PAYMENT_HISTORY';
-    const CHARGE_AUTHORIZED_PAYMENTS_PERMISSION_NAME = 'CHARGE_AUTHORIZED_PAYMENTS';
+    public const VIEW_PAYMENT_HISTORY_PERMISSION_NAME = 'VIEW_PAYMENT_HISTORY';
+    public const CHARGE_AUTHORIZED_PAYMENTS_PERMISSION_NAME = 'CHARGE_AUTHORIZED_PAYMENTS';
 
-    const ROLE_CHARGE_AUTHORIZED_PAYMENTS_PERMISSION = 'ROLE_CHARGE_PAYMENTS';
-    const ROLE_VIEW_HISTORY = 'ROLE_ORDER_VIEW';
+    public const ROLE_CHARGE_AUTHORIZED_PAYMENTS_PERMISSION = 'ROLE_CHARGE_PAYMENTS';
+    public const ROLE_VIEW_HISTORY = 'ROLE_ORDER_VIEW';
 
     #[\Override]
     protected function getRolesData()

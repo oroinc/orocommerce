@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
 class AssignTypePlaceholder extends AbstractPlaceholder
 {
-    const NAME = 'ASSIGN_TYPE';
+    public const NAME = 'ASSIGN_TYPE';
 
     #[\Override]
     public function getPlaceholder()

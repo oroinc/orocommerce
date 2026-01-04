@@ -9,17 +9,17 @@ use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
  */
 class CodeGenerator implements CodeGeneratorInterface
 {
-    const DASH_SYMBOL = '-';
+    public const DASH_SYMBOL = '-';
 
-    const TEMPLATES = [
+    public const TEMPLATES = [
         CodeGenerationOptions::NUMERIC_CODE_TYPE => self::NUMERIC_TEMPLATE,
         CodeGenerationOptions::ALPHABETIC_CODE_TYPE => self::ALPHABETIC_TEMPLATE,
         CodeGenerationOptions::ALPHANUMERIC_CODE_TYPE => self::ALPHANUMERIC_TEMPLATE,
     ];
 
-    const NUMERIC_TEMPLATE = '0123456789';
-    const ALPHABETIC_TEMPLATE = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const ALPHANUMERIC_TEMPLATE = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    public const NUMERIC_TEMPLATE = '0123456789';
+    public const ALPHABETIC_TEMPLATE = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    public const ALPHANUMERIC_TEMPLATE = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     #[\Override]
     public function generateOne(CodeGenerationOptions $options): string

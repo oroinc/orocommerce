@@ -16,8 +16,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ProductSelectType extends AbstractType
 {
-    const NAME = 'oro_product_select';
-    const DATA_PARAMETERS = 'data_parameters';
+    public const NAME = 'oro_product_select';
+    public const DATA_PARAMETERS = 'data_parameters';
 
     /**
      * @var TranslatorInterface

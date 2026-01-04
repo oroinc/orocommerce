@@ -6,7 +6,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ShippingMethodConfigDataEvent extends Event
 {
-    const NAME = 'oro_shipping_method.config_data';
+    public const NAME = 'oro_shipping_method.config_data';
 
     /**
      * @var int|string

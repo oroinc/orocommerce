@@ -16,7 +16,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class StatusMassActionHandler implements MassActionHandlerInterface
 {
-    const FLUSH_BATCH_SIZE = 100;
+    public const FLUSH_BATCH_SIZE = 100;
 
     /**
      * @var string

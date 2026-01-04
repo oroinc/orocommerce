@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BrandSelectType extends AbstractType
 {
-    const NAME = 'oro_product_brand_select';
+    public const NAME = 'oro_product_brand_select';
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver)

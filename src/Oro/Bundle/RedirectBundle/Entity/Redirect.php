@@ -22,8 +22,8 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 )]
 class Redirect
 {
-    const MOVED_PERMANENTLY = 301;
-    const MOVED_TEMPORARY = 302;
+    public const MOVED_PERMANENTLY = 301;
+    public const MOVED_TEMPORARY = 302;
 
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\Id]

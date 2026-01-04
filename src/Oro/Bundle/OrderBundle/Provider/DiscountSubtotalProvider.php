@@ -20,8 +20,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class DiscountSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
-    const TYPE = 'discount';
-    const SUBTOTAL_SORT_ORDER = 50;
+    public const TYPE = 'discount';
+    public const SUBTOTAL_SORT_ORDER = 50;
 
     /** @var TranslatorInterface */
     protected $translator;

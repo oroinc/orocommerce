@@ -7,7 +7,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ProductsChangeRelationEvent extends Event
 {
-    const NAME = 'oro_catalog.event.products_change_relation';
+    public const NAME = 'oro_catalog.event.products_change_relation';
 
     /** @var Product[] */
     private $products;

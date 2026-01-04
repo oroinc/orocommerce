@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxJurisdictionSelectType extends AbstractType
 {
-    const NAME = 'oro_tax_jurisdiction_select';
+    public const NAME = 'oro_tax_jurisdiction_select';
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver)

@@ -9,10 +9,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class WebsitePropertyType extends AbstractType
 {
-    const NAME = 'oro_fallback_website_property';
+    public const NAME = 'oro_fallback_website_property';
 
-    const FIELD_DEFAULT  = 'default';
-    const FIELD_WEBSITES = 'websites';
+    public const FIELD_DEFAULT  = 'default';
+    public const FIELD_WEBSITES = 'websites';
 
     public function getName()
     {

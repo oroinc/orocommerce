@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class QuoteProductCollectionType extends AbstractType
 {
-    const NAME = 'oro_sale_quote_product_collection';
+    public const NAME = 'oro_sale_quote_product_collection';
 
     #[\Override]
     public function getParent(): ?string

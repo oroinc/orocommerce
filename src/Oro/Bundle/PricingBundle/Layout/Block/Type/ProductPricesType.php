@@ -20,7 +20,7 @@ use Oro\Component\Layout\Util\BlockUtils;
  */
 class ProductPricesType extends AbstractContainerType
 {
-    const NAME = 'product_prices';
+    public const NAME = 'product_prices';
 
     /** @var AttributeRenderRegistry */
     private $attributeRenderRegistry;

@@ -11,7 +11,7 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class ProductPageTemplateValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_product_page_template_validator';
+    public const ALIAS = 'oro_product_page_template_validator';
 
     /** @var PageTemplatesManager */
     private $pageTemplatesManager;

@@ -17,10 +17,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadProductPricesWithRules extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
-    const PRODUCT_PRICE_1 = 'product_price_with_rule_1';
-    const PRODUCT_PRICE_2 = 'product_price_with_rule_2';
-    const PRODUCT_PRICE_3 = 'product_price_with_rule_3';
-    const PRODUCT_PRICE_4 = 'product_price_with_rule_4';
+    public const PRODUCT_PRICE_1 = 'product_price_with_rule_1';
+    public const PRODUCT_PRICE_2 = 'product_price_with_rule_2';
+    public const PRODUCT_PRICE_3 = 'product_price_with_rule_3';
+    public const PRODUCT_PRICE_4 = 'product_price_with_rule_4';
 
     /**
      * @var ContainerInterface

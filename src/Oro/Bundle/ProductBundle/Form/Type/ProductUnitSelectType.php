@@ -15,7 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProductUnitSelectType extends AbstractProductAwareType
 {
-    const NAME = 'oro_product_unit_select';
+    public const NAME = 'oro_product_unit_select';
 
     /**
      * @var string

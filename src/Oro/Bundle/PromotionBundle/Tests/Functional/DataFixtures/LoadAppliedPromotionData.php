@@ -14,9 +14,9 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 
 class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtureInterface
 {
-    const SIMPLE_APPLIED_PROMOTION = 'simple_applied_promotion';
-    const SHIPPING_APPLIED_PROMOTION = 'shipping_applied_promotion';
-    const SIMPLE_APPLIED_PROMOTION_WITH_LINE_ITEM = 'simple_applied_promotion_with_line_item';
+    public const SIMPLE_APPLIED_PROMOTION = 'simple_applied_promotion';
+    public const SHIPPING_APPLIED_PROMOTION = 'shipping_applied_promotion';
+    public const SIMPLE_APPLIED_PROMOTION_WITH_LINE_ITEM = 'simple_applied_promotion_with_line_item';
 
     /** @var array */
     protected static $appliedDiscounts = [

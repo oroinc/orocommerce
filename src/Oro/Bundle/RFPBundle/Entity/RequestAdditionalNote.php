@@ -21,8 +21,8 @@ class RequestAdditionalNote implements DatesAwareInterface, ExtendEntityInterfac
     use DatesAwareTrait;
     use ExtendEntityTrait;
 
-    const TYPE_CUSTOMER_NOTE = 'customer_note';
-    const TYPE_SELLER_NOTE = 'seller_note';
+    public const TYPE_CUSTOMER_NOTE = 'customer_note';
+    public const TYPE_SELLER_NOTE = 'seller_note';
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]

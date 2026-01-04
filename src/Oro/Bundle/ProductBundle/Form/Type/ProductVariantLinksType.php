@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductVariantLinksType extends AbstractType
 {
-    const NAME = 'oro_product_variant_links';
+    public const NAME = 'oro_product_variant_links';
 
     /** @var ProductVariantLinksDataTransformer */
     protected $transformer;

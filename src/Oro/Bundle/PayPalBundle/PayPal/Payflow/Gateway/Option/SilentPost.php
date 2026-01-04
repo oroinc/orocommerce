@@ -7,7 +7,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class SilentPost implements OptionInterface
 {
-    const SILENTPOSTURL = 'SILENTPOSTURL';
+    public const SILENTPOSTURL = 'SILENTPOSTURL';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

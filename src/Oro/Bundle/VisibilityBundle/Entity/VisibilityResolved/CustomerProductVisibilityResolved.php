@@ -16,7 +16,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerPro
 #[ORM\Table(name: 'oro_cus_prod_vsb_resolv')]
 class CustomerProductVisibilityResolved extends BaseProductVisibilityResolved
 {
-    const VISIBILITY_FALLBACK_TO_ALL = 2;
+    public const VISIBILITY_FALLBACK_TO_ALL = 2;
 
     #[ORM\ManyToOne(targetEntity: CustomerProductVisibility::class)]
     #[ORM\JoinColumn(name: 'source_product_visibility', referencedColumnName: 'id', onDelete: 'CASCADE')]

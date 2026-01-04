@@ -6,13 +6,13 @@ use Oro\Bundle\CatalogBundle\Migrations\Data\ORM\AbstractCategoryFixture;
 
 class LoadCategoryData extends AbstractCategoryFixture
 {
-    const FIRST_LEVEL = 'category_1';
-    const SECOND_LEVEL1 = 'category_1_2';
-    const SECOND_LEVEL2 = 'category_1_5';
-    const THIRD_LEVEL1 = 'category_1_2_3';
-    const THIRD_LEVEL2 = 'category_1_5_6';
-    const FOURTH_LEVEL1 = 'category_1_2_3_4';
-    const FOURTH_LEVEL2 = 'category_1_5_6_7';
+    public const FIRST_LEVEL = 'category_1';
+    public const SECOND_LEVEL1 = 'category_1_2';
+    public const SECOND_LEVEL2 = 'category_1_5';
+    public const THIRD_LEVEL1 = 'category_1_2_3';
+    public const THIRD_LEVEL2 = 'category_1_5_6';
+    public const FOURTH_LEVEL1 = 'category_1_2_3_4';
+    public const FOURTH_LEVEL2 = 'category_1_5_6_7';
 
     /**
      * @var array

@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class UserCurrencyManager
 {
-    const SESSION_CURRENCIES = 'currency_by_website';
+    public const SESSION_CURRENCIES = 'currency_by_website';
 
     public function __construct(
         protected RequestStack $requestStack,

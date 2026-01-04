@@ -7,7 +7,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class PartialAuthorization extends AbstractBooleanOption
 {
-    const PARTIALAUTH = 'PARTIALAUTH';
+    public const PARTIALAUTH = 'PARTIALAUTH';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

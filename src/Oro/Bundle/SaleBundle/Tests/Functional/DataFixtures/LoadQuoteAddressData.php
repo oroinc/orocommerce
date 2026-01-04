@@ -12,7 +12,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 
 class LoadQuoteAddressData extends BaseAbstractFixture implements DependentFixtureInterface
 {
-    const QUOTE_ADDRESS_1 = 'quote_address.office';
+    public const QUOTE_ADDRESS_1 = 'quote_address.office';
 
     /**
      * @var array

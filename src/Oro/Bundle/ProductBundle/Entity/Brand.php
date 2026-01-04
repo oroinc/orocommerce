@@ -126,8 +126,8 @@ class Brand implements
     use SluggableTrait;
     use ExtendEntityTrait;
 
-    const STATUS_DISABLED = 'disabled';
-    const STATUS_ENABLED = 'enabled';
+    public const STATUS_DISABLED = 'disabled';
+    public const STATUS_ENABLED = 'enabled';
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]

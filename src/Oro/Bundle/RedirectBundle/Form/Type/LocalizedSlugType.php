@@ -22,7 +22,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class LocalizedSlugType extends AbstractType
 {
-    const NAME = 'oro_redirect_localized_slug';
+    public const NAME = 'oro_redirect_localized_slug';
 
     /**
      * @var SlugifyFormHelper

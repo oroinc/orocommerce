@@ -6,10 +6,10 @@ use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 
 class LoadCouponFilterDiscountConfigurationData extends AbstractLoadDiscountConfigurationData
 {
-    const DISCOUNT_CONFIGURATION_ORDER_10_PERCENT = 'discount_configuration_order_10_percent';
-    const DISCOUNT_CONFIGURATION_ORDER_10_USD = 'discount_configuration_order_10_usd';
-    const DISCOUNT_CONFIGURATION_ORDER_20_PERCENT = 'DISCOUNT_CONFIGURATION_ORDER_20_PERCENT';
-    const DISCOUNT_CONFIGURATION_ORDER_20_USD = 'DISCOUNT_CONFIGURATION_ORDER_20_USD';
+    public const DISCOUNT_CONFIGURATION_ORDER_10_PERCENT = 'discount_configuration_order_10_percent';
+    public const DISCOUNT_CONFIGURATION_ORDER_10_USD = 'discount_configuration_order_10_usd';
+    public const DISCOUNT_CONFIGURATION_ORDER_20_PERCENT = 'DISCOUNT_CONFIGURATION_ORDER_20_PERCENT';
+    public const DISCOUNT_CONFIGURATION_ORDER_20_USD = 'DISCOUNT_CONFIGURATION_ORDER_20_USD';
 
     #[\Override]
     public function getDiscountConfiguration()

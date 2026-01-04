@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class ProductPriceType extends AbstractType
 {
-    const NAME = 'oro_pricing_product_price';
+    public const NAME = 'oro_pricing_product_price';
 
     /** @var string */
     protected $dataClass;

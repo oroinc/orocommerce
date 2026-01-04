@@ -23,7 +23,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  */
 class CheckoutGridListener
 {
-    const USER_CURRENCY_PARAMETER = 'user_currency';
+    public const USER_CURRENCY_PARAMETER = 'user_currency';
 
     /**
      * @var UserCurrencyManager

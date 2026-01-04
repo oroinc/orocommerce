@@ -26,22 +26,22 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
     /**
      * @var string
      */
-    const REFERENCE_GOOD_PRODUCT = 'goodProduct';
+    public const REFERENCE_GOOD_PRODUCT = 'goodProduct';
 
     /**
      * @var string
      */
-    const REFERENCE_BETTER_PRODUCT = 'betterProduct';
+    public const REFERENCE_BETTER_PRODUCT = 'betterProduct';
 
     /**
      * @var string
      */
-    const REFERENCE_EMPLOYEE1 = 'employee1';
+    public const REFERENCE_EMPLOYEE1 = 'employee1';
 
     /**
      * @var string
      */
-    const REFERENCE_EMPLOYEE2 = 'employee2';
+    public const REFERENCE_EMPLOYEE2 = 'employee2';
 
     /**
      * @var array

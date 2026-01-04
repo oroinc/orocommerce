@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ShippingOriginType extends AbstractType
 {
-    const NAME = 'oro_shipping_origin';
+    public const NAME = 'oro_shipping_origin';
 
     /** @var string */
     protected $dataClass;

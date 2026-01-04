@@ -6,7 +6,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProviderInter
 
 class HostAddressProviderMock implements HostAddressProviderInterface
 {
-    const PAYPAL_FORM_ACTION_MOCK = '/paypal-out-redirect-mock';
+    public const PAYPAL_FORM_ACTION_MOCK = '/paypal-out-redirect-mock';
 
     #[\Override]
     public function getHostAddress($testMode)

@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class WeightType extends AbstractType
 {
-    const NAME = 'oro_shipping_weight';
+    public const NAME = 'oro_shipping_weight';
 
     /** @var string */
     protected $dataClass;

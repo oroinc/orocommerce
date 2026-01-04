@@ -18,7 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CouponAddType extends AbstractType implements DataMapperInterface
 {
-    const NAME = 'oro_promotion_coupon_add';
+    public const NAME = 'oro_promotion_coupon_add';
 
     /**
      * @var DoctrineHelper

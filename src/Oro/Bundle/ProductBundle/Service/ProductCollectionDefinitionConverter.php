@@ -11,11 +11,11 @@ use Oro\Bundle\QueryDesignerBundle\QueryDesigner\SegmentFiltersPurifier;
  */
 class ProductCollectionDefinitionConverter
 {
-    const INCLUDED_FILTER_KEY = 'included';
-    const EXCLUDED_FILTER_KEY = 'excluded';
-    const DEFINITION_KEY = 'definition';
-    const INCLUDED_FILTER_ALIAS = 'incl';
-    const EXCLUDED_FILTER_ALIAS = 'excl';
+    public const INCLUDED_FILTER_KEY = 'included';
+    public const EXCLUDED_FILTER_KEY = 'excluded';
+    public const DEFINITION_KEY = 'definition';
+    public const INCLUDED_FILTER_ALIAS = 'incl';
+    public const EXCLUDED_FILTER_ALIAS = 'excl';
 
     /**
      * @var SegmentFiltersPurifier

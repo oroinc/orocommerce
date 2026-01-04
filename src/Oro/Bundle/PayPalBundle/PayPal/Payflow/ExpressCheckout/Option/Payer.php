@@ -8,7 +8,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class Payer extends AbstractOption implements OptionsDependentInterface
 {
-    const PAYERID = 'PAYERID';
+    public const PAYERID = 'PAYERID';
 
     #[\Override]
     public function isApplicableDependent(array $options)

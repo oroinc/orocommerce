@@ -9,10 +9,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const MERCHANT_COUNTRY_KEY = 'merchant_country';
+    public const MERCHANT_COUNTRY_KEY = 'merchant_country';
 
-    const ALLOWED_COUNTRIES_ALL = 'all';
-    const ALLOWED_COUNTRIES_SELECTED = 'selected';
+    public const ALLOWED_COUNTRIES_ALL = 'all';
+    public const ALLOWED_COUNTRIES_SELECTED = 'selected';
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)

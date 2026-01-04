@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormFactory;
 
 class BooleanTypeHandler implements ProductVariantTypeHandlerInterface
 {
-    const TYPE = 'boolean';
+    public const TYPE = 'boolean';
 
     /** @var FormFactory */
     protected $formFactory;

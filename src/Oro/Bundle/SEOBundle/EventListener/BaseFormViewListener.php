@@ -11,7 +11,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 abstract class BaseFormViewListener
 {
-    const SEO_BLOCK_ID = 'seo';
+    public const SEO_BLOCK_ID = 'seo';
 
     /**
      * @var TranslatorInterface

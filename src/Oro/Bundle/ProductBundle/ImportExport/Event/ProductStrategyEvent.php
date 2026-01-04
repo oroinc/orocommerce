@@ -7,8 +7,8 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ProductStrategyEvent extends Event
 {
-    const PROCESS_BEFORE = 'oro_product.strategy.process_before';
-    const PROCESS_AFTER = 'oro_product.strategy.process_after';
+    public const PROCESS_BEFORE = 'oro_product.strategy.process_before';
+    public const PROCESS_AFTER = 'oro_product.strategy.process_after';
 
     /**
      * @var Product

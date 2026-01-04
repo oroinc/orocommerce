@@ -30,7 +30,7 @@ use Oro\Component\DoctrineUtils\ORM\UnionQueryBuilder;
  */
 class ProductPriceRepository extends BaseProductPriceRepository
 {
-    const BUFFER_SIZE = 500;
+    public const BUFFER_SIZE = 500;
 
     /**
      * @var UuidGenerator

@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class AppliedPromotionNormalizer implements NormalizerInterface
 {
-    const REQUIRED_OPTIONS = [
+    public const REQUIRED_OPTIONS = [
         'id',
         'rule',
         'useCoupons'

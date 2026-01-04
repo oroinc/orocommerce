@@ -11,10 +11,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const ROOT_NODE = 'oro_pricing';
-    const DEFAULT_PRICE_LISTS = 'default_price_lists';
-    const DEFAULT_PRICE_LIST = 'default_price_list';
-    const PRICE_STORAGE = 'price_storage';
+    public const ROOT_NODE = 'oro_pricing';
+    public const DEFAULT_PRICE_LISTS = 'default_price_lists';
+    public const DEFAULT_PRICE_LIST = 'default_price_list';
+    public const PRICE_STORAGE = 'price_storage';
 
     /**
      * price_indexation_accuracy config option regulates the accuracy of search indexation. Supported values:
@@ -25,19 +25,21 @@ class Configuration implements ConfigurationInterface
      * Less accurate but most storage efficient accuracy is website - when only price lists associated with website
      * are taken into account during prices indexation
      */
-    const PRICE_INDEXATION_ACCURACY = 'price_indexation_accuracy';
-    const ROUNDING_TYPE = 'rounding_type';
-    const PRECISION = 'precision';
-    const COMBINED_PRICE_LIST = 'combined_price_list';
-    const FULL_COMBINED_PRICE_LIST = 'full_combined_price_list';
-    const OFFSET_OF_PROCESSING_CPL_PRICES = 'offset_of_processing_cpl_prices';
-    const PRICE_LIST_STRATEGIES = 'price_strategy';
-    const PRICE_CALCULATION_PRECISION = 'price_calculation_precision';
-    const FRACTIONAL_QUANTITY_LESS_THEN_UNIT_PRICE_CALCULATION = 'fractional_quantity_less_then_unit_price_calculation';
-    const FRACTIONAL_QUANTITY_LESS_THEN_MINIMUM_PRICED_PRICE_CALCULATION =
+    public const PRICE_INDEXATION_ACCURACY = 'price_indexation_accuracy';
+    public const ROUNDING_TYPE = 'rounding_type';
+    public const PRECISION = 'precision';
+    public const COMBINED_PRICE_LIST = 'combined_price_list';
+    public const FULL_COMBINED_PRICE_LIST = 'full_combined_price_list';
+    public const OFFSET_OF_PROCESSING_CPL_PRICES = 'offset_of_processing_cpl_prices';
+    public const PRICE_LIST_STRATEGIES = 'price_strategy';
+    public const PRICE_CALCULATION_PRECISION = 'price_calculation_precision';
+    public const FRACTIONAL_QUANTITY_LESS_THEN_UNIT_PRICE_CALCULATION =
+        'fractional_quantity_less_then_unit_price_calculation';
+    public const FRACTIONAL_QUANTITY_LESS_THEN_MINIMUM_PRICED_PRICE_CALCULATION =
         'fractional_quantity_less_then_minimum_priced_price_calculation';
-    const QUANTITY_LESS_THEN_MINIMUM_PRICED_PRICE_CALCULATION = 'quantity_less_then_minimum_priced_price_calculation';
-    const DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES = 12.0;
+    public const QUANTITY_LESS_THEN_MINIMUM_PRICED_PRICE_CALCULATION =
+        'quantity_less_then_minimum_priced_price_calculation';
+    public const DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES = 12.0;
 
     /**
      * @var string

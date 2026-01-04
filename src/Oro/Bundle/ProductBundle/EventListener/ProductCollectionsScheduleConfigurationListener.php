@@ -12,7 +12,9 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
  */
 class ProductCollectionsScheduleConfigurationListener
 {
-    const CONFIG_FIELD = Configuration::ROOT_NODE . '.' . Configuration::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE;
+    public const CONFIG_FIELD = Configuration::ROOT_NODE
+        . '.'
+        . Configuration::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE;
 
     /**
      * @var DeferredScheduler

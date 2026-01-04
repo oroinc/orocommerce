@@ -13,7 +13,7 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
  */
 abstract class AbstractProductImportEventListener
 {
-    const CATEGORY_KEY = 'category.default.title';
+    public const CATEGORY_KEY = 'category.default.title';
 
     /** @var ManagerRegistry */
     protected $registry;

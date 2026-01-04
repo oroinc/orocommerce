@@ -7,7 +7,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 
 class CustomerProductVisibilityRepository extends AbstractProductVisibilityRepository
 {
-    const BATCH_SIZE = 1000;
+    public const BATCH_SIZE = 1000;
 
     /**
      * Delete from CustomerProductVisibility visibilities with fallback to 'category' when category is absent

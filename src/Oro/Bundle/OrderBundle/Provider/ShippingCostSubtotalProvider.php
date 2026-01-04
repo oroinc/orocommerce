@@ -15,8 +15,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
-    const TYPE = 'shipping_cost';
-    const SUBTOTAL_SORT_ORDER = 200;
+    public const TYPE = 'shipping_cost';
+    public const SUBTOTAL_SORT_ORDER = 200;
 
     /**
      * @var TranslatorInterface

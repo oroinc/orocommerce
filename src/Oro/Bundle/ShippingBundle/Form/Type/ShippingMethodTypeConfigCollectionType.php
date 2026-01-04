@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ShippingMethodTypeConfigCollectionType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_shipping_method_type_config_collection';
+    public const BLOCK_PREFIX = 'oro_shipping_method_type_config_collection';
 
     /** @var MethodTypeConfigCollectionSubscriber */
     protected $subscriber;

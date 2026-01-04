@@ -14,7 +14,7 @@ use Symfony\Component\PropertyAccess\PropertyPathInterface;
  */
 class PurchaseAction extends AbstractPaymentMethodAction
 {
-    const SAVE_FOR_LATER_USE = 'saveForLaterUse';
+    public const SAVE_FOR_LATER_USE = 'saveForLaterUse';
 
     private ?PaymentStatusManager $paymentStatusManager = null;
 

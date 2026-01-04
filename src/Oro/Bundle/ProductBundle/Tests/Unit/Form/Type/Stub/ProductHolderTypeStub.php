@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductHolderTypeStub extends AbstractType
 {
-    const NAME = 'oro_stub_product_holder';
+    public const NAME = 'oro_stub_product_holder';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

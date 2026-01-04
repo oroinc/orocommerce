@@ -14,14 +14,14 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 
 class LoadOrderLineItemData extends AbstractFixture implements DependentFixtureInterface
 {
-    const ORDER_LINEITEM_2 = 'order_lineitem_2';
-    const ORDER_LINEITEM_3 = 'order_lineitem_3';
-    const ORDER_LINEITEM_4 = 'order_lineitem_4';
-    const ORDER_LINEITEM_5 = 'order_lineitem_5';
-    const ORDER_LINEITEM_6 = 'order_lineitem_6';
-    const ORDER_LINEITEM_7 = 'order_lineitem_7';
-    const ORDER_LINEITEM_8 = 'order_lineitem_8';
-    const ORDER_LINEITEM_9 = 'order_lineitem_9';
+    public const ORDER_LINEITEM_2 = 'order_lineitem_2';
+    public const ORDER_LINEITEM_3 = 'order_lineitem_3';
+    public const ORDER_LINEITEM_4 = 'order_lineitem_4';
+    public const ORDER_LINEITEM_5 = 'order_lineitem_5';
+    public const ORDER_LINEITEM_6 = 'order_lineitem_6';
+    public const ORDER_LINEITEM_7 = 'order_lineitem_7';
+    public const ORDER_LINEITEM_8 = 'order_lineitem_8';
+    public const ORDER_LINEITEM_9 = 'order_lineitem_9';
 
     /**
      * @var array

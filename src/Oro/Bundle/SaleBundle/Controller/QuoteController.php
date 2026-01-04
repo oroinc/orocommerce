@@ -33,7 +33,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class QuoteController extends AbstractController
 {
-    const REDIRECT_BACK_FLAG = 'redirect_back';
+    public const REDIRECT_BACK_FLAG = 'redirect_back';
 
     /**
      *

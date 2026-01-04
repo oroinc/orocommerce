@@ -8,7 +8,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class CancelUrl extends BaseCancelUrl implements OptionsDependentInterface
 {
-    const CANCELURL = 'CANCELURL';
+    public const CANCELURL = 'CANCELURL';
 
     public function __construct()
     {

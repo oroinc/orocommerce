@@ -12,11 +12,11 @@ class LoadProductsToIndex extends AbstractFixture implements ContainerAwareInter
 {
     use ContainerAwareTrait;
 
-    const REFERENCE_PRODUCT1 = 'product1';
-    const REFERENCE_PRODUCT2 = 'product2';
+    public const REFERENCE_PRODUCT1 = 'product1';
+    public const REFERENCE_PRODUCT2 = 'product2';
 
-    const PRODUCT1 = 'Product 1';
-    const PRODUCT2 = 'Product 2';
+    public const PRODUCT1 = 'Product 1';
+    public const PRODUCT2 = 'Product 2';
 
     /** @var array */
     protected $data = [

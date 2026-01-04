@@ -15,8 +15,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class TriggerEventForSelectedProductIdsMassActionHandler implements MassActionHandlerInterface
 {
-    const FAILED_RESPONSE_MESSAGE = 'oro.product.grid.mass_action.get_selected_product_ids.response.failed';
-    const SUCCESS_RESPONSE_MESSAGE = 'oro.product.grid.mass_action.get_selected_product_ids.response.success';
+    public const FAILED_RESPONSE_MESSAGE = 'oro.product.grid.mass_action.get_selected_product_ids.response.failed';
+    public const SUCCESS_RESPONSE_MESSAGE = 'oro.product.grid.mass_action.get_selected_product_ids.response.success';
 
     /**
      * @var ConfigManager

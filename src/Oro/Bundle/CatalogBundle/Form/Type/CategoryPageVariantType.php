@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class CategoryPageVariantType extends AbstractType
 {
-    const NAME = 'oro_catalog_category_page_variant';
+    public const NAME = 'oro_catalog_category_page_variant';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

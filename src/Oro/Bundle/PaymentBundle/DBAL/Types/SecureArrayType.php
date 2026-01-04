@@ -12,7 +12,7 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
  */
 class SecureArrayType extends JsonArrayType
 {
-    const TYPE = 'secure_array';
+    public const TYPE = 'secure_array';
 
     /** @var SymmetricCrypterInterface */
     private $crypter;

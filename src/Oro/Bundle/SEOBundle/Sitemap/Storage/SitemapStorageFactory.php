@@ -6,8 +6,8 @@ use Oro\Bundle\SEOBundle\Sitemap\Exception\UnsupportedStorageTypeException;
 
 class SitemapStorageFactory
 {
-    const TYPE_SITEMAP = 'sitemap';
-    const TYPE_SITEMAP_INDEX = 'index';
+    public const TYPE_SITEMAP = 'sitemap';
+    public const TYPE_SITEMAP_INDEX = 'index';
 
     /**
      * @param string $type

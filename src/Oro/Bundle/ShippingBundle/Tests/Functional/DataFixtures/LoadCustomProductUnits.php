@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class LoadCustomProductUnits extends AbstractFixture
 {
-    const WITH_SPECIAL_CHAR = 'product_unit.mètre';
+    public const WITH_SPECIAL_CHAR = 'product_unit.mètre';
 
     #[\Override]
     public function load(ObjectManager $manager)

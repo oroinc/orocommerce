@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormView;
 
 class FreightClassSelectType extends AbstractShippingOptionSelectType
 {
-    const NAME = 'oro_shipping_freight_class_select';
+    public const NAME = 'oro_shipping_freight_class_select';
 
     #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)

@@ -7,7 +7,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class TransparentRedirect extends AbstractBooleanOption
 {
-    const SILENTTRAN = 'SILENTTRAN';
+    public const SILENTTRAN = 'SILENTTRAN';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

@@ -12,22 +12,22 @@ class ContactInfo extends ParameterBag
     /**
      * @internal
      */
-    const NAME = 'name';
+    public const NAME = 'name';
 
     /**
      * @internal
      */
-    const PHONE = 'phone';
+    public const PHONE = 'phone';
 
     /**
      * @internal
      */
-    const EMAIL = 'email';
+    public const EMAIL = 'email';
 
     /**
      * @internal
      */
-    const MANUAL_TEXT = 'manual_text';
+    public const MANUAL_TEXT = 'manual_text';
 
     /**
      * @return string

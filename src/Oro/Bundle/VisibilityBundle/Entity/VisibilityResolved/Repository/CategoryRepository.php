@@ -20,7 +20,7 @@ class CategoryRepository extends ServiceEntityRepository
     use CategoryVisibilityResolvedTermTrait;
     use BasicOperationRepositoryTrait;
 
-    const INSERT_BATCH_SIZE = 500;
+    public const INSERT_BATCH_SIZE = 500;
 
     /**
      * @param Category $category

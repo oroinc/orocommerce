@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PriceRuleEditorType extends AbstractType
 {
-    const NAME = 'oro_pricing_price_rule_editor';
+    public const NAME = 'oro_pricing_price_rule_editor';
 
     /**
      * @var PriceRuleEditorOptionsConfigurator

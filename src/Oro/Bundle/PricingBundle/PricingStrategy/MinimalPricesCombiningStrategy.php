@@ -15,7 +15,7 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy implements
     CombinedPriceListIdentifierProviderInterface
 {
-    const NAME = 'minimal_prices';
+    public const NAME = 'minimal_prices';
 
     protected ShardManager $shardManager;
 

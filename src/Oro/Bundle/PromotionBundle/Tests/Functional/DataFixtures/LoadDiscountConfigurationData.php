@@ -7,10 +7,10 @@ use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 
 class LoadDiscountConfigurationData extends AbstractLoadDiscountConfigurationData
 {
-    const DISCOUNT_CONFIGURATION_ORDER_PERCENT = 'discount_configuration_order_percent';
-    const ANOTHER_DISCOUNT_CONFIGURATION_ORDER_PERCENT = 'another_discount_configuration_order_percent';
-    const DISCOUNT_CONFIGURATION_ORDER_AMOUNT = 'discount_configuration_order_amount';
-    const DISCOUNT_CONFIGURATION_SHIPPING_AMOUNT = 'discount_configuration_shipping_amount';
+    public const DISCOUNT_CONFIGURATION_ORDER_PERCENT = 'discount_configuration_order_percent';
+    public const ANOTHER_DISCOUNT_CONFIGURATION_ORDER_PERCENT = 'another_discount_configuration_order_percent';
+    public const DISCOUNT_CONFIGURATION_ORDER_AMOUNT = 'discount_configuration_order_amount';
+    public const DISCOUNT_CONFIGURATION_SHIPPING_AMOUNT = 'discount_configuration_shipping_amount';
 
     #[\Override]
     public function getDiscountConfiguration()

@@ -10,7 +10,7 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderType;
  */
 class OrderDiscountEventListener extends AbstractFormEventListener
 {
-    const TEMPLATE = '@OroOrder/Form/discountCollectionWidget.html.twig';
+    public const TEMPLATE = '@OroOrder/Form/discountCollectionWidget.html.twig';
 
     #[\Override]
     public function onOrderEvent(OrderEvent $event)

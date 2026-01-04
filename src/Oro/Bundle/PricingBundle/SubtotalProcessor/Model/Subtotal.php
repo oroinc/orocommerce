@@ -10,9 +10,9 @@ use Oro\Bundle\PricingBundle\Entity\BasePriceList;
  */
 class Subtotal
 {
-    const OPERATION_ADD = 1;
-    const OPERATION_SUBTRACTION = 2;
-    const OPERATION_IGNORE = 3;
+    public const OPERATION_ADD = 1;
+    public const OPERATION_SUBTRACTION = 2;
+    public const OPERATION_IGNORE = 3;
 
     /**
      * @var string

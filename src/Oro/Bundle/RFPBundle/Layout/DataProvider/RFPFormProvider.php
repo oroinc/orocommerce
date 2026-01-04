@@ -14,8 +14,8 @@ use Symfony\Component\Validator\Constraints\GroupSequence;
  */
 class RFPFormProvider extends AbstractFormProvider
 {
-    const RFP_REQUEST_CREATE_ROUTE_NAME = 'oro_rfp_frontend_request_create';
-    const RFP_REQUEST_UPDATE_ROUTE_NAME = 'oro_rfp_frontend_request_update';
+    public const RFP_REQUEST_CREATE_ROUTE_NAME = 'oro_rfp_frontend_request_create';
+    public const RFP_REQUEST_UPDATE_ROUTE_NAME = 'oro_rfp_frontend_request_update';
 
     /**
      * @param Request $request

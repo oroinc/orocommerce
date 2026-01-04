@@ -7,10 +7,10 @@ use Oro\Bundle\SaleBundle\DependencyInjection\Configuration;
 
 class ContactInfoSourceOptionsProvider implements OptionsProviderInterface
 {
-    const DONT_DISPLAY = 'dont_display';
-    const CUSTOMER_USER_OWNER = 'customer_user_owner';
-    const CUSTOMER_OWNER = 'customer_owner';
-    const PRE_CONFIGURED = 'pre_configured';
+    public const DONT_DISPLAY = 'dont_display';
+    public const CUSTOMER_USER_OWNER = 'customer_user_owner';
+    public const CUSTOMER_OWNER = 'customer_owner';
+    public const PRE_CONFIGURED = 'pre_configured';
 
     /**
      * @var ConfigManager

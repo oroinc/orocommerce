@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class CaptureComplete extends AbstractBooleanOption
 {
-    const CAPTURECOMPLETE = 'CAPTURECOMPLETE';
+    public const CAPTURECOMPLETE = 'CAPTURECOMPLETE';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

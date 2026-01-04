@@ -21,7 +21,7 @@ class RenameFlatRateMethods extends AbstractFixture implements ContainerAwareInt
     /**
      * @internal
      */
-    const PREVIOUS_VERSION_IDENTIFIER_PREFIX = 'flat_rate';
+    public const PREVIOUS_VERSION_IDENTIFIER_PREFIX = 'flat_rate';
 
     /**
      * @var MethodRenamingEventDispatcherInterface

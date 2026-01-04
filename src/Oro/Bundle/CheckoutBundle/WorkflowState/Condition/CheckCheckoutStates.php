@@ -21,11 +21,11 @@ class CheckCheckoutStates extends AbstractCondition implements ContextAccessorAw
 {
     use ContextAccessorAwareTrait;
 
-    const NAME = 'check_checkout_states';
+    public const NAME = 'check_checkout_states';
 
-    const OPTION_KEY_ENTITY = 'entity';
-    const OPTION_KEY_STATE1 = 'state1';
-    const OPTION_KEY_STATE2 = 'state2';
+    public const OPTION_KEY_ENTITY = 'entity';
+    public const OPTION_KEY_STATE1 = 'state1';
+    public const OPTION_KEY_STATE2 = 'state2';
 
     /** @var CheckoutStateDiffManager */
     protected $diffManager;

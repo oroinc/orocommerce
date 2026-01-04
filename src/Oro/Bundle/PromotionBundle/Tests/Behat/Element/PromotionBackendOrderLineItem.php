@@ -7,10 +7,10 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
 
 class PromotionBackendOrderLineItem extends TableRow implements DiscountAwareLineItemInterface
 {
-    const APPLIED_DISCOUNTS_CELL_HEADER = 'Applied Discounts';
-    const DISCOUNT_AMOUNT_CELL_HEADER = 'Disc. Amount';
-    const DISCOUNT_AMOUNT_INCL_TAX_CELL_HEADER = 'After Disc. Incl. Tax';
-    const DISCOUNT_AMOUNT_EXCL_TAX_CELL_HEADER = 'After Disc. Excl. Tax';
+    public const APPLIED_DISCOUNTS_CELL_HEADER = 'Applied Discounts';
+    public const DISCOUNT_AMOUNT_CELL_HEADER = 'Disc. Amount';
+    public const DISCOUNT_AMOUNT_INCL_TAX_CELL_HEADER = 'After Disc. Incl. Tax';
+    public const DISCOUNT_AMOUNT_EXCL_TAX_CELL_HEADER = 'After Disc. Excl. Tax';
 
     #[\Override]
     public function getDiscount()

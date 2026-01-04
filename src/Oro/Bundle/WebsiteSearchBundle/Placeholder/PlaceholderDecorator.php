@@ -7,7 +7,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
  */
 class PlaceholderDecorator implements PlaceholderInterface
 {
-    const DEFAULT_PLACEHOLDER_VALUE = '.+?';
+    public const DEFAULT_PLACEHOLDER_VALUE = '.+?';
 
     /**
      * @var PlaceholderRegistry

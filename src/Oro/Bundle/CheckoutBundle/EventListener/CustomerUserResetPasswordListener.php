@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class CustomerUserResetPasswordListener
 {
-    const CHECKOUT_RESET_PASSWORD_EMAIL_TEMPLATE_NAME = 'checkout_customer_user_reset_password';
+    public const CHECKOUT_RESET_PASSWORD_EMAIL_TEMPLATE_NAME = 'checkout_customer_user_reset_password';
 
     /**
      * @var RequestStack

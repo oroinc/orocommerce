@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP;
 
 class Encoder implements EncoderInterface
 {
-    const DECODE_REGEXP = '/(\w+)(\[(\d+)\])?=/';
+    public const DECODE_REGEXP = '/(\w+)(\[(\d+)\])?=/';
 
     #[\Override]
     public function encode(array $data)

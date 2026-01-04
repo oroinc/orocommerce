@@ -9,7 +9,7 @@ use Oro\Bundle\ConsentBundle\Entity\Consent;
  */
 class RequiredConsentFilter implements ConsentFilterInterface
 {
-    const NAME = 'required_consent_filter';
+    public const NAME = 'required_consent_filter';
 
     #[\Override]
     public function isConsentPassedFilter(Consent $consent, array $params = [])

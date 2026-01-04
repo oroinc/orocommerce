@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class SitemapDumper implements SitemapDumperInterface
 {
-    const SITEMAP_FILENAME_TEMPLATE = 'sitemap-%s-%s.xml';
+    public const SITEMAP_FILENAME_TEMPLATE = 'sitemap-%s-%s.xml';
 
     /**
      * @var SitemapStorageFactory

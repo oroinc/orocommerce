@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContentNodeSelectType extends AbstractType
 {
-    const NAME = 'oro_web_catalog_content_node_select';
+    public const NAME = 'oro_web_catalog_content_node_select';
 
     /**
      * @var ContentNodeTreeHandler

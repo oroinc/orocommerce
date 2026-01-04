@@ -134,10 +134,10 @@ class Category implements
     use OrganizationAwareTrait;
     use ExtendEntityTrait;
 
-    const MATERIALIZED_PATH_DELIMITER = '_';
-    const CATEGORY_PATH_DELIMITER = ' / ';
-    const INDEX_DATA_DELIMITER = '|';
-    const FIELD_PARENT_CATEGORY = 'parentCategory';
+    public const MATERIALIZED_PATH_DELIMITER = '_';
+    public const CATEGORY_PATH_DELIMITER = ' / ';
+    public const INDEX_DATA_DELIMITER = '|';
+    public const FIELD_PARENT_CATEGORY = 'parentCategory';
 
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\Id]

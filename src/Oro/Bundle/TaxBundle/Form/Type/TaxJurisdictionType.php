@@ -15,7 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxJurisdictionType extends AbstractType
 {
-    const NAME = 'oro_tax_jurisdiction_type';
+    public const NAME = 'oro_tax_jurisdiction_type';
 
     /**
      * @var string

@@ -8,7 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ProductDBQueryRestrictionEvent extends Event
 {
-    const NAME = 'oro_product.product_db_query.restriction';
+    public const NAME = 'oro_product.product_db_query.restriction';
 
     /** @var QueryBuilder */
     protected $queryBuilder;

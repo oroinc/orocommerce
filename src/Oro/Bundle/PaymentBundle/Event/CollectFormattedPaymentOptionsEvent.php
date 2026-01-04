@@ -10,7 +10,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class CollectFormattedPaymentOptionsEvent extends Event
 {
-    const EVENT_NAME = 'oro_payment.collect_formatted_payment_options';
+    public const EVENT_NAME = 'oro_payment.collect_formatted_payment_options';
 
     /**
      * @var PaymentMethodViewInterface

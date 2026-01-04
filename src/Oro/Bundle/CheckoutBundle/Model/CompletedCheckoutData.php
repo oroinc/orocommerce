@@ -7,12 +7,12 @@ namespace Oro\Bundle\CheckoutBundle\Model;
  */
 final class CompletedCheckoutData extends \ArrayObject implements \JsonSerializable
 {
-    const CURRENCY = 'currency';
-    const ITEMS_COUNT = 'itemsCount';
-    const ORDERS = 'orders';
-    const STARTED_FROM = 'startedFrom';
-    const SUBTOTAL = 'subtotal';
-    const TOTAL = 'total';
+    public const CURRENCY = 'currency';
+    public const ITEMS_COUNT = 'itemsCount';
+    public const ORDERS = 'orders';
+    public const STARTED_FROM = 'startedFrom';
+    public const SUBTOTAL = 'subtotal';
+    public const TOTAL = 'total';
 
     /**
      * Creates new CompletedCheckoutData object from serialized data

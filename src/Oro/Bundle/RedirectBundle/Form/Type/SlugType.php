@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SlugType extends AbstractType
 {
-    const NAME = 'oro_redirect_slug';
+    public const NAME = 'oro_redirect_slug';
 
     /**
      * @var SlugifyFormHelper

@@ -13,52 +13,52 @@ interface PaymentMethodInterface
     /**
      * Validate with zero amount, e.g reserve
      */
-    const VALIDATE = 'validate';
+    public const VALIDATE = 'validate';
 
     /**
      * Authorize with non-zero amount, e.g activate, initiate
      */
-    const AUTHORIZE = 'authorize';
+    public const AUTHORIZE = 'authorize';
 
     /**
      * Re-authorize the existing authorization hold.
      */
-    const RE_AUTHORIZE = 're_authorize';
+    public const RE_AUTHORIZE = 're_authorize';
 
     /**
      * Capture authorized amount, e.g complete
      */
-    const CAPTURE = 'capture';
+    public const CAPTURE = 'capture';
 
     /**
      * Capture non-zero amount
      */
-    const CHARGE = 'charge';
+    public const CHARGE = 'charge';
 
     /**
      * Send invoice
      */
-    const INVOICE = 'invoice';
+    public const INVOICE = 'invoice';
 
     /**
      * Decorate actions - charge, authorize, authorize and capture
      */
-    const PURCHASE = 'purchase';
+    public const PURCHASE = 'purchase';
 
     /**
      * Represents pending transaction that requires update
      */
-    const PENDING = 'pending';
+    public const PENDING = 'pending';
 
     /**
      * Cancel authorized or captured amount, e.g void, reversal
      */
-    const CANCEL = 'cancel';
+    public const CANCEL = 'cancel';
 
     /**
      * Refund captured amount
      */
-    const REFUND = 'refund';
+    public const REFUND = 'refund';
 
     /**
      * @param string $action

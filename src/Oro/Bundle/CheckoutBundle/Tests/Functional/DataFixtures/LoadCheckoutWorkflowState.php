@@ -8,8 +8,8 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState;
 
 class LoadCheckoutWorkflowState extends AbstractFixture
 {
-    const CHECKOUT_STATE_1 = 'checkout.state.1';
-    const CHECKOUT_STATE_2 = 'checkout.state.2';
+    public const CHECKOUT_STATE_1 = 'checkout.state.1';
+    public const CHECKOUT_STATE_2 = 'checkout.state.2';
 
     /**
      * @var array

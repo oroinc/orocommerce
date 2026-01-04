@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ParameterBagCalculableQuote extends ParameterBag implements CalculableQuoteInterface
 {
-    const FIELD_LINE_ITEMS = 'line_items';
+    public const FIELD_LINE_ITEMS = 'line_items';
 
     #[\Override]
     public function getLineItems()

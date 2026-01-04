@@ -18,7 +18,7 @@ class PaymentMethodSupports extends AbstractCondition implements ContextAccessor
 {
     use ContextAccessorAwareTrait;
 
-    const NAME = 'payment_method_supports';
+    public const NAME = 'payment_method_supports';
 
     /**
      * @var PaymentMethodProviderInterface

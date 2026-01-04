@@ -27,9 +27,9 @@ use Symfony\Component\PropertyAccess\PropertyPathInterface;
  */
 class CreateOrder extends AbstractAction
 {
-    const OPTION_KEY_ATTRIBUTE = 'attribute';
-    const OPTION_KEY_CHECKOUT = 'checkout';
-    const OPTION_KEY_DATA = 'data';
+    public const OPTION_KEY_ATTRIBUTE = 'attribute';
+    public const OPTION_KEY_CHECKOUT = 'checkout';
+    public const OPTION_KEY_DATA = 'data';
 
     /**
      * @var array

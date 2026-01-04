@@ -10,8 +10,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriceListStrategySelectType extends AbstractType
 {
-    const NAME = 'oro_pricing_list_strategy_selection';
-    const ALIAS = 'oro.pricing.system_configuration.fields.strategy_type.choices.';
+    public const NAME = 'oro_pricing_list_strategy_selection';
+    public const ALIAS = 'oro.pricing.system_configuration.fields.strategy_type.choices.';
 
     /**
      * @var StrategyRegister

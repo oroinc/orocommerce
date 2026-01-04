@@ -14,13 +14,13 @@ class LoadOrdersACLData extends AbstractFixture implements
     FixtureInterface,
     DependentFixtureInterface
 {
-    const ORDER_ACC_1_USER_LOCAL = 'order_customer1_user_local';
-    const ORDER_ACC_1_USER_BASIC = 'order_customer1_user_basic';
-    const ORDER_ACC_1_USER_DEEP = 'order_customer1_user_deep';
+    public const ORDER_ACC_1_USER_LOCAL = 'order_customer1_user_local';
+    public const ORDER_ACC_1_USER_BASIC = 'order_customer1_user_basic';
+    public const ORDER_ACC_1_USER_DEEP = 'order_customer1_user_deep';
 
-    const ORDER_ACC_1_1_USER_LOCAL = 'order_customer1.1_user_local';
+    public const ORDER_ACC_1_1_USER_LOCAL = 'order_customer1.1_user_local';
 
-    const ORDER_ACC_2_USER_LOCAL = 'order_customer2_user_local';
+    public const ORDER_ACC_2_USER_LOCAL = 'order_customer2_user_local';
 
     /**
      * @var array

@@ -22,7 +22,7 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements
 {
     use FeatureCheckerHolderTrait;
 
-    const OFFERS_DATA_KEY = 'offers';
+    public const OFFERS_DATA_KEY = 'offers';
 
     /** @var RequestStack */
     protected $requestStack;

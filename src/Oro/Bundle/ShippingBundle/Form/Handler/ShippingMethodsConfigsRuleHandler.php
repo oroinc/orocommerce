@@ -13,7 +13,7 @@ class ShippingMethodsConfigsRuleHandler
 {
     use RequestHandlerTrait;
 
-    const UPDATE_FLAG = 'update_methods_flag';
+    public const UPDATE_FLAG = 'update_methods_flag';
 
     /** @var RequestStack */
     protected $requestStack;

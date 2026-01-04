@@ -26,7 +26,7 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
  */
 class CheckoutSubtotalListener
 {
-    const ACCOUNT_BATCH_SIZE = 500;
+    public const ACCOUNT_BATCH_SIZE = 500;
 
     protected ManagerRegistry $registry;
 

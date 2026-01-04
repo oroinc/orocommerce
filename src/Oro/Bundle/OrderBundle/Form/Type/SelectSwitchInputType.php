@@ -11,9 +11,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SelectSwitchInputType extends AbstractType
 {
-    const NAME = 'oro_select_switch_input';
-    const MODE_SELECT = 'select';
-    const MODE_INPUT = 'input';
+    public const NAME = 'oro_select_switch_input';
+    public const MODE_SELECT = 'select';
+    public const MODE_INPUT = 'input';
 
     /**
      *

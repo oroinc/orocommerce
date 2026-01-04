@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RuleNormalizer implements NormalizerInterface
 {
-    const REQUIRED_OPTIONS = [
+    public const REQUIRED_OPTIONS = [
         'name',
         'sortOrder',
         'isStopProcessing',

@@ -7,7 +7,7 @@ use Oro\Bundle\IntegrationBundle\Provider\IconAwareIntegrationInterface;
 
 class FlatRateChannelType implements ChannelInterface, IconAwareIntegrationInterface
 {
-    const TYPE = 'flat_rate';
+    public const TYPE = 'flat_rate';
 
     #[\Override]
     public function getLabel()

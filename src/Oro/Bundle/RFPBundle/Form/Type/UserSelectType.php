@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserSelectType extends AbstractType
 {
-    const NAME = 'oro_rfp_user_select';
+    public const NAME = 'oro_rfp_user_select';
 
     /**
      * @var ManagerRegistry

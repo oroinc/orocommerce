@@ -25,8 +25,8 @@ class IndexDataProvider
 {
     use ContextTrait;
 
-    const ALL_TEXT_PREFIX = 'all_text';
-    const ALL_TEXT_L10N_FIELD = 'all_text_LOCALIZATION_ID';
+    public const ALL_TEXT_PREFIX = 'all_text';
+    public const ALL_TEXT_L10N_FIELD = 'all_text_LOCALIZATION_ID';
 
     /** @var array */
     private $cache;

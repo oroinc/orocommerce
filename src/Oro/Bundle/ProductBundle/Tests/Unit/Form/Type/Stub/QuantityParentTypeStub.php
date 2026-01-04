@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class QuantityParentTypeStub extends AbstractType
 {
-    const NAME = 'stub_quantity_parent_type';
+    public const NAME = 'stub_quantity_parent_type';
 
     /** @var array */
     protected $quantityOptions = [];

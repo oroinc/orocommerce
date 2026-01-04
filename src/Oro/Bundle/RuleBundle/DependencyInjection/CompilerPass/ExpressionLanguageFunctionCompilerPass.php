@@ -8,8 +8,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class ExpressionLanguageFunctionCompilerPass implements CompilerPassInterface
 {
-    const EXPRESSION_LANGUAGE_SERVICE = 'oro_rule.expression_language';
-    const TAG = 'oro_rule.expression_language.function';
+    public const EXPRESSION_LANGUAGE_SERVICE = 'oro_rule.expression_language';
+    public const TAG = 'oro_rule.expression_language.function';
 
     #[\Override]
     public function process(ContainerBuilder $container)

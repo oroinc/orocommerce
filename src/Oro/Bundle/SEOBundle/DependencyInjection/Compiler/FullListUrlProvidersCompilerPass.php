@@ -9,9 +9,9 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class FullListUrlProvidersCompilerPass implements CompilerPassInterface
 {
-    const PROVIDER_REGISTRY = 'oro_seo.sitemap.provider.full_list_urls_provider_registry';
-    const TAG_ALLOWED_URLS = 'oro_seo.sitemap.website_access_denied_urls_provider';
-    const TAG = 'oro_seo.sitemap.url_items_provider';
+    public const PROVIDER_REGISTRY = 'oro_seo.sitemap.provider.full_list_urls_provider_registry';
+    public const TAG_ALLOWED_URLS = 'oro_seo.sitemap.website_access_denied_urls_provider';
+    public const TAG = 'oro_seo.sitemap.url_items_provider';
 
     #[\Override]
     public function process(ContainerBuilder $container)

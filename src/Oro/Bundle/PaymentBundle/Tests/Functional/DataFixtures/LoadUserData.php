@@ -8,13 +8,13 @@ use Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\AbstractLoadMultipleUserD
 
 class LoadUserData extends AbstractLoadMultipleUserData
 {
-    const USER_VIEWER = 'payment-user-viewer';
-    const USER_EDITOR = 'payment-user-editor';
-    const USER_VIEWER_CREATOR = 'payment-user-viewer-creator';
+    public const USER_VIEWER = 'payment-user-viewer';
+    public const USER_EDITOR = 'payment-user-editor';
+    public const USER_VIEWER_CREATOR = 'payment-user-viewer-creator';
 
-    const ROLE_VIEW = 'PAYMENT_ROLE_VIEW';
-    const ROLE_EDIT = 'PAYMENT_ROLE_EDIT';
-    const ROLE_CREATE = 'PAYMENT_ROLE_CREATE';
+    public const ROLE_VIEW = 'PAYMENT_ROLE_VIEW';
+    public const ROLE_EDIT = 'PAYMENT_ROLE_EDIT';
+    public const ROLE_CREATE = 'PAYMENT_ROLE_CREATE';
 
     /**
      * @var array

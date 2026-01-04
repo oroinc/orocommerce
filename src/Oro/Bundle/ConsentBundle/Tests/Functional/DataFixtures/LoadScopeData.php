@@ -14,8 +14,8 @@ class LoadScopeData extends AbstractFixture implements DependentFixtureInterface
 {
     use ContainerAwareTrait;
 
-    const CATALOG_1_SCOPE = 'catalog_1_scope';
-    const CATALOG_2_SCOPE = 'catalog_2_scope';
+    public const CATALOG_1_SCOPE = 'catalog_1_scope';
+    public const CATALOG_2_SCOPE = 'catalog_2_scope';
 
     /**
      * @var array

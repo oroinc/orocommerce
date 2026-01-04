@@ -18,7 +18,7 @@ class ProductVariantLinksValidator extends ConstraintValidator
 {
     use ConfigurableProductAccessorTrait;
 
-    const ALIAS = 'oro_product_variant_links';
+    public const ALIAS = 'oro_product_variant_links';
 
     /**
      * @var PropertyAccessorInterface

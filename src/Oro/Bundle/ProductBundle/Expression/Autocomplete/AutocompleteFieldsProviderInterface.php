@@ -7,14 +7,14 @@ namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
  */
 interface AutocompleteFieldsProviderInterface
 {
-    const TYPE_RELATION = 'relation';
-    const TYPE_INTEGER = 'integer';
-    const TYPE_STRING = 'string';
-    const TYPE_FLOAT = 'float';
-    const TYPE_BOOLEAN = 'boolean';
-    const TYPE_DATE = 'date';
-    const TYPE_DATETIME = 'datetime';
-    const TYPE_ENUM = 'enum';
+    public const TYPE_RELATION = 'relation';
+    public const TYPE_INTEGER = 'integer';
+    public const TYPE_STRING = 'string';
+    public const TYPE_FLOAT = 'float';
+    public const TYPE_BOOLEAN = 'boolean';
+    public const TYPE_DATE = 'date';
+    public const TYPE_DATETIME = 'datetime';
+    public const TYPE_ENUM = 'enum';
 
     /**
      * @param string $className

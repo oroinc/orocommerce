@@ -10,12 +10,12 @@ class PayPalCA extends PayPal
     /**
      * @internal
      */
-    const CODE = 'PayPalCA';
+    public const CODE = 'PayPalCA';
 
     /**
      * @internal
      */
-    const NAME = 'PayPalCA';
+    public const NAME = 'PayPalCA';
 
     #[\Override]
     public function getName()

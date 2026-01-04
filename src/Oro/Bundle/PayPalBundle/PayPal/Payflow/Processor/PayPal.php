@@ -7,8 +7,8 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class PayPal implements Option\OptionsAwareInterface, ProcessorInterface
 {
-    const CODE = 'PayPal';
-    const NAME = 'PayPal';
+    public const CODE = 'PayPal';
+    public const NAME = 'PayPal';
 
     #[\Override]
     public function configureOptions(Option\OptionsResolver $resolver)

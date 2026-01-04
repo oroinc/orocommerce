@@ -7,7 +7,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class ExpirationDate extends AbstractOption
 {
-    const EXPDATE = 'EXPDATE';
+    public const EXPDATE = 'EXPDATE';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

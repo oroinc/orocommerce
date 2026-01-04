@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class QuoteProductDemandCollectionType extends CollectionType
 {
-    const NAME = 'oro_sale_quote_product_demand_collection';
+    public const NAME = 'oro_sale_quote_product_demand_collection';
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver)

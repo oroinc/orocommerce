@@ -11,9 +11,9 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
  */
 class SkuIncrementor implements SkuIncrementorInterface
 {
-    const INCREMENTED_SKU_PATTERN = '/^(.*)-\d+$/';
-    const SKU_INCREMENT_PATTERN = '/^%s-(\d+)$/';
-    const SKU_INCREMENT_DATABASE_PATTERN = '%s-%%';
+    public const INCREMENTED_SKU_PATTERN = '/^(.*)-\d+$/';
+    public const SKU_INCREMENT_PATTERN = '/^%s-(\d+)$/';
+    public const SKU_INCREMENT_DATABASE_PATTERN = '%s-%%';
 
     /**
      * @var DoctrineHelper

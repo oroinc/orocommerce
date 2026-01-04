@@ -20,9 +20,9 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRe
 #[Config]
 class ProductVisibility implements VisibilityInterface, ScopeAwareInterface
 {
-    const CATEGORY = 'category';
-    const CONFIG = 'config';
-    const VISIBILITY_TYPE = 'product_visibility';
+    public const CATEGORY = 'category';
+    public const CONFIG = 'config';
+    public const VISIBILITY_TYPE = 'product_visibility';
 
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\Id]

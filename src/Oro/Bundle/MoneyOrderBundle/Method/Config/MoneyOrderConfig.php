@@ -6,12 +6,12 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class MoneyOrderConfig extends ParameterBag implements MoneyOrderConfigInterface
 {
-    const LABEL_KEY = 'label';
-    const SHORT_LABEL_KEY = 'short_label';
-    const ADMIN_LABEL_KEY = 'admin_label';
-    const PAYMENT_METHOD_IDENTIFIER_KEY = 'payment_method_identifier';
-    const PAY_TO_KEY = 'pay_to';
-    const SEND_TO_KEY = 'send_to';
+    public const LABEL_KEY = 'label';
+    public const SHORT_LABEL_KEY = 'short_label';
+    public const ADMIN_LABEL_KEY = 'admin_label';
+    public const PAYMENT_METHOD_IDENTIFIER_KEY = 'payment_method_identifier';
+    public const PAY_TO_KEY = 'pay_to';
+    public const SEND_TO_KEY = 'send_to';
 
     public function __construct(array $parameters)
     {

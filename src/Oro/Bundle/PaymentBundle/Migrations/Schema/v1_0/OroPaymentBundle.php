@@ -15,11 +15,11 @@ class OroPaymentBundle implements Migration, ActivityExtensionAwareInterface
     /**
      * Table name for PaymentTerm
      */
-    const TABLE_NAME                          = 'orob2b_payment_term';
-    const PAYMENT_TERM_TO_ACCOUNT_TABLE       = 'orob2b_payment_term_to_account';
-    const PAYMENT_TERM_TO_ACCOUNT_GROUP_TABLE = 'orob2b_payment_term_to_acc_grp';
-    const ACCOUNT_TABLE                       = 'orob2b_account';
-    const ACCOUNT_GROUP_TABLE                 = 'orob2b_account_group';
+    public const TABLE_NAME                          = 'orob2b_payment_term';
+    public const PAYMENT_TERM_TO_ACCOUNT_TABLE       = 'orob2b_payment_term_to_account';
+    public const PAYMENT_TERM_TO_ACCOUNT_GROUP_TABLE = 'orob2b_payment_term_to_acc_grp';
+    public const ACCOUNT_TABLE                       = 'orob2b_account';
+    public const ACCOUNT_GROUP_TABLE                 = 'orob2b_account_group';
 
     #[\Override]
     public function up(Schema $schema, QueryBag $queries)

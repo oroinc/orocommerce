@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class AppliedPromotionCollectionTableType extends AbstractType
 {
-    const NAME = 'oro_promotion_applied_promotion_collection_table';
+    public const NAME = 'oro_promotion_applied_promotion_collection_table';
 
     #[\Override]
     public function getParent(): ?string

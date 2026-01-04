@@ -6,8 +6,8 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 
 class FedexToShippingDimensionsUnitTransformer implements FedexToShippingUnitTransformerInterface
 {
-    const SHIPPING_DIMENSION_CM = 'cm';
-    const SHIPPING_DIMENSION_INCH = 'inch';
+    public const SHIPPING_DIMENSION_CM = 'cm';
+    public const SHIPPING_DIMENSION_INCH = 'inch';
 
     #[\Override]
     public function transform(string $fedexValue): string

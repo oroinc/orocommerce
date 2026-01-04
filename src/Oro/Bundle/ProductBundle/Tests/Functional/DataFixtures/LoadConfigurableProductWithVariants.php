@@ -20,9 +20,9 @@ use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 class LoadConfigurableProductWithVariants extends AbstractFixture implements DependentFixtureInterface
 {
-    const CONFIGURABLE_SKU = 'PARENTCONFIG';
-    const FIRST_VARIANT_SKU = 'FIRSTVARIANT';
-    const SECOND_VARIANT_SKU = 'SECONDVARIANT';
+    public const CONFIGURABLE_SKU = 'PARENTCONFIG';
+    public const FIRST_VARIANT_SKU = 'FIRSTVARIANT';
+    public const SECOND_VARIANT_SKU = 'SECONDVARIANT';
 
     /** @var array */
     private $variants = [

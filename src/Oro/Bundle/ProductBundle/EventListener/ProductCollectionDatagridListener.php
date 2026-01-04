@@ -21,10 +21,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class ProductCollectionDatagridListener
 {
-    const SEGMENT_DEFINITION_PARAMETER_KEY = 'sd_';
-    const DEFINITION_KEY = 'definition';
-    const INCLUDED_KEY = 'included';
-    const EXCLUDED_KEY = 'excluded';
+    public const SEGMENT_DEFINITION_PARAMETER_KEY = 'sd_';
+    public const DEFINITION_KEY = 'definition';
+    public const INCLUDED_KEY = 'included';
+    public const EXCLUDED_KEY = 'excluded';
 
     /**
      * @var RequestStack

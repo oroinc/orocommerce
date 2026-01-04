@@ -8,10 +8,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class LoadProductUnits extends AbstractFixture
 {
-    const BOTTLE = 'product_unit.bottle';
-    const LITER = 'product_unit.liter';
-    const MILLILITER = 'product_unit.milliliter';
-    const BOX = 'product_unit.box';
+    public const BOTTLE = 'product_unit.bottle';
+    public const LITER = 'product_unit.liter';
+    public const MILLILITER = 'product_unit.milliliter';
+    public const BOX = 'product_unit.box';
 
     #[\Override]
     public function load(ObjectManager $manager)

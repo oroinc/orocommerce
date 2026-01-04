@@ -7,9 +7,9 @@ namespace Oro\Bundle\RedirectBundle\Cache;
  */
 interface UrlCacheInterface
 {
-    const SLUG_KEY = 's';
-    const URL_KEY = 'u';
-    const SLUG_ROUTES_KEY = '__slug_routes__';
+    public const SLUG_KEY = 's';
+    public const URL_KEY = 'u';
+    public const SLUG_ROUTES_KEY = '__slug_routes__';
 
     /**
      * @param string $routeName

@@ -7,7 +7,7 @@ use Oro\Bundle\IntegrationBundle\Provider\IconAwareIntegrationInterface;
 
 class MoneyOrderChannelType implements ChannelInterface, IconAwareIntegrationInterface
 {
-    const TYPE = 'money_order';
+    public const TYPE = 'money_order';
 
     #[\Override]
     public function getLabel()

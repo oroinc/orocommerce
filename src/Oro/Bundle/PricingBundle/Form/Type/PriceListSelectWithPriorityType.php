@@ -10,9 +10,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class PriceListSelectWithPriorityType extends AbstractType
 {
-    const NAME = 'oro_pricing_price_list_select_with_priority';
-    const PRICE_LIST_FIELD = 'priceList';
-    const SORT_ORDER_FIELD = 'sort_order';
+    public const NAME = 'oro_pricing_price_list_select_with_priority';
+    public const PRICE_LIST_FIELD = 'priceList';
+    public const SORT_ORDER_FIELD = 'sort_order';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

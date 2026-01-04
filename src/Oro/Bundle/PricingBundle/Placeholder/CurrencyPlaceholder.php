@@ -7,7 +7,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\AbstractPlaceholder;
 
 class CurrencyPlaceholder extends AbstractPlaceholder
 {
-    const NAME = 'CURRENCY';
+    public const NAME = 'CURRENCY';
 
     /**
      * @var UserCurrencyManager

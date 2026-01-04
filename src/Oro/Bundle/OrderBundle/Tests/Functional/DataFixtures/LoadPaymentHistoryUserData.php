@@ -7,11 +7,11 @@ use Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\AbstractLoadMultipleUserD
 
 class LoadPaymentHistoryUserData extends AbstractLoadMultipleUserData
 {
-    const USER_PAYMENT_HISTORY_VIEWER = 'order-payment-history-viewer';
-    const USER_ORDER_VIEWER = 'order-viewer';
+    public const USER_PAYMENT_HISTORY_VIEWER = 'order-payment-history-viewer';
+    public const USER_ORDER_VIEWER = 'order-viewer';
 
-    const ROLE_VIEW_HISTORY = 'ORDER_PAYMENT_HISTORY_VIEW';
-    const ROLE_VIEW_ORDER = 'ORDER_VIEW';
+    public const ROLE_VIEW_HISTORY = 'ORDER_PAYMENT_HISTORY_VIEW';
+    public const ROLE_VIEW_ORDER = 'ORDER_VIEW';
 
     #[\Override]
     protected function getRolesData()

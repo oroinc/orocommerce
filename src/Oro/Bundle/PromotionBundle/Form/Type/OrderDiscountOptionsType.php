@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 
 class OrderDiscountOptionsType extends AbstractType
 {
-    const NAME = 'oro_promotion_order_discount_options';
+    public const NAME = 'oro_promotion_order_discount_options';
 
     public function getName()
     {

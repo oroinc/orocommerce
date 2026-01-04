@@ -9,7 +9,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class OrderEvent extends Event implements EntityDataAwareEventInterface
 {
-    const NAME = 'oro_order.order';
+    public const NAME = 'oro_order.order';
 
     /** @var FormInterface */
     protected $form;

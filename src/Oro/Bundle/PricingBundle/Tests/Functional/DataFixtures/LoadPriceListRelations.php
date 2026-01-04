@@ -16,25 +16,25 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadPriceListRelations extends AbstractFixture implements DependentFixtureInterface
 {
-    const PRICE_LIST_TO_WEBSITE_1 = 'price_list_6_US';
-    const PRICE_LIST_TO_WEBSITE_2 = 'price_list_1_US';
-    const PRICE_LIST_TO_WEBSITE_3 = 'price_list_3_US';
-    const PRICE_LIST_TO_WEBSITE_4 = 'price_list_3_Canada';
+    public const PRICE_LIST_TO_WEBSITE_1 = 'price_list_6_US';
+    public const PRICE_LIST_TO_WEBSITE_2 = 'price_list_1_US';
+    public const PRICE_LIST_TO_WEBSITE_3 = 'price_list_3_US';
+    public const PRICE_LIST_TO_WEBSITE_4 = 'price_list_3_Canada';
 
-    const PRICE_LIST_TO_CUSTOMER_GROUP_1 = 'price_list_6_US_customer_group1';
-    const PRICE_LIST_TO_CUSTOMER_GROUP_2 = 'price_list_1_US_customer_group1';
-    const PRICE_LIST_TO_CUSTOMER_GROUP_3 = 'price_list_5_US_customer_group1';
-    const PRICE_LIST_TO_CUSTOMER_GROUP_4 = 'price_list_4_US_customer_group2';
-    const PRICE_LIST_TO_CUSTOMER_GROUP_5 = 'price_list_5_Canada_customer_group3';
+    public const PRICE_LIST_TO_CUSTOMER_GROUP_1 = 'price_list_6_US_customer_group1';
+    public const PRICE_LIST_TO_CUSTOMER_GROUP_2 = 'price_list_1_US_customer_group1';
+    public const PRICE_LIST_TO_CUSTOMER_GROUP_3 = 'price_list_5_US_customer_group1';
+    public const PRICE_LIST_TO_CUSTOMER_GROUP_4 = 'price_list_4_US_customer_group2';
+    public const PRICE_LIST_TO_CUSTOMER_GROUP_5 = 'price_list_5_Canada_customer_group3';
 
-    const PRICE_LIST_TO_CUSTOMER_US_1 = 'price_list_to_customer_US_1';
-    const PRICE_LIST_TO_CUSTOMER_US_2 = 'price_list_to_customer_US_2';
-    const PRICE_LIST_TO_CUSTOMER_US_3 = 'price_list_to_customer_US_3';
-    const PRICE_LIST_TO_CUSTOMER_US_4 = 'price_list_to_customer_US_4';
-    const PRICE_LIST_TO_CUSTOMER_US_5 = 'price_list_to_customer_US_5';
-    const PRICE_LIST_TO_CUSTOMER_US_6 = 'price_list_to_customer_US_6';
-    const PRICE_LIST_TO_CUSTOMER_CANADA_1 = 'price_list_to_customer_canada_1';
-    const PRICE_LIST_TO_CUSTOMER_CANADA_2 = 'price_list_to_customer_canada_2';
+    public const PRICE_LIST_TO_CUSTOMER_US_1 = 'price_list_to_customer_US_1';
+    public const PRICE_LIST_TO_CUSTOMER_US_2 = 'price_list_to_customer_US_2';
+    public const PRICE_LIST_TO_CUSTOMER_US_3 = 'price_list_to_customer_US_3';
+    public const PRICE_LIST_TO_CUSTOMER_US_4 = 'price_list_to_customer_US_4';
+    public const PRICE_LIST_TO_CUSTOMER_US_5 = 'price_list_to_customer_US_5';
+    public const PRICE_LIST_TO_CUSTOMER_US_6 = 'price_list_to_customer_US_6';
+    public const PRICE_LIST_TO_CUSTOMER_CANADA_1 = 'price_list_to_customer_canada_1';
+    public const PRICE_LIST_TO_CUSTOMER_CANADA_2 = 'price_list_to_customer_canada_2';
 
     /**
      * @var array

@@ -8,7 +8,7 @@ use Oro\Component\Expression\Node\ValueNode;
 
 class ValueNodeConverter implements QueryExpressionConverterInterface
 {
-    const PARAMETER_PREFIX = '_vn';
+    public const PARAMETER_PREFIX = '_vn';
 
     /**
      * @var int

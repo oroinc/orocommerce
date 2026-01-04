@@ -12,7 +12,7 @@ use Oro\DBAL\Types\MoneyType;
 class PriceRoundingService extends AbstractRoundingService
 {
     /** @var int */
-    const FALLBACK_PRECISION = MoneyType::TYPE_SCALE;
+    public const FALLBACK_PRECISION = MoneyType::TYPE_SCALE;
 
     /** @var int|null */
     private $roundType;

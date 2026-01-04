@@ -12,11 +12,11 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 
 class LoadPriceRules extends AbstractFixture implements DependentFixtureInterface
 {
-    const PRICE_RULE_1 = 'price_list_1_price_rule_1';
-    const PRICE_RULE_2 = 'price_list_1_price_rule_2';
-    const PRICE_RULE_3 = 'price_list_1_price_rule_3';
-    const PRICE_RULE_4 = 'price_list_2_price_rule_4';
-    const PRICE_RULE_5 = 'price_list_3_price_rule_5';
+    public const PRICE_RULE_1 = 'price_list_1_price_rule_1';
+    public const PRICE_RULE_2 = 'price_list_1_price_rule_2';
+    public const PRICE_RULE_3 = 'price_list_1_price_rule_3';
+    public const PRICE_RULE_4 = 'price_list_2_price_rule_4';
+    public const PRICE_RULE_5 = 'price_list_3_price_rule_5';
 
     /**
      * @var array

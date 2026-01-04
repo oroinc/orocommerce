@@ -12,9 +12,9 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
  */
 class ContactInfoWidgetProvider
 {
-    const WIDGET_VIEW_BLANK = '_sales_menu_blank_widget';
-    const WIDGET_VIEW_TEXT = '_sales_menu_text_info_widget';
-    const WIDGET_VIEW_USER = '_sales_menu_user_info_widget';
+    public const WIDGET_VIEW_BLANK = '_sales_menu_blank_widget';
+    public const WIDGET_VIEW_TEXT = '_sales_menu_text_info_widget';
+    public const WIDGET_VIEW_USER = '_sales_menu_user_info_widget';
 
     /**
      * @var TokenAccessorInterface

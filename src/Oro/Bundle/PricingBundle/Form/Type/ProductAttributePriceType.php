@@ -16,8 +16,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProductAttributePriceType extends AbstractType implements DataMapperInterface
 {
-    const NAME = 'oro_pricing_product_attribute_price';
-    const PRICE = 'price';
+    public const NAME = 'oro_pricing_product_attribute_price';
+    public const PRICE = 'price';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

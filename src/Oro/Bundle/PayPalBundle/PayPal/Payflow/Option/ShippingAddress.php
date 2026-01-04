@@ -7,18 +7,18 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
  */
 class ShippingAddress extends AbstractOption
 {
-    const SHIPTOFIRSTNAME = 'SHIPTOFIRSTNAME';
-    const SHIPTOLASTNAME = 'SHIPTOLASTNAME';
-    const SHIPTOSTREET = 'SHIPTOSTREET';
-    const SHIPTOSTREET2 = 'SHIPTOSTREET2';
-    const SHIPTOCITY = 'SHIPTOCITY';
-    const SHIPTOSTATE = 'SHIPTOSTATE';
-    const SHIPTOZIP = 'SHIPTOZIP';
-    const SHIPTOCOUNTRY = 'SHIPTOCOUNTRY';
-    const SHIPTOEMAIL = 'SHIPTOEMAIL';
-    const SHIPTOMIDDLENAME = 'SHIPTOMIDDLENAME';
-    const SHIPTOCOMPANY = 'SHIPTOCOMPANY';
-    const SHIPTOPHONE = 'SHIPTOPHONE';
+    public const SHIPTOFIRSTNAME = 'SHIPTOFIRSTNAME';
+    public const SHIPTOLASTNAME = 'SHIPTOLASTNAME';
+    public const SHIPTOSTREET = 'SHIPTOSTREET';
+    public const SHIPTOSTREET2 = 'SHIPTOSTREET2';
+    public const SHIPTOCITY = 'SHIPTOCITY';
+    public const SHIPTOSTATE = 'SHIPTOSTATE';
+    public const SHIPTOZIP = 'SHIPTOZIP';
+    public const SHIPTOCOUNTRY = 'SHIPTOCOUNTRY';
+    public const SHIPTOEMAIL = 'SHIPTOEMAIL';
+    public const SHIPTOMIDDLENAME = 'SHIPTOMIDDLENAME';
+    public const SHIPTOCOMPANY = 'SHIPTOCOMPANY';
+    public const SHIPTOPHONE = 'SHIPTOPHONE';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

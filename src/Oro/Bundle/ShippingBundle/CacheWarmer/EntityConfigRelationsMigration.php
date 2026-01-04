@@ -26,10 +26,11 @@ class EntityConfigRelationsMigration
     /**
      * @internal
      */
-    const SHIPPING_RULE_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRule';
-    const SHIPPING_RULE_METHOD_CONFIG_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig';
-    const SHIPPING_RULE_METHOD_TYPE_CONFIG_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig';
-    const SHIPPING_RULE_DESTINATION_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination';
+    public const SHIPPING_RULE_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRule';
+    public const SHIPPING_RULE_METHOD_CONFIG_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig';
+    public const SHIPPING_RULE_METHOD_TYPE_CONFIG_CLASS_NAME =
+        'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig';
+    public const SHIPPING_RULE_DESTINATION_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination';
 
     private ManagerRegistry $managerRegistry;
 

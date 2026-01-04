@@ -6,11 +6,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LineItemsDiscount extends AbstractDiscount implements DiscountProductUnitCodeAwareInterface
 {
-    const APPLY_TO = 'apply_to';
-    const MAXIMUM_QTY = 'maximum_qty';
+    public const APPLY_TO = 'apply_to';
+    public const MAXIMUM_QTY = 'maximum_qty';
 
-    const EACH_ITEM = 'each_item';
-    const LINE_ITEMS_TOTAL = 'line_items_total';
+    public const EACH_ITEM = 'each_item';
+    public const LINE_ITEMS_TOTAL = 'line_items_total';
 
     /**
      * @var string

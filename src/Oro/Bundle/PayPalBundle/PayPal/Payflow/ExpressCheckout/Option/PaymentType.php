@@ -8,10 +8,10 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class PaymentType extends AbstractOption implements OptionsDependentInterface
 {
-    const PAYMENTTYPE = 'PAYMENTTYPE';
+    public const PAYMENTTYPE = 'PAYMENTTYPE';
 
-    const INSTANTONLY = 'instantonly';
-    const ANY = 'any';
+    public const INSTANTONLY = 'instantonly';
+    public const ANY = 'any';
 
     #[\Override]
     public function isApplicableDependent(array $options)

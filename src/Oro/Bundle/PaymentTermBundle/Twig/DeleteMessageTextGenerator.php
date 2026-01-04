@@ -17,10 +17,10 @@ use Twig\Environment;
  */
 class DeleteMessageTextGenerator
 {
-    const ACCOUNT_GROUP_GRID_NAME = 'customer-groups-grid';
-    const ACCOUNT_GRID_NAME = 'customer-customers-grid';
-    const ACCOUNT_GROUP_GRID_ROUTE = 'oro_customer_customer_group_index';
-    const ACCOUNT_GRID_ROUTE = 'oro_customer_customer_index';
+    public const ACCOUNT_GROUP_GRID_NAME = 'customer-groups-grid';
+    public const ACCOUNT_GRID_NAME = 'customer-customers-grid';
+    public const ACCOUNT_GROUP_GRID_ROUTE = 'oro_customer_customer_group_index';
+    public const ACCOUNT_GRID_ROUTE = 'oro_customer_customer_index';
 
     /** @var RouterInterface */
     protected $router;

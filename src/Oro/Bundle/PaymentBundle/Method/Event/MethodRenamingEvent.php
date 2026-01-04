@@ -6,7 +6,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class MethodRenamingEvent extends Event
 {
-    const NAME = 'oro_payment.method_renaming';
+    public const NAME = 'oro_payment.method_renaming';
 
     /**
      * @var string

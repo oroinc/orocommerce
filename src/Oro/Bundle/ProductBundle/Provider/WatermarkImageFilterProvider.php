@@ -15,7 +15,7 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
  */
 class WatermarkImageFilterProvider implements CustomImageFilterProviderInterface
 {
-    const APPLY_PRODUCT_IMAGE_WATERMARK_OPTION_NAME = 'applyProductImageWatermark';
+    public const APPLY_PRODUCT_IMAGE_WATERMARK_OPTION_NAME = 'applyProductImageWatermark';
 
     /** @var ConfigManager */
     private $configManager;

@@ -10,7 +10,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class ProductImageResizeEvent extends Event
 {
-    const NAME = 'oro_product.product_image.resize';
+    public const NAME = 'oro_product.product_image.resize';
 
     /**
      * @var int

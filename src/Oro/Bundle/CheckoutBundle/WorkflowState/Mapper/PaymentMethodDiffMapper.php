@@ -6,7 +6,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    const DATA_NAME = 'payment_method';
+    public const DATA_NAME = 'payment_method';
 
     #[\Override]
     public function isEntitySupported($entity)

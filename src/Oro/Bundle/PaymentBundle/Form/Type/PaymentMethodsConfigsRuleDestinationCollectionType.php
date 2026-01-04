@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PaymentMethodsConfigsRuleDestinationCollectionType extends AbstractType
 {
-    const NAME = 'oro_payment_methods_configs_rule_destination_collection';
+    public const NAME = 'oro_payment_methods_configs_rule_destination_collection';
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver)

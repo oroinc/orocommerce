@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints\Type;
 
 class FlatRateOptionsType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_flat_rate_options_type';
+    public const BLOCK_PREFIX = 'oro_flat_rate_options_type';
 
     /**
      * @var RoundingServiceInterface

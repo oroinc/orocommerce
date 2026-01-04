@@ -10,16 +10,16 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
  */
 class FedexRateServiceSoapResponse implements FedexRateServiceResponseInterface
 {
-    const SEVERITY_SUCCESS = 'SUCCESS';
-    const SEVERITY_NOTE = 'NOTE';
-    const SEVERITY_WARNING = 'WARNING';
-    const SEVERITY_ERROR = 'ERROR';
-    const SEVERITY_FAILURE = 'FAILURE';
+    public const SEVERITY_SUCCESS = 'SUCCESS';
+    public const SEVERITY_NOTE = 'NOTE';
+    public const SEVERITY_WARNING = 'WARNING';
+    public const SEVERITY_ERROR = 'ERROR';
+    public const SEVERITY_FAILURE = 'FAILURE';
 
-    const CONNECTION_ERROR = 111;
-    const NO_SERVICES_ERROR = 556;
-    const AUTHORIZATION_ERROR = 1000;
-    const SERVICE_NOT_ALLOWED = 868;
+    public const CONNECTION_ERROR = 111;
+    public const NO_SERVICES_ERROR = 556;
+    public const AUTHORIZATION_ERROR = 1000;
+    public const SERVICE_NOT_ALLOWED = 868;
 
     /**
      * @var string

@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints\Valid;
  */
 class CouponGenerationType extends AbstractType
 {
-    const NAME = 'oro_promotion_coupon_generation_type';
+    public const NAME = 'oro_promotion_coupon_generation_type';
 
     /**
      * @var TokenAccessorInterface

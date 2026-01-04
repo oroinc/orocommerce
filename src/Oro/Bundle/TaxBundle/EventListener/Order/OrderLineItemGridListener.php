@@ -13,7 +13,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class OrderLineItemGridListener
 {
-    const ALIAS = 'taxValue';
+    public const ALIAS = 'taxValue';
 
     /**  @var string */
     protected $taxValueClass;

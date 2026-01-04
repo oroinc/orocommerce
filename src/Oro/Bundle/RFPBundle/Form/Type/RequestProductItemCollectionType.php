@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RequestProductItemCollectionType extends AbstractType
 {
-    const NAME = 'oro_rfp_request_product_item_collection';
+    public const NAME = 'oro_rfp_request_product_item_collection';
 
     #[\Override]
     public function getParent(): ?string

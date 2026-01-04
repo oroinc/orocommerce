@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class IPAddress implements OptionInterface
 {
-    const CUSTIP = 'CUSTIP';
+    public const CUSTIP = 'CUSTIP';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

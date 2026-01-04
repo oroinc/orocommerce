@@ -21,7 +21,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class UserLocalizationManager implements UserLocalizationManagerInterface
 {
-    const SESSION_LOCALIZATIONS = 'localizations_by_website';
+    public const SESSION_LOCALIZATIONS = 'localizations_by_website';
 
     /** @var array */
     private $currentLocalizations = [];

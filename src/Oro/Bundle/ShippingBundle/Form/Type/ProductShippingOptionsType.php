@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductShippingOptionsType extends AbstractType
 {
-    const NAME = 'oro_shipping_product_shipping_options';
+    public const NAME = 'oro_shipping_product_shipping_options';
 
     /** @var string */
     protected $dataClass;

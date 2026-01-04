@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 
 class ConvertTaxValueResultsQuery extends ParametrizedMigrationQuery
 {
-    const SELECT_LIMIT = 1000;
+    public const SELECT_LIMIT = 1000;
 
     /**
      * @var AbstractPlatform

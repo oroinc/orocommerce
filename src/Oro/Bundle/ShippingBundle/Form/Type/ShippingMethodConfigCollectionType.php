@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ShippingMethodConfigCollectionType extends AbstractType
 {
-    const NAME = 'oro_shipping_method_config_collection';
+    public const NAME = 'oro_shipping_method_config_collection';
 
     /**
      * @var MethodConfigCollectionSubscriber

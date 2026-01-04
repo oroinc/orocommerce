@@ -13,8 +13,8 @@ class RenamePriority implements Migration, RenameExtensionAwareInterface
 {
     use RenameExtensionAwareTrait;
 
-    const OLD_COLUMN_NAME = 'priority';
-    const NEW_COLUMN_NAME = 'sort_order';
+    public const OLD_COLUMN_NAME = 'priority';
+    public const NEW_COLUMN_NAME = 'sort_order';
 
     #[\Override]
     public function up(Schema $schema, QueryBag $queries)

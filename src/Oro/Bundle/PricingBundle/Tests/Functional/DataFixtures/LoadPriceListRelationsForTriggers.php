@@ -6,7 +6,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class LoadPriceListRelationsForTriggers extends LoadPriceListRelations
 {
-    const PRICE_LIST_TO_CUSTOMER_GROUP_6 = 'price_list_2_US_customer_group1';
+    public const PRICE_LIST_TO_CUSTOMER_GROUP_6 = 'price_list_2_US_customer_group1';
 
     #[\Override]
     public function load(ObjectManager $manager)

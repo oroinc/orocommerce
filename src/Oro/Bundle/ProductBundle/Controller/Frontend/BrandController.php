@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class BrandController extends AbstractController
 {
-    const GRID_NAME = 'frontend-brand-search-grid';
+    public const GRID_NAME = 'frontend-brand-search-grid';
 
     /**
      * View list of brands

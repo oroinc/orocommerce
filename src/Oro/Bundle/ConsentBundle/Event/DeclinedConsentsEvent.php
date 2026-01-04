@@ -11,7 +11,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class DeclinedConsentsEvent extends Event
 {
-    const EVENT_NAME = 'oro_consent.event.consents_declined';
+    public const EVENT_NAME = 'oro_consent.event.consents_declined';
 
     /**
      * @var ConsentAcceptance[]

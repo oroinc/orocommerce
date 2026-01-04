@@ -7,10 +7,10 @@ namespace Oro\Bundle\TaxBundle\Model;
  */
 class TaxResultElement extends AbstractResultElement
 {
-    const TAX = 'tax';
-    const RATE = 'rate';
-    const TAXABLE_AMOUNT = 'taxableAmount';
-    const TAX_AMOUNT = 'taxAmount';
+    public const TAX = 'tax';
+    public const RATE = 'rate';
+    public const TAXABLE_AMOUNT = 'taxableAmount';
+    public const TAX_AMOUNT = 'taxAmount';
 
     /**
      * @param string $taxCode

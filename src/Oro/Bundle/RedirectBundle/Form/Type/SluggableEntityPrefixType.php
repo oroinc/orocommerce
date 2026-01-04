@@ -22,9 +22,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class SluggableEntityPrefixType extends AbstractType
 {
-    const NAME = 'oro_redirect_sluggable_prefix';
-    const PREFIX_FIELD_NAME = 'prefix';
-    const CREATE_REDIRECT_FIELD_NAME = 'createRedirect';
+    public const NAME = 'oro_redirect_sluggable_prefix';
+    public const PREFIX_FIELD_NAME = 'prefix';
+    public const CREATE_REDIRECT_FIELD_NAME = 'createRedirect';
 
     /**
      * @var RedirectStorage

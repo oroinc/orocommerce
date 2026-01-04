@@ -7,7 +7,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class QuickAddRowsCollectionReadyEvent extends Event
 {
-    const NAME = 'oro_product.quick_add_rows_collection_ready';
+    public const NAME = 'oro_product.quick_add_rows_collection_ready';
 
     /**
      * @var QuickAddRowCollection

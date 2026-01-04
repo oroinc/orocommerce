@@ -25,7 +25,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class FedexIntegrationSettingsType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_fedex_settings';
+    public const BLOCK_PREFIX = 'oro_fedex_settings';
 
     private FedexResponseCacheInterface $fedexResponseCache;
     private ShippingPriceCache $shippingPriceCache;

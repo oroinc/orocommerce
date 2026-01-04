@@ -30,7 +30,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class PayPalSettingsType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_paypal_settings';
+    public const BLOCK_PREFIX = 'oro_paypal_settings';
 
     /**
      * @var TranslatorInterface

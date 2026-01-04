@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProductAutocompleteType extends AbstractProductAwareType
 {
-    const NAME = 'oro_product_autocomplete';
+    public const NAME = 'oro_product_autocomplete';
 
     public function getName()
     {

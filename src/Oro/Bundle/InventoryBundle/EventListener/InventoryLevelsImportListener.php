@@ -14,7 +14,7 @@ use Oro\Bundle\InventoryBundle\ImportExport\Strategy\InventoryLevelStrategy;
  */
 class InventoryLevelsImportListener
 {
-    const INVENTORY_IMPORT_PROCESSOR_ALIAS = 'oro_inventory.inventory_level';
+    public const INVENTORY_IMPORT_PROCESSOR_ALIAS = 'oro_inventory.inventory_level';
 
     /** @var  InventoryLevelStrategy $inventoryLevelStrategy */
     protected $inventoryLevelStrategy;

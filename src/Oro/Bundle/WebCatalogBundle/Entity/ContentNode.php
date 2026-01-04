@@ -92,7 +92,7 @@ class ContentNode implements
     use LocalizedSlugPrototypeWithRedirectAwareTrait;
     use ExtendEntityTrait;
 
-    const FIELD_PARENT_NODE = 'parentNode';
+    public const FIELD_PARENT_NODE = 'parentNode';
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]

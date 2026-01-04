@@ -8,7 +8,7 @@ use Oro\Component\Layout\ContextInterface;
 
 class WebCatalogContextConfigurator implements ContextConfiguratorInterface
 {
-    const CONTEXT_VARIABLE = 'web_catalog_id';
+    public const CONTEXT_VARIABLE = 'web_catalog_id';
 
     /**
      * @var ConfigManager

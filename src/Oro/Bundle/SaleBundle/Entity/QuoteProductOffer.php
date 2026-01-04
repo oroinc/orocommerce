@@ -17,8 +17,8 @@ use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 #[Config(defaultValues: ['entity' => ['icon' => 'fa-list-alt'], 'security' => ['type' => 'ACL', 'group_name' => '']])]
 class QuoteProductOffer extends BaseQuoteProductItem
 {
-    const PRICE_TYPE_UNIT       = 10;
-    const PRICE_TYPE_BUNDLED    = 20;
+    public const PRICE_TYPE_UNIT       = 10;
+    public const PRICE_TYPE_BUNDLED    = 20;
 
     #[ORM\ManyToOne(targetEntity: QuoteProduct::class, inversedBy: 'quoteProductOffers')]
     #[ORM\JoinColumn(name: 'quote_product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]

@@ -7,14 +7,14 @@ namespace Oro\Bundle\TaxBundle\Model;
  */
 final class Result extends AbstractResult implements \JsonSerializable
 {
-    const TOTAL = 'total';
-    const SHIPPING = 'shipping';
+    public const TOTAL = 'total';
+    public const SHIPPING = 'shipping';
 
-    const UNIT = 'unit';
-    const ROW = 'row';
+    public const UNIT = 'unit';
+    public const ROW = 'row';
 
-    const TAXES = 'taxes';
-    const ITEMS = 'items';
+    public const TAXES = 'taxes';
+    public const ITEMS = 'items';
 
     /**
      * @var bool

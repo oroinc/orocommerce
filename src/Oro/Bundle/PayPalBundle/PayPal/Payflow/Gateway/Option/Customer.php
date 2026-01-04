@@ -10,10 +10,10 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
  */
 class Customer extends AbstractOption
 {
-    const ACCT = 'ACCT';
-    const CUSTCODE = 'CUSTCODE';
-    const CUSTREF = 'CUSTREF';
-    const EMAIL = 'EMAIL';
+    public const ACCT = 'ACCT';
+    public const CUSTCODE = 'CUSTCODE';
+    public const CUSTREF = 'CUSTREF';
+    public const EMAIL = 'EMAIL';
 
     /** @var bool */
     private $customerRequired;

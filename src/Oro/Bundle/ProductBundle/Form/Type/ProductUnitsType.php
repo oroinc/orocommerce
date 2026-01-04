@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductUnitsType extends AbstractType
 {
-    const NAME = 'oro_product_units';
+    public const NAME = 'oro_product_units';
 
     /**
      * @var  ProductUnitsProvider

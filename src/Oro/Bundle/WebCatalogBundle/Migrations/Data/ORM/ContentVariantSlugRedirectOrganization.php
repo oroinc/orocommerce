@@ -16,7 +16,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
  */
 class ContentVariantSlugRedirectOrganization extends AbstractFixture
 {
-    const BATCH_SIZE = 1000;
+    public const BATCH_SIZE = 1000;
 
     #[\Override]
     public function load(ObjectManager $manager): void

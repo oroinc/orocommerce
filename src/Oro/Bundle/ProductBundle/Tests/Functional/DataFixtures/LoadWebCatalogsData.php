@@ -8,8 +8,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 
 class LoadWebCatalogsData extends AbstractFixture
 {
-    const FIRST_WEB_CATALOG = 'firstWebCatalog';
-    const SECOND_WEB_CATALOG = 'secondWebCatalog';
+    public const FIRST_WEB_CATALOG = 'firstWebCatalog';
+    public const SECOND_WEB_CATALOG = 'secondWebCatalog';
 
     #[\Override]
     public function load(ObjectManager $manager)

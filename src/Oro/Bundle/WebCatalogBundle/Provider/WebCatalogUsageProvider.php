@@ -11,7 +11,7 @@ use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 
 class WebCatalogUsageProvider implements WebCatalogUsageProviderInterface
 {
-    const SETTINGS_KEY = 'oro_web_catalog.web_catalog';
+    public const SETTINGS_KEY = 'oro_web_catalog.web_catalog';
 
     /** @var ConfigManager */
     private $configManager;

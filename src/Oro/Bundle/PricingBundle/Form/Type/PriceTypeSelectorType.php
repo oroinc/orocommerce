@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PriceTypeSelectorType extends AbstractType
 {
-    const NAME = 'oro_pricing_price_type';
+    public const NAME = 'oro_pricing_price_type';
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver)

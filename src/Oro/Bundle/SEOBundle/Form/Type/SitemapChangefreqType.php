@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SitemapChangefreqType extends AbstractType
 {
-    const NAME = 'oro_sitemap_changefreq';
+    public const NAME = 'oro_sitemap_changefreq';
 
     #[\Override]
     public function getParent(): ?string

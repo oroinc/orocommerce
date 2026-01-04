@@ -11,8 +11,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadOrderUsers extends AbstractFixture implements ContainerAwareInterface
 {
-    const ORDER_USER_1 = 'order.simple_user';
-    const ORDER_USER_2 = 'order.simple_user2';
+    public const ORDER_USER_1 = 'order.simple_user';
+    public const ORDER_USER_2 = 'order.simple_user2';
 
     /**
      * @var ContainerInterface

@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProductImageCollectionType extends AbstractType
 {
-    const NAME = 'oro_product_image_collection';
+    public const NAME = 'oro_product_image_collection';
 
     /**
      * @var ImageTypeProvider

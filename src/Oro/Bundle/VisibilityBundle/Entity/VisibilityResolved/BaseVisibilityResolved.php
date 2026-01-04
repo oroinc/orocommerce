@@ -12,9 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\MappedSuperclass]
 abstract class BaseVisibilityResolved
 {
-    const VISIBILITY_HIDDEN = -1;
-    const VISIBILITY_VISIBLE = 1;
-    const VISIBILITY_FALLBACK_TO_CONFIG = 0; // fallback to category config value
+    public const VISIBILITY_HIDDEN = -1;
+    public const VISIBILITY_VISIBLE = 1;
+    public const VISIBILITY_FALLBACK_TO_CONFIG = 0; // fallback to category config value
 
     #[ORM\Column(name: 'visibility', type: Types::SMALLINT, nullable: true)]
     protected ?int $visibility = null;

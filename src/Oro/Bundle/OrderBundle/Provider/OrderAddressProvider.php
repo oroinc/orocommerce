@@ -21,22 +21,22 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 class OrderAddressProvider implements AddressProviderInterface, ResetInterface
 {
-    const ADDRESS_TYPE_SHIPPING = 'shipping';
-    const ADDRESS_TYPE_BILLING = 'billing';
+    public const ADDRESS_TYPE_SHIPPING = 'shipping';
+    public const ADDRESS_TYPE_BILLING = 'billing';
 
-    const ADMIN_ACL_POSTFIX = '_backend';
+    public const ADMIN_ACL_POSTFIX = '_backend';
 
-    const ACCOUNT_ADDRESS_ANY = 'customer_any';
-    const ACCOUNT_USER_ADDRESS_DEFAULT = 'customer_user_default';
-    const ACCOUNT_USER_ADDRESS_ANY = 'customer_user_any';
+    public const ACCOUNT_ADDRESS_ANY = 'customer_any';
+    public const ACCOUNT_USER_ADDRESS_DEFAULT = 'customer_user_default';
+    public const ACCOUNT_USER_ADDRESS_ANY = 'customer_user_any';
 
-    const ADDRESS_SHIPPING_ACCOUNT_USE_ANY = 'oro_order_address_shipping_customer_use_any';
-    const ADDRESS_SHIPPING_ACCOUNT_USER_USE_DEFAULT = 'oro_order_address_shipping_customer_user_use_default';
-    const ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY = 'oro_order_address_shipping_customer_user_use_any';
+    public const ADDRESS_SHIPPING_ACCOUNT_USE_ANY = 'oro_order_address_shipping_customer_use_any';
+    public const ADDRESS_SHIPPING_ACCOUNT_USER_USE_DEFAULT = 'oro_order_address_shipping_customer_user_use_default';
+    public const ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY = 'oro_order_address_shipping_customer_user_use_any';
 
-    const ADDRESS_BILLING_ACCOUNT_USE_ANY = 'oro_order_address_billing_customer_use_any';
-    const ADDRESS_BILLING_ACCOUNT_USER_USE_DEFAULT = 'oro_order_address_billing_customer_user_use_default';
-    const ADDRESS_BILLING_ACCOUNT_USER_USE_ANY = 'oro_order_address_billing_customer_user_use_any';
+    public const ADDRESS_BILLING_ACCOUNT_USE_ANY = 'oro_order_address_billing_customer_use_any';
+    public const ADDRESS_BILLING_ACCOUNT_USER_USE_DEFAULT = 'oro_order_address_billing_customer_user_use_default';
+    public const ADDRESS_BILLING_ACCOUNT_USER_USE_ANY = 'oro_order_address_billing_customer_user_use_any';
 
     /**
      * @var array

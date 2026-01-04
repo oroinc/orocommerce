@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DimensionsType extends AbstractType
 {
-    const NAME = 'oro_shipping_dimensions';
+    public const NAME = 'oro_shipping_dimensions';
 
     /** @var string */
     protected $dataClass;

@@ -15,7 +15,7 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
  */
 class DatagridListener
 {
-    const CATEGORY_COLUMN = 'category_name';
+    public const CATEGORY_COLUMN = 'category_name';
 
     /** @var ManagerRegistry */
     protected $doctrine;

@@ -8,7 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class RestrictSitemapEntitiesEvent extends Event
 {
-    const NAME = 'oro_seo.event.restrict_sitemap_entity';
+    public const NAME = 'oro_seo.event.restrict_sitemap_entity';
 
     /**
      * @var QueryBuilder

@@ -6,7 +6,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\AbstractPlaceholder;
 
 class CategoryPathPlaceholder extends AbstractPlaceholder
 {
-    const NAME = 'CATEGORY_PATH';
+    public const NAME = 'CATEGORY_PATH';
 
     #[\Override]
     public function getPlaceholder()

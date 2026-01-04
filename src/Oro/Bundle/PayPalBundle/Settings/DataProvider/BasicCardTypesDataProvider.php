@@ -7,22 +7,22 @@ class BasicCardTypesDataProvider implements CreditCardTypesDataProviderInterface
     /**
      * @internal
      */
-    const VISA = 'visa';
+    public const VISA = 'visa';
 
     /**
      * @internal
      */
-    const MASTERCARD = 'mastercard';
+    public const MASTERCARD = 'mastercard';
 
     /**
      * @internal
      */
-    const DISCOVER = 'discover';
+    public const DISCOVER = 'discover';
 
     /**
      * @internal
      */
-    const AMERICAN_EXPRESS = 'american_express';
+    public const AMERICAN_EXPRESS = 'american_express';
 
     #[\Override]
     public function getCardTypes()

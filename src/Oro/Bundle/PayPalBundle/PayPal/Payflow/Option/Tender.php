@@ -4,13 +4,13 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class Tender extends AbstractOption
 {
-    const TENDER = 'TENDER';
+    public const TENDER = 'TENDER';
 
-    const AUTOMATED_CLEARINGHOUSE = 'A';
-    const CREDIT_CARD = 'C';
-    const PINLESS_DEBIT = 'D';
-    const TELECHECK = 'K';
-    const PAYPAL = 'P';
+    public const AUTOMATED_CLEARINGHOUSE = 'A';
+    public const CREDIT_CARD = 'C';
+    public const PINLESS_DEBIT = 'D';
+    public const TELECHECK = 'K';
+    public const PAYPAL = 'P';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CatalogVisibilityType extends AbstractType
 {
-    const NAME = 'oro_visibility_catalog_default_visibility';
+    public const NAME = 'oro_visibility_catalog_default_visibility';
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver)

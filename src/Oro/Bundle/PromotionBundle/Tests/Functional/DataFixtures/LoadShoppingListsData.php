@@ -14,7 +14,7 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadShoppingListsData extends AbstractFixture implements DependentFixtureInterface
 {
-    const PROMOTION_SHOPPING_LIST = 'promo_shopping_list';
+    public const PROMOTION_SHOPPING_LIST = 'promo_shopping_list';
 
     /**
      * @var array

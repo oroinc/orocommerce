@@ -10,8 +10,8 @@ use Psr\Log\LoggerInterface;
 
 class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
 {
-    const DB_MIN_INT = -2147483648;
-    const ORDERS_LIMIT = 10000;
+    public const DB_MIN_INT = -2147483648;
+    public const ORDERS_LIMIT = 10000;
 
     /**
      * @var LoggerInterface

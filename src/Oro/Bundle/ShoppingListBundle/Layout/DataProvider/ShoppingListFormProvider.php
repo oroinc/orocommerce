@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormView;
  */
 class ShoppingListFormProvider extends AbstractFormProvider
 {
-    const SHOPPING_LIST_CREATE_ROUTE_NAME   = 'oro_shopping_list_frontend_create';
+    public const SHOPPING_LIST_CREATE_ROUTE_NAME   = 'oro_shopping_list_frontend_create';
 
     /**
      * @param ShoppingList $shoppingList

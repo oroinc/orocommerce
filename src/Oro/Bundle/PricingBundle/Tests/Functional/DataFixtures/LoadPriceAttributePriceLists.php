@@ -11,12 +11,12 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganizatio
 
 class LoadPriceAttributePriceLists extends AbstractFixture implements DependentFixtureInterface
 {
-    const PRICE_ATTRIBUTE_PRICE_LIST_1 = 'price_attribute_price_list_1';
-    const PRICE_ATTRIBUTE_PRICE_LIST_2 = 'price_attribute_price_list_2';
-    const PRICE_ATTRIBUTE_PRICE_LIST_3 = 'price_attribute_price_list_3';
-    const PRICE_ATTRIBUTE_PRICE_LIST_4 = 'price_attribute_price_list_4';
-    const PRICE_ATTRIBUTE_PRICE_LIST_5 = 'price_attribute_price_list_5';
-    const PRICE_ATTRIBUTE_PRICE_LIST_6 = 'price_attribute_price_list_6';
+    public const PRICE_ATTRIBUTE_PRICE_LIST_1 = 'price_attribute_price_list_1';
+    public const PRICE_ATTRIBUTE_PRICE_LIST_2 = 'price_attribute_price_list_2';
+    public const PRICE_ATTRIBUTE_PRICE_LIST_3 = 'price_attribute_price_list_3';
+    public const PRICE_ATTRIBUTE_PRICE_LIST_4 = 'price_attribute_price_list_4';
+    public const PRICE_ATTRIBUTE_PRICE_LIST_5 = 'price_attribute_price_list_5';
+    public const PRICE_ATTRIBUTE_PRICE_LIST_6 = 'price_attribute_price_list_6';
     /**
      * @var array
      */

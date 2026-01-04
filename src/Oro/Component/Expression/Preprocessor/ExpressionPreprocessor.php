@@ -4,7 +4,7 @@ namespace Oro\Component\Expression\Preprocessor;
 
 class ExpressionPreprocessor implements ExpressionPreprocessorInterface
 {
-    const MAX_ITERATIONS = 100;
+    public const MAX_ITERATIONS = 100;
 
     /**
      * @var array|ExpressionPreprocessorInterface[]

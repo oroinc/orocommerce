@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraints\Email as BaseEmail;
 
 class Email extends BaseEmail implements AliasAwareConstraintInterface
 {
-    const ALIAS = 'email';
+    public const ALIAS = 'email';
 
     #[\Override]
     public function validatedBy(): string

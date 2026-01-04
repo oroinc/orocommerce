@@ -14,7 +14,7 @@ use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
 
 class VisibilityGridListener
 {
-    const VISIBILITY_FIELD = 'visibilityAlias.visibility';
+    public const VISIBILITY_FIELD = 'visibilityAlias.visibility';
 
     /**
      * @var ManagerRegistry

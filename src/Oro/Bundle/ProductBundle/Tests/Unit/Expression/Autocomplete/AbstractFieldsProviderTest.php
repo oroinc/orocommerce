@@ -11,8 +11,8 @@ abstract class AbstractFieldsProviderTest extends \PHPUnit\Framework\TestCase
     protected const CLASS_NAME = 'className';
     protected const IS_RELATION = 'isRelation';
     protected const FIELDS = 'fields';
-    const NUMERIC_TYPES = ['integer', 'float'];
-    const RELATION_TYPES = ['ref-one'];
+    public const NUMERIC_TYPES = ['integer', 'float'];
+    public const RELATION_TYPES = ['ref-one'];
 
     /** @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject */
     protected $expressionParser;

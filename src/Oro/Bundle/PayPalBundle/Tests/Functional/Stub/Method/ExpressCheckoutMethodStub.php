@@ -8,10 +8,10 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class ExpressCheckoutMethodStub implements PaymentMethodInterface
 {
-    const TYPE = 'test_express_checkout';
+    public const TYPE = 'test_express_checkout';
 
     /** @internal */
-    const TEST_URL = '/';
+    public const TEST_URL = '/';
 
     #[\Override]
     public function execute($action, PaymentTransaction $paymentTransaction)

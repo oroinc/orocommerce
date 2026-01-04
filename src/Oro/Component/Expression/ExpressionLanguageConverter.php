@@ -9,8 +9,8 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 class ExpressionLanguageConverter
 {
-    const FIELDS_KEY = 'fields';
-    const CONTAINER_ID_KEY = 'container_id';
+    public const FIELDS_KEY = 'fields';
+    public const CONTAINER_ID_KEY = 'container_id';
 
     /**
      * @var FieldsProviderInterface

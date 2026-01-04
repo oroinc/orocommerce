@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProductUnitPrecisionCollectionType extends AbstractType
 {
-    const NAME = 'oro_product_unit_precision_collection';
+    public const NAME = 'oro_product_unit_precision_collection';
 
     #[\Override]
     public function getParent(): ?string

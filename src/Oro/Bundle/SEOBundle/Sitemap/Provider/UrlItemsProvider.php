@@ -23,8 +23,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class UrlItemsProvider implements UrlItemsProviderInterface
 {
-    const ENTITY_ALIAS = 'entityAlias';
-    const BUFFER_SIZE = 50000;
+    public const ENTITY_ALIAS = 'entityAlias';
+    public const BUFFER_SIZE = 50000;
 
     /**
      * @var CanonicalUrlGenerator

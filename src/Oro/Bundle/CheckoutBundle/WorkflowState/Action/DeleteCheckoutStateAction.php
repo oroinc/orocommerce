@@ -17,8 +17,8 @@ use Oro\Component\ConfigExpression\ContextAccessor;
  */
 class DeleteCheckoutStateAction extends AbstractAction
 {
-    const OPTION_KEY_ENTITY = 'entity';
-    const OPTION_KEY_TOKEN_VALUE = 'token';
+    public const OPTION_KEY_ENTITY = 'entity';
+    public const OPTION_KEY_TOKEN_VALUE = 'token';
 
     /** @var array */
     protected $options;

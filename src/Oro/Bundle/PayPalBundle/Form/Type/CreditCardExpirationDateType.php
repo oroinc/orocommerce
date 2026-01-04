@@ -9,8 +9,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CreditCardExpirationDateType extends AbstractType
 {
-    const NAME = 'oro_paypal_credit_card_expiration_date';
-    const YEAR_PERIOD = 10;
+    public const NAME = 'oro_paypal_credit_card_expiration_date';
+    public const YEAR_PERIOD = 10;
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

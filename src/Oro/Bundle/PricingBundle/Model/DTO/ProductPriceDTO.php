@@ -12,11 +12,11 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class ProductPriceDTO implements \JsonSerializable, ProductPriceInterface
 {
-    const PRICE = 'price';
-    const CURRENCY = 'currency';
-    const QUANTITY = 'quantity';
-    const UNIT = 'unit';
-    const PRODUCT = 'product_id';
+    public const PRICE = 'price';
+    public const CURRENCY = 'currency';
+    public const QUANTITY = 'quantity';
+    public const UNIT = 'unit';
+    public const PRODUCT = 'product_id';
 
     /**
      * @var float

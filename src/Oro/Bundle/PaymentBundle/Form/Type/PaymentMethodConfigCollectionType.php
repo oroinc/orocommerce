@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PaymentMethodConfigCollectionType extends AbstractType
 {
-    const NAME = 'oro_payment_method_config_collection';
+    public const NAME = 'oro_payment_method_config_collection';
 
     /**
      * @var RuleMethodConfigCollectionSubscriber

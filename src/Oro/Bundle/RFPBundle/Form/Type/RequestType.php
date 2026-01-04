@@ -18,7 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RequestType extends AbstractType
 {
-    const NAME = 'oro_rfp_request';
+    public const NAME = 'oro_rfp_request';
 
     /**
      * @var string

@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PromotionSelectType extends AbstractType
 {
-    const NAME = 'oro_promotion_select';
+    public const NAME = 'oro_promotion_select';
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver)

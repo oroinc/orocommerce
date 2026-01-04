@@ -19,7 +19,7 @@ class PaymentMethodApplicable extends AbstractCondition implements ContextAccess
 {
     use ContextAccessorAwareTrait;
 
-    const NAME = 'payment_method_applicable';
+    public const NAME = 'payment_method_applicable';
 
     /** @var object */
     protected $context;

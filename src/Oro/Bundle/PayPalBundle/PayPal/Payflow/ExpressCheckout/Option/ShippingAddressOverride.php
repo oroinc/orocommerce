@@ -8,10 +8,10 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class ShippingAddressOverride extends AbstractBooleanOption implements OptionsDependentInterface
 {
-    const ADDROVERRIDE = 'ADDROVERRIDE';
+    public const ADDROVERRIDE = 'ADDROVERRIDE';
 
-    const TRUE = 1;
-    const FALSE = 0;
+    public const TRUE = 1;
+    public const FALSE = 0;
 
     #[\Override]
     public function isApplicableDependent(array $options)

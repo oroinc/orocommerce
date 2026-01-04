@@ -17,20 +17,20 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadPriceListFallbackSettings extends AbstractFixture implements DependentFixtureInterface
 {
-    const WEBSITE_CUSTOMER_FALLBACK_1 = 'US_customer_1_1_price_list_fallback';
-    const WEBSITE_CUSTOMER_FALLBACK_2 = 'US_customer_1_3_price_list_fallback';
-    const WEBSITE_CUSTOMER_FALLBACK_3 = 'US_customer_1_2_price_list_fallback';
-    const WEBSITE_CUSTOMER_FALLBACK_4 = 'Canada_customer_1_1_price_list_fallback';
-    const WEBSITE_CUSTOMER_FALLBACK_5 = 'Canada_customer_1_3_price_list_fallback';
-    const WEBSITE_CUSTOMER_FALLBACK_6 = 'Canada_customer_1_2_price_list_fallback';
+    public const WEBSITE_CUSTOMER_FALLBACK_1 = 'US_customer_1_1_price_list_fallback';
+    public const WEBSITE_CUSTOMER_FALLBACK_2 = 'US_customer_1_3_price_list_fallback';
+    public const WEBSITE_CUSTOMER_FALLBACK_3 = 'US_customer_1_2_price_list_fallback';
+    public const WEBSITE_CUSTOMER_FALLBACK_4 = 'Canada_customer_1_1_price_list_fallback';
+    public const WEBSITE_CUSTOMER_FALLBACK_5 = 'Canada_customer_1_3_price_list_fallback';
+    public const WEBSITE_CUSTOMER_FALLBACK_6 = 'Canada_customer_1_2_price_list_fallback';
 
-    const WEBSITE_CUSTOMER_GROUP_FALLBACK_1 = 'US_customer_group1_price_list_fallback';
-    const WEBSITE_CUSTOMER_GROUP_FALLBACK_2 = 'US_customer_group2_price_list_fallback';
-    const WEBSITE_CUSTOMER_GROUP_FALLBACK_3 = 'Canada_customer_group1_price_list_fallback';
-    const WEBSITE_CUSTOMER_GROUP_FALLBACK_4 = 'Canada_customer_group2_price_list_fallback';
+    public const WEBSITE_CUSTOMER_GROUP_FALLBACK_1 = 'US_customer_group1_price_list_fallback';
+    public const WEBSITE_CUSTOMER_GROUP_FALLBACK_2 = 'US_customer_group2_price_list_fallback';
+    public const WEBSITE_CUSTOMER_GROUP_FALLBACK_3 = 'Canada_customer_group1_price_list_fallback';
+    public const WEBSITE_CUSTOMER_GROUP_FALLBACK_4 = 'Canada_customer_group2_price_list_fallback';
 
-    const WEBSITE_FALLBACK_1 = 'US_price_list_fallback';
-    const WEBSITE_FALLBACK_2 = 'Canada_price_list_fallback';
+    public const WEBSITE_FALLBACK_1 = 'US_price_list_fallback';
+    public const WEBSITE_FALLBACK_2 = 'Canada_price_list_fallback';
 
     /**
      * @var array

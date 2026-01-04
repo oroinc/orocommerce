@@ -7,9 +7,9 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
 class ProductUnitSelector extends Element
 {
-    const TYPE_TOGGLE = 'toggle';
-    const TYPE_SELECT = 'select';
-    const TYPE_SINGLE = 'single';
+    public const TYPE_TOGGLE = 'toggle';
+    public const TYPE_SELECT = 'select';
+    public const TYPE_SINGLE = 'single';
 
     #[\Override]
     public function setValue($value)

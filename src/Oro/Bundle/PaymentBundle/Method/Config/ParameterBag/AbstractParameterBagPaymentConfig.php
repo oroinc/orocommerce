@@ -7,10 +7,10 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 abstract class AbstractParameterBagPaymentConfig extends ParameterBag implements PaymentConfigInterface
 {
-    const FIELD_LABEL = 'label';
-    const FIELD_SHORT_LABEL = 'short_label';
-    const FIELD_ADMIN_LABEL = 'admin_label';
-    const FIELD_PAYMENT_METHOD_IDENTIFIER = 'payment_method_identifier';
+    public const FIELD_LABEL = 'label';
+    public const FIELD_SHORT_LABEL = 'short_label';
+    public const FIELD_ADMIN_LABEL = 'admin_label';
+    public const FIELD_PAYMENT_METHOD_IDENTIFIER = 'payment_method_identifier';
 
     #[\Override]
     public function getLabel()

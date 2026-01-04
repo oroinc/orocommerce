@@ -7,7 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 
 class DefaultTemplate extends ProductTemplate
 {
-    const ELEMENT_PREFIX = 'Default Page';
+    public const ELEMENT_PREFIX = 'Default Page';
 
     #[\Override]
     public function assertGroupWithValue($groupName, TableNode $table)

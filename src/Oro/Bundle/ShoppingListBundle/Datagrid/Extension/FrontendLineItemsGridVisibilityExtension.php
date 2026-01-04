@@ -21,7 +21,7 @@ class FrontendLineItemsGridVisibilityExtension extends AbstractExtension
         'frontend-customer-user-shopping-list-grid',
         'frontend-customer-user-shopping-list-edit-grid',
     ];
-    const HIDDEN_LINE_ITEMS_OPTION = '[options][hiddenLineItems]';
+    public const HIDDEN_LINE_ITEMS_OPTION = '[options][hiddenLineItems]';
 
     private array $cache = [];
 

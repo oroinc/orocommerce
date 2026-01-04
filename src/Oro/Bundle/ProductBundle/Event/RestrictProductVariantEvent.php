@@ -7,7 +7,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class RestrictProductVariantEvent extends Event
 {
-    const NAME = 'oro_product.event.restrict_product_variant_event';
+    public const NAME = 'oro_product.event.restrict_product_variant_event';
 
     /** @var QueryBuilder */
     protected $queryBuilder;

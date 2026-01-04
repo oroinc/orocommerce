@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraints\Url as BaseUrl;
 
 class Url extends BaseUrl implements AliasAwareConstraintInterface
 {
-    const ALIAS = 'url';
+    public const ALIAS = 'url';
 
     #[\Override]
     public function validatedBy(): string

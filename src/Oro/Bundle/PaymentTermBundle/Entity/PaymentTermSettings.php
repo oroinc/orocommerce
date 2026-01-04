@@ -17,8 +17,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 #[ORM\Entity(repositoryClass: PaymentTermSettingsRepository::class)]
 class PaymentTermSettings extends Transport
 {
-    const SETTINGS_FIELD_LABELS = 'labels';
-    const SETTINGS_FIELD_SHORT_LABELS = 'short_labels';
+    public const SETTINGS_FIELD_LABELS = 'labels';
+    public const SETTINGS_FIELD_SHORT_LABELS = 'short_labels';
 
     /**
      * @var Collection<int, LocalizedFallbackValue>

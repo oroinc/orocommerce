@@ -14,7 +14,7 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
  */
 class ConfigEnableDirectUrlListener
 {
-    const ORO_REDIRECT_ENABLE_DIRECT_URL = 'oro_redirect.enable_direct_url';
+    public const ORO_REDIRECT_ENABLE_DIRECT_URL = 'oro_redirect.enable_direct_url';
 
     /**
      * @var MessageProducerInterface

@@ -10,9 +10,9 @@ use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 
 class LoadMoneyOrderSettingsData extends AbstractFixture implements FixtureInterface
 {
-    const MONEY_ORDER_LABEL = 'Check/Money Order';
-    const MONEY_ORDER_PAY_TO_VALUE = 'Johnson Brothers LLC.';
-    const MONEY_ORDER_SEND_TO_VALUE = '1234 Main St. Smallville, CA 90048';
+    public const MONEY_ORDER_LABEL = 'Check/Money Order';
+    public const MONEY_ORDER_PAY_TO_VALUE = 'Johnson Brothers LLC.';
+    public const MONEY_ORDER_SEND_TO_VALUE = '1234 Main St. Smallville, CA 90048';
     /**
      * @var array Transports configuration
      */

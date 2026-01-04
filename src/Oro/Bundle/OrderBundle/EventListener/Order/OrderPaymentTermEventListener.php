@@ -12,8 +12,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 class OrderPaymentTermEventListener
 {
-    const ACCOUNT_PAYMENT_TERM_KEY = 'customerPaymentTerm';
-    const ACCOUNT_GROUP_PAYMENT_TERM_KEY = 'customerGroupPaymentTerm';
+    public const ACCOUNT_PAYMENT_TERM_KEY = 'customerPaymentTerm';
+    public const ACCOUNT_GROUP_PAYMENT_TERM_KEY = 'customerGroupPaymentTerm';
 
     /** @var PaymentTermProviderInterface */
     protected $provider;

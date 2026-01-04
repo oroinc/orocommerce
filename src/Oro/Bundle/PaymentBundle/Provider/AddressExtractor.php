@@ -11,7 +11,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
  */
 class AddressExtractor
 {
-    const PROPERTY_PATH = 'billingAddress';
+    public const PROPERTY_PATH = 'billingAddress';
 
     /** @var PropertyAccessorInterface */
     protected $propertyAccessor;

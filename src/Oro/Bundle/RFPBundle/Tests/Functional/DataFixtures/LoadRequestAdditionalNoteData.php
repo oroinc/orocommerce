@@ -10,11 +10,11 @@ use Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote;
 
 class LoadRequestAdditionalNoteData extends AbstractFixture implements DependentFixtureInterface
 {
-    const NUM_CUSTOMER_NOTES = 5;
-    const NUM_SELLER_NOTES = 5;
+    public const NUM_CUSTOMER_NOTES = 5;
+    public const NUM_SELLER_NOTES = 5;
 
-    const CUSTOMER_NOTE = 'request.1.additional_note.1.customer_note';
-    const SELLER_NOTE = ' request.1.additional_note.1.seller_note';
+    public const CUSTOMER_NOTE = 'request.1.additional_note.1.customer_note';
+    public const SELLER_NOTE = ' request.1.additional_note.1.seller_note';
 
     #[\Override]
     public function getDependencies()

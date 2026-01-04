@@ -9,13 +9,13 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwareInterface
 {
-    const USER_VIEWER = 'shipping-user-viewer';
-    const USER_EDITOR = 'shipping-user-editor';
-    const USER_VIEWER_CREATOR = 'shipping-user-viewer-creator';
+    public const USER_VIEWER = 'shipping-user-viewer';
+    public const USER_EDITOR = 'shipping-user-editor';
+    public const USER_VIEWER_CREATOR = 'shipping-user-viewer-creator';
 
-    const ROLE_VIEW = 'SHIPPING_ROLE_VIEW';
-    const ROLE_EDIT = 'SHIPPING_ROLE_EDIT';
-    const ROLE_CREATE = 'SHIPPING_ROLE_CREATE';
+    public const ROLE_VIEW = 'SHIPPING_ROLE_VIEW';
+    public const ROLE_EDIT = 'SHIPPING_ROLE_EDIT';
+    public const ROLE_CREATE = 'SHIPPING_ROLE_CREATE';
 
     /**
      * @var array

@@ -8,7 +8,7 @@ use Oro\Bundle\CMSBundle\Entity\LoginPage;
 
 class LoadLoginPage extends AbstractFixture
 {
-    const LOGIN_PAGE_UNIQUE_REFERENCE = 'login_page_unique_test';
+    public const LOGIN_PAGE_UNIQUE_REFERENCE = 'login_page_unique_test';
 
     #[\Override]
     public function load(ObjectManager $manager)

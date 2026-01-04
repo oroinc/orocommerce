@@ -7,7 +7,7 @@ use Oro\Bundle\IntegrationBundle\Provider\IconAwareIntegrationInterface;
 
 class PaymentTermChannelType implements ChannelInterface, IconAwareIntegrationInterface
 {
-    const TYPE = 'payment_term';
+    public const TYPE = 'payment_term';
 
     #[\Override]
     public function getLabel()

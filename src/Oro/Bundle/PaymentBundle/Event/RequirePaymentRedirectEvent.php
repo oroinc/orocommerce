@@ -7,7 +7,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class RequirePaymentRedirectEvent extends Event
 {
-    const EVENT_NAME = 'oro_payment.require_payment_redirect';
+    public const EVENT_NAME = 'oro_payment.require_payment_redirect';
 
     /**
      * @var PaymentMethodInterface

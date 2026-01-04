@@ -7,7 +7,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class Purchase extends AbstractOption
 {
-    const PONUM = 'PONUM';
+    public const PONUM = 'PONUM';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

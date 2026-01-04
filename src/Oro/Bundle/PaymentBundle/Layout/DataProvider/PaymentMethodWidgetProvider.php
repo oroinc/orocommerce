@@ -10,7 +10,7 @@ use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
  */
 class PaymentMethodWidgetProvider
 {
-    const NAME = 'oro_payment_method_widget_provider';
+    public const NAME = 'oro_payment_method_widget_provider';
 
     /**
      * @var PaymentMethodViewProviderInterface

@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class PriceListFormExtension extends AbstractTypeExtension
 {
-    const MERGE_ALLOWED_FIELD = 'mergeAllowed';
+    public const MERGE_ALLOWED_FIELD = 'mergeAllowed';
 
     /**
      * @var ConfigManager

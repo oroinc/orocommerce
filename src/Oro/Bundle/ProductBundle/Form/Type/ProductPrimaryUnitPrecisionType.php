@@ -16,7 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProductPrimaryUnitPrecisionType extends AbstractType
 {
-    const NAME = 'oro_product_primary_unit_precision';
+    public const NAME = 'oro_product_primary_unit_precision';
 
     /**
      * @var string

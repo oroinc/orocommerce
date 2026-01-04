@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CategoryUnitPrecisionType extends AbstractType
 {
-    const NAME = 'oro_catalog_category_unit_precision';
+    public const NAME = 'oro_catalog_category_unit_precision';
 
     /**
      * @var string

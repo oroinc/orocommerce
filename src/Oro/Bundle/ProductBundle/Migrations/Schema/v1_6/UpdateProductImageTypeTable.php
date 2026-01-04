@@ -8,10 +8,10 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class UpdateProductImageTypeTable implements Migration
 {
-    const PRODUCT_IMAGE_TYPE_TABLE = 'oro_product_image_type';
-    const PRODUCT_IMAGE_TABLE = 'oro_product_image';
-    const FOREIGN_COLUMN = 'id';
-    const LOCAL_COLUMN = 'product_image_id';
+    public const PRODUCT_IMAGE_TYPE_TABLE = 'oro_product_image_type';
+    public const PRODUCT_IMAGE_TABLE = 'oro_product_image';
+    public const FOREIGN_COLUMN = 'id';
+    public const LOCAL_COLUMN = 'product_image_id';
 
     #[\Override]
     public function up(Schema $schema, QueryBag $queries)

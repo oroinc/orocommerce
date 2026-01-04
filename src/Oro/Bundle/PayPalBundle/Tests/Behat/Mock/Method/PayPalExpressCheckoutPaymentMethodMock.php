@@ -9,8 +9,8 @@ use Symfony\Component\Routing\RouterInterface;
 
 class PayPalExpressCheckoutPaymentMethodMock extends PayPalExpressCheckoutPaymentMethod
 {
-    const SUCCESS_REDIRECT_ROUTE = 'oro_payment_callback_return';
-    const PAYERID = '3JPYGZMJXAEXE';
+    public const SUCCESS_REDIRECT_ROUTE = 'oro_payment_callback_return';
+    public const PAYERID = '3JPYGZMJXAEXE';
 
     private ?RouterInterface $router;
 

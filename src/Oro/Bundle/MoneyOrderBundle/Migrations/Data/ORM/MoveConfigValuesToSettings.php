@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
 {
-    const SECTION_NAME = 'oro_money_order';
+    public const SECTION_NAME = 'oro_money_order';
 
     /**
      * @var ChannelFactory

@@ -11,7 +11,7 @@ use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
 class InventoryLevelGridDataTransformer implements DataTransformerInterface
 {
-    const PRECISION_KEY = 'precision';
+    public const PRECISION_KEY = 'precision';
 
     /**
      * @var DoctrineHelper

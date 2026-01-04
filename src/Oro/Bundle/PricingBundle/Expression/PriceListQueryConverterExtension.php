@@ -18,7 +18,7 @@ use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterIn
  */
 class PriceListQueryConverterExtension implements QueryConverterExtensionInterface
 {
-    const TABLE_ALIAS_PREFIX = '_plt';
+    public const TABLE_ALIAS_PREFIX = '_plt';
 
     /**
      * @var int

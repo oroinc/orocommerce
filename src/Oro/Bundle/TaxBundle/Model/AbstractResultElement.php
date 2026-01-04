@@ -7,7 +7,7 @@ namespace Oro\Bundle\TaxBundle\Model;
  */
 abstract class AbstractResultElement extends AbstractResult
 {
-    const CURRENCY = 'currency';
+    public const CURRENCY = 'currency';
 
     /**
      * @param string $index

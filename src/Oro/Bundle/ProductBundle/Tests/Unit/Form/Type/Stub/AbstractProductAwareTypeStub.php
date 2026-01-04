@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormView;
 
 class AbstractProductAwareTypeStub extends AbstractProductAwareType
 {
-    const NAME = 'product_aware';
+    public const NAME = 'product_aware';
 
     public function getName()
     {

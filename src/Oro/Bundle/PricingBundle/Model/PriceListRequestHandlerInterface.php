@@ -10,9 +10,9 @@ use Oro\Bundle\PricingBundle\Entity\BasePriceList;
  */
 interface PriceListRequestHandlerInterface
 {
-    const TIER_PRICES_KEY = 'showTierPrices';
-    const PRICE_LIST_CURRENCY_KEY = 'priceCurrencies';
-    const PRICE_LIST_KEY = 'priceListId';
+    public const TIER_PRICES_KEY = 'showTierPrices';
+    public const PRICE_LIST_CURRENCY_KEY = 'priceCurrencies';
+    public const PRICE_LIST_KEY = 'priceListId';
 
     /**
      * @return BasePriceList|null

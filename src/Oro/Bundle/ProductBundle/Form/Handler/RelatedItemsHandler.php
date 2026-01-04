@@ -14,8 +14,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class RelatedItemsHandler
 {
-    const RELATED_PRODUCTS = 'relatedProducts';
-    const UPSELL_PRODUCTS = 'upsellProducts';
+    public const RELATED_PRODUCTS = 'relatedProducts';
+    public const UPSELL_PRODUCTS = 'upsellProducts';
 
     /** @var AssignerStrategyInterface[] */
     private $assigners;

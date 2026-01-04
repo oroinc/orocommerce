@@ -9,18 +9,18 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class ShippingContext extends ParameterBag implements ShippingContextInterface
 {
-    const FIELD_CUSTOMER = 'customer';
-    const FIELD_CUSTOMER_USER = 'customer_user';
-    const FIELD_LINE_ITEMS = 'line_items';
-    const FIELD_BILLING_ADDRESS = 'billing_address';
-    const FIELD_SHIPPING_ADDRESS = 'shipping_address';
-    const FIELD_SHIPPING_ORIGIN = 'shipping_origin';
-    const FIELD_PAYMENT_METHOD = 'payment_method';
-    const FIELD_CURRENCY = 'currency';
-    const FIELD_SUBTOTAL = 'subtotal';
-    const FIELD_SOURCE_ENTITY = 'source_entity';
-    const FIELD_SOURCE_ENTITY_ID = 'source_entity_id';
-    const FIELD_WEBSITE = 'website';
+    public const FIELD_CUSTOMER = 'customer';
+    public const FIELD_CUSTOMER_USER = 'customer_user';
+    public const FIELD_LINE_ITEMS = 'line_items';
+    public const FIELD_BILLING_ADDRESS = 'billing_address';
+    public const FIELD_SHIPPING_ADDRESS = 'shipping_address';
+    public const FIELD_SHIPPING_ORIGIN = 'shipping_origin';
+    public const FIELD_PAYMENT_METHOD = 'payment_method';
+    public const FIELD_CURRENCY = 'currency';
+    public const FIELD_SUBTOTAL = 'subtotal';
+    public const FIELD_SOURCE_ENTITY = 'source_entity';
+    public const FIELD_SOURCE_ENTITY_ID = 'source_entity_id';
+    public const FIELD_WEBSITE = 'website';
 
     public function __construct(array $params)
     {

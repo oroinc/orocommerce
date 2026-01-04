@@ -11,8 +11,8 @@ use Symfony\Component\Form\FormEvents;
 
 class ShipToBillingAddressType extends AbstractType
 {
-    const NAME = 'oro_ship_to_billing_address';
-    const SHIPPING_ADDRESS_FORM_FIELD = 'shipping_address';
+    public const NAME = 'oro_ship_to_billing_address';
+    public const SHIPPING_ADDRESS_FORM_FIELD = 'shipping_address';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

@@ -7,7 +7,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class Swipe extends AbstractOption
 {
-    const SWIPE = 'SWIPE';
+    public const SWIPE = 'SWIPE';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

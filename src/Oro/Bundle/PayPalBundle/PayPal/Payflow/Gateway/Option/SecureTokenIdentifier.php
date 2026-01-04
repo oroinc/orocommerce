@@ -7,7 +7,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class SecureTokenIdentifier extends AbstractOption
 {
-    const SECURETOKENID = 'SECURETOKENID';
+    public const SECURETOKENID = 'SECURETOKENID';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

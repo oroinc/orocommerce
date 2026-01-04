@@ -4,14 +4,14 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class Currency implements OptionInterface
 {
-    const CURRENCY = 'CURRENCY';
+    public const CURRENCY = 'CURRENCY';
 
-    const AUSTRALIAN_DOLLAR = 'AUD';
-    const CANADIAN_DOLLAR = 'CAD';
-    const EURO = 'EUR';
-    const BRITISH_POUND = 'GBP';
-    const JAPANESE_YEN = 'JPY';
-    const US_DOLLAR = 'USD';
+    public const AUSTRALIAN_DOLLAR = 'AUD';
+    public const CANADIAN_DOLLAR = 'CAD';
+    public const EURO = 'EUR';
+    public const BRITISH_POUND = 'GBP';
+    public const JAPANESE_YEN = 'JPY';
+    public const US_DOLLAR = 'USD';
 
     /**
      * @var array

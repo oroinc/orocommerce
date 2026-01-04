@@ -16,9 +16,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 #[Config]
 class ProductImageType
 {
-    const TYPE_LISTING = 'listing';
-    const TYPE_MAIN = 'main';
-    const TYPE_ADDITIONAL = 'additional';
+    public const TYPE_LISTING = 'listing';
+    public const TYPE_MAIN = 'main';
+    public const TYPE_ADDITIONAL = 'additional';
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]

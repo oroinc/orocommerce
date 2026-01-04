@@ -7,9 +7,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ResolveTaxEvent extends Event
 {
-    const RESOLVE_BEFORE = 'oro_tax.resolve_before';
-    const RESOLVE = 'oro_tax.resolve';
-    const RESOLVE_AFTER = 'oro_tax.resolve_after';
+    public const RESOLVE_BEFORE = 'oro_tax.resolve_before';
+    public const RESOLVE = 'oro_tax.resolve';
+    public const RESOLVE_AFTER = 'oro_tax.resolve_after';
 
     /** @var Taxable */
     protected $taxable;

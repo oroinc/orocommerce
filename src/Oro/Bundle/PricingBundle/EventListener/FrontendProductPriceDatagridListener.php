@@ -25,10 +25,10 @@ class FrontendProductPriceDatagridListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
 
-    const COLUMN_PRICES = 'prices';
-    const COLUMN_SHOPPING_LIST_PRICES = 'shoppingListPrices';
-    const COLUMN_MINIMAL_PRICE = 'minimal_price';
-    const COLUMN_MINIMAL_PRICE_SORT = 'minimal_price_sort';
+    public const COLUMN_PRICES = 'prices';
+    public const COLUMN_SHOPPING_LIST_PRICES = 'shoppingListPrices';
+    public const COLUMN_MINIMAL_PRICE = 'minimal_price';
+    public const COLUMN_MINIMAL_PRICE_SORT = 'minimal_price_sort';
 
     private ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler;
 

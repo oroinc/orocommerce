@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContactInfoManualTextType extends AbstractType
 {
-    const NAME = 'oro_sale_contact_info_manual_text';
+    public const NAME = 'oro_sale_contact_info_manual_text';
 
     /**
      * @var ConfigManager

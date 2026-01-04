@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductStepOneType extends AbstractType
 {
-    const NAME = 'oro_product_step_one';
+    public const NAME = 'oro_product_step_one';
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver)

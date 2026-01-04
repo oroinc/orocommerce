@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class ProductPageVariantType extends AbstractType
 {
-    const NAME = 'oro_product_page_variant';
+    public const NAME = 'oro_product_page_variant';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

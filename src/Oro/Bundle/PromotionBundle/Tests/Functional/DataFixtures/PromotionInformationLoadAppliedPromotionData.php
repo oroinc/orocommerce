@@ -18,7 +18,7 @@ class PromotionInformationLoadAppliedPromotionData extends AbstractFixture imple
 {
     use ContainerAwareTrait;
 
-    const APPLIED_PROMOTION_1 = 'applied_promotion_1';
+    public const APPLIED_PROMOTION_1 = 'applied_promotion_1';
 
     /**
      * @var array

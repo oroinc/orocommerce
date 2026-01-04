@@ -18,15 +18,17 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  */
 class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
 {
-    const COMPLETE = 'complete';
+    public const COMPLETE = 'complete';
 
     // PayPal BN code
-    const BUTTON_SOURCE = 'OroCommerce_SP';
+    public const BUTTON_SOURCE = 'OroCommerce_SP';
 
-    const PILOT_REDIRECT_URL = 'https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
-    const PRODUCTION_REDIRECT_URL = 'https://www.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
+    public const PILOT_REDIRECT_URL =
+        'https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
+    public const PRODUCTION_REDIRECT_URL =
+        'https://www.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
 
-    const AMOUNT_PRECISION = 2;
+    public const AMOUNT_PRECISION = 2;
 
     protected Gateway $gateway;
     protected PropertyAccessor $propertyAccessor;

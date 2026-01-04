@@ -10,8 +10,8 @@ use Symfony\Component\Validator\Constraints\Regex;
  */
 class UrlSafe extends Regex implements AliasAwareConstraintInterface
 {
-    const ALIAS = 'url_safe';
-    const DELIMITER = SluggableUrlGenerator::CONTEXT_DELIMITER;
+    public const ALIAS = 'url_safe';
+    public const DELIMITER = SluggableUrlGenerator::CONTEXT_DELIMITER;
 
     /** @var string */
     public $message = 'This value should contain only latin letters, numbers and symbols "-._~".';

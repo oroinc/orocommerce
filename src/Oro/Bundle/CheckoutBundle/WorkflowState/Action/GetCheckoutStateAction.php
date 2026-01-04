@@ -18,9 +18,9 @@ use Oro\Component\ConfigExpression\ContextAccessor;
  */
 class GetCheckoutStateAction extends AbstractAction
 {
-    const OPTION_KEY_ENTITY = 'entity';
-    const OPTION_KEY_ATTRIBUTE = 'attribute';
-    const OPTION_KEY_TOKEN = 'token';
+    public const OPTION_KEY_ENTITY = 'entity';
+    public const OPTION_KEY_ATTRIBUTE = 'attribute';
+    public const OPTION_KEY_TOKEN = 'token';
 
     /** @var array */
     protected $options;

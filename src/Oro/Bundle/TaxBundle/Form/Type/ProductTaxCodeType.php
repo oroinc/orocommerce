@@ -4,7 +4,7 @@ namespace Oro\Bundle\TaxBundle\Form\Type;
 
 class ProductTaxCodeType extends AbstractTaxCodeType
 {
-    const NAME = 'oro_tax_product_tax_code_type';
+    public const NAME = 'oro_tax_product_tax_code_type';
 
     public function getName()
     {

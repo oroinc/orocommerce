@@ -12,16 +12,16 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const ROOT_NODE = 'oro_sale';
-    const CONTACT_INFO_SOURCE_DISPLAY = 'contact_info_source_display';
-    const CONTACT_DETAILS = 'contact_details';
-    const ALLOW_USER_CONFIGURATION = 'allow_user_configuration';
-    const AVAILABLE_USER_OPTIONS = 'available_user_options';
-    const CONTACT_INFO_USER_OPTION = 'contact_info_user_option';
-    const CONTACT_INFO_MANUAL_TEXT = 'contact_info_manual_text';
-    const GUEST_CONTACT_INFO_TEXT = 'guest_contact_info_text';
-    const ENABLE_GUEST_QUOTE = 'enable_guest_quote';
-    const QUOTE_FRONTEND_FEATURE_ENABLED = 'quote_frontend_feature_enabled';
+    public const ROOT_NODE = 'oro_sale';
+    public const CONTACT_INFO_SOURCE_DISPLAY = 'contact_info_source_display';
+    public const CONTACT_DETAILS = 'contact_details';
+    public const ALLOW_USER_CONFIGURATION = 'allow_user_configuration';
+    public const AVAILABLE_USER_OPTIONS = 'available_user_options';
+    public const CONTACT_INFO_USER_OPTION = 'contact_info_user_option';
+    public const CONTACT_INFO_MANUAL_TEXT = 'contact_info_manual_text';
+    public const GUEST_CONTACT_INFO_TEXT = 'guest_contact_info_text';
+    public const ENABLE_GUEST_QUOTE = 'enable_guest_quote';
+    public const QUOTE_FRONTEND_FEATURE_ENABLED = 'quote_frontend_feature_enabled';
     public const string VALIDATE_SHIPPING_ADDRESSES_ON_BACKOFFICE_QUOTE_PAGE =
         'validate_shipping_addresses__backoffice_quote_page';
 

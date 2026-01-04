@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProductShippingOptionsCollectionType extends AbstractType
 {
-    const NAME = 'oro_shipping_product_shipping_options_collection';
+    public const NAME = 'oro_shipping_product_shipping_options_collection';
 
     /** @var string */
     protected $dataClass;

@@ -7,11 +7,11 @@ namespace Oro\Bundle\TaxBundle\Model;
  */
 final class ResultElement extends AbstractResultElement implements \JsonSerializable
 {
-    const INCLUDING_TAX = 'includingTax';
-    const EXCLUDING_TAX = 'excludingTax';
-    const TAX_AMOUNT = 'taxAmount';
-    const ADJUSTMENT = 'adjustment';
-    const DISCOUNTS_INCLUDED = 'discountsIncluded';
+    public const INCLUDING_TAX = 'includingTax';
+    public const EXCLUDING_TAX = 'excludingTax';
+    public const TAX_AMOUNT = 'taxAmount';
+    public const ADJUSTMENT = 'adjustment';
+    public const DISCOUNTS_INCLUDED = 'discountsIncluded';
 
     /**
      * @param string $includingTax

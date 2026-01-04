@@ -6,7 +6,7 @@ use Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid;
 
 class FrontendProductGrid extends Grid
 {
-    const DEFAULT_MAPPINGS = [
+    public const DEFAULT_MAPPINGS = [
         'GridRow' => 'ProductFrontendGridRow',
         'GridRowStrict' => 'ProductFrontendGridRow',
         'GridTable' => 'ProductFrontendGridTable',

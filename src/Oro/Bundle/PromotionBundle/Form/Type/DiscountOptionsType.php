@@ -22,10 +22,10 @@ use Symfony\Component\Validator\Constraints\Range;
 
 class DiscountOptionsType extends AbstractType
 {
-    const NAME = 'oro_promotion_discount_options';
-    const AMOUNT_DISCOUNT_VALUE_FIELD = 'amount_discount_value';
-    const PERCENT_DISCOUNT_VALUE_FIELD = 'percent_discount_value';
-    const TYPE_FIELD_CHOICES = [DiscountInterface::TYPE_AMOUNT, DiscountInterface::TYPE_PERCENT];
+    public const NAME = 'oro_promotion_discount_options';
+    public const AMOUNT_DISCOUNT_VALUE_FIELD = 'amount_discount_value';
+    public const PERCENT_DISCOUNT_VALUE_FIELD = 'percent_discount_value';
+    public const TYPE_FIELD_CHOICES = [DiscountInterface::TYPE_AMOUNT, DiscountInterface::TYPE_PERCENT];
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

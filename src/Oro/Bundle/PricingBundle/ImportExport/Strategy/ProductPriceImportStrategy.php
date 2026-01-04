@@ -16,7 +16,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
 {
-    const PROCESSED_ENTITIES_HASH = 'processedEntitiesHash';
+    public const PROCESSED_ENTITIES_HASH = 'processedEntitiesHash';
 
     /**
      * @var TranslatorInterface

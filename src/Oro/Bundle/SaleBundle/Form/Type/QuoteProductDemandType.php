@@ -22,11 +22,11 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class QuoteProductDemandType extends AbstractType
 {
-    const NAME = 'oro_sale_quote_product_demand';
+    public const NAME = 'oro_sale_quote_product_demand';
 
-    const FIELD_QUANTITY = 'quantity';
-    const FIELD_QUOTE_PRODUCT_OFFER = 'quoteProductOffer';
-    const FIELD_UNIT = 'unit';
+    public const FIELD_QUANTITY = 'quantity';
+    public const FIELD_QUOTE_PRODUCT_OFFER = 'quoteProductOffer';
+    public const FIELD_UNIT = 'unit';
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver)

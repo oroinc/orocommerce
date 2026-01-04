@@ -23,8 +23,8 @@ use Symfony\Component\Validator\Constraint;
  */
 class PaymentMethodsConfigsRuleType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_payment_methods_configs_rule';
-    const DEFAULT_PAYMENT_METHOD_GROUP = 'default';
+    public const BLOCK_PREFIX = 'oro_payment_methods_configs_rule';
+    public const DEFAULT_PAYMENT_METHOD_GROUP = 'default';
 
     /**
      * @var PaymentMethodProviderInterface

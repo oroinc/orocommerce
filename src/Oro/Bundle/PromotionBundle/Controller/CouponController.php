@@ -28,7 +28,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class CouponController extends AbstractController
 {
-    const COUPONS_GRID = 'promotion-coupons-grid';
+    public const COUPONS_GRID = 'promotion-coupons-grid';
 
     /**
      *

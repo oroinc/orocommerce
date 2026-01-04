@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BaseCouponType extends AbstractType
 {
-    const NAME = 'oro_promotion_base_coupon_type';
+    public const NAME = 'oro_promotion_base_coupon_type';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

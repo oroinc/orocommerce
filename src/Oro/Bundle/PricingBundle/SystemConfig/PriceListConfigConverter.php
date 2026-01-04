@@ -11,9 +11,9 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
  */
 class PriceListConfigConverter
 {
-    const MERGE_KEY = 'mergeAllowed';
-    const SORT_ORDER_KEY = 'sort_order';
-    const PRICE_LIST_KEY = 'priceList';
+    public const MERGE_KEY = 'mergeAllowed';
+    public const SORT_ORDER_KEY = 'sort_order';
+    public const PRICE_LIST_KEY = 'priceList';
 
     /** @var ManagerRegistry */
     protected $doctrine;

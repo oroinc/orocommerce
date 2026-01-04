@@ -14,8 +14,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class RedirectListener
 {
-    const SUCCESS_URL_KEY = 'successUrl';
-    const FAILURE_URL_KEY = 'failureUrl';
+    public const SUCCESS_URL_KEY = 'successUrl';
+    public const FAILURE_URL_KEY = 'failureUrl';
 
     public function __construct(
         protected RequestStack $requestStack,

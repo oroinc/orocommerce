@@ -13,9 +13,9 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
  */
 class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
 {
-    const URL_KEY = 'url';
-    const SLUG_PROTOTYPE_KEY = 'slug_prototype';
-    const SLUG_ROUTES_KEY = UrlCacheInterface::SLUG_ROUTES_KEY;
+    public const URL_KEY = 'url';
+    public const SLUG_PROTOTYPE_KEY = 'slug_prototype';
+    public const SLUG_ROUTES_KEY = UrlCacheInterface::SLUG_ROUTES_KEY;
 
     /**
      * @var ManagerRegistry

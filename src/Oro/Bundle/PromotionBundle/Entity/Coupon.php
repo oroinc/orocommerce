@@ -53,7 +53,7 @@ class Coupon implements
     use BusinessUnitAwareTrait;
     use DatesAwareTrait;
 
-    const MAX_COUPON_CODE_LENGTH = 255;
+    public const MAX_COUPON_CODE_LENGTH = 255;
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]

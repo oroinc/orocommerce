@@ -15,20 +15,20 @@ class LoadBrandData extends LoadProductData
 {
     use MakeProductAttributesTrait;
 
-    const BRAND_1 = 'brand-1';
-    const BRAND_2 = 'brand-2';
+    public const BRAND_1 = 'brand-1';
+    public const BRAND_2 = 'brand-2';
 
-    const BRAND_1_DEFAULT_NAME = 'brand-1.names.default';
-    const BRAND_2_DEFAULT_NAME = 'brand-2.names.default';
+    public const BRAND_1_DEFAULT_NAME = 'brand-1.names.default';
+    public const BRAND_2_DEFAULT_NAME = 'brand-2.names.default';
 
-    const BRAND_1_DEFAULT_DESCRIPTION = 'brand-1.description.default';
-    const BRAND_2_DEFAULT_DESCRIPTION = 'brand-2.description.default';
+    public const BRAND_1_DEFAULT_DESCRIPTION = 'brand-1.description.default';
+    public const BRAND_2_DEFAULT_DESCRIPTION = 'brand-2.description.default';
 
-    const BRAND_1_DEFAULT_SHORT_DESCRIPTION = 'brand-1.short_description.default';
-    const BRAND_2_DEFAULT_SHORT_DESCRIPTION = 'brand-2.short_description.default';
+    public const BRAND_1_DEFAULT_SHORT_DESCRIPTION = 'brand-1.short_description.default';
+    public const BRAND_2_DEFAULT_SHORT_DESCRIPTION = 'brand-2.short_description.default';
 
-    const BRAND_1_DEFAULT_SLUG_PROTOTYPE = 'brand-1.slugPrototypes.default';
-    const BRAND_2_DEFAULT_SLUG_PROTOTYPE = 'brand-2.slugPrototypes.default';
+    public const BRAND_1_DEFAULT_SLUG_PROTOTYPE = 'brand-1.slugPrototypes.default';
+    public const BRAND_2_DEFAULT_SLUG_PROTOTYPE = 'brand-2.slugPrototypes.default';
 
     #[\Override]
     public function getDependencies()

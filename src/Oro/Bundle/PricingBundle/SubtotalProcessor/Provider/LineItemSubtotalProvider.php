@@ -21,8 +21,8 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
     SubtotalProviderInterface,
     SubtotalCacheAwareInterface
 {
-    const TYPE = 'subtotal';
-    const LABEL = 'oro.pricing.subtotals.subtotal.label';
+    public const TYPE = 'subtotal';
+    public const LABEL = 'oro.pricing.subtotals.subtotal.label';
 
     /** @var TranslatorInterface */
     protected $translator;

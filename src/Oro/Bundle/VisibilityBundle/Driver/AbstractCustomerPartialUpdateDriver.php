@@ -21,7 +21,7 @@ use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
  */
 abstract class AbstractCustomerPartialUpdateDriver implements CustomerPartialUpdateDriverInterface
 {
-    const PRODUCT_BATCH_SIZE = 1000;
+    public const PRODUCT_BATCH_SIZE = 1000;
 
     /**
      * @var PlaceholderProvider

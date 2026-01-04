@@ -15,7 +15,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class QuoteProductDemandOfferChoiceType extends AbstractType
 {
-    const NAME = 'oro_sale_quote_product_demand_offer_choice';
+    public const NAME = 'oro_sale_quote_product_demand_offer_choice';
 
     /**
      * @var UnitValueFormatterInterface

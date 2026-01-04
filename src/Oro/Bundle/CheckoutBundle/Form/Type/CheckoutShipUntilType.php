@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CheckoutShipUntilType extends AbstractType
 {
-    const NAME = 'oro_checkout_ship_until';
+    public const NAME = 'oro_checkout_ship_until';
 
     public function getName()
     {

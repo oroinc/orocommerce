@@ -6,7 +6,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\AbstractPlaceholder;
 
 class UnitPlaceholder extends AbstractPlaceholder
 {
-    const NAME = 'UNIT';
+    public const NAME = 'UNIT';
 
     #[\Override]
     public function getPlaceholder()

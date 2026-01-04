@@ -7,7 +7,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\Voter\VoterInterface;
 
 class FeatureVoter implements VoterInterface
 {
-    const FEATURE_NAME = 'frontend_master_catalog';
+    public const FEATURE_NAME = 'frontend_master_catalog';
 
     /**
      * @var ConfigManager

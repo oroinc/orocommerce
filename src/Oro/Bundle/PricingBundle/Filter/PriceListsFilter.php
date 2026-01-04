@@ -14,7 +14,7 @@ use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
  */
 class PriceListsFilter extends EntityFilter
 {
-    const RELATION_CLASS_NAME_PARAMETER = 'relation_class_name';
+    public const RELATION_CLASS_NAME_PARAMETER = 'relation_class_name';
 
     #[\Override]
     public function init($name, array $params)

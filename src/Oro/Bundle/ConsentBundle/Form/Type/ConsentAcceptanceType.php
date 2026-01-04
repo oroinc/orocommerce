@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ConsentAcceptanceType extends AbstractType
 {
-    const TARGET_FIELDNAME = 'customerConsents';
+    public const TARGET_FIELDNAME = 'customerConsents';
 
     /**
      * @var CustomerConsentsTransformer

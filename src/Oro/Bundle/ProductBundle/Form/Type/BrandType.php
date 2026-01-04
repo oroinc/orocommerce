@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class BrandType extends AbstractType
 {
-    const NAME = 'oro_product_brand';
+    public const NAME = 'oro_product_brand';
 
     /** @var  string */
     protected $dataClass;

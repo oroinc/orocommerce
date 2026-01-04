@@ -12,7 +12,7 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class NotEmptyConfigurableAttributesValidator extends ConstraintValidator
 {
-    const ALIAS = 'not_empty_configurable_attributes';
+    public const ALIAS = 'not_empty_configurable_attributes';
 
     /** @var VariantFieldProvider */
     private $provider;

@@ -17,15 +17,15 @@ use Psr\Log\LoggerInterface;
 class CouponGenerator implements CouponGeneratorInterface
 {
     // Number of codes to generate and insert
-    const BULK_SIZE = 1000;
+    public const BULK_SIZE = 1000;
 
     // Threshold which shows when system should increase coupon code length
     // If number_of_new_unique_codes / number_of_generated_codes < LENGTH_SWITCH_THRESHOLD code length will be increased
     // after LENGTH_SWITCH_MAX_FAILS attempts
-    const LENGTH_SWITCH_THRESHOLD = 0.25;
+    public const LENGTH_SWITCH_THRESHOLD = 0.25;
 
     // Number of attempts to insert required number of codes before increase coupon code length
-    const LENGTH_SWITCH_MAX_FAILS = 10;
+    public const LENGTH_SWITCH_MAX_FAILS = 10;
 
     /**
      * @var Statement[]

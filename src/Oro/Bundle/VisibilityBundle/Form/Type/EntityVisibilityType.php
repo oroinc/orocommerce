@@ -18,15 +18,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EntityVisibilityType extends AbstractType
 {
-    const NAME = 'oro_visibility_entity_visibility_type';
+    public const NAME = 'oro_visibility_entity_visibility_type';
 
-    const VISIBILITY = 'visibility';
-    const ALL_FIELD = 'all';
-    const ACCOUNT_FIELD = 'customer';
-    const ACCOUNT_GROUP_FIELD = 'customerGroup';
-    const ALL_CLASS = 'allClass';
-    const ACCOUNT_GROUP_CLASS = 'customerGroupClass';
-    const ACCOUNT_CLASS = 'customerClass';
+    public const VISIBILITY = 'visibility';
+    public const ALL_FIELD = 'all';
+    public const ACCOUNT_FIELD = 'customer';
+    public const ACCOUNT_GROUP_FIELD = 'customerGroup';
+    public const ALL_CLASS = 'allClass';
+    public const ACCOUNT_GROUP_CLASS = 'customerGroupClass';
+    public const ACCOUNT_CLASS = 'customerClass';
 
     /**
      * @var VisibilityPostSetDataListener

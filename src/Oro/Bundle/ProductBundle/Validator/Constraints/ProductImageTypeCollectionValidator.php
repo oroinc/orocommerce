@@ -15,7 +15,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ProductImageTypeCollectionValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_product_image_type_collection_validator';
+    public const ALIAS = 'oro_product_image_type_collection_validator';
 
     /**
      * @var ImageTypeProvider $imageTypeProvider

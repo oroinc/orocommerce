@@ -10,10 +10,10 @@ use Oro\Bundle\TaxBundle\DependencyInjection\Configuration;
  */
 class AddressResolverSettingsProvider
 {
-    const ADDRESS_RESOLVER_GRANULARITY_COUNTRY = 'country';
-    const ADDRESS_RESOLVER_GRANULARITY_REGION = 'region';
-    const ADDRESS_RESOLVER_GRANULARITY_ZIP = 'zip_code';
-    const ADDRESS_RESOLVER_GRANULARITY_COUNTRY_ZIP = 'country_and_zip_code';
+    public const ADDRESS_RESOLVER_GRANULARITY_COUNTRY = 'country';
+    public const ADDRESS_RESOLVER_GRANULARITY_REGION = 'region';
+    public const ADDRESS_RESOLVER_GRANULARITY_ZIP = 'zip_code';
+    public const ADDRESS_RESOLVER_GRANULARITY_COUNTRY_ZIP = 'country_and_zip_code';
 
     /**
      * @var ConfigManager

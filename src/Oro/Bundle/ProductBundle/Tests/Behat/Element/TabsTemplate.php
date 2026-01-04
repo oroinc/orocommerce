@@ -8,7 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Tabs;
 
 class TabsTemplate extends ProductTemplate
 {
-    const ELEMENT_PREFIX = 'Tabs Template';
+    public const ELEMENT_PREFIX = 'Tabs Template';
 
     #[\Override]
     public function assertGroupWithValue($groupName, TableNode $table)

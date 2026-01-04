@@ -10,8 +10,8 @@ use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
  */
 interface DiscountInterface
 {
-    const TYPE_AMOUNT = 'amount';
-    const TYPE_PERCENT = 'percent';
+    public const TYPE_AMOUNT = 'amount';
+    public const TYPE_PERCENT = 'percent';
 
     public function configure(array $options): array;
 

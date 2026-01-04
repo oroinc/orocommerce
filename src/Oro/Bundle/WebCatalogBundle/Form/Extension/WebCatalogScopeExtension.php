@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class WebCatalogScopeExtension extends AbstractTypeExtension
 {
-    const SCOPE_FIELD = 'webCatalog';
+    public const SCOPE_FIELD = 'webCatalog';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

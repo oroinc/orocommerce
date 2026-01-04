@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class UniqueVariantLinksSimpleProductValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_product_unique_variant_links_simple_product';
+    public const ALIAS = 'oro_product_unique_variant_links_simple_product';
 
     /** @var ValidatorInterface */
     private $validator;

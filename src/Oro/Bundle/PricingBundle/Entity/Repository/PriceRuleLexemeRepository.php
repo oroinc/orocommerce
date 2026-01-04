@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
  */
 class PriceRuleLexemeRepository extends EntityRepository
 {
-    const LEXEMES_CACHE_KEY = 'oro_pricing_price_rule_lexemes_cache';
+    public const LEXEMES_CACHE_KEY = 'oro_pricing_price_rule_lexemes_cache';
 
     public function deleteByPriceList(PriceList $priceList)
     {

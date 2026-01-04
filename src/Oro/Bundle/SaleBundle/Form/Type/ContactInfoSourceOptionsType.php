@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContactInfoSourceOptionsType extends AbstractType
 {
-    const NAME = 'oro_sale_contact_info_customer_option';
+    public const NAME = 'oro_sale_contact_info_customer_option';
 
     /**
      * @var OptionsProviderInterface

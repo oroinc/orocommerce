@@ -67,7 +67,7 @@ class MysqlTemporaryPrivilegeRequirementProviderTest extends \PHPUnit\Framework\
 
     protected function getProviderWithoutPrivilege(): MysqlTemporaryPrivilegeRequirementProvider
     {
-        return new class($this->getDoctrine()) extends MysqlTemporaryPrivilegeRequirementProvider {
+        return new class ($this->getDoctrine()) extends MysqlTemporaryPrivilegeRequirementProvider {
             protected function getGrantedPrivileges(Connection $connection): array
             {
                 return [];
@@ -77,7 +77,7 @@ class MysqlTemporaryPrivilegeRequirementProviderTest extends \PHPUnit\Framework\
 
     protected function getProviderWithPrivilege(): MysqlTemporaryPrivilegeRequirementProvider
     {
-        return new class($this->getDoctrine()) extends MysqlTemporaryPrivilegeRequirementProvider {
+        return new class ($this->getDoctrine()) extends MysqlTemporaryPrivilegeRequirementProvider {
             protected function getGrantedPrivileges(Connection $connection): array
             {
                 return ['CREATE TEMPORARY TABLES'];

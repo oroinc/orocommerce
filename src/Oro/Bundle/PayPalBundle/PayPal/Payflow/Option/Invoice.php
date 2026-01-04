@@ -7,7 +7,7 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
  */
 class Invoice extends AbstractOption
 {
-    const INVNUM = 'INVNUM';
+    public const INVNUM = 'INVNUM';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

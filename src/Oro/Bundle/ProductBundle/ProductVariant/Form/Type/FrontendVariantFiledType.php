@@ -23,7 +23,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
  */
 class FrontendVariantFiledType extends AbstractType
 {
-    const NAME = 'oro_product_product_variant_frontend_variant_field';
+    public const NAME = 'oro_product_product_variant_frontend_variant_field';
 
     protected ProductVariantAvailabilityProvider $productVariantAvailabilityProvider;
 

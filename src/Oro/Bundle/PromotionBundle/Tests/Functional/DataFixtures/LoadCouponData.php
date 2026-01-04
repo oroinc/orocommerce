@@ -4,13 +4,13 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures;
 
 class LoadCouponData extends AbstractLoadCouponData
 {
-    const COUPON_WITHOUT_PROMO_AND_VALID_UNTIL = 'coupon_without_promo_and_valid_until';
-    const COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL = 'coupon_with_promo_and_without_valid_until';
-    const COUPON_WITH_PROMO_AND_EXPIRED = 'coupon_with_promo_and_expired';
-    const COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL = 'coupon_with_promo_and_valid_from_and_until';
-    const COUPON_WITH_PROMO_AND_NOT_STARTED = 'coupon_with_promo_and_not_started';
-    const COUPON_DISABLED = 'coupon_disabled';
-    const COUPON_WITH_SHIPPING_PROMO_AND_VALID_UNTIL = 'coupon_with_shipping_promo_and_valid_until';
+    public const COUPON_WITHOUT_PROMO_AND_VALID_UNTIL = 'coupon_without_promo_and_valid_until';
+    public const COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL = 'coupon_with_promo_and_without_valid_until';
+    public const COUPON_WITH_PROMO_AND_EXPIRED = 'coupon_with_promo_and_expired';
+    public const COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL = 'coupon_with_promo_and_valid_from_and_until';
+    public const COUPON_WITH_PROMO_AND_NOT_STARTED = 'coupon_with_promo_and_not_started';
+    public const COUPON_DISABLED = 'coupon_disabled';
+    public const COUPON_WITH_SHIPPING_PROMO_AND_VALID_UNTIL = 'coupon_with_shipping_promo_and_valid_until';
 
     #[\Override]
     public function getDependencies()

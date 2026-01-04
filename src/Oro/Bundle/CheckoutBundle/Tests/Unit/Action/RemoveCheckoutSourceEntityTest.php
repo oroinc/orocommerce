@@ -34,7 +34,7 @@ class RemoveCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->action = new class(new ContextAccessor(), $this->registry) extends RemoveCheckoutSourceEntity {
+        $this->action = new class (new ContextAccessor(), $this->registry) extends RemoveCheckoutSourceEntity {
             public function execute($context)
             {
                 $this->executeAction($context);
@@ -159,7 +159,7 @@ class RemoveCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
 
     private function createContext(?object $checkout): object
     {
-        return new class($checkout) {
+        return new class ($checkout) {
             public ?object $checkout;
 
             public function __construct(?object $checkout)

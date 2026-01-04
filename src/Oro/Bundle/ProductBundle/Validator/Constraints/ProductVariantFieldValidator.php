@@ -10,7 +10,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class ProductVariantFieldValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_product_variant_field';
+    public const ALIAS = 'oro_product_variant_field';
 
     /** @var CustomFieldProvider */
     protected $customFieldProvider;

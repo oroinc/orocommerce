@@ -9,14 +9,14 @@ use Brick\Math\BigDecimal;
  */
 class LineItems extends AbstractOption implements OptionsDependentInterface
 {
-    const NAME = 'L_NAME%d';
-    const DESC = 'L_DESC%d';
-    const COST = 'L_COST%d';
-    const QTY = 'L_QTY%d';
-    const TAXAMT = 'L_TAXAMT%d';
+    public const NAME = 'L_NAME%d';
+    public const DESC = 'L_DESC%d';
+    public const COST = 'L_COST%d';
+    public const QTY = 'L_QTY%d';
+    public const TAXAMT = 'L_TAXAMT%d';
 
-    const PAYPAL_NAME_LIMIT = 36;
-    const PAYPAL_DESC_LIMIT = 35;
+    public const PAYPAL_NAME_LIMIT = 36;
+    public const PAYPAL_DESC_LIMIT = 35;
 
     #[\Override]
     public function configureDependentOption(OptionsResolver $resolver, array $options)

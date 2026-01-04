@@ -9,7 +9,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class BeforeReindexEvent extends Event
 {
-    const EVENT_NAME = 'oro_website_search.before_reindex';
+    public const EVENT_NAME = 'oro_website_search.before_reindex';
 
     /**
      * @var mixed

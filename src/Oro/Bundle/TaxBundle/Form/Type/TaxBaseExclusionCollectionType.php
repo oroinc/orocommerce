@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxBaseExclusionCollectionType extends AbstractType
 {
-    const NAME = 'oro_tax_base_exclusion_collection';
+    public const NAME = 'oro_tax_base_exclusion_collection';
 
     #[\Override]
     public function getParent(): ?string

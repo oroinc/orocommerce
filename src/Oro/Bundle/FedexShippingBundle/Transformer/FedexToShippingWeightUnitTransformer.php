@@ -6,8 +6,8 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 
 class FedexToShippingWeightUnitTransformer implements FedexToShippingUnitTransformerInterface
 {
-    const SHIPPING_WEIGHT_KG = 'kg';
-    const SHIPPING_WEIGHT_LBS = 'lbs';
+    public const SHIPPING_WEIGHT_KG = 'kg';
+    public const SHIPPING_WEIGHT_LBS = 'lbs';
 
     #[\Override]
     public function transform(string $fedexValue): string

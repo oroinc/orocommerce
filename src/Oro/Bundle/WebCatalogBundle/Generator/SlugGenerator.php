@@ -25,7 +25,7 @@ use Oro\Component\Routing\RouteData;
  */
 class SlugGenerator
 {
-    const ROOT_URL = '/';
+    public const ROOT_URL = '/';
 
     /**
      * @var ContentVariantTypeRegistry

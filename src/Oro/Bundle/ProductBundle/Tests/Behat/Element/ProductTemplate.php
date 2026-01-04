@@ -10,7 +10,7 @@ abstract class ProductTemplate extends Element
 {
     use PageObjectDictionary;
 
-    const ELEMENT_PREFIX = '';
+    public const ELEMENT_PREFIX = '';
 
     /**
      * @param string $groupName

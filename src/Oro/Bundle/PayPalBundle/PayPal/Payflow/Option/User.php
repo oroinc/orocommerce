@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class User extends AbstractOption
 {
-    const USER = 'USER';
+    public const USER = 'USER';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

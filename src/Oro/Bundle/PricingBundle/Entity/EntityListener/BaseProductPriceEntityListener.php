@@ -12,9 +12,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 abstract class BaseProductPriceEntityListener extends AbstractRuleEntityListener
 {
-    const FIELD_PRICE_LIST = 'priceList';
-    const FIELD_PRODUCT = 'product';
-    const FIELD_VALUE = 'value';
+    public const FIELD_PRICE_LIST = 'priceList';
+    public const FIELD_PRODUCT = 'product';
+    public const FIELD_VALUE = 'value';
 
     public function postPersist(BaseProductPrice $price)
     {

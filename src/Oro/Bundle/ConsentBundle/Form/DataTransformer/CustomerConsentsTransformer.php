@@ -18,8 +18,8 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  */
 class CustomerConsentsTransformer implements DataTransformerInterface
 {
-    const CONSENT_KEY = 'consentId';
-    const CMS_PAGE_KEY = 'cmsPageId';
+    public const CONSENT_KEY = 'consentId';
+    public const CMS_PAGE_KEY = 'cmsPageId';
 
     /** @var DoctrineHelper */
     private $doctrineHelper;

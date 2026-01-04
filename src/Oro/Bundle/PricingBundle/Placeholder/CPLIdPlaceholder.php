@@ -19,7 +19,7 @@ class CPLIdPlaceholder extends AbstractPlaceholder implements FeatureToggleableI
 {
     use FeatureCheckerHolderTrait;
 
-    const NAME = 'CPL_ID';
+    public const NAME = 'CPL_ID';
 
     public function __construct(
         private CombinedPriceListTreeHandler $priceListTreeHandler,

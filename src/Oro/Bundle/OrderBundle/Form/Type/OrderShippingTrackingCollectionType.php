@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrderShippingTrackingCollectionType extends AbstractType
 {
-    const NAME = 'oro_order_shipping_tracking_collection';
+    public const NAME = 'oro_order_shipping_tracking_collection';
 
     #[\Override]
     public function getParent(): ?string

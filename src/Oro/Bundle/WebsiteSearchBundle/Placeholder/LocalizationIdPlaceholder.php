@@ -10,7 +10,7 @@ use Oro\Bundle\LocaleBundle\Provider\CurrentLocalizationProvider;
  */
 class LocalizationIdPlaceholder extends AbstractPlaceholder
 {
-    const NAME = 'LOCALIZATION_ID';
+    public const NAME = 'LOCALIZATION_ID';
 
     private CurrentLocalizationProvider $localizationProvider;
 

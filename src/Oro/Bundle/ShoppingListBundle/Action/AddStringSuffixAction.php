@@ -9,10 +9,10 @@ use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 class AddStringSuffixAction extends AbstractAction
 {
-    const ATTRIBUTE_OPTION = 'attribute';
-    const MAX_LENGTH_OPTION = 'maxLength';
-    const STRING_OPTION = 'string';
-    const STRING_SUFFIX_OPTION = 'stringSuffix';
+    public const ATTRIBUTE_OPTION = 'attribute';
+    public const MAX_LENGTH_OPTION = 'maxLength';
+    public const STRING_OPTION = 'string';
+    public const STRING_SUFFIX_OPTION = 'stringSuffix';
 
     /**
      * @var array

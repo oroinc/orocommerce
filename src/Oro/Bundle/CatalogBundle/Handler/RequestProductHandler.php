@@ -10,11 +10,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class RequestProductHandler
 {
-    const CATEGORY_ID_KEY = 'categoryId';
-    const INCLUDE_SUBCATEGORIES_KEY = 'includeSubcategories';
-    const INCLUDE_SUBCATEGORIES_DEFAULT_VALUE = false;
-    const INCLUDE_NOT_CATEGORIZED_PRODUCTS_DEFAULT_VALUE = false;
-    const INCLUDE_NOT_CATEGORIZED_PRODUCTS_KEY = 'includeNotCategorizedProducts';
+    public const CATEGORY_ID_KEY = 'categoryId';
+    public const INCLUDE_SUBCATEGORIES_KEY = 'includeSubcategories';
+    public const INCLUDE_SUBCATEGORIES_DEFAULT_VALUE = false;
+    public const INCLUDE_NOT_CATEGORIZED_PRODUCTS_DEFAULT_VALUE = false;
+    public const INCLUDE_NOT_CATEGORIZED_PRODUCTS_KEY = 'includeNotCategorizedProducts';
 
     /** @var RequestStack */
     protected $requestStack;

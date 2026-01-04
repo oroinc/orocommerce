@@ -14,7 +14,7 @@ class LoadDependentPriceLists extends AbstractFixture implements DependentFixtur
 {
     use ContainerAwareTrait;
 
-    const DEPENDENT_PRICE_LIST_1 = 'dependent_price_list_1';
+    public const DEPENDENT_PRICE_LIST_1 = 'dependent_price_list_1';
     /**
      * @var array
      */

@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class AbstractMoveConfigValuesToSettings extends AbstractFixture implements ContainerAwareInterface
 {
-    const SECTION_NAME = '';
+    public const SECTION_NAME = '';
 
     /**
      * @var ManagerRegistry

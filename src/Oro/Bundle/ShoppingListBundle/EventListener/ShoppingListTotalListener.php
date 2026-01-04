@@ -28,7 +28,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 class ShoppingListTotalListener
 {
-    const ACCOUNT_BATCH_SIZE = 500;
+    public const ACCOUNT_BATCH_SIZE = 500;
 
     /**
      * @var ManagerRegistry

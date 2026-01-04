@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class PaymentTermType extends AbstractType
 {
-    const NAME = 'oro_payment_term';
+    public const NAME = 'oro_payment_term';
 
     /** @var string */
     private $dataClass;

@@ -11,10 +11,10 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 
 class LoadContentVariantsData extends AbstractFixture implements DependentFixtureInterface
 {
-    const CUSTOMER_VARIANT = 'web_catalog.content_variant.customer';
-    const ROOT_VARIANT = 'web_catalog.content_variant.root';
-    const CONTENT_VARIANT_SUBNODE_1 = 'web_catalog.content_variant.subnode_1';
-    const CONTENT_VARIANT_SUBNODE_2 = 'web_catalog.content_variant.subnode_2';
+    public const CUSTOMER_VARIANT = 'web_catalog.content_variant.customer';
+    public const ROOT_VARIANT = 'web_catalog.content_variant.root';
+    public const CONTENT_VARIANT_SUBNODE_1 = 'web_catalog.content_variant.subnode_1';
+    public const CONTENT_VARIANT_SUBNODE_2 = 'web_catalog.content_variant.subnode_2';
 
     #[\Override]
     public function load(ObjectManager $manager)

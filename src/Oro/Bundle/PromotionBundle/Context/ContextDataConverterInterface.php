@@ -7,21 +7,21 @@ namespace Oro\Bundle\PromotionBundle\Context;
  */
 interface ContextDataConverterInterface
 {
-    const BILLING_ADDRESS = 'billingAddress';
-    const CURRENCY = 'currency';
-    const SHIPPING_ADDRESS = 'shippingAddress';
-    const CUSTOMER_USER = 'customerUser';
-    const CUSTOMER = 'customer';
-    const CUSTOMER_GROUP = 'customerGroup';
-    const LINE_ITEMS = 'lineItems';
-    const SUBTOTAL = 'subtotal';
-    const SHIPPING_COST = 'shippingCost';
-    const PAYMENT_METHOD = 'paymentMethod';
-    const PAYMENT_METHODS = 'paymentMethods';
-    const SHIPPING_METHOD = 'shippingMethod';
-    const SHIPPING_METHOD_TYPE = 'shippingMethodType';
-    const CRITERIA = 'criteria';
-    const APPLIED_COUPONS = 'appliedCoupons';
+    public const BILLING_ADDRESS = 'billingAddress';
+    public const CURRENCY = 'currency';
+    public const SHIPPING_ADDRESS = 'shippingAddress';
+    public const CUSTOMER_USER = 'customerUser';
+    public const CUSTOMER = 'customer';
+    public const CUSTOMER_GROUP = 'customerGroup';
+    public const LINE_ITEMS = 'lineItems';
+    public const SUBTOTAL = 'subtotal';
+    public const SHIPPING_COST = 'shippingCost';
+    public const PAYMENT_METHOD = 'paymentMethod';
+    public const PAYMENT_METHODS = 'paymentMethods';
+    public const SHIPPING_METHOD = 'shippingMethod';
+    public const SHIPPING_METHOD_TYPE = 'shippingMethodType';
+    public const CRITERIA = 'criteria';
+    public const APPLIED_COUPONS = 'appliedCoupons';
 
     /**
      * @param object $entity

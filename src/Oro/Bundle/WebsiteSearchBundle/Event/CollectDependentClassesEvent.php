@@ -6,7 +6,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class CollectDependentClassesEvent extends Event
 {
-    const NAME = 'oro_website_search.event.collect_dependent_classes';
+    public const NAME = 'oro_website_search.event.collect_dependent_classes';
 
     /** @var array */
     private $dependencies = [];

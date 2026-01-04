@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 class MoneyOrderSettingsType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_money_order_settings';
+    public const BLOCK_PREFIX = 'oro_money_order_settings';
 
     /**
      * @throws ConstraintDefinitionException

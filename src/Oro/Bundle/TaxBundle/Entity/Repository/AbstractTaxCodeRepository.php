@@ -10,7 +10,7 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
  */
 abstract class AbstractTaxCodeRepository extends ServiceEntityRepository
 {
-    const ALIAS_SUFFIX = 'TaxCode';
+    public const ALIAS_SUFFIX = 'TaxCode';
 
     public function findOneByEntity(object $object): ?TaxCodeInterface
     {

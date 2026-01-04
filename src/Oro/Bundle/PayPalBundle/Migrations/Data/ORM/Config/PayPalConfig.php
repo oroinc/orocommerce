@@ -13,9 +13,9 @@ use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInte
  */
 class PayPalConfig
 {
-    const PAY_WITH_PAYPAL = 'Pay with PayPal';
-    const PAYPAL = 'PayPal';
-    const CREDIT_CARD_LABEL = 'Credit Card';
+    public const PAY_WITH_PAYPAL = 'Pay with PayPal';
+    public const PAYPAL = 'PayPal';
+    public const CREDIT_CARD_LABEL = 'Credit Card';
 
     private ConfigManager $configManager;
     private PayPalConfigKeysProvider $keysProvider;

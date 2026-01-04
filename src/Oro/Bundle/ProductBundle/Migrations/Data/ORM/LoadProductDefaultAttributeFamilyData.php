@@ -20,8 +20,8 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
     use UserUtilityTrait;
     use MakeProductAttributesTrait;
 
-    const DEFAULT_FAMILY_CODE = 'default_family';
-    const GENERAL_GROUP_CODE = 'general';
+    public const DEFAULT_FAMILY_CODE = 'default_family';
+    public const GENERAL_GROUP_CODE = 'general';
 
     private static array $groups = [
         [

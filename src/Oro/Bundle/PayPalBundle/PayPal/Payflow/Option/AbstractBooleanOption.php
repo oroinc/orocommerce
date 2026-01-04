@@ -4,11 +4,11 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 abstract class AbstractBooleanOption extends AbstractOption
 {
-    const YES = 'Y';
-    const NO = 'N';
+    public const YES = 'Y';
+    public const NO = 'N';
 
-    const TRUE = 'TRUE';
-    const FALSE = 'FALSE';
+    public const TRUE = 'TRUE';
+    public const FALSE = 'FALSE';
 
     /**
      * @param string $true

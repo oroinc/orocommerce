@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 
 class PageVariantType extends AbstractType
 {
-    const NAME = 'page_variant';
+    public const NAME = 'page_variant';
 
     #[\Override]
     public function getBlockPrefix(): string

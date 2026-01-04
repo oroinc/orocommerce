@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 
 class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuery
 {
-    const DEFAULT_PRIORITY = 100;
+    public const DEFAULT_PRIORITY = 100;
 
     /**
      * @var int

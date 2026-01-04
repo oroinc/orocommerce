@@ -7,7 +7,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 
 class ContentNodeMaterializedPathModifier
 {
-    const MATERIALIZED_PATH_DELIMITER = '_';
+    public const MATERIALIZED_PATH_DELIMITER = '_';
 
     /**
      * @var ManagerRegistry

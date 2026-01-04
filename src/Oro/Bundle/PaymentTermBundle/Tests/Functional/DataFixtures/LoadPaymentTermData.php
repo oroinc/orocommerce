@@ -15,11 +15,11 @@ class LoadPaymentTermData extends AbstractFixture implements DependentFixtureInt
 {
     use ContainerAwareTrait;
 
-    const TERM_LABEL_NET_10 = 'net 10';
-    const TERM_LABEL_NET_20 = 'net 20';
-    const TERM_LABEL_NET_30 = 'net 30';
-    const TERM_LABEL_NET_40 = 'net 40';
-    const PAYMENT_TERM_REFERENCE_PREFIX = 'payment_term_test_data_';
+    public const TERM_LABEL_NET_10 = 'net 10';
+    public const TERM_LABEL_NET_20 = 'net 20';
+    public const TERM_LABEL_NET_30 = 'net 30';
+    public const TERM_LABEL_NET_40 = 'net 40';
+    public const PAYMENT_TERM_REFERENCE_PREFIX = 'payment_term_test_data_';
 
     /**
      * @var array

@@ -12,10 +12,10 @@ class OroCatalogBundle implements Migration, AttachmentExtensionAwareInterface
 {
     use AttachmentExtensionAwareTrait;
 
-    const ORO_B2B_CATALOG_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
-    const MAX_CATEGORY_IMAGE_SIZE_IN_MB = 10;
-    const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
-    const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
+    public const ORO_B2B_CATALOG_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
+    public const MAX_CATEGORY_IMAGE_SIZE_IN_MB = 10;
+    public const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
+    public const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
 
     #[\Override]
     public function up(Schema $schema, QueryBag $queries)

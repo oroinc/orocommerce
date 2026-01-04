@@ -21,7 +21,7 @@ class IsConsentsAccepted extends AbstractCondition implements ContextAccessorAwa
     use ContextAccessorAwareTrait;
     use FeatureCheckerHolderTrait;
 
-    const NAME = 'is_consents_accepted';
+    public const NAME = 'is_consents_accepted';
 
     private EnabledConsentProvider $enabledConsentProvider;
     private ConsentAcceptanceProvider $consentAcceptanceProvider;

@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class WebCatalogType extends AbstractType
 {
-    const NAME = 'oro_web_catalog';
+    public const NAME = 'oro_web_catalog';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

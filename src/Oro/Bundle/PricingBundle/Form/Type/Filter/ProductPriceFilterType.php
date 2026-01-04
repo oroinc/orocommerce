@@ -18,7 +18,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ProductPriceFilterType extends AbstractType
 {
-    const NAME = 'oro_pricing_product_price_filter';
+    public const NAME = 'oro_pricing_product_price_filter';
 
     /**
      * @var TranslatorInterface

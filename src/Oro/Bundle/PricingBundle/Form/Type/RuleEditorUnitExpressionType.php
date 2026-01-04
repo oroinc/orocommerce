@@ -6,7 +6,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RuleEditorUnitExpressionType extends PriceRuleEditorTextType
 {
-    const NAME = 'oro_pricing_price_rule_editor_unit';
+    public const NAME = 'oro_pricing_price_rule_editor_unit';
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver)

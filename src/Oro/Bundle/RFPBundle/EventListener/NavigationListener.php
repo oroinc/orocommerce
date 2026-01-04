@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class NavigationListener
 {
-    const MENU_ITEM_ID = 'oro_rfp_frontend_request_index';
+    public const MENU_ITEM_ID = 'oro_rfp_frontend_request_index';
 
     public function __construct(
         private AuthorizationCheckerInterface $authorizationChecker,

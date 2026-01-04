@@ -12,7 +12,7 @@ class CreateForeignKeysWithNewTable implements Migration, OrderedMigrationInterf
     /**
      * @internal
      */
-    const SHIPPING_RULE_CLASS = 'Oro\Bundle\ShippingBundle\Entity\ShippingRule';
+    public const SHIPPING_RULE_CLASS = 'Oro\Bundle\ShippingBundle\Entity\ShippingRule';
 
     #[\Override]
     public function getOrder()

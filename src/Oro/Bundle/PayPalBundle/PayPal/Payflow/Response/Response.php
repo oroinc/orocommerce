@@ -4,9 +4,9 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Response;
 
 class Response implements ResponseInterface
 {
-    const PNREF_KEY = 'PNREF';
-    const RESULT_KEY = 'RESULT';
-    const RESPMSG_KEY = 'RESPMSG';
+    public const PNREF_KEY = 'PNREF';
+    public const RESULT_KEY = 'RESULT';
+    public const RESPMSG_KEY = 'RESPMSG';
     /**
      * @var \ArrayObject
      */

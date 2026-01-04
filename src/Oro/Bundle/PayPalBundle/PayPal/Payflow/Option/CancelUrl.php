@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class CancelUrl implements OptionInterface
 {
-    const CANCELURL = 'CANCELURL';
+    public const CANCELURL = 'CANCELURL';
 
     /** @var bool */
     protected $required;

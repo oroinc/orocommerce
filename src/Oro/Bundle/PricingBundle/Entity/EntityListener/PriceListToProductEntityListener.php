@@ -24,8 +24,8 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
 {
     use OptionalListenerTrait;
 
-    const FIELD_PRICE_LIST = 'priceList';
-    const FIELD_PRODUCT = 'product';
+    public const FIELD_PRICE_LIST = 'priceList';
+    public const FIELD_PRODUCT = 'product';
 
     /** @var ShardManager */
     protected $shardManager;

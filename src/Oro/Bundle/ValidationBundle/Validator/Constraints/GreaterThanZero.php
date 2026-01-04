@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraints\GreaterThan;
 
 class GreaterThanZero extends GreaterThan implements AliasAwareConstraintInterface
 {
-    const ALIAS = 'greater_than_zero';
+    public const ALIAS = 'greater_than_zero';
 
     public $value = 0;
 

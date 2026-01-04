@@ -14,15 +14,15 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceList
 
 class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureInterface
 {
-    const CHECKOUT_SUBTOTAL_1 = 'checkout.subtotal.1';
-    const CHECKOUT_SUBTOTAL_2 = 'checkout.subtotal.2';
-    const CHECKOUT_SUBTOTAL_3 = 'checkout.subtotal.3';
-    const CHECKOUT_SUBTOTAL_4 = 'checkout.subtotal.4';
-    const CHECKOUT_SUBTOTAL_5 = 'checkout.subtotal.5';
-    const CHECKOUT_SUBTOTAL_6 = 'checkout.subtotal.6';
-    const CHECKOUT_SUBTOTAL_7 = 'checkout.subtotal.7';
-    const CHECKOUT_SUBTOTAL_8 = 'checkout.subtotal.8';
-    const CHECKOUT_SUBTOTAL_9 = 'checkout.subtotal.9';
+    public const CHECKOUT_SUBTOTAL_1 = 'checkout.subtotal.1';
+    public const CHECKOUT_SUBTOTAL_2 = 'checkout.subtotal.2';
+    public const CHECKOUT_SUBTOTAL_3 = 'checkout.subtotal.3';
+    public const CHECKOUT_SUBTOTAL_4 = 'checkout.subtotal.4';
+    public const CHECKOUT_SUBTOTAL_5 = 'checkout.subtotal.5';
+    public const CHECKOUT_SUBTOTAL_6 = 'checkout.subtotal.6';
+    public const CHECKOUT_SUBTOTAL_7 = 'checkout.subtotal.7';
+    public const CHECKOUT_SUBTOTAL_8 = 'checkout.subtotal.8';
+    public const CHECKOUT_SUBTOTAL_9 = 'checkout.subtotal.9';
 
     /** @var array */
     protected static $data = [

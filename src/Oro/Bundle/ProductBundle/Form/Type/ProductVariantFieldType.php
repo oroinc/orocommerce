@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ProductVariantFieldType extends AbstractType
 {
-    const NAME = 'oro_product_variant_field';
+    public const NAME = 'oro_product_variant_field';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

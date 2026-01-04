@@ -9,8 +9,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 
 class LoadContentNodeData extends AbstractFixture implements DependentFixtureInterface
 {
-    const FIRST_CONTENT_NODE = 'firstContentNode';
-    const SECOND_CONTENT_NODE = 'secondContentNode';
+    public const FIRST_CONTENT_NODE = 'firstContentNode';
+    public const SECOND_CONTENT_NODE = 'secondContentNode';
 
     #[\Override]
     public function getDependencies()

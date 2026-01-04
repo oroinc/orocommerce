@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 
 class UnitVisibilityModeDataGridListener
 {
-    const TEMPLATE_TYPE = 'twig';
+    public const TEMPLATE_TYPE = 'twig';
 
     /**
      * @var string

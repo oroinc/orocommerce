@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class ResolvePaymentTermListener
 {
-    const CHECKOUT_ROUTE = 'oro_checkout_frontend_checkout';
+    public const CHECKOUT_ROUTE = 'oro_checkout_frontend_checkout';
 
     /** @var RequestStack */
     protected $requestStack;

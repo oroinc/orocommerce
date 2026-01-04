@@ -20,9 +20,9 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerGroupCatego
 #[Config]
 class CustomerGroupCategoryVisibility implements VisibilityInterface, ScopeAwareInterface
 {
-    const PARENT_CATEGORY = 'parent_category';
-    const CATEGORY = 'category';
-    const VISIBILITY_TYPE = 'customer_group_category_visibility';
+    public const PARENT_CATEGORY = 'parent_category';
+    public const CATEGORY = 'category';
+    public const VISIBILITY_TYPE = 'customer_group_category_visibility';
 
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\Id]

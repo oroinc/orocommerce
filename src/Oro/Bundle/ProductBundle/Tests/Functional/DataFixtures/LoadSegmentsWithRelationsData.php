@@ -10,11 +10,11 @@ use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 
 class LoadSegmentsWithRelationsData extends AbstractFixture
 {
-    const FIRST_SEGMENT = 'firstSegment';
-    const SECOND_SEGMENT = 'secondSegment';
-    const THIRD_SEGMENT = 'thirdSegment';
-    const NO_RELATIONS_SEGMENT = 'noRelationsSegment';
-    const WITH_CRITERIA_SEGMENT = 'withCriteriaSegment';
+    public const FIRST_SEGMENT = 'firstSegment';
+    public const SECOND_SEGMENT = 'secondSegment';
+    public const THIRD_SEGMENT = 'thirdSegment';
+    public const NO_RELATIONS_SEGMENT = 'noRelationsSegment';
+    public const WITH_CRITERIA_SEGMENT = 'withCriteriaSegment';
 
     private $definitions = [
         'withoutRelations' => [

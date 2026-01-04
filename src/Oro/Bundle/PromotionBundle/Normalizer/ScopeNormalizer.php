@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ScopeNormalizer implements NormalizerInterface
 {
-    const REQUIRED_OPTIONS = [
+    public const REQUIRED_OPTIONS = [
         'id'
     ];
 

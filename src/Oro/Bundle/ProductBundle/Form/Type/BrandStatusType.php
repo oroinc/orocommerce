@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class BrandStatusType extends AbstractType
 {
-    const NAME = 'oro_brand_status';
+    public const NAME = 'oro_brand_status';
 
     /**
      * @var  BrandStatusProvider $brandStatuses

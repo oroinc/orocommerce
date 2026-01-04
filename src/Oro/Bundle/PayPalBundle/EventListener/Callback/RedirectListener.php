@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class RedirectListener
 {
-    const FAILED_SHIPPING_ADDRESS_URL_KEY = 'failedShippingAddressUrl';
+    public const FAILED_SHIPPING_ADDRESS_URL_KEY = 'failedShippingAddressUrl';
 
     public function __construct(
         protected RequestStack $requestStack,

@@ -7,7 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 
 class WideTemplate extends ProductTemplate
 {
-    const ELEMENT_PREFIX = 'Wide Template';
+    public const ELEMENT_PREFIX = 'Wide Template';
 
     #[\Override]
     public function assertGroupWithValue($groupName, TableNode $table)

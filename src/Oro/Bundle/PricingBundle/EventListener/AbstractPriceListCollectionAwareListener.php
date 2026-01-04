@@ -30,7 +30,7 @@ abstract class AbstractPriceListCollectionAwareListener implements FeatureToggle
 {
     use FeatureCheckerHolderTrait;
 
-    const PRICE_LISTS_COLLECTION_FORM_FIELD_NAME = 'priceListsByWebsites';
+    public const PRICE_LISTS_COLLECTION_FORM_FIELD_NAME = 'priceListsByWebsites';
 
     /**
      * @var PriceListWithPriorityCollectionHandler

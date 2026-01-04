@@ -12,7 +12,7 @@ use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
  */
 class FeatureVoter implements VoterInterface
 {
-    const FEATURE_NAME = 'consents';
+    public const FEATURE_NAME = 'consents';
 
     /** @var ConfigManager */
     private $configManager;

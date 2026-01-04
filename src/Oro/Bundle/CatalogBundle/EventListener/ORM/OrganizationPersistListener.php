@@ -12,7 +12,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
  */
 class OrganizationPersistListener
 {
-    const ROOT_CATEGORY_NAME = 'All Products';
+    public const ROOT_CATEGORY_NAME = 'All Products';
 
     /** @var DoctrineHelper */
     private $doctrineHelper;

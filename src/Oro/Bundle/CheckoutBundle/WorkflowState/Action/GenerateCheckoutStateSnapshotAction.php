@@ -17,8 +17,8 @@ use Oro\Component\ConfigExpression\ContextAccessor;
  */
 class GenerateCheckoutStateSnapshotAction extends AbstractAction
 {
-    const OPTION_KEY_ENTITY = 'entity';
-    const OPTION_KEY_ATTRIBUTE = 'attribute';
+    public const OPTION_KEY_ENTITY = 'entity';
+    public const OPTION_KEY_ATTRIBUTE = 'attribute';
 
     /** @var array */
     protected $options;

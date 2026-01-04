@@ -12,7 +12,7 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
  */
 class CurrencyCheckerProvider implements RepositoryCurrencyCheckerProviderInterface
 {
-    const ENTITY_LABEL = 'oro.sale.quote.entity_label';
+    public const ENTITY_LABEL = 'oro.sale.quote.entity_label';
 
     /**
      * @var ManagerRegistry

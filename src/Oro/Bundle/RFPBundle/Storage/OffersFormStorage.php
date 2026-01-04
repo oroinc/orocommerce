@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Storage\AbstractDataStorage;
 
 class OffersFormStorage extends AbstractDataStorage
 {
-    const DATA_KEY = 'offers_data';
+    public const DATA_KEY = 'offers_data';
 
     /**
      * @param array $data

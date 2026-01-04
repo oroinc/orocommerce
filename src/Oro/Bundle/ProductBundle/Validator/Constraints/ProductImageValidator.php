@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class ProductImageValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_product_image_validator';
+    public const ALIAS = 'oro_product_image_validator';
 
     /**
      * @var ExecutionContextInterface

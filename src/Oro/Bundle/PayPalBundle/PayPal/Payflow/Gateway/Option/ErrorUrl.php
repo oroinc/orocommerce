@@ -7,7 +7,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class ErrorUrl implements OptionInterface
 {
-    const ERRORURL = 'ERRORURL';
+    public const ERRORURL = 'ERRORURL';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

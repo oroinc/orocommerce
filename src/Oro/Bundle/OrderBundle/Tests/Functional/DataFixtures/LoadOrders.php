@@ -23,16 +23,16 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
 {
     use ContainerAwareTrait;
 
-    const ORDER_1 = 'simple_order';
-    const ORDER_2 = 'simple_order2';
-    const ORDER_3 = 'simple_order3';
-    const ORDER_4 = 'simple_order4';
-    const ORDER_5 = 'simple_order5';
-    const ORDER_6 = 'simple_order6';
-    const MY_ORDER = 'my_order';
-    const ACCOUNT_USER = 'grzegorz.brzeczyszczykiewicz@example.com';
-    const SUBTOTAL = '789.0000';
-    const TOTAL = '1234.0000';
+    public const ORDER_1 = 'simple_order';
+    public const ORDER_2 = 'simple_order2';
+    public const ORDER_3 = 'simple_order3';
+    public const ORDER_4 = 'simple_order4';
+    public const ORDER_5 = 'simple_order5';
+    public const ORDER_6 = 'simple_order6';
+    public const MY_ORDER = 'my_order';
+    public const ACCOUNT_USER = 'grzegorz.brzeczyszczykiewicz@example.com';
+    public const SUBTOTAL = '789.0000';
+    public const TOTAL = '1234.0000';
 
     /**
      * @var array

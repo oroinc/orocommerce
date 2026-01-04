@@ -7,7 +7,7 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowAwareManager;
 
 class WorkflowStepMapper implements CheckoutStateDiffMapperInterface
 {
-    const DATA_NAME = 'workflow_step';
+    public const DATA_NAME = 'workflow_step';
 
     /** @var WorkflowAwareManager */
     protected $workflowAwareManager;

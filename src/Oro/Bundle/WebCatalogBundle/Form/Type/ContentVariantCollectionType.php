@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContentVariantCollectionType extends AbstractType
 {
-    const NAME = 'oro_web_catalog_content_variant_collection';
+    public const NAME = 'oro_web_catalog_content_variant_collection';
 
     /**
      * @var ContentVariantTypeRegistry

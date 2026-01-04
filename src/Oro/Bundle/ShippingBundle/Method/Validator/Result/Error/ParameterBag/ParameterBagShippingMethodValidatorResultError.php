@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 class ParameterBagShippingMethodValidatorResultError extends ParameterBag implements
     ShippingMethodValidatorResultErrorInterface
 {
-    const FIELD_MESSAGE = 'message';
+    public const FIELD_MESSAGE = 'message';
 
     #[\Override]
     public function getMessage()

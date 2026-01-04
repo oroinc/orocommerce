@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraint;
 
 class PriceForProductUnitExists extends Constraint
 {
-    const VALIDATOR = 'oro_pricing_price_for_product_unit_exists_validator';
+    public const VALIDATOR = 'oro_pricing_price_for_product_unit_exists_validator';
 
     /**
      * @var string

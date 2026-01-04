@@ -6,7 +6,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 class ShippingAddressDiffMapper extends AbstractAddressDiffMapper
 {
-    const DATA_NAME = 'shipping_address';
+    public const DATA_NAME = 'shipping_address';
 
     #[\Override]
     public function getName()

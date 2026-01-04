@@ -9,9 +9,9 @@ use Oro\Component\Expression\Node\ValueNode;
 
 class BinaryNodeConverter implements QueryExpressionConverterInterface, ConverterAwareInterface
 {
-    const TYPE_LOGICAL = 1;
-    const TYPE_MATH = 2;
-    const TYPE_COMPARISON = 3;
+    public const TYPE_LOGICAL = 1;
+    public const TYPE_MATH = 2;
+    public const TYPE_COMPARISON = 3;
 
     /**
      * @var QueryExpressionConverterInterface

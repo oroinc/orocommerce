@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ShoppingListType extends AbstractType
 {
-    const NAME = 'oro_shopping_list_type';
+    public const NAME = 'oro_shopping_list_type';
 
     /** @var  string */
     protected $dataClass;

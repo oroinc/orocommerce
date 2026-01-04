@@ -6,7 +6,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class CollectContextEvent extends Event
 {
-    const NAME = 'oro_website_search.event.collect_context';
+    public const NAME = 'oro_website_search.event.collect_context';
 
     /**
      * @var array

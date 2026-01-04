@@ -13,7 +13,7 @@ use Symfony\Component\Validator\ConstraintViolation;
  */
 class CheckoutErrorHandler
 {
-    const WORKFLOW_STATE_MESSAGE = 'oro.checkout.workflow.condition.content_of_order_was_changed.message';
+    public const WORKFLOW_STATE_MESSAGE = 'oro.checkout.workflow.condition.content_of_order_was_changed.message';
 
     protected RequestStack $requestStack;
 

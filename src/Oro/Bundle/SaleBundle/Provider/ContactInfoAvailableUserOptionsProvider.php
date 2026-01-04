@@ -7,9 +7,9 @@ use Oro\Bundle\SaleBundle\DependencyInjection\Configuration;
 
 class ContactInfoAvailableUserOptionsProvider implements OptionsProviderInterface
 {
-    const DON_T_DISPLAY_CONTACT_INFO = 'dont_display';
-    const USE_USER_PROFILE_DATA = 'user_profile_data';
-    const ENTER_MANUALLY = 'enter_manually';
+    public const DON_T_DISPLAY_CONTACT_INFO = 'dont_display';
+    public const USE_USER_PROFILE_DATA = 'user_profile_data';
+    public const ENTER_MANUALLY = 'enter_manually';
 
     /**
      * @var ConfigManager

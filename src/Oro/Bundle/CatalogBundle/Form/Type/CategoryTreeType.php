@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CategoryTreeType extends AbstractType
 {
-    const NAME = 'oro_catalog_category_tree';
+    public const NAME = 'oro_catalog_category_tree';
 
     /**
      * @var AbstractTreeHandler

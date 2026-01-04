@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class PriceAttributesProductFormExtension extends AbstractTypeExtension
 {
-    const PRODUCT_PRICE_ATTRIBUTES_PRICES = 'productPriceAttributesPrices';
+    public const PRODUCT_PRICE_ATTRIBUTES_PRICES = 'productPriceAttributesPrices';
 
     private ManagerRegistry $registry;
     private AclHelper $aclHelper;

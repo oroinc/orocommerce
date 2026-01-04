@@ -16,17 +16,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class PriceRuleType extends AbstractType
 {
-    const NAME = 'oro_pricing_price_rule';
+    public const NAME = 'oro_pricing_price_rule';
 
-    const RULE = 'rule';
-    const RULE_CONDITION = 'ruleCondition';
-    const CURRENCY = 'currency';
-    const CURRENCY_EXPRESSION = 'currencyExpression';
-    const PRODUCT_UNIT = 'productUnit';
-    const PRODUCT_UNIT_EXPRESSION = 'productUnitExpression';
-    const QUANTITY = 'quantity';
-    const QUANTITY_EXPRESSION = 'quantityExpression';
-    const PRIORITY = 'priority';
+    public const RULE = 'rule';
+    public const RULE_CONDITION = 'ruleCondition';
+    public const CURRENCY = 'currency';
+    public const CURRENCY_EXPRESSION = 'currencyExpression';
+    public const PRODUCT_UNIT = 'productUnit';
+    public const PRODUCT_UNIT_EXPRESSION = 'productUnitExpression';
+    public const QUANTITY = 'quantity';
+    public const QUANTITY_EXPRESSION = 'quantityExpression';
+    public const PRIORITY = 'priority';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

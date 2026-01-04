@@ -15,8 +15,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 #[Config(defaultValues: ['entity' => ['icon' => 'fa-discount']])]
 class OrderDiscount
 {
-    const TYPE_AMOUNT = 'oro_order_discount_item_type_amount';
-    const TYPE_PERCENT = 'oro_order_discount_item_type_percent';
+    public const TYPE_AMOUNT = 'oro_order_discount_item_type_amount';
+    public const TYPE_PERCENT = 'oro_order_discount_item_type_percent';
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]

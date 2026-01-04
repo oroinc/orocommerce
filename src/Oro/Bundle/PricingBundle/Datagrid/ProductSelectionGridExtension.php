@@ -13,8 +13,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class ProductSelectionGridExtension extends AbstractExtension
 {
-    const SUPPORTED_GRID = 'products-select-grid-frontend';
-    const CURRENCY_KEY = 'currency';
+    public const SUPPORTED_GRID = 'products-select-grid-frontend';
+    public const CURRENCY_KEY = 'currency';
 
     /**
      * @var bool

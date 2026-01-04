@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraint;
 
 class PriceRuleRelationExpressions extends Constraint
 {
-    const ALIAS = 'oro_pricing.validator_constraints.price_rule_relation_expressions_validator';
+    public const ALIAS = 'oro_pricing.validator_constraints.price_rule_relation_expressions_validator';
 
     /**
      * @var string

@@ -7,7 +7,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class Code implements OptionInterface
 {
-    const CVV2 = 'CVV2';
+    public const CVV2 = 'CVV2';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

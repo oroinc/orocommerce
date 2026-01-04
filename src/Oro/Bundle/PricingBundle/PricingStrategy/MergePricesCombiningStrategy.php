@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\ORM\TempTableManipulatorInterface;
  */
 class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
 {
-    const NAME = 'merge_by_priority';
+    public const NAME = 'merge_by_priority';
 
     private TempTableManipulatorInterface $tempTableManipulator;
 

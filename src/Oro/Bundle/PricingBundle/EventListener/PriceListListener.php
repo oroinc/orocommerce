@@ -21,7 +21,7 @@ class PriceListListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
 
-    const IS_ACTIVE_FIELD = 'isActive';
+    public const IS_ACTIVE_FIELD = 'isActive';
 
     /**
      * @var PriceListSchedule[]

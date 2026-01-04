@@ -22,9 +22,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class CombinedPriceListProvider
 {
-    const GLUE = CombinedPriceListIdentifierProviderInterface::GLUE;
-    const MERGE_NOT_ALLOWED_FLAG = 'f';
-    const MERGE_ALLOWED_FLAG = 't';
+    public const GLUE = CombinedPriceListIdentifierProviderInterface::GLUE;
+    public const MERGE_NOT_ALLOWED_FLAG = 'f';
+    public const MERGE_ALLOWED_FLAG = 't';
 
     protected ManagerRegistry $registry;
     protected EventDispatcherInterface $eventDispatcher;

@@ -7,11 +7,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class WorkflowDefinitionCheckoutTestCase extends WebTestCase
 {
-    const XPATH_RECORD_GROUPS = "//label[contains(@class, 'attribute-item__term') and "
+    public const XPATH_RECORD_GROUPS = "//label[contains(@class, 'attribute-item__term') and "
         . "text()='Exclusive Record Groups']/following-sibling::div//li";
-    const XPATH_FLOW_NAME = "//label[contains(@class, 'attribute-item__term') and "
+    public const XPATH_FLOW_NAME = "//label[contains(@class, 'attribute-item__term') and "
         . "text()='Name']/following-sibling::div/div";
-    const XPATH_FLOWCHART = "//div[@data-page-component-name = 'flowchart-container' ]";
+    public const XPATH_FLOWCHART = "//div[@data-page-component-name = 'flowchart-container' ]";
 
     #[\Override]
     protected function setUp(): void

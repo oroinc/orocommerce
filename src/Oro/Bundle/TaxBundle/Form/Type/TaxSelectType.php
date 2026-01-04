@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxSelectType extends AbstractType
 {
-    const NAME = 'oro_tax_select';
+    public const NAME = 'oro_tax_select';
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver)

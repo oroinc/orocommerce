@@ -6,7 +6,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 class CustomerNotesDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    const DATA_NAME = 'customer_notes';
+    public const DATA_NAME = 'customer_notes';
 
     #[\Override]
     public function isEntitySupported($entity)

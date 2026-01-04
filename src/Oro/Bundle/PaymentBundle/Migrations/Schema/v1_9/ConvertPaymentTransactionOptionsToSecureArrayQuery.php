@@ -12,7 +12,7 @@ use Psr\Log\LoggerInterface;
 
 class ConvertPaymentTransactionOptionsToSecureArrayQuery extends ParametrizedMigrationQuery
 {
-    const SELECT_LIMIT = 1000;
+    public const SELECT_LIMIT = 1000;
 
     /**
      * @var AbstractPlatform

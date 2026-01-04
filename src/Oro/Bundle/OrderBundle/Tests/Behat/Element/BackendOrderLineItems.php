@@ -9,8 +9,8 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Table;
  */
 class BackendOrderLineItems extends Table
 {
-    const TABLE_ROW_ELEMENT = 'BackendOrderLineItem';
-    const TABLE_ROW_STRICT_ELEMENT = 'BackendOrderLineItem';
+    public const TABLE_ROW_ELEMENT = 'BackendOrderLineItem';
+    public const TABLE_ROW_STRICT_ELEMENT = 'BackendOrderLineItem';
 
     /**
      * @param string $content

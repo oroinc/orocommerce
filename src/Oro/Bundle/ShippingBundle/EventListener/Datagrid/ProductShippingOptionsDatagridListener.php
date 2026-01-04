@@ -15,7 +15,7 @@ use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
  */
 class ProductShippingOptionsDatagridListener
 {
-    const SHIPPING_OPTIONS_COLUMN = 'product_shipping_options';
+    public const SHIPPING_OPTIONS_COLUMN = 'product_shipping_options';
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;

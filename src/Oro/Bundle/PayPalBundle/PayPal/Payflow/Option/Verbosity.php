@@ -4,9 +4,9 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class Verbosity extends AbstractOption
 {
-    const VERBOSITY = 'VERBOSITY';
+    public const VERBOSITY = 'VERBOSITY';
 
-    const HIGH = 'HIGH';
+    public const HIGH = 'HIGH';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

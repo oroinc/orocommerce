@@ -94,14 +94,14 @@ class Quote implements
     use DatesAwareTrait;
     use ExtendEntityTrait;
 
-    const CUSTOMER_STATUS_CODE = 'quote_customer_status';
-    const INTERNAL_STATUS_CODE = 'quote_internal_status';
+    public const CUSTOMER_STATUS_CODE = 'quote_customer_status';
+    public const INTERNAL_STATUS_CODE = 'quote_internal_status';
 
-    const INTERNAL_STATUS_DRAFT = 'draft';
-    const INTERNAL_STATUS_DELETED = 'deleted';
-    const INTERNAL_STATUS_SENT_TO_CUSTOMER = 'sent_to_customer';
+    public const INTERNAL_STATUS_DRAFT = 'draft';
+    public const INTERNAL_STATUS_DELETED = 'deleted';
+    public const INTERNAL_STATUS_SENT_TO_CUSTOMER = 'sent_to_customer';
 
-    const INTERNAL_STATUSES = [
+    public const INTERNAL_STATUSES = [
         'template',
         'open',
         'sent_to_customer',

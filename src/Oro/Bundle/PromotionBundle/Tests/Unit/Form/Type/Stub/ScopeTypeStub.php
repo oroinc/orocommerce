@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ScopeTypeStub extends AbstractType
 {
-    const NAME = 'oro_scope';
+    public const NAME = 'oro_scope';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

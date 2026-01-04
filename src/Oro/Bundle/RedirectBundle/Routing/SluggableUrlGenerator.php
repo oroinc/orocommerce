@@ -17,10 +17,10 @@ use Symfony\Component\Routing\RequestContext;
  */
 class SluggableUrlGenerator implements UrlGeneratorInterface
 {
-    const DEFAULT_LOCALIZATION_ID = 0;
-    const CONTEXT_DELIMITER = '_item';
-    const CONTEXT_TYPE = 'context_type';
-    const CONTEXT_DATA = 'context_data';
+    public const DEFAULT_LOCALIZATION_ID = 0;
+    public const CONTEXT_DELIMITER = '_item';
+    public const CONTEXT_TYPE = 'context_type';
+    public const CONTEXT_DATA = 'context_data';
 
     private UrlGeneratorInterface $generator;
 

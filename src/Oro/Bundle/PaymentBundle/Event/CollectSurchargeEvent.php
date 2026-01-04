@@ -7,7 +7,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class CollectSurchargeEvent extends Event
 {
-    const NAME = 'oro_payment.event.collect_surcharge';
+    public const NAME = 'oro_payment.event.collect_surcharge';
 
     /** @var object */
     private $entity;

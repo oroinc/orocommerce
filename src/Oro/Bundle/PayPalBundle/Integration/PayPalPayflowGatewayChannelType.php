@@ -7,7 +7,7 @@ use Oro\Bundle\IntegrationBundle\Provider\IconAwareIntegrationInterface;
 
 class PayPalPayflowGatewayChannelType implements ChannelInterface, IconAwareIntegrationInterface
 {
-    const TYPE = 'paypal_payflow_gateway';
+    public const TYPE = 'paypal_payflow_gateway';
 
     #[\Override]
     public function getLabel()

@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrderLineItemsCollectionType extends AbstractType
 {
-    const NAME = 'oro_order_line_items_collection';
+    public const NAME = 'oro_order_line_items_collection';
 
     #[\Override]
     public function getParent(): ?string

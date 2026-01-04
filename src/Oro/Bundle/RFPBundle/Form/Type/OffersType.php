@@ -11,9 +11,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OffersType extends AbstractType
 {
-    const NAME = 'oro_rfp_request_offers';
+    public const NAME = 'oro_rfp_request_offers';
 
-    const OFFERS_OPTION = 'offers';
+    public const OFFERS_OPTION = 'offers';
 
     #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)

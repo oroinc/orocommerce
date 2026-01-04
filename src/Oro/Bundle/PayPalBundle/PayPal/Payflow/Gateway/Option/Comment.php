@@ -7,8 +7,8 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class Comment extends AbstractOption
 {
-    const COMMENT1 = 'COMMENT1';
-    const COMMENT2 = 'COMMENT2';
+    public const COMMENT1 = 'COMMENT1';
+    public const COMMENT2 = 'COMMENT2';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

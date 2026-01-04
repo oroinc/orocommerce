@@ -14,7 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class CategoryFallbackProvider extends AbstractEntityFallbackProvider
 {
-    const FALLBACK_ID = 'category';
+    public const FALLBACK_ID = 'category';
 
     /**
      * @var DoctrineHelper

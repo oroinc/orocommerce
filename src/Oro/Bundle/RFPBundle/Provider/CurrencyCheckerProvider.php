@@ -12,7 +12,7 @@ use Oro\Bundle\RFPBundle\Entity\Request;
  */
 class CurrencyCheckerProvider implements RepositoryCurrencyCheckerProviderInterface
 {
-    const ENTITY_LABEL = 'oro.rfp.request.entity_label';
+    public const ENTITY_LABEL = 'oro.rfp.request.entity_label';
 
     /**
      * @var ManagerRegistry

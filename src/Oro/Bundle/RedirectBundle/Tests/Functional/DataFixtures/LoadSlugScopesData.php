@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadSlugScopesData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
-    const SCOPE_KEY = 'slug_scope';
+    public const SCOPE_KEY = 'slug_scope';
 
     /**
      * @var ContainerInterface

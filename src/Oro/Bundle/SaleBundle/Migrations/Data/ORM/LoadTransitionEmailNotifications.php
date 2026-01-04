@@ -23,7 +23,7 @@ class LoadTransitionEmailNotifications extends AbstractFixture implements
 {
     use ContainerAwareTrait;
 
-    const WORKFLOW_NAME = 'b2b_quote_backoffice_approvals';
+    public const WORKFLOW_NAME = 'b2b_quote_backoffice_approvals';
 
     /** @var array */
     protected static $notifications = [

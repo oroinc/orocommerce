@@ -28,7 +28,7 @@ class WebCatalogEntityIndexerListener
 {
     use ContextTrait;
 
-    const ASSIGN_TYPE_CONTENT_VARIANT = 'variant';
+    public const ASSIGN_TYPE_CONTENT_VARIANT = 'variant';
 
     /**
      * @var ManagerRegistry

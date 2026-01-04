@@ -18,8 +18,8 @@ class RemoveRestrictedProducts extends AbstractAction
 {
     use ProductHolderTrait;
 
-    const OPTION_KEY_ATTRIBUTE = 'attribute';
-    const OPTION_KEY_PRODUCT_HOLDER = 'productHolderPath';
+    public const OPTION_KEY_ATTRIBUTE = 'attribute';
+    public const OPTION_KEY_PRODUCT_HOLDER = 'productHolderPath';
 
     /** @var array */
     private $options;

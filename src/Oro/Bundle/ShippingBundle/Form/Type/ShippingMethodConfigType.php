@@ -16,7 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ShippingMethodConfigType extends AbstractType
 {
-    const NAME = 'oro_shipping_method_config';
+    public const NAME = 'oro_shipping_method_config';
 
     /**
      * @var ShippingMethodProviderInterface

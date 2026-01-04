@@ -16,7 +16,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadShoppingListLineItemsData extends AbstractFixture implements DependentFixtureInterface
 {
-    const LINE_ITEM_1 = 'promo_sl_line_item_1';
+    public const LINE_ITEM_1 = 'promo_sl_line_item_1';
 
     /**
      * @var array

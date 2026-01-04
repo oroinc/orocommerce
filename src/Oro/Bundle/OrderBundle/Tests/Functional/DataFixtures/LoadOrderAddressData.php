@@ -12,10 +12,10 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 
 class LoadOrderAddressData extends AbstractFixture implements DependentFixtureInterface
 {
-    const ORDER_ADDRESS_1 = 'order_address.office';
-    const ORDER_ADDRESS_2 = 'order_address.warehouse';
-    const ORDER_ADDRESS_3 = 'order_address.order2.billing';
-    const ORDER_ADDRESS_4 = 'order_address.order2.shipping';
+    public const ORDER_ADDRESS_1 = 'order_address.office';
+    public const ORDER_ADDRESS_2 = 'order_address.warehouse';
+    public const ORDER_ADDRESS_3 = 'order_address.order2.billing';
+    public const ORDER_ADDRESS_4 = 'order_address.order2.shipping';
 
     /**
      * @var array

@@ -17,7 +17,7 @@ class LoadCommerceFooterLinksMenuData extends AbstractFixture implements Contain
 {
     use ContainerAwareTrait;
 
-    const MENU = 'commerce_footer_links';
+    public const MENU = 'commerce_footer_links';
 
     /** @var array */
     protected static $menuUpdates = [

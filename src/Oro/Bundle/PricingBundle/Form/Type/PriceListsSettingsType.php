@@ -10,15 +10,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PriceListsSettingsType extends AbstractType
 {
-    const NAME = 'oro_pricing_price_lists_settings';
+    public const NAME = 'oro_pricing_price_lists_settings';
 
     // fields
-    const PRICE_LIST_COLLECTION_FIELD = 'priceListCollection';
-    const FALLBACK_FIELD = 'fallback';
+    public const PRICE_LIST_COLLECTION_FIELD = 'priceListCollection';
+    public const FALLBACK_FIELD = 'fallback';
 
     // options
-    const FALLBACK_CHOICES = 'fallback_choices';
-    const PRICE_LIST_RELATION_CLASS = 'price_list_relation_class';
+    public const FALLBACK_CHOICES = 'fallback_choices';
+    public const PRICE_LIST_RELATION_CLASS = 'price_list_relation_class';
 
     public function getName()
     {

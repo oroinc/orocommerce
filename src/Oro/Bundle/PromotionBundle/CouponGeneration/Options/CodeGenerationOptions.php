@@ -4,9 +4,9 @@ namespace Oro\Bundle\PromotionBundle\CouponGeneration\Options;
 
 class CodeGenerationOptions
 {
-    const NUMERIC_CODE_TYPE = 'numeric';
-    const ALPHANUMERIC_CODE_TYPE = 'alphanumeric';
-    const ALPHABETIC_CODE_TYPE = 'alphabetic';
+    public const NUMERIC_CODE_TYPE = 'numeric';
+    public const ALPHANUMERIC_CODE_TYPE = 'alphanumeric';
+    public const ALPHABETIC_CODE_TYPE = 'alphabetic';
 
     /**
      * @var int

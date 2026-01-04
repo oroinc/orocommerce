@@ -16,8 +16,8 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerGroupFallbackRep
 #[ORM\UniqueConstraint(name: 'oro_price_list_cus_gr_fb_unq', columns: ['customer_group_id', 'website_id'])]
 class PriceListCustomerGroupFallback extends PriceListFallback implements CustomerGroupAwareInterface
 {
-    const WEBSITE = 0;
-    const CURRENT_ACCOUNT_GROUP_ONLY = 1;
+    public const WEBSITE = 0;
+    public const CURRENT_ACCOUNT_GROUP_ONLY = 1;
 
     #[ORM\ManyToOne(targetEntity: CustomerGroup::class)]
     #[ORM\JoinColumn(name: 'customer_group_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]

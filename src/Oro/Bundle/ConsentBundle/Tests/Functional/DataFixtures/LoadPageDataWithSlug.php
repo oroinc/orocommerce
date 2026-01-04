@@ -14,12 +14,12 @@ class LoadPageDataWithSlug extends AbstractFixture implements ContainerAwareInte
 {
     use ContainerAwareTrait;
 
-    const PAGE_1 = 'page.1';
-    const PAGE_2 = 'page.2';
-    const PAGE_3 = 'page.3';
-    const PAGE_1_SLUG = 'page1';
-    const PAGE_2_SLUG = 'page2';
-    const PAGE_3_SLUG = 'page3';
+    public const PAGE_1 = 'page.1';
+    public const PAGE_2 = 'page.2';
+    public const PAGE_3 = 'page.3';
+    public const PAGE_1_SLUG = 'page1';
+    public const PAGE_2_SLUG = 'page2';
+    public const PAGE_3_SLUG = 'page3';
 
     /**
      * @var array

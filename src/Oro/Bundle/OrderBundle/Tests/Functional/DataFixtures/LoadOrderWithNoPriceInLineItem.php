@@ -27,7 +27,7 @@ class LoadOrderWithNoPriceInLineItem extends AbstractFixture implements
 {
     use ContainerAwareTrait;
 
-    const ORDER_WITH_NULL_PRICE = 'order_with_no_price_in_line_item';
+    public const ORDER_WITH_NULL_PRICE = 'order_with_no_price_in_line_item';
 
     #[\Override]
     public function getDependencies()

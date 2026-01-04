@@ -13,8 +13,8 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
 class LoadWebCatalogScopes extends AbstractFixture implements DependentFixtureInterface
 {
-    const SCOPE1 = 'web_catalog.scope1';
-    const SCOPE2 = 'web_catalog.scope2';
+    public const SCOPE1 = 'web_catalog.scope1';
+    public const SCOPE2 = 'web_catalog.scope2';
 
     #[\Override]
     public function getDependencies()

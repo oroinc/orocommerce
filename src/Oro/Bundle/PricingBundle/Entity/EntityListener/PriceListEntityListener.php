@@ -18,8 +18,8 @@ use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
  */
 class PriceListEntityListener
 {
-    const FIELD_PRODUCT_ASSIGNMENT_RULE = 'productAssignmentRule';
-    const ACTIVE = 'active';
+    public const FIELD_PRODUCT_ASSIGNMENT_RULE = 'productAssignmentRule';
+    public const ACTIVE = 'active';
 
     /** @var PriceListRelationTriggerHandler */
     protected $triggerHandler;

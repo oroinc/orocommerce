@@ -9,11 +9,11 @@ use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 
 class LoadShippingServiceRulesData extends AbstractFixture implements OrderedFixtureInterface
 {
-    const REFERENCE_RULE1 = 'fedex_shipping_service_rule1';
-    const REFERENCE_RULE2 = 'fedex_shipping_service_rule2';
-    const REFERENCE_RULE3 = 'fedex_shipping_service_rule3';
-    const REFERENCE_RULE4 = 'fedex_shipping_service_rule4';
-    const REFERENCE_RULE5 = 'fedex_shipping_service_rule5';
+    public const REFERENCE_RULE1 = 'fedex_shipping_service_rule1';
+    public const REFERENCE_RULE2 = 'fedex_shipping_service_rule2';
+    public const REFERENCE_RULE3 = 'fedex_shipping_service_rule3';
+    public const REFERENCE_RULE4 = 'fedex_shipping_service_rule4';
+    public const REFERENCE_RULE5 = 'fedex_shipping_service_rule5';
 
     #[\Override]
     public function getOrder()

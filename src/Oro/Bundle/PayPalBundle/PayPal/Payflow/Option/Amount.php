@@ -4,14 +4,14 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class Amount implements OptionInterface
 {
-    const AMT = 'AMT';
+    public const AMT = 'AMT';
 
-    const ITEMAMT = 'ITEMAMT';
-    const TAXAMT = 'TAXAMT';
-    const FREIGHTAMT = 'FREIGHTAMT';
-    const HANDLINGAMT = 'HANDLINGAMT';
-    const INSURANCEAMT = 'INSURANCEAMT';
-    const DISCOUNT = 'DISCOUNT';
+    public const ITEMAMT = 'ITEMAMT';
+    public const TAXAMT = 'TAXAMT';
+    public const FREIGHTAMT = 'FREIGHTAMT';
+    public const HANDLINGAMT = 'HANDLINGAMT';
+    public const INSURANCEAMT = 'INSURANCEAMT';
+    public const DISCOUNT = 'DISCOUNT';
 
     /** @var bool */
     protected $amountRequired;

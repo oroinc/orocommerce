@@ -19,9 +19,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class PriceRuleRelationExpressionsValidator extends ConstraintValidator
 {
-    const QUANTITY_FIELD_NAME = 'oro.pricing.pricerule.quantity.label';
-    const CURRENCY_FIELD_NAME = 'oro.pricing.pricerule.currency.label';
-    const PRODUCT_UNIT_FIELD_NAME = 'oro.pricing.pricerule.product_unit.label';
+    public const QUANTITY_FIELD_NAME = 'oro.pricing.pricerule.quantity.label';
+    public const CURRENCY_FIELD_NAME = 'oro.pricing.pricerule.currency.label';
+    public const PRODUCT_UNIT_FIELD_NAME = 'oro.pricing.pricerule.product_unit.label';
 
     /**
      * @var ExpressionParser

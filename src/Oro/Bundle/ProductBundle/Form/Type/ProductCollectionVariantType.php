@@ -14,8 +14,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProductCollectionVariantType extends AbstractType
 {
-    const NAME = 'oro_product_collection_variant';
-    const PRODUCT_COLLECTION_SEGMENT = 'productCollectionSegment';
+    public const NAME = 'oro_product_collection_variant';
+    public const PRODUCT_COLLECTION_SEGMENT = 'productCollectionSegment';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

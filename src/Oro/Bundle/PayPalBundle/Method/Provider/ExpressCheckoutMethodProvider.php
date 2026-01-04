@@ -9,7 +9,7 @@ use Oro\Bundle\PayPalBundle\Method\Factory\PayPalExpressCheckoutPaymentMethodFac
 
 class ExpressCheckoutMethodProvider extends AbstractPaymentMethodProvider
 {
-    const TYPE = 'express_checkout';
+    public const TYPE = 'express_checkout';
 
     /**
      * @var PayPalExpressCheckoutConfigProviderInterface

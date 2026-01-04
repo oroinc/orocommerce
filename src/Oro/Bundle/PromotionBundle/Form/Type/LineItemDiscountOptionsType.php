@@ -14,9 +14,9 @@ use Symfony\Component\Validator\Constraints\GreaterThan;
 
 class LineItemDiscountOptionsType extends AbstractType
 {
-    const NAME = 'oro_promotion_line_item_discount_options';
+    public const NAME = 'oro_promotion_line_item_discount_options';
 
-    const APPLY_TO_FIELD_CHOICES = [
+    public const APPLY_TO_FIELD_CHOICES = [
         LineItemsDiscount::EACH_ITEM,
         LineItemsDiscount::LINE_ITEMS_TOTAL
     ];

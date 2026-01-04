@@ -19,7 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ProductUpdateHandler extends UpdateHandlerFacade
 {
-    const ACTION_SAVE_AND_DUPLICATE = 'save_and_duplicate';
+    public const ACTION_SAVE_AND_DUPLICATE = 'save_and_duplicate';
 
     private ActionGroupRegistry $actionGroupRegistry;
     private TranslatorInterface $translator;

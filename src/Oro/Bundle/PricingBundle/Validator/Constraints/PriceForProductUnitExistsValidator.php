@@ -12,7 +12,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class PriceForProductUnitExistsValidator extends ConstraintValidator
 {
-    const PRICE_LIST_KEY = 'priceList';
+    public const PRICE_LIST_KEY = 'priceList';
 
     /**
      * @var ManagerRegistry

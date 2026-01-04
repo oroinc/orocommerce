@@ -6,8 +6,8 @@ use Oro\Component\SEO\Model\DTO\UrlItemInterface;
 
 abstract class AbstractXmlSitemapStorage implements SitemapStorageInterface
 {
-    const URL_NUMBER_LIMIT = 10000;
-    const FILE_SIZE_LIMIT = 10485760; // 10 MB
+    public const URL_NUMBER_LIMIT = 10000;
+    public const FILE_SIZE_LIMIT = 10485760; // 10 MB
 
     /**
      * @var int

@@ -18,9 +18,9 @@ use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData
 
 abstract class AbstractLoadWebCatalogData extends AbstractFixture implements DependentFixtureInterface
 {
-    const CONTENT_NODE_SLUG = '/content-node-slug';
-    const CONTENT_NODE = 'content-node';
-    const CONTENT_NODE_TITLE = 'Content node title';
+    public const CONTENT_NODE_SLUG = '/content-node-slug';
+    public const CONTENT_NODE = 'content-node';
+    public const CONTENT_NODE_TITLE = 'Content node title';
 
     #[\Override]
     public function load(ObjectManager $manager)

@@ -17,7 +17,7 @@ class LoadOrderData extends AbstractFixture implements DependentFixtureInterface
 {
     use ContainerAwareTrait;
 
-    const PROMOTION_ORDER_1 = 'promo_order_1';
+    public const PROMOTION_ORDER_1 = 'promo_order_1';
 
     #[\Override]
     public function getDependencies()

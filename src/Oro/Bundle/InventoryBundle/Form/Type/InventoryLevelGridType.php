@@ -21,7 +21,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class InventoryLevelGridType extends AbstractType
 {
-    const NAME = 'oro_inventory_level_grid';
+    public const NAME = 'oro_inventory_level_grid';
 
     /**
      * @var FormFactoryInterface

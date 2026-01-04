@@ -18,9 +18,9 @@ use Symfony\Component\PropertyAccess\PropertyPathInterface;
  */
 class PriceListBackgroundRecalculateAction extends AbstractAction
 {
-    const NAME = 'price_list_recalculate';
+    public const NAME = 'price_list_recalculate';
 
-    const OPTION_KEY_PRICE_LIST = 'price_list';
+    public const OPTION_KEY_PRICE_LIST = 'price_list';
 
     /** @var PriceListProductAssignmentBuilder */
     protected $assignmentBuilder;

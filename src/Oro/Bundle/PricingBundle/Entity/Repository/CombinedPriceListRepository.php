@@ -28,7 +28,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 class CombinedPriceListRepository extends BasePriceListRepository
 {
-    const CPL_BATCH_SIZE = 100;
+    public const CPL_BATCH_SIZE = 100;
 
     /**
      * @param CombinedPriceList $combinedPriceList

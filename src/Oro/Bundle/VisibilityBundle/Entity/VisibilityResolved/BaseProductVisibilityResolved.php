@@ -17,8 +17,8 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 #[ORM\MappedSuperclass]
 abstract class BaseProductVisibilityResolved extends BaseVisibilityResolved
 {
-    const SOURCE_STATIC = 1;
-    const SOURCE_CATEGORY = 2;
+    public const SOURCE_STATIC = 1;
+    public const SOURCE_CATEGORY = 2;
 
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: Scope::class)]

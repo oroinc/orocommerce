@@ -7,11 +7,11 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class Action implements OptionInterface
 {
-    const ACTION = 'ACTION';
+    public const ACTION = 'ACTION';
 
-    const SET_EC = 'S';
-    const GET_EC_DETAILS = 'G';
-    const DO_EC = 'D';
+    public const SET_EC = 'S';
+    public const GET_EC_DETAILS = 'G';
+    public const DO_EC = 'D';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

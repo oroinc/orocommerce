@@ -8,7 +8,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\ReturnUrl;
 
 class CreateSecureToken extends AbstractBooleanOption
 {
-    const CREATESECURETOKEN = 'CREATESECURETOKEN';
+    public const CREATESECURETOKEN = 'CREATESECURETOKEN';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

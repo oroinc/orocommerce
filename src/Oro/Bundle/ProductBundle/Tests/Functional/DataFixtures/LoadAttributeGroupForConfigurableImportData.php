@@ -16,8 +16,8 @@ class LoadAttributeGroupForConfigurableImportData extends AbstractFixture implem
 {
     use ContainerAwareTrait;
 
-    const CONFIGURABLE_ATTRIBUTE_GROUP_1 = 'configurable_attribute_group_1';
-    const BOOL_CONFIGURABLE_ATTRIBUTE = 'testAttrBoolean';
+    public const CONFIGURABLE_ATTRIBUTE_GROUP_1 = 'configurable_attribute_group_1';
+    public const BOOL_CONFIGURABLE_ATTRIBUTE = 'testAttrBoolean';
 
     protected array $groups = [
         'configurable' => [

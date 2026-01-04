@@ -17,7 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ContentNodeSelectSystemConfigType extends AbstractType
 {
-    const NAME = 'oro_web_catalog_content_node_select_system_config';
+    public const NAME = 'oro_web_catalog_content_node_select_system_config';
 
     /** @var DoctrineHelper */
     private $doctrineHelper;

@@ -12,13 +12,13 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
  */
 class ProductVisibilityIndexer
 {
-    const FIELD_VISIBILITY_ANONYMOUS = 'visibility_anonymous';
+    public const FIELD_VISIBILITY_ANONYMOUS = 'visibility_anonymous';
 
-    const FIELD_VISIBILITY_NEW = 'visibility_new';
+    public const FIELD_VISIBILITY_NEW = 'visibility_new';
 
-    const FIELD_VISIBILITY_ACCOUNT = 'visibility_customer.CUSTOMER_ID';
+    public const FIELD_VISIBILITY_ACCOUNT = 'visibility_customer.CUSTOMER_ID';
 
-    const FIELD_IS_VISIBLE_BY_DEFAULT = 'is_visible_by_default';
+    public const FIELD_IS_VISIBLE_BY_DEFAULT = 'is_visible_by_default';
 
     /**
      * @var ProductVisibilityProvider

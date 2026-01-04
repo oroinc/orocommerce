@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class CmsPageContentVariantType implements ContentVariantTypeInterface, ContentVariantEntityProviderInterface
 {
-    const TYPE = 'cms_page';
+    public const TYPE = 'cms_page';
 
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;

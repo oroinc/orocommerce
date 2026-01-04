@@ -7,7 +7,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class PriceListToProductSaveAfterEvent extends Event
 {
-    const NAME = 'oro_pricing.price_list_to_product.save_after';
+    public const NAME = 'oro_pricing.price_list_to_product.save_after';
 
     /**
      * @var PriceListToProduct

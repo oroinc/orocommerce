@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationExceptio
  */
 class ProductAccessExceptionListener
 {
-    const PRODUCT_VIEW_ROUTE = 'oro_product_frontend_product_view';
+    public const PRODUCT_VIEW_ROUTE = 'oro_product_frontend_product_view';
 
     /**
      * @var RequestStack

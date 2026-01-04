@@ -18,9 +18,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class SlugWithRedirectType extends AbstractType
 {
-    const NAME = 'oro_redirect_slug_with_redirect';
-    const TEXT_SLUG_PROTOTYPE_FIELD_NAME = 'textSlugPrototype';
-    const CREATE_REDIRECT_FIELD_NAME = 'createRedirect';
+    public const NAME = 'oro_redirect_slug_with_redirect';
+    public const TEXT_SLUG_PROTOTYPE_FIELD_NAME = 'textSlugPrototype';
+    public const CREATE_REDIRECT_FIELD_NAME = 'createRedirect';
 
     /**
      * @var ConfirmSlugChangeFormHelper

@@ -22,32 +22,32 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 #[ORM\Entity(repositoryClass: PayPalSettingsRepository::class)]
 class PayPalSettings extends Transport
 {
-    const CREDIT_CARD_LABELS_KEY = 'credit_card_labels';
-    const CREDIT_CARD_SHORT_LABELS_KEY = 'credit_card_short_labels';
-    const CREDIT_CARD_PAYMENT_ACTION_KEY = 'credit_card_payment_action';
+    public const CREDIT_CARD_LABELS_KEY = 'credit_card_labels';
+    public const CREDIT_CARD_SHORT_LABELS_KEY = 'credit_card_short_labels';
+    public const CREDIT_CARD_PAYMENT_ACTION_KEY = 'credit_card_payment_action';
 
-    const EXPRESS_CHECKOUT_NAME_KEY = 'express_checkout_name';
-    const EXPRESS_CHECKOUT_LABELS_KEY = 'express_checkout_labels';
-    const EXPRESS_CHECKOUT_SHORT_LABELS_KEY = 'express_checkout_short_labels';
-    const EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY = 'express_checkout_payment_action';
+    public const EXPRESS_CHECKOUT_NAME_KEY = 'express_checkout_name';
+    public const EXPRESS_CHECKOUT_LABELS_KEY = 'express_checkout_labels';
+    public const EXPRESS_CHECKOUT_SHORT_LABELS_KEY = 'express_checkout_short_labels';
+    public const EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY = 'express_checkout_payment_action';
 
-    const ALLOWED_CREDIT_CARD_TYPES_KEY = 'allowed_credit_card_types';
-    const PARTNER_KEY = 'partner';
-    const VENDOR_KEY = 'vendor';
-    const USER_KEY = 'user';
-    const PASSWORD_KEY = 'password';
+    public const ALLOWED_CREDIT_CARD_TYPES_KEY = 'allowed_credit_card_types';
+    public const PARTNER_KEY = 'partner';
+    public const VENDOR_KEY = 'vendor';
+    public const USER_KEY = 'user';
+    public const PASSWORD_KEY = 'password';
 
-    const TEST_MODE_KEY = 'test_mode';
-    const DEBUG_MODE_KEY = 'debug_mode';
+    public const TEST_MODE_KEY = 'test_mode';
+    public const DEBUG_MODE_KEY = 'debug_mode';
 
-    const USE_PROXY_KEY = 'use_proxy';
-    const PROXY_HOST_KEY = 'proxy_host';
-    const PROXY_PORT_KEY = 'proxy_port';
+    public const USE_PROXY_KEY = 'use_proxy';
+    public const PROXY_HOST_KEY = 'proxy_host';
+    public const PROXY_PORT_KEY = 'proxy_port';
 
-    const ENABLE_SSL_VERIFICATION_KEY = 'enable_ssl_verification';
-    const REQUIRE_CVV_ENTRY_KEY = 'require_cvv_entry';
-    const ZERO_AMOUNT_AUTHORIZATION_KEY = 'zero_amount_authorization';
-    const AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY = 'authorization_for_required_amount';
+    public const ENABLE_SSL_VERIFICATION_KEY = 'enable_ssl_verification';
+    public const REQUIRE_CVV_ENTRY_KEY = 'require_cvv_entry';
+    public const ZERO_AMOUNT_AUTHORIZATION_KEY = 'zero_amount_authorization';
+    public const AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY = 'authorization_for_required_amount';
 
     /**
      * @var ParameterBag

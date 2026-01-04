@@ -6,9 +6,9 @@ use Oro\Bundle\PaymentBundle\Method\Config\ParameterBag\AbstractParameterBagPaym
 
 abstract class AbstractPayPalConfig extends AbstractParameterBagPaymentConfig implements PayPalConfigInterface
 {
-    const CREDENTIALS_KEY  = 'credentials';
-    const PURCHASE_ACTION_KEY  = 'purchase_action';
-    const TEST_MODE_KEY  = 'test_mode';
+    public const CREDENTIALS_KEY  = 'credentials';
+    public const PURCHASE_ACTION_KEY  = 'purchase_action';
+    public const TEST_MODE_KEY  = 'test_mode';
 
     #[\Override]
     public function getCredentials()

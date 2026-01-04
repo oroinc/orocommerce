@@ -8,7 +8,7 @@ use Oro\Bundle\EntityBundle\Fallback\Provider\AbstractEntityFallbackProvider;
 
 class ParentCategoryFallbackProvider extends AbstractEntityFallbackProvider
 {
-    const FALLBACK_ID = 'parentCategory';
+    public const FALLBACK_ID = 'parentCategory';
 
     #[\Override]
     public function getFallbackHolderEntity($object, $objectFieldName)

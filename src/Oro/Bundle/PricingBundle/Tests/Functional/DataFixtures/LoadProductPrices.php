@@ -17,23 +17,23 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadProductPrices extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
-    const PRODUCT_PRICE_1 = 'product_price.1';
-    const PRODUCT_PRICE_2 = 'product_price.2';
-    const PRODUCT_PRICE_3 = 'product_price.3';
-    const PRODUCT_PRICE_4 = 'product_price.4';
-    const PRODUCT_PRICE_5 = 'product_price.5';
-    const PRODUCT_PRICE_6 = 'product_price.6';
-    const PRODUCT_PRICE_7 = 'product_price.7';
-    const PRODUCT_PRICE_8 = 'product_price.8';
-    const PRODUCT_PRICE_9 = 'product_price.9';
-    const PRODUCT_PRICE_10 = 'product_price.10';
-    const PRODUCT_PRICE_11 = 'product_price.11';
-    const PRODUCT_PRICE_12 = 'product_price.12';
-    const PRODUCT_PRICE_13 = 'product_price.13';
-    const PRODUCT_PRICE_14 = 'product_price.14';
-    const PRODUCT_PRICE_15 = 'product_price.15';
-    const PRODUCT_PRICE_16 = 'product_price.16';
-    const PRODUCT_PRICE_17 = 'product_price.17';
+    public const PRODUCT_PRICE_1 = 'product_price.1';
+    public const PRODUCT_PRICE_2 = 'product_price.2';
+    public const PRODUCT_PRICE_3 = 'product_price.3';
+    public const PRODUCT_PRICE_4 = 'product_price.4';
+    public const PRODUCT_PRICE_5 = 'product_price.5';
+    public const PRODUCT_PRICE_6 = 'product_price.6';
+    public const PRODUCT_PRICE_7 = 'product_price.7';
+    public const PRODUCT_PRICE_8 = 'product_price.8';
+    public const PRODUCT_PRICE_9 = 'product_price.9';
+    public const PRODUCT_PRICE_10 = 'product_price.10';
+    public const PRODUCT_PRICE_11 = 'product_price.11';
+    public const PRODUCT_PRICE_12 = 'product_price.12';
+    public const PRODUCT_PRICE_13 = 'product_price.13';
+    public const PRODUCT_PRICE_14 = 'product_price.14';
+    public const PRODUCT_PRICE_15 = 'product_price.15';
+    public const PRODUCT_PRICE_16 = 'product_price.16';
+    public const PRODUCT_PRICE_17 = 'product_price.17';
 
     /**
      * @var ContainerInterface

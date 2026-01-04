@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PageSelectType extends AbstractType
 {
-    const NAME = 'oro_cms_page_select';
+    public const NAME = 'oro_cms_page_select';
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver)

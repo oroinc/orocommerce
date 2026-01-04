@@ -13,7 +13,7 @@ use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
  */
 class PriceRuleEntityListener
 {
-    const FIELD_QUANTITY = 'quantity';
+    public const FIELD_QUANTITY = 'quantity';
 
     /** @var RuleCache */
     protected $cache;

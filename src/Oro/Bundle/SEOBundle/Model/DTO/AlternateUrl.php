@@ -6,7 +6,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 
 class AlternateUrl
 {
-    const HREF_LANG_X_DEFAULT = 'x-default';
+    public const HREF_LANG_X_DEFAULT = 'x-default';
 
     /**
      * @var string

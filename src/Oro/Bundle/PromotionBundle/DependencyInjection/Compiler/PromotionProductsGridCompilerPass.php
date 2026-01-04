@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class PromotionProductsGridCompilerPass implements CompilerPassInterface
 {
-    const PRODUCT_COLLECTION_DATAGRID_LISTENER = 'oro_product.event_listener.product_collection_datagrid';
+    public const PRODUCT_COLLECTION_DATAGRID_LISTENER = 'oro_product.event_listener.product_collection_datagrid';
 
     #[\Override]
     public function process(ContainerBuilder $container)

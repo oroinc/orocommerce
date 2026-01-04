@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class ProductsController extends AbstractController
 {
-    const PRODUCT_GRID_NAME = 'order-products-previously-purchased-grid';
+    public const PRODUCT_GRID_NAME = 'order-products-previously-purchased-grid';
 
     /**
      * @return array

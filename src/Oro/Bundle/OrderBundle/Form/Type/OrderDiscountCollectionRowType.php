@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class OrderDiscountCollectionRowType extends AbstractType
 {
-    const NAME = 'oro_order_discount_collection_row';
+    public const NAME = 'oro_order_discount_collection_row';
 
     /**
      * @var string

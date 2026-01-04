@@ -9,7 +9,7 @@ use Oro\Bundle\ConsentBundle\Entity\Consent;
  */
 interface ConsentFilterInterface
 {
-    const LOG_ERRORS_PARAMETER = 'log_errors';
+    public const LOG_ERRORS_PARAMETER = 'log_errors';
 
     /**
      * `false` result tells that this Consent must not be included in the return result set

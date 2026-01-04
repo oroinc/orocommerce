@@ -7,8 +7,8 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ProductNormalizerEvent extends Event
 {
-    const NORMALIZE = 'oro_product.normalizer.normalizer';
-    const DENORMALIZE = 'oro_product.normalizer.denormalizer';
+    public const NORMALIZE = 'oro_product.normalizer.normalizer';
+    public const DENORMALIZE = 'oro_product.normalizer.denormalizer';
 
     /**
      * @var Product

@@ -13,8 +13,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class OroSEOBundle implements Migration
 {
-    const ENTITY_TO = LocalizedFallbackValue::class;
-    const RELATION_TYPE = 'manyToMany';
+    public const ENTITY_TO = LocalizedFallbackValue::class;
+    public const RELATION_TYPE = 'manyToMany';
 
     #[\Override]
     public function up(Schema $schema, QueryBag $queries)

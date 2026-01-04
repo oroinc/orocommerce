@@ -21,7 +21,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
 {
     private const EXTENDED_TYPE = OrderLineItemType::class;
 
-    const BASE_ORDER = 60;
+    public const BASE_ORDER = 60;
 
     /**
      * @var TaxationSettingsProvider

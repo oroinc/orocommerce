@@ -14,18 +14,19 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class ProductExpressionServicesPass implements CompilerPassInterface
 {
-    const EXPRESSION_PARSER = 'oro_product.expression.parser';
-    const QUERY_EXPRESSION_BUILDER = 'oro_product.expression.query_expression_builder';
-    const EXPRESSION_PREPROCESSOR = 'oro_product.expression.preprocessor';
-    const NODE_TO_QUERY_DESIGNER_CONVERTER = 'oro_product.expression.node_to_query_designer_converter';
-    const QUERY_CONVERTER = 'oro_product.expression.query_converter';
+    public const EXPRESSION_PARSER = 'oro_product.expression.parser';
+    public const QUERY_EXPRESSION_BUILDER = 'oro_product.expression.query_expression_builder';
+    public const EXPRESSION_PREPROCESSOR = 'oro_product.expression.preprocessor';
+    public const NODE_TO_QUERY_DESIGNER_CONVERTER = 'oro_product.expression.node_to_query_designer_converter';
+    public const QUERY_CONVERTER = 'oro_product.expression.query_converter';
 
-    const ASSIGNED_PRODUCTS_CONVERTER = 'oro_pricing.expression.query_expression.converter.assigned_products';
-    const ASSIGNMENT_RULE_PREPROCESSOR = 'oro_pricing.expression.preprocessor.product_assignment_rule';
-    const PRICE_LIST_COLUMN_INFORMATION_PROVIDER = 'oro_pricing.expression.column_information.price_list_provider';
-    const PRICE_LIST_QUERY_CONVERTER_EXTENSION = 'oro_pricing.expression.price_list_query_converter_extension';
-    const FIELDS_PROVIDER = 'oro_product.expression.fields_provider';
-    const AUTOCOMPLETE_FIELDS_PROVIDER = 'oro_product.autocomplete_fields_provider';
+    public const ASSIGNED_PRODUCTS_CONVERTER = 'oro_pricing.expression.query_expression.converter.assigned_products';
+    public const ASSIGNMENT_RULE_PREPROCESSOR = 'oro_pricing.expression.preprocessor.product_assignment_rule';
+    public const PRICE_LIST_COLUMN_INFORMATION_PROVIDER =
+        'oro_pricing.expression.column_information.price_list_provider';
+    public const PRICE_LIST_QUERY_CONVERTER_EXTENSION = 'oro_pricing.expression.price_list_query_converter_extension';
+    public const FIELDS_PROVIDER = 'oro_product.expression.fields_provider';
+    public const AUTOCOMPLETE_FIELDS_PROVIDER = 'oro_product.autocomplete_fields_provider';
 
     #[\Override]
     public function process(ContainerBuilder $container)

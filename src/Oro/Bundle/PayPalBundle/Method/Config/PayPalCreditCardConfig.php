@@ -4,16 +4,16 @@ namespace Oro\Bundle\PayPalBundle\Method\Config;
 
 class PayPalCreditCardConfig extends AbstractPayPalConfig implements PayPalCreditCardConfigInterface
 {
-    const TYPE = 'credit_card';
-    const DEBUG_MODE_KEY = 'debug_mode';
-    const USE_PROXY_KEY = 'use_proxy';
-    const PROXY_HOST_KEY = 'proxy_host';
-    const PROXY_PORT_KEY = 'proxy_port';
-    const ZERO_AMOUNT_AUTHORIZATION_KEY = 'zero_amount_authorization';
-    const AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY = 'authorization_for_required_amount';
-    const ALLOWED_CREDIT_CARD_TYPES_KEY = 'allowed_credit_card_types';
-    const ENABLE_SSL_VERIFICATION_KEY = 'enable_ssl_verification';
-    const REQUIRE_CVV_ENTRY_KEY = 'require_cvv_entry';
+    public const TYPE = 'credit_card';
+    public const DEBUG_MODE_KEY = 'debug_mode';
+    public const USE_PROXY_KEY = 'use_proxy';
+    public const PROXY_HOST_KEY = 'proxy_host';
+    public const PROXY_PORT_KEY = 'proxy_port';
+    public const ZERO_AMOUNT_AUTHORIZATION_KEY = 'zero_amount_authorization';
+    public const AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY = 'authorization_for_required_amount';
+    public const ALLOWED_CREDIT_CARD_TYPES_KEY = 'allowed_credit_card_types';
+    public const ENABLE_SSL_VERIFICATION_KEY = 'enable_ssl_verification';
+    public const REQUIRE_CVV_ENTRY_KEY = 'require_cvv_entry';
 
     #[\Override]
     public function isZeroAmountAuthorizationEnabled()

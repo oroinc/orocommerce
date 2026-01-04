@@ -28,12 +28,12 @@ use Symfony\Component\Validator\Constraints\Valid;
  */
 class ProductCollectionSegmentType extends AbstractType implements DataMapperInterface
 {
-    const NAME = 'oro_product_collection_segment_type';
-    const DEFINITION = 'definition';
-    const INCLUDED_PRODUCTS = 'includedProducts';
-    const EXCLUDED_PRODUCTS = 'excludedProducts';
-    const SORT_ORDER = 'sortOrder';
-    const DEFAULT_SCOPE_VALUE = 'productCollectionSegment';
+    public const NAME = 'oro_product_collection_segment_type';
+    public const DEFINITION = 'definition';
+    public const INCLUDED_PRODUCTS = 'includedProducts';
+    public const EXCLUDED_PRODUCTS = 'excludedProducts';
+    public const SORT_ORDER = 'sortOrder';
+    public const DEFAULT_SCOPE_VALUE = 'productCollectionSegment';
 
     /**
      * @var ProductCollectionDefinitionConverter

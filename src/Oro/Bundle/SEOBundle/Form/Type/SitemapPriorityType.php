@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints\Range;
 
 class SitemapPriorityType extends AbstractType
 {
-    const NAME = 'oro_sitemap_priority';
+    public const NAME = 'oro_sitemap_priority';
 
     #[\Override]
     public function getParent(): ?string

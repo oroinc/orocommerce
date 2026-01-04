@@ -15,7 +15,7 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
  */
 class CheckoutSubtotalUpdater
 {
-    const BATCH_COUNT = 50;
+    public const BATCH_COUNT = 50;
 
     /** @var ManagerRegistry */
     protected $registry;

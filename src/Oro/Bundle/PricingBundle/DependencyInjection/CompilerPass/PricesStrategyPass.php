@@ -8,9 +8,9 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class PricesStrategyPass implements CompilerPassInterface
 {
-    const STRATEGY_REGISTER = 'oro_pricing.pricing_strategy.strategy_register';
-    const STRATEGY_ALIAS = 'alias';
-    const STRATEGY_TAG = 'oro_pricing.price_strategy';
+    public const STRATEGY_REGISTER = 'oro_pricing.pricing_strategy.strategy_register';
+    public const STRATEGY_ALIAS = 'alias';
+    public const STRATEGY_TAG = 'oro_pricing.price_strategy';
 
     #[\Override]
     public function process(ContainerBuilder $container)

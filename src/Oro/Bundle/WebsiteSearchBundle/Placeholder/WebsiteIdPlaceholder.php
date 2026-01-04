@@ -6,7 +6,7 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class WebsiteIdPlaceholder extends AbstractPlaceholder
 {
-    const NAME = 'WEBSITE_ID';
+    public const NAME = 'WEBSITE_ID';
 
     /**
      * @var WebsiteManager

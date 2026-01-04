@@ -23,13 +23,13 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
 {
-    const COMPLETE = 'complete';
+    public const COMPLETE = 'complete';
 
-    const ZERO_AMOUNT = 0;
-    const AMOUNT_PRECISION = 2;
+    public const ZERO_AMOUNT = 0;
+    public const AMOUNT_PRECISION = 2;
 
     // PayPal BN code
-    const BUTTON_SOURCE = 'OroCommerce_SP';
+    public const BUTTON_SOURCE = 'OroCommerce_SP';
 
     protected Gateway $gateway;
     protected RouterInterface $router;

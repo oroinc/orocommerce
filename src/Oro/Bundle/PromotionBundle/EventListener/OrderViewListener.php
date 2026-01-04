@@ -10,7 +10,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class OrderViewListener
 {
-    const DISCOUNTS_BLOCK_ID = 'discounts';
+    public const DISCOUNTS_BLOCK_ID = 'discounts';
 
     /**
      * @var TranslatorInterface

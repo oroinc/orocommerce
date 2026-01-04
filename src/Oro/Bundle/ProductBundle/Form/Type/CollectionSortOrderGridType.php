@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints\Range;
  */
 class CollectionSortOrderGridType extends AbstractType
 {
-    const NAME = 'oro_collection_sort_order_grid';
+    public const NAME = 'oro_collection_sort_order_grid';
 
     public function __construct(
         protected FormFactoryInterface $formFactory,

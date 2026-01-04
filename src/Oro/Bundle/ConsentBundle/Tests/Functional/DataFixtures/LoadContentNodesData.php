@@ -14,12 +14,12 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
 class LoadContentNodesData extends AbstractFixture implements DependentFixtureInterface
 {
-    const CATALOG_1_ROOT = 'web_catalog.node.1.root';
-    const CATALOG_1_ROOT_WITH_CMS_PAGE_VARIANT = 'web_catalog.node.1.cms_page_variant';
-    const CATALOG_1_ROOT_WITH_SYSTEM_PAGE_VARIANT = 'web_catalog.node.1.system_page_variant';
-    const CATALOG_2_ROOT = 'web_catalog.node.2.root';
-    const CATALOG_2_ROOT_WITH_CMS_PAGE_VARIANT = 'web_catalog.node.2.cms_page_variant';
-    const CATALOG_2_ROOT_WITH_SYSTEM_PAGE_VARIANT = 'web_catalog.node.2.system_page_variant';
+    public const CATALOG_1_ROOT = 'web_catalog.node.1.root';
+    public const CATALOG_1_ROOT_WITH_CMS_PAGE_VARIANT = 'web_catalog.node.1.cms_page_variant';
+    public const CATALOG_1_ROOT_WITH_SYSTEM_PAGE_VARIANT = 'web_catalog.node.1.system_page_variant';
+    public const CATALOG_2_ROOT = 'web_catalog.node.2.root';
+    public const CATALOG_2_ROOT_WITH_CMS_PAGE_VARIANT = 'web_catalog.node.2.cms_page_variant';
+    public const CATALOG_2_ROOT_WITH_SYSTEM_PAGE_VARIANT = 'web_catalog.node.2.system_page_variant';
 
     /**
      * @var array

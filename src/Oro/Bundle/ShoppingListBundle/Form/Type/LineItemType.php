@@ -19,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class LineItemType extends AbstractType
 {
-    const NAME = 'oro_shopping_list_line_item';
+    public const NAME = 'oro_shopping_list_line_item';
 
     /**
      * @var string

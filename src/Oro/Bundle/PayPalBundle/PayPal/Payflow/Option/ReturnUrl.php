@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class ReturnUrl implements OptionInterface
 {
-    const RETURNURL = 'RETURNURL';
+    public const RETURNURL = 'RETURNURL';
 
     /** @var bool */
     protected $required;

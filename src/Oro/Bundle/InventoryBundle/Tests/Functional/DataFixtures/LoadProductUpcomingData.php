@@ -16,7 +16,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 class LoadProductUpcomingData extends AbstractFixture implements DependentFixtureInterface
 {
-    const CATEGORIES = [
+    public const CATEGORIES = [
         LoadCategoryData::SECOND_LEVEL2 => [
             UpcomingProductProvider::IS_UPCOMING => true,
             UpcomingProductProvider::AVAILABILITY_DATE => '2050-10-10'
@@ -27,7 +27,7 @@ class LoadProductUpcomingData extends AbstractFixture implements DependentFixtur
         ]
     ];
 
-    const PRODUCTS = [
+    public const PRODUCTS = [
         LoadProductData::PRODUCT_1 => [
             UpcomingProductProvider::IS_UPCOMING => true,
             UpcomingProductProvider::AVAILABILITY_DATE => '2070-10-10'

@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ProductPageContentVariantType implements ContentVariantTypeInterface, ContentVariantEntityProviderInterface
 {
-    const TYPE = 'product_page';
+    public const TYPE = 'product_page';
 
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;

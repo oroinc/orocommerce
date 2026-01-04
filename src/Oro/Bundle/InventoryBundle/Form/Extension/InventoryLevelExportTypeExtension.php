@@ -6,7 +6,7 @@ use Oro\Bundle\ImportExportBundle\Form\Type\ExportType;
 
 class InventoryLevelExportTypeExtension extends InventoryLevelExportTemplateTypeExtension
 {
-    const NAME = 'oro_importexport_export_type_extension';
+    public const NAME = 'oro_importexport_export_type_extension';
 
     /**
      * @return array

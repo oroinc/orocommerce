@@ -11,7 +11,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class BeforeSearchEvent extends Event implements SearchQueryAwareEventInterface
 {
-    const EVENT_NAME = 'oro_website_search.before_search';
+    public const EVENT_NAME = 'oro_website_search.before_search';
 
     /**
      * @var Query

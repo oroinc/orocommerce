@@ -7,7 +7,7 @@ namespace Oro\Bundle\RedirectBundle\Cache;
  */
 class UrlDataStorage implements \JsonSerializable
 {
-    const PREFIX_KEY = 'p';
+    public const PREFIX_KEY = 'p';
 
     /**
      * @var array

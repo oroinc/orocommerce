@@ -21,11 +21,11 @@ use Symfony\Component\Cache\CacheItem;
  */
 class MenuDataProvider
 {
-    const PRIORITY = 'priority';
-    const IDENTIFIER = 'identifier';
-    const LABEL = 'label';
-    const URL = 'url';
-    const CHILDREN = 'children';
+    public const PRIORITY = 'priority';
+    public const IDENTIFIER = 'identifier';
+    public const LABEL = 'label';
+    public const URL = 'url';
+    public const CHILDREN = 'children';
 
     /** @var ManagerRegistry */
     private $doctrine;

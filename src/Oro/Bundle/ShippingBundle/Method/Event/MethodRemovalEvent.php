@@ -6,7 +6,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class MethodRemovalEvent extends Event
 {
-    const NAME = 'oro_shipping.method_removal';
+    public const NAME = 'oro_shipping.method_removal';
 
     /**
      * @var int|string

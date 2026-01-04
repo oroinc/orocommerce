@@ -7,7 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
 
 class InlineMatrixRow extends TableRow
 {
-    const HEADER_ELEMENT = 'InlineMatrixHeader';
+    public const HEADER_ELEMENT = 'InlineMatrixHeader';
 
     /**
      * @param int $number Row index number starting from 0

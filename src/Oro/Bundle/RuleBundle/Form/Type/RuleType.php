@@ -17,7 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RuleType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_rule';
+    public const BLOCK_PREFIX = 'oro_rule';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

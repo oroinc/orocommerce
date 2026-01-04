@@ -16,8 +16,8 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 class LoadOrderItems extends AbstractFixture implements DependentFixtureInterface
 {
-    const ORDER_ITEM_1 = 'simple_order_item_1';
-    const ORDER_ITEM_2 = 'simple_order_item_2';
+    public const ORDER_ITEM_1 = 'simple_order_item_1';
+    public const ORDER_ITEM_2 = 'simple_order_item_2';
 
     /**
      * @var array

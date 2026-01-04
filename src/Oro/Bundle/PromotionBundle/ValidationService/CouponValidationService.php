@@ -11,12 +11,13 @@ use Oro\Bundle\PromotionBundle\Manager\CouponUsageManager;
  */
 class CouponValidationService implements CouponValidatorInterface
 {
-    const MESSAGE_DISABLED = 'oro.promotion.coupon.violation.disabled';
-    const MESSAGE_ABSENT_PROMOTION = 'oro.promotion.coupon.violation.absent_promotion';
-    const MESSAGE_EXPIRED = 'oro.promotion.coupon.violation.expired';
-    const MESSAGE_NOT_STARTED = 'oro.promotion.coupon.violation.not_started';
-    const MESSAGE_USAGE_LIMIT_EXCEEDED = 'oro.promotion.coupon.violation.usage_limit_exceeded';
-    const MESSAGE_USER_USAGE_LIMIT_EXCEEDED = 'oro.promotion.coupon.violation.customer_user_usage_limit_exceeded';
+    public const MESSAGE_DISABLED = 'oro.promotion.coupon.violation.disabled';
+    public const MESSAGE_ABSENT_PROMOTION = 'oro.promotion.coupon.violation.absent_promotion';
+    public const MESSAGE_EXPIRED = 'oro.promotion.coupon.violation.expired';
+    public const MESSAGE_NOT_STARTED = 'oro.promotion.coupon.violation.not_started';
+    public const MESSAGE_USAGE_LIMIT_EXCEEDED = 'oro.promotion.coupon.violation.usage_limit_exceeded';
+    public const MESSAGE_USER_USAGE_LIMIT_EXCEEDED =
+        'oro.promotion.coupon.violation.customer_user_usage_limit_exceeded';
 
     private CouponUsageManager $couponUsageManager;
 

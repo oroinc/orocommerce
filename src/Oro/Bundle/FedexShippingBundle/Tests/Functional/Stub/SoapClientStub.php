@@ -8,10 +8,10 @@ use Oro\Bundle\SoapBundle\Client\SoapClientInterface;
 
 class SoapClientStub implements SoapClientInterface
 {
-    const AUTHORIZATION_ERROR_OPTION = 'authorization_error';
-    const CONNECTION_ERROR_OPTION = 'connection_error';
-    const NO_SERVICES_OPTION = 'no_services';
-    const OK_OPTION = 'ok';
+    public const AUTHORIZATION_ERROR_OPTION = 'authorization_error';
+    public const CONNECTION_ERROR_OPTION = 'connection_error';
+    public const NO_SERVICES_OPTION = 'no_services';
+    public const OK_OPTION = 'ok';
 
     #[\Override]
     public function send(SoapClientSettingsInterface $settings, array $data)

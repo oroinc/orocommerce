@@ -15,7 +15,7 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class EmptyVariantFieldInSimpleProductForVariantLinksValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_product_empty_variant_field_in_simple_product_for_variant_links';
+    public const ALIAS = 'oro_product_empty_variant_field_in_simple_product_for_variant_links';
 
     /**
      * @var PropertyAccessorInterface

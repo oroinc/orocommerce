@@ -9,7 +9,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class QuoteEvent extends Event implements EntityDataAwareEventInterface
 {
-    const NAME = 'oro_sale.quote';
+    public const NAME = 'oro_sale.quote';
 
     /** @var FormInterface */
     protected $form;

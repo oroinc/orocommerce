@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PaymentTermSelectType extends AbstractType
 {
-    const NAME = 'oro_payment_term_select';
+    public const NAME = 'oro_payment_term_select';
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver)

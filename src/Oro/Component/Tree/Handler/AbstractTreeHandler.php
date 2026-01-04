@@ -9,9 +9,9 @@ use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
 abstract class AbstractTreeHandler
 {
-    const ROOT_PARENT_VALUE = '#';
-    const SUCCESS_STATUS = true;
-    const ERROR_STATUS = false;
+    public const ROOT_PARENT_VALUE = '#';
+    public const SUCCESS_STATUS = true;
+    public const ERROR_STATUS = false;
 
     /**
      * @var ManagerRegistry

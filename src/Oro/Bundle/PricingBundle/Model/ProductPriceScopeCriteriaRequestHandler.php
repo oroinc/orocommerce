@@ -20,10 +20,10 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ProductPriceScopeCriteriaRequestHandler
 {
-    const WEBSITE_KEY = 'websiteId';
-    const CUSTOMER_ID_KEY = 'customer_id';
-    const PRICE_CONTEXT_ENTITY_KEY = 'price_context_entity';
-    const PRICE_CONTEXT_ENTITY_ID_KEY = 'price_context_entity_id';
+    public const WEBSITE_KEY = 'websiteId';
+    public const CUSTOMER_ID_KEY = 'customer_id';
+    public const PRICE_CONTEXT_ENTITY_KEY = 'price_context_entity';
+    public const PRICE_CONTEXT_ENTITY_ID_KEY = 'price_context_entity_id';
 
     /**
      * @var RequestStack

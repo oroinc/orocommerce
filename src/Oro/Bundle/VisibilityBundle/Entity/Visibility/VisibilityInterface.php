@@ -6,8 +6,8 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 interface VisibilityInterface
 {
-    const HIDDEN = 'hidden';
-    const VISIBLE = 'visible';
+    public const HIDDEN = 'hidden';
+    public const VISIBLE = 'visible';
 
     /**
      * @param object $target

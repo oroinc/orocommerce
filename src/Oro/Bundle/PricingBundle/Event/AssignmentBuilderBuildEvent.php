@@ -8,7 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class AssignmentBuilderBuildEvent extends Event
 {
-    const NAME = 'oro_pricing.assignment_rule_builder.build';
+    public const NAME = 'oro_pricing.assignment_rule_builder.build';
 
     /**
      * @var PriceList

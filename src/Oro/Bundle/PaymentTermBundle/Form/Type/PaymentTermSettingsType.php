@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 class PaymentTermSettingsType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_payment_term_settings';
+    public const BLOCK_PREFIX = 'oro_payment_term_settings';
 
     /**
      * @throws ConstraintDefinitionException

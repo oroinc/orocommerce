@@ -22,9 +22,9 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
      */
     private $container;
 
-    const PRICE_PRODUCT_7 = 'product_price.7';
+    public const PRICE_PRODUCT_7 = 'product_price.7';
 
-    const PRICE_PRODUCT_8 = 'product_price.8';
+    public const PRICE_PRODUCT_8 = 'product_price.8';
 
     /**
      * @var array

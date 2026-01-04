@@ -8,7 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class CategoryTreeCreateAfterEvent extends Event
 {
-    const NAME = 'oro_catalog.category.tree.create_after';
+    public const NAME = 'oro_catalog.category.tree.create_after';
 
     /**
      * @var UserInterface|null

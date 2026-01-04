@@ -14,7 +14,7 @@ use Symfony\Component\Form\FormFactory;
  */
 class EnumTypeHandler implements ProductVariantTypeHandlerInterface
 {
-    const TYPE = 'enum';
+    public const TYPE = 'enum';
 
     public function __construct(
         protected FormFactory $formFactory,

@@ -10,8 +10,8 @@ use Oro\Component\PhpUtils\ArrayUtil;
 
 class QueryExpressionBuilder implements QueryExpressionConverterInterface
 {
-    const CONVERTER = 'converter';
-    const SORT_ORDER = 'sort_order';
+    public const CONVERTER = 'converter';
+    public const SORT_ORDER = 'sort_order';
 
     /**
      * @var array

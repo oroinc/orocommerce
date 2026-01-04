@@ -20,9 +20,9 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CategoryVisibilityR
 #[Config]
 class CategoryVisibility implements VisibilityInterface, ScopeAwareInterface
 {
-    const PARENT_CATEGORY = 'parent_category';
-    const CONFIG = 'config';
-    const VISIBILITY_TYPE = 'category_visibility';
+    public const PARENT_CATEGORY = 'parent_category';
+    public const CONFIG = 'config';
+    public const VISIBILITY_TYPE = 'category_visibility';
 
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\Id]

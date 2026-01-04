@@ -9,9 +9,9 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
 class LoadWebCatalogData extends AbstractFixture
 {
-    const CATALOG_1 = 'web_catalog.1';
-    const CATALOG_2 = 'web_catalog.2';
-    const CATALOG_3 = 'web_catalog.3';
+    public const CATALOG_1 = 'web_catalog.1';
+    public const CATALOG_2 = 'web_catalog.2';
+    public const CATALOG_3 = 'web_catalog.3';
 
     #[\Override]
     public function load(ObjectManager $manager)

@@ -15,9 +15,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class QuickAddImportFromFileType extends AbstractType
 {
-    const NAME = 'oro_product_quick_add_import_from_file';
-    const FILE_FIELD_NAME = 'file';
-    const COMPONENT_FIELD_NAME = 'component';
+    public const NAME = 'oro_product_quick_add_import_from_file';
+    public const FILE_FIELD_NAME = 'file';
+    public const COMPONENT_FIELD_NAME = 'component';
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)

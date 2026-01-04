@@ -6,27 +6,27 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 class PayPalConfigKeysProvider extends ParameterBag
 {
-    const LABEL_KEY = 'label';
-    const SHORT_LABEL_KEY = 'short_label';
-    const ALLOWED_CC_TYPES_KEY = 'allowed_cc_types';
-    const PARTNER_KEY = 'partner';
-    const USER_KEY = 'user';
-    const PASSWORD_KEY = 'password';
-    const VENDOR_KEY = 'vendor';
-    const PAYMENT_ACTION_KEY = 'payment_action';
-    const TEST_MODE_KEY = 'test_mode';
-    const USE_PROXY_KEY = 'use_proxy';
-    const PROXY_HOST_KEY = 'proxy_host';
-    const PROXY_PORT_KEY = 'proxy_port';
-    const DEBUG_MODE_KEY = 'debug_mode';
-    const ENABLE_SSL_VERIFICATION_KEY = 'enable_ssl_verification';
-    const REQUIRE_CVV_KEY = 'require_cvv';
-    const ZERO_AMOUNT_AUTHORIZATION_KEY = 'zero_amount_authorization';
-    const AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY = 'authorization_for_required_amount';
+    public const LABEL_KEY = 'label';
+    public const SHORT_LABEL_KEY = 'short_label';
+    public const ALLOWED_CC_TYPES_KEY = 'allowed_cc_types';
+    public const PARTNER_KEY = 'partner';
+    public const USER_KEY = 'user';
+    public const PASSWORD_KEY = 'password';
+    public const VENDOR_KEY = 'vendor';
+    public const PAYMENT_ACTION_KEY = 'payment_action';
+    public const TEST_MODE_KEY = 'test_mode';
+    public const USE_PROXY_KEY = 'use_proxy';
+    public const PROXY_HOST_KEY = 'proxy_host';
+    public const PROXY_PORT_KEY = 'proxy_port';
+    public const DEBUG_MODE_KEY = 'debug_mode';
+    public const ENABLE_SSL_VERIFICATION_KEY = 'enable_ssl_verification';
+    public const REQUIRE_CVV_KEY = 'require_cvv';
+    public const ZERO_AMOUNT_AUTHORIZATION_KEY = 'zero_amount_authorization';
+    public const AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY = 'authorization_for_required_amount';
 
-    const EXPRESS_CHECKOUT_LABEL_KEY = 'express_checkout_label';
-    const EXPRESS_CHECKOUT_SHORT_LABEL_KEY = 'express_checkout_short_label';
-    const EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY = 'express_checkout_payment_action';
+    public const EXPRESS_CHECKOUT_LABEL_KEY = 'express_checkout_label';
+    public const EXPRESS_CHECKOUT_SHORT_LABEL_KEY = 'express_checkout_short_label';
+    public const EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY = 'express_checkout_payment_action';
 
     public function __construct(array $parameters = [])
     {

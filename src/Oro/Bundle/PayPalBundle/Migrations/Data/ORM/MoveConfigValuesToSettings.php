@@ -14,12 +14,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
 {
-    const SECTION_NAME = 'oro_paypal';
+    public const SECTION_NAME = 'oro_paypal';
 
-    const PAYFLOW_GATEWAY_TYPE = 'payflow_gateway';
-    const PAYFLOW_GATEWAY_EXPRESS_CHECKOUT_TYPE = 'payflow_express_checkout';
-    const PAYMENTS_PRO_TYPE = 'paypal_payments_pro';
-    const PAYMENTS_PRO_EXPRESS_CHECKOUT_TYPE = 'paypal_payments_pro_express_checkout';
+    public const PAYFLOW_GATEWAY_TYPE = 'payflow_gateway';
+    public const PAYFLOW_GATEWAY_EXPRESS_CHECKOUT_TYPE = 'payflow_express_checkout';
+    public const PAYMENTS_PRO_TYPE = 'paypal_payments_pro';
+    public const PAYMENTS_PRO_EXPRESS_CHECKOUT_TYPE = 'paypal_payments_pro_express_checkout';
 
     /**
      * @var ChannelByTypeFactory

@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AppliedCouponCollectionType extends AbstractType
 {
-    const NAME = 'oro_promotion_applied_coupon_collection';
+    public const NAME = 'oro_promotion_applied_coupon_collection';
 
     #[\Override]
     public function getParent(): ?string

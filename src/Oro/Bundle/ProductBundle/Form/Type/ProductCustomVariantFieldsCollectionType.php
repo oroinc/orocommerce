@@ -19,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProductCustomVariantFieldsCollectionType extends AbstractType
 {
-    const NAME = 'oro_product_custom_variant_fields_collection';
+    public const NAME = 'oro_product_custom_variant_fields_collection';
 
     /** @var VariantFieldProvider */
     private $variantFieldProvider;

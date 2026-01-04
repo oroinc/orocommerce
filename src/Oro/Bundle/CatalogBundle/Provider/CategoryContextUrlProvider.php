@@ -13,10 +13,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class CategoryContextUrlProvider implements ContextUrlProviderInterface
 {
-    const CATEGORY_ROUTE_NAME = 'oro_product_frontend_product_index';
-    const USED_SLUG_KEY = '_used_slug';
-    const CATEGORY_ID = 'categoryId';
-    const INCLUDE_SUBCATEGORIES = 'includeSubcategories';
+    public const CATEGORY_ROUTE_NAME = 'oro_product_frontend_product_index';
+    public const USED_SLUG_KEY = '_used_slug';
+    public const CATEGORY_ID = 'categoryId';
+    public const INCLUDE_SUBCATEGORIES = 'includeSubcategories';
 
     private RequestStack $requestStack;
 

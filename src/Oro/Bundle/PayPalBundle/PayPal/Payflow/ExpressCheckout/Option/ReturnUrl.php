@@ -8,7 +8,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\ReturnUrl as BaseReturnUrl;
 
 class ReturnUrl extends BaseReturnUrl implements OptionsDependentInterface
 {
-    const RETURNURL = 'RETURNURL';
+    public const RETURNURL = 'RETURNURL';
 
     public function __construct()
     {

@@ -15,8 +15,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProductPriceCollectionType extends AbstractType
 {
-    const NAME = 'oro_pricing_product_price_collection';
-    const VALIDATION_GROUP = 'ProductPriceCollection';
+    public const NAME = 'oro_pricing_product_price_collection';
+    public const VALIDATION_GROUP = 'ProductPriceCollection';
 
     /**
      * @var ManagerRegistry

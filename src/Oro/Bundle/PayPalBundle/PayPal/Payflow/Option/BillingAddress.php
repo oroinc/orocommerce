@@ -7,18 +7,18 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
  */
 class BillingAddress extends AbstractOption
 {
-    const BILLTOFIRSTNAME = 'BILLTOFIRSTNAME';
-    const BILLTOLASTNAME = 'BILLTOLASTNAME';
-    const BILLTOSTREET = 'BILLTOSTREET';
-    const BILLTOSTREET2 = 'BILLTOSTREET2';
-    const BILLTOCITY = 'BILLTOCITY';
-    const BILLTOSTATE = 'BILLTOSTATE';
-    const BILLTOZIP = 'BILLTOZIP';
-    const BILLTOCOUNTRY = 'BILLTOCOUNTRY';
-    const BILLTOEMAIL = 'BILLTOEMAIL';
-    const BILLTOMIDDLENAME = 'BILLTOMIDDLENAME';
-    const BILLTOCOMPANY = 'BILLTOCOMPANY';
-    const BILLTOPHONENUM = 'BILLTOPHONENUM';
+    public const BILLTOFIRSTNAME = 'BILLTOFIRSTNAME';
+    public const BILLTOLASTNAME = 'BILLTOLASTNAME';
+    public const BILLTOSTREET = 'BILLTOSTREET';
+    public const BILLTOSTREET2 = 'BILLTOSTREET2';
+    public const BILLTOCITY = 'BILLTOCITY';
+    public const BILLTOSTATE = 'BILLTOSTATE';
+    public const BILLTOZIP = 'BILLTOZIP';
+    public const BILLTOCOUNTRY = 'BILLTOCOUNTRY';
+    public const BILLTOEMAIL = 'BILLTOEMAIL';
+    public const BILLTOMIDDLENAME = 'BILLTOMIDDLENAME';
+    public const BILLTOCOMPANY = 'BILLTOCOMPANY';
+    public const BILLTOPHONENUM = 'BILLTOPHONENUM';
 
     #[\Override]
     public function configureOption(OptionsResolver $resolver)

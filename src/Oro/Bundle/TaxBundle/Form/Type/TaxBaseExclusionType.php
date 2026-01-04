@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class TaxBaseExclusionType extends AbstractType
 {
-    const NAME = 'oro_tax_base_exclusion';
+    public const NAME = 'oro_tax_base_exclusion';
 
     /**
      * @var string

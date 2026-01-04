@@ -13,9 +13,9 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
 {
     use AttachmentExtensionAwareTrait;
 
-    const MAX_IMAGE_SLIDE_MAIN_IMAGE_SIZE_IN_MB = 10;
-    const MAX_IMAGE_SLIDE_MEDIUM_IMAGE_SIZE_IN_MB = 10;
-    const MAX_IMAGE_SLIDE_SMALL_IMAGE_SIZE_IN_MB = 10;
+    public const MAX_IMAGE_SLIDE_MAIN_IMAGE_SIZE_IN_MB = 10;
+    public const MAX_IMAGE_SLIDE_MEDIUM_IMAGE_SIZE_IN_MB = 10;
+    public const MAX_IMAGE_SLIDE_SMALL_IMAGE_SIZE_IN_MB = 10;
 
     #[\Override]
     public function up(Schema $schema, QueryBag $queries)

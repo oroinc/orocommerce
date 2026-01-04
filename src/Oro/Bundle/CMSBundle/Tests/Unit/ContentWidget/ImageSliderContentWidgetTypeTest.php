@@ -216,7 +216,7 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
     {
         $fileType = new FileType($this->createMock(ExternalFileFactory::class));
         $fileType->setEventSubscriber(
-            new class() implements EventSubscriberInterface {
+            new class () implements EventSubscriberInterface {
                 public static function getSubscribedEvents(): array
                 {
                     return [];
