@@ -47,7 +47,8 @@ const TotalsComponent = PricingTotalsComponent.extend({
 
             'line-items-totals:update': this.updateTotals,
             'shipping-cost:updated': this.setTotals,
-            'order:totals:get:current': this.getCurrentTotals
+            'order:totals:get:current': this.getCurrentTotals,
+            'order:totals:push:current': this.pushCurrentTotals
         });
 
         this.$totals = this.options._sourceElement.find(this.options.selectors.totals);
@@ -81,6 +82,11 @@ const TotalsComponent = PricingTotalsComponent.extend({
         TotalsComponent.__super__.triggerTotalsUpdateEvent.call(this, data.totals);
 
         this.render(this.currentTotals);
+    },
+
+    pushCurrentTotals: function() {
+        TotalsComponent.__super__.triggerTotalsUpdateEvent.call(this, this.options.totals);
+        mediator.trigger('page:afterPagePartChange');
     },
 
     /**

@@ -22,7 +22,7 @@ const FrontendRequestProductCollectionView = BaseView.extend({
     },
 
     render: function() {
-        this.initLayout().done(() => {
+        this.initLayout().then(() => {
             this.$el.find('.request-form__content').removeClass('hidden');
             this.$el.find('.view-loading').remove();
         });

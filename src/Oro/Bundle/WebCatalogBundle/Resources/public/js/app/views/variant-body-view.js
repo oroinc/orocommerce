@@ -27,7 +27,7 @@ const VariantBodyView = BaseView.extend({
      */
     initialize(options) {
         this.options = _.defaults(options || {}, this.options);
-        this.initLayout().done(this.handleLayoutInit.bind(this));
+        this.initLayout().then(this.handleLayoutInit.bind(this));
     },
 
     dispose() {

@@ -7,6 +7,8 @@ import LoadingMask from 'oroui/js/app/views/loading-mask-view';
 import NumberFormatter from 'orolocale/js/formatter/number';
 
 const DiscountCollectionView = BaseView.extend({
+    autoRender: true,
+
     /**
      * @property {Object}
      */
@@ -43,6 +45,13 @@ const DiscountCollectionView = BaseView.extend({
     constructor: function DiscountCollectionView(options) {
         this.options = $.extend(true, {}, this.options, options || {});
         DiscountCollectionView.__super__.constructor.call(this, options);
+    },
+
+    render: function() {
+        DiscountCollectionView.__super__.render.call(this);
+        mediator.trigger('order:totals:push:current');
+
+        return this;
     },
 
     /**

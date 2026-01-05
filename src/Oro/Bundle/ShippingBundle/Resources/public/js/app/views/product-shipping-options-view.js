@@ -51,6 +51,7 @@ const ProductShippingOptionsView = BaseView.extend({
             .on('content:changed', this.onContentChanged.bind(this));
 
         mediator.on('product:precision:add', this.onContentChanged, this);
+        mediator.on('product:primary:init', this.onContentChanged, this);
 
         this.$itemsContainer
             .on('click', '.removeRow', this.onRemoveRowClick.bind(this))

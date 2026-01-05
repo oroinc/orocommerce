@@ -214,7 +214,7 @@ layout:
                 __checkout_order_summary_totals_subtree:
                     blockType: layout_subtree_update
                     options:
-                        reloadEvents: ['datagrid_create_before', 'shopping-list:refresh']
+                        reloadEvents: ['page:afterChange', 'shopping-list:refresh']
                         showLoading: false
                         onLoadingCssClass: 'loading-blur'
                 __checkout_order_summary_totals:

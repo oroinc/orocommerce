@@ -139,10 +139,10 @@ const QuickOrderFromView = BaseView.extend({
         const $rows = this.$(this.elem.rows).addClass('stale');
         await this.addRows(this.rowsCountInitial);
         this.listenToOnce(this, 'rows-initialization-done', async () => {
-            await window.sleep(0);
+            await window.scheduler.yield();
             const bathes = _.chunk($rows, this.options.rowsBatchSize);
             await bathes.map(async rows => {
-                await window.sleep(0);
+                await window.scheduler.yield();
                 const $rows = $(rows);
                 this.componentManager.eraseElement($rows);
                 $rows.remove();
@@ -184,7 +184,7 @@ const QuickOrderFromView = BaseView.extend({
         });
 
         while (count > 0) {
-            await window.sleep(0); // give time to repaint UI
+            await window.scheduler.yield(); // give time to repaint UI
             const batch = count > batchSize ? batchSize : count;
             this.$(this.elem.add).trigger({
                 type: 'add-rows',

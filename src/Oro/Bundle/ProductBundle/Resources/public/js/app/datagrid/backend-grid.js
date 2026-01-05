@@ -134,7 +134,7 @@ const BackendGrid = Grid.extend({
 
         this.initLayout({
             collection: this.collection
-        }).always(() => {
+        }).finally(() => {
             this.rendered = true;
             /**
              * Backbone event. Fired when the grid has been successfully rendered.
