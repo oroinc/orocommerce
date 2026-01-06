@@ -62,7 +62,7 @@ const FilterItemsHintView = BaseView.extend({
      * @param e
      */
     resetAllFilters(e) {
-        mediator.trigger('filters:reset', e);
+        mediator.trigger('filters:reset:' + this.gridName, e);
     },
 
     updateResetBtnLabel() {
