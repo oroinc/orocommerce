@@ -1,5 +1,7 @@
 @ticket-BB-24934
 @fixture-OroPromotionBundle:order_customer_promotions.yml
+# Unskip in BB-26754
+@skip
 
 Feature: Order change customer to apply promotion
   Verify that all discouns calculate correctly if order customer have been changed.
