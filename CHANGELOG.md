@@ -108,6 +108,9 @@ The current file describes significant changes in the code that may affect the u
 #### PaymentBundle
 * Removed `\Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider` and interface. Added `\Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\PaymentStatusCalculator` and implementations for each payment status instead.
 
+#### NavigationBundle
+* Removed onFocusOutToFocusable and toggleFocusableClass methods in `navigation-menu-view.js`
+
 ## 6.1.0 (2025-03-31)
 [Show detailed list of changes](incompatibilities-6-1.md)
 
