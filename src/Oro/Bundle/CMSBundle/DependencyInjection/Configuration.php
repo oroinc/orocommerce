@@ -17,6 +17,7 @@ class Configuration implements ConfigurationInterface
     public const HOME_PAGE = 'home_page';
     // Component added back for theme layout BC from version 5.0
     public const IS_UPDATED_AFTER_507 = 'is_updated_after_507';
+    public const string GUEST_ACCESS_ALLOWED_CMS_PAGES = 'guest_access_allowed_cms_pages';
 
     private array $contentRestrictionModes;
 
@@ -75,8 +76,9 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                self::DIRECT_URL_PREFIX => ['type' => 'string', 'value' => ''],
-                self::HOME_PAGE => ['type' => 'integer', 'value' => null],
+                self::DIRECT_URL_PREFIX => ['value' => '', 'type' => 'string'],
+                self::HOME_PAGE => ['value' => null, 'type' => 'integer'],
+                self::GUEST_ACCESS_ALLOWED_CMS_PAGES => ['value' => [], 'type' => 'array'],
             ]
         );
 

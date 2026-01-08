@@ -26,6 +26,22 @@ system_configuration:
                 attr:
                     class: control-subgroup
 
+        oro_cms.guest_access_allowed_cms_pages:
+            data_type: array
+            type: Oro\Bundle\CMSBundle\Form\Type\PageSelectionType
+            priority: 1800
+            options:
+                label: oro.cms.system_configuration.fields.guest_access_allowed_cms_pages.label
+                tooltip: oro.cms.system_configuration.fields.guest_access_allowed_cms_pages.tooltip
+                required: false
+                configs:
+                    multiple: true
+                    component: dependent
+                    placeholder: oro.cms.system_configuration.fields.guest_access_allowed_cms_pages.placeholder
+                attr:
+                    'data-depend-on': 'guest_access_enabled'
+                    'data-show-if': 'unchecked'
+
     tree:
         system_configuration:
             platform:
@@ -40,3 +56,12 @@ system_configuration:
                                     websites_routing_general:
                                         children:
                                             - oro_cms.home_page
+            commerce:
+                children:
+                    guests:
+                        children:
+                            website_access:
+                                children:
+                                    website_access:
+                                        children:
+                                            - oro_cms.guest_access_allowed_cms_pages
