@@ -1,0 +1,23 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    about_us_slug_prototype:
+        string: 'test-about-us'
+    about_us_title:
+        string: 'Test About Us Page'
+    privacy_policy_slug_prototype:
+        string: 'test-privacy-policy'
+    privacy_policy_title:
+        string: 'Test Privacy Policy Page'
+
+Oro\Bundle\CMSBundle\Entity\Page:
+    about_us_page:
+        __calls:
+            - addTitle: ['@about_us_title']
+        content: 'This is the about us page content.'
+        organization: '@organization'
+        slugPrototypes: ['@about_us_slug_prototype']
+    privacy_policy_page:
+        __calls:
+            - addTitle: ['@privacy_policy_title']
+        content: 'This is the privacy policy page content.'
+        organization: '@organization'
+        slugPrototypes: ['@privacy_policy_slug_prototype']

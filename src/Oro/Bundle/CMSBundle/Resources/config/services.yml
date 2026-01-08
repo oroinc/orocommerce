@@ -604,3 +604,28 @@ services:
             - '@oro_web_catalog.request_web_content_variant_provider'
         tags:
             - { name: layout.data_provider, alias: cms_page_title }
+
+    oro_cms.form.autocomplete.page_with_slug_and_id.search_handler:
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - 'Oro\Bundle\CMSBundle\Entity\Page'
+            - ['defaultTitle.string', 'baseSlug.url', 'id']
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_cms_page_with_slug_and_id, acl_resource: oro_cms_page_view }
+
+    Oro\Bundle\CMSBundle\GuestAccess\Provider\CmsPagesGuestAccessAllowedUrlsProvider:
+        arguments:
+            - '@oro_config.manager'
+            - '@router'
+            - '@doctrine'
+        tags: ['oro_frontend.guest_access_urls_provider']
+
+    oro_cms.event_listener.system_config.guest_access_allowed_cms_pages:
+        class: Oro\Bundle\ConfigBundle\EventListener\EntityCollectionSystemConfigListener
+        arguments:
+            - '@doctrine'
+            - 'Oro\Bundle\CMSBundle\Entity\Page'
+            - 'oro_cms.guest_access_allowed_cms_pages'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }

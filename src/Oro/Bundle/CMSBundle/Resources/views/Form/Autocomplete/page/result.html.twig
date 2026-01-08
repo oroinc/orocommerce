@@ -1,0 +1,7 @@
+<%= _.escape(obj['defaultTitle.string']) %>
+<span class="text-muted">
+<% if (obj['baseSlug.url']) { %>
+- "<%= _.escape(obj['baseSlug.url']) %>"
+<% } %>
+({{ 'oro.cms.page.id.label'|trans }}: <%- id %>)
+</span>

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\CMSBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeInterface;
@@ -28,6 +30,10 @@ class OroCMSExtensionTest extends TestCase
                         Configuration::DIRECT_URL_PREFIX => ['value' => '', 'scope' => 'app'],
                         Configuration::HOME_PAGE => [
                             'value' => null,
+                            'scope' => 'app'
+                        ],
+                        Configuration::GUEST_ACCESS_ALLOWED_CMS_PAGES => [
+                            'value' => [],
                             'scope' => 'app'
                         ]
                     ]

@@ -11,6 +11,12 @@ services:
         tags:
             - { name: form.type, alias: oro_cms_page_select }
 
+    Oro\Bundle\CMSBundle\Form\Type\PageSelectionType:
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: form.type }
+
     oro_cms.form.type.loginpage:
         class: Oro\Bundle\CMSBundle\Form\Type\LoginPageType
         arguments:

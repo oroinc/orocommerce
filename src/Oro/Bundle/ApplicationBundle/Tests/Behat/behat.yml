@@ -470,13 +470,13 @@ oro_behat_extension:
           SKU:
             type: 'xpath'
             locator: '//div[contains(@id,"s2id_oro_rfp_frontend_request_requestProducts_2_product-uid")]//input'
-          Quantity: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][quantity]'
-          Unit: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][productUnit]'
-          Target Price: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][price][value]'
+          Quantity: 'oro_rfp_frontend_request[requestProducts][2][requestProductItems][0][quantity]'
+          Unit: 'oro_rfp_frontend_request[requestProducts][2][requestProductItems][0][productUnit]'
+          Target Price: 'oro_rfp_frontend_request[requestProducts][2][requestProductItems][0][price][value]'
 
     Update Line Item:
       selector:
-        locator: '//div[@class="request-form-editline" and @data-role="request-product-edit-mode-container"]//button[@data-role="update"]'
+        locator: '//div[@class="request-form-editline"]//button[@data-role="update"]'
         type: xpath
 
     Delete Line Item:
