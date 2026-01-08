@@ -97,14 +97,14 @@
 
     {% if transitionData is defined and transitionData %}
         {% set attr = layout_attr_defaults(attr, {
-            '~class': ' btn checkout-form__submit ' ~ buttonCssStyle,
-            'type': 'submit'
+            '~class': ' btn checkout-form__submit btn--disabled' ~ buttonCssStyle,
+            'type': 'submit',
+            'disabled': 'disabled'
         }) %}
 
         {% if not transitionData.isAllowed %}
-            {% set attr = layout_attr_defaults(attr, {
-                '~class': ' btn--disabled',
-                'disabled': 'disabled'
+            {% set componentOptions = componentOptions|merge({
+                enabled: false
             }) %}
         {% endif %}
 
