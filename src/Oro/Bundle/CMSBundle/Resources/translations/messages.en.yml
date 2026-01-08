@@ -299,6 +299,10 @@ oro.cms:
             home_page:
                 label: Homepage
                 tooltip: 'Choose the homepage from the landing pages.'
+            guest_access_allowed_cms_pages:
+                label: 'Allow Guest Access to Landing Pages'
+                tooltip: 'Select the landing pages that should remain available to guest users when guest access is disabled.'
+                placeholder: 'Select one or more landing pages...'
 
     privilege:
         category:

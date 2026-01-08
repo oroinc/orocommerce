@@ -30,10 +30,10 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *
  * @method LocalizedFallbackValue getTitle(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultTitle()
- * @method LocalizedFallbackValue getSlug(Localization $localization = null)
- * @method LocalizedFallbackValue getDefaultSlug()
- * @method setDefaultTitle($title)
- * @method setDefaultSlug($slug)
+ * @method LocalizedFallbackValue getSlugPrototype(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultSlugPrototype()
+ * @method setDefaultTitle(string $value)
+ * @method setDefaultSlugPrototype(string $value)
  * @method $this cloneLocalizedFallbackValueAssociations()
  * @mixin OroCMSBundle_Entity_Page
  */

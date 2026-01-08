@@ -1,0 +1,137 @@
+include:
+    - '@OroRFPBundle:RFQCustomer.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '0'
+    precision2:
+        unit: '@item'
+        precision: '0'
+    precision3:
+        unit: '@item'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product1_name:
+        string: 'First Product'
+    product2_name:
+        string: 'Second Product'
+    product3_name:
+        string: 'Third Product'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        primaryUnitPrecision: '@precision1'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - setNames: [['@product1_name']]
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+    product2:
+        sku: 'PSKU2'
+        primaryUnitPrecision: '@precision2'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - setNames: [['@product2_name']]
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+    product3:
+        sku: 'PSKU3'
+        primaryUnitPrecision: '@precision3'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - setNames: [['@product3_name']]
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    pricelist:
+        name: 'pricelist'
+        __calls:
+            - setCurrencies: [['USD']]
+        active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListProductRelation1:
+        product: '@product1'
+        priceList: '@pricelist'
+    priceListProductRelation2:
+        product: '@product2'
+        priceList: '@pricelist'
+    priceListProductRelation3:
+        product: '@product3'
+        priceList: '@pricelist'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite:
+        pricelist: '@pricelist'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer:
+        customer: '@customer'
+        pricelist: '@pricelist'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice1:
+        pricelist: '@pricelist'
+        product: '@product1'
+        productSku: 'PSKU1'
+        quantity: 1
+        unit: '@item'
+        value: 100.01
+        currency: 'USD'
+    productPrice2:
+        pricelist: '@pricelist'
+        product: '@product2'
+        productSku: 'PSKU2'
+        quantity: 1
+        unit: '@item'
+        value: 200.02
+        currency: 'USD'
+    productPrice3:
+        pricelist: '@pricelist'
+        product: '@product3'
+        productSku: 'PSKU3'
+        quantity: 1
+        unit: '@item'
+        value: 300.03
+        currency: 'USD'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shopping_list1:
+        label: 'Shopping List 1'
+        customer: '@customer'
+        customerUser: '@amanda'
+        owner: '@admin'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    line_item1:
+        shoppingList: '@shopping_list1'
+        product: '@product1'
+        quantity: 10
+        unit: '@item'
+        customerUser: '@amanda'
+        organization: '@organization'
+        owner: '@admin'
+    line_item2:
+        shoppingList: '@shopping_list1'
+        product: '@product2'
+        quantity: 20
+        unit: '@item'
+        customerUser: '@amanda'
+        organization: '@organization'
+        owner: '@admin'

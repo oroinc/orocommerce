@@ -45,7 +45,12 @@ Feature: Consent have the ability to work with tags
 
   Scenario: Edit tag in grid
     Given I go to System/ Consent Management
-    When I edit Tags as "SecondTag"
+    When I hover on "Grid Tags Cell"
+    And I click "Grid Tags Edit Button"
+    And I type "SecondTag" in "Grid Tags Inline Form Search"
+    Then I should see a "Highlighted Suggestion" element
+    When I click on "Highlighted Suggestion"
+    And I click "Save changes"
     Then should see "Record has been successfully updated" flash message
     When I reload the page
     Then should see following grid:

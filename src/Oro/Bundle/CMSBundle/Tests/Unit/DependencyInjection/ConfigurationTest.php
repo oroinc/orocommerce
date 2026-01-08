@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\CMSBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\CMSBundle\DependencyInjection\Configuration;
@@ -38,6 +40,10 @@ class ConfigurationTest extends TestCase
                         Configuration::HOME_PAGE => [
                             'value' => null,
                             'scope' => 'app'
+                        ],
+                        Configuration::GUEST_ACCESS_ALLOWED_CMS_PAGES => [
+                            'value' => [],
+                            'scope' => 'app'
                         ]
                     ],
                     Configuration::DIRECT_EDITING => [
@@ -58,6 +64,10 @@ class ConfigurationTest extends TestCase
                         ],
                         Configuration::HOME_PAGE => [
                             'value' => null,
+                            'scope' => 'app'
+                        ],
+                        Configuration::GUEST_ACCESS_ALLOWED_CMS_PAGES => [
+                            'value' => [],
                             'scope' => 'app'
                         ]
                     ],
@@ -80,6 +90,10 @@ class ConfigurationTest extends TestCase
                         Configuration::HOME_PAGE => [
                             'value' => null,
                             'scope' => 'app'
+                        ],
+                        Configuration::GUEST_ACCESS_ALLOWED_CMS_PAGES => [
+                            'value' => [],
+                            'scope' => 'app'
                         ]
                     ],
                     Configuration::DIRECT_EDITING => [Configuration::LOGIN_PAGE_CSS_FIELD_OPTION => false]
@@ -99,6 +113,7 @@ class ConfigurationTest extends TestCase
                         'settings' => [
                             Configuration::DIRECT_URL_PREFIX => ['value' => 'prefix'],
                             Configuration::HOME_PAGE => ['value' => 1],
+                            Configuration::GUEST_ACCESS_ALLOWED_CMS_PAGES => ['value' => [1, 2]]
                         ]
                     ],
                 ],
@@ -111,6 +126,10 @@ class ConfigurationTest extends TestCase
                         ],
                         Configuration::HOME_PAGE => [
                             'value' => 1,
+                            'scope' => 'app'
+                        ],
+                        Configuration::GUEST_ACCESS_ALLOWED_CMS_PAGES => [
+                            'value' => [1, 2],
                             'scope' => 'app'
                         ]
                     ],
