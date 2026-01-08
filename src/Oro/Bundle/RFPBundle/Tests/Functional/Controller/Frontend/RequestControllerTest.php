@@ -70,12 +70,13 @@ class RequestControllerTest extends WebTestCase
         $configManager = self::getConfigManager();
         $configManager->set('oro_rfp.guest_rfp', true);
         $configManager->flush();
-
-        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
-        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 401);
-
-        $configManager->reset('oro_rfp.guest_rfp');
-        $configManager->flush();
+        try {
+            $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
+            self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 401);
+        } finally {
+            $configManager->set('oro_rfp.guest_rfp', false);
+            $configManager->flush();
+        }
     }
 
     /**
