@@ -134,6 +134,7 @@
         &__image {
             width: $product-view-media-gallery-image-width;
             height: $product-view-media-gallery-image-height;
+            aspect-ratio: $product-view-media-gallery-image-aspect-ratio;
             box-shadow: $product-view-media-gallery-slick-slide-item-box-shadow;
             border-radius: $product-view-media-gallery-image-border-radius;
             overflow: hidden;
@@ -309,6 +310,8 @@
         }
 
         &__nav {
+            min-height: $product-view-media-gallery-nav-tablet-min-height;
+
             // show part of slide in addition to slidesToShow
             .slick-list {
                 padding-right: 40px;
