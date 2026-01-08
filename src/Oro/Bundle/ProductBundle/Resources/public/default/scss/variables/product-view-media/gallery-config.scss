@@ -37,11 +37,10 @@ $product-view-media-gallery-arrow-wrapper-bg: get-color('neutral', 'white-100') 
 $product-view-media-gallery-arrow-wrapper-box-shadow: -10px 0 20px 16px get-color('neutral', 'white-100'),
                                                        10px 0 20px 16px get-color('neutral', 'white-100') !default;
 
-$product-view-media-gallery-image-width: 80px !default;
-$product-view-media-gallery-image-height: 80px !default;
+$product-view-media-gallery-image-width: 100% !default;
+$product-view-media-gallery-image-height: auto !default;
 $product-view-media-gallery-image-border-radius: 100% !default;
-$product-view-media-gallery-image-width-tablet: 56px !default;
-$product-view-media-gallery-image-height-tablet: 56px !default;
+$product-view-media-gallery-image-aspect-ratio: #{'1 / 1'} !default;
 
 $product-view-sticker-wrapper-width: 100% !default;
 $product-view-sticker-wrapper-height: $product-view-media-gallery-max-height !default;
@@ -110,6 +109,7 @@ $vertical-product-view-sticker-wrapper-grid-column: #{'2 / 3'} !default;
 // Tablet
 $product-view-media-gallery-container-tablet-grid-row: #{'1 / 2'} !default;
 $product-view-media-gallery-container-tablet-grid-column: #{'1 / 2'} !default;
+$product-view-media-gallery-nav-tablet-min-height: 48px !default;
 
 $product-view-sticker-wrapper-tablet-width: 100% !default;
 $product-view-sticker-wrapper-tablet-position: relative !default;
