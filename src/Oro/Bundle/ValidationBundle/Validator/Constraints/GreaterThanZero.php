@@ -4,11 +4,14 @@ namespace Oro\Bundle\ValidationBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraints\GreaterThan;
 
+/**
+ * Validates that a value is greater than zero.
+ */
 class GreaterThanZero extends GreaterThan implements AliasAwareConstraintInterface
 {
     public const ALIAS = 'greater_than_zero';
 
-    public $value = 0;
+    public mixed $value = 0;
 
     public function __construct($options = null)
     {

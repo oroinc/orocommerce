@@ -36,7 +36,7 @@ class CustomerConsentsTransformer implements DataTransformerInterface
     }
 
     #[\Override]
-    public function transform($consentAcceptances)
+    public function transform($consentAcceptances): mixed
     {
         if ($consentAcceptances instanceof Collection) {
             $consentAcceptances = $consentAcceptances->toArray();
@@ -54,7 +54,7 @@ class CustomerConsentsTransformer implements DataTransformerInterface
     }
 
     #[\Override]
-    public function reverseTransform($encodedConsentAcceptanceData)
+    public function reverseTransform($encodedConsentAcceptanceData): mixed
     {
         $consentAcceptancesDataArray = is_array($encodedConsentAcceptanceData)
             ? $encodedConsentAcceptanceData

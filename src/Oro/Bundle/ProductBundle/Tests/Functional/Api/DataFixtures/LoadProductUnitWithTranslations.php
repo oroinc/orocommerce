@@ -6,8 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\TranslationBundle\Entity\Translation;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadProductUnitWithTranslations extends AbstractFixture implements ContainerAwareInterface
 {

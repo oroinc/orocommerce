@@ -22,7 +22,7 @@ class NavigationRootOptionTransformer implements DataTransformerInterface
     }
 
     #[\Override]
-    public function transform($value)
+    public function transform($value): mixed
     {
         if ($value && !$value instanceof ContentNode) {
             $value = $this->doctrineHelper->getEntityRepository(ContentNode::class)->find($value);
@@ -32,7 +32,7 @@ class NavigationRootOptionTransformer implements DataTransformerInterface
     }
 
     #[\Override]
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if ($value instanceof ContentNode) {
             return $value->getId();

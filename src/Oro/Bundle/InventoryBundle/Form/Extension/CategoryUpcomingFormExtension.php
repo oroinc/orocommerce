@@ -27,7 +27,7 @@ class CategoryUpcomingFormExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add(

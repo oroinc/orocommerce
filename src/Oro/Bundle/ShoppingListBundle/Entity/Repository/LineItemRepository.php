@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
@@ -77,7 +78,7 @@ class LineItemRepository extends ServiceEntityRepository
                 'product.parentVariantLinks',
                 'parentVariantLinksExpr',
                 Join::WITH,
-                'product = parentVariantLinksExpr.parentProduct'.
+                'product = parentVariantLinksExpr.parentProduct' .
                 ' AND parentVariantLinksExpr.parentProduct IN (:products)'
             );
 
@@ -354,8 +355,8 @@ class LineItemRepository extends ServiceEntityRepository
             ->where('line_item.product = :product')
             ->andWhere('line_item.parentProduct = :parentProduct')
             ->set('line_item.parentProduct', ':nullValue')
-            ->setParameter('product', $productVariantLink->getProduct())
-            ->setParameter('parentProduct', $productVariantLink->getParentProduct())
+            ->setParameter('product', $productVariantLink->getProduct()?->getId(), Types::INTEGER)
+            ->setParameter('parentProduct', $productVariantLink->getParentProduct()?->getId(), Types::INTEGER)
             ->setParameter('nullValue', null)
             ->getQuery()
             ->execute();

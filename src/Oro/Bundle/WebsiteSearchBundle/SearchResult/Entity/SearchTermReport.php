@@ -10,6 +10,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchTermReportRepository;
+use Oro\Component\DoctrineUtils\ORM\Id\UuidGenerator;
 
 /**
  * ORM Entity SearchTermReport.
@@ -47,7 +48,8 @@ class SearchTermReport implements
      */
     #[ORM\Column(name: 'id', type: Types::GUID)]
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'UUID')]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected $id;
 
     #[ORM\Column(name: 'search_term', type: Types::STRING, length: 255, nullable: false)]

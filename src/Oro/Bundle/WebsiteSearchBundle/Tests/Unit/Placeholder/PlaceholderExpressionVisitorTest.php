@@ -57,6 +57,12 @@ class PlaceholderExpressionVisitorTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
+        $this->placeholder->expects($this->exactly(2))
+            ->method('replaceDefault')
+            ->willReturnCallback(function ($field) {
+                return $field === 'field_name_NAME_ID' ? 'field_name_1' : 'field_name_2';
+            });
+
         $result = $this->visitor->walkCompositeExpression($expr);
 
         $this->assertInstanceOf(CompositeExpression::class, $result);

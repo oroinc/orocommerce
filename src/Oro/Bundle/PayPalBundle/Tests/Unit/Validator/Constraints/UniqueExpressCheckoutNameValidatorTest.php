@@ -11,6 +11,7 @@ use Oro\Bundle\PayPalBundle\Entity\Repository\PayPalSettingsRepository;
 use Oro\Bundle\PayPalBundle\Validator\Constraints\UniqueExpressCheckoutName;
 use Oro\Bundle\PayPalBundle\Validator\Constraints\UniqueExpressCheckoutNameValidator;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -28,7 +29,7 @@ class UniqueExpressCheckoutNameValidatorTest extends ConstraintValidatorTestCase
     }
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new UniqueExpressCheckoutNameValidator($this->doctrine);
     }

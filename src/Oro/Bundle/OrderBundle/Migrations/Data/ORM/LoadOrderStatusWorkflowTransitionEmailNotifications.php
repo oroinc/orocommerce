@@ -11,8 +11,8 @@ use Oro\Bundle\NotificationBundle\Entity\RecipientList;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Event\WorkflowEvents;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Loads email notifications rules for "order_processing_flow" workflow.

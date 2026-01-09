@@ -15,7 +15,7 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
   nodeRoot:
     __calls:
       - addTitle: ['@localValueRootNode']
-      - addMetaTitl: ['@localMetaTitle']
+      - addMetaTitle: ['@localMetaTitle']
       - addMetaKeyword: ['@localMetaKeyword']
       - addMetaDescription: ['@localMetaDescription']
       - addContentVariant: ['@pageVariant']

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Migrations\Schema\v1_3;
 
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
@@ -56,7 +57,7 @@ class ExportDataQuery extends ParametrizedSqlMigrationQuery
                     VALUES (:name, :destination_id)
                 ';
                 $params = ['name' => trim($postalCode), 'destination_id' => $row['id']];
-                $types = ['name' => \PDO::PARAM_STR, 'destination_id' => \PDO::PARAM_INT];
+                $types = ['name' => ParameterType::STRING, 'destination_id' => ParameterType::INTEGER];
 
                 $this->logQuery($logger, $query, $params, $types);
 
@@ -91,18 +92,18 @@ class ExportDataQuery extends ParametrizedSqlMigrationQuery
                 'enabled' => $row['enabled'],
                 'sort_order' => $row['priority'],
                 'stop_processing' => $row['stop_processing'],
-                'expression' => $row['conditions'].'',
+                'expression' => $row['conditions'] . '',
                 'created_at' => $row['created_at'],
                 'updated_at' => $row['updated_at'],
             ];
             $types = [
-                'name' => \PDO::PARAM_STR,
-                'enabled' => \PDO::PARAM_BOOL,
-                'sort_order' => \PDO::PARAM_INT,
-                'stop_processing' => \PDO::PARAM_BOOL,
-                'expression' => \PDO::PARAM_STR,
-                'created_at' => \PDO::PARAM_STR,
-                'updated_at' => \PDO::PARAM_STR,
+                'name' => ParameterType::STRING,
+                'enabled' => ParameterType::BOOLEAN,
+                'sort_order' => ParameterType::INTEGER,
+                'stop_processing' => ParameterType::BOOLEAN,
+                'expression' => ParameterType::STRING,
+                'created_at' => ParameterType::STRING,
+                'updated_at' => ParameterType::STRING,
             ];
 
             $this->logQuery($logger, $query, $params, $types);
@@ -126,8 +127,8 @@ class ExportDataQuery extends ParametrizedSqlMigrationQuery
                 'currency' => $row['currency'],
             ];
             $types = [
-                'rule_id' => \PDO::PARAM_INT,
-                'currency' => \PDO::PARAM_STR,
+                'rule_id' => ParameterType::INTEGER,
+                'currency' => ParameterType::STRING,
             ];
             $this->logQuery($logger, $query, $params, $types);
 

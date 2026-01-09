@@ -17,7 +17,7 @@ class ProductImageValidator extends ConstraintValidator
     /**
      * @var ExecutionContextInterface
      */
-    protected $context;
+    protected ExecutionContextInterface $context;
 
     /**
      * @param File $value

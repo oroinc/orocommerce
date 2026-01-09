@@ -9,6 +9,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
+/**
+ * Transforms inventory level grid data by enriching rows with product unit precision data.
+ */
 class InventoryLevelGridDataTransformer implements DataTransformerInterface
 {
     public const PRECISION_KEY = 'precision';
@@ -30,13 +33,13 @@ class InventoryLevelGridDataTransformer implements DataTransformerInterface
     }
 
     #[\Override]
-    public function transform($value)
+    public function transform($value): mixed
     {
         return $value;
     }
 
     #[\Override]
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (!$value) {
             return new ArrayCollection();

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Migrations\Schema\v1_5;
 
+use Doctrine\DBAL\ParameterType;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -68,7 +69,7 @@ class SetShippingMethodsConfigsRuleOrganizationQuery extends ParametrizedSqlMigr
             SET organization_id = :organization_id
         ';
         $params = ['organization_id' => $organizationId];
-        $types = ['organization_id' => \PDO::PARAM_INT];
+        $types = ['organization_id' => ParameterType::INTEGER];
         $this->logQuery($logger, $sql, $params, $types);
 
         if (!$dryRun) {

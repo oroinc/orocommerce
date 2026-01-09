@@ -3,14 +3,14 @@
 namespace Oro\Bundle\PaymentBundle\DBAL\Types;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\JsonArrayType;
+use Doctrine\DBAL\Types\JsonType;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
 /**
  * Class adds secure_array type to Doctrine Mapping Types
  * This type provides ability to transparently encrypt/decrypt json array in DB
  */
-class SecureArrayType extends JsonArrayType
+class SecureArrayType extends JsonType
 {
     public const TYPE = 'secure_array';
 
@@ -42,9 +42,9 @@ class SecureArrayType extends JsonArrayType
     }
 
     #[\Override]
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform)
     {
-        return $platform->getClobTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getClobTypeDeclarationSQL($column);
     }
 
     #[\Override]

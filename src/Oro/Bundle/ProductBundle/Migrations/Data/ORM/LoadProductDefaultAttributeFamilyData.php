@@ -8,7 +8,7 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
  * Update all products with default product family

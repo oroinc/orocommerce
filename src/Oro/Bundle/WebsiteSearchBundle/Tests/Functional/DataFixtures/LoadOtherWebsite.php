@@ -9,9 +9,9 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 use Oro\Bundle\WebsiteBundle\Provider\CacheableWebsiteProvider;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 use Oro\Component\Testing\Doctrine\Events;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadOtherWebsite extends AbstractFixture implements ContainerAwareInterface
 {

@@ -32,7 +32,7 @@ class OrderAddressToAddressIdentifierViewTransformer implements DataTransformerI
     }
 
     #[\Override]
-    public function transform($address)
+    public function transform($address): mixed
     {
         // Transforms OrderAddress to an address key.
         if ($address instanceof OrderAddress) {
@@ -52,7 +52,7 @@ class OrderAddressToAddressIdentifierViewTransformer implements DataTransformerI
     }
 
     #[\Override]
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         // Do nothing, it is expected that value will be transformed by the ChoiceToValueTransformer.
         return $value;

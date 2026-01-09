@@ -36,7 +36,7 @@ class PriceListToProductIdToUUID implements Migration, ConnectionAwareInterface
             $queries->addQuery('ALTER TABLE oro_price_list_to_product ADD PRIMARY KEY (id);');
         } else {
             $table->dropPrimaryKey();
-            $table->changeColumn(
+            $table->modifyColumn(
                 'id',
                 [
                     'type' => Type::getType(Types::GUID),

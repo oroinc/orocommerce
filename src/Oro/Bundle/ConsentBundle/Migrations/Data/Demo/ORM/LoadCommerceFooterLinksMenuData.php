@@ -7,8 +7,8 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Adds links to consents pages in the commerce_footer_links menu.
@@ -22,13 +22,13 @@ class LoadCommerceFooterLinksMenuData extends AbstractFixture implements Contain
     /** @var array */
     protected static $menuUpdates = [
         [
-            'key' => self::MENU.'_terms_and_conditions',
+            'key' => self::MENU . '_terms_and_conditions',
             'parent_key' => 'information',
             'uri' => '/terms_and_conditions',
             'default_title' => 'Terms and Conditions'
         ],
         [
-            'key' =>  self::MENU.'_email_subscription',
+            'key' =>  self::MENU . '_email_subscription',
             'parent_key' => 'information',
             'uri' => '/email_subscription',
             'default_title' => 'Email subscription'

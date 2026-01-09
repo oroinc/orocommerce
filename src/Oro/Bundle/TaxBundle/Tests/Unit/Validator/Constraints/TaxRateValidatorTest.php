@@ -4,12 +4,13 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\TaxBundle\Validator\Constraints\TaxRate;
 use Oro\Bundle\TaxBundle\Validator\Constraints\TaxRateValidator;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class TaxRateValidatorTest extends ConstraintValidatorTestCase
 {
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new TaxRateValidator();
     }

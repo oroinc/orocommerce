@@ -10,7 +10,7 @@ use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadRedirects extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface

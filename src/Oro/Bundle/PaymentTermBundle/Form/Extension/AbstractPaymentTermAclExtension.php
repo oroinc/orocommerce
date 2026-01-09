@@ -7,6 +7,9 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Base form extension that removes payment term association fields based on ACL permissions.
+ */
 abstract class AbstractPaymentTermAclExtension extends AbstractTypeExtension
 {
     /** @var string ACL resource to disable override */
@@ -27,7 +30,7 @@ abstract class AbstractPaymentTermAclExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!$this->aclResource) {
             throw new \InvalidArgumentException('ACL resource not configured');

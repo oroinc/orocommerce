@@ -21,7 +21,7 @@ class OroRFPBundle implements Migration
     protected function modifyRfpRequestTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_rfp_request');
-        $table->changeColumn('phone', ['notnull' => false]);
-        $table->changeColumn('note', ['notnull' => false]);
+        $table->modifyColumn('phone', ['notnull' => false]);
+        $table->modifyColumn('note', ['notnull' => false]);
     }
 }

@@ -39,12 +39,12 @@ class Router extends BaseRouter
     public function getGenerator(): UrlGeneratorInterface
     {
         if ($this->urlDecisionMaker->matches($this->context->getPathInfo())) {
-            if (!$this->generator instanceof SluggableUrlGenerator) {
+            if (!isset($this->generator) || !$this->generator instanceof SluggableUrlGenerator) {
                 $sluggableUrlGenerator = $this->container->get('oro_redirect.routing.sluggable_url_generator');
                 $sluggableUrlGenerator->setBaseGenerator(parent::getGenerator());
                 $this->generator = $sluggableUrlGenerator;
             }
-        } elseif (!$this->generator) {
+        } elseif (!isset($this->generator)) {
             $this->generator = parent::getGenerator();
         }
 
@@ -55,12 +55,12 @@ class Router extends BaseRouter
     public function getMatcher(): UrlMatcherInterface|RequestMatcherInterface
     {
         if ($this->urlDecisionMaker->matches($this->context->getPathInfo())) {
-            if (!$this->matcher instanceof SlugUrlMatcher) {
+            if (!isset($this->matcher) || !$this->matcher instanceof SlugUrlMatcher) {
                 $slugUrlMatcher = $this->container->get('oro_redirect.routing.slug_url_matcher');
                 $slugUrlMatcher->setBaseMatcher(parent::getMatcher());
                 $this->matcher = $slugUrlMatcher;
             }
-        } elseif (!$this->matcher) {
+        } elseif (!isset($this->matcher)) {
             $this->matcher = parent::getMatcher();
         }
 

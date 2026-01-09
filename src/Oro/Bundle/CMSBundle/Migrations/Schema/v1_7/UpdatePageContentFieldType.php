@@ -19,7 +19,7 @@ class UpdatePageContentFieldType implements Migration
         if ($table->hasColumn('content')) {
             $contentType = $table->getColumn('content')->getType();
             if (!$contentType instanceof WYSIWYGType) {
-                $table->changeColumn(
+                $table->modifyColumn(
                     'content',
                     ['type' => WYSIWYGType::getType('wysiwyg'), 'comment' => '(DC2Type:wysiwyg)']
                 );

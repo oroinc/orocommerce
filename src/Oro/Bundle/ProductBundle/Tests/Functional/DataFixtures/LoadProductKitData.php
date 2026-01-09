@@ -21,8 +21,8 @@ use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFami
 use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\UserBundle\Entity\User;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Loads products kits.

@@ -6,8 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\ContentWidget\TabbedContentWidgetType;
 use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Rename RenameTabbedContentWidgetType from 'tabbed_content' to 'oro_tabbed_content'

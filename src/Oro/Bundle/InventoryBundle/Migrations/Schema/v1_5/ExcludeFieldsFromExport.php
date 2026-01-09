@@ -19,7 +19,7 @@ class ExcludeFieldsFromExport implements Migration
     {
         // Works in case when "availability_date" column does not yet exist.
         $table = $schema->getTable('oro_catalog_category');
-        $table->changeColumn(
+        $table->modifyColumn(
             'availability_date',
             [
                 OroOptions::KEY => [

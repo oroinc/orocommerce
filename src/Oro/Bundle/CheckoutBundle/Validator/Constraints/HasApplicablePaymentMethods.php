@@ -14,7 +14,7 @@ class HasApplicablePaymentMethods extends Constraint
     public string $message = 'oro.checkout.validator.has_applicable_payment_methods.message';
 
     #[\Override]
-    public function getTargets()
+    public function getTargets(): array|string
     {
         return self::CLASS_CONSTRAINT;
     }

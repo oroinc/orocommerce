@@ -7,6 +7,9 @@ use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\InventoryBundle\Model\Inventory;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Extends category forms with minimum and maximum quantity to order fields.
+ */
 class CategoryQuantityToOrderFormExtension extends AbstractFallbackCategoryTypeExtension
 {
     #[\Override]
@@ -19,7 +22,7 @@ class CategoryQuantityToOrderFormExtension extends AbstractFallbackCategoryTypeE
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 

@@ -7,8 +7,8 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadFrontendCategoryProductData implements FixtureInterface, DependentFixtureInterface, ContainerAwareInterface
 {

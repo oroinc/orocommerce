@@ -5,8 +5,11 @@ namespace Oro\Bundle\SEOBundle\Migrations\Data\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\MakeProductAttributesTrait;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
 
+/**
+ * Updates SEO meta attribute configurations to enable searching and indexing.
+ */
 class UpdateAttributesConfig extends AbstractFixture implements ContainerAwareInterface
 {
     use MakeProductAttributesTrait;

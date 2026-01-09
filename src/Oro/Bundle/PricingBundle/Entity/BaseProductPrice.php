@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Component\DoctrineUtils\ORM\Id\UuidGenerator;
 
 /**
  * Base entity class for product price entities.
@@ -34,7 +35,8 @@ class BaseProductPrice implements
      */
     #[ORM\Column(name: 'id', type: Types::GUID)]
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'UUID')]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
     protected $id;
 

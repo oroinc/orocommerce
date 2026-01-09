@@ -7,12 +7,15 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Defines a form type for managing a collection of quote product demand entries.
+ */
 class QuoteProductDemandCollectionType extends CollectionType
 {
     public const NAME = 'oro_sale_quote_product_demand_collection';
 
     #[\Override]
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -27,7 +30,7 @@ class QuoteProductDemandCollectionType extends CollectionType
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // custom subscriber to pass data to child form types
         $resizeSubscriber = new QuoteToOrderResizeFormSubscriber(

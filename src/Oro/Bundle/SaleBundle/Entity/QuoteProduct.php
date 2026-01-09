@@ -624,7 +624,7 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
     {
         $index = $productKitItemLineItem->getKitItemId();
 
-        if (!$this->kitItemLineItems->containsKey($index)) {
+        if ($index === null || !$this->kitItemLineItems->containsKey($index)) {
             $productKitItemLineItem->setQuoteProduct($this);
             if ($index) {
                 $this->kitItemLineItems->set($index, $productKitItemLineItem);

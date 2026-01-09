@@ -8,6 +8,7 @@ use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageTypeCollection;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageTypeCollectionValidator;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -34,7 +35,7 @@ class ProductImageTypeCollectionValidatorTest extends ConstraintValidatorTestCas
      * @return ProductImageTypeCollectionValidator
      */
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         $this->imageTypeProvider = $this->createMock(ImageTypeProvider::class);
         $this->translator = $this->createMock(TranslatorInterface::class);

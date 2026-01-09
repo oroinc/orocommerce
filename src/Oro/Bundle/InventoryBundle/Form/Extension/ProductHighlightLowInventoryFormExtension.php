@@ -10,6 +10,9 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Extends the product form to add low inventory highlighting field with category fallback support.
+ */
 class ProductHighlightLowInventoryFormExtension extends AbstractTypeExtension
 {
     #[\Override]
@@ -19,7 +22,7 @@ class ProductHighlightLowInventoryFormExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $product = $builder->getData();
         // set category as default fallback

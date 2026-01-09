@@ -71,7 +71,7 @@ class PricingStorageSwitchHandler implements PricingStorageSwitchHandlerInterfac
      * Any change to switch logic will lead to query changes and vise versa, so Single Responsibility principle
      * isn't broken here.
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     private function deleteNonFirstPriceListAssociations(string $table, string $associationColumn)
     {

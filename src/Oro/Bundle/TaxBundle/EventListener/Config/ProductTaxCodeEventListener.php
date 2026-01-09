@@ -60,10 +60,11 @@ class ProductTaxCodeEventListener
 
         $result = [];
         $ids = (array) $settings[ConfigManager::VALUE_KEY];
+        $ids = $this->filterIds($ids);
 
         if ($ids) {
             $taxCodes = $this->doctrineHelper->getEntityRepository(ProductTaxCode::class)
-                ->findBy(['id' => $this->filterIds($ids)]);
+                ->findBy(['id' => $ids]);
 
             $result = array_map(
                 function (AbstractTaxCode $taxCode) {

@@ -60,7 +60,7 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
     /**
      * @param LoggerInterface $logger
      * @param bool $dryRun
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     public function migrateData(LoggerInterface $logger, $dryRun = false)
     {

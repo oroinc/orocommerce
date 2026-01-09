@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Migrations\Schema;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
@@ -111,7 +111,7 @@ class OroPaymentTermBundleInstaller implements
 
     private function migrateRelations(Schema $schema, QueryBag $queries): void
     {
-        if ($this->platform instanceof MySqlPlatform) {
+        if ($this->platform instanceof MySQLPlatform) {
             $queryAccount = <<<QUERY
 UPDATE oro_customer a
 JOIN oro_payment_term_to_account pta ON pta.account_id = a.id

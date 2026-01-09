@@ -30,7 +30,7 @@ class ProductImageTypeCollectionValidator extends ConstraintValidator
     /**
      * @var ExecutionContextInterface $context
      */
-    protected $context;
+    protected ExecutionContextInterface $context;
 
     public function __construct(
         ImageTypeProvider $imageTypeProvider,

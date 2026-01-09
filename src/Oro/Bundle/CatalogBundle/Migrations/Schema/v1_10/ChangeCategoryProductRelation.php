@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_10;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
@@ -42,7 +42,7 @@ class ChangeCategoryProductRelation implements
 
         if ($this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
             $queries->addQuery(new UpdateCategoryIdsInProductsPqSql());
-        } elseif ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
+        } elseif ($this->connection->getDatabasePlatform() instanceof MySQLPlatform) {
             $queries->addQuery(new UpdateCategoryIdsInProductsMySql());
         }
 

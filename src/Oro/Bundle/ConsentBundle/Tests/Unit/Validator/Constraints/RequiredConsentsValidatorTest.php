@@ -11,6 +11,7 @@ use Oro\Bundle\ConsentBundle\Validator\Constraints\RequiredConsentsValidator;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class RequiredConsentsValidatorTest extends ConstraintValidatorTestCase
@@ -38,7 +39,7 @@ class RequiredConsentsValidatorTest extends ConstraintValidatorTestCase
     }
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new RequiredConsentsValidator($this->enabledConsentProvider, $this->localizedHelper);
     }

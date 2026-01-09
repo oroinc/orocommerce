@@ -225,7 +225,7 @@ class IsLineItemGroupsShippingMethodsUpdateRequiredTest extends \PHPUnit\Framewo
                 'is_line_item_groups_shipping_methods_update_required',
                 $entity,
                 "new \Oro\Component\ConfigExpression\CompiledPropertyPath("
-                . "'line_item_groups_shipping_data', ['line_item_groups_shipping_data'], [false])"
+                . "'line_item_groups_shipping_data', ['line_item_groups_shipping_data'], [false], [false])"
             ),
             $result
         );

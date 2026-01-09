@@ -18,8 +18,8 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture implements ContainerAwareInterface
 {

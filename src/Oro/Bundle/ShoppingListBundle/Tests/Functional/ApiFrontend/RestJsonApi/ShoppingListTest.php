@@ -1823,6 +1823,16 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                 'data' => [
                     [
                         'type' => 'shoppinglistitems',
+                        'id' => '<toString(@kit_line_item1->id)>',
+                        'attributes' => [
+                            'quantity' => 2,
+                            'currency' => 'USD',
+                            'value' => '14.8000',
+                            'subTotal' => '29.6000'
+                        ]
+                    ],
+                    [
+                        'type' => 'shoppinglistitems',
                         'id' => '<toString(@line_item1->id)>',
                         'attributes' => [
                             'quantity' => 5,
@@ -1839,16 +1849,6 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                             'currency' => 'USD',
                             'value' => '2.3400',
                             'subTotal' => '23.4000'
-                        ]
-                    ],
-                    [
-                        'type' => 'shoppinglistitems',
-                        'id' => '<toString(@kit_line_item1->id)>',
-                        'attributes' => [
-                            'quantity' => 2,
-                            'currency' => 'USD',
-                            'value' => '14.8000',
-                            'subTotal' => '29.6000'
                         ]
                     ]
                 ]
@@ -1890,9 +1890,9 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
+                    ['type' => 'shoppinglistitems', 'id' => '<toString(@kit_line_item1->id)>'],
                     ['type' => 'shoppinglistitems', 'id' => '<toString(@line_item1->id)>'],
-                    ['type' => 'shoppinglistitems', 'id' => '<toString(@line_item2->id)>'],
-                    ['type' => 'shoppinglistitems', 'id' => '<toString(@kit_line_item1->id)>']
+                    ['type' => 'shoppinglistitems', 'id' => '<toString(@line_item2->id)>']
                 ]
             ],
             $response

@@ -35,7 +35,7 @@ class ProductStepOneFormExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!$this->authorizationChecker->isGranted('oro_catalog_category_view')) {
             return;

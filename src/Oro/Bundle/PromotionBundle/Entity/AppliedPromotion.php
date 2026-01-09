@@ -57,13 +57,13 @@ class AppliedPromotion implements DatesAwareInterface, ExtendEntityInterface
     /**
      * @var array
      */
-    #[ORM\Column(name: 'config_options', type: 'json_array')]
+    #[ORM\Column(name: 'config_options', type: 'json')]
     protected $configOptions = [];
 
     /**
      * @var array
      */
-    #[ORM\Column(name: 'promotion_data', type: 'json_array')]
+    #[ORM\Column(name: 'promotion_data', type: 'json')]
     protected $promotionData = [];
 
     /**

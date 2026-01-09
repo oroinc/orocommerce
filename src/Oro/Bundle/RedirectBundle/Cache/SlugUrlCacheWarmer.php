@@ -34,7 +34,7 @@ class SlugUrlCacheWarmer implements CacheWarmerInterface
     }
 
     #[\Override]
-    public function warmUp(string $cacheDir): array
+    public function warmUp(string $cacheDir, ?string $buildDir = null): array
     {
         foreach ($this->routingInformationProvider->getEntityClasses() as $entityClass) {
             $this->messageProducer->send(

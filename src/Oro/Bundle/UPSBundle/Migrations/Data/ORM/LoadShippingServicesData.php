@@ -8,8 +8,8 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Migrations\Data\ORM\LoadCountryData;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Loads shipping services.
@@ -123,7 +123,8 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
             /** @var Country $country */
             foreach ($countries as $country) {
                 if ($row['type'] === 'AC' ||
-                    ($row['type'] === 'UC' && !in_array($country->getIso2Code(), $this->loadedCountries, false))) {
+                    ($row['type'] === 'UC' && !in_array($country->getIso2Code(), $this->loadedCountries, false))
+                ) {
                     $shippingService = new ShippingService();
                     $shippingService
                         ->setCode($row['code'])

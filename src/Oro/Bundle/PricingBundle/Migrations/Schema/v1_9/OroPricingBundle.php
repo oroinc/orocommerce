@@ -27,7 +27,7 @@ class OroPricingBundle implements Migration, ConnectionAwareInterface
             $queries->addQuery('ALTER TABLE oro_price_product ADD PRIMARY KEY (id);');
         } else {
             $table->dropPrimaryKey();
-            $table->changeColumn(
+            $table->modifyColumn(
                 'id',
                 [
                     'type' => Type::getType("guid"),

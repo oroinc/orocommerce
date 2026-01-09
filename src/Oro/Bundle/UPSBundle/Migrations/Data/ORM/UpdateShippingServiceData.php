@@ -9,8 +9,8 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Migrations\Data\ORM\LoadCountryData;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Updates shipping services.

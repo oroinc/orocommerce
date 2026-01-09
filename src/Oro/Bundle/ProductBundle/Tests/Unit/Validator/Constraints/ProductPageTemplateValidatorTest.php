@@ -7,6 +7,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductPageTemplate;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductPageTemplateValidator;
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductPageTemplateValidatorTest extends ConstraintValidatorTestCase
@@ -37,7 +38,7 @@ class ProductPageTemplateValidatorTest extends ConstraintValidatorTestCase
     }
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new ProductPageTemplateValidator($this->pageTemplatesManager);
     }

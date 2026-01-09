@@ -10,6 +10,9 @@ use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Extends the category form to add visibility configuration fields.
+ */
 class CategoryFormExtension extends AbstractTypeExtension
 {
     #[\Override]
@@ -19,7 +22,7 @@ class CategoryFormExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add(

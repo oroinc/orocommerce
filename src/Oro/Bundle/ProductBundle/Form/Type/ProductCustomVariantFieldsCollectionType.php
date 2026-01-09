@@ -46,7 +46,10 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
+        // Data transformation must happen in PRE_SET_DATA (before ResizeFormListener)
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'transformData']);
+        // Field configuration must happen in POST_SET_DATA after ResizeFormListener (priority 255)
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'configureFields'], -255);
         $builder->addModelTransformer(new ProductVariantFieldsTransformer());
     }
 
@@ -62,7 +65,10 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
         $view->parent->vars['variantFields'] = $variantFields;
     }
 
-    public function onPreSetData(FormEvent $event)
+    /**
+     * Transforms data structure in PRE_SET_DATA (allowed to call setData)
+     */
+    public function transformData(FormEvent $event)
     {
         $form = $event->getForm();
         $config = $form->getConfig();
@@ -80,14 +86,9 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
             throw new UnexpectedTypeException($eventData, 'array or \ArrayAccess');
         }
 
-        foreach ($form as $name => $child) {
-            $form->remove($name);
-        }
-
         $variantFields = $this->variantFieldProvider->getVariantFields($attributeFamily);
 
         $data = [];
-        $fieldsToAdd = [];
         foreach ($variantFields as $field) {
             $fieldName = $field->getName();
             $priority = array_search($fieldName, $eventData);
@@ -98,10 +99,46 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
                 'priority' => $priority,
                 'is_selected' => $selected,
             ];
+        }
 
-            $fieldsToAdd[$field->getName()] = [
+        $event->setData($data);
+    }
+
+    /**
+     * Configures fields with labels in POST_SET_DATA after ResizeFormListener
+     */
+    public function configureFields(FormEvent $event)
+    {
+        $form = $event->getForm();
+        $config = $form->getConfig();
+        $attributeFamily = $config->getOption('attributeFamily');
+
+        if (!$attributeFamily) {
+            return;
+        }
+
+        $data = $event->getData();
+        if (!$data) {
+            return;
+        }
+
+        // Remove all fields created by ResizeFormListener (without labels)
+        foreach ($form as $name => $child) {
+            $form->remove($name);
+        }
+
+        $variantFields = $this->variantFieldProvider->getVariantFields($attributeFamily);
+
+        $fieldsToAdd = [];
+        foreach ($variantFields as $field) {
+            $fieldName = $field->getName();
+            if (!isset($data[$fieldName])) {
+                continue;
+            }
+
+            $fieldsToAdd[$fieldName] = [
                 'name' => $fieldName,
-                'priority' => $priority,
+                'priority' => $data[$fieldName]['priority'],
                 'label' => $field->getLabel(),
             ];
         }
@@ -111,13 +148,11 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
         });
 
         foreach ($fieldsToAdd as $field) {
-            $form->add($field['name'], $form->getConfig()->getOption('entry_type'), array_replace([
-                'property_path' => '['.$field['name'].']',
+            $form->add($field['name'], $config->getOption('entry_type'), array_replace([
+                'property_path' => '[' . $field['name'] . ']',
                 'label' => $field['label'],
-            ], $form->getConfig()->getOption('entry_options')));
+            ], $config->getOption('entry_options')));
         }
-
-        $event->setData($data);
     }
 
     /**

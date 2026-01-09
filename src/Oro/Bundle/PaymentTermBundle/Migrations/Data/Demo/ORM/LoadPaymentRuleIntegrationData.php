@@ -17,8 +17,8 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings;
 use Oro\Bundle\PaymentTermBundle\Integration\PaymentTermChannelType;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\UserBundle\Entity\User;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Loads payment term integration channel.

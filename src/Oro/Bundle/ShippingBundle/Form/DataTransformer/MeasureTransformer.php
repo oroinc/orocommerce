@@ -6,6 +6,9 @@ use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 
+/**
+ * Transforms measure units between entity and code representations.
+ */
 class MeasureTransformer implements DataTransformerInterface
 {
     /** @var ObjectRepository */
@@ -17,7 +20,7 @@ class MeasureTransformer implements DataTransformerInterface
     }
 
     #[\Override]
-    public function transform($values)
+    public function transform($values): mixed
     {
         if (!is_array($values)) {
             return [];
@@ -32,7 +35,7 @@ class MeasureTransformer implements DataTransformerInterface
     }
 
     #[\Override]
-    public function reverseTransform($entities)
+    public function reverseTransform($entities): mixed
     {
         if (!is_array($entities)) {
             return [];

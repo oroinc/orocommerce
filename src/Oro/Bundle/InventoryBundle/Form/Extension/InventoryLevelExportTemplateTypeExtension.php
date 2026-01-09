@@ -8,6 +8,9 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Extends export template forms to provide processor alias options for inventory levels.
+ */
 class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
 {
     /**
@@ -28,7 +31,7 @@ class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!(isset($options['entityName']) && $options['entityName'] === InventoryLevel::class)) {
             return;

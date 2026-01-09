@@ -13,8 +13,8 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ThemeBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ThemeBundle\Entity\ThemeConfiguration;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Yaml\Yaml;
 
 /**

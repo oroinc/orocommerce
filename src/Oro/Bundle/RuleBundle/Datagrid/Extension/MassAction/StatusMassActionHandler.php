@@ -144,11 +144,9 @@ class StatusMassActionHandler implements MassActionHandlerInterface
      */
     protected function process($queryBuilder, $status, $iteration)
     {
-        $result = $queryBuilder->getQuery()->iterate();
+        $result = $queryBuilder->getQuery()->toIterable();
+        /** @var RuleOwnerInterface $entity */
         foreach ($result as $entity) {
-            /** @var RuleOwnerInterface $entity */
-            $entity = $entity[0];
-
             $entity->getRule()->setEnabled($status);
 
             $this->entityManager->persist($entity);

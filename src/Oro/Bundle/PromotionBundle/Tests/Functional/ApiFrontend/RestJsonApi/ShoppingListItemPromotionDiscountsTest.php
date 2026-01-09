@@ -58,6 +58,30 @@ class ShoppingListItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
                 'data' => [
                     [
                         'type' => 'shoppinglistitems',
+                        'id' => '<toString(@kit_line_item1->id)>',
+                        'attributes' => [
+                            'quantity' => 2,
+                            'currency' => 'USD',
+                            'value' => '14.8000',
+                            'subTotal' => '29.6000',
+                            'totalValue' => '28.6000',
+                            'discount' => '-1.0000'
+                        ]
+                    ],
+                    [
+                        'type' => 'shoppinglistitems',
+                        'id' => '<toString(@kit_line_item2->id)>',
+                        'attributes' => [
+                            'quantity' => 2,
+                            'currency' => 'USD',
+                            'value' => '14.8000',
+                            'subTotal' => '29.6000',
+                            'totalValue' => '28.6000',
+                            'discount' => '-1.0000'
+                        ]
+                    ],
+                    [
+                        'type' => 'shoppinglistitems',
                         'id' => '<toString(@line_item1->id)>',
                         'attributes' => [
                             'quantity' => 5,
@@ -91,30 +115,6 @@ class ShoppingListItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
                             'totalValue' => '19.2000',
                             'discount' => '-1.0000'
                         ]
-                    ],
-                    [
-                        'type' => 'shoppinglistitems',
-                        'id' => '<toString(@kit_line_item1->id)>',
-                        'attributes' => [
-                            'quantity' => 2,
-                            'currency' => 'USD',
-                            'value' => '14.8000',
-                            'subTotal' => '29.6000',
-                            'totalValue' => '28.6000',
-                            'discount' => '-1.0000'
-                        ]
-                    ],
-                    [
-                        'type' => 'shoppinglistitems',
-                        'id' => '<toString(@kit_line_item2->id)>',
-                        'attributes' => [
-                            'quantity' => 2,
-                            'currency' => 'USD',
-                            'value' => '14.8000',
-                            'subTotal' => '29.6000',
-                            'totalValue' => '28.6000',
-                            'discount' => '-1.0000'
-                        ]
                     ]
                 ]
             ],
@@ -141,6 +141,20 @@ class ShoppingListItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
                 'data' => [
                     [
                         'type' => 'shoppinglistitems',
+                        'id' => '<toString(@kit_line_item1->id)>',
+                        'attributes' => [
+                            'totalValue' => '28.6000'
+                        ]
+                    ],
+                    [
+                        'type' => 'shoppinglistitems',
+                        'id' => '<toString(@kit_line_item2->id)>',
+                        'attributes' => [
+                            'totalValue' => '28.6000'
+                        ]
+                    ],
+                    [
+                        'type' => 'shoppinglistitems',
                         'id' => '<toString(@line_item1->id)>',
                         'attributes' => [
                             'totalValue' => '5.1500'
@@ -158,20 +172,6 @@ class ShoppingListItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
                         'id' => '<toString(@line_item3->id)>',
                         'attributes' => [
                             'totalValue' => '19.2000'
-                        ]
-                    ],
-                    [
-                        'type' => 'shoppinglistitems',
-                        'id' => '<toString(@kit_line_item1->id)>',
-                        'attributes' => [
-                            'totalValue' => '28.6000'
-                        ]
-                    ],
-                    [
-                        'type' => 'shoppinglistitems',
-                        'id' => '<toString(@kit_line_item2->id)>',
-                        'attributes' => [
-                            'totalValue' => '28.6000'
                         ]
                     ]
                 ]
@@ -199,6 +199,20 @@ class ShoppingListItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
                 'data' => [
                     [
                         'type' => 'shoppinglistitems',
+                        'id' => '<toString(@kit_line_item1->id)>',
+                        'attributes' => [
+                            'discount' => '-1.0000'
+                        ]
+                    ],
+                    [
+                        'type' => 'shoppinglistitems',
+                        'id' => '<toString(@kit_line_item2->id)>',
+                        'attributes' => [
+                            'discount' => '-1.0000'
+                        ]
+                    ],
+                    [
+                        'type' => 'shoppinglistitems',
                         'id' => '<toString(@line_item1->id)>',
                         'attributes' => [
                             'discount' => '-1.0000'
@@ -214,20 +228,6 @@ class ShoppingListItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
                     [
                         'type' => 'shoppinglistitems',
                         'id' => '<toString(@line_item3->id)>',
-                        'attributes' => [
-                            'discount' => '-1.0000'
-                        ]
-                    ],
-                    [
-                        'type' => 'shoppinglistitems',
-                        'id' => '<toString(@kit_line_item1->id)>',
-                        'attributes' => [
-                            'discount' => '-1.0000'
-                        ]
-                    ],
-                    [
-                        'type' => 'shoppinglistitems',
-                        'id' => '<toString(@kit_line_item2->id)>',
                         'attributes' => [
                             'discount' => '-1.0000'
                         ]

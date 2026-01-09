@@ -9,7 +9,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadSlugScopesData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface

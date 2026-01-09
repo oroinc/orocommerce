@@ -9,6 +9,7 @@ use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -37,7 +38,7 @@ class WYSIWYGValidatorTest extends ConstraintValidatorTestCase
     }
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects($this->any())

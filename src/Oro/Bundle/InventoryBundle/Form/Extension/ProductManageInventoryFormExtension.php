@@ -9,6 +9,9 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Extends the product form to add inventory management field with category fallback support.
+ */
 class ProductManageInventoryFormExtension extends AbstractTypeExtension
 {
     #[\Override]
@@ -18,7 +21,7 @@ class ProductManageInventoryFormExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $product = $builder->getData();
         // set category as default fallback

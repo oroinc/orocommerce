@@ -19,7 +19,7 @@ class OroOrderBundle implements Migration
 
         $table->removeForeignKey('fk_orob2b_order_account_id');
 
-        $table->changeColumn('account_id', ['type' => IntegerType::getType('integer'), 'notnull' => false]);
+        $table->modifyColumn('account_id', ['type' => IntegerType::getType('integer'), 'notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
 
         $table->addForeignKeyConstraint(

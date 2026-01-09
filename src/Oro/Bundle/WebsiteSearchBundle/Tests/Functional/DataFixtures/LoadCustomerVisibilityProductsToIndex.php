@@ -6,8 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadCustomerVisibilityProductsToIndex extends AbstractFixture implements ContainerAwareInterface
 {

@@ -96,6 +96,9 @@ class ShoppingListLineItemBatchUpdateHandler
         $repository = $this->doctrineHelper->getEntityRepository(LineItem::class);
 
         $data = [];
+        if (empty($ids)) {
+            return [];
+        }
         foreach ($repository->findBy(['id' => $ids]) as $item) {
             $data[$item->getId()] = $item;
         }

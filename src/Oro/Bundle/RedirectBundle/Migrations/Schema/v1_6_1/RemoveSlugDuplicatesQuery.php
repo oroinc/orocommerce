@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Migrations\Schema\v1_6_1;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -37,7 +37,7 @@ class RemoveSlugDuplicatesQuery extends ParametrizedSqlMigrationQuery
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     private function fillScopeHashes(LoggerInterface $logger, bool $dryRun): void
     {
@@ -90,7 +90,7 @@ SQL;
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     private function removeDuplicates(LoggerInterface $logger, bool $dryRun): void
     {

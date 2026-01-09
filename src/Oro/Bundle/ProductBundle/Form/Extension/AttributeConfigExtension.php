@@ -36,7 +36,7 @@ class AttributeConfigExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $configModel = $options['config_model'];
         if ($configModel instanceof FieldConfigModel) {
@@ -52,7 +52,7 @@ class AttributeConfigExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $configModel = $options['config_model'];
         if ($configModel instanceof FieldConfigModel && $this->isApplicable($configModel)) {

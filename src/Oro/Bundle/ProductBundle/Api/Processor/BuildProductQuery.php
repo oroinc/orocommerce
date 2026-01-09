@@ -39,6 +39,6 @@ class BuildProductQuery implements ProcessorInterface
         // Adds one filter that points to concrete products and remove unnecessary parts from the query.
         $qb->andWhere($qb->expr()->in(sprintf('%s.id', $alias), $productIds));
         $qb->setMaxResults(null);
-        $qb->setFirstResult(null);
+        $qb->setFirstResult(0);
     }
 }

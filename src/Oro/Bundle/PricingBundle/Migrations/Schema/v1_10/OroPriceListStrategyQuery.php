@@ -49,15 +49,15 @@ WHERE c.entity = :entity';
         $this->logQuery($logger, $query);
         if (!$dryRun) {
             $statement = $this->connection->prepare($query);
-            $statement->bindValue(':entity', 'app', Types::STRING);
-            $statement->bindValue(':name', Configuration::PRICE_LIST_STRATEGIES, Types::STRING);
-            $statement->bindValue(':section', Configuration::ROOT_NODE, Types::STRING);
-            $statement->bindValue(':text_value', MergePricesCombiningStrategy::NAME, Types::TEXT);
-            $statement->bindValue(':object_value', null, Types::OBJECT);
-            $statement->bindValue(':array_value', null, Types::ARRAY);
-            $statement->bindValue(':type', 'scalar', Types::STRING);
+            $statement->bindValue('entity', 'app', Types::STRING);
+            $statement->bindValue('name', Configuration::PRICE_LIST_STRATEGIES, Types::STRING);
+            $statement->bindValue('section', Configuration::ROOT_NODE, Types::STRING);
+            $statement->bindValue('text_value', MergePricesCombiningStrategy::NAME, Types::TEXT);
+            $statement->bindValue('object_value', null, Types::OBJECT);
+            $statement->bindValue('array_value', null, Types::ARRAY);
+            $statement->bindValue('type', 'scalar', Types::STRING);
             $now = (new \DateTime())->setTimezone(new \DateTimeZone('UTC'));
-            $statement->bindValue(':created_at', $now, Types::DATETIME_MUTABLE);
+            $statement->bindValue('created_at', $now, Types::DATETIME_MUTABLE);
             $statement->executeQuery();
         }
     }

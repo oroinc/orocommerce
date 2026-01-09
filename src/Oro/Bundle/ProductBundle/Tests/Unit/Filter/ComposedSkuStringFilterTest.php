@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Filter;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -254,7 +254,7 @@ class ComposedSkuStringFilterTest extends TestCase
         $connection = $this->createMock(Connection::class);
         $connection->expects(self::any())
             ->method('getDatabasePlatform')
-            ->willReturn(new PostgreSQL94Platform());
+            ->willReturn(new PostgreSQLPlatform());
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager->expects(self::any())

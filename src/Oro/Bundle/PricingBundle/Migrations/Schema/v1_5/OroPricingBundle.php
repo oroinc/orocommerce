@@ -70,7 +70,7 @@ class OroPricingBundle implements
         );
         $postSchema = clone $schema;
         $postSchema->getTable('orob2b_price_attribute_pl')
-            ->changeColumn('field_name', ['notnull' => true]);
+            ->modifyColumn('field_name', ['notnull' => true]);
         $postQueries = $this->getSchemaDiff($schema, $postSchema);
         foreach ($postQueries as $query) {
             $queries->addPostQuery($query);

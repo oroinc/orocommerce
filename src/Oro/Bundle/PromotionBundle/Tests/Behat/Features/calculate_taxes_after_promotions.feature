@@ -100,8 +100,8 @@ Feature: Calculate taxes after promotions
     And I hide column "Taxes" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
       | Product             | UPIT  | UPET  | UPTA  | RTIT  | RTET  | RTTA  | RTDA  | RTADIT | RTADET |
-      | Product 1 SKU: SKU1 | $0.51 | $0.47 | $0.05 | $2.59 | $2.35 | $0.24 | $0.00 | $2.59  | $2.35  |
       | Product 2 SKU: SKU2 | $0.23 | $0.23 | $0.00 | $1.15 | $1.15 | $0.00 | $5.00 | $0.00  | $0.00  |
+      | Product 1 SKU: SKU1 | $0.51 | $0.47 | $0.05 | $2.59 | $2.35 | $0.24 | $0.00 | $2.59  | $2.35  |
 
   Scenario: Enable Product Prices Include Tax option
     Given I proceed as the Admin
@@ -175,8 +175,8 @@ Feature: Calculate taxes after promotions
     And I hide column "Taxes" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
       | Product             | UPIT  | UPET  | UPTA  | RTIT  | RTET  | RTTA  | RTDA  | RTADIT | RTADET |
-      | Product 1 SKU: SKU1 | $0.47 | $0.42 | $0.04 | $2.35 | $2.14 | $0.21 | $0.00 | $2.35  | $2.14  |
       | Product 2 SKU: SKU2 | $0.23 | $0.23 | $0.00 | $1.15 | $1.15 | $0.00 | $5.00 | $0.00  | $0.00  |
+      | Product 1 SKU: SKU1 | $0.47 | $0.42 | $0.04 | $2.35 | $2.14 | $0.21 | $0.00 | $2.35  | $2.14  |
 
   Scenario: Check Orders grid
     Given I proceed as the Admin
@@ -197,8 +197,8 @@ Feature: Calculate taxes after promotions
     And I show all columns in "Backend Order Line Items Grid" except Taxes
     Then I should see following "Backend Order Line Items Grid" grid:
       | SKU  | Product   | UPIT        | UPET        | UPTA        | RTIT        | RTET        | RTTA        | RTDA        | RTADIT        | RTADET        |
-      | SKU1 | Product 1 | <UPIT_SKU1> | <UPET_SKU1> | <UPTA_SKU1> | <RTIT_SKU1> | <RTET_SKU1> | <RTTA_SKU1> | <RTDA_SKU1> | <RTADIT_SKU1> | <RTADET_SKU1> |
       | SKU2 | Product 2 | <UPIT_SKU2> | <UPET_SKU2> | <UPTA_SKU2> | <RTIT_SKU2> | <RTET_SKU2> | <RTTA_SKU2> | <RTDA_SKU2> | <RTADIT_SKU2> | <RTADET_SKU2> |
+      | SKU1 | Product 1 | <UPIT_SKU1> | <UPET_SKU1> | <UPTA_SKU1> | <RTIT_SKU1> | <RTET_SKU1> | <RTTA_SKU1> | <RTDA_SKU1> | <RTADIT_SKU1> | <RTADET_SKU1> |
     Examples:
       | PONumber  | UPIT_SKU1 | UPET_SKU1 | UPTA_SKU1 | RTIT_SKU1 | RTET_SKU1 | RTTA_SKU1 | RTDA_SKU1 | RTADIT_SKU1 | RTADET_SKU1 | UPIT_SKU2 | UPET_SKU2 | UPTA_SKU2 | RTIT_SKU2 | RTET_SKU2 | RTTA_SKU2 | RTDA_SKU2 | RTADIT_SKU2 | RTADET_SKU2 |
       | PONumber1 | $0.51     | $0.47     | $0.05     | $2.59     | $2.35     | $0.24     | $0.00     | $2.59       | $2.35       | $0.23     | $0.23     | $0.00     | $1.15     | $1.15     | $0.00     | $5.00     | $0.00       | $0.00       |

@@ -25,8 +25,8 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\UserBundle\Entity\User;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -212,7 +212,7 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
         $fileManager = $this->container->get('oro_attachment.file_manager');
         foreach ($item['images'] as $image) {
             $fileName = $productReferenceName . '.jpg';
-            if (is_file(__DIR__. '/files/' . $fileName)) {
+            if (is_file(__DIR__ . '/files/' . $fileName)) {
                 $imageFile = $fileManager->createFileEntity(__DIR__ . '/files/' . $fileName);
             } else {
                 $imageFile = new File();

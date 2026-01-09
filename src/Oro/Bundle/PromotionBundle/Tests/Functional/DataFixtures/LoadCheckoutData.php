@@ -10,8 +10,8 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadCheckoutData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {

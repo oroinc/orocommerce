@@ -10,10 +10,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Extends order forms with applied promotions and coupons fields.
+ */
 class OrderTypeExtension extends AbstractTypeExtension
 {
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('appliedPromotions', AppliedPromotionCollectionTableType::class);
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData']);

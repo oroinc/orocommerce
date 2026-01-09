@@ -123,8 +123,12 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
         return $this->getUnitVisibility()->isUnitCodeVisible($code);
     }
 
-    public function formatUnitPrecisionLabel(string $unitCode, int $precision): string
+    public function formatUnitPrecisionLabel(?string $unitCode, int $precision): string
     {
+        if ($unitCode === null) {
+            return '';
+        }
+
         return $this->getUnitPrecisionLabelFormatter()->formatUnitPrecisionLabel($unitCode, $precision);
     }
 

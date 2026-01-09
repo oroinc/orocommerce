@@ -36,7 +36,6 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Packages as AssetHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Validator\Constraints\ExpressionSyntaxValidator;
 
 abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
@@ -61,17 +60,6 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
 
         $this->methodConfigSubscriber->setFactory($this->factory);
         $this->methodConfigSubscriber->setShippingMethodProvider($this->shippingMethodProvider);
-    }
-
-    public function test()
-    {
-        $this->assertEquals(
-            [
-                FormEvents::PRE_SET_DATA => 'preSet',
-                FormEvents::PRE_SUBMIT => 'preSubmit'
-            ],
-            $this->subscriber->getSubscribedEvents()
-        );
     }
 
     public function testPreSet()

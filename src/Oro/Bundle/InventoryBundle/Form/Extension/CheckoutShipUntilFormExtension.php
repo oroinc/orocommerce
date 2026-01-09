@@ -49,7 +49,7 @@ class CheckoutShipUntilFormExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('_products', function (Options $options) {
             return $this->getProducts($options);

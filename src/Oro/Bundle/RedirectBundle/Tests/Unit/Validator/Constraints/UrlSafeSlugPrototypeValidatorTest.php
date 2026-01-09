@@ -6,6 +6,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Validator\Constraints\UrlSafeSlugPrototype;
 use Oro\Bundle\RedirectBundle\Validator\Constraints\UrlSafeSlugPrototypeValidator;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
@@ -27,7 +28,7 @@ class UrlSafeSlugPrototypeValidatorTest extends ConstraintValidatorTestCase
     }
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new UrlSafeSlugPrototypeValidator($this->externalValidator);
     }

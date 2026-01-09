@@ -39,7 +39,7 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
     /**
      * @param LoggerInterface $logger
      * @param bool $dryRun
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     protected function updatePriceListConfigPriority(LoggerInterface $logger, $dryRun = false)
     {

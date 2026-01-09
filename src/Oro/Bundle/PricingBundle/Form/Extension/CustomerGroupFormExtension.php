@@ -43,7 +43,7 @@ class CustomerGroupFormExtension extends AbstractTypeExtension implements Featur
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!$this->isFeaturesEnabled()) {
             return;

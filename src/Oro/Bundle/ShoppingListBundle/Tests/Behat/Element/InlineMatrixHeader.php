@@ -16,7 +16,10 @@ class InlineMatrixHeader extends TableHeader
     #[\Override]
     public function getColumnNumber($headerText)
     {
-        $crawler = new Crawler($this->getHtml());
+        $crawler = new Crawler(
+            node: $this->getHtml(),
+            useHtml5Parser: false
+        );
 
         $i = 0;
         $headers = [];
@@ -48,7 +51,10 @@ class InlineMatrixHeader extends TableHeader
     #[\Override]
     public function hasColumn($columnName)
     {
-        $crawler = new Crawler($this->getHtml());
+        $crawler = new Crawler(
+            node: $this->getHtml(),
+            useHtml5Parser: false
+        );
 
         /** @var \DOMElement $th */
         foreach ($crawler->filter('.matrix-order-widget__form__col') as $th) {

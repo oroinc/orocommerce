@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints\RegexValidator;
  */
 class UrlSafeValidator extends RegexValidator
 {
-    public function validate(mixed $value, Constraint $constraint)
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof UrlSafe) {
             return;
@@ -21,7 +21,7 @@ class UrlSafeValidator extends RegexValidator
         if ($value === $delimiter
             || str_starts_with($value, $delimiter . '/')
             || str_ends_with($value, '/' . $delimiter)
-            || str_contains($value, '/'. $delimiter . '/')
+            || str_contains($value, '/' . $delimiter . '/')
         ) {
             $this->context->buildViolation($constraint->delimiterMessage)
                 ->addViolation();

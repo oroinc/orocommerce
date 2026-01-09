@@ -27,7 +27,7 @@ class PageVariantTypeExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $pageContentVariantTypeName = $options['content_variant_type'];
 
@@ -96,7 +96,7 @@ class PageVariantTypeExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['web_catalog', 'content_variant_type']);
         $resolver->setAllowedTypes('web_catalog', ['null', WebCatalog::class]);

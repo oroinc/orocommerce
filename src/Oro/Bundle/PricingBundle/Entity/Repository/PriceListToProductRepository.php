@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -168,7 +168,7 @@ class PriceListToProductRepository extends EntityRepository
         $table = $this->getClassMetadata()->getTableName();
 
         $platform = $this->getEntityManager()->getConnection()->getDatabasePlatform();
-        if ($platform instanceof MySqlPlatform) {
+        if ($platform instanceof MySQLPlatform) {
             $sql = sprintf(
                 'INSERT IGNORE INTO %s (price_list_id, product_id, is_manual, id) VALUES (?, ?, ?, uuid())',
                 $table

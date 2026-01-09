@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Sharding;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Constraint;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Schema\Index;
@@ -162,11 +162,11 @@ class ShardManager
     protected function getColumnsPlaceholder($class)
     {
         $connection = $this->getConnection();
-        $sm = $connection->getSchemaManager();
+        $sm = $connection->createSchemaManager();
 
         $baseTableName = $this->getBaseTableName($class);
         /** @var Table $table */
-        $table = $sm->listTableDetails($baseTableName);
+        $table = $sm->introspectTable($baseTableName);
         $columns = [];
         foreach ($table->getColumns() as $column) {
             $columns[] = $column->getQuotedName($connection->getDatabasePlatform());
@@ -229,10 +229,10 @@ class ShardManager
         $baseTableName = $this->getBaseTableName($className);
         $connection = $this->getConnection();
 
-        $sm = $connection->getSchemaManager();
+        $sm = $connection->createSchemaManager();
 
         /** @var Table $table */
-        $table = $sm->listTableDetails($baseTableName);
+        $table = $sm->introspectTable($baseTableName);
 
         $search = [$baseTableName];
         $replace = [$shardName];
@@ -262,7 +262,7 @@ class ShardManager
     public function exists($shardName)
     {
         $connection = $this->getConnection();
-        return $connection->getSchemaManager()->tablesExist([$shardName]);
+        return $connection->createSchemaManager()->tablesExist([$shardName]);
     }
 
     /**
@@ -271,7 +271,7 @@ class ShardManager
     public function delete($shardName)
     {
         if ($this->enableSharding) {
-            $this->getConnection()->getSchemaManager()->dropTable($shardName);
+            $this->getConnection()->createSchemaManager()->dropTable($shardName);
         }
     }
 
@@ -437,7 +437,7 @@ class ShardManager
         $createQueries = $connection->getDatabasePlatform()->getCreateTableSQL($table, $createFlags);
 
         //create single create table query
-        if ($connection->getDatabasePlatform() instanceof MySqlPlatform) {
+        if ($connection->getDatabasePlatform() instanceof MySQLPlatform) {
             $createQuery = $createQueries[0];
             $constraints = [];
             foreach ($createQueries as $query) {

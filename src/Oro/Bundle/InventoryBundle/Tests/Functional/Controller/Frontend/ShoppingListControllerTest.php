@@ -73,7 +73,10 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertJsonResponseStatusCodeEquals($response, 200);
 
         $content = \json_decode($response->getContent(), true);
-        $crawler = new Crawler($content['combined_button_wrapper']);
+        $crawler = new Crawler(
+            node: $content['combined_button_wrapper'],
+            useHtml5Parser: false
+        );
 
         $createOrderLabel = 'Checkout';
         static::assertStringContainsString($createOrderLabel, $crawler->html());

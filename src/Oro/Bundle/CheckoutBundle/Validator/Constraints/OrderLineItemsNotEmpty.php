@@ -19,7 +19,7 @@ class OrderLineItemsNotEmpty extends Constraint
     public string $notEmptyForRfpMessage = 'oro.checkout.validator.order_line_items_not_empty.not_allow_rfp.message';
 
     #[\Override]
-    public function getTargets()
+    public function getTargets(): array|string
     {
         return self::CLASS_CONSTRAINT;
     }

@@ -343,7 +343,7 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     catalog1_node1:
         __calls:
             - addTitle: ['@catalog1_node1_name']
-            - addMetaTitl: ['@catalog1_node1_meta_title']
+            - addMetaTitle: ['@catalog1_node1_meta_title']
             - addMetaDescription: ['@catalog1_node1_meta_description']
             - addMetaKeyword: ['@catalog1_node1_meta_keywords']
             - addContentVariant: ['@catalog1_node1_variant']
@@ -353,7 +353,7 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     catalog1_node11:
         __calls:
             - addTitle: ['@catalog1_node11_name']
-            - addMetaTitl: ['@catalog1_node11_meta_title']
+            - addMetaTitle: ['@catalog1_node11_meta_title']
             - addMetaDescription: ['@catalog1_node11_meta_description']
             - addMetaKeyword: ['@catalog1_node11_meta_keywords']
             - addContentVariant: ['@catalog1_node11_variant']

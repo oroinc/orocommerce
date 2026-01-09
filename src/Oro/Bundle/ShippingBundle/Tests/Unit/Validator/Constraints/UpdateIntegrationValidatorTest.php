@@ -13,6 +13,7 @@ use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\ShippingMethodValida
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\ShippingMethodValidatorResultInterface;
 use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\UpdateIntegrationValidator;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 // phpcs:enable
@@ -36,7 +37,7 @@ class UpdateIntegrationValidatorTest extends ConstraintValidatorTestCase
     }
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new UpdateIntegrationValidator(
             $this->shippingMethodFactory,

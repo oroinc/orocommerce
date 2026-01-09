@@ -17,7 +17,7 @@ class SlugUrlCacheClearer implements CacheClearerInterface
     }
 
     #[\Override]
-    public function clear(string $cacheDir)
+    public function clear(string $cacheDir): void
     {
         if ($this->cache instanceof ClearableCacheInterface) {
             $this->cache->deleteAll();

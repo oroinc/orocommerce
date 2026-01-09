@@ -15,7 +15,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostal
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodType;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -66,7 +66,7 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture implements
 
     private function getShippingMethodsConfigsRuleData(): array
     {
-        return Yaml::parse(file_get_contents(__DIR__.'/data/shipping_methods_configs_rules.yml'));
+        return Yaml::parse(file_get_contents(__DIR__ . '/data/shipping_methods_configs_rules.yml'));
     }
 
     private function setDestinations(ShippingMethodsConfigsRule $entity, ObjectManager $manager, array $data): void
@@ -86,7 +86,7 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture implements
             if (\array_key_exists('region', $destination)) {
                 /** @var Region $region */
                 $region = $manager->getRepository(Region::class)
-                    ->findOneBy(['combinedCode' => $destination['country'].'-'.$destination['region']]);
+                    ->findOneBy(['combinedCode' => $destination['country'] . '-' . $destination['region']]);
                 $shippingMethodsConfigsRuleDestination->setRegion($region);
             }
 

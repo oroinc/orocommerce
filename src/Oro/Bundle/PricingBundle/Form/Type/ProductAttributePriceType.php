@@ -50,7 +50,7 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
     }
 
     #[\Override]
-    public function mapDataToForms(mixed $data, \Traversable $forms)
+    public function mapDataToForms(mixed $data, \Traversable $forms): void
     {
         $forms = iterator_to_array($forms);
         /** @var FormInterface $priceForm */
@@ -64,7 +64,7 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
      * @param PriceAttributeProductPrice $data
      */
     #[\Override]
-    public function mapFormsToData(\Traversable $forms, mixed &$data)
+    public function mapFormsToData(\Traversable $forms, mixed &$data): void
     {
         $forms = iterator_to_array($forms);
         /** @var FormInterface $priceForm */

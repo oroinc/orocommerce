@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSet;
 use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSetValidator;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -15,7 +16,7 @@ class VisibilityChangeSetValidatorTest extends ConstraintValidatorTestCase
      * @return VisibilityChangeSetValidator
      */
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new VisibilityChangeSetValidator();
     }

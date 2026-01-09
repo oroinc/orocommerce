@@ -88,7 +88,10 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $this->assertJsonResponseStatusCodeEquals($response, 200);
 
         $content = self::jsonToArray($response->getContent());
-        $crawler = new Crawler($content['combined_button_wrapper']);
+        $crawler = new Crawler(
+            node: $content['combined_button_wrapper'],
+            useHtml5Parser: false
+        );
 
         $link = $crawler->selectLink('Checkout');
         $this->assertCount(1, $link);

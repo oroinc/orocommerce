@@ -9,8 +9,8 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProviderInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadCheckoutWithAppliedCouponData extends AbstractFixture implements
     DependentFixtureInterface,

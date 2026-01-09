@@ -20,13 +20,15 @@ use Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler;
 use Oro\Bundle\ProductBundle\Form\Handler\RelatedItemsHandler;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as ProductStub;
 use Oro\Bundle\UIBundle\Route\Router;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub\ReturnCallback;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -40,42 +42,42 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
+class ProductUpdateHandlerTest extends TestCase
 {
     private const FORM_DATA = ['field' => 'value'];
     private const PRODUCT_ID = 1;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|Request */
+    /** @var MockObject|Request */
     private $request;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|Session */
+    /** @var MockObject|Session */
     private $session;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|Router */
+    /** @var MockObject|Router */
     private $router;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
+    /** @var MockObject|DoctrineHelper */
     private $doctrineHelper;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface */
+    /** @var MockObject|EventDispatcherInterface */
     private $eventDispatcher;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface */
+    /** @var MockObject|FormInterface */
     private $form;
 
-    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var RequestStack|MockObject */
     private $requestStack;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|EntityManager */
+    /** @var MockObject|EntityManager */
     private $entityManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
+    /** @var MockObject|TranslatorInterface */
     private $translator;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ActionGroupRegistry */
+    /** @var MockObject|ActionGroupRegistry */
     private $actionGroupRegistry;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|RelatedItemsHandler */
+    /** @var MockObject|RelatedItemsHandler */
     private $relatedItemsHandler;
 
     /** @var bool */
@@ -124,7 +126,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->setRelatedItemsHandler($this->relatedItemsHandler);
     }
 
-    private function getUpdateFactoryMock(): UpdateFactory|\PHPUnit\Framework\MockObject\MockObject
+    private function getUpdateFactoryMock(): UpdateFactory|MockObject
     {
         $updateFactory = $this->createMock(UpdateFactory::class);
         $updateFactory->expects(self::any())
@@ -677,7 +679,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
     public function testHandleUpdateWorksWithoutWid(): void
     {
         $queryParameters = ['qwe' => 'rty'];
-        $this->request->query = new ParameterBag($queryParameters);
+        $this->request->query = new InputBag($queryParameters);
 
         $message = 'Saved';
 
@@ -716,7 +718,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateWorksWithoutWid(): void
     {
-        $this->request->query = new ParameterBag(['qwe' => 'rty']);
+        $this->request->query = new InputBag(['qwe' => 'rty']);
 
         $message = 'Saved';
 
@@ -1021,7 +1023,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     private function assertSaveData(
-        FormInterface|\PHPUnit\Framework\MockObject\MockObject $form,
+        FormInterface|MockObject $form,
         Product $entity
     ): array {
         $formView = $this->createMock(FormView::class);
@@ -1066,7 +1068,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     private function getExpectedSaveData(
-        FormInterface|\PHPUnit\Framework\MockObject\MockObject $form,
+        FormInterface|MockObject $form,
         Product $entity
     ): array {
         $formView = $this->createMock(FormView::class);
@@ -1094,7 +1096,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
     private function getFormThatReturnsNoErrors(
         FormInterface $appendRelatedSubForm,
         FormInterface $removeRelatedSubForm
-    ): FormInterface|\PHPUnit\Framework\MockObject\MockObject {
+    ): FormInterface|MockObject {
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())
             ->method('get')
@@ -1116,7 +1118,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         FormInterface $appendRelatedProductsField,
         FormInterface $removeRelatedProductsField,
         Product $entity
-    ): FormInterface|\PHPUnit\Framework\MockObject\MockObject {
+    ): FormInterface|MockObject {
         $form = $this->createMock(Form::class);
         $form->expects($this->any())
             ->method('get')

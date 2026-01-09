@@ -10,12 +10,12 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\RedirectBundle\Async\Topic\GenerateDirectUrlForEntitiesTopic;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Oro\Component\DoctrineUtils\ORM\ResultSetMappingUtil;
 use Oro\Component\DoctrineUtils\ORM\SqlQueryBuilder;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Regenerate removed slugs.

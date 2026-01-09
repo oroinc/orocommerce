@@ -29,7 +29,7 @@ class UserIdToEmailTransformer implements DataTransformerInterface
      * @return null|int
      */
     #[\Override]
-    public function transform($email)
+    public function transform($email): mixed
     {
         if (!$email) {
             return null;
@@ -53,7 +53,7 @@ class UserIdToEmailTransformer implements DataTransformerInterface
      * @return string|null
      */
     #[\Override]
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (!$value) {
             return null;

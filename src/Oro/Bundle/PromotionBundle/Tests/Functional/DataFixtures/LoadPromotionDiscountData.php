@@ -13,8 +13,8 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\UserBundle\Entity\User;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadPromotionDiscountData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
@@ -89,6 +89,6 @@ class LoadPromotionDiscountData extends AbstractFixture implements ContainerAwar
 
     private function getPromotionsData(): array
     {
-        return Yaml::parse(file_get_contents(__DIR__.'/data/promotions.yml'));
+        return Yaml::parse(file_get_contents(__DIR__ . '/data/promotions.yml'));
     }
 }

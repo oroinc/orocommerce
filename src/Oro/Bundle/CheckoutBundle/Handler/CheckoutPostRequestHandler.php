@@ -37,7 +37,7 @@ class CheckoutPostRequestHandler implements CheckoutHandlerInterface
     #[\Override]
     public function handle(WorkflowItem $workflowItem, Request $request): void
     {
-        $transition = $this->getContinueTransition($workflowItem, (string) $request->get('transition'));
+        $transition = $this->getContinueTransition($workflowItem, (string) $request->query->get('transition'));
         if (!$transition) {
             return;
         }

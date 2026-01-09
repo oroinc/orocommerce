@@ -19,7 +19,7 @@ class RemoveStatusEnumField implements Migration, OrderedMigrationInterface
     public function up(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->getTable('orob2b_product');
-        $table->changeColumn('status', ['notnull' => true]);
+        $table->modifyColumn('status', ['notnull' => true]);
         $table->dropColumn('status_id');
     }
 }

@@ -16,8 +16,8 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * The base class for fixtures that load product visibilities demo data.

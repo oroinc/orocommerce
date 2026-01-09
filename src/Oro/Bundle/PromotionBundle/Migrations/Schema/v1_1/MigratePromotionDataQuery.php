@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Migrations\Schema\v1_1;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
@@ -123,7 +123,7 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     private function migratePromotionData()
     {
@@ -193,7 +193,7 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
 
                 $updateQuery = 'UPDATE oro_promotion_applied SET promotion_data = :promotionData WHERE id = :id';
                 $params = ['id' => $row['id'], 'promotionData' => $row['promotion_data']];
-                $types = ['id' => Types::INTEGER, 'promotionData' => Types::JSON_ARRAY];
+                $types = ['id' => Types::INTEGER, 'promotionData' => Types::JSON];
 
                 $this->executeQuery($updateQuery, $params, $types);
             }

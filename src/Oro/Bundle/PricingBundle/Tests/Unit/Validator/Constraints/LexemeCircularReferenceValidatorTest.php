@@ -17,6 +17,7 @@ use Oro\Component\Expression\Node\NameNode;
 use Oro\Component\Expression\Node\RelationNode;
 use Oro\Component\Expression\Node\ValueNode;
 use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 /**
@@ -41,7 +42,7 @@ class LexemeCircularReferenceValidatorTest extends ConstraintValidatorTestCase
     }
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         $entityManager = $this->createMock(ObjectManager::class);
         $entityManager->expects($this->any())

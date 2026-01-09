@@ -11,8 +11,8 @@ use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\TaxResultElement;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadOrderTaxesData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {

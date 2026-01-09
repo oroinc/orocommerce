@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\MakeProductAttributesTrait;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
  * Updates the SEO attributes configuration.

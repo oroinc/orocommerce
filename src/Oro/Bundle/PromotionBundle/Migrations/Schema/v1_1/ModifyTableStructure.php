@@ -73,8 +73,8 @@ class ModifyTableStructure implements
         $table->addColumn('active', 'boolean', ['default' => '1']);
         $table->addColumn('type', 'string', ['length' => 255]);
         $table->addColumn('promotion_name', 'text', []);
-        $table->addColumn('config_options', 'json_array', []);
-        $table->addColumn('promotion_data', 'json_array', ['notnull' => false]);
+        $table->addColumn('config_options', 'json', []);
+        $table->addColumn('promotion_data', 'json', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);

@@ -17,6 +17,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class PriceForProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
@@ -32,7 +33,7 @@ class PriceForProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
     }
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         $em = $this->createMock(ObjectManager::class);
         $em->expects(self::any())

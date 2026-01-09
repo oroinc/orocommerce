@@ -50,7 +50,7 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
         if (preg_match('/\W/', $name)) {
-            throw new RouteNotFoundException('Unable to generate a URL for the named route'.
+            throw new RouteNotFoundException('Unable to generate a URL for the named route' .
                 ' as such route does not fit [a-zA-Z0-9_] regexp.');
         }
 
@@ -93,7 +93,7 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     }
 
     #[\Override]
-    public function setContext(RequestContext $context)
+    public function setContext(RequestContext $context): void
     {
         $this->generator->setContext($context);
     }

@@ -56,8 +56,7 @@ abstract class AbstractCouponMassActionHandler implements MassActionHandlerInter
         $manager = $this->doctrineHelper->getEntityManagerForClass(Coupon::class);
 
         $iteration = 0;
-        foreach ($qb->getQuery()->iterate(null, Query::HYDRATE_SCALAR) as $result) {
-            $sourceParams = reset($result);
+        foreach ($qb->getQuery()->toIterable([], Query::HYDRATE_SCALAR) as $sourceParams) {
             /** @var Coupon $coupon */
             $coupon = $manager->getRepository(Coupon::class)->find($sourceParams['id']);
             if ($coupon) {

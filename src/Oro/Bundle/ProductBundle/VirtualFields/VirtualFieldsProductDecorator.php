@@ -222,6 +222,10 @@ class VirtualFieldsProductDecorator
      */
     protected function getRelatedEntities($className, array $ids)
     {
+        if (empty($ids)) {
+            return [];
+        }
+
         $relatedEntityIdentifier = $this->getEntityIdentifier($className);
         $relatedEntities = $this->doctrine->getManagerForClass($className)->getRepository($className)
             ->findBy([$relatedEntityIdentifier => $ids]);

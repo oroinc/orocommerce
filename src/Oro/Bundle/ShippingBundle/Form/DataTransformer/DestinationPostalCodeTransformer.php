@@ -6,6 +6,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode;
 use Symfony\Component\Form\DataTransformerInterface;
 
+/**
+ * Transforms postal codes between collection and string representations.
+ */
 class DestinationPostalCodeTransformer implements DataTransformerInterface
 {
     /**
@@ -13,7 +16,7 @@ class DestinationPostalCodeTransformer implements DataTransformerInterface
      * @return string
      */
     #[\Override]
-    public function transform($postalCodes)
+    public function transform($postalCodes): mixed
     {
         if (!$postalCodes) {
             return '';
@@ -33,7 +36,7 @@ class DestinationPostalCodeTransformer implements DataTransformerInterface
      * @return ArrayCollection|ShippingMethodsConfigsRuleDestinationPostalCode[]
      */
     #[\Override]
-    public function reverseTransform($postalCodesString)
+    public function reverseTransform($postalCodesString): mixed
     {
         $postalCodes = new ArrayCollection();
 

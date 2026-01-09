@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Entity\Hydrator;
 
+use Doctrine\DBAL\ParameterType;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Hydrator\AbstractMatchingEntityHydrator;
 
@@ -30,7 +31,7 @@ class MatchingSlugHydrator extends AbstractMatchingEntityHydrator
     {
         $hasScopeQuery = 'SELECT 1 FROM oro_slug_scope WHERE slug_id = :id LIMIT 1';
         $hasScopes = $this->_em->getConnection()
-            ->executeQuery($hasScopeQuery, ['id' => $slugId], ['id' => \PDO::PARAM_INT])
+            ->executeQuery($hasScopeQuery, ['id' => $slugId], ['id' => ParameterType::INTEGER])
             ->fetchOne();
 
         return (bool)$hasScopes;

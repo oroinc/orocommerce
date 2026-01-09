@@ -12,7 +12,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadProductPricesWithRules extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface

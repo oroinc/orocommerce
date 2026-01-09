@@ -7,11 +7,12 @@ use Oro\Bundle\CatalogBundle\Validator\Constraints\ParentCategoryIdNotEqualCateg
 use Oro\Bundle\CatalogBundle\Validator\Constraints\ParentCategoryIdNotEqualCategoryIdValidator;
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ParentCategoryIdNotEqualCategoryIdValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new ParentCategoryIdNotEqualCategoryIdValidator();
     }

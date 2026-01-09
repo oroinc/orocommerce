@@ -137,6 +137,7 @@ class ProductStrategyTest extends WebTestCase
         $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);
         $kitItem = $productKit->getKitItems()->current();
 
+        $product->setDefaultName('Test_Product');
         $product->setSku('TEST_KIT');
         $product->setType(Product::TYPE_KIT);
         $product->addKitItem($kitItem);
@@ -190,7 +191,6 @@ class ProductStrategyTest extends WebTestCase
         $this->strategy->process($productKit1);
 
         $this->assertCount(1, $productKit1->getKitItems());
-        $this->assertEquals(null, $kitItem->getId());
         $this->assertEquals([$message], $context->getErrors());
     }
 

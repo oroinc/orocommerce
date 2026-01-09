@@ -11,7 +11,7 @@ use Symfony\Component\Form\DataTransformerInterface;
 class ZipCodeTransformer implements DataTransformerInterface
 {
     #[\Override]
-    public function transform($value)
+    public function transform($value): mixed
     {
         /** @var ZipCode|null $value */
 
@@ -28,7 +28,7 @@ class ZipCodeTransformer implements DataTransformerInterface
     }
 
     #[\Override]
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         /** @var ZipCode|null $value */
 

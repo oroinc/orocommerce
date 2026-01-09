@@ -11,12 +11,15 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Extends the scope form to add web catalog selection field.
+ */
 class WebCatalogScopeExtension extends AbstractTypeExtension
 {
     public const SCOPE_FIELD = 'webCatalog';
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (array_key_exists(self::SCOPE_FIELD, $options['scope_fields'])) {
             $builder->add(
@@ -33,7 +36,7 @@ class WebCatalogScopeExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('web_catalog', null);
         $resolver->setAllowedTypes('web_catalog', ['null', WebCatalog::class]);

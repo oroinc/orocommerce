@@ -18,6 +18,6 @@ class OroCheckoutBundle implements Migration
     {
         $table = $schema->getTable('oro_checkout');
         $table->addColumn('completed', 'boolean', ['default' => false]);
-        $table->addColumn('completed_data', 'json_array');
+        $table->addColumn('completed_data', 'json');
     }
 }

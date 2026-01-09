@@ -81,7 +81,7 @@ class CouponAddType extends AbstractType implements DataMapperInterface
     }
 
     #[\Override]
-    public function mapDataToForms(mixed $data, \Traversable $forms)
+    public function mapDataToForms(mixed $data, \Traversable $forms): void
     {
         if (null === $data) {
             return;
@@ -92,7 +92,7 @@ class CouponAddType extends AbstractType implements DataMapperInterface
     }
 
     #[\Override]
-    public function mapFormsToData(\Traversable $forms, mixed &$data)
+    public function mapFormsToData(\Traversable $forms, mixed &$data): void
     {
         if (null === $data) {
             return;

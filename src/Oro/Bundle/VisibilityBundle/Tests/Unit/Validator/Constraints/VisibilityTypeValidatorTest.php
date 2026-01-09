@@ -7,13 +7,14 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityType;
 use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityTypeValidator;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class VisibilityTypeValidatorTest extends ConstraintValidatorTestCase
 {
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new VisibilityTypeValidator();
     }

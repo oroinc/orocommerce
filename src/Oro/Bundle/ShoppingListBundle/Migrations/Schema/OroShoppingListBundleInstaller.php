@@ -250,11 +250,11 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         $targetTable = $schema->getTable('oro_shopping_list');
 
         // Column names are used to show a title of target entity
-        $targetTitleColumnNames = $targetTable->getPrimaryKeyColumns();
+        $targetTitleColumnNames = $targetTable->getPrimaryKey()->getColumns();
         // Column names are used to show detailed info about target entity
-        $targetDetailedColumnNames = $targetTable->getPrimaryKeyColumns();
+        $targetDetailedColumnNames = $targetTable->getPrimaryKey()->getColumns();
         // Column names are used to show target entity in a grid
-        $targetGridColumnNames = $targetTable->getPrimaryKeyColumns();
+        $targetGridColumnNames = $targetTable->getPrimaryKey()->getColumns();
 
         $this->extendExtension->addManyToManyRelation(
             $schema,
@@ -274,11 +274,11 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         );
 
         // Column names are used to show a title of target entity
-        $tableTitleColumnNames = $table->getPrimaryKeyColumns();
+        $tableTitleColumnNames = $table->getPrimaryKey()->getColumns();
         // Column names are used to show detailed info about target entity
-        $tableDetailedColumnNames = $table->getPrimaryKeyColumns();
+        $tableDetailedColumnNames = $table->getPrimaryKey()->getColumns();
         // Column names are used to show target entity in a grid
-        $tableGridColumnNames = $table->getPrimaryKeyColumns();
+        $tableGridColumnNames = $table->getPrimaryKey()->getColumns();
 
         $this->extendExtension->addManyToManyInverseRelation(
             $schema,

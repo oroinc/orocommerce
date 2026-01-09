@@ -20,7 +20,7 @@ class UpdatePageContentStylesField implements Migration
     {
         $table = $schema->getTable('oro_cms_page');
         if ($table->hasColumn('content_style')) {
-            $table->changeColumn(
+            $table->modifyColumn(
                 'content_style',
                 [
                     OroOptions::KEY => [

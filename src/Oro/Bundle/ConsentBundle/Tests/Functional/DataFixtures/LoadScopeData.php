@@ -7,8 +7,8 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\WebCatalogBundle\Provider\ScopeWebCatalogProvider;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadScopeData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {

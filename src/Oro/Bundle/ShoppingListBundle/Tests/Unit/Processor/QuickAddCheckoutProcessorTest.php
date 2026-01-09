@@ -513,8 +513,7 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
         $flashBag = $this->createMock(FlashBagInterface::class);
         $flashBag->expects(self::once())
             ->method('add')
-            ->with('error')
-            ->willReturn($flashBag);
+            ->with('error');
 
         $session = $this->createMock(Session::class);
         $session->expects(self::once())

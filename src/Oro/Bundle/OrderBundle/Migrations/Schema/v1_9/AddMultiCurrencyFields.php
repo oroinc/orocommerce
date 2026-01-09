@@ -41,8 +41,8 @@ class AddMultiCurrencyFields implements Migration, RenameExtensionAwareInterface
     {
         $table = $schema->getTable('oro_order');
         $type = Type::getType('money_value');
-        $table->changeColumn('subtotal', ['type' => $type, 'notnull' => false, 'comment' => '(DC2Type:money_value)']);
-        $table->changeColumn('total', ['type' => $type, 'notnull' => false, 'comment' => '(DC2Type:money_value)']);
+        $table->modifyColumn('subtotal', ['type' => $type, 'notnull' => false, 'comment' => '(DC2Type:money_value)']);
+        $table->modifyColumn('total', ['type' => $type, 'notnull' => false, 'comment' => '(DC2Type:money_value)']);
 
         $this->renameExtension->renameColumn($schema, $queries, $table, 'subtotal', 'subtotal_value');
         $this->renameExtension->renameColumn($schema, $queries, $table, 'total', 'total_value');

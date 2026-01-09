@@ -12,8 +12,8 @@ class Letters extends Regex implements AliasAwareConstraintInterface
 {
     public const ALIAS = 'letters';
 
-    public $message = 'This value should contain only latin letters.';
-    public $pattern = '/^[a-zA-Z]*$/';
+    public string $message = 'This value should contain only latin letters.';
+    public ?string $pattern = '/^[a-zA-Z]*$/';
 
     public function __construct(
         $pattern = null,

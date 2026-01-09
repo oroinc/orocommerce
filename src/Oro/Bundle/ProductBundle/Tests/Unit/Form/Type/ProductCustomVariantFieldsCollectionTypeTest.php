@@ -134,7 +134,7 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
      */
     public function testSubmit(array $variantFields, array $submittedData, array $expectedData)
     {
-        $this->variantFieldProvider->expects($this->once())
+        $this->variantFieldProvider->expects($this->exactly(2))
             ->method('getVariantFields')
             ->with($this->attributeFamily)
             ->willReturn($variantFields);

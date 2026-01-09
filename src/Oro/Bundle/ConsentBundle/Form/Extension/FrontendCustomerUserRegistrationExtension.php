@@ -20,7 +20,7 @@ class FrontendCustomerUserRegistrationExtension extends AbstractTypeExtension im
     use FeatureCheckerHolderTrait;
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!$this->isFeaturesEnabled()) {
             return;

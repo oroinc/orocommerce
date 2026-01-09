@@ -159,7 +159,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
     }
 
     #[\Override]
-    public function mapDataToForms(mixed $data, \Traversable $forms)
+    public function mapDataToForms(mixed $data, \Traversable $forms): void
     {
         $this->getDataMapper()->mapDataToForms($data, $forms);
         /** @var Form[]|\Traversable $forms */
@@ -186,7 +186,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
     }
 
     #[\Override]
-    public function mapFormsToData(\Traversable $forms, mixed &$data)
+    public function mapFormsToData(\Traversable $forms, mixed &$data): void
     {
         $this->getDataMapper()->mapFormsToData($forms, $data);
         /** @var Form[]|\Traversable $forms */

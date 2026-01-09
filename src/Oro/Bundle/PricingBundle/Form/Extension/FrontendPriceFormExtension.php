@@ -11,6 +11,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Extends price form type to set user currency as default on the frontend.
+ */
 class FrontendPriceFormExtension extends AbstractTypeExtension
 {
     /**
@@ -30,7 +33,7 @@ class FrontendPriceFormExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!$this->frontendHelper->isFrontendRequest()) {
             return;
@@ -47,7 +50,7 @@ class FrontendPriceFormExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         if ($this->frontendHelper->isFrontendRequest()) {
             $resolver->setDefaults([

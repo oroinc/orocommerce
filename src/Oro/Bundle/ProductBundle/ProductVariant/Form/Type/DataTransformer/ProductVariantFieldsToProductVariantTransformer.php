@@ -6,6 +6,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Symfony\Component\Form\DataTransformerInterface;
 
+/**
+ * Transforms product variant fields to a product variant and vice versa.
+ */
 class ProductVariantFieldsToProductVariantTransformer implements DataTransformerInterface
 {
     /** @var Product */
@@ -33,7 +36,7 @@ class ProductVariantFieldsToProductVariantTransformer implements DataTransformer
     }
 
     #[\Override]
-    public function transform($value)
+    public function transform($value): mixed
     {
         if ($value === null) {
             return null;
@@ -53,7 +56,7 @@ class ProductVariantFieldsToProductVariantTransformer implements DataTransformer
     }
 
     #[\Override]
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (!$value instanceof $this->productClass) {
             throw new \InvalidArgumentException(

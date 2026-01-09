@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider\MultiShipping;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\Persistence\ManagerRegistry;
@@ -189,7 +190,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
             $this->getOrganizationEnabledUserQuery(),
             [['id_0' => $userId]],
             [1 => 1, 2 => true],
-            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
+            [1 => ParameterType::INTEGER, 2 => ParameterType::BOOLEAN]
         );
 
         $owner = $this->provider->getOwner($lineItems, $lineItemGroupKey);
@@ -234,7 +235,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
             $this->getBusinessUnitEnabledUserQuery(),
             [['id_0' => $userId]],
             [1 => 1, 2 => true],
-            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
+            [1 => ParameterType::INTEGER, 2 => ParameterType::BOOLEAN]
         );
 
         $owner = $this->provider->getOwner($lineItems, $lineItemGroupKey);
@@ -383,7 +384,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
             $this->getBusinessUnitEnabledUserQuery(),
             [['id_0' => $userId]],
             [1 => 1, 2 => true],
-            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
+            [1 => ParameterType::INTEGER, 2 => ParameterType::BOOLEAN]
         );
 
         $owner = $this->provider->getOwner($lineItems, $lineItemGroupKey);
@@ -409,7 +410,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
             $this->getOrganizationEnabledUserQuery(),
             [['id_0' => $userId]],
             [1 => 1, 2 => true],
-            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
+            [1 => ParameterType::INTEGER, 2 => ParameterType::BOOLEAN]
         );
 
         $owner = $this->provider->getOwner($lineItems, $lineItemGroupKey);
@@ -433,13 +434,13 @@ class SubOrderOwnerProviderTest extends OrmTestCase
             $this->getBusinessUnitEnabledUserQuery(),
             [],
             [1 => 1, 2 => true],
-            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
+            [1 => ParameterType::INTEGER, 2 => ParameterType::BOOLEAN]
         );
         $this->addQueryExpectation(
             $this->getBusinessUnitUserQuery(),
             [['id_0' => $userId]],
             [1 => 1],
-            [1 => \PDO::PARAM_INT]
+            [1 => ParameterType::INTEGER]
         );
         $this->applyQueryExpectations($this->getDriverConnectionMock($this->em));
 
@@ -465,13 +466,13 @@ class SubOrderOwnerProviderTest extends OrmTestCase
             $this->getOrganizationEnabledUserQuery(),
             [],
             [1 => 1, 2 => true],
-            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
+            [1 => ParameterType::INTEGER, 2 => ParameterType::BOOLEAN]
         );
         $this->addQueryExpectation(
             $this->getOrganizationUserQuery(),
             [['id_0' => $userId]],
             [1 => 1],
-            [1 => \PDO::PARAM_INT]
+            [1 => ParameterType::INTEGER]
         );
         $this->applyQueryExpectations($this->getDriverConnectionMock($this->em));
 
@@ -498,13 +499,13 @@ class SubOrderOwnerProviderTest extends OrmTestCase
             $this->getBusinessUnitEnabledUserQuery(),
             [],
             [1 => 1, 2 => true],
-            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
+            [1 => ParameterType::INTEGER, 2 => ParameterType::BOOLEAN]
         );
         $this->addQueryExpectation(
             $this->getBusinessUnitUserQuery(),
             [],
             [1 => 1],
-            [1 => \PDO::PARAM_INT]
+            [1 => ParameterType::INTEGER]
         );
         $this->applyQueryExpectations($this->getDriverConnectionMock($this->em));
 
@@ -531,13 +532,13 @@ class SubOrderOwnerProviderTest extends OrmTestCase
             $this->getOrganizationEnabledUserQuery(),
             [],
             [1 => 1, 2 => true],
-            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
+            [1 => ParameterType::INTEGER, 2 => ParameterType::BOOLEAN]
         );
         $this->addQueryExpectation(
             $this->getOrganizationUserQuery(),
             [],
             [1 => 1],
-            [1 => \PDO::PARAM_INT]
+            [1 => ParameterType::INTEGER]
         );
         $this->applyQueryExpectations($this->getDriverConnectionMock($this->em));
 

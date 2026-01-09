@@ -41,15 +41,15 @@ class NVPClientTest extends TestCase
             ->with($options)
             ->willReturn($encodedData);
 
-        $responseStream = $this->createMock(StreamInterface::class);
-        $responseStream->expects(self::once())
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->expects(self::once())
             ->method('__toString')
             ->willReturn($responseString);
 
         $response = $this->createMock(ResponseInterface::class);
         $response->expects($this->once())
             ->method('getBody')
-            ->willReturn($responseStream);
+            ->willReturn($stream);
 
         $this->httpClient->expects($this->once())
             ->method('request')

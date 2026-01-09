@@ -43,7 +43,7 @@ class UpdateFallbackEntitySystemOptionConfig extends ParametrizedMigrationQuery
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     protected function updateEntityConfig(LoggerInterface $logger)
     {

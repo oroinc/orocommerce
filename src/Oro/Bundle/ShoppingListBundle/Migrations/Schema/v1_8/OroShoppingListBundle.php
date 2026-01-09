@@ -11,8 +11,8 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterf
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class OroShoppingListBundle implements
     Migration,
@@ -34,11 +34,11 @@ class OroShoppingListBundle implements
         $targetTable = $schema->getTable('oro_shopping_list');
 
         // Column names are used to show a title of target entity
-        $tableTitleColumnNames = $table->getPrimaryKeyColumns();
+        $tableTitleColumnNames = $table->getPrimaryKey()->getColumns();
         // Column names are used to show detailed info about target entity
-        $tableDetailedColumnNames = $table->getPrimaryKeyColumns();
+        $tableDetailedColumnNames = $table->getPrimaryKey()->getColumns();
         // Column names are used to show target entity in a grid
-        $tableGridColumnNames = $table->getPrimaryKeyColumns();
+        $tableGridColumnNames = $table->getPrimaryKey()->getColumns();
 
         $this->extendExtension->addManyToManyInverseRelation(
             $schema,

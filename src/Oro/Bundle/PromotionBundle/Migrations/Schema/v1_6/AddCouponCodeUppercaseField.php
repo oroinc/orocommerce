@@ -30,7 +30,7 @@ class AddCouponCodeUppercaseField implements Migration, DatabasePlatformAwareInt
 
         $postSchema = clone $schema;
         $postSchema->getTable('oro_promotion_coupon')
-            ->changeColumn('code_uppercase', ['notnull' => true]);
+            ->modifyColumn('code_uppercase', ['notnull' => true]);
         $postQueries = $this->getSchemaDiff($schema, $postSchema);
         foreach ($postQueries as $query) {
             $queries->addPostQuery($query);

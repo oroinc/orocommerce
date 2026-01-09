@@ -31,7 +31,7 @@ class ProductImageCollectionValidator extends ConstraintValidator
     /**
      * @var ExecutionContextInterface $context
      */
-    protected $context;
+    protected ExecutionContextInterface $context;
 
     /**
      * @var ProductImageHelper $productImageHelper

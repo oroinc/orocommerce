@@ -8,8 +8,8 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Oro\Bundle\WebsiteSearchTermBundle\Entity\SearchTerm;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadSearchTermData extends AbstractFixture implements
     ContainerAwareInterface,

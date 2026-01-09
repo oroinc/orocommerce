@@ -59,7 +59,7 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
     public function onSave(ProductPriceSaveAfterEvent $event)
     {
         /** @var ProductPrice $productPrice */
-        $productPrice = $event->getEventArgs()->getEntity();
+        $productPrice = $event->getEventArgs()->getObject();
         $this->addPriceListToProductRelation($productPrice);
 
         if ($this->isFeaturesEnabled()) {

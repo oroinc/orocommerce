@@ -11,8 +11,8 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
 use Oro\Component\Website\WebsiteInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadProductVisibilityFallbackCategoryForAnonymousData extends AbstractFixture implements

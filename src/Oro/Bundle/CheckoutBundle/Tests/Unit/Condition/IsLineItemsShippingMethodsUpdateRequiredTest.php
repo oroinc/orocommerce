@@ -171,7 +171,7 @@ class IsLineItemsShippingMethodsUpdateRequiredTest extends \PHPUnit\Framework\Te
                 'is_line_items_shipping_methods_update_required',
                 $stdClass,
                 "new \Oro\Component\ConfigExpression\CompiledPropertyPath("
-                    . "'line_items_shipping_data', ['line_items_shipping_data'], [false])"
+                    . "'line_items_shipping_data', ['line_items_shipping_data'], [false], [false])"
             ),
             $result
         );

@@ -14,7 +14,7 @@ class ValidCheckoutAddress extends Constraint
     public string $message = 'oro.checkout.validator.invalid_checkout_addresses.message';
 
     #[\Override]
-    public function getTargets()
+    public function getTargets(): array|string
     {
         return [self::CLASS_CONSTRAINT, self::PROPERTY_CONSTRAINT];
     }

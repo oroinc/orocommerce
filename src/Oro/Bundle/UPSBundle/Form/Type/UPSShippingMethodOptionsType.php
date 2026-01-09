@@ -26,7 +26,7 @@ class UPSShippingMethodOptionsType extends AbstractType
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(UPSShippingMethod::OPTION_SURCHARGE, NumberType::class, [
             'required' => true,

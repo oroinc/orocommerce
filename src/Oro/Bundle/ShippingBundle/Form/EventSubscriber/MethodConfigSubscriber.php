@@ -11,6 +11,9 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * Handles form events to dynamically recreate shipping method configuration fields based on the selected method.
+ */
 class MethodConfigSubscriber implements EventSubscriberInterface
 {
     /**
@@ -36,12 +39,12 @@ class MethodConfigSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            FormEvents::PRE_SET_DATA => 'preSet',
+            FormEvents::POST_SET_DATA => 'postSetData',
             FormEvents::PRE_SUBMIT => 'preSubmit',
         ];
     }
 
-    public function preSet(FormEvent $event)
+    public function postSetData(FormEvent $event): void
     {
         /** @var ShippingMethodConfig $data */
         $data = $event->getData();
@@ -51,7 +54,7 @@ class MethodConfigSubscriber implements EventSubscriberInterface
         $this->recreateDynamicChildren($event->getForm(), $data->getMethod());
     }
 
-    public function preSubmit(FormEvent $event)
+    public function preSubmit(FormEvent $event): void
     {
         $submittedData = $event->getData();
         $form = $event->getForm();
@@ -68,7 +71,7 @@ class MethodConfigSubscriber implements EventSubscriberInterface
      * @param FormInterface $form
      * @param string $method
      */
-    protected function recreateDynamicChildren(FormInterface $form, $method)
+    protected function recreateDynamicChildren(FormInterface $form, $method): void
     {
         $shippingMethod = $this->shippingMethodProvider->getShippingMethod($method);
         $oldOptions = $form->get('typeConfigs')->getConfig()->getOptions();

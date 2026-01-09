@@ -253,7 +253,7 @@ class RequestProduct implements ProductHolderInterface, ProductKitItemLineItemsA
     {
         $index = $productKitItemLineItem->getKitItemId();
 
-        if (!$this->kitItemLineItems->containsKey($index)) {
+        if ($index === null || !$this->kitItemLineItems->containsKey($index)) {
             $productKitItemLineItem->setRequestProduct($this);
             if ($index) {
                 $this->kitItemLineItems->set($index, $productKitItemLineItem);

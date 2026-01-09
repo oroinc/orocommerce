@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Async;
 
 use Monolog\Handler\TestHandler;
+use Monolog\Logger;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\JobsAwareTestTrait;
 use Oro\Bundle\ProductBundle\Async\ReindexProductCollectionProcessor;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductCollectionData;
@@ -11,7 +12,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\MessageQueue\Transport\ConnectionInterface;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
-use Symfony\Bridge\Monolog\Logger;
+use Symfony\Bridge\Monolog\Processor\DebugProcessor;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @dbIsolationPerTest
@@ -41,6 +43,9 @@ class ReindexProductCollectionProcessorTest extends WebTestCase
         $logger = self::getContainer()->get('logger');
         $logger->pushHandler(new TestHandler());
 
+        $debugProcessor = new DebugProcessor(new RequestStack());
+        $logger->pushProcessor($debugProcessor);
+
         $childJob = $this->createDelayedJob();
         $segment = $this->getReference(LoadProductCollectionData::SEGMENT);
         $website = self::getContainer()->get('oro_website.manager')->getDefaultWebsite();
@@ -65,7 +70,7 @@ class ReindexProductCollectionProcessorTest extends WebTestCase
             'oro.message_queue.consumption.ack',
             $result
         );
-        self::assertEmpty($logger->getLogs());
+        self::assertEmpty($debugProcessor->getLogs());
 
         $connection = self::getContainer()->get('doctrine')->getConnection();
         $qb = $connection->createQueryBuilder();

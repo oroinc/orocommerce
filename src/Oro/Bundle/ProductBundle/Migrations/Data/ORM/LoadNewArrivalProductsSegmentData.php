@@ -11,9 +11,12 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Bundle\SegmentBundle\Migrations\Data\ORM\LoadSegmentTypes;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Creates a new arrivals segment with products filtered by the newArrival attribute.
+ */
 class LoadNewArrivalProductsSegmentData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface

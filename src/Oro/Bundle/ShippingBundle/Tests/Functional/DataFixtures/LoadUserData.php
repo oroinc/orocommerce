@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\AbstractLoadMultipleUserData;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
 
 class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwareInterface
 {

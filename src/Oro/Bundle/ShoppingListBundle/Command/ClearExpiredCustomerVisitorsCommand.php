@@ -80,7 +80,7 @@ HELP
                     'rel',
                     'cv.id = rel.customervisitor_id'
                 )
-                ->where($visitorsQB->expr()->andX(
+                ->where($visitorsQB->expr()->and(
                     $visitorsQB->expr()->lte('cv.last_visit', ':expiredLastVisitDate'),
                     $visitorsQB->expr()->isNull('rel.customervisitor_id')
                 ))

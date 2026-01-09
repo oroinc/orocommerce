@@ -10,12 +10,13 @@ use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGFieldsNameValidator;
 use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestActivity;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class WYSIWYGFieldsNameValidatorTest extends ConstraintValidatorTestCase
 {
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new WYSIWYGFieldsNameValidator();
     }

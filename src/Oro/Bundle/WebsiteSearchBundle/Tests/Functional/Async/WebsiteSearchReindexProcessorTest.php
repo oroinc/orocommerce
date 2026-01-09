@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Async;
 
-use Doctrine\DBAL\Driver\DriverException;
+use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\Exception\DeadlockException;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\JobsAwareTestTrait;
@@ -238,6 +238,6 @@ class WebsiteSearchReindexProcessorTest extends WebTestCase
 
     public function throwDeadlockException(): void
     {
-        throw new DeadlockException('Deadlock detected', $this->createMock(DriverException::class));
+        throw new DeadlockException($this->createMock(Exception::class), null);
     }
 }

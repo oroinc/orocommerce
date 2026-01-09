@@ -33,6 +33,9 @@ class CategoriesProductsProvider
     public function getCountByCategories(array $categoriesIds): array //[category id => number of products, ...]
     {
         $cacheKey = 'categories_products_' . implode('_', $categoriesIds);
+        if (empty($categoriesIds)) {
+            return [];
+        }
 
         return $this->cache->get($cacheKey, function (ItemInterface $item) use ($categoriesIds) {
             $item->expiresAfter($this->cacheLifeTime);

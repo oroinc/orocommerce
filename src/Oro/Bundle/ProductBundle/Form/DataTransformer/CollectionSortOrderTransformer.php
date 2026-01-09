@@ -22,7 +22,7 @@ class CollectionSortOrderTransformer implements DataTransformerInterface
     }
 
     #[\Override]
-    public function transform($value)
+    public function transform($value): mixed
     {
         if ($value != null) {
             foreach ($value as $id => $item) {
@@ -33,7 +33,7 @@ class CollectionSortOrderTransformer implements DataTransformerInterface
     }
 
     #[\Override]
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (!$value) {
             return new ArrayCollection();

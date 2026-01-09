@@ -108,6 +108,9 @@ class RequestManager
      */
     protected function getProducts(array $ids)
     {
+        if (empty($ids)) {
+            return [];
+        }
         $products = $this->doctrineHelper
             ->getEntityRepositoryForClass(Product::class)
             ->findBy(['id' => $ids]);

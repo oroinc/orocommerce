@@ -8,8 +8,8 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProviderInterface;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadCheckoutCouponData extends AbstractFixture implements
     DependentFixtureInterface,

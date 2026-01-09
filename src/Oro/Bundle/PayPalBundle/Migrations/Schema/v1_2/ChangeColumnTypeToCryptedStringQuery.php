@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Migrations\Schema\v1_2;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -27,7 +27,7 @@ class ChangeColumnTypeToCryptedStringQuery extends ParametrizedSqlMigrationQuery
     public function processQueries(LoggerInterface $logger, $dryRun = false)
     {
         $platform = $this->connection->getDatabasePlatform();
-        if ($platform instanceof MySqlPlatform) {
+        if ($platform instanceof MySQLPlatform) {
             foreach ($this->fields as $field) {
                 $this->addSql(
                     "ALTER TABLE {$this->table} " .

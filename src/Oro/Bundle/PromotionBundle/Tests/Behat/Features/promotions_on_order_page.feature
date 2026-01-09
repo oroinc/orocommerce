@@ -30,8 +30,8 @@ Feature: Promotions on Order page
     When I click "Line Items"
     Then I see next line item discounts for backoffice order:
       | SKU  | Row Total Incl Tax | Row Total Excl Tax | Discount |
-      | SKU1 | $10.00             | $10.00             | $0.00    |
       | SKU2 | $5.00              | $5.00              | $5.00    |
+      | SKU1 | $10.00             | $10.00             | $0.00    |
     And I click "Totals"
     And I see next subtotals for "Backend Order":
       | Subtotal          | Amount  |
@@ -52,8 +52,8 @@ Feature: Promotions on Order page
     And I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
       | Product             | RTDA  |
-      | Product 1 SKU: SKU1 | $0.00 |
       | Product 2 SKU: SKU2 | $5.00 |
+      | Product 1 SKU: SKU1 | $0.00 |
     And I see next subtotals for "Order":
       | Subtotal          | Amount  |
       | Subtotal          | $20.00  |
@@ -69,8 +69,8 @@ Feature: Promotions on Order page
       | SKU2ProductQuantity | 3 |
     Then I see next line item discounts for backoffice order:
       | SKU  | Row Total Incl Tax | Row Total Excl Tax | Discount |
-      | SKU1 | $10.00             | $10.00             | $0.00    |
       | SKU2 | $3.00              | $3.00              | $3.00    |
+      | SKU1 | $10.00             | $10.00             | $0.00    |
     And I should see next rows in "Promotions" table
       | Promotion                    | Discount |
       | line Item Discount Promotion | -$3.00   |
@@ -94,8 +94,8 @@ Feature: Promotions on Order page
       | order Discount Promotion     | -$6.50   |
     And I see next line item discounts for backoffice order:
       | SKU  | Row Total Incl Tax | Row Total Excl Tax | Discount |
-      | SKU1 | $10.00             | $10.00             | $0.00    |
       | SKU2 | $3.00              | $3.00              | $3.00    |
+      | SKU1 | $10.00             | $10.00             | $0.00    |
     And I click "Totals"
     And I see next subtotals for "Backend Order":
       | Subtotal          | Amount |

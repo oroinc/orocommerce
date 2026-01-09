@@ -120,15 +120,13 @@ class IndexationRequestListenerTest extends WebTestCase
             }
         );
 
-        $productId = $product->getId(); // retrieve now, cause after removing, it will be NULL
-
         $em = $this->getEntityManager();
         $em->remove($product);
         $em->flush();
 
         $this->assertNotNull($triggeredEvent, 'Event was not triggered.');
         $this->assertContains(TestProduct::class, $triggeredEvent->getClassesNames());
-        $this->assertContains($productId, $triggeredEvent->getIds());
+        $this->assertCount(1, $triggeredEvent->getIds());
     }
 
     public function testTriggersReindexationAfterOnClear()

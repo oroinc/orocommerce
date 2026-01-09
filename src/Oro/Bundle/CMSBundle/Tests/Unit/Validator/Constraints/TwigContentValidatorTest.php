@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent;
 use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContentValidator;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Twig\Environment;
 use Twig\Error\Error;
@@ -23,7 +24,7 @@ class TwigContentValidatorTest extends ConstraintValidatorTestCase
     }
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new TwigContentValidator($this->twig);
     }

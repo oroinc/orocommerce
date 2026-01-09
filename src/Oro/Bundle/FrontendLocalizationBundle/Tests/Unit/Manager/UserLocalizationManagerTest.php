@@ -18,6 +18,7 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -112,6 +113,7 @@ class UserLocalizationManagerTest extends TestCase
         $request->expects(self::any())
             ->method('getPathInfo')
             ->willReturn($pathInfo);
+        $request->attributes = $this->createMock(ParameterBag::class);
 
         $this->requestStack->expects(self::atLeastOnce())
             ->method('getCurrentRequest')

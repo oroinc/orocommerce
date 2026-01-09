@@ -129,8 +129,7 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetItemsWithoutContentVariant()
     {
         $categoryId = 2;
-        $request = Request::create('/', Request::METHOD_GET);
-        $request->query = new ParameterBag([
+        $request = Request::create('/', Request::METHOD_GET, [
             'categoryId' => $categoryId
         ]);
 
@@ -154,7 +153,6 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetItemsWithoutContentVariantAndCategory()
     {
         $request = Request::create('/', Request::METHOD_GET);
-        $request->query = new ParameterBag();
 
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
@@ -291,8 +289,7 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
     {
         $categoryId = 2;
         $currentPageTitle = '220 Lumen Rechargeable Headlamp';
-        $request = Request::create('/', Request::METHOD_GET);
-        $request->query = new ParameterBag([
+        $request = Request::create('/', Request::METHOD_GET, [
             'categoryId' => $categoryId
         ]);
 

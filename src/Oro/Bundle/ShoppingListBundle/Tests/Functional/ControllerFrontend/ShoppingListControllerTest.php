@@ -186,8 +186,14 @@ class ShoppingListControllerTest extends WebTestCase
         self::assertJsonResponseStatusCodeEquals($response, 200);
 
         $content = self::jsonToArray($response->getContent());
-        $pageCrawler = new Crawler($content['page_content']);
-        $buttonsCrawler = new Crawler($content['combined_button_wrapper']);
+        $pageCrawler = new Crawler(
+            node: $content['page_content'],
+            useHtml5Parser: false
+        );
+        $buttonsCrawler = new Crawler(
+            node: $content['combined_button_wrapper'],
+            useHtml5Parser: false
+        );
 
         self::assertStringContainsString($currentShoppingList->getLabel(), $pageCrawler->html());
 
@@ -257,8 +263,14 @@ class ShoppingListControllerTest extends WebTestCase
         self::assertJsonResponseStatusCodeEquals($response, 200);
 
         $content = self::jsonToArray($response->getContent());
-        $pageCrawler = new Crawler($content['page_content']);
-        $buttonsCrawler = new Crawler($content['combined_button_wrapper']);
+        $pageCrawler = new Crawler(
+            node: $content['page_content'],
+            useHtml5Parser: false
+        );
+        $buttonsCrawler = new Crawler(
+            node: $content['combined_button_wrapper'],
+            useHtml5Parser: false
+        );
 
         self::assertStringContainsString($shoppingList1->getLabel(), $pageCrawler->html());
 
@@ -351,8 +363,14 @@ class ShoppingListControllerTest extends WebTestCase
         self::assertJsonResponseStatusCodeEquals($response, 200);
 
         $content = self::jsonToArray($response->getContent());
-        $pageCrawler = new Crawler($content['page_content']);
-        $buttonsCrawler = new Crawler($content['combined_button_wrapper']);
+        $pageCrawler = new Crawler(
+            node: $content['page_content'],
+            useHtml5Parser: false
+        );
+        $buttonsCrawler = new Crawler(
+            node: $content['combined_button_wrapper'],
+            useHtml5Parser: false
+        );
 
         self::assertStringContainsString($shoppingList->getLabel(), $pageCrawler->html());
         self::assertStringContainsString('Checkout', $buttonsCrawler->html());
@@ -445,7 +463,10 @@ class ShoppingListControllerTest extends WebTestCase
                 return;
             }
 
-            $buttonsCrawler = new Crawler($content['combined_button_wrapper']);
+            $buttonsCrawler = new Crawler(
+                node: $content['combined_button_wrapper'],
+                useHtml5Parser: false
+            );
 
             if ($expectedCreateOrderButtonVisible) {
                 self::assertStringContainsString('Checkout', $buttonsCrawler->html());

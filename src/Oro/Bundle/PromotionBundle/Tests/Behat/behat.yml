@@ -143,8 +143,8 @@ oro_behat_extension:
       selector: "form[name='oro_order_type']"
       options:
         mapping:
-          SKU1ProductQuantity: oro_order_type[lineItems][0][quantity]
-          SKU2ProductQuantity: oro_order_type[lineItems][1][quantity]
+          SKU1ProductQuantity: oro_order_type[lineItems][1][quantity]
+          SKU2ProductQuantity: oro_order_type[lineItems][0][quantity]
 
     CouponCodePreview:
       selector: 'div#coupon-code-preview'

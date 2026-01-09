@@ -34,7 +34,7 @@ class CustomerFormExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $customer = $builder->getData();
         if (!$customer || !$customer->getGroup()) {

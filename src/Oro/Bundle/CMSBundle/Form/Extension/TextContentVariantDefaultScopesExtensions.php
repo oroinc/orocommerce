@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormEvents;
 class TextContentVariantDefaultScopesExtensions extends AbstractTypeExtension
 {
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function ($event) {
             $contentVariant = $event->getData();

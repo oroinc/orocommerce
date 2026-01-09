@@ -178,6 +178,24 @@ class StartCheckoutTest extends FrontendRestJsonApiTestCase
                         'type' => 'checkoutlineitems',
                         'id' => 'new',
                         'attributes' => [
+                            'productSku' => 'KIT1'
+                        ],
+                        'relationships' => [
+                            'product' => [
+                                'data' => ['type' => 'products', 'id' => '<toString(@product_kit1->id)>']
+                            ],
+                            'kitItemLineItems' => [
+                                'data' => [
+                                    ['type' => 'checkoutproductkititemlineitems', 'id' => 'new'],
+                                    ['type' => 'checkoutproductkititemlineitems', 'id' => 'new']
+                                ]
+                            ]
+                        ]
+                    ],
+                    [
+                        'type' => 'checkoutlineitems',
+                        'id' => 'new',
+                        'attributes' => [
                             'productSku' => 'PSKU1'
                         ],
                         'relationships' => [
@@ -203,24 +221,6 @@ class StartCheckoutTest extends FrontendRestJsonApiTestCase
                                 'data' => []
                             ]
                         ]
-                    ],
-                    [
-                        'type' => 'checkoutlineitems',
-                        'id' => 'new',
-                        'attributes' => [
-                            'productSku' => 'KIT1'
-                        ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => ['type' => 'products', 'id' => '<toString(@product_kit1->id)>']
-                            ],
-                            'kitItemLineItems' => [
-                                'data' => [
-                                    ['type' => 'checkoutproductkititemlineitems', 'id' => 'new'],
-                                    ['type' => 'checkoutproductkititemlineitems', 'id' => 'new']
-                                ]
-                            ]
-                        ]
                     ]
                 ]
             ],
@@ -230,8 +230,8 @@ class StartCheckoutTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
         $responseData = self::jsonToArray($response->getContent());
         self::assertCount(3, $responseData['included']);
-        self::assertCount(1, $responseData['included'][2]['attributes']);
-        self::assertCount(2, $responseData['included'][2]['relationships']);
+        self::assertCount(1, $responseData['included'][0]['attributes']);
+        self::assertCount(2, $responseData['included'][0]['relationships']);
 
         return $expectedData;
     }
@@ -301,8 +301,8 @@ class StartCheckoutTest extends FrontendRestJsonApiTestCase
             $expectedData['included']
         );
         $expectedData['data']['attributes']['customerNotes'] = 'updated notes';
-        $expectedData['data']['attributes']['totalValue'] = '6.1500';
-        $expectedData['data']['attributes']['totals'][0]['amount'] = '6.1500';
+        $expectedData['data']['attributes']['totalValue'] = '29.6000';
+        $expectedData['data']['attributes']['totals'][0]['amount'] = '29.6000';
         $this->assertResponseContains($expectedData, $response);
         self::assertResponseStatusCodeEquals($response, Response::HTTP_OK);
     }

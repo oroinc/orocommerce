@@ -12,8 +12,8 @@ class Alphanumeric extends Regex implements AliasAwareConstraintInterface
 {
     public const ALIAS = 'alphanumeric';
 
-    public $message = 'This value should contain only latin letters and numbers.';
-    public $pattern = '/^[a-zA-Z0-9]*$/';
+    public string $message = 'This value should contain only latin letters and numbers.';
+    public ?string $pattern = '/^[a-zA-Z0-9]*$/';
 
     public function __construct(
         $pattern = null,

@@ -149,7 +149,7 @@ class Checkout implements
     /**
      * @var array|CompletedCheckoutData
      */
-    #[ORM\Column(name: 'completed_data', type: 'json_array')]
+    #[ORM\Column(name: 'completed_data', type: 'json')]
     protected $completedData;
 
     #[ORM\Column(name: 'line_item_group_shipping_data', type: 'json', nullable: true)]

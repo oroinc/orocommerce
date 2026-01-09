@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\CouponGeneration\Coupon;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Statement;
+use Doctrine\DBAL\Statement;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGeneratorInterface;
@@ -153,7 +153,7 @@ class CouponGenerator implements CouponGeneratorInterface
     /**
      * @param array|string[] $codes
      * @return array
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     protected function filter(array $codes): array
     {

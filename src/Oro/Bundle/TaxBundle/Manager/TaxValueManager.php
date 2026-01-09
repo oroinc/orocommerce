@@ -98,6 +98,10 @@ class TaxValueManager
      */
     private function findTaxValues(?string $entityClass, array $entityIds): array
     {
+        if (empty($entityIds)) {
+            return [];
+        }
+
         return $this->doctrineHelper->getEntityRepositoryForClass($this->taxValueClass)
             ->findBy(['entityClass' => $entityClass, 'entityId' => $entityIds]);
     }

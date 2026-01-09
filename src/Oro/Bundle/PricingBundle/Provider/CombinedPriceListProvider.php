@@ -105,11 +105,14 @@ class CombinedPriceListProvider
         $containsSchedules = false;
         if (count($collectionInfo)) {
             $priceLists = [];
-            foreach ($repo->findBy(['id' => array_column($collectionInfo, 'p')]) as $priceList) {
-                if ($priceList->isContainSchedule()) {
-                    $containsSchedules = true;
+            $priceListIds = array_column($collectionInfo, 'p');
+            if (!empty($priceListIds)) {
+                foreach ($repo->findBy(['id' => $priceListIds]) as $priceList) {
+                    if ($priceList->isContainSchedule()) {
+                        $containsSchedules = true;
+                    }
+                    $priceLists[$priceList->getId()] = $priceList;
                 }
-                $priceLists[$priceList->getId()] = $priceList;
             }
 
             $sequenceMembers = array_map(static function (array $member) use ($priceLists) {

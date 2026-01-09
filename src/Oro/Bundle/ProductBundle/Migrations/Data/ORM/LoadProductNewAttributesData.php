@@ -10,9 +10,12 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Adds product attributes to the default attribute group.
+ */
 class LoadProductNewAttributesData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface

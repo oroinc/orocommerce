@@ -10,7 +10,7 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodRenamingEventDispatcherInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -89,6 +89,6 @@ class RenameFlatRateMethods extends AbstractFixture implements ContainerAwareInt
      */
     protected function generatePreviousVersionOfFlatRateIdentifier(Channel $channel)
     {
-        return static::PREVIOUS_VERSION_IDENTIFIER_PREFIX.$channel->getId();
+        return static::PREVIOUS_VERSION_IDENTIFIER_PREFIX . $channel->getId();
     }
 }

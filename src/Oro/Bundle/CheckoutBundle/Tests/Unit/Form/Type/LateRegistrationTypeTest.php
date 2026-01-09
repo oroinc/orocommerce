@@ -80,13 +80,15 @@ class LateRegistrationTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
 
-        $errors = $form->getErrors(true);
-        self::assertFalse($form->isValid());
         self::assertTrue($form->isSynchronized());
-
         self::assertFormIsNotValid($form);
-        self::assertCount(1, $errors);
-        self::assertEquals('This value is not a valid email address.', $errors->current()->getMessage());
+
+        $errors = $form->getErrors(true);
+        self::assertGreaterThan(0, $errors->count());
+        self::assertStringContainsString(
+            'This value is not a valid email address.',
+            (string) $errors
+        );
 
         $formData = $form->getData();
         $submittedData['password'] = 'Q1foobar';

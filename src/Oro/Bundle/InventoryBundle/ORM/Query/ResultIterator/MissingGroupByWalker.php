@@ -36,7 +36,7 @@ class MissingGroupByWalker extends TreeWalkerAdapter
 
         $newGroupBys = [];
         // parse query components and make each one has a group by section
-        foreach ($this->_getQueryComponents() as $componentAlias => $component) {
+        foreach ($this->getQueryComponents() as $componentAlias => $component) {
             if (!array_key_exists('metadata', $component)) {
                 continue;
             }

@@ -6,6 +6,9 @@ use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use Symfony\Component\Form\DataTransformerInterface;
 
+/**
+ * Transforms tax base exclusion data between array and entity representations.
+ */
 class TaxBaseExclusionTransformer implements DataTransformerInterface
 {
     /**
@@ -22,7 +25,7 @@ class TaxBaseExclusionTransformer implements DataTransformerInterface
      * @param array $values
      */
     #[\Override]
-    public function transform($values)
+    public function transform($values): mixed
     {
         if (empty($values) || !is_array($values)) {
             return [];
@@ -40,7 +43,7 @@ class TaxBaseExclusionTransformer implements DataTransformerInterface
      * @param TaxBaseExclusion[] $entities
      */
     #[\Override]
-    public function reverseTransform($entities)
+    public function reverseTransform($entities): mixed
     {
         if (empty($entities) || !is_array($entities)) {
             return [];

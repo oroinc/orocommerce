@@ -18,7 +18,7 @@ class UpdateJsonArrayQuery extends ParametrizedMigrationQuery
     {
         $logger = new ArrayLogger();
         $logger->info(
-            'Convert a column with "DC2Type:json_array" type to "JSON" type on MySQL >= 5.7.8 and Doctrine 2.7'
+            'Convert a column with "DC2Type:json" type to "JSON" type on MySQL >= 5.7.8 and Doctrine 2.7'
         );
         $this->doExecute($logger, true);
 
@@ -35,9 +35,9 @@ class UpdateJsonArrayQuery extends ParametrizedMigrationQuery
     {
         $platform = $this->connection->getDatabasePlatform();
         if ($platform instanceof MySQL57Platform) {
-            $updateSql = "ALTER TABLE oro_promotion_applied ".
-                "CHANGE config_options config_options JSON NOT NULL COMMENT '(DC2Type:json_array)',
-                CHANGE promotion_data promotion_data JSON NOT NULL COMMENT '(DC2Type:json_array)'";
+            $updateSql = "ALTER TABLE oro_promotion_applied " .
+                "CHANGE config_options config_options JSON NOT NULL COMMENT '(DC2Type:json)',
+                CHANGE promotion_data promotion_data JSON NOT NULL COMMENT '(DC2Type:json)'";
 
             $this->logQuery($logger, $updateSql);
             if (!$dryRun) {

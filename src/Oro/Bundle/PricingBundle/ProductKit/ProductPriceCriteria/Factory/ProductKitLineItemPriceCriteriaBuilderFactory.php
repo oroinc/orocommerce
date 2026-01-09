@@ -38,7 +38,9 @@ class ProductKitLineItemPriceCriteriaBuilderFactory
 
         if ($lineItem instanceof ProductKitItemLineItemsAwareInterface) {
             foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
-                if (!$this->isKitItemLineItemSupported($kitItemLineItem)) {
+                if (!$this->isKitItemLineItemSupported($kitItemLineItem)
+                    || !$this->isProductAvailableInKitItem($kitItemLineItem)
+                ) {
                     continue;
                 }
 
@@ -66,5 +68,23 @@ class ProductKitLineItemPriceCriteriaBuilderFactory
     {
         return $kitItemLineItem->getKitItem() !== null
             && $this->isLineItemSupported($kitItemLineItem);
+    }
+
+    private function isProductAvailableInKitItem(ProductKitItemLineItemInterface $kitItemLineItem): bool
+    {
+        $kitItem = $kitItemLineItem->getKitItem();
+        $product = $kitItemLineItem->getProduct();
+
+        if (null === $kitItem || null === $product) {
+            return false;
+        }
+
+        foreach ($kitItem->getKitItemProducts() as $kitItemProduct) {
+            if ($product->getId() === $kitItemProduct->getProduct()?->getId()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

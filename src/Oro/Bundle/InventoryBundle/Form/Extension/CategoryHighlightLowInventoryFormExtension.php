@@ -7,6 +7,9 @@ use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Extends the category form with the highlight low inventory field.
+ */
 class CategoryHighlightLowInventoryFormExtension extends AbstractFallbackCategoryTypeExtension
 {
     #[\Override]
@@ -18,7 +21,7 @@ class CategoryHighlightLowInventoryFormExtension extends AbstractFallbackCategor
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 

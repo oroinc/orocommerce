@@ -4,6 +4,10 @@ namespace Oro\Bundle\PaymentBundle\Method\View;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+/**
+ * Abstract base provider for managing
+ * and retrieving payment method view representations with lazy loading support
+ */
 abstract class AbstractPaymentMethodViewProvider implements PaymentMethodViewProviderInterface
 {
     /** @var ArrayCollection|PaymentMethodViewInterface[] */
@@ -22,7 +26,7 @@ abstract class AbstractPaymentMethodViewProvider implements PaymentMethodViewPro
     #[\Override]
     public function hasPaymentMethodView($identifier)
     {
-        return $this->getViews()->containsKey($identifier);
+        return $identifier ? $this->getViews()->containsKey($identifier) : false;
     }
 
     #[\Override]

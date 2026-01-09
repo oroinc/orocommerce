@@ -24,7 +24,7 @@ class FrontendRfqExtension extends AbstractTypeExtension implements FeatureToggl
     use FeatureCheckerHolderTrait;
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!$this->isFeaturesEnabled()) {
             return;

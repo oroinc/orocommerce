@@ -95,8 +95,8 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit\Framework\TestCase
 
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
-            ->method('iterate')
-            ->with(null, AbstractQuery::HYDRATE_SCALAR)
+            ->method('toIterable')
+            ->with([], AbstractQuery::HYDRATE_SCALAR)
             ->willReturn($iterateData);
         $queryBuilder->expects($this->once())
             ->method('getQuery')
@@ -136,7 +136,7 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit\Framework\TestCase
     {
         return [
             [
-                [[['id' => 1]], [['id' => 3]]],
+                [['id' => 1], ['id' => 3]],
                 [$this->getCoupon(1), $this->getCoupon(3)]
             ]
         ];

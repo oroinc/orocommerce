@@ -6,12 +6,13 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitShippingCalculationMethod;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitShippingCalculationMethodValidator;
 use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductKitShippingCalculationMethodValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new ProductKitShippingCalculationMethodValidator();
     }

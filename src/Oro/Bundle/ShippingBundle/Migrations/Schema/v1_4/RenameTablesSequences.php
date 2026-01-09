@@ -30,7 +30,7 @@ class RenameTablesSequences implements Migration, DatabasePlatformAwareInterface
     private function renameSequence(Schema $schema, QueryBag $queries, $oldTableName, $newTableName)
     {
         if ($this->platform->supportsSequences()) {
-            $primaryKey = $schema->getTable($newTableName)->getPrimaryKeyColumns();
+            $primaryKey = $schema->getTable($newTableName)->getPrimaryKey()->getColumns();
             if (count($primaryKey) === 1) {
                 $primaryKey = reset($primaryKey);
                 $oldSequenceName = $this->platform->getIdentitySequenceName($oldTableName, $primaryKey);

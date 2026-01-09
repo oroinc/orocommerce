@@ -14,8 +14,8 @@ use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Loads product shipping options demo data.

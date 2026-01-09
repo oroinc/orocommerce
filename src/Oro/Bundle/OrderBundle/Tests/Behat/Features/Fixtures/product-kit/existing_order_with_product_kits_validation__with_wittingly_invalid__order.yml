@@ -17,7 +17,7 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         quantity: 1
         productUnit: '@piece'
         comment: 'with wittignly invalid quantity and precision'
-        checksum: 'f8b2e2895fab118d870811680047e13b069cd838'
+        checksum: 'ea0612f777924c8d1179fbb04e2c4888885f6352'
         __calls:
             -   addKitItemLineItem: [ '@order1_line_item0_kit_item1' ]
             -   addKitItemLineItem: [ '@order1_line_item0_kit_item2' ]

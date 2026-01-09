@@ -7,6 +7,9 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCo
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode;
 use Symfony\Component\Form\DataTransformerInterface;
 
+/**
+ * Transforms destination postal codes between object and string representations.
+ */
 class DestinationPostalCodeTransformer implements DataTransformerInterface
 {
     /**
@@ -14,7 +17,7 @@ class DestinationPostalCodeTransformer implements DataTransformerInterface
      * @return string
      */
     #[\Override]
-    public function transform($postalCodes)
+    public function transform($postalCodes): mixed
     {
         if (!$postalCodes) {
             return '';
@@ -34,7 +37,7 @@ class DestinationPostalCodeTransformer implements DataTransformerInterface
      * @return ArrayCollection|ShippingMethodsConfigsRuleDestinationPostalCode[]
      */
     #[\Override]
-    public function reverseTransform($postalCodesString)
+    public function reverseTransform($postalCodesString): mixed
     {
         $postalCodes = new ArrayCollection();
 

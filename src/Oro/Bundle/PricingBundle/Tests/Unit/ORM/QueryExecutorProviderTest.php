@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\ORM;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
@@ -51,14 +51,14 @@ class QueryExecutorProviderTest extends TestCase
 
     public function testGetQueryExecutorIfsAllowedMySql()
     {
-        $platform = $this->createMock(MySqlPlatform::class);
+        $platform = $this->createMock(MySQLPlatform::class);
         $this->assertPlatformCall($platform);
         $this->assertSame($this->multiInsertQueryExecutor, $this->provider->getQueryExecutor());
     }
 
     public function testGetQueryExecutorIfsDisallowedMySql()
     {
-        $platform = $this->createMock(MySqlPlatform::class);
+        $platform = $this->createMock(MySQLPlatform::class);
         $this->assertPlatformCall($platform);
 
         $this->provider->setAllowInsertFromSelectExecutorUsage(false);

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Migrations\Schema\v1_3;
 
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
@@ -41,12 +42,12 @@ class ConvertTaxValueResultsQuery extends ParametrizedMigrationQuery
     /**
      * @param LoggerInterface $logger
      * @param bool $dryRun
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
         $objectType = Type::getType(Types::OBJECT);
-        $jsonType = Type::getType(Types::JSON_ARRAY);
+        $jsonType = Type::getType(Types::JSON);
 
         $selectSql = 'SELECT id, result_base64 FROM oro_tax_value ORDER BY id LIMIT :lim OFFSET :offs';
         $selectTypes = ['lim' => Types::INTEGER, 'offs' => Types::INTEGER];
@@ -59,10 +60,10 @@ class ConvertTaxValueResultsQuery extends ParametrizedMigrationQuery
             $this->logQuery($logger, $selectSql, $selectParams, $selectTypes);
         } else {
             $selectStatement = $this->connection->prepare($selectSql);
-            $selectStatement->bindValue('lim', $selectParams['lim'], \PDO::PARAM_INT);
+            $selectStatement->bindValue('lim', $selectParams['lim'], ParameterType::INTEGER);
             $updateStatement = $this->connection->prepare($updateSql);
             do {
-                $selectStatement->bindValue('offs', $selectParams['offs'], \PDO::PARAM_INT);
+                $selectStatement->bindValue('offs', $selectParams['offs'], ParameterType::INTEGER);
                 $this->logQuery($logger, $selectSql, $selectParams, $selectTypes);
                 $rowsCount = 0;
                 while ($row = $selectStatement->executeQuery()->fetchAssociative()) {
@@ -72,8 +73,8 @@ class ConvertTaxValueResultsQuery extends ParametrizedMigrationQuery
                         'id' => $row['id'],
                         'result' => $jsonType->convertToDatabaseValue($result, $this->platform)
                     ];
-                    $updateStatement->bindValue('id', $updateParams['id'], \PDO::PARAM_INT);
-                    $updateStatement->bindValue('result', $updateParams['result'], \PDO::PARAM_STR);
+                    $updateStatement->bindValue('id', $updateParams['id'], ParameterType::INTEGER);
+                    $updateStatement->bindValue('result', $updateParams['result'], ParameterType::STRING);
                     $updateStatement->executeQuery();
                     $this->logQuery($logger, $updateSql, $updateParams, $updateTypes);
                 }

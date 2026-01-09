@@ -14,7 +14,7 @@ class HasApplicableShippingRules extends Constraint
     public string $message = 'oro.checkout.validator.has_applicable_shipping_rules.message';
 
     #[\Override]
-    public function getTargets()
+    public function getTargets(): array|string
     {
         return self::CLASS_CONSTRAINT;
     }

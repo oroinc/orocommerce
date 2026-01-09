@@ -12,6 +12,9 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
+/**
+ * Extends the order line item form to include tax information sections and calculations.
+ */
 class OrderLineItemTypeExtension extends AbstractTypeExtension
 {
     public const BASE_ORDER = 50;
@@ -47,7 +50,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         if (!$this->taxationSettingsProvider->isEnabled()) {
             return;
@@ -72,7 +75,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         if (!$this->taxationSettingsProvider->isEnabled()) {
             return;

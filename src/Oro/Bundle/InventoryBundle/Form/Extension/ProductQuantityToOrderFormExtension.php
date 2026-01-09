@@ -10,6 +10,9 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Extends the product form to add minimum and maximum order quantity fields with category fallback support.
+ */
 class ProductQuantityToOrderFormExtension extends AbstractTypeExtension
 {
     #[\Override]
@@ -19,7 +22,7 @@ class ProductQuantityToOrderFormExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $product = $builder->getData();
         // set category as default fallback

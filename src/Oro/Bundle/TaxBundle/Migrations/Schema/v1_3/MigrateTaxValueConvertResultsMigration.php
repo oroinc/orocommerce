@@ -27,7 +27,7 @@ class MigrateTaxValueConvertResultsMigration implements
     public function up(Schema $schema, QueryBag $queries)
     {
         $schemaWithNewColumn = clone $schema;
-        $schemaWithNewColumn->getTable('oro_tax_value')->addColumn('result', 'json_array', ['notnull' => false]);
+        $schemaWithNewColumn->getTable('oro_tax_value')->addColumn('result', 'json', ['notnull' => false]);
         foreach ($this->getSchemaDiff($schema, $schemaWithNewColumn) as $query) {
             $queries->addQuery($query);
         }
@@ -35,7 +35,7 @@ class MigrateTaxValueConvertResultsMigration implements
         $queries->addQuery(new ConvertTaxValueResultsQuery($this->platform));
 
         $schemaWithModifiedColumn = clone $schemaWithNewColumn;
-        $schemaWithModifiedColumn->getTable('oro_tax_value')->changeColumn('result', ['notnull' => true]);
+        $schemaWithModifiedColumn->getTable('oro_tax_value')->modifyColumn('result', ['notnull' => true]);
         $schemaWithModifiedColumn->getTable('oro_tax_value')->dropColumn('result_base64');
         foreach ($this->getSchemaDiff($schemaWithNewColumn, $schemaWithModifiedColumn) as $query) {
             $queries->addQuery($query);

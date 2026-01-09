@@ -149,7 +149,7 @@ class CheckoutSubtotalRepositoryTest extends FrontendWebTestCase
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     protected function preparePriceListRelationForCustomerGroupChecks(CheckoutSubtotal $checkoutSubtotal): void
     {

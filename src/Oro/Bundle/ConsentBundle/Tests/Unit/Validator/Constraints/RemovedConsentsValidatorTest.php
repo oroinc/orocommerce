@@ -10,6 +10,7 @@ use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsentsValidator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class RemovedConsentsValidatorTest extends ConstraintValidatorTestCase
@@ -25,7 +26,7 @@ class RemovedConsentsValidatorTest extends ConstraintValidatorTestCase
     }
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
         $doctrineHelper->expects($this->any())

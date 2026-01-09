@@ -9,8 +9,8 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\DataStorageExtensionAwareTrai
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class OroPricingBundle implements
     Migration,

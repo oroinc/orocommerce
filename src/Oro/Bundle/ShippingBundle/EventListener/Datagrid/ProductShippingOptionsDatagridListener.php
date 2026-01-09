@@ -123,6 +123,10 @@ class ProductShippingOptionsDatagridListener
      */
     protected function getShippingOptions(array $productIds)
     {
+        if (empty($productIds)) {
+            return [];
+        }
+
         /** @var ProductShippingOptions[] $options */
         $options = $this->getRepository()->findBy(['product' => $productIds], ['productUnit' => 'ASC']);
 

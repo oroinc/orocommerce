@@ -7,7 +7,7 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 
 class CheckoutGetRequestHandlerTest extends TestCase
@@ -44,8 +44,7 @@ class CheckoutGetRequestHandlerTest extends TestCase
     {
         $workflowItem = $this->createMock(WorkflowItem::class);
         $request = $this->createMock(Request::class);
-        $request->query = $this->createMock(ParameterBag::class);
-        $request->query->method('has')->with('transition')->willReturn(false);
+        $request->query = new InputBag([]);
 
         $this->workflowManager->expects($this->never())
             ->method('transitIfAllowed');
@@ -57,17 +56,7 @@ class CheckoutGetRequestHandlerTest extends TestCase
     {
         $workflowItem = $this->createMock(WorkflowItem::class);
         $request = $this->createMock(Request::class);
-        $request->query = $this->createMock(ParameterBag::class);
-        $request->query
-            ->method('has')
-            ->willReturnMap([
-                ['transition', true],
-                ['layout_block_ids', false],
-            ]);
-        $request->expects($this->once())
-            ->method('get')
-            ->with('transition')
-            ->willReturn('some_transition');
+        $request->query = new InputBag(['transition' => 'some_transition']);
 
         $this->workflowManager->expects($this->once())
             ->method('transitIfAllowed')
@@ -80,15 +69,10 @@ class CheckoutGetRequestHandlerTest extends TestCase
     {
         $workflowItem = $this->createMock(WorkflowItem::class);
         $request = $this->createMock(Request::class);
-        $request->query = $this->createMock(ParameterBag::class);
-        $request->query->method('has')->willReturnMap([
-            ['transition', true],
-            ['layout_block_ids', true],
+        $request->query = new InputBag([
+            'transition' => 'payment_error',
+            'layout_block_ids' => ['some_id']
         ]);
-        $request->expects($this->once())
-            ->method('get')
-            ->with('transition')
-            ->willReturn('payment_error');
 
         $this->workflowManager->expects($this->never())
             ->method('transitIfAllowed');

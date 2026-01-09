@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Async;
 
-use Doctrine\DBAL\Driver\DriverException;
+use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -149,9 +149,9 @@ class InvalidateTotalsByInventoryStatusPerProductProcessorTest extends \PHPUnit\
             ->with($data)
             ->willReturn($productIds);
 
-        /** @var DriverException $driverException */
-        $driverException = $this->createMock(DriverException::class);
-        $e = new DeadlockException('deadlock detected', $driverException);
+        /** @var Exception $driverException */
+        $driverException = $this->createMock(Exception::class);
+        $e = new DeadlockException($driverException, null);
 
         $repo = $this->createMock(ShoppingListTotalRepository::class);
         $repo->expects(self::once())

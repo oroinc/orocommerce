@@ -188,6 +188,9 @@ class WebsiteSearchCategoryIndexerListener
 
         // remove root category
         unset($parentCategoryIds[0]);
+        if (empty($parentCategoryIds)) {
+            return [];
+        }
 
         /** @var Category[] $parentCategories */
         $parentCategories = $this->getRepository()->findBy(['id' => $parentCategoryIds]);

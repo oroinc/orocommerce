@@ -4,7 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
@@ -13,11 +13,11 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Oro\Component\DoctrineUtils\ORM\ResultSetMappingUtil;
 use Oro\Component\DoctrineUtils\ORM\SqlQueryBuilder;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Set Slug organization same to owning entity organization if slug organization is empty.
@@ -157,7 +157,7 @@ class FixSlugOrganizationRelation extends AbstractFixture implements ContainerAw
                 ->setParameter('entityId', $entityId);
         }
 
-        if ($manager->getConnection()->getDatabasePlatform() instanceof MySqlPlatform) {
+        if ($manager->getConnection()->getDatabasePlatform() instanceof MySQLPlatform) {
             $updateQB->set('slug.organization_id', 'entity.organization_id');
         } else {
             $updateQB->set('organization_id', 'entity.organization_id');

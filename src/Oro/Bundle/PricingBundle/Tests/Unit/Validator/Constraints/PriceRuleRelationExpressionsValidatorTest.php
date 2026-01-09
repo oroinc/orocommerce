@@ -17,6 +17,7 @@ use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\RelationNode;
 use Oro\Component\Expression\Node\ValueNode;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -58,7 +59,7 @@ class PriceRuleRelationExpressionsValidatorTest extends ConstraintValidatorTestC
     }
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects($this->any())

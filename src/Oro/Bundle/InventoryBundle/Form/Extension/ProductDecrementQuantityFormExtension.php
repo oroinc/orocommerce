@@ -9,6 +9,9 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Extends product forms with a decrement quantity field with category fallback support.
+ */
 class ProductDecrementQuantityFormExtension extends AbstractTypeExtension
 {
     #[\Override]
@@ -18,7 +21,7 @@ class ProductDecrementQuantityFormExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $product = $builder->getData();
         // set category as default fallback

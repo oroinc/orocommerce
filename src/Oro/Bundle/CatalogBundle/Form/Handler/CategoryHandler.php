@@ -126,6 +126,9 @@ class CategoryHandler implements FormHandlerInterface
         array $sortOrder
     ): void {
         $productRepository = $this->manager->getRepository(Product::class);
+        if (empty($sortOrder)) {
+            return;
+        }
         $products = $productRepository->findBy(['id' => array_keys($sortOrder)]);
         foreach ($products as $product) {
             $sortDataInputValue = $sortOrder[$product->getId()]['data']['categorySortOrder'];

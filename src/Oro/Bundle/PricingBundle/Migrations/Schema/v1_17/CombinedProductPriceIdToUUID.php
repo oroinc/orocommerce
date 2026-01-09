@@ -36,7 +36,7 @@ class CombinedProductPriceIdToUUID implements Migration, ConnectionAwareInterfac
             $queries->addQuery('ALTER TABLE oro_price_product_combined ADD PRIMARY KEY (id);');
         } else {
             $table->dropPrimaryKey();
-            $table->changeColumn(
+            $table->modifyColumn(
                 'id',
                 [
                     'type' => Type::getType('guid'),

@@ -3,11 +3,13 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\DBAL\Types;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
 use Oro\Bundle\SecurityBundle\Encoder\DefaultCrypter;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use PHPUnit\Framework\TestCase;
 
-class SecureArrayTypeTest extends \PHPUnit\Framework\TestCase
+class SecureArrayTypeTest extends TestCase
 {
     private SymmetricCrypterInterface $crypter;
     private SecureArrayType $type;
@@ -58,7 +60,8 @@ class SecureArrayTypeTest extends \PHPUnit\Framework\TestCase
 
         $encrypted = $this->crypter->encryptData('{"value":"value}');
 
-        $this->assertNull($this->type->convertToPHPValue($encrypted, $this->createMock(AbstractPlatform::class)));
+        $this->expectException(ConversionException::class);
+        $this->type->convertToPHPValue($encrypted, $this->createMock(AbstractPlatform::class));
     }
 
     public function testConvertToDatabaseValue()

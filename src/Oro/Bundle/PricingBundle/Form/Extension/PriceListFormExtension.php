@@ -9,6 +9,9 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Extends PriceListSelectWithPriorityType form to add a merge allowed checkbox field.
+ */
 class PriceListFormExtension extends AbstractTypeExtension
 {
     public const MERGE_ALLOWED_FIELD = 'mergeAllowed';
@@ -30,7 +33,7 @@ class PriceListFormExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if ($this->configManager->get('oro_pricing.price_strategy') === MergePricesCombiningStrategy::NAME) {
             $builder->add(

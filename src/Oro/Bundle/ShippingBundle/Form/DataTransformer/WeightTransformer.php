@@ -5,6 +5,9 @@ namespace Oro\Bundle\ShippingBundle\Form\DataTransformer;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Symfony\Component\Form\DataTransformerInterface;
 
+/**
+ * Validates and transforms weight model data.
+ */
 class WeightTransformer implements DataTransformerInterface
 {
     /**
@@ -12,7 +15,7 @@ class WeightTransformer implements DataTransformerInterface
      * @return Weight|null
      */
     #[\Override]
-    public function transform($weight)
+    public function transform($weight): mixed
     {
         return $weight;
     }
@@ -22,7 +25,7 @@ class WeightTransformer implements DataTransformerInterface
      * @return Weight|null
      */
     #[\Override]
-    public function reverseTransform($weight)
+    public function reverseTransform($weight): mixed
     {
         if (!$weight instanceof Weight ||
             !$weight->getUnit() ||

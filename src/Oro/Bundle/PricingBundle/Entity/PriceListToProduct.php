@@ -6,6 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\DoctrineUtils\ORM\Id\UuidGenerator;
 
 /**
  * Stores relation between price list and product entities
@@ -21,7 +22,8 @@ class PriceListToProduct
      */
     #[ORM\Column(name: 'id', type: Types::GUID)]
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'UUID')]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected $id;
 
     #[ORM\ManyToOne(targetEntity: PriceList::class)]

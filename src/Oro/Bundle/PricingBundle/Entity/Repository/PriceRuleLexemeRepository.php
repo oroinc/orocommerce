@@ -65,7 +65,7 @@ class PriceRuleLexemeRepository extends EntityRepository
         $qb = $this->getLexemesQueryBuilder($className, $updatedFields, $relationId, $organization);
 
         return $qb->getQuery()
-            ->useResultCache(true, 3600, self::LEXEMES_CACHE_KEY)
+            ->enableResultCache(3600, self::LEXEMES_CACHE_KEY)
             ->getResult();
     }
 
@@ -104,7 +104,7 @@ class PriceRuleLexemeRepository extends EntityRepository
     {
         $cache = $this->getEntityManager()
             ->getConfiguration()
-            ->getResultCacheImpl();
+            ->getResultCache();
 
         if ($cache) {
             $cache->delete(self::LEXEMES_CACHE_KEY);

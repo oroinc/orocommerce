@@ -79,7 +79,7 @@ class OroRedirectBundle implements Migration, DatabasePlatformAwareInterface
         );
         $postSchema = clone $schema;
         $postSchema->getTable('oro_redirect_slug')
-            ->changeColumn('url_hash', ['notnull' => true]);
+            ->modifyColumn('url_hash', ['notnull' => true]);
         $postQueries = $this->getSchemaDiff($schema, $postSchema);
         foreach ($postQueries as $query) {
             $queries->addPostQuery($query);

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_19;
 
-use Doctrine\DBAL\DBALException;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
@@ -27,7 +26,7 @@ class UpdateReportQuery extends ParametrizedMigrationQuery
     ];
 
     /**
-     * @throws DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     #[\Override]
     public function getDescription()
@@ -39,7 +38,7 @@ class UpdateReportQuery extends ParametrizedMigrationQuery
     }
 
     /**
-     * @throws DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     #[\Override]
     public function execute(LoggerInterface $logger)
@@ -48,7 +47,7 @@ class UpdateReportQuery extends ParametrizedMigrationQuery
     }
 
     /**
-     * @throws DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     public function doExecute(LoggerInterface $logger, bool $dryRun = false): void
     {
@@ -57,7 +56,7 @@ class UpdateReportQuery extends ParametrizedMigrationQuery
     }
 
     /**
-     * @throws DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     protected function migrateReport(LoggerInterface $logger, $dryRun): void
     {
@@ -81,7 +80,7 @@ class UpdateReportQuery extends ParametrizedMigrationQuery
     }
 
     /**
-     * @throws DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     protected function migrateSegment(LoggerInterface $logger, $dryRun): void
     {
@@ -105,7 +104,7 @@ class UpdateReportQuery extends ParametrizedMigrationQuery
     }
 
     /**
-     * @throws DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     protected function executeUpdateQuery(LoggerInterface $logger, $dryRun, $def, $row, $query): void
     {

@@ -144,7 +144,7 @@ class CheckoutSubtotalRepository extends EntityRepository
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     private function invalidateByPriceListRelation(string $relationColumn, array $priceListIds)
     {
@@ -166,7 +166,7 @@ class CheckoutSubtotalRepository extends EntityRepository
 
     /**
      * @return SqlQueryBuilder
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     private function getBaseInvalidateByRelationQueryBuilder()
     {

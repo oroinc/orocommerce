@@ -7,8 +7,8 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Refreshes product names for all OrderLineItem

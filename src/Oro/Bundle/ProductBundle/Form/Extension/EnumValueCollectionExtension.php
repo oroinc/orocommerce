@@ -33,7 +33,7 @@ class EnumValueCollectionExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $data = $form->getData();
         if (!$data || !\is_array($data)) {

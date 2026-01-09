@@ -7,6 +7,9 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Configures a date form type for credit card expiration dates with month and year only.
+ */
 class CreditCardExpirationDateType extends AbstractType
 {
     public const NAME = 'oro_paypal_credit_card_expiration_date';
@@ -32,6 +35,8 @@ class CreditCardExpirationDateType extends AbstractType
                 'model_timezone' => 'UTC',
                 'view_timezone' => 'UTC',
                 'format' => 'dMy',
+                'widget' => 'choice',
+                'html5' => false,
                 'input' => 'array',
                 'years' => $years,
                 'months' => $months

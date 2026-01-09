@@ -14,6 +14,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * Handles form events to synchronize shipping method type configurations in a collection form.
+ */
 class MethodTypeConfigCollectionSubscriber implements EventSubscriberInterface
 {
     /**
@@ -33,12 +36,12 @@ class MethodTypeConfigCollectionSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            FormEvents::PRE_SET_DATA => 'preSet',
+            FormEvents::POST_SET_DATA => 'postSetData',
             FormEvents::PRE_SUBMIT => 'preSubmit',
         ];
     }
 
-    public function preSet(FormEvent $event)
+    public function postSetData(FormEvent $event): void
     {
         /** @var FormInterface|Form[] $form */
         $form = $event->getForm();
@@ -76,7 +79,7 @@ class MethodTypeConfigCollectionSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function preSubmit(FormEvent $event)
+    public function preSubmit(FormEvent $event): void
     {
         /** @var array $submittedData */
         $submittedData = $event->getData();
@@ -108,7 +111,7 @@ class MethodTypeConfigCollectionSubscriber implements EventSubscriberInterface
         $index,
         ShippingMethodInterface $method,
         ShippingMethodTypeInterface $type
-    ) {
+    ): void {
         $form->add($index, ShippingMethodTypeConfigType::class, [
             'options_type' => $type->getOptionsConfigurationFormType(),
             'auto_initialize' => false,
@@ -124,7 +127,7 @@ class MethodTypeConfigCollectionSubscriber implements EventSubscriberInterface
     protected function removeTypeForm(
         FormInterface $form,
         $index
-    ) {
+    ): void {
         $form->remove($index);
     }
 }

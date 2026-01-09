@@ -5,6 +5,10 @@ namespace Oro\Bundle\InventoryBundle\ORM\Query\ResultIterator;
 use Doctrine\ORM\Query\AST;
 use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\SelectIdentifierWalker as BaseWalker;
 
+/**
+ * Modifies ORM query selection to return only root entity identifiers and ensures proper grouping for consistent
+ * results.
+ */
 class SelectIdentifierWalker extends BaseWalker
 {
     /**
@@ -17,7 +21,7 @@ class SelectIdentifierWalker extends BaseWalker
         $this->validate($AST);
 
         // Get the root entity and alias from the AST fromClause
-        $queryComponents = $this->_getQueryComponents();
+        $queryComponents = $this->getQueryComponents();
         $from = $AST->fromClause->identificationVariableDeclarations;
         if (count($from) !== 1) {
             throw new \LogicException('You have to have exactly 1 From clause');

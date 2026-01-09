@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Migrations\Schema\v1_11;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
@@ -24,7 +24,7 @@ class OroSaleBundle implements Migration, DatabasePlatformAwareInterface
 
     protected function updateAccountData(QueryBag $queries)
     {
-        if ($this->platform instanceof MySqlPlatform) {
+        if ($this->platform instanceof MySQLPlatform) {
             $queries->addQuery('UPDATE oro_quote_demand d
                 INNER JOIN oro_checkout_source s ON s.quoteDemand_id = d.id
                 INNER JOIN oro_checkout c ON c.source_id = s.id

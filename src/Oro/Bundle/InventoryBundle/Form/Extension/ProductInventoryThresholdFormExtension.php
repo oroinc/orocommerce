@@ -22,7 +22,7 @@ class ProductInventoryThresholdFormExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $product = $builder->getData();
         // set category as default fallback

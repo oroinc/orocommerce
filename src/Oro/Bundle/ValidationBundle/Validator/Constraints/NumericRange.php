@@ -15,10 +15,10 @@ class NumericRange extends Range
     private const DEFAULT_SCALE = 4;
 
     /** @var float|string */
-    public $min;
+    public mixed $min;
 
     /** @var float|string */
-    public $max;
+    public mixed $max;
 
     public function __construct($options = null)
     {

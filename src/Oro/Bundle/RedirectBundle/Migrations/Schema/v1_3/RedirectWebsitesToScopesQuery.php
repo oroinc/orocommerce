@@ -118,14 +118,14 @@ SQL;
      */
     protected function findScopeId($websiteId, LoggerInterface $logger)
     {
-        $schemaManager = $this->connection->getSchemaManager();
+        $schemaManager = $this->connection->createSchemaManager();
         $scopeColumns = $schemaManager->listTableColumns('oro_scope');
 
         $query = 'SELECT s.id FROM oro_scope s WHERE website_id = :websiteId';
         foreach ($scopeColumns as $scopeColumn) {
             $columnName = $scopeColumn->getName();
             if (!in_array($columnName, ['id', 'website_id', 'serialized_data'], true)) {
-                $query .= ' AND '. $columnName . ' IS NULL ';
+                $query .= ' AND ' . $columnName . ' IS NULL ';
             }
         }
 

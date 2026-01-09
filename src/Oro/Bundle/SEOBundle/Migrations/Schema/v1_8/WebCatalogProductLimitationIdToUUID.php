@@ -36,7 +36,7 @@ class WebCatalogProductLimitationIdToUUID implements Migration, ConnectionAwareI
             $queries->addQuery('ALTER TABLE oro_web_catalog_product_limit ADD PRIMARY KEY (id);');
         } else {
             $table->dropPrimaryKey();
-            $table->changeColumn(
+            $table->modifyColumn(
                 'id',
                 [
                     'type' => Type::getType("guid"),

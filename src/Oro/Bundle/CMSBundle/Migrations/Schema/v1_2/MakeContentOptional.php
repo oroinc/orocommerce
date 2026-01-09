@@ -20,6 +20,6 @@ class MakeContentOptional implements Migration
     protected function alterOroCmsPageTable(Schema $schema)
     {
         $table = $schema->getTable('oro_cms_page');
-        $table->changeColumn('content', ['notnull' => false]);
+        $table->modifyColumn('content', ['notnull' => false]);
     }
 }

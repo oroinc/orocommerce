@@ -28,9 +28,9 @@ use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFami
 use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\ThemeBundle\Fallback\Provider\ThemeConfigurationFallbackProvider;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Loads demo products with images.

@@ -7,8 +7,8 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadPageDataWithSlug extends AbstractFixture implements ContainerAwareInterface
 {

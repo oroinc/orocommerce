@@ -12,8 +12,8 @@ class AlphanumericDash extends Regex implements AliasAwareConstraintInterface
 {
     public const ALIAS = 'alphanumeric_dash';
 
-    public $message = 'This value should contain only latin letters, numbers and symbol "-"';
-    public $pattern = '/^[A-Za-z0-9-]+$/';
+    public string $message = 'This value should contain only latin letters, numbers and symbol "-"';
+    public ?string $pattern = '/^[A-Za-z0-9-]+$/';
 
     public function __construct(
         $pattern = null,

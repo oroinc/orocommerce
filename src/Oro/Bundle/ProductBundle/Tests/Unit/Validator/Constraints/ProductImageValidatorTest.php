@@ -7,12 +7,13 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImage;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductImageValidatorTest extends ConstraintValidatorTestCase
 {
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new ProductImageValidator();
     }

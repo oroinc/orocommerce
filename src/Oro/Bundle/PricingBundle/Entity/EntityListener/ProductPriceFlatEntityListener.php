@@ -31,7 +31,7 @@ class ProductPriceFlatEntityListener implements OptionalListenerInterface, Featu
     public function onSave(ProductPriceSaveAfterEvent $event): void
     {
         /** @var ProductPrice $productPrice */
-        $productPrice = $event->getEventArgs()->getEntity();
+        $productPrice = $event->getEventArgs()->getObject();
         $this->handleChanges($productPrice);
     }
 

@@ -7,8 +7,8 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * @see \Oro\Bundle\EntityConfigBundle\Tests\Functional\Environment\TestEntitiesMigrationListener

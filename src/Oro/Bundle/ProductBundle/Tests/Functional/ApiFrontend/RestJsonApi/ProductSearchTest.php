@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
@@ -62,7 +62,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             return false;
         }
 
-        return $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof MySqlPlatform;
+        return $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof MySQLPlatform;
     }
 
     public function testNoSearchQueryFilter(): void

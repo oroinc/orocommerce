@@ -7,6 +7,9 @@ use Doctrine\ORM\Query\Lexer;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 
+/**
+ * Generates SQL for the UUID_GENERATE_V4() database function in Doctrine queries.
+ */
 class UUID extends FunctionNode
 {
     #[\Override]
@@ -25,6 +28,6 @@ class UUID extends FunctionNode
     #[\Override]
     public function getSql(SqlWalker $sqlWalker)
     {
-        return $sqlWalker->getConnection()->getDatabasePlatform()->getGuidExpression();
+        return 'UUID_GENERATE_V4()';
     }
 }

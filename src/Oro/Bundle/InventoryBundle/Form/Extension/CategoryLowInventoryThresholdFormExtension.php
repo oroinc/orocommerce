@@ -23,7 +23,7 @@ class CategoryLowInventoryThresholdFormExtension extends AbstractFallbackCategor
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 

@@ -14,7 +14,7 @@ class NotEmptyShippingAddress extends Constraint
     public string $message = 'oro.checkout.workflow.condition.invalid_shipping_address.messa';
 
     #[\Override]
-    public function getTargets()
+    public function getTargets(): array|string
     {
         return self::PROPERTY_CONSTRAINT;
     }

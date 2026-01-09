@@ -12,6 +12,6 @@ class OroWebsiteSearchBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_website_search_decimal');
-        $table->changeColumn('value', ['precision' => 21, 'scale' => 6]);
+        $table->modifyColumn('value', ['precision' => 21, 'scale' => 6]);
     }
 }

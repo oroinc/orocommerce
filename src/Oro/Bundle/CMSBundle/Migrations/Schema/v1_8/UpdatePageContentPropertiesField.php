@@ -20,7 +20,7 @@ class UpdatePageContentPropertiesField implements Migration
     {
         $table = $schema->getTable('oro_cms_page');
         if ($table->hasColumn('content_properties')) {
-            $table->changeColumn(
+            $table->modifyColumn(
                 'content_properties',
                 [
                     OroOptions::KEY => [

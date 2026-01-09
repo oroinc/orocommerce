@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Migrations\Schema\v1_9;
 
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
@@ -42,7 +43,7 @@ class ConvertPaymentTransactionOptionsToSecureArrayQuery extends ParametrizedMig
     /**
      * @param LoggerInterface $logger
      * @param bool $dryRun
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
@@ -56,14 +57,14 @@ class ConvertPaymentTransactionOptionsToSecureArrayQuery extends ParametrizedMig
         $selectParams = ['limit' => self::SELECT_LIMIT, 'offset' => 0];
 
         $selectStatement = $this->connection->prepare($selectSql);
-        $selectStatement->bindValue('limit', $selectParams['limit'], \PDO::PARAM_INT);
+        $selectStatement->bindValue('limit', $selectParams['limit'], ParameterType::INTEGER);
 
         $updateSql = 'UPDATE oro_payment_transaction SET transaction_options=:transactionOptions WHERE id=:id';
         $updateTypes = ['id' => Types::INTEGER, 'transactionOptions' => Types::STRING];
         $updateStatement = $this->connection->prepare($updateSql);
 
         do {
-            $selectStatement->bindValue('offset', $selectParams['offset'], \PDO::PARAM_INT);
+            $selectStatement->bindValue('offset', $selectParams['offset'], ParameterType::INTEGER);
             $query = $selectStatement->executeQuery();
             $this->logQuery($logger, $selectSql, $selectParams, $selectTypes);
             $rowsCount = 0;
@@ -84,8 +85,8 @@ class ConvertPaymentTransactionOptionsToSecureArrayQuery extends ParametrizedMig
                     'id' => $row['id'],
                     'transactionOptions' => $newTransactionOptions,
                 ];
-                $updateStatement->bindValue('id', $updateParams['id'], \PDO::PARAM_INT);
-                $updateStatement->bindValue('transactionOptions', $updateParams['transactionOptions'], \PDO::PARAM_STR);
+                $updateStatement->bindValue('id', $updateParams['id'], ParameterType::INTEGER);
+                $updateStatement->bindValue('transactionOptions', $updateParams['transactionOptions']);
 
                 if ($dryRun) {
                     $this->logQuery($logger, $updateSql, $updateParams, $updateTypes);

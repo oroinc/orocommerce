@@ -69,7 +69,7 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor implement
         return $this->executeNativeQueryInBatches(
             $insertToTableName,
             $className,
-            $connection->executeQuery($sourceSql, $params, $types),
+            $connection->executeQuery($sourceSql, $params, $types)->iterateAssociative(),
             $fields,
             $applyOnDuplicateKeyUpdate
         );
@@ -82,7 +82,7 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor implement
      * @param array $fields
      * @param bool $applyOnDuplicateKeyUpdate
      * @return int
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     private function executeNativeQueryInBatches(
         string $insertToTableName,

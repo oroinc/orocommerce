@@ -5,6 +5,7 @@ namespace Oro\Bundle\RFPBundle\Form\Extension;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
+use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
 use Oro\Bundle\RFPBundle\Form\Type\OffersType;
@@ -18,6 +19,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Manages offer data storage and form fields in order line item forms.
+ */
 class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
@@ -30,7 +34,7 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements
     /** @var DataStorageInterface */
     protected $sessionStorage;
 
-    /** @var \Oro\Bundle\OrderBundle\Form\Section\SectionProvider */
+    /** @var SectionProvider */
     protected $sectionProvider;
 
     /**
@@ -52,7 +56,7 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements
     }
 
     /**
-     * @param \Oro\Bundle\OrderBundle\Form\Section\SectionProvider $sectionProvider
+     * @param SectionProvider $sectionProvider
      */
     public function setSectionProvider($sectionProvider)
     {
@@ -69,7 +73,7 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!$this->isApplicable()) {
             return;
@@ -151,7 +155,7 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements
     }
 
     #[\Override]
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         if ($this->sectionProvider && $this->isApplicable()) {
             foreach (self::getExtendedTypes() as $extendedType) {

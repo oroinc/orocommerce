@@ -14,12 +14,12 @@ class UrlSafe extends Regex implements AliasAwareConstraintInterface
     public const DELIMITER = SluggableUrlGenerator::CONTEXT_DELIMITER;
 
     /** @var string */
-    public $message = 'This value should contain only latin letters, numbers and symbols "-._~".';
+    public string $message = 'This value should contain only latin letters, numbers and symbols "-._~".';
 
     public string $delimiterMessage = 'This value should not contain reserved keyword "' . self::DELIMITER . '"';
 
     /** @var string */
-    public $pattern = '/^[a-zA-Z0-9\-\.\_\~]*$/';
+    public ?string $pattern = '/^[a-zA-Z0-9\-\.\_\~]*$/';
 
     public function __construct($options = null)
     {

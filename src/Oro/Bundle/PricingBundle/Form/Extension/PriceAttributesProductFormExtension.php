@@ -46,7 +46,7 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(self::PRODUCT_PRICE_ATTRIBUTES_PRICES, CollectionType::class, [
             'mapped' => false,
@@ -126,7 +126,7 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
         }
 
         $request = $this->requestStack->getCurrentRequest();
-        $requestProductData = $request->get('oro_product');
+        $requestProductData = $request->request->all('oro_product');
 
         if ($requestProductData
             && isset($requestProductData['primaryUnitPrecision']['unit'])
@@ -223,6 +223,10 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
      */
     private function getProductExistingPrices(Product $product, array $priceLists)
     {
+        if (empty($priceLists)) {
+            return [];
+        }
+
         $result = $this->registry
             ->getManagerForClass(PriceAttributeProductPrice::class)
             ->getRepository(PriceAttributeProductPrice::class)

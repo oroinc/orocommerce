@@ -28,7 +28,7 @@ abstract class AbstractFallbackCategoryTypeExtension extends AbstractTypeExtensi
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $category = $builder->getData();
         $fallbackProperties = $this->getFallbackProperties();

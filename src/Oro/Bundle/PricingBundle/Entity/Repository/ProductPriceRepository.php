@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\QueryBuilder as NativeQueryBuilder;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Id\UuidGenerator;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -22,6 +22,7 @@ use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\DoctrineUtils\ORM\Id\UuidGenerator;
 use Oro\Component\DoctrineUtils\ORM\UnionQueryBuilder;
 
 /**
@@ -55,7 +56,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
         $sql = $query->getSQL();
         $sql = str_replace($baseTable, $realTableName, $sql);
         $parameters = [$priceList->getId()];
-        $types = [\PDO::PARAM_INT];
+        $types = [ParameterType::INTEGER];
         if ($products) {
             $parameters[] = array_map(
                 function ($product) {
@@ -123,7 +124,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
                 $this->_em->getConnection()->executeQuery(
                     $sql,
                     [$priceList->getId(), $ids],
-                    [\PDO::PARAM_INT, Connection::PARAM_STR_ARRAY]
+                    [ParameterType::INTEGER, Connection::PARAM_STR_ARRAY]
                 );
                 $ids = [];
             }
@@ -133,7 +134,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
             $this->_em->getConnection()->executeQuery(
                 $sql,
                 [$priceList->getId(), $ids],
-                [\PDO::PARAM_INT, Connection::PARAM_STR_ARRAY]
+                [ParameterType::INTEGER, Connection::PARAM_STR_ARRAY]
             );
         }
     }
@@ -259,7 +260,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
             $qb->where('id = :id')
                 ->setParameter('id', $price->getId());
         } else {
-            $id = $this->getGenerator()->generate($this->_em, null);
+            $id = $this->getGenerator()->generateId($this->_em, null);
             $columns['id'] = ':id';
             $qb->setParameter('id', $id);
             $qb->insert($tableName)

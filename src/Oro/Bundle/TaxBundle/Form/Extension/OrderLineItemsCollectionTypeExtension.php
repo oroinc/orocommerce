@@ -10,6 +10,9 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
+/**
+ * Extends the order line items form to preload and display tax values for line items.
+ */
 class OrderLineItemsCollectionTypeExtension extends AbstractTypeExtension
 {
     /**
@@ -37,7 +40,7 @@ class OrderLineItemsCollectionTypeExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         if (!$this->taxationSettingsProvider->isEnabled()) {
             return;

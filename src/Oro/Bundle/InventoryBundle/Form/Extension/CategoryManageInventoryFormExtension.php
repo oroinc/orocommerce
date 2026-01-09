@@ -6,6 +6,9 @@ use Oro\Bundle\CatalogBundle\Form\Extension\AbstractFallbackCategoryTypeExtensio
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Extends the category form with the manage inventory field.
+ */
 class CategoryManageInventoryFormExtension extends AbstractFallbackCategoryTypeExtension
 {
     #[\Override]
@@ -17,7 +20,7 @@ class CategoryManageInventoryFormExtension extends AbstractFallbackCategoryTypeE
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 

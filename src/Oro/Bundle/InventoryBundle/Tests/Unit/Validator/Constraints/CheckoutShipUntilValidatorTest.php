@@ -9,6 +9,7 @@ use Oro\Bundle\InventoryBundle\Validator\Constraints\CheckoutShipUntil;
 use Oro\Bundle\InventoryBundle\Validator\Constraints\CheckoutShipUntilValidator;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class CheckoutShipUntilValidatorTest extends ConstraintValidatorTestCase
@@ -28,7 +29,7 @@ class CheckoutShipUntilValidatorTest extends ConstraintValidatorTestCase
     }
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new CheckoutShipUntilValidator($this->upcomingProvider, $this->checkoutLineItemsManager);
     }

@@ -3,17 +3,20 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Parser;
 
 use Oro\Bundle\CMSBundle\Parser\TwigParser;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Twig\Environment;
 use Twig\Node\BodyNode;
+use Twig\Node\EmptyNode;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\ModuleNode;
 use Twig\Node\Node;
 use Twig\Source;
 use Twig\TokenStream;
 
-class TwigParserTest extends \PHPUnit\Framework\TestCase
+class TwigParserTest extends TestCase
 {
-    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Environment|MockObject */
     private $twig;
 
     /** @var TwigParser */
@@ -60,7 +63,7 @@ class TwigParserTest extends \PHPUnit\Framework\TestCase
                 new Node([]),
                 new Node([]),
                 new Node([]),
-                '',
+                new EmptyNode(),
                 new Source('', '')
             ));
 

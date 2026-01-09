@@ -25,7 +25,7 @@ class ConsentCollectionTransformer implements DataTransformerInterface
     }
 
     #[\Override]
-    public function transform($value)
+    public function transform($value): mixed
     {
         if (!is_array($value) || empty($value)) {
             return null;
@@ -35,7 +35,7 @@ class ConsentCollectionTransformer implements DataTransformerInterface
     }
 
     #[\Override]
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         $value = array_filter(
             $value,

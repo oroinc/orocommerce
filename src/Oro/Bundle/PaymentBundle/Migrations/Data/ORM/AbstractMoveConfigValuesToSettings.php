@@ -11,7 +11,7 @@ use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\PaymentBundle\Method\Event\MethodRenamingEventDispatcherInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

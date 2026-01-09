@@ -65,7 +65,7 @@ class ExtendEntityCacheWarmer implements CacheWarmerInterface
     }
 
     #[\Override]
-    public function warmUp(string $cacheDir): array
+    public function warmUp(string $cacheDir, ?string $buildDir = null): array
     {
         if (!$this->applicationState->isInstalled()) {
             return [];

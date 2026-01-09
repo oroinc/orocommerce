@@ -15,7 +15,7 @@ class ShippingMethodIsValid extends Constraint
     public string $shippingMethodTypeMessage = 'oro.checkout.validator.shipping_method_type_is_invalid.message';
 
     #[\Override]
-    public function getTargets()
+    public function getTargets(): array|string
     {
         return self::CLASS_CONSTRAINT;
     }

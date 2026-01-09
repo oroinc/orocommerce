@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
@@ -73,7 +74,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
         $tableName = ' ' . $shardManager->getEnabledShardName($this->getClassName(), ['priceList' => $priceList]) . ' ';
         $sql = str_replace($baseTableName, $tableName, $sql);
         $parameters = [$priceList->getId()];
-        $types = [\PDO::PARAM_INT];
+        $types = [ParameterType::INTEGER];
         if ($products) {
             $parameters[] = array_map(
                 function ($product) {

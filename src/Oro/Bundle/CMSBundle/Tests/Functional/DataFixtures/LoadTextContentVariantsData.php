@@ -10,8 +10,8 @@ use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadTextContentVariantsData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {

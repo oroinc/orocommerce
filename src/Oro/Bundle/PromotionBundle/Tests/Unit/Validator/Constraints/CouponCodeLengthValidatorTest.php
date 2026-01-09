@@ -5,13 +5,14 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 use Oro\Bundle\PromotionBundle\Validator\Constraints\CouponCodeLength;
 use Oro\Bundle\PromotionBundle\Validator\Constraints\CouponCodeLengthValidator;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class CouponCodeLengthValidatorTest extends ConstraintValidatorTestCase
 {
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new CouponCodeLengthValidator();
     }

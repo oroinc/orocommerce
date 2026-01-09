@@ -7,6 +7,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Symfony\Component\Form\DataTransformerInterface;
 
+/**
+ * Transforms product variant links between form data and entity collections.
+ */
 class ProductVariantLinksDataTransformer implements DataTransformerInterface
 {
     /**
@@ -15,7 +18,7 @@ class ProductVariantLinksDataTransformer implements DataTransformerInterface
     private $variantLinks;
 
     #[\Override]
-    public function transform($value)
+    public function transform($value): mixed
     {
         if (null === $value) {
             return null;
@@ -30,7 +33,7 @@ class ProductVariantLinksDataTransformer implements DataTransformerInterface
     }
 
     #[\Override]
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (!$value) {
             return null;

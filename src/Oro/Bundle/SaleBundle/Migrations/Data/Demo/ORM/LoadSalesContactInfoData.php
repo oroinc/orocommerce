@@ -7,9 +7,12 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\SaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\SaleBundle\Provider\ContactInfoSourceOptionsProvider;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loads default sales contact information configuration for demo data.
+ */
 class LoadSalesContactInfoData extends AbstractFixture implements
     FixtureInterface,
     ContainerAwareInterface

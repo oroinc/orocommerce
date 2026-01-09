@@ -95,7 +95,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         $table->addColumn('payment_in_progress', 'boolean', ['default' => false]);
         $table->addColumn('completed', 'boolean', ['default' => false]);
         $table->addColumn('additional_data', 'text', ['notnull' => false]);
-        $table->addColumn('completed_data', 'json_array', ['comment' => '(DC2Type:json_array)']);
+        $table->addColumn('completed_data', 'json', ['comment' => '(DC2Type:json)']);
         $table->addColumn('line_item_group_shipping_data', 'json', ['notnull' => false, 'comment' => '(DC2Type:json)']);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['billing_address_id'], 'uniq_checkout_bill_addr');

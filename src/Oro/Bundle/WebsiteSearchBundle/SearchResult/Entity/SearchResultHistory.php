@@ -17,6 +17,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchResultHistoryRepository;
+use Oro\Component\DoctrineUtils\ORM\Id\UuidGenerator;
 
 /**
  * Stores search results history items.
@@ -56,7 +57,8 @@ class SearchResultHistory implements
      */
     #[ORM\Column(name: 'id', type: Types::GUID)]
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'UUID')]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
     protected $id;
 

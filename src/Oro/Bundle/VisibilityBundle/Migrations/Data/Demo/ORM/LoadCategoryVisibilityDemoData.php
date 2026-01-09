@@ -13,8 +13,8 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Sets proper visibility setting to demo categories
@@ -72,7 +72,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
         $this->container->get('oro_visibility.visibility.cache.product.category.cache_builder')->buildCache();
     }
 
-    private function getCategory(ObjectManager $manager, string  $title): Category
+    private function getCategory(ObjectManager $manager, string $title): Category
     {
         $organization = $manager->getRepository(Organization::class)->getFirst();
         $queryBuilder = $manager->getRepository(Category::class)->findOneByDefaultTitleQueryBuilder($title);

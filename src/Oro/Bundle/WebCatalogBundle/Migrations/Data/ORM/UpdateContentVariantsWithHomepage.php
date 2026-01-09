@@ -12,8 +12,8 @@ use Oro\Bundle\CMSBundle\Migrations\Data\ORM\LoadHomePageData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Updates Content Variants pointing to the system page "Oro Frontend Root (Welcome - Home page)"

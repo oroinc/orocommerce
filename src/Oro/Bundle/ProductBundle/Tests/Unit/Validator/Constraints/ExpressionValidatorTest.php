@@ -9,6 +9,7 @@ use Oro\Component\Expression\ExpressionLanguageConverter;
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\FieldsProviderInterface;
 use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -38,7 +39,7 @@ class ExpressionValidatorTest extends ConstraintValidatorTestCase
     }
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new ExpressionValidator(
             $this->parser,

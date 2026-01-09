@@ -27,7 +27,7 @@ class TaxValue implements DatesAwareInterface
     /**
      * @var Result
      */
-    #[ORM\Column(name: 'result', type: 'json_array')]
+    #[ORM\Column(name: 'result', type: 'json')]
     protected $result;
 
     #[ORM\Column(name: 'entity_class', type: Types::STRING, length: 255)]

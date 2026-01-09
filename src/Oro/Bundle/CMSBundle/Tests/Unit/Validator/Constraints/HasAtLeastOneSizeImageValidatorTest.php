@@ -12,6 +12,7 @@ use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Constraints\IsNull;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
@@ -22,7 +23,7 @@ class HasAtLeastOneSizeImageValidatorTest extends ConstraintValidatorTestCase
     private MockObject|TranslatorInterface $translator;
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
 

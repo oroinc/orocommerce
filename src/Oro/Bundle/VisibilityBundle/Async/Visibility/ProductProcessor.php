@@ -80,6 +80,9 @@ class ProductProcessor implements MessageProcessorInterface, TopicSubscriberInte
      */
     private function getProducts(array $productIds): array
     {
+        if (empty($productIds)) {
+            return [];
+        }
         $products = $this->managerRegistry
             ->getRepository(Product::class)
             ->findBy(['id' => $productIds]);

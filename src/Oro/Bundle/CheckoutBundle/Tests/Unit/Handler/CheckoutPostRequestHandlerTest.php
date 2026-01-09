@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -363,11 +363,7 @@ class CheckoutPostRequestHandlerTest extends TestCase
     private function getPreparedRequest(?string $transitionName): Request|MockObject
     {
         $request = $this->createMock(Request::class);
-        $request->query = $this->createMock(ParameterBag::class);
-        $request->expects($this->any())
-            ->method('get')
-            ->with('transition')
-            ->willReturn($transitionName);
+        $request->query = new InputBag(['transition' => $transitionName]);
 
         return $request;
     }

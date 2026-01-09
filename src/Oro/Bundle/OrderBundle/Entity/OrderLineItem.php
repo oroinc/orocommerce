@@ -689,13 +689,16 @@ class OrderLineItem implements
     {
         $index = $productKitItemLineItem->getKitItemId();
 
-        if (!$this->kitItemLineItems->containsKey($index)) {
+        if (null !== $index && !$this->kitItemLineItems->containsKey($index)) {
             $productKitItemLineItem->setLineItem($this);
-            if ($index) {
-                $this->kitItemLineItems->set($index, $productKitItemLineItem);
-            } else {
-                $this->kitItemLineItems->add($productKitItemLineItem);
-            }
+            $this->kitItemLineItems->set($index, $productKitItemLineItem);
+
+            return $this;
+        }
+
+        if (!$this->kitItemLineItems->contains($productKitItemLineItem)) {
+            $productKitItemLineItem->setLineItem($this);
+            $this->kitItemLineItems->add($productKitItemLineItem);
         }
 
         return $this;

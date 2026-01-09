@@ -148,28 +148,28 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
                 'expectedOptions' => ['compact' => false, 'full_list' => false, 'multiple' => false],
                 'submittedData' => null,
                 'expectedData' => null,
-                'expectedLabels' => ['formatted.lbs', 'formatted.kg'],
+                'expectedLabels' => ['formatted.lbs', 'formatted.kg', 'formatted.custom'],
             ],
             [
                 'inputOptions' => ['compact' => true, 'full_list' => true],
                 'expectedOptions' => ['compact' => true, 'full_list' => true, 'multiple' => false],
                 'submittedData' => 'lbs',
                 'expectedData' => $this->createUnit('lbs'),
-                'expectedLabels' => ['formatted.lbs', 'formatted.kg'],
+                'expectedLabels' => ['formatted.lbs', 'formatted.kg', 'formatted.custom'],
             ],
             [
                 'inputOptions' => ['multiple' => true],
                 'expectedOptions' => ['compact' => false, 'full_list' => false, 'multiple' => true],
                 'submittedData' => ['lbs', 'kg'],
                 'expectedData' => [$this->createUnit('lbs'), $this->createUnit('kg')],
-                'expectedLabels' => ['formatted.lbs', 'formatted.kg'],
+                'expectedLabels' => ['formatted.lbs', 'formatted.kg', 'formatted.custom'],
             ],
             [
                 'inputOptions' => [],
                 'expectedOptions' => ['compact' => false, 'full_list' => false],
                 'submittedData' => 'custom',
                 'expectedData' => $this->createUnit('custom'),
-                'expectedLabels' => ['formatted.lbs', 'formatted.kg'],
+                'expectedLabels' => ['formatted.lbs', 'formatted.kg', 'formatted.custom'],
                 'choices' => ['custom']
             ]
         ];

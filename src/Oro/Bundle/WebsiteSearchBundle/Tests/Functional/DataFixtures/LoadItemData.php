@@ -16,8 +16,8 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadItemData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {

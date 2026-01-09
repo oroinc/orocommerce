@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Async;
 
 use Monolog\Handler\TestHandler;
+use Monolog\Logger;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\JobsAwareTestTrait;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Async\ReindexRequestItemProductsByRelatedJobProcessor;
@@ -14,7 +15,8 @@ use Oro\Component\MessageQueue\Client\Config;
 use Oro\Component\MessageQueue\Transport\ConnectionInterface;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
-use Symfony\Bridge\Monolog\Logger;
+use Symfony\Bridge\Monolog\Processor\DebugProcessor;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -53,6 +55,10 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
         /** @var Logger $logger */
         $logger = self::getContainer()->get('logger');
         $logger->pushHandler(new TestHandler());
+
+        $debugProcessor = new DebugProcessor(new RequestStack());
+        $logger->pushProcessor($debugProcessor);
+
         $result = $this->processor->process($message, $session);
         self::assertEquals(
             'oro.message_queue.consumption.ack',
@@ -60,7 +66,7 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
         );
 
         self::assertMessagesEmpty(WebsiteSearchReindexTopic::getName());
-        self::assertEmpty($logger->getLogs());
+        self::assertEmpty($debugProcessor->getLogs());
     }
 
     /**
@@ -81,13 +87,17 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
         /** @var Logger $logger */
         $logger = self::getContainer()->get('logger');
         $logger->pushHandler(new TestHandler());
+
+        $debugProcessor = new DebugProcessor(new RequestStack());
+        $logger->pushProcessor($debugProcessor);
+
         $this->processor->setBatchSize(3);
         $result = $this->processor->process($message, $session);
         self::assertEquals(
             'oro.message_queue.consumption.ack',
             $result
         );
-        self::assertEmpty($logger->getLogs());
+        self::assertEmpty($debugProcessor->getLogs());
 
         $messageBodies = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
         self::assertNotEmpty($messageBodies);

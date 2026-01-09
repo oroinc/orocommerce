@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Migrations\Schema\v1_1;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
@@ -47,7 +47,7 @@ FROM oro_payment_term_to_account pta
 WHERE pta.account_id = a.id AND a.payment_term_7c4f1e8e_id IS NULL;
 QUERY;
         }
-        if ($this->platform instanceof MySqlPlatform) {
+        if ($this->platform instanceof MySQLPlatform) {
             return <<<QUERY
 UPDATE oro_customer a
 JOIN oro_payment_term_to_account pta ON pta.account_id = a.id
@@ -69,7 +69,7 @@ FROM oro_payment_term_to_acc_grp ptag
 WHERE ptag.account_group_id = ag.id AND ag.payment_term_7c4f1e8e_id IS NULL;
 QUERY;
         }
-        if ($this->platform instanceof MySqlPlatform) {
+        if ($this->platform instanceof MySQLPlatform) {
             return <<<QUERY
 UPDATE oro_customer_group ag
 JOIN oro_payment_term_to_acc_grp ptag ON ptag.account_group_id = ag.id

@@ -12,8 +12,8 @@ class AlphanumericDashUnderscore extends Regex implements AliasAwareConstraintIn
 {
     public const ALIAS = 'alphanumeric_dash_underscore';
 
-    public $message = 'This value should contain only latin letters, numbers and symbols "-" or "_".';
-    public $pattern = '/^[-_a-zA-Z0-9]*$/';
+    public string $message = 'This value should contain only latin letters, numbers and symbols "-" or "_".';
+    public ?string $pattern = '/^[-_a-zA-Z0-9]*$/';
 
     public function __construct(
         $pattern = null,

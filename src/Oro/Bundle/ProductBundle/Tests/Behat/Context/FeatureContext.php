@@ -967,7 +967,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $selector = sprintf(
             "//*[contains(text(), '%s')]/ancestor::tr//td[contains(@class, 'grid-body-cell-quantity')]//" .
             "div[(contains(@class, 'select') and contains(text(), '%s')) or " .
-            "(input[@type='radio' and @checked]/following-sibling::label[1][contains(text(), '%s')]) or ".
+            "(input[@type='radio' and @checked]/following-sibling::label[1][contains(text(), '%s')]) or " .
             "(span[contains(@class, 'single-unit') and contains(text(), '%s')])]" .
             "/ancestor::tr/following-sibling::tr[contains(@class, 'notification-row') and position()=1]",
             $SKU,
@@ -1945,7 +1945,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         self::assertNotNull($element, 'Image table not found on the page.');
 
-        $crawler = new Crawler($element->getHtml());
+        $crawler = new Crawler(
+            node: $element->getHtml(),
+            useHtml5Parser: false
+        );
         $results = [];
         $crawler->filter('tr')->each(function (Crawler $tr) use (&$results) {
             $row = [];
@@ -1983,7 +1986,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         self::assertNotNull($element, 'Additional units table not found on the page.');
 
-        $crawler = new Crawler($element->getHtml());
+        $crawler = new Crawler(
+            node: $element->getHtml(),
+            useHtml5Parser: false
+        );
         $results = [];
         $crawler->filter('tr')->each(function (Crawler $tr) use (&$results) {
             $row = [];

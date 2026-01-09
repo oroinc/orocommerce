@@ -7,6 +7,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\ProductKit\ProductPriceCriteria\Fa
 use Oro\Bundle\PricingBundle\ProductKit\ProductPriceCriteria\Builder\ProductKitPriceCriteriaBuilderInterface;
 use Oro\Bundle\PricingBundle\ProductKit\ProductPriceCriteria\Factory\ProductKitLineItemPriceCriteriaBuilderFactory;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
@@ -81,6 +82,7 @@ class ProductKitLineItemPriceCriteriaBuilderFactoryTest extends TestCase
         $productUnitEach = (new ProductUnit())->setCode('each');
         $kitItemLineItem1Product = (new ProductStub())->setId(1);
         $kitItem1 = new ProductKitItemStub(11);
+        $kitItem1->addKitItemProduct((new ProductKitItemProduct())->setProduct($kitItemLineItem1Product));
         $kitItemLineItem1 = (new ProductKitItemLineItemStub(10))
             ->setKitItem($kitItem1)
             ->setProduct($kitItemLineItem1Product)
@@ -88,6 +90,7 @@ class ProductKitLineItemPriceCriteriaBuilderFactoryTest extends TestCase
             ->setQuantity(11);
         $kitItemLineItem2Product = (new ProductStub())->setId(2);
         $kitItem2 = new ProductKitItemStub(22);
+        $kitItem2->addKitItemProduct((new ProductKitItemProduct())->setProduct($kitItemLineItem2Product));
         $kitItemLineItem2 = (new ProductKitItemLineItemStub(20))
             ->setKitItem($kitItem2)
             ->setProduct($kitItemLineItem2Product)
@@ -202,6 +205,7 @@ class ProductKitLineItemPriceCriteriaBuilderFactoryTest extends TestCase
         $productUnitEach = (new ProductUnit())->setCode('each');
         $kitItemLineItem2Product = (new ProductStub())->setId(2);
         $kitItem2 = new ProductKitItemStub(22);
+        $kitItem2->addKitItemProduct((new ProductKitItemProduct())->setProduct($kitItemLineItem2Product));
         $kitItemLineItem2 = (new ProductKitItemLineItemStub(20))
             ->setKitItem($kitItem2)
             ->setProduct($kitItemLineItem2Product)
@@ -246,7 +250,7 @@ class ProductKitLineItemPriceCriteriaBuilderFactoryTest extends TestCase
                 $kitItemLineItem2->getKitItem(),
                 $kitItemLineItem2->getProduct(),
                 $kitItemLineItem2->getProductUnit(),
-                $kitItemLineItem2->getQuantity(),
+                (float)$kitItemLineItem2->getQuantity(),
             )
             ->willReturnSelf();
 

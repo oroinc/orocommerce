@@ -39,19 +39,20 @@ class CustomerGroupFormViewListener extends AbstractCustomerFormViewListener
             CustomerGroup::class,
             (int)$request->get('id')
         );
+        $websites = $this->websiteProvider->getWebsites();
 
         /** @var PriceListToCustomerGroup[] $priceLists */
-        $priceLists = $this->doctrineHelper
+        $priceLists = $websites ? $this->doctrineHelper
             ->getEntityRepository(PriceListToCustomerGroup::class)
             ->findBy(
-                ['customerGroup' => $customerGroup, 'website' => $this->websiteProvider->getWebsites()],
+                ['customerGroup' => $customerGroup, 'website' => $websites],
                 ['sortOrder' => PriceListCollectionType::DEFAULT_ORDER]
-            );
+            ) : [];
 
         /** @var PriceListCustomerGroupFallback $fallbackEntity */
-        $fallbackEntity = $this->doctrineHelper
+        $fallbackEntity = $websites ? $this->doctrineHelper
             ->getEntityRepository(PriceListCustomerGroupFallback::class)
-            ->findOneBy(['customerGroup' => $customerGroup, 'website' => $this->websiteProvider->getWebsites()]);
+            ->findOneBy(['customerGroup' => $customerGroup, 'website' => $websites]) : [];
 
         $fallback = $fallbackEntity
             ? $this->fallbackChoices[$fallbackEntity->getFallback()]

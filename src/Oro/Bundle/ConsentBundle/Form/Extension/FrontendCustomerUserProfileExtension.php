@@ -35,7 +35,7 @@ class FrontendCustomerUserProfileExtension extends AbstractTypeExtension impleme
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!$this->isFeaturesEnabled()) {
             return;

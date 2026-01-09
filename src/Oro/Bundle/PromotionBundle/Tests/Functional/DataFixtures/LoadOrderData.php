@@ -10,8 +10,8 @@ use Oro\Bundle\CheckoutBundle\Mapper\OrderMapper;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadOrderData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {

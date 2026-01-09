@@ -12,8 +12,8 @@ use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Loads sort order demo data for ProductCollection ContentVariants in WebCatalog

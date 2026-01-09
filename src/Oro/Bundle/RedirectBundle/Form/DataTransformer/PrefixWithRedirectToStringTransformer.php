@@ -5,10 +5,13 @@ namespace Oro\Bundle\RedirectBundle\Form\DataTransformer;
 use Oro\Bundle\RedirectBundle\Model\PrefixWithRedirect;
 use Symfony\Component\Form\DataTransformerInterface;
 
+/**
+ * Transforms between string prefixes and PrefixWithRedirect objects.
+ */
 class PrefixWithRedirectToStringTransformer implements DataTransformerInterface
 {
     #[\Override]
-    public function transform($value)
+    public function transform($value): mixed
     {
         if (null === $value) {
             return null;
@@ -25,7 +28,7 @@ class PrefixWithRedirectToStringTransformer implements DataTransformerInterface
      * @param PrefixWithRedirect $value
      */
     #[\Override]
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         if (null === $value) {
             return null;

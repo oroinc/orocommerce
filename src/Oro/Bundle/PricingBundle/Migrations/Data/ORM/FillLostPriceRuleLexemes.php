@@ -7,8 +7,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Fill price rule lexemes that were lost during price list duplication

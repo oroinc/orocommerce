@@ -231,7 +231,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $manager = $this->getAppContainer()->get('doctrine')->getManagerForClass(ShoppingList::class);
         /** @var ShoppingList $shoppingList */
         $shoppingList = $manager->getRepository(ShoppingList::class)->findOneBy(['label' => $shoppingListName]);
-        $this->visitPath('customer/shoppinglist/'.$shoppingList->getId());
+        $this->visitPath('customer/shoppinglist/' . $shoppingList->getId());
         $this->waitForAjax();
         $this->getSession()->getPage()->clickLink('Checkout');
         $this->waitForAjax();
@@ -295,7 +295,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         self::assertNotNull($element, 'Shipping options table not found on the page.');
 
-        $crawler = new Crawler($element->getHtml());
+        $crawler = new Crawler(
+            node: $element->getHtml(),
+            useHtml5Parser: false
+        );
         $results = [];
         $crawler->filter('tr')->each(function (Crawler $tr) use (&$results) {
             $row = [];

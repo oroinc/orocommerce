@@ -25,6 +25,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -77,11 +78,6 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
     {
         $em = $this->createMock(ObjectManager::class);
 
-        $priceRepository = $this->createMock(PriceAttributeProductPriceRepository::class);
-        $priceRepository->expects($this->once())
-            ->method('findBy')
-            ->willReturn([]);
-
         $attributeRepository = $this->createMock(PriceAttributePriceListRepository::class);
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
@@ -98,22 +94,18 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
             ->with($queryBuilder)
             ->willReturn($query);
 
-        $em->expects($this->exactly(2))
+        $em->expects($this->once())
             ->method('getRepository')
-            ->willReturnMap([
-                [PriceAttributePriceList::class, $attributeRepository],
-                [PriceAttributeProductPrice::class, $priceRepository],
-            ]);
+            ->with(PriceAttributePriceList::class)
+            ->willReturn($attributeRepository);
 
-        $this->registry->expects($this->exactly(2))
+        $this->registry->expects($this->once())
             ->method('getManagerForClass')
+            ->with(PriceAttributePriceList::class)
             ->willReturn($em);
 
         $request = $this->createMock(Request::class);
-        $request->expects($this->once())
-            ->method('get')
-            ->with('oro_product')
-            ->willReturn(null);
+        $request->request = new InputBag([]);
 
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
@@ -255,11 +247,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
             ]
         ];
 
-        $request = $this->createMock(Request::class);
-        $request->expects($this->once())
-            ->method('get')
-            ->with('oro_product')
-            ->willReturn($requestProduct);
+        $request = Request::create('/', Request::METHOD_POST, ['oro_product' => $requestProduct]);
 
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
@@ -333,10 +321,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
             ->willReturn($em);
 
         $request = $this->createMock(Request::class);
-        $request->expects($this->once())
-            ->method('get')
-            ->with('oro_product')
-            ->willReturn(null);
+        $request->request = new InputBag([]);
 
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
@@ -418,10 +403,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
             ->willReturn($em);
 
         $request = $this->createMock(Request::class);
-        $request->expects($this->once())
-            ->method('get')
-            ->with('oro_product')
-            ->willReturn(null);
+        $request->request = new InputBag([]);
 
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')

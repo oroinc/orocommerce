@@ -8,6 +8,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Extends the integer form type to allow customizing the HTML input type attribute.
+ */
 class IntegerExtension extends AbstractTypeExtension
 {
     #[\Override]
@@ -17,13 +20,13 @@ class IntegerExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['type' => null]);
     }
 
     #[\Override]
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         if ($options['type']) {
             $view->vars['type'] = $options['type'];

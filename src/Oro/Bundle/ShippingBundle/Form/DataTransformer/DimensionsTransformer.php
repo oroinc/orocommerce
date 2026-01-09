@@ -6,6 +6,9 @@ use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
 use Symfony\Component\Form\DataTransformerInterface;
 
+/**
+ * Validates and transforms dimensions model data.
+ */
 class DimensionsTransformer implements DataTransformerInterface
 {
     /**
@@ -13,7 +16,7 @@ class DimensionsTransformer implements DataTransformerInterface
      * @return Dimensions|null
      */
     #[\Override]
-    public function transform($dimensions)
+    public function transform($dimensions): mixed
     {
         return $dimensions;
     }
@@ -23,7 +26,7 @@ class DimensionsTransformer implements DataTransformerInterface
      * @return Dimensions|null
      */
     #[\Override]
-    public function reverseTransform($dimensions)
+    public function reverseTransform($dimensions): mixed
     {
         if (!$dimensions instanceof Dimensions ||
             !$dimensions->getValue() instanceof DimensionsValue ||

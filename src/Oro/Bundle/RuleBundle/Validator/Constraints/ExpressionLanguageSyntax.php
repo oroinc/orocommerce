@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints\ExpressionSyntax;
  */
 class ExpressionLanguageSyntax extends ExpressionSyntax
 {
-    public $message = 'oro.rule.expression_language_syntax';
+    public string $message = 'oro.rule.expression_language_syntax';
 
     #[\Override]
     public function validatedBy(): string

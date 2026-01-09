@@ -234,8 +234,8 @@ class OroPromotionBundleInstaller implements
         $table->addColumn('removed', 'boolean', ['default' => '0']);
         $table->addColumn('type', 'string', ['length' => 255]);
         $table->addColumn('promotion_name', 'text');
-        $table->addColumn('config_options', 'json_array', ['comment' => '(DC2Type:json_array)']);
-        $table->addColumn('promotion_data', 'json_array', ['comment' => '(DC2Type:json_array)']);
+        $table->addColumn('config_options', 'json', ['comment' => '(DC2Type:json)']);
+        $table->addColumn('promotion_data', 'json', ['comment' => '(DC2Type:json)']);
         $table->addColumn('created_at', 'datetime');
         $table->addColumn('updated_at', 'datetime');
         $table->setPrimaryKey(['id']);

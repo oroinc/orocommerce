@@ -5,6 +5,7 @@ namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChain;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChainValidator;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class DatesChainValidatorTest extends ConstraintValidatorTestCase
@@ -14,7 +15,7 @@ class DatesChainValidatorTest extends ConstraintValidatorTestCase
     private const THIRD_LABEL = 'Third';
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new DatesChainValidator(PropertyAccess::createPropertyAccessor());
     }

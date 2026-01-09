@@ -63,7 +63,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $sections = [];
         $sectionNames = [
@@ -82,7 +82,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         /** @var OrderLineItem $orderLineItem */
         $orderLineItem = $form->getData();

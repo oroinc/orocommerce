@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Entity\Hydrator;
 
+use Doctrine\DBAL\ParameterType;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\ScopeBundle\Entity\Hydrator\AbstractMatchingEntityHydrator;
 
@@ -30,7 +31,7 @@ class MatchingVariantHydrator extends AbstractMatchingEntityHydrator
     {
         $hasScopeQuery = 'SELECT 1 FROM oro_cms_txt_cont_variant_scope WHERE variant_id = :id LIMIT 1';
         $hasScopes = $this->_em->getConnection()
-            ->executeQuery($hasScopeQuery, ['id' => $variantId], ['id' => \PDO::PARAM_INT])
+            ->executeQuery($hasScopeQuery, ['id' => $variantId], ['id' => ParameterType::INTEGER])
             ->fetchOne();
 
         return (bool)$hasScopes;

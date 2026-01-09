@@ -40,6 +40,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
 
         $container = TestContainerBuilder::create()
             ->addParameter('kernel.cache_dir', 'test_cache_dir')
+            ->addParameter('kernel.build_dir', 'test_build_dir')
             ->addParameter('kernel.container_class', 'test_container_class')
             ->add('routing.loader', $loader)
             ->add('oro_redirect.routing.sluggable_url_generator', $this->sluggableUrlGenerator)

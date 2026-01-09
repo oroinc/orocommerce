@@ -20,7 +20,7 @@ class AddScopesHashUniqueIndex implements Migration, OrderedMigrationInterface
             return;
         }
 
-        $table->changeColumn('scopes_hash', ['notnull' => true]);
+        $table->modifyColumn('scopes_hash', ['notnull' => true]);
         $table->addUniqueIndex(
             ['url_hash', 'scopes_hash', 'route_name', 'parameters_hash'],
             'oro_redirect_slug_scopes_idx'

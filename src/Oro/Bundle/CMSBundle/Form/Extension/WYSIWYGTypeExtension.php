@@ -38,7 +38,7 @@ class WYSIWYGTypeExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('page-component', function (Options $options, $value) {
             $value['options']['themes'] = $this->getThemes();
