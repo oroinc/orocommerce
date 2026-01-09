@@ -203,11 +203,12 @@ class SearchProductKitListenerTest extends WebTestCase
                 'shortDescriptions' => (string)$product6->getDefaultShortDescription(),
                 'all_text' => 'product-6.names.default product 6 names default product-6 simple enabled '
                     . 'product-6.descriptions.default descriptions product-6.shortDescriptions.default '
-                    . 'shortDescriptions Default',
+                    . 'shortDescriptions Default In Stock',
                 'productType' => 'simple',
                 'productStatus' => 'enabled',
                 'productFamilyName' => 'Default',
-                'category' => ''
+                'category' => '',
+                'inventoryStatus' => 'In Stock'
             ]
         ];
 
@@ -235,11 +236,13 @@ class SearchProductKitListenerTest extends WebTestCase
                 'all_text' => 'PKSKU1 - Unit of Quantity Taken from Product Kit product-1.names.default '
                     . 'product 1 names default product-1 simple enabled product-1.names.en_CA en CA '
                     . 'product-1.descriptions.default descriptions product-1.shortDescriptions.default '
-                    . 'shortDescriptions product-1.shortDescriptions.en_CA Default with Single Item product-kit-1 kit',
+                    . 'shortDescriptions product-1.shortDescriptions.en_CA Default In Stock '
+                    . 'with Single Item product-kit-1 kit',
                 'productType' => 'kit',
                 'productStatus' => 'enabled',
                 'productFamilyName' => 'Default',
-                'category' => ''
+                'category' => '',
+                'inventoryStatus' => 'In Stock'
             ]
         ];
 
@@ -265,11 +268,12 @@ class SearchProductKitListenerTest extends WebTestCase
                 'sku' => $kit1->getSku(),
                 'defaultName' => $name,
                 'names' => $name,
-                'all_text' => 'Product Kit with Single Item product-kit-1 product kit 1 enabled Default',
+                'all_text' => 'Product Kit with Single Item product-kit-1 product kit 1 enabled Default In Stock',
                 'productType' => 'kit',
                 'productStatus' => 'enabled',
                 'productFamilyName' => 'Default',
-                'category' => ''
+                'category' => '',
+                'inventoryStatus' => 'In Stock'
             ]
         ];
 

@@ -14,7 +14,6 @@
 
 {% set entityInfo = [
     {'title': 'oro.cms.contentwidget.widget_type.label'|trans, 'value': entity.widgetType ? entity.widgetType|content_widget_type_label : 'N/A'|trans},
-    {'title': 'oro.cms.contentwidget.layout.label'|trans, 'value': entity.layout ? entity.layout|content_widget_layout_label(entity.widgetType) : 'N/A'|trans},
     {'title': 'oro.cms.contentwidget.created_at.label'|trans, 'value': entity.createdAt ? entity.createdAt|oro_format_datetime : 'N/A'|trans},
     {'title': 'oro.cms.contentwidget.updated_at.label'|trans, 'value': entity.updatedAt ? entity.updatedAt|oro_format_datetime : 'N/A'|trans},
 ] %}

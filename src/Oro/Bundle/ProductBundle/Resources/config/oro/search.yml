@@ -80,6 +80,15 @@ search:
                                 target_type: text
                                 target_fields: [productBrand]
 
+            -
+                name:                   inventory_status
+                relation_type:          many-to-one
+                relation_fields:
+                    -
+                        name:           name
+                        target_type:    text
+                        target_fields:  [inventoryStatus]
+
     Oro\Bundle\ProductBundle\Entity\Brand:
         alias:                          oro_brand
         route:
@@ -119,11 +128,3 @@ search:
                         name: text
                         target_type: text
                         target_fields: [shortDescriptions]
-            -
-                name:                   inventory_status
-                relation_type:          many-to-one
-                relation_fields:
-                    -
-                        name:           name
-                        target_type:    text
-                        target_fields:  [inventoryStatus]
