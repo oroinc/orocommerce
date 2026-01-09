@@ -70,10 +70,10 @@ class FrontendRoutingTest extends WebTestCase
         $slug = $this->getReference(LoadSlugsData::SLUG_URL_USER);
 
         $this->client->request('GET', $this->getSlugTargetUrl($slug));
-        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 401);
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), 401);
 
         $this->client->request('GET', LoadSlugsData::SLUG_URL_USER);
-        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 401);
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), 401);
 
         $this->initClient(
             [],
