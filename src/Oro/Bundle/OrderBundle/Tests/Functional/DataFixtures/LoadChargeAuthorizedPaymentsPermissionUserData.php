@@ -77,7 +77,7 @@ class LoadChargeAuthorizedPaymentsPermissionUserData extends AbstractLoadMultipl
     {
         return [
             [
-                'email' => self::USER_WITH_CHARGE_AUTHORIZED_PAYMENTS_PERMISSION.'@test.com',
+                'email' => self::USER_WITH_CHARGE_AUTHORIZED_PAYMENTS_PERMISSION . '@test.com',
                 'username' => self::USER_WITH_CHARGE_AUTHORIZED_PAYMENTS_PERMISSION,
                 'password' => self::USER_WITH_CHARGE_AUTHORIZED_PAYMENTS_PERMISSION,
                 'firstname' => 'User',
@@ -85,7 +85,7 @@ class LoadChargeAuthorizedPaymentsPermissionUserData extends AbstractLoadMultipl
                 'userRoles' => [self::ROLE_CHARGE_AUTHORIZED_PAYMENTS_PERMISSION],
             ],
             [
-                'email' => self::USER_PAYMENT_HISTORY_VIEWER.'@test.com',
+                'email' => self::USER_PAYMENT_HISTORY_VIEWER . '@test.com',
                 'username' => self::USER_PAYMENT_HISTORY_VIEWER,
                 'password' => self::USER_PAYMENT_HISTORY_VIEWER,
                 'firstname' => 'User',

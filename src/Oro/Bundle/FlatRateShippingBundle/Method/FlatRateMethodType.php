@@ -24,7 +24,7 @@ class FlatRateMethodType implements ShippingMethodTypeInterface
 
     private string $label;
 
-    public function __construct(string  $label)
+    public function __construct(string $label)
     {
         $this->label = $label;
     }
@@ -74,7 +74,8 @@ class FlatRateMethodType implements ShippingMethodTypeInterface
         }
 
         $handlingFee = 0;
-        if (\array_key_exists(self::HANDLING_FEE_OPTION, $typeOptions)
+        if (
+            \array_key_exists(self::HANDLING_FEE_OPTION, $typeOptions)
             && $typeOptions[self::HANDLING_FEE_OPTION]
         ) {
             $handlingFee = $typeOptions[self::HANDLING_FEE_OPTION];

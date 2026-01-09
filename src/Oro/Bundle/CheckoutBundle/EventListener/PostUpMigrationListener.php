@@ -6,7 +6,10 @@ use Oro\Bundle\CheckoutBundle\Migrations\Schema\RemoveWorkflowFieldsMigration;
 use Oro\Bundle\MigrationBundle\Event\PostMigrationEvent;
 
 /**
- * TODO: remove this listener after stable release
+ * Handles post-migration events to remove legacy workflow fields.
+ *
+ * Listens to post-migration events and schedules the removal of legacy workflow fields
+ * from the checkout entity schema.
  */
 class PostUpMigrationListener
 {

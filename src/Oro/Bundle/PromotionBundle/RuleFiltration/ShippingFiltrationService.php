@@ -43,7 +43,8 @@ class ShippingFiltrationService extends AbstractSkippableFiltrationService
             }
 
             $discountConfiguration = $ruleOwner->getDiscountConfiguration();
-            if ($discountConfiguration->getType() !== ShippingDiscount::NAME
+            if (
+                $discountConfiguration->getType() !== ShippingDiscount::NAME
                 || $this->isShippingOptionsMatched($discountConfiguration, $shippingMethod, $shippingMethodType)
             ) {
                 $filteredRuleOwners[] = $ruleOwner;

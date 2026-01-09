@@ -69,7 +69,8 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
 
     private function isApplicable(LifecycleEventArgs $args): bool
     {
-        if (!$this->enabled
+        if (
+            !$this->enabled
             || !\is_object($args->getObject())
             || $args->getObject() instanceof AbstractLocalizedFallbackValue
             || !$this->getTwigFunctionProcessor()->getApplicableMapping()
@@ -274,7 +275,8 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
      */
     private function isScheduledCollection(WYSIWYGProcessedEntityDTO $processedEntity, $collection): bool
     {
-        if (!$collection instanceof Collection
+        if (
+            !$collection instanceof Collection
 
             // No sense check non-initialized collections
             || ($collection instanceof AbstractLazyCollection && !$collection->isInitialized())
@@ -327,7 +329,8 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
         }
 
         foreach ($metadata->getAssociationMappings() as $relationName => $mapping) {
-            if (isset($mapping['targetEntity']) &&
+            if (
+                isset($mapping['targetEntity']) &&
                 is_a($mapping['targetEntity'], AbstractLocalizedFallbackValue::class, true)
             ) {
                 $this->fieldLists[$entityName][$relationName] = $mapping['targetEntity'];

@@ -82,7 +82,8 @@ class ProductPriceType extends AbstractType
         }
 
         $priceForm = $form->get('price');
-        if ($submittedData['quantity'] != $form->get('quantity')->getViewData()
+        if (
+            $submittedData['quantity'] != $form->get('quantity')->getViewData()
             || $submittedData['unit'] != $productPrice->getProductUnitCode()
             || $submittedData['price']['value'] != $priceForm->get('value')->getViewData()
             || $submittedData['price']['currency'] != $priceForm->get('currency')->getViewData()

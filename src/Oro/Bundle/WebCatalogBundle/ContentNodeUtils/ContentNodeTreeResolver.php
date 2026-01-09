@@ -21,11 +21,11 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
  */
 class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
 {
-    private DoctrineHelper             $doctrineHelper;
-    private ContentNodeProvider        $contentNodeProvider;
-    private ScopeManager               $scopeManager;
+    private DoctrineHelper $doctrineHelper;
+    private ContentNodeProvider $contentNodeProvider;
+    private ScopeManager $scopeManager;
     private ResolvedContentNodesLoader $resolvedContentNodesLoader;
-    private PropertyAccessorInterface  $propertyAccessor;
+    private PropertyAccessorInterface $propertyAccessor;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -143,7 +143,8 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
         // a consent or other object).
         // We need the customer group to be sure that content nodes that have a restriction
         // by a customer group will be filtered correctly.
-        if ($this->propertyAccessor->isReadable($scope, 'customer')
+        if (
+            $this->propertyAccessor->isReadable($scope, 'customer')
             && $this->propertyAccessor->getValue($scope, 'customer')
         ) {
             $customer = $this->propertyAccessor->getValue($scope, 'customer');

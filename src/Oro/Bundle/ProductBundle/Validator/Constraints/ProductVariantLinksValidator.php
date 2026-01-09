@@ -154,7 +154,8 @@ class ProductVariantLinksValidator extends ConstraintValidator
 
             $productAttributeFamily = $product->getAttributeFamily();
             $parentProductAttributeFamily = $parentProduct->getAttributeFamily();
-            if (!$productAttributeFamily ||
+            if (
+                !$productAttributeFamily ||
                 !$parentProductAttributeFamily ||
                 $productAttributeFamily->getCode() !== $parentProductAttributeFamily->getCode()
             ) {

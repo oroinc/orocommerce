@@ -60,7 +60,8 @@ class ProductImageCollectionValidator extends ConstraintValidator
         $maxNumberByType = $this->imageTypeProvider->getMaxNumberByType();
 
         foreach ($maxNumberByType as $name => $maxTypeValues) {
-            if (array_key_exists($name, $imagesByTypeCounter) &&
+            if (
+                array_key_exists($name, $imagesByTypeCounter) &&
                 !is_null($maxTypeValues['max']) &&
                 $imagesByTypeCounter[$name] > $maxTypeValues['max']
             ) {

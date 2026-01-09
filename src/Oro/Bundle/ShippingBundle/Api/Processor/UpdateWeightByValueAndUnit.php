@@ -80,7 +80,8 @@ class UpdateWeightByValueAndUnit implements ProcessorInterface
     {
         $unit = null;
         $isUnitSubmitted = false;
-        if (null !== $formFieldName
+        if (
+            null !== $formFieldName
             && \array_key_exists($formFieldName, $data)
             && \array_key_exists('id', $data[$formFieldName])
         ) {

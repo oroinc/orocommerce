@@ -28,7 +28,8 @@ class OrderAfterDiscountsMapper implements TaxMapperInterface
     {
         $taxable = $this->innerMapper->map($order);
 
-        if ($this->taxationSettingsProvider->isCalculateAfterPromotionsEnabled() &&
+        if (
+            $this->taxationSettingsProvider->isCalculateAfterPromotionsEnabled() &&
             $this->promotionExecutor->supports($order)
         ) {
             $discountContext = $this->promotionExecutor->execute($order);

@@ -14,12 +14,12 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         $this->initClient([]);
         $this->client->useHashNavigation(true);
 
-        $currentBundleDataFixturesNameSpace = 'Oro\Bundle\PaymentBundle\Tests\Functional';
+        $testNamespace = 'Oro\Bundle\PaymentBundle\Tests\Functional';
         $this->loadFixtures(
             [
-                $currentBundleDataFixturesNameSpace.'\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData',
-                $currentBundleDataFixturesNameSpace.'\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleDestinationData',
-                $currentBundleDataFixturesNameSpace.'\DataFixtures\LoadUserData'
+                $testNamespace . '\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData',
+                $testNamespace . '\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleDestinationData',
+                $testNamespace . '\DataFixtures\LoadUserData'
             ]
         );
     }

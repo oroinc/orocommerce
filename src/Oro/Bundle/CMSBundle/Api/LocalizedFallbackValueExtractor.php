@@ -31,7 +31,8 @@ class LocalizedFallbackValueExtractor implements LocalizedFallbackValueExtractor
     #[\Override]
     public function extractValue(AbstractLocalizedFallbackValue $value): ?string
     {
-        if ($this->propertyAccessor->isReadable($value, self::WYSIWYG_FIELD_VALUE)
+        if (
+            $this->propertyAccessor->isReadable($value, self::WYSIWYG_FIELD_VALUE)
             && $this->propertyAccessor->isReadable($value, self::WYSIWYG_FIELD_STYLE)
         ) {
             $wysiwygValue = $this->propertyAccessor->getValue($value, self::WYSIWYG_FIELD_VALUE);

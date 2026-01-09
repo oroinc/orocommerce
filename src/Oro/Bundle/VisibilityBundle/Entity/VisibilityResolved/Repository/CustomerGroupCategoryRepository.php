@@ -163,7 +163,7 @@ class CustomerGroupCategoryRepository extends ServiceEntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder();
 
         $configFallback = CustomerGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
-        $qb->select('COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configFallback).')')
+        $qb->select('COALESCE(agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configFallback) . ')')
             ->from(Category::class, 'category')
             ->leftJoin(
                 CategoryVisibilityResolved::class,
@@ -206,7 +206,7 @@ class CustomerGroupCategoryRepository extends ServiceEntityRepository
 
         $qb->select(
             'IDENTITY(scope.customerGroup) as customerGroupId',
-            'COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configFallback).') as visibility',
+            'COALESCE(agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configFallback) . ') as visibility',
             'agcvr.visibility as a',
             'cvr.visibility as b'
         )

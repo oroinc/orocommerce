@@ -11,6 +11,8 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
 /**
  * Create Rate Service request by a given context and settings.
+ *
+ * phpcs:ignore
  * @deprecated. Will be removed when SOAP support will be dropped by FedEx.
  */
 class FedexRateServiceRequestSoapFactory implements FedexRequestByRateServiceSettingsFactoryInterface

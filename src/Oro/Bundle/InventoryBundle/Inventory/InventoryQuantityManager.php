@@ -41,7 +41,8 @@ class InventoryQuantityManager
     public function hasEnoughQuantity(InventoryLevel $inventoryLevel, $quantityToDecrement)
     {
         $product = $inventoryLevel->getProduct();
-        if (!$this->entityFallbackResolver->getFallbackValue($product, 'decrementQuantity')
+        if (
+            !$this->entityFallbackResolver->getFallbackValue($product, 'decrementQuantity')
             || $this->entityFallbackResolver->getFallbackValue($product, 'backOrder')
         ) {
             return true;
@@ -100,7 +101,8 @@ class InventoryQuantityManager
     protected function checkQuantities(InventoryLevel $inventoryLevel, $quantityToDecrement, $product)
     {
         $inventoryThreshold = $this->entityFallbackResolver->getFallbackValue($product, 'inventoryThreshold');
-        if (false === $this->entityFallbackResolver->getFallbackValue($product, 'backOrder')
+        if (
+            false === $this->entityFallbackResolver->getFallbackValue($product, 'backOrder')
             && ($inventoryLevel->getQuantity() - $inventoryThreshold) < $quantityToDecrement
         ) {
             return false;
@@ -116,7 +118,8 @@ class InventoryQuantityManager
     public function getAvailableQuantity(InventoryLevel $inventoryLevel)
     {
         $product = $inventoryLevel->getProduct();
-        if (!$this->shouldDecrement($product)
+        if (
+            !$this->shouldDecrement($product)
             || $this->entityFallbackResolver->getFallbackValue($product, 'backOrder')
         ) {
             return $inventoryLevel->getQuantity();

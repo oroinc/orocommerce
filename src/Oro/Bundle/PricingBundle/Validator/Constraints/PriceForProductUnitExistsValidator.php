@@ -76,7 +76,8 @@ class PriceForProductUnitExistsValidator extends ConstraintValidator
         foreach ($productPriceAttributeData as $productPriceAttributes) {
             /** @var PriceAttributeProductPrice $productPriceAttribute */
             foreach ($productPriceAttributes as $productPriceAttribute) {
-                if ($productPriceAttribute->getUnit()->getCode() === $productUnitPrecision->getUnit()->getCode() &&
+                if (
+                    $productPriceAttribute->getUnit()->getCode() === $productUnitPrecision->getUnit()->getCode() &&
                     $productPriceAttribute->getPrice()->getValue() !== null
                 ) {
                     return false;

@@ -46,7 +46,8 @@ class UniquePriceListValidator extends ConstraintValidator
         if ($item instanceof PriceListAwareInterface && $item->getPriceList()) {
             return $item->getPriceList()->getId();
         }
-        if (\is_array($item)
+        if (
+            \is_array($item)
             && \array_key_exists(self::PRICE_LIST_KEY, $item)
             && $item[self::PRICE_LIST_KEY] instanceof PriceList
         ) {

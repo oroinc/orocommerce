@@ -59,7 +59,7 @@ class RelatedItemsHandler
         try {
             $assigner->addRelations($product, $appendRelated);
             $hasErrors = false;
-        } catch (\InvalidArgumentException|\LogicException|\OverflowException $e) {
+        } catch (\InvalidArgumentException | \LogicException | \OverflowException $e) {
             $this->addFormError($appendField, $e->getMessage());
         }
 

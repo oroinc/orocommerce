@@ -32,7 +32,8 @@ class UniqueExpressCheckoutNameValidator extends ConstraintValidator
             return;
         }
 
-        if ($value->getTransport() instanceof PayPalSettings
+        if (
+            $value->getTransport() instanceof PayPalSettings
             && !$this->validateExpressCheckoutName($value, $constraint)
         ) {
             return;
@@ -48,7 +49,8 @@ class UniqueExpressCheckoutNameValidator extends ConstraintValidator
         /** @var PayPalSettings $transport */
         $transport = $integration->getTransport();
 
-        if ($integration->getName() === $transport->getExpressCheckoutName()
+        if (
+            $integration->getName() === $transport->getExpressCheckoutName()
             || $this->integrationNameAlreadyTaken($transport->getExpressCheckoutName())
         ) {
             $this->context->buildViolation($constraint->expressCheckoutNameMessage)->addViolation();

@@ -38,7 +38,8 @@ class ProductCollectionExtension extends AbstractTypeExtension
 
         $names = [];
         foreach ($form->all() as $variantForm) {
-            if (!$variantForm->has('productCollectionSegment')
+            if (
+                !$variantForm->has('productCollectionSegment')
                 || !$variantForm->get('productCollectionSegment')->has('name')
             ) {
                 continue;

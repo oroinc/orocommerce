@@ -90,7 +90,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertEquals(
             'Product has been added to "<a href="' .
             $this->getUrl('oro_shopping_list_frontend_update', ['id' => $shoppingList->getId()]) .
-            '">'.$shoppingList->getLabel().'</a>"',
+            '">' . $shoppingList->getLabel() . '</a>"',
             $result['message']
         );
 

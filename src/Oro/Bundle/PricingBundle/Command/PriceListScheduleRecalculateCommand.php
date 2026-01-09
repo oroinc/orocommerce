@@ -131,7 +131,8 @@ HELP
             $hasUpdates = $this->processAllPriceLists($output);
         } elseif ($input->getOption('price-list')) {
             $hasUpdates = $this->processPriceLists($input, $output);
-        } elseif ($input->getOption('website')
+        } elseif (
+            $input->getOption('website')
             || $input->getOption('customer')
             || $input->getOption('customer-group')
         ) {

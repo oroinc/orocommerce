@@ -45,7 +45,8 @@ class CategoryLowInventoryThresholdFormExtension extends AbstractFallbackCategor
     {
         $data = $event->getData();
 
-        if (isset($data[LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION]['useFallback'])
+        if (
+            isset($data[LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION]['useFallback'])
             && $data[LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION]['useFallback'] == '1'
         ) {
             $data[LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION]['scalarValue'] = 0;

@@ -34,7 +34,7 @@ class NodeToQueryDesignerConverterTest extends \PHPUnit\Framework\TestCase
         $columnInfoProvider->expects($this->once())
             ->method('fillColumnInformation')
             ->willReturnCallback(
-                function ($subNode, array  &$addedColumns, array &$definition) {
+                function ($subNode, array &$addedColumns, array &$definition) {
                     $definition['columns'][] = ['name' => 'test'];
                     return true;
                 }

@@ -30,7 +30,7 @@ class RestrictSitemapProductByInventoryStatusListenerTest extends WebTestCase
             ->getRepository(Product::class)
             ->createQueryBuilder(UrlItemsProvider::ENTITY_ALIAS);
 
-        $qb->select(UrlItemsProvider::ENTITY_ALIAS. '.id');
+        $qb->select(UrlItemsProvider::ENTITY_ALIAS . '.id');
 
         $configManager = self::getConfigManager(null);
         $this->assertEquals(
@@ -71,7 +71,7 @@ class RestrictSitemapProductByInventoryStatusListenerTest extends WebTestCase
             ->getRepository(Product::class)
             ->createQueryBuilder(UrlItemsProvider::ENTITY_ALIAS);
 
-        $qb->select(UrlItemsProvider::ENTITY_ALIAS. '.id');
+        $qb->select(UrlItemsProvider::ENTITY_ALIAS . '.id');
 
         $configManager = self::getConfigManager();
         $initialProductVisibility = $configManager->get('oro_product.general_frontend_product_visibility');

@@ -46,7 +46,8 @@ class AjaxRequestProductKitItemLineItemController extends AbstractController
             $form->submit($submittedData);
 
             $requestProductKey = array_key_first($submittedData['requestProducts'] ?? []);
-            if ($requestProductKey !== null
+            if (
+                $requestProductKey !== null
                 && $form->get('requestProducts')->has($requestProductKey)
             ) {
                 $requestProductForm = $form->get('requestProducts')->get($requestProductKey);

@@ -338,35 +338,35 @@ class OrderUpdateListTest extends RestJsonApiUpdateListTestCase
         $this->assertAsyncOperationErrors(
             [
                 [
-                    'id'     => $operationId.'-1-1',
+                    'id'     => $operationId . '-1-1',
                     'status' => 400,
                     'title'  => 'form constraint',
                     'detail' => 'The "wrong_date" is not valid date.',
                     'source' => ['pointer' => '/data/0/attributes/shipUntil']
                 ],
                 [
-                    'id'     => $operationId.'-1-2',
+                    'id'     => $operationId . '-1-2',
                     'status' => 400,
                     'title'  => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
                     'source' => ['pointer' => '/data/0/attributes/currency']
                 ],
                 [
-                    'id'     => $operationId.'-1-3',
+                    'id'     => $operationId . '-1-3',
                     'status' => 400,
                     'title'  => 'not blank constraint',
                     'detail' => 'Price value should not be blank. Source: price.',
                     'source' => ['pointer' => '/included/0']
                 ],
                 [
-                    'id'     => $operationId.'-1-4',
+                    'id'     => $operationId . '-1-4',
                     'status' => 400,
                     'title'  => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
                     'source' => ['pointer' => '/data/0/relationships/customer/data']
                 ],
                 [
-                    'id'     => $operationId.'-1-5',
+                    'id'     => $operationId . '-1-5',
                     'status' => 400,
                     'title'  => 'not blank constraint',
                     'detail' => 'Price value should not be blank.',

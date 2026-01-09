@@ -49,7 +49,8 @@ class CreateOrderEventListener
             }
 
             $inventoryLevel = $this->getInventoryLevel($lineItem->getProduct(), $lineItem->getProductUnit());
-            if (null !== $inventoryLevel
+            if (
+                null !== $inventoryLevel
                 && $this->quantityManager->canDecrementInventory($inventoryLevel, $lineItem->getQuantity())
             ) {
                 $this->quantityManager->decrementInventory($inventoryLevel, $lineItem->getQuantity());

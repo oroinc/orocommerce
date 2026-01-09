@@ -673,20 +673,26 @@ class CategoryControllerTest extends WebTestCase
     ): void {
         foreach ($this->localizations as $localization) {
             $this->assertEquals(
-                $localization->getLanguageCode().$title,
-                $formValues['oro_catalog_category[titles][values][localizations]['.$localization->getId().'][value]']
+                $localization->getLanguageCode() . $title,
+                $formValues[
+                    'oro_catalog_category[titles][values][localizations][' . $localization->getId() . '][value]'
+                ]
             );
 
             $locId = $localization->getId();
 
             $this->assertEquals(
-                $localization->getLanguageCode().$shortDescription,
-                $formValues['oro_catalog_category[shortDescriptions][values][localizations]['.$locId.'][value]']
+                $localization->getLanguageCode() . $shortDescription,
+                $formValues[
+                    'oro_catalog_category[shortDescriptions][values][localizations][' . $locId . '][value]'
+                ]
             );
 
             $this->assertEquals(
-                $localization->getLanguageCode().$longDescription,
-                $formValues['oro_catalog_category[longDescriptions][values][localizations]['.$locId.'][value][wysiwyg]']
+                $localization->getLanguageCode() . $longDescription,
+                $formValues[
+                    'oro_catalog_category[longDescriptions][values][localizations][' . $locId . '][value][wysiwyg]'
+                ]
             );
         }
     }

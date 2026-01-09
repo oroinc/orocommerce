@@ -25,7 +25,8 @@ class DefaultShippingMethodSetterDecorator implements DefaultShippingMethodSette
         }
 
         $sourceEntity = $checkout->getSourceEntity();
-        if ($sourceEntity instanceof PreConfiguredShippingMethodConfigurationInterface
+        if (
+            $sourceEntity instanceof PreConfiguredShippingMethodConfigurationInterface
             && $sourceEntity->getShippingMethod()
             && $sourceEntity->getShippingMethodType()
         ) {

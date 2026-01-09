@@ -38,7 +38,8 @@ class ZipCodeTransformer implements DataTransformerInterface
 
         $zipRangeStart = $value->getZipRangeStart();
         $zipRangeEnd = $value->getZipRangeEnd();
-        if ($zipRangeStart === $zipRangeEnd
+        if (
+            $zipRangeStart === $zipRangeEnd
             || ($zipRangeStart && !$zipRangeEnd)
             || (!$zipRangeStart && $zipRangeEnd)
         ) {

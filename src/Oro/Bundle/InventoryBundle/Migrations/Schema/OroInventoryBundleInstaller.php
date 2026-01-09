@@ -75,7 +75,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
 
         $this->updateWarehouseEntityRelations($schema);
 
-        if (!$schema->hasTable('oro_inventory_level')
+        if (
+            !$schema->hasTable('oro_inventory_level')
             && (
                 $schema->hasTable('oro_warehouse_inventory_lev')
                 || $schema->hasTable('orob2b_warehouse_inventory_lev')

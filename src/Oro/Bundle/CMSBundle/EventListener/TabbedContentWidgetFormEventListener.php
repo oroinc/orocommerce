@@ -27,7 +27,8 @@ class TabbedContentWidgetFormEventListener
     public function onBeforeFlush(AfterFormProcessEvent $args): void
     {
         $contentWidget = $args->getData();
-        if (!$contentWidget instanceof ContentWidget ||
+        if (
+            !$contentWidget instanceof ContentWidget ||
             $contentWidget->getWidgetType() !== TabbedContentWidgetType::getName()
         ) {
             return;

@@ -61,7 +61,8 @@ class CombinedPriceListBuildTriggerHandler
         foreach ($pricesByPriceList as $prices) {
             $priceList = $prices[0]->getPriceList();
 
-            if ($priceList->isActive()
+            if (
+                $priceList->isActive()
                 && $combinedPriceToPriceListRepository->hasCombinedPriceListWithPriceList($priceList)
                 && $productPriceRepository->areAllPricesNewInPriceList($this->shardManager, $priceList, $prices)
             ) {
@@ -83,7 +84,8 @@ class CombinedPriceListBuildTriggerHandler
         /** @var ProductPriceRepository $productPriceRepository */
         $productPriceRepository = $this->doctrine->getRepository(ProductPrice::class);
 
-        if ($priceList->isActive()
+        if (
+            $priceList->isActive()
             && $combinedPriceToPriceListRepository->hasCombinedPriceListWithPriceList($priceList)
             && $productPriceRepository->isFirstPriceAdded($this->shardManager, $productPrice)
         ) {

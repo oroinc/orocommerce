@@ -64,7 +64,8 @@ class EnabledConsentProvider
         $consentConfigs = $this->enabledConsentConfigProvider->getConsentConfigs();
         foreach ($consentConfigs as $consentConfig) {
             $consent = $consentConfig->getConsent();
-            if (null !== $consent
+            if (
+                null !== $consent
                 && !isset($acceptedConsents[$consent->getId()])
                 && $this->isConsentPassedFilters($consent)
             ) {

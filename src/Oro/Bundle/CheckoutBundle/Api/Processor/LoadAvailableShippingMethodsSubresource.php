@@ -42,7 +42,8 @@ class LoadAvailableShippingMethodsSubresource implements ProcessorInterface
     private function getAvailableShippingMethods(int $checkoutId): array
     {
         $checkout = $this->doctrineHelper->getEntity(Checkout::class, $checkoutId);
-        if (null === $checkout
+        if (
+            null === $checkout
             || $checkout->isDeleted()
             || !$this->authorizationChecker->isGranted(BasicPermission::VIEW, $checkout)
         ) {

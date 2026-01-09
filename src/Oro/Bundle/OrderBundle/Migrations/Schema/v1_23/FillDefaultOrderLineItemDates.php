@@ -20,7 +20,8 @@ class FillDefaultOrderLineItemDates implements Migration, OrderedMigrationInterf
     public function up(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->getTable('oro_order_line_item');
-        if ($table->hasColumn('created_at')
+        if (
+            $table->hasColumn('created_at')
             && $table->hasColumn('updated_at')
             && !$table->getColumn('created_at')->getNotnull()
             && !$table->getColumn('updated_at')->getNotnull()

@@ -54,7 +54,8 @@ class WYSIWYGBlockListener
 
         foreach ($fieldConfigs as $fieldConfig) {
             $fieldName = $fieldConfig->getFieldName();
-            if ($fieldConfig->getFieldType() === WYSIWYGType::TYPE &&
+            if (
+                $fieldConfig->getFieldType() === WYSIWYGType::TYPE &&
                 $scrollData->hasNamedField($fieldName)
             ) {
                 $config = $this->entityConfigProvider->getConfig($className, $fieldName);
@@ -71,8 +72,10 @@ class WYSIWYGBlockListener
         }
 
         //Removes Additional section if no subblocks left
-        if ($scrollData->hasBlock(UiExtension::ADDITIONAL_SECTION_KEY)
-            && $scrollData->isEmptyBlock(UiExtension::ADDITIONAL_SECTION_KEY)) {
+        if (
+            $scrollData->hasBlock(UiExtension::ADDITIONAL_SECTION_KEY)
+            && $scrollData->isEmptyBlock(UiExtension::ADDITIONAL_SECTION_KEY)
+        ) {
             $scrollData->removeNamedBlock(UiExtension::ADDITIONAL_SECTION_KEY);
         }
 

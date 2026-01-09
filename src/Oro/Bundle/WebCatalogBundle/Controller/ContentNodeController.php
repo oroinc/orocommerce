@@ -103,8 +103,10 @@ class ContentNodeController extends AbstractController
         #[MapEntity(id: 'newParentId')]
         ContentNode $newParentContentNode
     ): JsonResponse {
-        if (!$this->isGranted('oro_web_catalog_update', $contentNode->getWebCatalog())
-            || !$this->isGranted('oro_web_catalog_update', $newParentContentNode->getWebCatalog())) {
+        if (
+            !$this->isGranted('oro_web_catalog_update', $contentNode->getWebCatalog())
+            || !$this->isGranted('oro_web_catalog_update', $newParentContentNode->getWebCatalog())
+        ) {
             throw $this->createAccessDeniedException();
         }
 

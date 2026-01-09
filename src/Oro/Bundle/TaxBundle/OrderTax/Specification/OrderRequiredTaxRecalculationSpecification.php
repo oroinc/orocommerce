@@ -66,7 +66,8 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
             return true;
         }
 
-        if ($this->isOrderAddressChanged($order->getShippingAddress(), $originalOrderData['shippingAddress'])
+        if (
+            $this->isOrderAddressChanged($order->getShippingAddress(), $originalOrderData['shippingAddress'])
             || $this->isOrderAddressChanged($order->getBillingAddress(), $originalOrderData['billingAddress'])
         ) {
             return true;

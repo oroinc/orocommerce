@@ -252,7 +252,8 @@ class PriceManager
              * @see \Oro\Bundle\PricingBundle\Entity\EntityListener\BaseProductPriceEntityListener::isPriceValueChanged
              */
             $originalData = $uow->getOriginalEntityData($price);
-            if (!empty($originalData['value'])
+            if (
+                !empty($originalData['value'])
                 && !\is_float($originalData['value'])
                 && null !== $price->getPrice()
                 && \is_float($price->getPrice()->getValue())

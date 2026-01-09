@@ -19,6 +19,7 @@ class AtLeastOneAvailableProduct extends AbstractCondition implements ContextAcc
 {
     use ContextAccessorAwareTrait;
     use ProductHolderTrait;
+
     public const NAME = 'at_least_one_available_product';
 
     /** @var PropertyPathInterface */

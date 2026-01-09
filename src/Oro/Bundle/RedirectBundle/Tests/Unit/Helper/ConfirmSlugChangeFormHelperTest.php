@@ -59,11 +59,14 @@ class ConfirmSlugChangeFormHelperTest extends \PHPUnit\Framework\TestCase
 
         $this->assertArrayHasKey('confirm_slug_change_component_options', $view->vars);
         $this->assertEquals(
-            '[name^="form-name[target-name]['.LocalizedSlugWithRedirectType::SLUG_PROTOTYPES_FIELD_NAME.'][values]"]',
+            \sprintf(
+                '[name^="form-name[target-name][%s][values]"]',
+                LocalizedSlugWithRedirectType::SLUG_PROTOTYPES_FIELD_NAME
+            ),
             $view->vars['confirm_slug_change_component_options']['slugFields']
         );
         $this->assertEquals(
-            '[name^="form-name[target-name]['.LocalizedSlugWithRedirectType::CREATE_REDIRECT_FIELD_NAME.']"]',
+            '[name^="form-name[target-name][' . LocalizedSlugWithRedirectType::CREATE_REDIRECT_FIELD_NAME . ']"]',
             $view->vars['confirm_slug_change_component_options']['createRedirectCheckbox']
         );
         $this->assertEquals($expectDisabled, $view->vars['confirm_slug_change_component_options']['disabled']);
@@ -130,11 +133,11 @@ class ConfirmSlugChangeFormHelperTest extends \PHPUnit\Framework\TestCase
 
         $this->assertArrayHasKey('confirm_slug_change_component_options', $view->vars);
         $this->assertEquals(
-            '[name^="form-name[target-name]['.SlugWithRedirectType::TEXT_SLUG_PROTOTYPE_FIELD_NAME.']"]',
+            '[name^="form-name[target-name][' . SlugWithRedirectType::TEXT_SLUG_PROTOTYPE_FIELD_NAME . ']"]',
             $view->vars['confirm_slug_change_component_options']['slugFields']
         );
         $this->assertEquals(
-            '[name^="form-name[target-name]['.SlugWithRedirectType::CREATE_REDIRECT_FIELD_NAME.']"]',
+            '[name^="form-name[target-name][' . SlugWithRedirectType::CREATE_REDIRECT_FIELD_NAME . ']"]',
             $view->vars['confirm_slug_change_component_options']['createRedirectCheckbox']
         );
         $this->assertEquals($expectDisabled, $view->vars['confirm_slug_change_component_options']['disabled']);

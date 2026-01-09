@@ -18,7 +18,8 @@ class UrlSafeValidator extends RegexValidator
         }
 
         $delimiter = SluggableUrlGenerator::CONTEXT_DELIMITER;
-        if ($value === $delimiter
+        if (
+            $value === $delimiter
             || str_starts_with($value, $delimiter . '/')
             || str_ends_with($value, '/' . $delimiter)
             || str_contains($value, '/' . $delimiter . '/')

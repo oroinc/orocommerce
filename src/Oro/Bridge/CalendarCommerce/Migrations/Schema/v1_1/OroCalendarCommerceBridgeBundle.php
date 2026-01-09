@@ -32,8 +32,10 @@ class OroCalendarCommerceBridgeBundle implements Migration, RenameExtensionAware
     private static function renameCustomerRelated(Schema $schema, QueryBag $queries, RenameExtension $extension)
     {
         // CustomerBundle v1_7 - calendar event to account user association
-        if ($schema->hasTable('oro_rel_46a29d19a6adb604a9b8e1')
-            && !$schema->hasTable('oro_rel_46a29d19a6adb604aeb863')) {
+        if (
+            $schema->hasTable('oro_rel_46a29d19a6adb604a9b8e1')
+            && !$schema->hasTable('oro_rel_46a29d19a6adb604aeb863')
+        ) {
             $extension->renameTable(
                 $schema,
                 $queries,
@@ -43,8 +45,10 @@ class OroCalendarCommerceBridgeBundle implements Migration, RenameExtensionAware
         }
 
         // CustomerBundle v1_8 - calendar event to account user association
-        if ($schema->hasTable('oro_rel_46a29d19a6adb604aeb863')
-            && !$schema->hasTable('oro_rel_46a29d19a6adb604264ef1')) {
+        if (
+            $schema->hasTable('oro_rel_46a29d19a6adb604aeb863')
+            && !$schema->hasTable('oro_rel_46a29d19a6adb604264ef1')
+        ) {
             $extension->renameTable(
                 $schema,
                 $queries,
@@ -81,8 +85,10 @@ class OroCalendarCommerceBridgeBundle implements Migration, RenameExtensionAware
     private static function renameOrderRelated(Schema $schema, QueryBag $queries, RenameExtension $extension)
     {
         // OrderBundle v1_5 - calendar event to order association
-        if ($schema->hasTable('oro_rel_46a29d1934e8bc9c23a92e')
-            && !$schema->hasTable('oro_rel_46a29d1934e8bc9c2ddbe0')) {
+        if (
+            $schema->hasTable('oro_rel_46a29d1934e8bc9c23a92e')
+            && !$schema->hasTable('oro_rel_46a29d1934e8bc9c2ddbe0')
+        ) {
             $extension->renameTable(
                 $schema,
                 $queries,
@@ -102,8 +108,10 @@ class OroCalendarCommerceBridgeBundle implements Migration, RenameExtensionAware
     private static function renameRFPRelated(Schema $schema, QueryBag $queries, RenameExtension $extension)
     {
         // RFPBundle v1_6 - calendar event to request association
-        if ($schema->hasTable('oro_rel_46a29d19f42ab603f15753')
-            && !$schema->hasTable('oro_rel_46a29d19f42ab603ec4b1d')) {
+        if (
+            $schema->hasTable('oro_rel_46a29d19f42ab603f15753')
+            && !$schema->hasTable('oro_rel_46a29d19f42ab603ec4b1d')
+        ) {
             $extension->renameTable(
                 $schema,
                 $queries,
@@ -123,8 +131,10 @@ class OroCalendarCommerceBridgeBundle implements Migration, RenameExtensionAware
     private static function renameSaleRelated(Schema $schema, QueryBag $queries, RenameExtension $extension)
     {
         // SaleBundle v1_10 - calendar event to quote association
-        if ($schema->hasTable('oro_rel_46a29d19aab0e4f0a0472d')
-            && !$schema->hasTable('oro_rel_46a29d19aab0e4f0b5ec88')) {
+        if (
+            $schema->hasTable('oro_rel_46a29d19aab0e4f0a0472d')
+            && !$schema->hasTable('oro_rel_46a29d19aab0e4f0b5ec88')
+        ) {
             $extension->renameTable(
                 $schema,
                 $queries,

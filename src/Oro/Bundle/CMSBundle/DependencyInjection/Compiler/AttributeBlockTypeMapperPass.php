@@ -22,7 +22,7 @@ class AttributeBlockTypeMapperPass implements CompilerPassInterface
             $definition = $container->getDefinition(self::SERVICE_ID);
             $definition->addMethodCall('addBlockType', [
                 self::WYSIWYG_FIELD_TYPE_KEY,
-                'attribute_'. self::WYSIWYG_FIELD_TYPE_KEY
+                'attribute_' . self::WYSIWYG_FIELD_TYPE_KEY
             ]);
         }
     }

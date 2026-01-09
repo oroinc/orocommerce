@@ -54,7 +54,7 @@ class DriverDecoratorTest extends WebTestCase
         $websiteId = $this->getDefaultWebsiteId();
 
         $query = new Query();
-        $query->from('oro_product_'.$websiteId);
+        $query->from('oro_product_' . $websiteId);
         $query->getCriteria()->orderBy(['id' => Query::ORDER_ASC]);
 
         /** @var Item $goodProductReference */
@@ -109,7 +109,7 @@ class DriverDecoratorTest extends WebTestCase
         $websiteId = $this->getDefaultWebsiteId();
 
         $query = new Query();
-        $query->from('oro_product_'.$websiteId);
+        $query->from('oro_product_' . $websiteId);
         $query->getCriteria()->andWhere(Criteria::expr()->contains('long_description', 'Long description'));
 
         $referenceName = LoadItemData::getReferenceName(LoadItemData::REFERENCE_GOOD_PRODUCT, $websiteId);
@@ -134,7 +134,7 @@ class DriverDecoratorTest extends WebTestCase
         $expectedItem = $this->convertItemToArray($item);
 
         $query = new Query();
-        $query->from('oro_product_'.$websiteId);
+        $query->from('oro_product_' . $websiteId);
         $query->getCriteria()->andWhere(Criteria::expr()->eq('integer.lucky_number', 777));
 
         $itemResults = $this->getContainer()->get('oro_website_search.engine.orm.driver')->search($query);
@@ -153,7 +153,7 @@ class DriverDecoratorTest extends WebTestCase
         $websiteId = $this->getDefaultWebsiteId();
 
         $query = new Query();
-        $query->from('oro_product_'.$websiteId);
+        $query->from('oro_product_' . $websiteId);
         $query->addAggregate($field, 'integer.for_count', $function, $parameters);
 
         $results = $this->getContainer()->get('oro_website_search.engine.orm.driver')->getAggregatedData($query);

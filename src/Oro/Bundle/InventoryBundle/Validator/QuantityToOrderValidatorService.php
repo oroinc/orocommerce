@@ -66,7 +66,8 @@ class QuantityToOrderValidatorService
             if (!$product instanceof Product) {
                 continue;
             }
-            if ($this->isHigherThanMaxLimit($this->getMaximumLimit($product), $quantity)
+            if (
+                $this->isHigherThanMaxLimit($this->getMaximumLimit($product), $quantity)
                 || $this->isLowerThenMinLimit($this->getMinimumLimit($product), $quantity)
             ) {
                 return false;

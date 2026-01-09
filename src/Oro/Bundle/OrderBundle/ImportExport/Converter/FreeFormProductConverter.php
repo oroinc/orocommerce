@@ -15,7 +15,8 @@ class FreeFormProductConverter implements ComplexDataConverterInterface
     #[\Override]
     public function convert(array $item, mixed $sourceData): array
     {
-        if (!isset($item[self::ENTITY][JsonApiDoc::RELATIONSHIPS]['product'][JsonApiDoc::DATA])
+        if (
+            !isset($item[self::ENTITY][JsonApiDoc::RELATIONSHIPS]['product'][JsonApiDoc::DATA])
             && isset($item[self::ENTITY][JsonApiDoc::ATTRIBUTES])
         ) {
             $attributes = $item[self::ENTITY][JsonApiDoc::ATTRIBUTES];

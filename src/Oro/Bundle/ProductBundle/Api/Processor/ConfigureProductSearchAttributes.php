@@ -60,7 +60,8 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
 
             $fieldName = $attribute->getFieldName();
 
-            if (!isset($searchFilterMapping[$fieldName])
+            if (
+                !isset($searchFilterMapping[$fieldName])
                 && $this->isAttributeFilterable($attributeType, $attribute)
             ) {
                 $filterableFieldName = $this->getFilterableFieldName($attributeType, $attribute);
@@ -69,7 +70,8 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
                 }
             }
 
-            if (!$sorters->hasField($fieldName)
+            if (
+                !$sorters->hasField($fieldName)
                 && $this->isAttributeSortable($attributeType, $attribute)
             ) {
                 $sorters->addField($fieldName)
@@ -88,7 +90,8 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
 
     private function getAttributeType(FieldConfigModel $attribute): ?SearchAttributeTypeInterface
     {
-        if (!$this->configurationProvider->isAttributeCustom($attribute)
+        if (
+            !$this->configurationProvider->isAttributeCustom($attribute)
             || !$this->configurationProvider->isAttributeActive($attribute)
         ) {
             return null;

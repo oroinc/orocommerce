@@ -22,7 +22,8 @@ class OrderDiscountTypeConverter implements
     #[\Override]
     public function convert(array $item, mixed $sourceData): array
     {
-        if (!empty($item[self::ENTITY][JsonApiDoc::ATTRIBUTES][self::TYPE_API])
+        if (
+            !empty($item[self::ENTITY][JsonApiDoc::ATTRIBUTES][self::TYPE_API])
             && \is_string($item[self::ENTITY][JsonApiDoc::ATTRIBUTES][self::TYPE_API])
             && !str_starts_with($item[self::ENTITY][JsonApiDoc::ATTRIBUTES][self::TYPE_API], self::TYPE_PREFIX)
         ) {

@@ -65,9 +65,11 @@ class ProductCollectionSearchTermFilteringEventListener implements FeatureChecke
     {
         if ($request->query->has('search')) {
             $searchTerm = $this->searchTermProvider->getMostSuitableSearchTerm($request->query->get('search'));
-            if (!$searchTerm ||
+            if (
+                !$searchTerm ||
                 $searchTerm->getActionType() !== 'modify' ||
-                !$searchTerm->getProductCollectionSegment()) {
+                !$searchTerm->getProductCollectionSegment()
+            ) {
                 return [null, null];
             }
 

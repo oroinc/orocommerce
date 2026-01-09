@@ -73,7 +73,8 @@ class AttributeChangesListener
 
             $fieldName = $model->getFieldName();
 
-            if (!empty($this->fieldNamesForIndexation) &&
+            if (
+                !empty($this->fieldNamesForIndexation) &&
                 !\in_array($fieldName, $this->fieldNamesForIndexation, true)
             ) {
                 continue;
@@ -185,7 +186,8 @@ class AttributeChangesListener
             ]
         );
 
-        if (($isStateChanged && $isAnyOptionEnabled) ||
+        if (
+            ($isStateChanged && $isAnyOptionEnabled) ||
             (!$isStateChanged && $isAnyOptionChangedToEnabled) ||
             ($isAnyOptionEnabled && $enumChangeSet)
         ) {

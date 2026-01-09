@@ -36,7 +36,8 @@ class PossibleShippingMethodEventListener
     public function onEvent(EntityDataAwareEventInterface $event): void
     {
         $submittedData = $event->getSubmittedData();
-        if ($submittedData === null
+        if (
+            $submittedData === null
             || (
                 \array_key_exists(self::CALCULATE_SHIPPING_KEY, $submittedData)
                 && $submittedData[self::CALCULATE_SHIPPING_KEY]

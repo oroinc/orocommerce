@@ -232,7 +232,8 @@ class OrderType extends AbstractType
                  * displayed as “Previously selected delivery method” and can only be changed by explicitly specifying
                  * a new shipping method.
                  */
-                if (empty($data['shippingMethod']) &&
+                if (
+                    empty($data['shippingMethod']) &&
                     empty($data['shippingMethodType']) &&
                     empty($data['estimatedShippingCostAmount'])
                 ) {

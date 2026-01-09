@@ -103,7 +103,8 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         $checkoutsWithSource = $this->repository->getCheckoutsByIds($this->getCheckoutIds($checkouts));
         $found = 0;
         foreach ($checkouts as $checkout) {
-            if (isset($checkoutsWithSource[$checkout->getId()])
+            if (
+                isset($checkoutsWithSource[$checkout->getId()])
                 && is_object($checkoutsWithSource[$checkout->getId()])
             ) {
                 $found++;

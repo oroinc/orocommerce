@@ -11,7 +11,7 @@ use Oro\Bundle\UPSBundle\Client\Url\Provider\UpsClientUrlProviderInterface;
 final class AddressValidationUpsClientFactoryMock implements UpsClientFactoryInterface
 {
     public function __construct(
-        private FakeRestClientFactory    $restClientFactory,
+        private FakeRestClientFactory $restClientFactory,
         private UpsClientUrlProviderInterface $upsClientUrlProvider
     ) {
     }

@@ -47,7 +47,7 @@ class MigrateBaseUrlToTestModeQuery extends ParametrizedMigrationQuery
 
         $parameters = [
             $this->productionUrl,
-            rtrim($this->productionUrl, '/').'/',
+            rtrim($this->productionUrl, '/') . '/',
         ];
 
         $this->logQuery($logger, $query, $parameters);

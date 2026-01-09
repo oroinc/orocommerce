@@ -41,10 +41,12 @@ class InvoicedPaymentStatusCalculator implements PaymentStatusCalculatorInterfac
     private function hasInvoiceTransactions(iterable $paymentTransactions): bool
     {
         foreach ($paymentTransactions as $paymentTransaction) {
-            if (!$paymentTransaction->isClone()
+            if (
+                !$paymentTransaction->isClone()
                 && $paymentTransaction->isActive()
                 && $paymentTransaction->isSuccessful()
-                && $paymentTransaction->getAction() === PaymentMethodInterface::INVOICE) {
+                && $paymentTransaction->getAction() === PaymentMethodInterface::INVOICE
+            ) {
                 return true;
             }
         }

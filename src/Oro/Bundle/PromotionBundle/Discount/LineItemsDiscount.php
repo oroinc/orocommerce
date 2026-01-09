@@ -44,7 +44,8 @@ class LineItemsDiscount extends AbstractDiscount implements DiscountProductUnitC
     {
         foreach ($discountContext->getLineItems() as $discountLineItem) {
             foreach ($this->getMatchingProducts() as $discountMatchingProduct) {
-                if ($discountLineItem->getProduct()->getId() === $discountMatchingProduct->getId()
+                if (
+                    $discountLineItem->getProduct()->getId() === $discountMatchingProduct->getId()
                     && $discountLineItem->getProductUnitCode() === $this->discountProductUnitCode
                 ) {
                     $discountLineItem->addDiscount($this);

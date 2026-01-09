@@ -29,7 +29,7 @@ class RestrictSitemapProductByStatusListenerTest extends WebTestCase
             ->getRepository(Product::class)
             ->createQueryBuilder(UrlItemsProvider::ENTITY_ALIAS);
 
-        $qb->select(UrlItemsProvider::ENTITY_ALIAS. '.id');
+        $qb->select(UrlItemsProvider::ENTITY_ALIAS . '.id');
 
         $listener = new RestrictSitemapProductByStatusListener();
         $listener->restrictQueryBuilder(new RestrictSitemapEntitiesEvent($qb, time()));

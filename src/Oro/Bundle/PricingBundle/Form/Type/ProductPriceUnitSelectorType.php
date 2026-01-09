@@ -24,7 +24,8 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
     protected function getProductUnits(FormInterface $form, ?Product $product = null)
     {
         $productForm = $this->getProductForm($form);
-        if (!$productForm ||
+        if (
+            !$productForm ||
             !$productForm->has('primaryUnitPrecision') ||
             !$productForm->has('additionalUnitPrecisions')
         ) {

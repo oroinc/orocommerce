@@ -95,7 +95,8 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidator extends Constrain
     private function getRequiredAttributesInfo(Product $product): array
     {
         $parentVariantLinks = $product->getParentVariantLinks();
-        if ($product->getId()
+        if (
+            $product->getId()
             && $parentVariantLinks instanceof AbstractLazyCollection
             && !$parentVariantLinks->isInitialized()
         ) {

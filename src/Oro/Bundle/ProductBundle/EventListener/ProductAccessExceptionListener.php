@@ -30,14 +30,17 @@ class ProductAccessExceptionListener
     {
         $exception = $event->getThrowable();
 
-        if (!($exception instanceof AccessDeniedException ||
+        if (
+            !($exception instanceof AccessDeniedException ||
             $exception instanceof AccessDeniedHttpException ||
-            $exception instanceof InsufficientAuthenticationException)) {
+            $exception instanceof InsufficientAuthenticationException)
+        ) {
             return;
         }
 
         $request = $this->requestStack->getCurrentRequest();
-        if (!$request
+        if (
+            !$request
             || $request->isXmlHttpRequest()
             || $request->attributes->get('_route') !== self::PRODUCT_VIEW_ROUTE
         ) {

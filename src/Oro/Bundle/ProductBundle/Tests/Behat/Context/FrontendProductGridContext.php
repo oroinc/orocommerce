@@ -16,6 +16,7 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 class FrontendProductGridContext extends OroFeatureContext implements OroPageObjectAware
 {
     use PageObjectDictionary;
+
     private ?OroMainContext $oroMainContext = null;
 
     /**

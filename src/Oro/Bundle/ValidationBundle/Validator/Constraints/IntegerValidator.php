@@ -33,7 +33,8 @@ class IntegerValidator extends ConstraintValidator
         $position = 0;
         $formatter->parse($value, PHP_INT_SIZE == 8 ? $formatter::TYPE_INT64 : $formatter::TYPE_INT32, $position);
 
-        if (intl_is_failure($formatter->getErrorCode())
+        if (
+            intl_is_failure($formatter->getErrorCode())
             || str_contains($value, $decimalSeparator)
             || $position < strlen($value)
         ) {

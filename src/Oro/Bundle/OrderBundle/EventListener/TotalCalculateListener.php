@@ -38,7 +38,8 @@ class TotalCalculateListener
         $entity = $event->getEntity();
         $request = $event->getRequest();
 
-        if ($entity instanceof Order
+        if (
+            $entity instanceof Order
             && !$this->frontendHelper->isFrontendRequest()
             && $request->request->has($this->getFormName(OrderType::class))
         ) {

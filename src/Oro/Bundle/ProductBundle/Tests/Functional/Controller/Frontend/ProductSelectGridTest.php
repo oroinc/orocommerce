@@ -63,7 +63,7 @@ class ProductSelectGridTest extends WebTestCase
                 'Skipped because current test implementation isn\'t compatible with InnoDB Full-Text index'
             );
         }
-        $filters = array_merge($filters, [self::DATAGRID_NAME.'[_sort_by][sku]' => 'ASC']);
+        $filters = array_merge($filters, [self::DATAGRID_NAME . '[_sort_by][sku]' => 'ASC']);
         $response = $this->client->requestFrontendGrid(['gridName' => self::DATAGRID_NAME], $filters, true);
 
         $result = $this->getJsonResponseContent($response, 200);
@@ -80,7 +80,7 @@ class ProductSelectGridTest extends WebTestCase
     {
         return [
             [
-                [self::DATAGRID_NAME.'[_sort_by][productName]' => 'DESC'],
+                [self::DATAGRID_NAME . '[_sort_by][productName]' => 'DESC'],
                 array_reverse([
                     LoadProductKitData::PRODUCT_KIT_3,
                     LoadProductKitData::PRODUCT_KIT_2,
@@ -93,7 +93,7 @@ class ProductSelectGridTest extends WebTestCase
                 ])
             ],
             [
-                [self::DATAGRID_NAME.'[_sort_by][productName]' => 'ASC'],
+                [self::DATAGRID_NAME . '[_sort_by][productName]' => 'ASC'],
                 [
                     LoadProductKitData::PRODUCT_KIT_3,
                     LoadProductKitData::PRODUCT_KIT_2,
@@ -106,7 +106,7 @@ class ProductSelectGridTest extends WebTestCase
                 ]
             ],
             [
-                [self::DATAGRID_NAME.'[_sort_by][sku]' => 'DESC'],
+                [self::DATAGRID_NAME . '[_sort_by][sku]' => 'DESC'],
                 array_reverse([
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -119,7 +119,7 @@ class ProductSelectGridTest extends WebTestCase
                 ])
             ],
             [
-                [self::DATAGRID_NAME.'[_sort_by][sku]' => 'ASC'],
+                [self::DATAGRID_NAME . '[_sort_by][sku]' => 'ASC'],
                 [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -139,8 +139,8 @@ class ProductSelectGridTest extends WebTestCase
         return [
             [
                 [
-                    self::DATAGRID_NAME.'[_filter][productName][value]' => 'product',
-                    self::DATAGRID_NAME.'[_filter][productName][type]' => TextFilterType::TYPE_CONTAINS,
+                    self::DATAGRID_NAME . '[_filter][productName][value]' => 'product',
+                    self::DATAGRID_NAME . '[_filter][productName][type]' => TextFilterType::TYPE_CONTAINS,
                 ],
                 [
                     LoadProductData::PRODUCT_1,
@@ -155,14 +155,14 @@ class ProductSelectGridTest extends WebTestCase
             ],
             [
                 [
-                    self::DATAGRID_NAME.'[_filter][productName][value]' => 'product-1.names',
-                    self::DATAGRID_NAME.'[_filter][productName][type]' => TextFilterType::TYPE_CONTAINS,
+                    self::DATAGRID_NAME . '[_filter][productName][value]' => 'product-1.names',
+                    self::DATAGRID_NAME . '[_filter][productName][type]' => TextFilterType::TYPE_CONTAINS,
                 ],
                 [LoadProductData::PRODUCT_1],
                 false
             ],
             [
-                [self::DATAGRID_NAME.'[_filter][inventoryStatus][value][]' => 'prod_inventory_status.out_of_stock'],
+                [self::DATAGRID_NAME . '[_filter][inventoryStatus][value][]' => 'prod_inventory_status.out_of_stock'],
                 [
                     LoadProductData::PRODUCT_3,
                     LoadProductKitData::PRODUCT_KIT_3,
@@ -171,8 +171,8 @@ class ProductSelectGridTest extends WebTestCase
             ],
             [
                 [
-                    self::DATAGRID_NAME.'[_filter][sku][value]' => 'product-2',
-                    self::DATAGRID_NAME.'[_filter][sku][type]' => TextFilterType::TYPE_EQUAL,
+                    self::DATAGRID_NAME . '[_filter][sku][value]' => 'product-2',
+                    self::DATAGRID_NAME . '[_filter][sku][type]' => TextFilterType::TYPE_EQUAL,
                 ],
                 [LoadProductData::PRODUCT_2],
                 false

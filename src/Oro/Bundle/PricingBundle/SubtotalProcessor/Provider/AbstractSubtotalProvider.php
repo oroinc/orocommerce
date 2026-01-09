@@ -53,9 +53,7 @@ abstract class AbstractSubtotalProvider
      */
     protected function getExchangeRate($fromCurrency, $toCurrency)
     {
-        /**
-         * TODO: Need to define currency exchange logic. BB-124/BB-3274
-         */
+        // not implemented, up to customization
         return 1.0;
     }
 }

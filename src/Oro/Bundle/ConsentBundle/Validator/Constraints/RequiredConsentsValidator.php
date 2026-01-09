@@ -42,7 +42,7 @@ class RequiredConsentsValidator extends ConstraintValidator
             $consentLabels = array_map([$this, 'getConsentsLabels'], $unacceptedRequiredConsents);
             $this->context
                 ->buildViolation($constraint->message, [
-                    '{{ consent_names }}' => '"'.implode('", "', $consentLabels).'"',
+                    '{{ consent_names }}' => '"' . implode('", "', $consentLabels) . '"',
                 ])
                 ->addViolation();
         }

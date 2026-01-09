@@ -5,6 +5,11 @@ namespace Oro\Bundle\InventoryBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+/**
+ * Compiler pass that registers class migrations for inventory level entities.
+ *
+ * Configures the frontend class migration service to map old warehouse inventory level classes to the new ones.
+ */
 class InventoryLevelMigrationPass implements CompilerPassInterface
 {
     #[\Override]

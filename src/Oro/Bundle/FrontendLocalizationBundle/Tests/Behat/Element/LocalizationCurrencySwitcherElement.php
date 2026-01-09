@@ -64,7 +64,8 @@ class LocalizationCurrencySwitcherElement extends Element
 
     public function getLocationElement(): ?string
     {
-        if ($this->hasElementByMappedSelector('LocationAboveTheHeaderLocalizationSwitcher')
+        if (
+            $this->hasElementByMappedSelector('LocationAboveTheHeaderLocalizationSwitcher')
             || $this->hasElementByMappedSelector('LocationAboveTheHeaderCurrencySwitcher')
         ) {
             return 'above the header, separate switchers';
@@ -74,7 +75,8 @@ class LocalizationCurrencySwitcherElement extends Element
             return 'above the header, as single switcher';
         }
 
-        if ($this->hasElementByMappedSelector('SelectMainElementContainer')
+        if (
+            $this->hasElementByMappedSelector('SelectMainElementContainer')
             || $this->hasElementByMappedSelector('ToggleMainElementContainer')
         ) {
             return 'in the hamburger menu';
@@ -175,7 +177,7 @@ class LocalizationCurrencySwitcherElement extends Element
         $this->spin(function () use ($footerExpand) {
             try {
                 $footerExpand->click();
-            } catch (NoSuchElement|ElementNotVisible $e) {
+            } catch (NoSuchElement | ElementNotVisible $e) {
                 return false;
             } finally {
                 return $footerExpand->isVisible();

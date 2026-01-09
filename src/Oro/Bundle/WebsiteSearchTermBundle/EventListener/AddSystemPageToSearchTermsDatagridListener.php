@@ -24,9 +24,11 @@ class AddSystemPageToSearchTermsDatagridListener
     public function onResultAfter(OrmResultAfter $event): void
     {
         foreach ($event->getRecords() as $result) {
-            if ($result->getValue('actionType') !== 'redirect'
+            if (
+                $result->getValue('actionType') !== 'redirect'
                 || $result->getValue('redirectActionType') !== 'system_page'
-                || !$result->getValue('redirectSystemPage')) {
+                || !$result->getValue('redirectSystemPage')
+            ) {
                 continue;
             }
 

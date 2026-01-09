@@ -54,8 +54,10 @@ class DatagridLineItemsDataListener
         foreach ($event->getLineItems() as $lineItem) {
             $lineItemId = $lineItem->getEntityIdentifier();
             $product = $lineItem->getProduct();
-            if ($lineItem instanceof ProductKitItemLineItemInterface
-                && !$lineItem->getKitItem()?->getProducts()->contains($product)) {
+            if (
+                $lineItem instanceof ProductKitItemLineItemInterface
+                && !$lineItem->getKitItem()?->getProducts()->contains($product)
+            ) {
                 // The selected product is not allowed.
                 $product = null;
             }

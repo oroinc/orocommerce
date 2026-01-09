@@ -88,7 +88,8 @@ class TotalProvider
         }
 
         foreach ($subtotals as $item) {
-            if ($item->getType() === LineItemSubtotalProvider::TYPE
+            if (
+                $item->getType() === LineItemSubtotalProvider::TYPE
                 && $item->getCurrency() !== $defaultCurrency
             ) {
                 $baseAmount = $isStatic ? $order->getBaseSubtotalValue() : null;

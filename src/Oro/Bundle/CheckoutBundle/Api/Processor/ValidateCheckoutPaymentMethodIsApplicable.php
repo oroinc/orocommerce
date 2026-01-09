@@ -27,7 +27,8 @@ class ValidateCheckoutPaymentMethodIsApplicable implements ProcessorInterface
         /** @var Checkout $checkout */
         $checkout = $context->getParentEntity();
         $paymentMethod = $checkout->getPaymentMethod();
-        if (!$paymentMethod
+        if (
+            !$paymentMethod
             || !$this->checkoutPaymentSubresourceProvider->isSupportedPaymentMethod($paymentMethod)
         ) {
             throw new AccessDeniedException('The payment method is not supported.');

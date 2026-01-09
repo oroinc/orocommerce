@@ -11,6 +11,8 @@ use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
 
 /**
  * The factory to create FedEx shipment validation request.
+ *
+ * phpcs:ignore
  * @deprecated. Will be removed when SOAP support will be dropped by FedEx.
  */
 class FedexRateServiceValidateConnectionRequestSoapFactory implements FedexRequestByIntegrationSettingsFactoryInterface

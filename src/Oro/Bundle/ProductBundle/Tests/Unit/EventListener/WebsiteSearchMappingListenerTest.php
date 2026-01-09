@@ -245,56 +245,56 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'organization_id' => null,
                             'group' => 'main'
                         ],
-                        $attribute1->getFieldName().'_enum.'.EnumIdPlaceholder::NAME => [
-                            'name'            => $attribute1->getFieldName().'_enum.'.EnumIdPlaceholder::NAME,
+                        $attribute1->getFieldName() . '_enum.' . EnumIdPlaceholder::NAME => [
+                            'name'            => $attribute1->getFieldName() . '_enum.' . EnumIdPlaceholder::NAME,
                             'type'            => Query::TYPE_INTEGER,
                             'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
                             'group' => 'main'
                         ],
-                        $attribute2->getFieldName().'_priority'                 => [
-                            'name'            => $attribute2->getFieldName().'_priority',
+                        $attribute2->getFieldName() . '_priority'                 => [
+                            'name'            => $attribute2->getFieldName() . '_priority',
                             'type'            => Query::TYPE_INTEGER,
                             'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
                             'group' => 'main'
                         ],
-                        $attribute3->getFieldName().'_enum.'.EnumIdPlaceholder::NAME => [
-                            'name'            => $attribute3->getFieldName().'_enum.'.EnumIdPlaceholder::NAME,
+                        $attribute3->getFieldName() . '_enum.' . EnumIdPlaceholder::NAME => [
+                            'name'            => $attribute3->getFieldName() . '_enum.' . EnumIdPlaceholder::NAME,
                             'type'            => Query::TYPE_INTEGER,
                             'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
                             'group' => 'main'
                         ],
-                        $attribute3->getFieldName().'_priority'                 => [
-                            'name'            => $attribute3->getFieldName().'_priority',
+                        $attribute3->getFieldName() . '_priority'                 => [
+                            'name'            => $attribute3->getFieldName() . '_priority',
                             'type'            => Query::TYPE_INTEGER,
                             'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
                             'group' => 'main'
                         ],
-                        $attribute5->getFieldName().'_enum.'.EnumIdPlaceholder::NAME                 => [
-                            'name'            => $attribute5->getFieldName().'_enum.'.EnumIdPlaceholder::NAME,
+                        $attribute5->getFieldName() . '_enum.' . EnumIdPlaceholder::NAME                 => [
+                            'name'            => $attribute5->getFieldName() . '_enum.' . EnumIdPlaceholder::NAME,
                             'type'            => Query::TYPE_INTEGER,
                             'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
                             'group' => 'main'
                         ],
-                        $attribute5->getFieldName().'_priority'                 => [
-                            'name'            => $attribute5->getFieldName().'_priority',
+                        $attribute5->getFieldName() . '_priority'                 => [
+                            'name'            => $attribute5->getFieldName() . '_priority',
                             'type'            => Query::TYPE_INTEGER,
                             'store'           => true,
                             'fulltext'        => false,
                             'organization_id' => null,
                             'group' => 'main'
                         ],
-                        $attribute5->getFieldName().'_searchable'                 => [
-                            'name'            => $attribute5->getFieldName().'_searchable',
+                        $attribute5->getFieldName() . '_searchable'                 => [
+                            'name'            => $attribute5->getFieldName() . '_searchable',
                             'type'            => Query::TYPE_TEXT,
                             'store'           => true,
                             'fulltext'        => true,

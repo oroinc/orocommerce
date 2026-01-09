@@ -37,7 +37,7 @@ class TriggerEventForSelectedProductIdsMassActionHandler implements MassActionHa
     #[\Override]
     public function handle(MassActionHandlerArgs $args): MassActionResponseInterface
     {
-        $configKey = Configuration::ROOT_NODE.'.'.Configuration::PRODUCT_COLLECTION_MASS_ACTION_LIMITATION;
+        $configKey = Configuration::ROOT_NODE . '.' . Configuration::PRODUCT_COLLECTION_MASS_ACTION_LIMITATION;
         $massActionLimit = $this->configManager->get($configKey);
         $data = $args->getData();
         if (empty($data['force']) && $args->getResults()->count() > $massActionLimit) {

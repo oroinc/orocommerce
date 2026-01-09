@@ -34,7 +34,8 @@ class ShoppingListEntityListener
 
     public function prePersist(ShoppingList $shoppingList): void
     {
-        if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken
+        if (
+            $this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken
             && null === $shoppingList->getOwner()
         ) {
             $shoppingList->setOwner(

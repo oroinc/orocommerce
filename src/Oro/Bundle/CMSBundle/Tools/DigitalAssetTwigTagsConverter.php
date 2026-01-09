@@ -217,9 +217,11 @@ class DigitalAssetTwigTagsConverter
 
     private function getUuid(array $fileData, array $context, int $digitalAssetId, array &$buffer): string
     {
-        if ($fileData['parentEntityClass'] !== $context['entityClass']
+        if (
+            $fileData['parentEntityClass'] !== $context['entityClass']
             || $fileData['parentEntityId'] !== $context['entityId']
-            || $fileData['parentEntityFieldName'] !== $context['fieldName']) {
+            || $fileData['parentEntityFieldName'] !== $context['fieldName']
+        ) {
             // Generates new uuid if the found file does not belong to the currently processed entity.
             if (!isset($buffer['uuidByDigitalAssetId'][$digitalAssetId])) {
                 $buffer['uuidByDigitalAssetId'][$digitalAssetId] = $this->generateUuid();

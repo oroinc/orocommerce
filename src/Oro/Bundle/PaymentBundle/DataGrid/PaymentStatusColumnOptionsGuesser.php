@@ -20,8 +20,10 @@ class PaymentStatusColumnOptionsGuesser extends AbstractColumnOptionsGuesser
     #[\Override]
     public function guessFilter($class, $property, $type): ?ColumnGuess
     {
-        if (!is_a($class, PaymentStatus::class, true) ||
-            $property !== PaymentStatusVirtualRelationProvider::VIRTUAL_RELATION_NAME) {
+        if (
+            !is_a($class, PaymentStatus::class, true) ||
+            $property !== PaymentStatusVirtualRelationProvider::VIRTUAL_RELATION_NAME
+        ) {
             return null;
         }
 

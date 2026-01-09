@@ -33,8 +33,10 @@ class WebpAwarePreviewMetadataProvider implements PreviewMetadataProviderInterfa
     {
         $metadata = $this->innerPreviewMetadataProvider->getMetadata($file);
 
-        if (!$this->attachmentManager->isWebpDisabled()
-            && $this->mimeTypeChecker->isImageMimeType((string)$file->getMimeType())) {
+        if (
+            !$this->attachmentManager->isWebpDisabled()
+            && $this->mimeTypeChecker->isImageMimeType((string)$file->getMimeType())
+        ) {
             $metadata['url_webp'] = $this->attachmentManager->getFilteredImageUrl($file, 'wysiwyg_original', 'webp');
         }
 

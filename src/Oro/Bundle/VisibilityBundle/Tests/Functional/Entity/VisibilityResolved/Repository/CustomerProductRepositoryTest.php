@@ -116,7 +116,8 @@ class CustomerProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
         Scope $scope
     ): ?BaseProductVisibilityResolved {
         foreach ($visibilities as $visibility) {
-            if ($visibility->getProduct()->getId() === $product->getId()
+            if (
+                $visibility->getProduct()->getId() === $product->getId()
                 && $visibility->getScope()->getId() === $scope->getId()
             ) {
                 return $visibility;
@@ -131,7 +132,8 @@ class CustomerProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
         BaseProductVisibilityResolved $resolveVisibility
     ): ?VisibilityInterface {
         foreach ($sourceVisibilities as $visibility) {
-            if ($resolveVisibility->getProduct()->getId() === $visibility->getProduct()->getId()
+            if (
+                $resolveVisibility->getProduct()->getId() === $visibility->getProduct()->getId()
                 && $resolveVisibility->getScope()->getId() === $visibility->getScope()->getId()
             ) {
                 return $visibility;

@@ -51,15 +51,10 @@ class NodeHasNoRestrictionsValidator extends ConstraintValidator
 
         $scopes = $contentNode->getScopesConsideringParent();
         foreach ($scopes as $scope) {
-            if ((
-                $scope->getLocalization()
-                || $scope->getCustomerGroup()
-                || $scope->getCustomer()
-            )
-                || (
-                    self::SCOPE_WEBSITE === $scopeEntityName
-                    && $scope->getWebsite()
-                )
+            if (
+                ($scope->getLocalization() || $scope->getCustomerGroup() || $scope->getCustomer())
+                ||
+                (self::SCOPE_WEBSITE === $scopeEntityName && $scope->getWebsite())
             ) {
                 return true;
             }

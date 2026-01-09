@@ -122,7 +122,8 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
 
             /** @var Country $country */
             foreach ($countries as $country) {
-                if ($row['type'] === 'AC' ||
+                if (
+                    $row['type'] === 'AC' ||
                     ($row['type'] === 'UC' && !in_array($country->getIso2Code(), $this->loadedCountries, false))
                 ) {
                     $shippingService = new ShippingService();

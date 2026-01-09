@@ -27,7 +27,7 @@ class ProductImageImportTest extends TestCase
         // copy fixture files to the storage
         $fileManager = self::getContainer()->get('oro_product.tests.importexport.file_manager.product_images');
         $finder = new Finder();
-        $files = $finder->files()->in(__DIR__.'/data/product_image/images/');
+        $files = $finder->files()->in(__DIR__ . '/data/product_image/images/');
         /** @var \SplFileInfo[] $files */
         foreach ($files as $file) {
             $fileManager->writeFileToStorage($file->getPathname(), $file->getFilename());
@@ -40,7 +40,7 @@ class ProductImageImportTest extends TestCase
     {
         $this->assertExportTemplateWorks(
             $this->getExportImportConfiguration(),
-            __DIR__.'/data/product_image/product_image_export_template.csv'
+            __DIR__ . '/data/product_image/product_image_export_template.csv'
         );
     }
 
@@ -48,7 +48,7 @@ class ProductImageImportTest extends TestCase
     {
         $this->assertImportWorks(
             $this->getExportImportConfiguration(),
-            __DIR__.'/data/product_image/product_image_import.csv'
+            __DIR__ . '/data/product_image/product_image_import.csv'
         );
 
         $this->assertImportedDataValid();
@@ -58,7 +58,7 @@ class ProductImageImportTest extends TestCase
     {
         $this->assertImportWorks(
             $this->getExportImportConfiguration(),
-            __DIR__.'/data/product_image/product_image_import_with_types.csv'
+            __DIR__ . '/data/product_image/product_image_import_with_types.csv'
         );
 
         /** @var  EntityRepository $productRepo */

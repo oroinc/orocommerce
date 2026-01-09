@@ -30,8 +30,10 @@ class CheckoutManager
         $checkout = $this->getCheckoutById($checkoutId);
 
         //Only guest checkout which is not still assigned
-        if ($checkout && !$checkout->getRegisteredCustomerUser() &&
-            (!$checkout->getCustomerUser() || $checkout->getCustomerUser()->isGuest())) {
+        if (
+            $checkout && !$checkout->getRegisteredCustomerUser() &&
+            (!$checkout->getCustomerUser() || $checkout->getCustomerUser()->isGuest())
+        ) {
             $checkout->setRegisteredCustomerUser($customerUser);
             $this->getEntityManager()->flush($checkout);
         }

@@ -174,10 +174,13 @@ class CheckoutAddressType extends AbstractType
                 continue;
             }
 
-            if (!$isNewAddress || (
-                $customerAddressData === CheckoutAddressSelectType::ENTER_MANUALLY &&
-                    $form->getConfig()->getOption('disableManualFields')
-            )) {
+            if (
+                !$isNewAddress
+                || (
+                    $customerAddressData === CheckoutAddressSelectType::ENTER_MANUALLY
+                    && $form->getConfig()->getOption('disableManualFields')
+                )
+            ) {
                 FormUtils::replaceFieldOptionsRecursive(
                     $event->getForm(),
                     $child->getName(),

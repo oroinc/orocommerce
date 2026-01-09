@@ -55,7 +55,8 @@ class FixSlugOrganizationRelation extends AbstractFixture implements ContainerAw
     private function fillLostSlugOrganization(EntityManagerInterface $manager): void
     {
         foreach ($manager->getMetadataFactory()->getAllMetadata() as $metadata) {
-            if (is_a($metadata->getName(), SlugAwareInterface::class, true)
+            if (
+                is_a($metadata->getName(), SlugAwareInterface::class, true)
                 && is_a($metadata->getName(), OrganizationAwareInterface::class, true)
             ) {
                 $this->updateSlugOrganization($manager, $metadata);

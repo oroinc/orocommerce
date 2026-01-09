@@ -90,7 +90,8 @@ class ProductMatrixAvailabilityProvider
                     $isUnitSupportedBySimpleProducts = true;
                     [$configurableUnit] = $configurableProductData[$configurableProductId];
                     foreach ($simpleProducts[$configurableProductId] as $simpleProductId) {
-                        if (!isset($simpleProductUnits[$simpleProductId])
+                        if (
+                            !isset($simpleProductUnits[$simpleProductId])
                             || !\in_array($configurableUnit, $simpleProductUnits[$simpleProductId], true)
                         ) {
                             $isUnitSupportedBySimpleProducts = false;

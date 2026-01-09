@@ -77,7 +77,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
                 = $customerIdsWithChangedVisibility;
         }
 
-        if (!$this->customerGroupIdsWithChangedVisibility[$category->getId()] &&
+        if (
+            !$this->customerGroupIdsWithChangedVisibility[$category->getId()] &&
             !$this->customerIdsWithChangedVisibility[$category->getId()]
         ) {
             return;

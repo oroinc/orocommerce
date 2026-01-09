@@ -79,7 +79,7 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
             'order option should be of type Order::class' => [
                 'exception' => InvalidOptionsException::class,
                 'exceptionMessage' => 'The option "order" with value "anything" is expected to be of type'
-                    .' "Oro\Bundle\OrderBundle\Entity\Order", but is of type "string".',
+                    . ' "Oro\Bundle\OrderBundle\Entity\Order", but is of type "string".',
                 'formOptions' => ['order' => 'anything'],
             ],
         ];

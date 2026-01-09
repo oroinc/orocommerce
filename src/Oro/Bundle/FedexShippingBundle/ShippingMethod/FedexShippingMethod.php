@@ -197,7 +197,7 @@ class FedexShippingMethod implements
     {
         foreach ($this->getTrackingRegexList() as $regex) {
             if (preg_match($regex, $number)) {
-                return self::TRACKING_URL.$number;
+                return self::TRACKING_URL . $number;
             }
         }
 

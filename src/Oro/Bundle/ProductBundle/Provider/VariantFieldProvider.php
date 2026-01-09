@@ -32,10 +32,11 @@ class VariantFieldProvider
         /** @var FieldConfigModel $attribute */
         foreach ($attributes as $attribute) {
             //Leave only attributes which meets requirements
-            if (!in_array($attribute->getType(), $this->allowedAttributeTypes, true) ||
-                $this->attributeManager->isSystem($attribute) ||
-                !$this->attributeManager->isActive($attribute) ||
-                ($this->serializedFieldProvider->isSerialized($attribute)
+            if (
+                !in_array($attribute->getType(), $this->allowedAttributeTypes, true)
+                || $this->attributeManager->isSystem($attribute)
+                || !$this->attributeManager->isActive($attribute)
+                || ($this->serializedFieldProvider->isSerialized($attribute)
                     && !ExtendHelper::isEnumerableType($attribute->getType()))
             ) {
                 continue;

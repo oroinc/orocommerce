@@ -41,9 +41,11 @@ class ProductCollectionSearchTermWebsiteSearchIndexEntityListener
         }
 
         foreach ($searchTermsData as $searchTermData) {
-            if (!isset($searchTermData['searchTermId']) ||
+            if (
+                !isset($searchTermData['searchTermId']) ||
                 !isset($searchTermData['productCollectionSegmentId']) ||
-                !isset($searchTermData['productCollectionProductId'])) {
+                !isset($searchTermData['productCollectionProductId'])
+            ) {
                 continue;
             }
 

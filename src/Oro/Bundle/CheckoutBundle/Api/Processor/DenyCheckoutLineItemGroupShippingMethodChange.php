@@ -45,7 +45,8 @@ class DenyCheckoutLineItemGroupShippingMethodChange implements ProcessorInterfac
         string $attributeName
     ): void {
         $fieldForm = $context->findFormField($fieldName);
-        if (null !== $fieldForm
+        if (
+            null !== $fieldForm
             && FormUtil::isSubmittedAndValid($fieldForm)
             && $this->isFieldValueChanged($context, $fieldForm, $attributeName)
         ) {

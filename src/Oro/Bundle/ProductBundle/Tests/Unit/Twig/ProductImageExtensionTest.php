@@ -12,6 +12,7 @@ use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Twig\ProductImageExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -19,11 +20,8 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
 
     private const PLACEHOLDER = 'placeholder/image.png';
 
-    private AttachmentManager|\PHPUnit\Framework\MockObject\MockObject $attachmentManager;
-
-    private PictureSourcesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-        $pictureSourcesProvider;
-
+    private AttachmentManager|MockObject $attachmentManager;
+    private PictureSourcesProviderInterface|MockObject $pictureSourcesProvider;
     private ProductImageExtension $extension;
 
     #[\Override]

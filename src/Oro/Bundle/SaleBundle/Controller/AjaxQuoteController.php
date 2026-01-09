@@ -140,7 +140,8 @@ class AjaxQuoteController extends AbstractController
      */
     protected function validateRelation(CustomerUser $customerUser, Customer $customer)
     {
-        if ($customerUser->getCustomer() &&
+        if (
+            $customerUser->getCustomer() &&
             $customerUser->getCustomer()->getId() !== $customer->getId()
         ) {
             throw new BadRequestHttpException('CustomerUser must belong to Customer');

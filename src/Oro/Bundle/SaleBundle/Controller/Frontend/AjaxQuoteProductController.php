@@ -38,7 +38,8 @@ class AjaxQuoteProductController extends AbstractController
         Request $request
     ) {
         $authorizationChecker = $this->container->get('security.authorization_checker');
-        if (!$authorizationChecker->isGranted('oro_sale_quote_demand_frontend_view', $quoteDemand) ||
+        if (
+            !$authorizationChecker->isGranted('oro_sale_quote_demand_frontend_view', $quoteDemand) ||
             $quoteDemand->getQuote()->getId() !== $quoteProduct->getQuote()->getId()
         ) {
             throw $this->createAccessDeniedException();

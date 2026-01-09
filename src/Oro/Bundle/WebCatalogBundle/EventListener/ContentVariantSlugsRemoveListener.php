@@ -78,7 +78,8 @@ class ContentVariantSlugsRemoveListener
             $this->contentVariantLinkedEntities = [];
 
             foreach ($em->getClassMetadata(ContentVariant::class)->getAssociationMappings() as $mapping) {
-                if (!empty($mapping['isOwningSide']) &&
+                if (
+                    !empty($mapping['isOwningSide']) &&
                     !empty($mapping['type']) &&
                     $mapping['type'] === ClassMetadata::MANY_TO_ONE
                 ) {

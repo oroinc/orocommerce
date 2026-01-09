@@ -45,13 +45,15 @@ class Purchase extends TransitionServiceAbstract
             return false;
         }
 
-        if ($this->paymentMethodActions->isPaymentMethodSupportsValidate($checkout)
+        if (
+            $this->paymentMethodActions->isPaymentMethodSupportsValidate($checkout)
             && !$this->paymentTransactionProvider->getActiveValidatePaymentTransaction($checkout->getPaymentMethod())
         ) {
             return false;
         }
 
-        if ($this->isPurchaseViaDirectUrl()
+        if (
+            $this->isPurchaseViaDirectUrl()
             && !$this->isPurchaseViaDirectUrlAllowed($checkout, $workflowItem, $errors)
         ) {
             return false;

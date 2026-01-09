@@ -69,7 +69,7 @@ class ConsentContentNodeValidator
                 if ($logValidationErrors) {
                     $this->logger->error(
                         sprintf(
-                            "Expected 'ContentVariant' with type 'cms_page' but got '%s' ".
+                            "Expected 'ContentVariant' with type 'cms_page' but got '%s' " .
                             "in Consent with id '%d' with 'Scope' with id '%d'!",
                             $contentVariantType,
                             $consent->getId(),

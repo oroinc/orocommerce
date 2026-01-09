@@ -173,7 +173,7 @@ class ImportExportTest extends AbstractImportExportTestCase
             $strategy,
             '@OroPricingBundle/Tests/Functional/ImportExport/data/duplicate_rows.csv',
             'Error in row #2. Product has duplication of product prices. '
-            .'Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.'
+            . 'Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.'
         );
     }
 
@@ -294,14 +294,14 @@ class ImportExportTest extends AbstractImportExportTestCase
 
         $form = $crawler->selectButton('Submit')->form();
 
-        $optionsPriceList = '&options[price_list_id]='. $this->priceList->getId() .
+        $optionsPriceList = '&options[price_list_id]=' . $this->priceList->getId() .
             '&importJob=price_list_product_prices_entity_import_from_csv' .
             '&exportJob=price_list_product_prices_export_to_csv';
 
         /** Change after BAP-1813 */
         $form->getFormNode()->setAttribute(
             'action',
-            $form->getFormNode()->getAttribute('action'). $optionsPriceList . '&_widgetContainer=dialog'
+            $form->getFormNode()->getAttribute('action') . $optionsPriceList . '&_widgetContainer=dialog'
         );
 
         $form['oro_importexport_import[file]']->upload($this->file);

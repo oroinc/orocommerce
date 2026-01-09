@@ -51,7 +51,7 @@ class QuoteRepository extends EntityRepository implements ResettableCustomerUser
             return $qb
                 ->getQuery()
                 ->getSingleResult();
-        } catch (NoResultException|NonUniqueResultException $e) {
+        } catch (NoResultException | NonUniqueResultException $e) {
         }
 
         return null;
@@ -67,7 +67,7 @@ class QuoteRepository extends EntityRepository implements ResettableCustomerUser
             return $qb
                 ->getQuery()
                 ->getSingleResult();
-        } catch (NoResultException|NonUniqueResultException|DriverException $e) {
+        } catch (NoResultException | NonUniqueResultException | DriverException $e) {
         }
 
         return null;

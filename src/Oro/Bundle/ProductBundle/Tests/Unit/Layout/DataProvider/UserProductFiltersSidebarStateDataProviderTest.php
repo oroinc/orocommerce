@@ -4,12 +4,11 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\ProductBundle\Layout\DataProvider\UserProductFiltersSidebarStateDataProvider;
 use Oro\Bundle\ProductBundle\Manager\UserProductFiltersSidebarStateManager;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class UserProductFiltersSidebarStateDataProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private UserProductFiltersSidebarStateManager|\PHPUnit\Framework\MockObject\MockObject
-        $userProductFiltersSidebarStateManager;
-
+    private UserProductFiltersSidebarStateManager|MockObject $userProductFiltersSidebarStateManager;
     private UserProductFiltersSidebarStateDataProvider $dataProvider;
 
     #[\Override]

@@ -92,7 +92,8 @@ class CreateOrder extends BasePlaceOrder
             $this->doValidatePayment($workflowItem);
         }
 
-        if (!$validatePayment
+        if (
+            !$validatePayment
             || !empty($workflowResult->offsetGet('responseData')['successful'])
             || !$this->paymentMethodActions->isPaymentMethodSupportsValidate($checkout)
         ) {
@@ -156,7 +157,8 @@ class CreateOrder extends BasePlaceOrder
             $workflowResult->offsetSet('responseData', $validateResult);
         }
 
-        if (empty($validateResult['successful'])
+        if (
+            empty($validateResult['successful'])
             && $this->paymentMethodActions->isPaymentMethodSupportsValidate($checkout)
         ) {
             $workflowResult->offsetSet('updateCheckoutState', true);

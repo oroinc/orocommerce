@@ -72,7 +72,8 @@ class CreateOrder extends AbstractAction
             throw new InvalidParameterException('Attribute must be valid property definition');
         }
 
-        if (!empty($options[self::OPTION_KEY_DATA])
+        if (
+            !empty($options[self::OPTION_KEY_DATA])
             && !is_array($options[self::OPTION_KEY_DATA])
             && !$options[self::OPTION_KEY_DATA] instanceof PropertyPathInterface
         ) {

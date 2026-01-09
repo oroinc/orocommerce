@@ -34,7 +34,7 @@ class LoadShippingMethodConfigsWithFakeMethods extends AbstractFixture implement
      */
     protected function getShippingMethodConfigsData()
     {
-        return Yaml::parse(file_get_contents(__DIR__.'/data/shipping_method_configs_with_fake_methods.yml'));
+        return Yaml::parse(file_get_contents(__DIR__ . '/data/shipping_method_configs_with_fake_methods.yml'));
     }
 
     /**

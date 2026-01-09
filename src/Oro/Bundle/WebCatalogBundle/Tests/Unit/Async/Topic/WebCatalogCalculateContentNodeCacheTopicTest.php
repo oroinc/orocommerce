@@ -42,7 +42,7 @@ class WebCatalogCalculateContentNodeCacheTopicTest extends AbstractTopicTestCase
                 'body' => [WebCatalogCalculateContentNodeCacheTopic::CONTENT_NODE_ID => new \stdClass()],
                 'exceptionClass' => InvalidOptionsException::class,
                 'exceptionMessage' => '/The option "contentNodeId" with value stdClass is expected '
-                    .'to be of type "int"/',
+                    . 'to be of type "int"/',
             ],
         ];
     }

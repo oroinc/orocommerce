@@ -82,7 +82,8 @@ class BinaryNodeConverter implements QueryExpressionConverterInterface, Converte
 
             $left = $this->converter->convert($node->getLeft(), $expr, $params, $aliasMapping);
             // Always use parametrized values for comparison with value nodes
-            if ($method
+            if (
+                $method
                 && self::$exprTypeMap[$method] === self::TYPE_COMPARISON
                 && $node->getRight() instanceof ValueNode
             ) {

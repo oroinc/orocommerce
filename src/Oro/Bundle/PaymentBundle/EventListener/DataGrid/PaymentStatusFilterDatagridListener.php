@@ -25,8 +25,10 @@ final class PaymentStatusFilterDatagridListener implements BuildBeforeListenerIn
     {
         $datagrid = $event->getDatagrid();
         $datagridName = $datagrid->getName();
-        if (!str_contains($datagridName, Report::GRID_PREFIX) &&
-            !str_contains($datagridName, Segment::GRID_PREFIX)) {
+        if (
+            !str_contains($datagridName, Report::GRID_PREFIX) &&
+            !str_contains($datagridName, Segment::GRID_PREFIX)
+        ) {
             return;
         }
 

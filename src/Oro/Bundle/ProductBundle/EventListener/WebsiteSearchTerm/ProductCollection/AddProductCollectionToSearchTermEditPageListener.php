@@ -22,7 +22,8 @@ class AddProductCollectionToSearchTermEditPageListener
         $actionBlock = & $scrollDataData[ScrollData::DATA_BLOCKS]['action'];
         $actionSubBlockData = [];
 
-        foreach ($actionBlock[ScrollData::SUB_BLOCKS][0][ScrollData::DATA] ?? [] as $fieldName => $fieldValue
+        foreach (
+            $actionBlock[ScrollData::SUB_BLOCKS][0][ScrollData::DATA] ?? [] as $fieldName => $fieldValue
         ) {
             $actionSubBlockData[$fieldName] = $fieldValue;
 

@@ -35,7 +35,8 @@ class ProductBrandExtension extends AbstractTypeExtension
                 return;
             }
 
-            if (!$this->authorizationChecker->isGranted('oro_product_brand_view') ||
+            if (
+                !$this->authorizationChecker->isGranted('oro_product_brand_view') ||
                 !$this->authorizationChecker->isGranted('VIEW', $product->getBrand())
             ) {
                 $event->getForm()->remove('brand');

@@ -99,7 +99,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     /**
      * @dataProvider priceListRelationDataProvider
      */
-    public function testAddOnCreate(array $submittedData, array  $expectedData)
+    public function testAddOnCreate(array $submittedData, array $expectedData)
     {
         $form = $this->getUpdateForm();
         $formValues = $form->getValues();
@@ -121,7 +121,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     /**
      * @dataProvider priceListRelationDataProvider
      */
-    public function testAddOnUpdate(array $submittedData, array  $expectedData)
+    public function testAddOnUpdate(array $submittedData, array $expectedData)
     {
         $form = $this->getUpdateForm();
         $formValues = $form->getValues();
@@ -254,7 +254,8 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
 
         $priceList = $this->getReference($priceListReference);
         foreach ($priceListsRelations as $priceListRelation) {
-            if ($priceListRelation->getWebsite()->getId() == $website->getId()
+            if (
+                $priceListRelation->getWebsite()->getId() == $website->getId()
                 && $priceList->getId() == $priceListRelation->getPriceList()->getId()
             ) {
                 return true;

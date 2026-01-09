@@ -19,10 +19,8 @@ User-agent: *
 
 TEXT;
 
-    private WebsiteInterface|MockObject  $website;
-
+    private WebsiteInterface|MockObject $website;
     private RobotsTxtFileManager|MockObject $robotsTxtFileManager;
-
     private RobotsTxtDistTemplateManager $robotsTxtDistTemplateManager;
 
     #[\Override]

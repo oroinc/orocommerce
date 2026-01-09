@@ -37,7 +37,8 @@ class CustomerUserResetPasswordListener
     public function onCustomerUserEmailSend(CustomerUserEmailSendEvent $event)
     {
         $checkoutId = $this->getFromRequest('_checkout_id');
-        if ($this->getFromRequest('_checkout_forgot_password')
+        if (
+            $this->getFromRequest('_checkout_forgot_password')
             && $checkoutId
             && $event->getEmailTemplate() === Processor::RESET_PASSWORD_EMAIL_TEMPLATE_NAME
         ) {

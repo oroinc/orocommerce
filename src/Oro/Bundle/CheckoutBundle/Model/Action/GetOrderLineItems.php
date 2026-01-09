@@ -44,8 +44,10 @@ class GetOrderLineItems extends AbstractAction
             throw new InvalidParameterException('Attribute name parameter is required');
         }
 
-        if (!array_key_exists('disable_price_filter', $options)
-            && array_key_exists('config_visibility_path', $options)) {
+        if (
+            !array_key_exists('disable_price_filter', $options)
+            && array_key_exists('config_visibility_path', $options)
+        ) {
             throw new InvalidParameterException(
                 'Attribute disable_price_filter is required if config_visibility_path is specified'
             );

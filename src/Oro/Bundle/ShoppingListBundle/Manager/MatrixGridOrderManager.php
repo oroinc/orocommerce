@@ -290,7 +290,8 @@ class MatrixGridOrderManager
 
         /** @var LineItem $lineItem */
         foreach ($lineItems->getIterator() as $lineItem) {
-            if ($cellProduct->getId() === $lineItem->getProduct()->getId()
+            if (
+                $cellProduct->getId() === $lineItem->getProduct()->getId()
                 && $lineItem->getProductUnitCode() === $productUnit->getCode()
             ) {
                 return $lineItem->getQuantity();

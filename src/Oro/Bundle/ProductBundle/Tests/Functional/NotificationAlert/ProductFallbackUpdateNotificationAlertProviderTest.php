@@ -258,10 +258,10 @@ class ProductFallbackUpdateNotificationAlertProviderTest extends WebTestCase
 
         for ($i = 0; $i < $count; $i++) {
             $product = new Product();
-            $sku = 'TEST-FALLBACK-'.uniqid();
+            $sku = 'TEST-FALLBACK-' . uniqid();
 
             $name = new ProductName();
-            $name->setString('Test Product '.$sku);
+            $name->setString('Test Product ' . $sku);
 
             $product->setSku($sku);
             $product->addName($name);

@@ -31,7 +31,8 @@ class Amount extends BaseAmount implements OptionsDependentInterface
     #[\Override]
     public function configureDependentOption(OptionsResolver $resolver, array $options)
     {
-        if (isset($options[Action::ACTION]) &&
+        if (
+            isset($options[Action::ACTION]) &&
             in_array($options[Action::ACTION], [Action::SET_EC, Action::DO_EC], true)
         ) {
             $this->amountRequired = true;

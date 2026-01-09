@@ -181,7 +181,8 @@ class ProductCollectionDefinitionConverter
 
     private function getUserDefinedFilter(array $definition): array
     {
-        if (isset($definition['filters'][0])
+        if (
+            isset($definition['filters'][0])
             && is_array($definition['filters'][0])
             && array_key_exists(0, $definition['filters'][0])
         ) {

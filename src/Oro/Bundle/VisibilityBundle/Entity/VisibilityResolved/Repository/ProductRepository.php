@@ -144,7 +144,7 @@ class ProductRepository extends AbstractVisibilityRepository
         $qb->select([
             (string) $scope->getId(),
             'product.id',
-            'COALESCE(cvr.visibility, '.$qb->expr()->literal($configValue).')',
+            'COALESCE(cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
             (string) ProductVisibilityResolved::SOURCE_CATEGORY,
             'category.id',
         ])

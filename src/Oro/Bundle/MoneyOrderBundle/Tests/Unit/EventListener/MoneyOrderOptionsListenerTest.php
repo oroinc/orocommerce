@@ -62,8 +62,8 @@ class MoneyOrderOptionsListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener->onCollectPaymentOptions($event);
         $expectedOptions = [
-            $payToTransLabel.': '.$payTo,
-            $sendToTransLabel.': '.$sendTo,
+            $payToTransLabel . ': ' . $payTo,
+            $sendToTransLabel . ': ' . $sendTo,
         ];
         self::assertEquals($expectedOptions, $event->getOptions());
     }

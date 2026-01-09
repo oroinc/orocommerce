@@ -34,7 +34,7 @@ class LoadShippingMethodTypeConfigsWithFakeTypes extends AbstractFixture impleme
      */
     protected function getShippingMethodTypeConfigsData()
     {
-        return Yaml::parse(file_get_contents(__DIR__.'/data/shipping_method_type_configs_with_fake_types.yml'));
+        return Yaml::parse(file_get_contents(__DIR__ . '/data/shipping_method_type_configs_with_fake_types.yml'));
     }
 
     /**

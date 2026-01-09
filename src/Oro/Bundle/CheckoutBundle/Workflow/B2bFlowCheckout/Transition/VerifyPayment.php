@@ -32,7 +32,8 @@ class VerifyPayment extends ContinueTransition
             return false;
         }
 
-        if ($this->checkRequest('_wid', 'ajax_checkout')
+        if (
+            $this->checkRequest('_wid', 'ajax_checkout')
             && $this->checkRequest('transition', 'continue_to_order_review')
         ) {
             return false;

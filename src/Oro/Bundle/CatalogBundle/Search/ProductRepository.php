@@ -38,11 +38,11 @@ class ProductRepository extends WebsiteSearchRepository
     public function getCategoriesCounts(array $categories)
     {
         $query = $this->createQuery()
-            ->setFrom('oro_product_'. WebsiteIdPlaceholder::NAME);
+            ->setFrom('oro_product_' . WebsiteIdPlaceholder::NAME);
 
         $criteria = array_map(
             function (Category $category) {
-                return Criteria::expr()->exists('integer.category_paths.'. $category->getMaterializedPath());
+                return Criteria::expr()->exists('integer.category_paths.' . $category->getMaterializedPath());
             },
             $categories
         );

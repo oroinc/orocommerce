@@ -62,7 +62,8 @@ class PaymentTermManager
     {
         $default = $this->paymentTermAssociationProvider->getDefaultAssociationName();
 
-        if ($entityClass
+        if (
+            $entityClass
             && !in_array($default, $this->paymentTermAssociationProvider->getAssociationNames($entityClass), true)
         ) {
             return null;

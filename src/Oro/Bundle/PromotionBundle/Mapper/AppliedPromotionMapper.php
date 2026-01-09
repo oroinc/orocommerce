@@ -112,7 +112,8 @@ class AppliedPromotionMapper
         /** @var Coupon $coupon */
         $coupon = $this->findById(Coupon::class, $appliedCoupon->getSourceCouponId());
 
-        if (!$coupon
+        if (
+            !$coupon
             || !$coupon->getPromotion()
             || $coupon->getPromotion()->getId() !== $appliedCoupon->getSourcePromotionId()
         ) {

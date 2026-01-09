@@ -78,7 +78,8 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
             if (null === $targetDefinition) {
                 continue;
             }
-            if ($this->isFieldNotExistOrExcluded($targetDefinition, WYSIWYGFields::FIELD_VALUE)
+            if (
+                $this->isFieldNotExistOrExcluded($targetDefinition, WYSIWYGFields::FIELD_VALUE)
                 || $this->isFieldNotExistOrExcluded($targetDefinition, WYSIWYGFields::FIELD_STYLE)
                 || $this->isFieldNotExistOrExcluded($targetDefinition, WYSIWYGFields::FIELD_PROPERTIES)
             ) {

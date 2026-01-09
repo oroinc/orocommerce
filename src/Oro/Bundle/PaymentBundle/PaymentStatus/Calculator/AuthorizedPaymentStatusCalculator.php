@@ -62,9 +62,11 @@ class AuthorizedPaymentStatusCalculator implements PaymentStatusCalculatorInterf
                 continue;
             }
 
-            if ($paymentTransaction->isActive()
+            if (
+                $paymentTransaction->isActive()
                 && $paymentTransaction->isSuccessful()
-                && $paymentTransaction->getAction() === PaymentMethodInterface::AUTHORIZE) {
+                && $paymentTransaction->getAction() === PaymentMethodInterface::AUTHORIZE
+            ) {
                 $authorizeTransactions[] = $paymentTransaction;
             }
         }

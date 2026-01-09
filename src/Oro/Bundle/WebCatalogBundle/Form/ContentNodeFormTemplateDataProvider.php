@@ -65,8 +65,10 @@ class ContentNodeFormTemplateDataProvider implements FormTemplateDataProviderInt
         foreach ($contentVariantsForm as $contentVariantForm) {
             $contentVariantForm->vars['triggerSortOrderDialog'] = false;
             $targetEntity = $contentVariantForm->vars['value'];
-            if (is_object($targetEntity)
-                && $this->sortOrderDialogTargetStorage->hasTarget(ContentVariant::class, $targetEntity->getId())) {
+            if (
+                is_object($targetEntity)
+                && $this->sortOrderDialogTargetStorage->hasTarget(ContentVariant::class, $targetEntity->getId())
+            ) {
                 $contentVariantForm->vars['triggerSortOrderDialog'] = true;
                 $data['expandedContentVariantForms'][] = $contentVariantForm;
 

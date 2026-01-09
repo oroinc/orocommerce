@@ -40,8 +40,10 @@ class ProductAutocompleteListener implements FeatureToggleableInterface
 
     public function onProcessAutocompleteData(ProcessAutocompleteDataEvent $event): void
     {
-        if (!$this->featureChecker->isFeatureEnabled('oro_price_lists_flat')
-            && !$this->featureChecker->isFeatureEnabled('oro_price_lists_combined')) {
+        if (
+            !$this->featureChecker->isFeatureEnabled('oro_price_lists_flat')
+            && !$this->featureChecker->isFeatureEnabled('oro_price_lists_combined')
+        ) {
             return;
         }
 

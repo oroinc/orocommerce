@@ -55,7 +55,8 @@ class ConsentConfigManager
         $configKey = Configuration::getConfigKey(Configuration::ENABLED_CONSENTS);
         $config = $configManager->get($configKey, false, true, $website);
 
-        if (empty($config[ConfigManager::VALUE_KEY])
+        if (
+            empty($config[ConfigManager::VALUE_KEY])
             || $config[ConfigManager::USE_PARENT_SCOPE_VALUE_KEY] === true
         ) {
             return;

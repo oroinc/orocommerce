@@ -39,7 +39,8 @@ class MultiShippingContextConfigurator implements ContextConfiguratorInterface
         $context->set(self::MULTI_SHIPPING_OPTION_NAME, $this->configProvider->isShippingSelectionByLineItemEnabled());
         $context->set(self::GROUPED_LINE_ITEMS_OPTION_NAME, $this->configProvider->isLineItemsGroupingEnabled());
         $multiShippingType = null;
-        if ($context->has('workflowName')
+        if (
+            $context->has('workflowName')
             && $context->get('workflowName') === 'b2b_flow_checkout'
             && $this->configProvider->isMultiShippingEnabled()
         ) {

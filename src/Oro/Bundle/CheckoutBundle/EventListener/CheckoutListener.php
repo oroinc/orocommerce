@@ -26,7 +26,8 @@ class CheckoutListener
 
     public function prePersist(Checkout $checkout): void
     {
-        if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken
+        if (
+            $this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken
             && null === $checkout->getOwner()
         ) {
             $checkout->setOwner(

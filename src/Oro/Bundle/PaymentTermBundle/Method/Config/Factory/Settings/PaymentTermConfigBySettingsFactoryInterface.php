@@ -12,5 +12,5 @@ interface PaymentTermConfigBySettingsFactoryInterface
      *
      * @return PaymentTermConfigInterface
      */
-    public function createConfigBySettings(PaymentTermSettings  $paymentTermSettings);
+    public function createConfigBySettings(PaymentTermSettings $paymentTermSettings);
 }

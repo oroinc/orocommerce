@@ -70,7 +70,8 @@ class AddAcceptableEntityClassesToCheckoutSourceAssociation implements Processor
             }
 
             $targetClass = $targetEntityMetadata->getAssociationTargetClass($targetFieldName);
-            if (is_a($targetClass, CheckoutSourceEntityInterface::class, true)
+            if (
+                is_a($targetClass, CheckoutSourceEntityInterface::class, true)
                 && $this->resourcesProvider->isResourceAccessible($targetClass, $version, $requestType)
             ) {
                 $acceptableEntities[] = $targetClass;

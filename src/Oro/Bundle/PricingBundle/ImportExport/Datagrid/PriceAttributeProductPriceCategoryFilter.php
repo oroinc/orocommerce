@@ -31,7 +31,7 @@ class PriceAttributeProductPriceCategoryFilter implements CategoryFilterInterfac
     {
         $rootAlias = QueryBuilderUtil::getSingleRootAlias($qb);
 
-        $qb->join($rootAlias.'.product', 'product')
+        $qb->join($rootAlias . '.product', 'product')
             ->join('product.category', self::FIELD_NAME);
     }
 }

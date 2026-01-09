@@ -40,7 +40,8 @@ class CheckoutVoter implements VoterInterface
             return self::ACCESS_ABSTAIN;
         }
 
-        if ($this->authorizationChecker->isGranted(BasicPermission::VIEW, $object)
+        if (
+            $this->authorizationChecker->isGranted(BasicPermission::VIEW, $object)
             && $this->authorizationChecker->isGranted(BasicPermission::CREATE, 'entity:' . Checkout::class)
         ) {
             return self::ACCESS_GRANTED;

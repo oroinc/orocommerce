@@ -177,7 +177,8 @@ class OrderAddressType extends AbstractType
                     $orderAddress->setCustomerAddress(null);
                     $orderAddress->setCustomerUserAddress(null);
                 }
-            } elseif ($selectedAddress instanceof AbstractAddress
+            } elseif (
+                $selectedAddress instanceof AbstractAddress
                 && $this->isAddressChangeRequired($selectedAddress, $orderAddress)
             ) {
                 $event->setData($this->orderAddressManager->updateFromAbstract($selectedAddress, $orderAddress));
@@ -195,13 +196,17 @@ class OrderAddressType extends AbstractType
             return true;
         }
 
-        if ($selectedAddress instanceof CustomerAddress &&
-            $selectedAddress->getId() !== $orderAddress->getCustomerAddress()?->getId()) {
+        if (
+            $selectedAddress instanceof CustomerAddress &&
+            $selectedAddress->getId() !== $orderAddress->getCustomerAddress()?->getId()
+        ) {
             return true;
         }
 
-        if ($selectedAddress instanceof CustomerUserAddress &&
-            $selectedAddress->getId() !== $orderAddress->getCustomerUserAddress()?->getId()) {
+        if (
+            $selectedAddress instanceof CustomerUserAddress &&
+            $selectedAddress->getId() !== $orderAddress->getCustomerUserAddress()?->getId()
+        ) {
             return true;
         }
 

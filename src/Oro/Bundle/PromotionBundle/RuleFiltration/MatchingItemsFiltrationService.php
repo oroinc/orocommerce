@@ -84,7 +84,8 @@ class MatchingItemsFiltrationService extends AbstractSkippableFiltrationService
         $productUnitCode = $discountOptions[UnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE];
         /** @var DiscountLineItem $lineItem */
         foreach ($lineItems as $lineItem) {
-            if ($lineItem->getProduct()
+            if (
+                $lineItem->getProduct()
                 && isset($productIds[$lineItem->getProduct()->getId()])
                 && $lineItem->getProductUnitCode() === $productUnitCode
             ) {

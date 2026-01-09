@@ -109,7 +109,8 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
     {
         $kitItemLineItemsData = $itemData[ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEMS_DATA_KEY] ?? [];
         foreach ($kitItemLineItemsData as $kitItemLineItemData) {
-            if (!isset($kitItemLineItemData[ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEM_KIT_ITEM_KEY])
+            if (
+                !isset($kitItemLineItemData[ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEM_KIT_ITEM_KEY])
                 || !isset($kitItemLineItemData[ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEM_PRODUCT_KEY])
             ) {
                 continue;

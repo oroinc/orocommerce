@@ -34,7 +34,8 @@ class OroSaleBundle implements Migration
     protected function removeQuoteAddressSerializedDataColumn(Schema $schema)
     {
         $table = $schema->getTable('orob2b_quote_address');
-        if ($table->hasColumn('serialized_data') &&
+        if (
+            $table->hasColumn('serialized_data') &&
             !class_exists('Oro\Bundle\EntitySerializedFieldsBundle\OroEntitySerializedFieldsBundle')
         ) {
             $table->dropColumn('serialized_data');

@@ -41,8 +41,10 @@ class NewShippingAddress extends AbstractOperationService
             $this->defaultShippingMethodSetter->setDefaultShippingMethod($checkout);
         }
 
-        if ($data->offsetGet('oldAddress') instanceof OrderAddress &&
-            $checkout->getShippingAddress()?->getId() !== $data->offsetGet('oldAddress')->getId()) {
+        if (
+            $data->offsetGet('oldAddress') instanceof OrderAddress &&
+            $checkout->getShippingAddress()?->getId() !== $data->offsetGet('oldAddress')->getId()
+        ) {
             $this->actionExecutor->executeAction(
                 'remove_entity',
                 [$data->offsetGet('oldAddress')]

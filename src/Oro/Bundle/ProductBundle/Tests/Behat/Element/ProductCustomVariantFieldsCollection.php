@@ -19,7 +19,7 @@ class ProductCustomVariantFieldsCollection extends Element
 
         foreach ($value as $item) {
             // Click on label because stylish checkbox hover the real one
-            $checkBox = $variants->find('xpath', '//label[text()="'. $item .'"]');
+            $checkBox = $variants->find('xpath', '//label[text()="' . $item . '"]');
             self::assertNotNull($checkBox, "Label for checkbox '$item' not found");
             $checkBox->click();
         }

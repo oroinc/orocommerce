@@ -38,7 +38,7 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
             }
         }
 
-        throw new \InvalidArgumentException('There is no payment method view for "'.$identifier.'"');
+        throw new \InvalidArgumentException('There is no payment method view for "' . $identifier . '"');
     }
 
     #[\Override]

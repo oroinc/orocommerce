@@ -27,7 +27,8 @@ class NavigationListener
         $rfpItem = MenuUpdateUtils::findMenuItem($event->getMenu(), self::MENU_ITEM_ID);
         if ($rfpItem && $this->frontendHelper->isFrontendRequest()) {
             $isDisplay = false;
-            if ($this->authorizationChecker->isGranted('oro_rfp_frontend_request_view') ||
+            if (
+                $this->authorizationChecker->isGranted('oro_rfp_frontend_request_view') ||
                 $this->featureChecker->isResourceEnabled('oro_rfp_frontend_request_index', 'routes')
             ) {
                 $isDisplay = true;

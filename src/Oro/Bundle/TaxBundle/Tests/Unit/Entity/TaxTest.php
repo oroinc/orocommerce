@@ -8,6 +8,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 class TaxTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
+
     /**
      * Test setters getters
      */

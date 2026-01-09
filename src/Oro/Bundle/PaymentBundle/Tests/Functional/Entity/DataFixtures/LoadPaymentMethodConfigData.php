@@ -45,6 +45,6 @@ class LoadPaymentMethodConfigData extends AbstractFixture implements DependentFi
      */
     protected function getPaymentMethodsConfigsRulesData()
     {
-        return Yaml::parse(file_get_contents(__DIR__.'/data/basic_payment_method_configs.yml'));
+        return Yaml::parse(file_get_contents(__DIR__ . '/data/basic_payment_method_configs.yml'));
     }
 }

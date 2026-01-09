@@ -37,7 +37,9 @@ class CustomerControllerTest extends WebTestCase
         /** @var EnumOptionInterface $internalRating */
         $internalRating = $this->getReference('internal_rating.1 of 5');
         /** @var CustomerTaxCode $customerTaxCode */
-        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
+        $customerTaxCode = $this->getReference(
+            LoadCustomerTaxCodes::REFERENCE_PREFIX . '.' . LoadCustomerTaxCodes::TAX_1
+        );
 
         $this->assertCustomerSave($crawler, self::CUSTOMER_NAME, $parent, $group, $internalRating, $customerTaxCode);
 
@@ -66,7 +68,9 @@ class CustomerControllerTest extends WebTestCase
         $html = $crawler->html();
 
         /** @var CustomerTaxCode $customerTaxCode */
-        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
+        $customerTaxCode = $this->getReference(
+            LoadCustomerTaxCodes::REFERENCE_PREFIX . '.' . LoadCustomerTaxCodes::TAX_1
+        );
 
         self::assertStringContainsString($customerTaxCode->getCode(), $html);
 
@@ -83,7 +87,9 @@ class CustomerControllerTest extends WebTestCase
     public function testTaxCodeViewContainsEntity()
     {
         /** @var CustomerTaxCode $customerTaxCode */
-        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
+        $customerTaxCode = $this->getReference(
+            LoadCustomerTaxCodes::REFERENCE_PREFIX . '.' . LoadCustomerTaxCodes::TAX_1
+        );
 
         $crawler = $this->client->request(
             'GET',
@@ -103,7 +109,9 @@ class CustomerControllerTest extends WebTestCase
     public function testGrid()
     {
         /** @var CustomerTaxCode $customerTaxCode */
-        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
+        $customerTaxCode = $this->getReference(
+            LoadCustomerTaxCodes::REFERENCE_PREFIX . '.' . LoadCustomerTaxCodes::TAX_1
+        );
 
         $response = $this->client->requestGrid(
             'customer-customers-grid',
@@ -125,7 +133,9 @@ class CustomerControllerTest extends WebTestCase
     public function testGridCustomerTaxCodeFallbackToCustomerGroup()
     {
         /** @var CustomerTaxCode $customerTaxCode */
-        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_2);
+        $customerTaxCode = $this->getReference(
+            LoadCustomerTaxCodes::REFERENCE_PREFIX . '.' . LoadCustomerTaxCodes::TAX_2
+        );
 
         /** @var Customer $customer */
         $customer = $this->getReference('customer.level_1.2');
@@ -174,7 +184,9 @@ class CustomerControllerTest extends WebTestCase
         $html = $crawler->html();
 
         /** @var CustomerTaxCode $customerTaxCode */
-        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_2);
+        $customerTaxCode = $this->getReference(
+            LoadCustomerTaxCodes::REFERENCE_PREFIX . '.' . LoadCustomerTaxCodes::TAX_2
+        );
 
         self::assertStringContainsString($customerTaxCode->getCode(), $html);
         self::assertStringContainsString('(Defined for Customer Group)', $html);

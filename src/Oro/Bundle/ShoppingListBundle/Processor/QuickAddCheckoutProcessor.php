@@ -71,7 +71,8 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     #[\Override]
     public function process(array $data, Request $request): ?Response
     {
-        if (empty($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]) ||
+        if (
+            empty($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]) ||
             !\is_array($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
         ) {
             return null;

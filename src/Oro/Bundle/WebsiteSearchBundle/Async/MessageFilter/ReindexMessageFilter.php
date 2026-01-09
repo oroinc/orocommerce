@@ -13,6 +13,7 @@ use Oro\Component\MessageQueue\Client\Message;
 class ReindexMessageFilter implements MessageFilterInterface
 {
     use ContextTrait;
+
     private const NO_GROUPS_KEY = '_';
 
     private string $topic;
@@ -82,7 +83,8 @@ class ReindexMessageFilter implements MessageFilterInterface
     {
         // If full indexation was requested (there is a message without field groups passed) run full reindexation
         // and skip field groups merging
-        if ($fieldGroups
+        if (
+            $fieldGroups
             && !in_array(null, $fieldGroups, true)
             && !in_array([], $fieldGroups, true)
         ) {

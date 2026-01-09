@@ -109,7 +109,8 @@ class PriceListProductPriceType extends AbstractType
             return;
         }
         $oldPrice = $productPrice->getPrice();
-        if ($submittedData['quantity'] != $productPrice->getQuantity()
+        if (
+            $submittedData['quantity'] != $productPrice->getQuantity()
             || ($productPrice->getUnit() && $submittedData['unit'] != $productPrice->getUnit()->getCode())
             || $submittedData['price']['value'] != $oldPrice->getValue()
             || $submittedData['price']['currency'] != $oldPrice->getCurrency()

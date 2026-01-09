@@ -65,7 +65,8 @@ class MethodConfigCollectionSubscriber implements EventSubscriberInterface
 
         $filteredSubmittedData = [];
         foreach ($submittedData as $index => $itemData) {
-            if (array_key_exists('method', $itemData)
+            if (
+                array_key_exists('method', $itemData)
                 && $this->shippingMethodProvider->getShippingMethod($itemData['method']) !== null
             ) {
                 $filteredSubmittedData[$index] = $itemData;

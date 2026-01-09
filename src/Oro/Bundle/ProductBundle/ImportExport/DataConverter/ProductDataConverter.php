@@ -47,7 +47,8 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
     {
         $isAvailable = parent::isFieldAvailableForExport($entityName, $fieldName);
         $attrConfig = $this->fieldHelper->getFieldConfig('attribute', $entityName, $fieldName);
-        if ($isAvailable
+        if (
+            $isAvailable
             && null !== $attrConfig
             && $attrConfig->is('is_attribute')
             && !$this->isAvailableAttribute($attrConfig)

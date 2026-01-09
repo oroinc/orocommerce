@@ -138,7 +138,8 @@ class CategoryHandler implements FormHandlerInterface
              *   - Check that the field is not in the removed products
              *   - Compare the old value and the new value
             */
-            if (($category->getProducts()->contains($product) || in_array($product, $appendProducts))
+            if (
+                ($category->getProducts()->contains($product) || in_array($product, $appendProducts))
                 && !in_array($product, $removeProducts)
                 && $sortDataInputValue !== $product->getCategorySortOrder()
             ) {

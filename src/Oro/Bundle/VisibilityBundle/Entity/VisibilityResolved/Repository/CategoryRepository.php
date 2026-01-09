@@ -185,7 +185,7 @@ class CategoryRepository extends ServiceEntityRepository
         $configFallback = CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->select('COALESCE(cvr.visibility, '. $qb->expr()->literal($configFallback).')')
+        $qb->select('COALESCE(cvr.visibility, ' . $qb->expr()->literal($configFallback) . ')')
             ->from(Category::class, 'category')
             ->leftJoin(
                 CategoryVisibilityResolved::class,

@@ -106,7 +106,8 @@ class RequestWebContentScopeProvider
 
         $criteria = null;
 
-        if ($this->matchedUrlDecisionMaker->matches($request->getPathInfo()) ||
+        if (
+            $this->matchedUrlDecisionMaker->matches($request->getPathInfo()) ||
             $request->attributes->get('exception')?->getStatusCode() === Response::HTTP_NOT_FOUND
         ) {
             $criteria = $this->scopeManager->getCriteria('web_content');

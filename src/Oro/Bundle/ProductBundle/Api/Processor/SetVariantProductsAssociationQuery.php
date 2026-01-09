@@ -27,7 +27,8 @@ class SetVariantProductsAssociationQuery implements ProcessorInterface
 
         $definition = $context->getResult();
         $variantProductsField = $definition->getField('variantProducts');
-        if (null !== $variantProductsField
+        if (
+            null !== $variantProductsField
             && !$variantProductsField->isExcluded()
             && null === $variantProductsField->getAssociationQuery()
         ) {

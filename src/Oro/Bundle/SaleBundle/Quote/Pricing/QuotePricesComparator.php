@@ -77,8 +77,10 @@ class QuotePricesComparator
         $matchingPrice = null;
 
         foreach ($listedPrices as $productPrice) {
-            if ($matchedQuantity <= $quoteProductItem->getQuantity()
-                && $quoteProductItem->getQuantity() >= $productPrice->getQuantity()) {
+            if (
+                $matchedQuantity <= $quoteProductItem->getQuantity()
+                && $quoteProductItem->getQuantity() >= $productPrice->getQuantity()
+            ) {
                 $matchedQuantity = $productPrice->getQuantity();
                 $matchingPrice = $productPrice->getPrice();
             }

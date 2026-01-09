@@ -11,7 +11,7 @@ use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 class TaxAmountProvider
 {
     public function __construct(
-        private TaxProviderRegistry      $taxProviderRegistry,
+        private TaxProviderRegistry $taxProviderRegistry,
         private TaxationSettingsProvider $taxationSettingsProvider
     ) {
     }
@@ -55,8 +55,10 @@ class TaxAmountProvider
 
     public function isTotalIncludedTax(): bool
     {
-        if ($this->taxationSettingsProvider->isProductPricesIncludeTax()
-            && $this->taxationSettingsProvider->isShippingRatesIncludeTax()) {
+        if (
+            $this->taxationSettingsProvider->isProductPricesIncludeTax()
+            && $this->taxationSettingsProvider->isShippingRatesIncludeTax()
+        ) {
             return true;
         }
 

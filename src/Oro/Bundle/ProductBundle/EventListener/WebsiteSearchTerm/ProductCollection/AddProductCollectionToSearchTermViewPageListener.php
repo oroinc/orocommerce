@@ -15,8 +15,10 @@ class AddProductCollectionToSearchTermViewPageListener
     {
         /** @var SearchTerm $searchTerm */
         $searchTerm = $event->getEntity();
-        if ($searchTerm->getActionType() !== 'modify'
-            || $searchTerm->getModifyActionType() !== 'product_collection') {
+        if (
+            $searchTerm->getActionType() !== 'modify'
+            || $searchTerm->getModifyActionType() !== 'product_collection'
+        ) {
             return;
         }
 

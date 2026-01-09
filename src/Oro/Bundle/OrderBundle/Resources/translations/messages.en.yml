@@ -142,7 +142,6 @@ oro:
         total:
             label: Total
         base.label: 'Total In Base Currency'
-        # TODO: remove after resolving https://magecore.atlassian.net/browse/BAP-3940
         shipping_cost_amount.label: 'Shipping Cost Amount'
         shipping_method:
             label: Shipping Method

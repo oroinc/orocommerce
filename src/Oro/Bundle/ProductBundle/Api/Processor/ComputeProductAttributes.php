@@ -142,7 +142,8 @@ class ComputeProductAttributes implements ProcessorInterface
         foreach ($attributeNames as $familyId => $fields) {
             $visibleAttributeNames = [];
             foreach ($fields as $fieldName => [$fieldType, $visible, $targetFieldNames]) {
-                if ($visible
+                if (
+                    $visible
                     || (
                         isset($variantFieldNamesPerFamily[$familyId])
                         && \in_array($fieldName, $variantFieldNamesPerFamily[$familyId], true)
@@ -189,7 +190,8 @@ class ComputeProductAttributes implements ProcessorInterface
                 continue;
             }
             $extendConfig = $this->configManager->getFieldConfig('extend', Product::class, $fieldName);
-            if (!$extendConfig->is('owner', ExtendScope::OWNER_CUSTOM)
+            if (
+                !$extendConfig->is('owner', ExtendScope::OWNER_CUSTOM)
                 || !ExtendHelper::isFieldAccessible($extendConfig)
             ) {
                 continue;

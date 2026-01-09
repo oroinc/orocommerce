@@ -160,7 +160,8 @@ class SlugGenerator
         $existingSlugs = $contentVariant->getSlugs();
 
         foreach ($existingSlugs as $existingSlug) {
-            if ($slugUrl->getUrl() === $existingSlug->getUrl()
+            if (
+                $slugUrl->getUrl() === $existingSlug->getUrl()
                 && $slugUrl->getLocalization() === $existingSlug->getLocalization()
             ) {
                 return $existingSlug;
@@ -325,7 +326,8 @@ class SlugGenerator
     protected function getExistingLocalizedUrl(SlugUrl $slugUrl, ContentNode $contentNode)
     {
         foreach ($contentNode->getLocalizedUrls() as $localizedUrl) {
-            if ($slugUrl->getUrl() === $localizedUrl->getText()
+            if (
+                $slugUrl->getUrl() === $localizedUrl->getText()
                 && $slugUrl->getLocalization() === $localizedUrl->getLocalization()
             ) {
                 return $localizedUrl;

@@ -43,7 +43,8 @@ trait RedirectLocalizationControllerTrait
             if (isset($param['_route'], $param['_route_params'])) {
                 $contextUrl = $this->generateUrl($param['_route'], $param['_route_params']);
 
-                if (isset($routeParams['_resolved_slug_url'], $param['_resolved_slug_url'])
+                if (
+                    isset($routeParams['_resolved_slug_url'], $param['_resolved_slug_url'])
                     && $routeParams['_resolved_slug_url'] !== $url
                     && $param['_resolved_slug_url'] !== $contextUrl
                 ) {

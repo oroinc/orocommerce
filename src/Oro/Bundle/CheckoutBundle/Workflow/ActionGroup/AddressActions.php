@@ -120,7 +120,8 @@ class AddressActions implements AddressActionsInterface
 
         $customerUserShippingAddress = null;
         if ($checkout->isSaveShippingAddress()) {
-            if ($customerUserBillingAddress
+            if (
+                $customerUserBillingAddress
                 && $checkout->isShipToBillingAddress()
                 && $checkout->isSaveBillingAddress()
             ) {
@@ -159,7 +160,8 @@ class AddressActions implements AddressActionsInterface
         string $addressTypeName,
         string $aclResource
     ): ?CustomerUserAddress {
-        if ($orderAddress->getCustomerAddress()
+        if (
+            $orderAddress->getCustomerAddress()
             || $orderAddress->getCustomerUserAddress()
             || !$this->isGranted($aclResource)
         ) {

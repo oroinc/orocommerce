@@ -9,6 +9,7 @@ use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProviderInterface;
 use Oro\Bundle\CatalogBundle\Twig\CategoryImageExtension;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class CategoryImageExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -16,11 +17,8 @@ class CategoryImageExtensionTest extends \PHPUnit\Framework\TestCase
 
     private const PLACEHOLDER = 'placeholder/image.png';
 
-    private AttachmentManager|\PHPUnit\Framework\MockObject\MockObject $attachmentManager;
-
-    private PictureSourcesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-        $pictureSourcesProvider;
-
+    private AttachmentManager|MockObject $attachmentManager;
+    private PictureSourcesProviderInterface|MockObject $pictureSourcesProvider;
     private CategoryImageExtension $extension;
 
     #[\Override]

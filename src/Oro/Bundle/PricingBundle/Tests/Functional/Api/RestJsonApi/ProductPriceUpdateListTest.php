@@ -77,7 +77,8 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
         $response = $this->cget(['entity' => 'productprices'], ['filter[priceList]' => '@price_list_5->id']);
         // we cannot rely to order of returned data due to product price ID is UUID
         $responseContent = self::jsonToArray($response->getContent());
-        if (isset($responseContent['data'][0]['attributes']['quantity'])
+        if (
+            isset($responseContent['data'][0]['attributes']['quantity'])
             && count($responseContent['data']) === 2
             && $responseContent['data'][0]['attributes']['quantity'] !== 250
         ) {
@@ -146,7 +147,8 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
         $response = $this->cget(['entity' => 'productprices'], ['filter[priceList]' => (string)$priceList1Id]);
         // we cannot rely to order of returned data due to product price ID is UUID
         $responseContent = self::jsonToArray($response->getContent());
-        if (isset($responseContent['data'][0]['attributes']['quantity'])
+        if (
+            isset($responseContent['data'][0]['attributes']['quantity'])
             && count($responseContent['data']) === 2
             && $responseContent['data'][0]['attributes']['quantity'] !== 250
         ) {
@@ -233,7 +235,8 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
         );
         // we cannot rely to order of returned data due to product price ID is UUID
         $responseContent = self::jsonToArray($response->getContent());
-        if (isset($responseContent['data'][0]['attributes']['quantity'])
+        if (
+            isset($responseContent['data'][0]['attributes']['quantity'])
             && count($responseContent['data']) === 2
             && $responseContent['data'][0]['attributes']['quantity'] !== 250
         ) {

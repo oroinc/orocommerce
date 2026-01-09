@@ -85,8 +85,10 @@ class WebCatalogEntityIndexerListener
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event): void
     {
-        if (!$this->hasContextFieldGroup($event->getContext(), 'main')
-            && !$this->hasContextFieldGroup($event->getContext(), 'collection_sort_order')) {
+        if (
+            !$this->hasContextFieldGroup($event->getContext(), 'main')
+            && !$this->hasContextFieldGroup($event->getContext(), 'collection_sort_order')
+        ) {
             return;
         }
 
@@ -146,7 +148,8 @@ class WebCatalogEntityIndexerListener
     ): void {
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 
-        if ($this->hasContextFieldGroup($event->getContext(), 'main') &&
+        if (
+            $this->hasContextFieldGroup($event->getContext(), 'main') &&
             $this->hasContextFieldGroup($event->getContext(), 'collection_sort_order')
         ) {
             $this->addInformationToIndex($event, $localizations, $relations, $nodes, true);

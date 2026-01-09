@@ -28,7 +28,8 @@ class DimensionsTransformer implements DataTransformerInterface
     #[\Override]
     public function reverseTransform($dimensions): mixed
     {
-        if (!$dimensions instanceof Dimensions ||
+        if (
+            !$dimensions instanceof Dimensions ||
             !$dimensions->getValue() instanceof DimensionsValue ||
             !$dimensions->getUnit() ||
             $dimensions->getValue()->isEmpty() ||

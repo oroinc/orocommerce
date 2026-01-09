@@ -55,8 +55,10 @@ class FeaturedCategoriesProvider
             $result = [];
             $categories = $this->categoryTreeProvider->getCategories($user);
             foreach ($categories as $category) {
-                if ($category->getLevel() !== 0
-                    && (!$categoryIds || in_array($category->getId(), $categoryIds, true))) {
+                if (
+                    $category->getLevel() !== 0
+                    && (!$categoryIds || in_array($category->getId(), $categoryIds, true))
+                ) {
                     $result[] = [
                         'id' => $category->getId(),
                         'title' => (string) $this->localizationHelper

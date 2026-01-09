@@ -57,7 +57,8 @@ class CustomerCategoryResolvedCacheBuilder extends AbstractCategoryResolvedCache
 
         $hasCustomerCategoryVisibilityResolved = $repository->hasEntity($where);
 
-        if (!$hasCustomerCategoryVisibilityResolved
+        if (
+            !$hasCustomerCategoryVisibilityResolved
             && $selectedVisibility !== CustomerCategoryVisibility::CUSTOMER_GROUP
         ) {
             $insert = true;

@@ -58,7 +58,8 @@ class ProductDataConverterEventListener
 
         $clearedAttributes = [];
         foreach ($this->attributeManager->getActiveAttributesByClass(Product::class) as $attribute) {
-            if (!isset($data[$attribute->getFieldName()]) ||
+            if (
+                !isset($data[$attribute->getFieldName()]) ||
                 $this->isEmptyValue($data[$attribute->getFieldName()]) ||
                 $this->attributeManager->getAttributeByFamilyAndName($attributeFamily, $attribute->getFieldName())
             ) {

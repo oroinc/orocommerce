@@ -54,8 +54,9 @@ class PayflowExpressCheckoutListener
 
         $eventData = $event->getData();
 
-        // TODO: BB-3693 Will use typed Response
-        if (!$paymentTransaction || !isset($eventData['PayerID'], $eventData['token']) ||
+        // Will use typed Response after BB-3693
+        if (
+            !$paymentTransaction || !isset($eventData['PayerID'], $eventData['token']) ||
             $eventData['token'] !== $paymentTransaction->getReference()
         ) {
             return;

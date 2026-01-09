@@ -37,7 +37,7 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
 
     protected function getShippingRuleData(): array
     {
-        return Yaml::parse(file_get_contents(__DIR__.'/data/shipping_methods_configs_rules_with_configs.yml'));
+        return Yaml::parse(file_get_contents(__DIR__ . '/data/shipping_methods_configs_rules_with_configs.yml'));
     }
 
     private function loadShippingRule(string $reference, array $data, ObjectManager $manager): void
@@ -97,7 +97,7 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
             if (array_key_exists('region', $destination)) {
                 /** @var Region $region */
                 $region = $manager->getRepository(Region::class)
-                    ->findOneBy(['combinedCode' => $destination['country'].'-'.$destination['region']]);
+                    ->findOneBy(['combinedCode' => $destination['country'] . '-' . $destination['region']]);
                 $shippingRuleDestination->setRegion($region);
             }
 

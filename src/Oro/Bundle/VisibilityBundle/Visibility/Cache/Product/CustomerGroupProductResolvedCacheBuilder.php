@@ -55,7 +55,8 @@ class CustomerGroupProductResolvedCacheBuilder extends AbstractProductResolvedCa
         $er = $this->doctrine->getRepository(CustomerGroupProductVisibilityResolved::class);
         $hasCustomerGroupProductVisibilityResolved = $er->hasEntity($where);
 
-        if (!$hasCustomerGroupProductVisibilityResolved
+        if (
+            !$hasCustomerGroupProductVisibilityResolved
             && $selectedVisibility !== CustomerGroupProductVisibility::CURRENT_PRODUCT
         ) {
             $insert = true;

@@ -63,8 +63,10 @@ class RefundedPaymentStatusCalculator implements PaymentStatusCalculatorInterfac
                 continue;
             }
 
-            if ($paymentTransaction->isSuccessful() &&
-                $paymentTransaction->getAction() === PaymentMethodInterface::REFUND) {
+            if (
+                $paymentTransaction->isSuccessful() &&
+                $paymentTransaction->getAction() === PaymentMethodInterface::REFUND
+            ) {
                 $refundTransactions[] = $paymentTransaction;
             }
         }

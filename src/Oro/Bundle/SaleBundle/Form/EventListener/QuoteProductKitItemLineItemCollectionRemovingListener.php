@@ -41,7 +41,8 @@ class QuoteProductKitItemLineItemCollectionRemovingListener implements EventSubs
 
         foreach ($collection as $key => $kitItemLineItem) {
             // Removes kit item line items that are not represented in a form.
-            if (!$form->has((string)$key)
+            if (
+                !$form->has((string)$key)
                 // Removes kit item line item that does not have a kit item specified.
                 || $kitItemLineItem->getKitItemId() === null
                 || ($kitItemLineItem->isOptional() === true

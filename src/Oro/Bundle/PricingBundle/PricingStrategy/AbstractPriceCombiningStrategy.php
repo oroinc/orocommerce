@@ -59,7 +59,8 @@ abstract class AbstractPriceCombiningStrategy implements PriceCombiningStrategyI
 
         // $fallbackCpl var assignment done within `if` statement to eliminate fallback CPL fetch
         // when $products is not empty.
-        if ($this->isFallbackMergeAllowed($priceListsRelations)
+        if (
+            $this->isFallbackMergeAllowed($priceListsRelations)
             && ($fallbackCpl = $this->getFallbackCombinedPriceList($combinedPriceList))
         ) {
             $this->combinePricesUsingPrecalculatedFallback(

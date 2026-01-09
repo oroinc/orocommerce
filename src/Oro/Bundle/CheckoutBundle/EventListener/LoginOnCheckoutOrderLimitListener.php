@@ -51,7 +51,8 @@ class LoginOnCheckoutOrderLimitListener
             return;
         }
 
-        if (!$this->orderLimitProvider->isMinimumOrderAmountMet($sourceEntity)
+        if (
+            !$this->orderLimitProvider->isMinimumOrderAmountMet($sourceEntity)
             || !$this->orderLimitProvider->isMaximumOrderAmountMet($sourceEntity)
         ) {
             $event->stopPropagation();

@@ -133,7 +133,7 @@ class ConsentContentNodeValidatorTest extends \PHPUnit\Framework\TestCase
                 'isContentNodeResolved' => true,
                 'contentVariant' => $contentVariantWithIncorrectType,
                 'expectedError' => true,
-                'errorMsg' => "Expected 'ContentVariant' with type 'cms_page' but got 'incorrect_type' ".
+                'errorMsg' => "Expected 'ContentVariant' with type 'cms_page' but got 'incorrect_type' " .
                     "in Consent with id '1' with 'Scope' with id '123'!",
                 'expectedResult' => false
             ],

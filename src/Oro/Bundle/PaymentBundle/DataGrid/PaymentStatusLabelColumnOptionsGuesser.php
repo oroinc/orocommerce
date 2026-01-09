@@ -26,8 +26,10 @@ class PaymentStatusLabelColumnOptionsGuesser extends AbstractColumnOptionsGuesse
     #[\Override]
     public function guessFormatter($class, $property, $type): ?ColumnGuess
     {
-        if (!is_a($class, $this->entityClass, true) ||
-            $property !== PaymentStatusLabelVirtualFieldProvider::VIRTUAL_FIELD_NAME) {
+        if (
+            !is_a($class, $this->entityClass, true) ||
+            $property !== PaymentStatusLabelVirtualFieldProvider::VIRTUAL_FIELD_NAME
+        ) {
             return null;
         }
 
@@ -43,8 +45,10 @@ class PaymentStatusLabelColumnOptionsGuesser extends AbstractColumnOptionsGuesse
     #[\Override]
     public function guessSorter($class, $property, $type): ?ColumnGuess
     {
-        if (!is_a($class, $this->entityClass, true) ||
-            $property !== PaymentStatusLabelVirtualFieldProvider::VIRTUAL_FIELD_NAME) {
+        if (
+            !is_a($class, $this->entityClass, true) ||
+            $property !== PaymentStatusLabelVirtualFieldProvider::VIRTUAL_FIELD_NAME
+        ) {
             return null;
         }
 
@@ -56,8 +60,10 @@ class PaymentStatusLabelColumnOptionsGuesser extends AbstractColumnOptionsGuesse
     #[\Override]
     public function guessFilter($class, $property, $type): ?ColumnGuess
     {
-        if (!is_a($class, $this->entityClass, true) ||
-            $property !== PaymentStatusLabelVirtualFieldProvider::VIRTUAL_FIELD_NAME) {
+        if (
+            !is_a($class, $this->entityClass, true) ||
+            $property !== PaymentStatusLabelVirtualFieldProvider::VIRTUAL_FIELD_NAME
+        ) {
             return null;
         }
 

@@ -27,7 +27,9 @@ class CustomerGroupControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var CustomerTaxCode $customerTaxCode */
-        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
+        $customerTaxCode = $this->getReference(
+            LoadCustomerTaxCodes::REFERENCE_PREFIX . '.' . LoadCustomerTaxCodes::TAX_1
+        );
 
         $form = $crawler->selectButton('Save and Close')->form(
             [
@@ -74,7 +76,9 @@ class CustomerGroupControllerTest extends WebTestCase
         $html = $crawler->html();
 
         /** @var CustomerTaxCode $customerTaxCode */
-        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
+        $customerTaxCode = $this->getReference(
+            LoadCustomerTaxCodes::REFERENCE_PREFIX . '.' . LoadCustomerTaxCodes::TAX_1
+        );
 
         self::assertStringContainsString($customerTaxCode->getCode(), $html);
     }
@@ -85,7 +89,9 @@ class CustomerGroupControllerTest extends WebTestCase
     public function testTaxCodeViewContainsEntity()
     {
         /** @var CustomerTaxCode $customerTaxCode */
-        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
+        $customerTaxCode = $this->getReference(
+            LoadCustomerTaxCodes::REFERENCE_PREFIX . '.' . LoadCustomerTaxCodes::TAX_1
+        );
 
         $crawler = $this->client->request(
             'GET',
@@ -105,7 +111,9 @@ class CustomerGroupControllerTest extends WebTestCase
     public function testGrid()
     {
         /** @var CustomerTaxCode $customerTaxCode */
-        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
+        $customerTaxCode = $this->getReference(
+            LoadCustomerTaxCodes::REFERENCE_PREFIX . '.' . LoadCustomerTaxCodes::TAX_1
+        );
 
         $response = $this->client->requestGrid(
             'customer-groups-grid',

@@ -125,7 +125,7 @@ class InlineEditProductControllerTest extends WebTestCase
                 'PATCH',
                 $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $product1->getId()]),
                 [
-                    'productName' => '<a href="#">'. self::NEW_PRODUCT_NAME . '</a>',
+                    'productName' => '<a href="#">' . self::NEW_PRODUCT_NAME . '</a>',
                     'createRedirect' => true,
                 ]
             );

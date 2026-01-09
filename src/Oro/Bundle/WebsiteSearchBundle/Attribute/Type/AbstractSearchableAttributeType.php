@@ -66,10 +66,10 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
 
         if (!$names) {
             throw new \LogicException('Main filterable field name `SearchAttributeTypeInterface::VALUE_MAIN` is '
-                .' required for filtering! Either provide it by overriding '
-                .' `AbstractSearchableAttributeType::getFilterableFieldNameMain()` or make your own implementation of'
-                .' `SearchAttributeTypeInterface::getFilterableFieldNames()` to avoid this exception if filtering '
-                .' is not supported by your attribute type.');
+                . ' required for filtering! Either provide it by overriding '
+                . ' `AbstractSearchableAttributeType::getFilterableFieldNameMain()` or make your own implementation of'
+                . ' `SearchAttributeTypeInterface::getFilterableFieldNames()` to avoid this exception if filtering '
+                . ' is not supported by your attribute type.');
         }
 
         return $names;
@@ -102,10 +102,10 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
 
         if (!$types) {
             throw new \LogicException('Main filter storage field type `SearchAttributeTypeInterface::VALUE_MAIN` is '
-                .' required for filtering! Either provide it by overriding '
-                .' `AbstractSearchableAttributeType::getFilterStorageFieldTypeMain()` or make your own implementation'
-                .' of `SearchAttributeTypeInterface::getFilterStorageFieldTypes()` to avoid this exception if '
-                .' filtering is not supported by your attribute type.');
+                . ' required for filtering! Either provide it by overriding '
+                . ' `AbstractSearchableAttributeType::getFilterStorageFieldTypeMain()` or make your own implementation'
+                . ' of `SearchAttributeTypeInterface::getFilterStorageFieldTypes()` to avoid this exception if '
+                . ' filtering is not supported by your attribute type.');
         }
 
         return $types;

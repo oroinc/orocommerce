@@ -53,7 +53,7 @@ class LoadQuoteProductOfferData extends AbstractFixture implements DependentFixt
             $quoteProduct->setProduct($this->getReference($item['product']));
             $quoteProduct->addQuoteProductOffer($offer);
             $manager->persist($quoteProduct);
-            $this->addReference('quote_product_'.$item['product'], $quoteProduct);
+            $this->addReference('quote_product_' . $item['product'], $quoteProduct);
 
             $manager->persist($offer);
             $this->setReference($key, $offer);

@@ -128,7 +128,8 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
         $request = $this->requestStack->getCurrentRequest();
         $requestProductData = $request->request->all('oro_product');
 
-        if ($requestProductData
+        if (
+            $requestProductData
             && isset($requestProductData['primaryUnitPrecision']['unit'])
         ) {
             $unitCode = $requestProductData['primaryUnitPrecision']['unit'];
@@ -154,7 +155,8 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
 
     private function ensureProductSkuInPrice(PriceAttributeProductPrice $price): void
     {
-        if (null === $price->getProductSku()
+        if (
+            null === $price->getProductSku()
             && $price->getProduct()?->getSku()
         ) {
             $price->setProduct($price->getProduct());

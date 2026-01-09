@@ -33,8 +33,10 @@ class QueryExecutorProvider implements QueryExecutorProviderInterface
     #[\Override]
     public function getQueryExecutor(): ShardQueryExecutorInterface
     {
-        if ($this->allowInsertFromSelectExecutorUsage
-            && $this->registry->getConnection()->getDatabasePlatform() instanceof PostgreSQL94Platform) {
+        if (
+            $this->allowInsertFromSelectExecutorUsage
+            && $this->registry->getConnection()->getDatabasePlatform() instanceof PostgreSQL94Platform
+        ) {
             return $this->insertFromSelectExecutor;
         }
 

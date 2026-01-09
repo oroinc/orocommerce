@@ -103,7 +103,7 @@ class CombineSingleCombinedPriceListPricesTopic extends AbstractTopic
                         return $this->combinedPriceListProvider->getCombinedPriceListByCollectionInformation(
                             $options['collection']
                         );
-                    } catch (RetryableException|ForeignKeyConstraintViolationException $e) {
+                    } catch (RetryableException | ForeignKeyConstraintViolationException $e) {
                         return false;
                     } catch (EntityNotFoundException $e) {
                         // CPL cannot be retrieved if any of price lists in the chain do not exist.

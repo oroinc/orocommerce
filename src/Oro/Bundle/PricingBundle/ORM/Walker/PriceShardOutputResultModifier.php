@@ -149,8 +149,10 @@ class PriceShardOutputResultModifier extends AbstractOutputResultModifier
     protected function getShardManager()
     {
         $query = $this->getQuery();
-        if (!$query->hasHint(self::ORO_PRICING_SHARD_MANAGER)
-            || !$query->getHint(self::ORO_PRICING_SHARD_MANAGER) instanceof ShardManager) {
+        if (
+            !$query->hasHint(self::ORO_PRICING_SHARD_MANAGER)
+            || !$query->getHint(self::ORO_PRICING_SHARD_MANAGER) instanceof ShardManager
+        ) {
             throw new \RuntimeException('Shard manager was not found');
         }
 

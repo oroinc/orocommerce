@@ -59,7 +59,8 @@ class PaymentTermProvider implements PaymentTermProviderInterface
             if ($token->getUser() instanceof CustomerUser) {
                 $user = $token->getUser();
                 $paymentTermEvent->setPaymentTerm($this->getPaymentTerm($user->getCustomer()));
-            } elseif ($token instanceof AnonymousCustomerUserToken
+            } elseif (
+                $token instanceof AnonymousCustomerUserToken
                 && $token->getVisitor()->getCustomerUser()
                 && $token->getVisitor()->getCustomerUser()->getCustomer()
             ) {

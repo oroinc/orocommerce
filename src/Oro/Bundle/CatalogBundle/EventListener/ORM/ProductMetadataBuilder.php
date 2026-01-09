@@ -25,7 +25,7 @@ class ProductMetadataBuilder implements MetadataBuilderInterface
     #[\Override]
     public function build(ClassMetadataBuilder $metadataBuilder, ConfigInterface $extendConfig)
     {
-        //TODO: should be removed after BAP-16101
+        // May be removed after BAP-16101
         $metadata = $metadataBuilder->getClassMetadata();
         if (!$metadata->hasAssociation('category')) {
             return;

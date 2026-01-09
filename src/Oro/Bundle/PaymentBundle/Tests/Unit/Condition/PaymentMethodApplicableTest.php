@@ -116,7 +116,7 @@ class PaymentMethodApplicableTest extends \PHPUnit\Framework\TestCase
         $this->condition->initialize(['payment_method' => self::METHOD, 'context' => new \stdClass()]);
         $result = $this->condition->toArray();
 
-        $key = '@'.PaymentMethodApplicable::NAME;
+        $key = '@' . PaymentMethodApplicable::NAME;
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey($key, $result);

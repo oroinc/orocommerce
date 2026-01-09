@@ -130,8 +130,10 @@ class CombinedPriceListActivationPlanBuilder
         $entities = [];
         $rawRules = $this->schedulerResolver->mergeSchedule($priceListSchedules, $priceListRelations);
         foreach ($rawRules as $ruleData) {
-            if ($ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY] !== null
-                && $now > $ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY]) {
+            if (
+                $ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY] !== null
+                && $now > $ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY]
+            ) {
                 //rule expired already, no need to add it to activation plan
                 continue;
             }

@@ -19,7 +19,8 @@ class UpdateProductImageTypeTable implements Migration
         $table = $schema->getTable(self::PRODUCT_IMAGE_TYPE_TABLE);
 
         foreach ($table->getForeignKeys() as $foreignKey) {
-            if ($foreignKey->getForeignTableName() === self::PRODUCT_IMAGE_TABLE &&
+            if (
+                $foreignKey->getForeignTableName() === self::PRODUCT_IMAGE_TABLE &&
                 $foreignKey->getLocalColumns() === [self::LOCAL_COLUMN]
             ) {
                 $table->removeForeignKey($foreignKey->getName());

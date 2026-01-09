@@ -42,10 +42,12 @@ class ZipCodeMatcherTest extends WebTestCase
         $address = $this->createAddress($postalCode, $country, $region, $regionText);
 
         /** @var TaxCodeInterface $productTaxCode */
-        $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX.'.'.LoadProductTaxCodes::TAX_1);
+        $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1);
 
         /** @var TaxCodeInterface $customerTaxCode */
-        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
+        $customerTaxCode = $this->getReference(
+            LoadCustomerTaxCodes::REFERENCE_PREFIX . '.' . LoadCustomerTaxCodes::TAX_1
+        );
 
         $zipCodeMatcher = $this->getContainer()->get('oro_tax.matcher.zip_code_matcher');
         /** @var TaxRule[] $rules */

@@ -8,6 +8,8 @@ use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceS
 
 /**
  * FedEx rate SOAP response factory.
+ *
+ * phpcs:ignore
  * @deprecated. Will be removed when SOAP support will be dropped by FedEx.
  */
 class FedexRateServiceResponseSoapFactory implements FedexRateServiceResponseFactoryInterface

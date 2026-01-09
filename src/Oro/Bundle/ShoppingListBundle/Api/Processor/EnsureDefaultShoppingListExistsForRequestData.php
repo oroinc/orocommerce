@@ -42,7 +42,8 @@ class EnsureDefaultShoppingListExistsForRequestData implements ProcessorInterfac
             if (!str_starts_with($path, $requestDataPrefix)) {
                 continue;
             }
-            if (is_a($identifier->getEntityClass(), ShoppingList::class, true)
+            if (
+                is_a($identifier->getEntityClass(), ShoppingList::class, true)
                 && 'default' === $identifier->getValue()
             ) {
                 $path = substr($path, \strlen($requestDataPrefix));

@@ -119,12 +119,15 @@ class SlugifyEntityHelper
         AbstractLocalizedFallbackValue $localizedSource
     ): ?AbstractLocalizedFallbackValue {
         foreach ($localizedSlugs as $localizedSlug) {
-            if (null === $localizedSource->getLocalization() &&
-                null === $localizedSlug->getLocalization()) {
+            if (
+                null === $localizedSource->getLocalization() &&
+                null === $localizedSlug->getLocalization()
+            ) {
                 return $localizedSlug;
             }
 
-            if ($localizedSource->getLocalization() &&
+            if (
+                $localizedSource->getLocalization() &&
                 $localizedSlug->getLocalization() &&
                 $localizedSource->getLocalization()->getName() === $localizedSlug->getLocalization()->getName()
             ) {

@@ -65,7 +65,8 @@ class CouponEditMassActionHandler extends AbstractCouponMassActionHandler
         if (!$this->formData) {
             $requestData = $args->getData();
 
-            if (!array_key_exists(BaseCouponType::NAME, $requestData)
+            if (
+                !array_key_exists(BaseCouponType::NAME, $requestData)
                 || !is_array($requestData[BaseCouponType::NAME])
             ) {
                 throw new LogicException('Required array with form data not found');

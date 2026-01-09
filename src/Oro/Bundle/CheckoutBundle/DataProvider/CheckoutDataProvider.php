@@ -167,7 +167,8 @@ class CheckoutDataProvider implements CheckoutDataProviderInterface
                 continue;
             }
 
-            if ($lineItem->getProduct()
+            if (
+                $lineItem->getProduct()
                 && (
                     (!$lineItem->getPrice() && !$lineItem->isPriceFixed())
                     // We should get prices for Product Kits even if price is fixed,

@@ -72,8 +72,10 @@ class DatagridLineItemsDataPromotionsListener
             }
 
             $lineItemData = $event->getDataForLineItem($lineItemId);
-            if (empty($lineItemData[DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE])
-                || empty($lineItemData[DatagridLineItemsDataPricingListener::CURRENCY])) {
+            if (
+                empty($lineItemData[DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE])
+                || empty($lineItemData[DatagridLineItemsDataPricingListener::CURRENCY])
+            ) {
                 $event->addDataForLineItem($lineItemId, [
                     self::DISCOUNT_VALUE => 0.0,
                     self::DISCOUNT => '',

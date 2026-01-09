@@ -156,8 +156,8 @@ class CustomerViewListenerTest extends TestCase
                             'subblocks' => [
                                 [
                                     'data' => [
-                                        'KSKU-2'.
-                                        '_null_'.
+                                        'KSKU-2' .
+                                        '_null_' .
                                         'oro.product.kit_shipping_calculation_method.choices.kit_shipping_all'
                                     ]
                                 ]
@@ -182,8 +182,8 @@ class CustomerViewListenerTest extends TestCase
                             'subblocks' => [
                                 [
                                     'data' => [
-                                        'KSKU-3'.
-                                        '_null_'.
+                                        'KSKU-3' .
+                                        '_null_' .
                                         'oro.product.kit_shipping_calculation_method.choices.kit_shipping_product'
                                     ]
                                 ]
@@ -208,8 +208,8 @@ class CustomerViewListenerTest extends TestCase
                             'subblocks' => [
                                 [
                                     'data' => [
-                                        'KSKU-4'.
-                                        '_null_'.
+                                        'KSKU-4' .
+                                        '_null_' .
                                         'oro.product.kit_shipping_calculation_method.choices.kit_shipping_items'
                                     ]
                                 ]

@@ -164,7 +164,8 @@ class WYSIWYGFieldsProvider
         }
 
         $anotherWysiwygAdditionalField = $wysiwygFieldName . $this->camelize($wysiwygAdditionalFieldSuffix);
-        if ($anotherWysiwygAdditionalField !== $wysiwygAdditionalField
+        if (
+            $anotherWysiwygAdditionalField !== $wysiwygAdditionalField
             && $this->isWysiwygAdditionalField($metadata, $anotherWysiwygAdditionalField, $wysiwygAdditionalFieldType)
         ) {
             return $anotherWysiwygAdditionalField;

@@ -47,7 +47,7 @@ class VisibilityFormFieldDataProvider
      */
     public function findFormFieldData($form, $field)
     {
-        $visibilityClassName = $form->getConfig()->getOption($field.'Class');
+        $visibilityClassName = $form->getConfig()->getOption($field . 'Class');
         /** @var VisibilityRepositoryInterface $repository */
         $type = $this->getVisibilityScopeType($form, $field);
         $criteria = $this->formScopeCriteriaResolver->resolve($form->get($field), $type);
@@ -78,9 +78,10 @@ class VisibilityFormFieldDataProvider
     {
         $config = $form->getConfig();
 
-        $visibilityClassName = $config->getOption($field.'Class');
+        $visibilityClassName = $config->getOption($field . 'Class');
 
-        if ($config->hasOption(FormScopeCriteriaResolver::SCOPE)
+        if (
+            $config->hasOption(FormScopeCriteriaResolver::SCOPE)
             && null !== $config->getOption(FormScopeCriteriaResolver::SCOPE)
         ) {
             $rootScope = $config->getOption(FormScopeCriteriaResolver::SCOPE);

@@ -30,7 +30,8 @@ class InventoryStatusesStrategyHelper extends AbstractInventoryLevelStrategyHelp
             return null;
         }
 
-        if (!empty($product->getInventoryStatus())
+        if (
+            !empty($product->getInventoryStatus())
             && !$this->isInventoryStatusConsistent($product->getSku(), $product->getInventoryStatus())
         ) {
             $this->addError('oro.inventory.import.error.inventory_status');
@@ -81,7 +82,8 @@ class InventoryStatusesStrategyHelper extends AbstractInventoryLevelStrategyHelp
             return true;
         }
 
-        if (!empty($inventoryStatusName)
+        if (
+            !empty($inventoryStatusName)
             && false === array_search($inventoryStatusName, $this->inventoryStatusCache[$productSku])
         ) {
             return false;

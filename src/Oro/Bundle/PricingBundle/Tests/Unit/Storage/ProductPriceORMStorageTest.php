@@ -17,18 +17,15 @@ use Oro\Bundle\PricingBundle\Storage\ProductPriceORMStorage;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
 {
-    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry;
-
-    private ShardManager|\PHPUnit\Framework\MockObject\MockObject  $shardManager;
-
-    private FlatPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject $priceListTreeHandler;
-
+    private ManagerRegistry|MockObject $registry;
+    private ShardManager|MockObject $shardManager;
+    private FlatPriceListTreeHandler|MockObject $priceListTreeHandler;
     private ProductPriceORMStorage $storage;
-
-    private FeatureChecker|FlatPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject $featureChecker;
+    private FeatureChecker|FlatPriceListTreeHandler|MockObject $featureChecker;
 
     #[\Override]
     protected function setUp(): void

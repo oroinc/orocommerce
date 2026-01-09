@@ -199,7 +199,8 @@ class LexemeCircularReferenceValidator extends ConstraintValidator
     {
         $expressions = [];
         foreach ($properties as $property) {
-            if ((($expression = $this->getFieldValue($entity, $property)) !== null) &&
+            if (
+                (($expression = $this->getFieldValue($entity, $property)) !== null) &&
                 (!empty($expression))
             ) {
                 $expressions[] = $expression;

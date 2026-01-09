@@ -34,7 +34,7 @@ class LoadPaymentMethodsConfigsRuleDestinationData extends AbstractFixture imple
 
             /** @var Region $region */
             $region = $manager->getRepository(Region::class)
-                ->findOneBy(['combinedCode' => $data['iso2_country_code'].'-'.$data['region_code']]);
+                ->findOneBy(['combinedCode' => $data['iso2_country_code'] . '-' . $data['region_code']]);
 
             /** @var PaymentMethodsConfigsRule $configsRule */
             $configsRule = $this->getReference($data['payment_methods_configs_rule_reference']);
@@ -68,6 +68,6 @@ class LoadPaymentMethodsConfigsRuleDestinationData extends AbstractFixture imple
      */
     protected function getPaymentMethodsConfigsRulesData()
     {
-        return Yaml::parse(file_get_contents(__DIR__.'/data/basic_payment_methods_configs_rules_destinations.yml'));
+        return Yaml::parse(file_get_contents(__DIR__ . '/data/basic_payment_methods_configs_rules_destinations.yml'));
     }
 }

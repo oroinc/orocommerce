@@ -107,8 +107,10 @@ class PaymentMethodsConfigsRuleType extends AbstractType
 
         /** @var PaymentMethodInterface|PaymentMethodGroupAwareInterface $paymentMethod */
         foreach ($this->paymentMethodProvider->getPaymentMethods() as $paymentMethod) {
-            if ($paymentMethod instanceof PaymentMethodGroupAwareInterface &&
-                !$paymentMethod->isApplicableForGroup($paymentMethodGroup)) {
+            if (
+                $paymentMethod instanceof PaymentMethodGroupAwareInterface &&
+                !$paymentMethod->isApplicableForGroup($paymentMethodGroup)
+            ) {
                 continue;
             }
 

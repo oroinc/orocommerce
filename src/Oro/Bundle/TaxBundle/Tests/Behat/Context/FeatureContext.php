@@ -23,7 +23,7 @@ class FeatureContext extends OroFeatureContext
         $this->thereIsUseAsBaseByDefaultInTheSystemConfiguration(TaxationSettingsProvider::USE_AS_BASE_DESTINATION);
     }
 
-    private function thereIsUseAsBaseByDefaultInTheSystemConfiguration(string  $value): void
+    private function thereIsUseAsBaseByDefaultInTheSystemConfiguration(string $value): void
     {
         $configManager = $this->getAppContainer()->get('oro_config.global');
         $configManager->set('oro_tax.use_as_base_by_default', $value);

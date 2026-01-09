@@ -44,7 +44,7 @@ abstract class AbstractSurchargeListener
             $subtotals = [$subtotals];
         }
 
-        // TODO: BB-3274 Need to check and convert currency for subtotals
+        // Currency conversion is not implemented (BB-3274); assuming that all subtotals are in the same currency.
         $amount = 0;
         foreach ($subtotals as $subtotal) {
             if ($subtotal->getOperation() === Subtotal::OPERATION_ADD) {

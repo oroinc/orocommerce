@@ -29,7 +29,7 @@ class RestrictSitemapCmsPageByUrlSlugsListenerTest extends WebTestCase
             ->getRepository(Page::class)
             ->createQueryBuilder(UrlItemsProvider::ENTITY_ALIAS);
 
-        $qb->select(UrlItemsProvider::ENTITY_ALIAS. '.id');
+        $qb->select(UrlItemsProvider::ENTITY_ALIAS . '.id');
 
         $listener = new RestrictSitemapCmsPageByUrlSlugsListener();
         $listener->restrictQueryBuilder(new RestrictSitemapEntitiesEvent($qb, time()));

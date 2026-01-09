@@ -101,7 +101,8 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
     private function collectProductIds($entities, array &$productIds)
     {
         foreach ($entities as $entity) {
-            if (!$entity instanceof ContentVariantInterface
+            if (
+                !$entity instanceof ContentVariantInterface
                 || $entity->getType() !== ProductPageContentVariantType::TYPE
                 || !$entity->getProductPageProduct()
             ) {
@@ -118,7 +119,8 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
     private function sendProductCollectionForReindex($entities)
     {
         foreach ($entities as $entity) {
-            if (!$entity instanceof ContentVariantInterface
+            if (
+                !$entity instanceof ContentVariantInterface
                 || $entity->getType() !== ProductCollectionContentVariantType::TYPE
                 || !$entity->getProductCollectionSegment()
             ) {
@@ -137,7 +139,8 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
     private function collectChangedProductIds($entities, array &$productIds, UnitOfWork $unitOfWork)
     {
         foreach ($entities as $entity) {
-            if (!$entity instanceof ContentVariantInterface
+            if (
+                !$entity instanceof ContentVariantInterface
                 || $entity->getType() !== ProductPageContentVariantType::TYPE
                 || !$entity->getProductPageProduct()
             ) {
@@ -225,9 +228,11 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
      */
     private function isValidContentVariantEntity($entity)
     {
-        if (!$entity instanceof ContentVariantInterface
+        if (
+            !$entity instanceof ContentVariantInterface
             || !$entity instanceof ContentNodeAwareInterface
-            || $entity->getType() !== ProductPageContentVariantType::TYPE) {
+            || $entity->getType() !== ProductPageContentVariantType::TYPE
+        ) {
             return false;
         }
 

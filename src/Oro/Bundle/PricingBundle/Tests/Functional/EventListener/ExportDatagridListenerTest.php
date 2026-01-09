@@ -33,7 +33,7 @@ class ExportDatagridListenerTest extends WebTestCase
         $expected = [];
 
         for ($i = 1; $i <= 14; ++$i) {
-            $expected[] = $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.$i)->getId();
+            $expected[] = $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . $i)->getId();
         }
 
         sort($expected);
@@ -59,14 +59,14 @@ class ExportDatagridListenerTest extends WebTestCase
         ]);
 
         $expected = [
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'5')->getId(),
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'6')->getId(),
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'7')->getId(),
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'10')->getId(),
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'11')->getId(),
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'12')->getId(),
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'13')->getId(),
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'14')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '5')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '6')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '7')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '10')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '11')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '12')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '13')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '14')->getId(),
         ];
 
         sort($expected);
@@ -83,15 +83,15 @@ class ExportDatagridListenerTest extends WebTestCase
         ]);
 
         $expected = [
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'5')->getId(),
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'6')->getId(),
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'7')->getId(),
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'8')->getId(),
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'10')->getId(),
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'11')->getId(),
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'12')->getId(),
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'13')->getId(),
-            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.'14')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '5')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '6')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '7')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '8')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '10')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '11')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '12')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '13')->getId(),
+            $this->getReference(LoadPriceAttributeProductPrices::REFERENCE . '14')->getId(),
         ];
 
         sort($expected);

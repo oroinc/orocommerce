@@ -44,7 +44,8 @@ class UpsConnectionValidatorResultFactory implements UpsConnectionValidatorResul
         if (!is_array($data)) {
             throw new \LogicException($data);
         }
-        if (array_key_exists('Fault', $data)
+        if (
+            array_key_exists('Fault', $data)
             && $this->getErrorCode($data) !== self::UNAVAILABLE_SERVICE_BETWEEN_LOCATIONS_ERROR_CODE
         ) {
             $resultParams = [

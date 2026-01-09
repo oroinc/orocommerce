@@ -28,7 +28,8 @@ class ProductAvailabilityCacheListener
         );
         $productsId = [];
         foreach ($entities as $entity) {
-            if ($entity instanceof Product
+            if (
+                $entity instanceof Product
                 && null !== $entity->getId()
             ) {
                 $productsId[] = (string) $entity->getId();

@@ -26,7 +26,8 @@ class MultiShippingFiltrationService extends AbstractSkippableFiltrationService
     #[\Override]
     protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
-        if (empty($context[OrderContextDataConverter::SUB_ORDERS])
+        if (
+            empty($context[OrderContextDataConverter::SUB_ORDERS])
             && !empty($context[ContextDataConverterInterface::LINE_ITEMS])
             && $this->isMultiShipping($context[ContextDataConverterInterface::SHIPPING_METHOD] ?? null)
         ) {
@@ -49,7 +50,8 @@ class MultiShippingFiltrationService extends AbstractSkippableFiltrationService
         $shippingRuleOwners = [];
         $otherRuleOwners = [];
         foreach ($ruleOwners as $ruleOwner) {
-            if ($ruleOwner instanceof PromotionDataInterface
+            if (
+                $ruleOwner instanceof PromotionDataInterface
                 && ShippingDiscount::NAME === $ruleOwner->getDiscountConfiguration()->getType()
             ) {
                 $shippingRuleOwners[] = $ruleOwner;

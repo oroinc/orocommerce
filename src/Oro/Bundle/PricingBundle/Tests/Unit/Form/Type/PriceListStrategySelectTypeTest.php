@@ -41,8 +41,8 @@ class PriceListStrategySelectTypeTest extends \PHPUnit\Framework\TestCase
         ];
 
         $expectedChoices = [
-            PriceListStrategySelectType::ALIAS.'merge_by_priority' => 'merge_by_priority',
-            PriceListStrategySelectType::ALIAS.'test_strategy' => 'test_strategy',
+            PriceListStrategySelectType::ALIAS . 'merge_by_priority' => 'merge_by_priority',
+            PriceListStrategySelectType::ALIAS . 'test_strategy' => 'test_strategy',
         ];
 
         $this->translator->expects($this->any())

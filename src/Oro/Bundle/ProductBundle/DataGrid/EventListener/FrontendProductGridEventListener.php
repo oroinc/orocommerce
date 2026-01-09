@@ -206,8 +206,10 @@ class FrontendProductGridEventListener
 
         $this->families = [];
         $configKey = Configuration::getConfigKeyByName(Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING);
-        if (!$this->datagridParametersHelper->isDatagridExtensionSkipped($parameterBag)
-            && $this->configManager->get($configKey)) {
+        if (
+            !$this->datagridParametersHelper->isDatagridExtensionSkipped($parameterBag)
+            && $this->configManager->get($configKey)
+        ) {
             $familyAttributes = $this->familyAttributeCountsProvider->getFamilyAttributeCounts($gridName);
             if (!empty($familyAttributes['familyAttributesCount'])) {
                 $this->families = array_keys($familyAttributes['familyAttributesCount']);

@@ -75,8 +75,8 @@ final class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExte
             ->method('getChecksum')
             ->willReturnCallback(static function (BaseQuoteProductItem $quoteProductItem) {
                 return ($quoteProductItem->getProduct()?->getId()
-                    .'|'.$quoteProductItem->getProductUnit()?->getCode()
-                    .'|'.$quoteProductItem->getQuantity());
+                    . '|' . $quoteProductItem->getProductUnit()?->getCode()
+                    . '|' . $quoteProductItem->getQuantity());
             });
 
         return new QuoteDataStorageExtension(

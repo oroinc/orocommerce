@@ -43,8 +43,10 @@ class SchemaOrgProductDescriptionCommonProvider implements SchemaOrgProductDescr
     ): string {
         $fieldValue = $this->propertyAccessor->getValue($product, $this->field);
         if ($fieldValue instanceof Collection) {
-            if (!$fieldValue->count()
-                || ($fieldValue->count() && $fieldValue[0] instanceof AbstractLocalizedFallbackValue)) {
+            if (
+                !$fieldValue->count()
+                || ($fieldValue->count() && $fieldValue[0] instanceof AbstractLocalizedFallbackValue)
+            ) {
                 $description = $this->localizationHelper->getLocalizedValue($fieldValue, $localization);
             } else {
                 throw new \LogicException(

@@ -15,21 +15,16 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class WebsiteSearchReindexProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    private MessageProcessorInterface|\PHPUnit\Framework\MockObject\MockObject $delayedJobRunnerProcessor;
-
-    private WebsiteSearchReindexGranulizedProcessor|\PHPUnit\Framework\MockObject\MockObject
-        $reindexGranulizedProcessor;
-
-    private ReindexMessageGranularizer|\PHPUnit\Framework\MockObject\MockObject $reindexMessageGranularizer;
-
-    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $messageProducer;
-
-    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
-
+    private MessageProcessorInterface|MockObject $delayedJobRunnerProcessor;
+    private WebsiteSearchReindexGranulizedProcessor|MockObject $reindexGranulizedProcessor;
+    private ReindexMessageGranularizer|MockObject $reindexMessageGranularizer;
+    private MessageProducerInterface|MockObject $messageProducer;
+    private EventDispatcherInterface|MockObject $eventDispatcher;
     private WebsiteSearchReindexProcessor $processor;
 
     #[\Override]

@@ -37,7 +37,8 @@ class DenyChangeRelationshipForReadonlyQuote implements ProcessorInterface
         /** @var Quote $quote */
         $quote = $context->getParentEntity();
         $quoteStatus = $quote->getInternalStatus()?->getInternalId();
-        if ($quoteStatus
+        if (
+            $quoteStatus
             && \in_array($quoteStatus, $this->readonlyStatuses, true)
             && !$this->isActivityAssociation(
                 $context->getParentConfig(),

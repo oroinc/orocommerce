@@ -38,7 +38,8 @@ class ReindexProductFallbackValueChanged implements ProcessorInterface
     {
         $product = $fallbackValue->getProduct();
         if (null !== $product && $product->getId()) {
-            if ($fallbackValue instanceof ProductName
+            if (
+                $fallbackValue instanceof ProductName
                 && $fallbackValue->getLocalization() === null
                 && $fallbackValue->getString() !== $product->getDenormalizedDefaultName()
             ) {

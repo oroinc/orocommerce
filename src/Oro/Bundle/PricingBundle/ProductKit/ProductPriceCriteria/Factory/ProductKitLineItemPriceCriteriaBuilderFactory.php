@@ -38,7 +38,8 @@ class ProductKitLineItemPriceCriteriaBuilderFactory
 
         if ($lineItem instanceof ProductKitItemLineItemsAwareInterface) {
             foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
-                if (!$this->isKitItemLineItemSupported($kitItemLineItem)
+                if (
+                    !$this->isKitItemLineItemSupported($kitItemLineItem)
                     || !$this->isProductAvailableInKitItem($kitItemLineItem)
                 ) {
                     continue;

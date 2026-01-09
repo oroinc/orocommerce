@@ -15,8 +15,8 @@ use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider;
 class ActualizeCouponsStateListener
 {
     public function __construct(
-        private ManagerRegistry            $registry,
-        private EntityCouponsProvider      $entityCouponsProvider,
+        private ManagerRegistry $registry,
+        private EntityCouponsProvider $entityCouponsProvider,
         private PromotionAwareEntityHelper $promotionAwareHelper,
     ) {
     }

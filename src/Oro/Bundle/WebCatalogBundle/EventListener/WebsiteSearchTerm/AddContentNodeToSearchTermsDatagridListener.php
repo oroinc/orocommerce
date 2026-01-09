@@ -45,8 +45,10 @@ class AddContentNodeToSearchTermsDatagridListener
     public function onResultAfter(OrmResultAfter $event): void
     {
         foreach ($event->getRecords() as $result) {
-            if ($result->getValue('actionType') !== 'redirect'
-                || $result->getValue('redirectActionType') !== 'content_node') {
+            if (
+                $result->getValue('actionType') !== 'redirect'
+                || $result->getValue('redirectActionType') !== 'content_node'
+            ) {
                 continue;
             }
 

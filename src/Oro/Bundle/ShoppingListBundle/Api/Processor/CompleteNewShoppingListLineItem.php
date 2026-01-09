@@ -22,7 +22,8 @@ class CompleteNewShoppingListLineItem implements ProcessorInterface
         /** @var LineItem $lineItem */
         $lineItem = $context->getData();
         $shoppingList = $lineItem->getShoppingList();
-        if (null !== $shoppingList
+        if (
+            null !== $shoppingList
             && null === $lineItem->getCustomerUser()
             && null !== $shoppingList->getCustomerUser()
         ) {

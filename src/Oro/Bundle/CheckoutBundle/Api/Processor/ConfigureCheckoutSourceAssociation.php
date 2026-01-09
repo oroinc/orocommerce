@@ -34,7 +34,8 @@ class ConfigureCheckoutSourceAssociation implements ProcessorInterface
         $targetAssociationMappings = $this->doctrineHelper->getEntityMetadataForClass(CheckoutSource::class)
             ->getAssociationMappings();
         foreach ($targetAssociationMappings as $targetAssociationName => $targetAssociationMapping) {
-            if (($targetAssociationMapping['type'] & ClassMetadata::TO_ONE)
+            if (
+                ($targetAssociationMapping['type'] & ClassMetadata::TO_ONE)
                 && is_a($targetAssociationMapping['targetEntity'], CheckoutSourceEntityInterface::class, true)
             ) {
                 $dependsOn[] = $targetAssociationPrefix . $targetAssociationName;

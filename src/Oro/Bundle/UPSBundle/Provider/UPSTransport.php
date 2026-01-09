@@ -47,7 +47,8 @@ class UPSTransport extends AbstractRestTransport
     #[\Override]
     protected function getClientBaseUrl(ParameterBag $parameterBag)
     {
-        if ($parameterBag->get('client_id')
+        if (
+            $parameterBag->get('client_id')
             && $parameterBag->get('client_secret')
         ) {
             return $this->upsClientOAuthUrlProvider->getUpsUrl($parameterBag->get('test_mode'));
@@ -94,7 +95,8 @@ class UPSTransport extends AbstractRestTransport
             $this->client = $this->createRestClient($transportEntity);
 
             $resource = static::API_RATES_PREFIX;
-            if ($transportEntity instanceof \Oro\Bundle\UPSBundle\Entity\UPSTransport
+            if (
+                $transportEntity instanceof \Oro\Bundle\UPSBundle\Entity\UPSTransport
                 && !empty($transportEntity->getUpsClientId())
                 && !empty($transportEntity->getUpsClientSecret())
             ) {

@@ -31,7 +31,7 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
     {
         $this->assertExportTemplateWorks(
             $this->getPriceAttributeProductPriceConfiguration(),
-            __DIR__.'/data/price_attribute_product_price/export_template.csv'
+            __DIR__ . '/data/price_attribute_product_price/export_template.csv'
         );
     }
 
@@ -39,7 +39,7 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
     {
         $this->assertExportWorks(
             $this->getPriceAttributeProductPriceConfiguration(),
-            __DIR__.'/data/price_attribute_product_price/export.csv'
+            __DIR__ . '/data/price_attribute_product_price/export.csv'
         );
     }
 
@@ -47,7 +47,7 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
     {
         $this->assertImportWorks(
             $this->getPriceAttributeProductPriceConfiguration(),
-            __DIR__.'/data/price_attribute_product_price/import.csv'
+            __DIR__ . '/data/price_attribute_product_price/import.csv'
         );
 
         $this->assertImportedDataValid();
@@ -71,7 +71,7 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
 
         $this->assertImportWorks(
             $configuration,
-            __DIR__.'/data/price_attribute_product_price/import_reset_and_add.csv'
+            __DIR__ . '/data/price_attribute_product_price/import_reset_and_add.csv'
         );
 
         $this->assertResetAndAddValid();
@@ -86,8 +86,8 @@ class PriceAttributeProductPriceExportTest extends AbstractImportExportTestCase
     {
         $this->assertImportValidateWorks(
             $this->getPriceAttributeProductPriceConfiguration(),
-            __DIR__.'/data/price_attribute_product_price/import_wrong_data.csv',
-            __DIR__.'/data/price_attribute_product_price/import_validation_errors.json'
+            __DIR__ . '/data/price_attribute_product_price/import_wrong_data.csv',
+            __DIR__ . '/data/price_attribute_product_price/import_validation_errors.json'
         );
     }
 

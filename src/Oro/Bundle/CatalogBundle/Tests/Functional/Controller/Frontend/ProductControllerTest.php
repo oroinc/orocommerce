@@ -116,7 +116,7 @@ class ProductControllerTest extends WebTestCase
         $url = $this->getUrl(
             'oro_product_frontend_product_index',
             $requestParams
-        ).'&grid[frontend-product-search-grid]='.$gridUrlPart;
+        ) . '&grid[frontend-product-search-grid]=' . $gridUrlPart;
 
         $crawler = $this->client->request('GET', $url);
 

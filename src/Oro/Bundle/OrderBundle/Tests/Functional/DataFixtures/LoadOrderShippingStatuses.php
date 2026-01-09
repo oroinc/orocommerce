@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
-namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
-
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;

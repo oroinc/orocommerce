@@ -40,7 +40,8 @@ class RestrictProductVariationsEventListener
 
     public function onSearchQuery(ProductSearchQueryRestrictionEvent $event)
     {
-        if ($this->isRestrictionApplicableForSearchEvent($event) &&
+        if (
+            $this->isRestrictionApplicableForSearchEvent($event) &&
             !$this->isVariantCriteriaExist($event->getQuery()->getCriteria()->getWhereExpression())
         ) {
             $event->getQuery()->getCriteria()->andWhere(

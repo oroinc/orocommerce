@@ -429,9 +429,9 @@ class FrontendLineItemsGridExtensionTest extends TestCase
                         'select' => [
                             '(SELECT GROUP_CONCAT(innerItem.id ORDER BY innerItem.id ASC) ' .
                             'FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerItem ' .
-                            'WHERE ('.
-                            '  innerItem.parentProduct = lineItem.parentProduct OR '.
-                            '  (innerItem.product = lineItem.product AND innerItem.checksum = lineItem.checksum)'.
+                            'WHERE (' .
+                            '  innerItem.parentProduct = lineItem.parentProduct OR ' .
+                            '  (innerItem.product = lineItem.product AND innerItem.checksum = lineItem.checksum)' .
                             ') ' .
                             'AND innerItem.shoppingList = lineItem.shoppingList ' .
                             'AND innerItem.unit = lineItem.unit) as allLineItemsIds',

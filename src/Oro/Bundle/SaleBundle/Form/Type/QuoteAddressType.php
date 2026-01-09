@@ -174,7 +174,8 @@ class QuoteAddressType extends AbstractType
                     $quoteAddress->setCustomerAddress(null);
                     $quoteAddress->setCustomerUserAddress(null);
                 }
-            } elseif ($selectedAddress instanceof AbstractAddress
+            } elseif (
+                $selectedAddress instanceof AbstractAddress
                 && $this->isAddressChangeRequired($selectedAddress, $quoteAddress)
             ) {
                 $event->setData($this->quoteAddressManager->updateFromAbstract($selectedAddress, $quoteAddress));
@@ -192,13 +193,17 @@ class QuoteAddressType extends AbstractType
             return true;
         }
 
-        if ($selectedAddress instanceof CustomerAddress &&
-            $selectedAddress->getId() !== $quoteAddress->getCustomerAddress()?->getId()) {
+        if (
+            $selectedAddress instanceof CustomerAddress &&
+            $selectedAddress->getId() !== $quoteAddress->getCustomerAddress()?->getId()
+        ) {
             return true;
         }
 
-        if ($selectedAddress instanceof CustomerUserAddress &&
-            $selectedAddress->getId() !== $quoteAddress->getCustomerUserAddress()?->getId()) {
+        if (
+            $selectedAddress instanceof CustomerUserAddress &&
+            $selectedAddress->getId() !== $quoteAddress->getCustomerUserAddress()?->getId()
+        ) {
             return true;
         }
 

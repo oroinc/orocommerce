@@ -10,16 +10,14 @@ use Oro\Bundle\ProductBundle\Handler\ProductUnitPrecisionDeleteHandlerExtension;
 use Oro\Bundle\ProductBundle\Provider\ProductKitsByUnitPrecisionProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductUnitPrecisionStub;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductUnitPrecisionDeleteHandlerExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    private ProductKitsByUnitPrecisionProvider|\PHPUnit\Framework\MockObject\MockObject
-        $productKitsByUnitPrecisionProvider;
-
-    private TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator;
-
+    private ProductKitsByUnitPrecisionProvider|MockObject $productKitsByUnitPrecisionProvider;
+    private TranslatorInterface|MockObject $translator;
     private ProductUnitPrecisionDeleteHandlerExtension $extension;
 
     #[\Override]

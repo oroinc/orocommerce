@@ -88,7 +88,8 @@ class ShoppingListExtension extends AbstractExtension implements ServiceSubscrib
     {
         $featureChecker = $this->getFeatureChecker();
         $product = $lineItem->getProduct();
-        if ($featureChecker->isFeatureEnabled('simple_variations_view_restriction')
+        if (
+            $featureChecker->isFeatureEnabled('simple_variations_view_restriction')
             && $product->getParentVariantLinks()->count()
         ) {
             return $lineItem->getParentProduct();

@@ -25,7 +25,8 @@ class ProductBrandViewListener
             return;
         }
 
-        if (!$this->authorizationChecker->isGranted('oro_product_brand_view') ||
+        if (
+            !$this->authorizationChecker->isGranted('oro_product_brand_view') ||
             !$this->authorizationChecker->isGranted('VIEW', $event->getEntity()->getBrand())
         ) {
             $event->getScrollData()->removeField(self::BRAND_KEY);

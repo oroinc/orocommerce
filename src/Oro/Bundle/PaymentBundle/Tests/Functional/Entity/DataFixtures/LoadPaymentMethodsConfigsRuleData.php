@@ -38,6 +38,6 @@ class LoadPaymentMethodsConfigsRuleData extends AbstractFixture implements Depen
 
     protected function getPaymentMethodsConfigsRulesData(): array
     {
-        return Yaml::parse(file_get_contents(__DIR__.'/data/basic_payment_methods_configs_rules.yml'));
+        return Yaml::parse(file_get_contents(__DIR__ . '/data/basic_payment_methods_configs_rules.yml'));
     }
 }

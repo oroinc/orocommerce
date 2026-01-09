@@ -20,10 +20,10 @@ class CouponApplicabilityValidationService
     public const MESSAGE_PROMOTION_NOT_APPLICABLE = 'oro.promotion.coupon.violation.coupon_promotion_not_applicable';
 
     public function __construct(
-        private PromotionProvider          $promotionProvider,
-        private EntityCouponsProvider      $entityCouponsProvider,
+        private PromotionProvider $promotionProvider,
+        private EntityCouponsProvider $entityCouponsProvider,
         private PromotionAwareEntityHelper $promotionAwareHelper,
-        private iterable                   $couponValidators
+        private iterable $couponValidators
     ) {
     }
 
@@ -32,8 +32,10 @@ class CouponApplicabilityValidationService
      */
     public function getViolations(Coupon $coupon, object $entity, array $skipFilters = []): array
     {
-        if (!$entity instanceof CustomerOwnerAwareInterface
-            || !$this->promotionAwareHelper->isCouponAware($entity)) {
+        if (
+            !$entity instanceof CustomerOwnerAwareInterface
+            || !$this->promotionAwareHelper->isCouponAware($entity)
+        ) {
             throw new \InvalidArgumentException(
                 'Argument $entity should implement CustomerOwnerAwareInterface and ' .
                 'have is_promotion_aware entity config'

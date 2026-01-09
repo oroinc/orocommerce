@@ -144,7 +144,8 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
 
         $accessor = PropertyAccess::createPropertyAccessor();
         $doctrine = $this->container->get('doctrine');
-        if ($type === CategoryPageContentVariantType::TYPE
+        if (
+            $type === CategoryPageContentVariantType::TYPE
             && $accessor->isWritable($variant, 'category_page_category')
         ) {
             $category = $this->getCategory($params['title']);
@@ -157,7 +158,8 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
             $accessor->setValue($variant, 'cms_page', $page);
         } elseif ($type === SystemPageContentVariantType::TYPE) {
             $variant->setSystemPageRoute($params['route']);
-        } elseif ($type === ProductCollectionContentVariantType::TYPE
+        } elseif (
+            $type === ProductCollectionContentVariantType::TYPE
             && $accessor->isWritable($variant, 'product_collection_segment')
         ) {
             $segment = $doctrine

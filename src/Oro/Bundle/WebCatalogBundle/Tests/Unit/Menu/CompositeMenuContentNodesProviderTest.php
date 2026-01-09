@@ -7,16 +7,13 @@ use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Menu\CompositeMenuContentNodesProvider;
 use Oro\Bundle\WebCatalogBundle\Menu\MenuContentNodesProviderInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class CompositeMenuContentNodesProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private MenuContentNodesProviderInterface|\PHPUnit\Framework\MockObject\MockObject $menuContentNodesProvider;
-
-    private MenuContentNodesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-        $menuContentNodesFrontendProvider;
-
-    private FrontendHelper|\PHPUnit\Framework\MockObject\MockObject $frontendHelper;
-
+    private MenuContentNodesProviderInterface|MockObject $menuContentNodesProvider;
+    private MenuContentNodesProviderInterface|MockObject $menuContentNodesFrontendProvider;
+    private FrontendHelper|MockObject $frontendHelper;
     private CompositeMenuContentNodesProvider $provider;
 
     #[\Override]

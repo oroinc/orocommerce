@@ -58,7 +58,8 @@ class ProductFormAvailabilityProvider
                 $result[$configurableProductId] = $matrixFormType;
             }
         }
-        if ($result
+        if (
+            $result
             && (
                 self::POPUP_PRODUCT_VIEW === $productView
                 || $this->userAgentProvider->getUserAgent()->isMobile()

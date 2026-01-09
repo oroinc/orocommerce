@@ -124,7 +124,8 @@ class ProductFormExtension extends AbstractTypeExtension
 
     private function ensureProductSkuInPrice(PriceAttributeProductPrice $price): void
     {
-        if (null === $price->getProductSku()
+        if (
+            null === $price->getProductSku()
             && $price->getProduct()?->getSku()
         ) {
             $price->setProduct($price->getProduct());

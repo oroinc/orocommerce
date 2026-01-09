@@ -65,7 +65,8 @@ class StartFromShoppingListTransition extends TransitionServiceAbstract
             return false;
         }
 
-        if (!$this->orderLimitProvider->isMinimumOrderAmountMet($shoppingList)
+        if (
+            !$this->orderLimitProvider->isMinimumOrderAmountMet($shoppingList)
             || !$this->orderLimitProvider->isMaximumOrderAmountMet($shoppingList)
         ) {
             return false;

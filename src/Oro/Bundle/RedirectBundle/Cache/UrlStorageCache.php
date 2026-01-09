@@ -117,7 +117,8 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, Flu
     public function deleteAll(): void
     {
         $this->localCache->clear();
-        if ($this->persistentCache instanceof DirectoryAwareFileCacheInterface
+        if (
+            $this->persistentCache instanceof DirectoryAwareFileCacheInterface
             && $cacheDir = $this->persistentCache->getDirectory()
         ) {
             $this->filesystem->remove($cacheDir);

@@ -27,7 +27,8 @@ class RobotsTxtTemplateManager
         );
 
         $templateContent = $this->configManager->get($robotsTxtTemplateKey);
-        if ($templateContent === null
+        if (
+            $templateContent === null
             || (is_string($templateContent) && $templateContent !== '')
         ) {
             return (string) $templateContent;

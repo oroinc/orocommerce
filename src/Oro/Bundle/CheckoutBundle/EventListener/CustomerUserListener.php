@@ -93,7 +93,8 @@ class CustomerUserListener
     public function onCustomerUserEmailSend(CustomerUserEmailSendEvent $event)
     {
         $checkoutId = $this->getFromRequest('_checkout_id');
-        if ($this->getFromRequest('_checkout_registration') && $checkoutId &&
+        if (
+            $this->getFromRequest('_checkout_registration') && $checkoutId &&
             !$this->configManager->get('oro_checkout.allow_checkout_without_email_confirmation') &&
             $event->getEmailTemplate() === Processor::CONFIRMATION_EMAIL_TEMPLATE_NAME
         ) {

@@ -120,10 +120,10 @@ class SearchResultHistoryRepositoryTest extends WebTestCase
 
         # Update existing record on conflict on session_id
         $this->repo->upsertSearchHistoryRecord(
-            $searchTerm.' updated',
+            $searchTerm . ' updated',
             'empty',
             0,
-            md5($searchTerm.' updated'),
+            md5($searchTerm . ' updated'),
             $businessUnit->getId(),
             $website->getId(),
             $sessionId,
@@ -140,10 +140,10 @@ class SearchResultHistoryRepositoryTest extends WebTestCase
             ->refresh($record);
         $this->assertNotNull($record);
 
-        $this->assertEquals($searchTerm.' updated', $record->getSearchTerm());
+        $this->assertEquals($searchTerm . ' updated', $record->getSearchTerm());
         $this->assertEquals('empty', $record->getResultType());
         $this->assertEquals(0, $record->getResultsCount());
-        $this->assertEquals(md5($searchTerm.' updated'), $record->getNormalizedSearchTermHash());
+        $this->assertEquals(md5($searchTerm . ' updated'), $record->getNormalizedSearchTermHash());
         $this->assertEquals($businessUnit->getId(), $record->getOwner()->getId());
         $this->assertEquals($sessionId, $record->getSearchSession());
         $this->assertEquals($localization->getId(), $record->getLocalization()->getId());
@@ -155,10 +155,10 @@ class SearchResultHistoryRepositoryTest extends WebTestCase
 
         # Insert new record with new session_id
         $this->repo->upsertSearchHistoryRecord(
-            $searchTerm.' updated',
+            $searchTerm . ' updated',
             'empty',
             0,
-            md5($searchTerm.' updated'),
+            md5($searchTerm . ' updated'),
             $businessUnit->getId(),
             $website->getId(),
             'new_session',

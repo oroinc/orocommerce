@@ -21,7 +21,8 @@ class CheckFrontendSkuRequestType implements ProcessorInterface
         /** @var Context $context */
 
         $requestType = $context->getRequestType();
-        if (!$requestType->contains(self::REQUEST_TYPE)
+        if (
+            !$requestType->contains(self::REQUEST_TYPE)
             && self::REQUEST_HEADER_VALUE === $context->getRequestHeaders()->get(self::REQUEST_HEADER_NAME)
         ) {
             $requestType->add(self::REQUEST_TYPE);

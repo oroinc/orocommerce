@@ -138,7 +138,8 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
             ->setReference($response->getReference());
 
         // Payment with non-complete pending reason should be marked as pending
-        if ($paymentTransaction->isSuccessful()
+        if (
+            $paymentTransaction->isSuccessful()
             && isset($data['PENDINGREASON'])
             && !in_array($data['PENDINGREASON'], ['none', 'completed', 'authorization'])
         ) {

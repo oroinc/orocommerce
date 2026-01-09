@@ -51,7 +51,8 @@ class RelatedItemsProductEditListener
         $tabs = [];
         $grids = [];
 
-        if ($this->getConfigProvider('related_products')->isEnabled()
+        if (
+            $this->getConfigProvider('related_products')->isEnabled()
             && $this->authorizationChecker->isGranted('oro_related_products_edit')
         ) {
             $tabs[] = [
@@ -61,7 +62,8 @@ class RelatedItemsProductEditListener
             $grids[] = $this->getRelatedProductsEditBlock($event, $twigEnv);
         }
 
-        if ($this->getConfigProvider('upsell_products')->isEnabled()
+        if (
+            $this->getConfigProvider('upsell_products')->isEnabled()
             && $this->authorizationChecker->isGranted('oro_upsell_products_edit')
         ) {
             $tabs[] = [

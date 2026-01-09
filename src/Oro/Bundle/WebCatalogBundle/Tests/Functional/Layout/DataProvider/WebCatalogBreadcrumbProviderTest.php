@@ -56,7 +56,7 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
      */
     public function testBreadcrumbs(string $reference, int $expectedCount, array $expectedBreadcrumbs): void
     {
-        $crawler = $this->client->request('GET', '/'.$reference);
+        $crawler = $this->client->request('GET', '/' . $reference);
         $result = $this->client->getResponse();
         self::assertHtmlResponseStatusCodeEquals($result, 200);
 

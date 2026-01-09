@@ -13,7 +13,7 @@ use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 class OrderMapperDecorator implements MapperInterface
 {
     public function __construct(
-        private MapperInterface            $orderMapper,
+        private MapperInterface $orderMapper,
         private PromotionAwareEntityHelper $promotionAwareHelper
     ) {
     }

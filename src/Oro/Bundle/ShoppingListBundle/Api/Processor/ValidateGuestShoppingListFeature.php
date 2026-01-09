@@ -30,7 +30,8 @@ class ValidateGuestShoppingListFeature implements ProcessorInterface
     {
         /** @var Context $context */
 
-        if ($this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken
+        if (
+            $this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken
             && !$this->shoppingListManager->isGuestShoppingListAvailable()
         ) {
             throw new AccessDeniedException('The access to guest shopping lists is denied.');

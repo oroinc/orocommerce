@@ -74,7 +74,8 @@ class Firewall
     {
         if ($this->matchedUrlDecisionMaker->matches($event->getRequest()->getPathInfo())) {
             $request = $event->getRequest();
-            if ($event->isMainRequest()
+            if (
+                $event->isMainRequest()
                 && !$event->hasResponse()
                 && $request->attributes->has('_resolved_slug_url')
             ) {

@@ -32,7 +32,8 @@ class EnsureDefaultShoppingListExistsForParent implements ProcessorInterface
 
         /** @var NotResolvedIdentifier[] $notResolvedIdentifiers */
         $notResolvedIdentifiers = $context->getNotResolvedIdentifiers();
-        if (!isset($notResolvedIdentifiers['parentId'])
+        if (
+            !isset($notResolvedIdentifiers['parentId'])
             || 'default' !== $notResolvedIdentifiers['parentId']->getValue()
         ) {
             return;

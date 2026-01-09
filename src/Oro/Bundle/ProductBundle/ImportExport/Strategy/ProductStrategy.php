@@ -283,7 +283,8 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
 
             // Add primary unit precision to unit precisions list if it was unintentionally removed
             $primaryUnitPrecision = $existingEntity->getPrimaryUnitPrecision();
-            if ($primaryUnitPrecision
+            if (
+                $primaryUnitPrecision
                 && $primaryUnitPrecision->getProductUnitCode()
                 && !$entity->getUnitPrecisions()->contains($primaryUnitPrecision)
             ) {
@@ -300,7 +301,8 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
     protected function importEntityFields($entity, $existingEntity, $isFullData, $entityIsRelation, $itemData)
     {
         // Ensures that ProductKitItem which does not belong to Product will not be changed.
-        if ($existingEntity instanceof ProductKitItem &&
+        if (
+            $existingEntity instanceof ProductKitItem &&
             $this->processingEntity->getId() !== $existingEntity->getProductKit()->getId()
         ) {
             return $existingEntity;

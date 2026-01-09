@@ -67,7 +67,7 @@ class PriceListStrategySelectType extends AbstractType
         $choices = [];
 
         foreach ($this->getStrategies() as $strategy => $value) {
-            $choices[$this->translator->trans(self::ALIAS.$strategy)] = $strategy;
+            $choices[$this->translator->trans(self::ALIAS . $strategy)] = $strategy;
         }
 
         return $choices;

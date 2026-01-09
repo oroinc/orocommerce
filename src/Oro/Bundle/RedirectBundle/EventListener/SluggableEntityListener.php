@@ -24,6 +24,7 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 class SluggableEntityListener implements OptionalListenerInterface
 {
     use OptionalListenerTrait;
+
     private const BATCH_SIZE = 100;
 
     /**

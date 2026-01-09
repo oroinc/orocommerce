@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -24,15 +25,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject $formFactory;
-
-    private UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject $router;
-
-    private ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject
-        $productVariantAvailabilityProvider;
-
-    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $doctrine;
-
+    private FormFactoryInterface|MockObject $formFactory;
+    private UrlGeneratorInterface|MockObject $router;
+    private ProductVariantAvailabilityProvider|MockObject $productVariantAvailabilityProvider;
+    private ManagerRegistry|MockObject $doctrine;
     private ProductFormProvider $provider;
 
     #[\Override]

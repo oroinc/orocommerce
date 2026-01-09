@@ -92,7 +92,8 @@ class CustomerUserActions implements CustomerUserActionsInterface
     {
         $result = [];
         $customerUser = $checkout->getCustomerUser();
-        if (!empty($lateRegistrationData['is_late_registration_enabled'])
+        if (
+            !empty($lateRegistrationData['is_late_registration_enabled'])
             && $customerUser
             && !$checkout->getRegisteredCustomerUser()
         ) {

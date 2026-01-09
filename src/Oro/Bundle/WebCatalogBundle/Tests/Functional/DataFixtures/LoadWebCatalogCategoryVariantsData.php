@@ -56,7 +56,7 @@ class LoadWebCatalogCategoryVariantsData extends AbstractFixture implements Depe
                 $node->addScope($scope);
 
                 $slug = new Slug();
-                $slug->setUrl('/'.$nodeReference);
+                $slug->setUrl('/' . $nodeReference);
                 $slug->setRouteName('oro_product_frontend_product_index');
                 $slug->setRouteParameters(['categoryId' => $category->getId(), 'includeSubcategories' => 1]);
                 $slug->addScope($scope);

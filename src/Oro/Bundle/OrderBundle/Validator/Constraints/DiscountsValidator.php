@@ -28,7 +28,8 @@ class DiscountsValidator extends ConstraintValidator
             throw new UnexpectedTypeException($value, Order::class);
         }
 
-        if ($value->getTotalDiscounts()
+        if (
+            $value->getTotalDiscounts()
             && $value->getSubtotal()
             && $value->getSubtotal() < $value->getTotalDiscounts()->getValue()
         ) {
@@ -41,7 +42,8 @@ class DiscountsValidator extends ConstraintValidator
         $exists = false;
         /** @var ConstraintViolation $violation */
         foreach ($this->context->getViolations() as $violation) {
-            if ($violation->getConstraint() === $constraint
+            if (
+                $violation->getConstraint() === $constraint
                 && $violation->getInvalidValue() === $this->context->getValue()
             ) {
                 $exists = true;

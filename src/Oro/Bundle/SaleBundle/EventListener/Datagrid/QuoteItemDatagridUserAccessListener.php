@@ -37,7 +37,8 @@ class QuoteItemDatagridUserAccessListener
             throw new AccessDeniedException();
         }
 
-        if ($this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken
+        if (
+            $this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken
             && $this->guestQuoteAccessProvider->isGranted($quote)
         ) {
             return;

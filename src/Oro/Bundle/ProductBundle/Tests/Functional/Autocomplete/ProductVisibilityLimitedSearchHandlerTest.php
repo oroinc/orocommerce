@@ -313,7 +313,8 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
             $found = false;
             foreach ($results as $result) {
                 // intentional non-strict comparison
-                if ($product->getId() === (int)$result['id']
+                if (
+                    $product->getId() === (int)$result['id']
                     && $product->getSku() === $result['sku']
                     && (string)$product->getDefaultName() === $result['defaultName.string']
                 ) {

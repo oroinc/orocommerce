@@ -32,7 +32,8 @@ class CronSegmentsProvider
         $segmentIterator = $this->contentVariantSegmentProvider->getContentVariantSegments();
         foreach ($segmentIterator as $segment) {
             $definition = QueryDefinitionUtil::decodeDefinition($segment->getDefinition());
-            if (isset($definition['filters'])
+            if (
+                isset($definition['filters'])
                 && is_array($definition['filters'])
                 && $this->hasRelationOrCriteriaInFilters($definition['filters'], $joinIdentifierHelper)
             ) {

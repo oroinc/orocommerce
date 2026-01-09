@@ -28,7 +28,7 @@ class CategoryImportExportHelper
     {
         $this->doctrine = $doctrine;
         $this->unescapedDelimiter = trim(self::CATEGORY_PATH_DELIMITER);
-        $this->escapedDelimiter = $this->unescapedDelimiter.$this->unescapedDelimiter;
+        $this->escapedDelimiter = $this->unescapedDelimiter . $this->unescapedDelimiter;
     }
 
     public function getCategoryPath(Category $category): string

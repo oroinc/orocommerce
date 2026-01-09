@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Provider\ProductKitsByUnitPrecisionProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitPrecisionsCollectionReferencedByProductKitItems;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitPrecisionsCollectionReferencedByProductKitItemsValidator;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\IsNull;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -22,10 +23,8 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductUnitPrecisionsCollectionReferencedByProductKitItemsValidatorTest extends ConstraintValidatorTestCase
 {
-    private ProductKitsByUnitPrecisionProvider|\PHPUnit\Framework\MockObject\MockObject
-        $productKitsByUnitPrecisionProvider;
-
-    private EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $entityManager;
+    private ProductKitsByUnitPrecisionProvider|MockObject $productKitsByUnitPrecisionProvider;
+    private EntityManagerInterface|MockObject $entityManager;
 
     #[\Override]
     protected function createValidator(): ProductUnitPrecisionsCollectionReferencedByProductKitItemsValidator

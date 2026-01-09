@@ -100,8 +100,8 @@ class RFPFrontendActionsTest extends WebTestCase
         $basePath = 'input[name="oro_rfp_frontend_request[requestProducts]';
 
         for ($i = 0; $i < $count; $i++) {
-            $value = $crawler->filter($basePath.'['.$i.'][product]"]')->extract(['value']);
-            $quantity = $crawler->filter($basePath.'['.$i.'][requestProductItems][0][quantity]"]')
+            $value = $crawler->filter($basePath . '[' . $i . '][product]"]')->extract(['value']);
+            $quantity = $crawler->filter($basePath . '[' . $i . '][requestProductItems][0][quantity]"]')
                 ->extract(['value']);
 
             $this->assertNotEmpty($value, 'Product is empty');

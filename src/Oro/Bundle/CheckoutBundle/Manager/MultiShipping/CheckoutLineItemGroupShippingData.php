@@ -189,7 +189,8 @@ final class CheckoutLineItemGroupShippingData
         if (!empty($this->data[self::SHIPPING_METHODS])) {
             $lineItemGroupKeys = array_keys($this->data[self::SHIPPING_METHODS]);
             foreach ($lineItemGroupKeys as $lineItemGroupKey) {
-                if (GroupLineItemHelper::OTHER_ITEMS_KEY !== $lineItemGroupKey
+                if (
+                    GroupLineItemHelper::OTHER_ITEMS_KEY !== $lineItemGroupKey
                     && !str_starts_with($lineItemGroupKey, $prefix)
                 ) {
                     unset($this->data[self::SHIPPING_METHODS][$lineItemGroupKey]);
@@ -199,7 +200,8 @@ final class CheckoutLineItemGroupShippingData
         if (!empty($this->data[self::SHIPPING_AMOUNT])) {
             $lineItemGroupKeys = array_keys($this->data[self::SHIPPING_AMOUNT]);
             foreach ($lineItemGroupKeys as $lineItemGroupKey) {
-                if (GroupLineItemHelper::OTHER_ITEMS_KEY !== $lineItemGroupKey
+                if (
+                    GroupLineItemHelper::OTHER_ITEMS_KEY !== $lineItemGroupKey
                     && !str_starts_with($lineItemGroupKey, $prefix)
                 ) {
                     unset($this->data[self::SHIPPING_AMOUNT][$lineItemGroupKey]);

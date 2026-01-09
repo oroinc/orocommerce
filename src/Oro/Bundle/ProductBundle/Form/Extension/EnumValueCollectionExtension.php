@@ -99,7 +99,8 @@ class EnumValueCollectionExtension extends AbstractTypeExtension
      */
     private function isValidAttributeEnum($configId)
     {
-        if (!$configId || !$configId instanceof FieldConfigId ||
+        if (
+            !$configId || !$configId instanceof FieldConfigId ||
             !is_a($configId->getClassName(), Product::class, true)
         ) {
             return false;

@@ -21,10 +21,10 @@ use Symfony\Component\Security\Acl\Util\ClassUtils;
  */
 class ContentVariantListener
 {
-    private ContentVariantTypeRegistry         $typeRegistry;
+    private ContentVariantTypeRegistry $typeRegistry;
     private OwnershipMetadataProviderInterface $metadataProvider;
-    private DoctrineHelper                     $doctrineHelper;
-    private PropertyAccessorInterface          $propertyAccessor;
+    private DoctrineHelper $doctrineHelper;
+    private PropertyAccessorInterface $propertyAccessor;
 
     public function __construct(
         ContentVariantTypeRegistry $typeRegistry,

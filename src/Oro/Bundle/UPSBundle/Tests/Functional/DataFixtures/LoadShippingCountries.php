@@ -31,6 +31,6 @@ class LoadShippingCountries extends AbstractFixture
      */
     protected function getShippingCountriesData()
     {
-        return Yaml::parse(file_get_contents(__DIR__.'/data/shipping_countries.yml'));
+        return Yaml::parse(file_get_contents(__DIR__ . '/data/shipping_countries.yml'));
     }
 }

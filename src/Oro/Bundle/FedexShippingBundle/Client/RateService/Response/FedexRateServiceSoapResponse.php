@@ -6,6 +6,8 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 /**
  * Response of FedEx Rate SOAP API.
+ *
+ * phpcs:ignore
  * @deprecated. Will be removed when SOAP support will be dropped by FedEx.
  */
 class FedexRateServiceSoapResponse implements FedexRateServiceResponseInterface

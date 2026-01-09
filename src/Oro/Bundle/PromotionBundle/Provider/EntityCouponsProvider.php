@@ -18,7 +18,7 @@ use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 class EntityCouponsProvider implements EntityCouponsProviderInterface
 {
     public function __construct(
-        private DoctrineHelper             $doctrineHelper,
+        private DoctrineHelper $doctrineHelper,
         private PromotionAwareEntityHelper $promotionAwareHelper
     ) {
     }

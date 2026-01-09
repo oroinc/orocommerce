@@ -39,7 +39,8 @@ class VisibilityFormPostSubmitDataHandler
      */
     public function saveForm(FormInterface $visibilityForm, $targetEntity)
     {
-        if (!$visibilityForm->isSubmitted()
+        if (
+            !$visibilityForm->isSubmitted()
             || !$visibilityForm->isValid()
             || !is_object($targetEntity)
             || !$targetEntity->getId()

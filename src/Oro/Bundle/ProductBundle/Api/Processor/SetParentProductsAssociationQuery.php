@@ -27,7 +27,8 @@ class SetParentProductsAssociationQuery implements ProcessorInterface
 
         $definition = $context->getResult();
         $parentProductsField = $definition->getField('parentProducts');
-        if (null !== $parentProductsField
+        if (
+            null !== $parentProductsField
             && !$parentProductsField->isExcluded()
             && null === $parentProductsField->getAssociationQuery()
         ) {

@@ -28,7 +28,8 @@ class PriceResponse
             throw new LogicException(json_encode($data['Fault']));
         }
 
-        if (!array_key_exists('RateResponse', $data)
+        if (
+            !array_key_exists('RateResponse', $data)
             || !array_key_exists('RatedShipment', $data['RateResponse'])
         ) {
             throw new InvalidArgumentException('No price data in provided string.');
@@ -64,8 +65,10 @@ class PriceResponse
 
     private function createPrice(array $priceData): ?Price
     {
-        if (!array_key_exists('MonetaryValue', $priceData) ||
-            !array_key_exists('CurrencyCode', $priceData)) {
+        if (
+            !array_key_exists('MonetaryValue', $priceData) ||
+            !array_key_exists('CurrencyCode', $priceData)
+        ) {
             return null;
         }
 

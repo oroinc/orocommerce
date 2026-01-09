@@ -289,7 +289,7 @@ class AjaxLineItemControllerTest extends WebTestCase
             [
                 'productRef' => LoadProductData::PRODUCT_1,
                 'expectedResult' => true,
-                'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/update/%s">'.
+                'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/update/%s">' .
                     'shopping_list_2_label</a>"',
                 'expectedInitCount' => 2,
                 'removeCurrent' => false,
@@ -298,7 +298,7 @@ class AjaxLineItemControllerTest extends WebTestCase
             [
                 'productRef' => LoadProductData::PRODUCT_2,
                 'expectedResult' => true,
-                'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/update/%s">'.
+                'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/update/%s">' .
                     'shopping_list_2_label</a>"',
                 'expectedInitCount' => 1,
                 'removeCurrent' => false,
@@ -336,7 +336,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'oro_shopping_list_add_products_massaction',
                 [
                     'gridName' => 'frontend-product-search-grid',
-                    'actionName' => 'oro_shoppinglist_frontend_addlineitemlist'.$shoppingList->getId(),
+                    'actionName' => 'oro_shoppinglist_frontend_addlineitemlist' . $shoppingList->getId(),
                     'shoppingList' => $shoppingList->getId(),
                     'inset' => 1,
                     'values' => $this->getReference('product-1')->getId(),

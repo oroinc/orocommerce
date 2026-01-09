@@ -85,7 +85,7 @@ class HasApplicablePaymentMethodsTest extends \PHPUnit\Framework\TestCase
         $this->condition->initialize(['context' => $stdClass]);
         $result = $this->condition->toArray();
 
-        $key = '@'.HasApplicablePaymentMethods::NAME;
+        $key = '@' . HasApplicablePaymentMethods::NAME;
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey($key, $result);

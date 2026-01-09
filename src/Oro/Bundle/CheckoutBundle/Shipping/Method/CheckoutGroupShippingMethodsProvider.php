@@ -55,7 +55,8 @@ class CheckoutGroupShippingMethodsProvider implements CheckoutGroupShippingMetho
                 $lineItems = $this->getLineItems($checkout, $lineItemIds);
                 if ($lineItems) {
                     $organization = null;
-                    if ($isLineItemsGroupedByOrganization
+                    if (
+                        $isLineItemsGroupedByOrganization
                         && GroupLineItemHelper::OTHER_ITEMS_KEY !== $lineItemGroupKey
                     ) {
                         $organization = $this->groupLineItemHelper->getGroupingFieldValue(

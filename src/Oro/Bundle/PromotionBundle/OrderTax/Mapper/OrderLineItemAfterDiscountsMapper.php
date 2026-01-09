@@ -43,7 +43,8 @@ class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
         }
 
         foreach ($orders as $order) {
-            if ($lineItem->getPrice() &&
+            if (
+                $lineItem->getPrice() &&
                 $this->taxationSettingsProvider->isCalculateAfterPromotionsEnabled() &&
                 $this->promotionExecutor->supports($order)
             ) {

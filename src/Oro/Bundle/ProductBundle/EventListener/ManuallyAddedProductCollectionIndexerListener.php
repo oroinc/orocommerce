@@ -135,7 +135,8 @@ class ManuallyAddedProductCollectionIndexerListener implements WebsiteSearchProd
     {
         $variantsByRecordId = [];
         foreach ($entitiesData as $recordId => $data) {
-            if (empty($data['assigned_to.ASSIGN_TYPE_ASSIGN_ID'])
+            if (
+                empty($data['assigned_to.ASSIGN_TYPE_ASSIGN_ID'])
                 || !\is_array($data['assigned_to.ASSIGN_TYPE_ASSIGN_ID'])
             ) {
                 continue;
@@ -145,7 +146,8 @@ class ManuallyAddedProductCollectionIndexerListener implements WebsiteSearchProd
                 /** @var PlaceholderValue $placeholderValue */
                 $placeholderValue = $assignData['value'];
                 $placeholders = $placeholderValue->getPlaceholders();
-                if (isset($placeholders[AssignTypePlaceholder::NAME])
+                if (
+                    isset($placeholders[AssignTypePlaceholder::NAME])
                     && $placeholders[AssignTypePlaceholder::NAME]
                     === WebCatalogEntityIndexerListener::ASSIGN_TYPE_CONTENT_VARIANT
                 ) {
@@ -191,7 +193,8 @@ class ManuallyAddedProductCollectionIndexerListener implements WebsiteSearchProd
         // Filter out variants that were assigned not as manually added products or not for product collection variant.
         foreach ($variantsByRecordId as $recordId => $variantIds) {
             foreach ($variantIds as $key => $variantId) {
-                if (empty($manuallyAddedByVariantId[$variantId])
+                if (
+                    empty($manuallyAddedByVariantId[$variantId])
                     || !in_array($recordId, $manuallyAddedByVariantId[$variantId], true)
                 ) {
                     unset($variantsByRecordId[$recordId][$key]);

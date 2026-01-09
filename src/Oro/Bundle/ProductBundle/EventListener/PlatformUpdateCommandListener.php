@@ -8,7 +8,6 @@ use Symfony\Component\Console\Event\ConsoleEvent;
 
 /**
  * This listener should be executed only once during update from alpha1 to later version
- * TODO: remove this listener after stable release
  */
 class PlatformUpdateCommandListener
 {

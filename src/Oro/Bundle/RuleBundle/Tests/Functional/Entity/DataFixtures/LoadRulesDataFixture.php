@@ -34,6 +34,6 @@ class LoadRulesDataFixture extends AbstractFixture
      */
     protected function getRulesData()
     {
-        return Yaml::parse(file_get_contents(__DIR__.'/data/basic_rule.yml'));
+        return Yaml::parse(file_get_contents(__DIR__ . '/data/basic_rule.yml'));
     }
 }

@@ -100,7 +100,8 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
     private function collectCategories($entities, array &$categories): void
     {
         foreach ($entities as $entity) {
-            if ($entity instanceof ContentVariantInterface
+            if (
+                $entity instanceof ContentVariantInterface
                 && $entity->getType() === CategoryPageContentVariantType::TYPE
             ) {
                 /** @var Category $category */
@@ -120,7 +121,8 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
     private function collectChangedCategories($entities, array &$categories, UnitOfWork $unitOfWork): void
     {
         foreach ($entities as $entity) {
-            if ($entity instanceof ContentVariantInterface
+            if (
+                $entity instanceof ContentVariantInterface
                 && $entity->getType() === CategoryPageContentVariantType::TYPE
             ) {
                 $changeSet = $unitOfWork->getEntityChangeSet($entity);
@@ -204,9 +206,11 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
      */
     private function isValidContentVariantEntity($entity): bool
     {
-        if (!$entity instanceof ContentVariantInterface
+        if (
+            !$entity instanceof ContentVariantInterface
             || !$entity instanceof ContentNodeAwareInterface
-            || $entity->getType() !== CategoryPageContentVariantType::TYPE) {
+            || $entity->getType() !== CategoryPageContentVariantType::TYPE
+        ) {
             return false;
         }
 

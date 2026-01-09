@@ -63,7 +63,8 @@ class GuestCheckoutVisitorQueryModifier implements QueryModifierInterface, Query
                 $this->applyCheckoutLineItemRootRestriction($qb, $from->getAlias());
             } elseif (CheckoutProductKitItemLineItem::class === $entityClass) {
                 $this->applyCheckoutKitItemLineItemRootRestriction($qb, $from->getAlias());
-            } elseif (OrderAddress::class === $entityClass
+            } elseif (
+                OrderAddress::class === $entityClass
                 && CheckoutAddress::class === ($this->options['resourceClass'] ?? null)
             ) {
                 $this->applyCheckoutAddressRootRestriction($qb, $from->getAlias());

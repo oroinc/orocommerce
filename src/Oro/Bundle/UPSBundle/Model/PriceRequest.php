@@ -40,7 +40,8 @@ class PriceRequest
      */
     public function toJson(): string
     {
-        if (empty($this->clientId)
+        if (
+            empty($this->clientId)
             && empty($this->clientSecret)
         ) {
             $request['UPSSecurity'] = [

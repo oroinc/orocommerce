@@ -76,9 +76,11 @@ class CheckoutAddressSelectType extends AbstractType
         $selectedAddress = $event->getData();
 
         if ($selectedAddress === null || $selectedAddress === self::ENTER_MANUALLY) {
-            if ($orderAddress &&
+            if (
+                $orderAddress &&
                 !$orderAddress->getCustomerAddress() &&
-                !$orderAddress->getCustomerUserAddress()) {
+                !$orderAddress->getCustomerUserAddress()
+            ) {
                 $event->setData($orderAddress);
             }
         } else {
@@ -107,8 +109,10 @@ class CheckoutAddressSelectType extends AbstractType
         $view->vars['checkoutId'] = $options['object']->getId();
 
         $currentAddress = $form->getData();
-        if ($currentAddress instanceof AddressBookAwareInterface &&
-            !AddressBookAddressUtils::getAddressBookAddress($currentAddress)) {
+        if (
+            $currentAddress instanceof AddressBookAwareInterface &&
+            !AddressBookAddressUtils::getAddressBookAddress($currentAddress)
+        ) {
             $addresses[self::ENTER_MANUALLY] = $currentAddress;
         }
 

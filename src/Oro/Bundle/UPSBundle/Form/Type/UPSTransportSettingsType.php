@@ -244,7 +244,8 @@ class UPSTransportSettingsType extends AbstractType
 
         /** @var UPSTransport $entity */
         $entity = $event->getData();
-        if (null !== $entity
+        if (
+            null !== $entity
             && (
                 !$entity->getId()
                 || (!$entity->getUpsApiUser() && !$entity->getUpsApiKey())

@@ -77,7 +77,8 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
     private function checkExistPair(array $attributeCurrency, array $expectedAttributeCurrencies): bool
     {
         foreach ($expectedAttributeCurrencies as $expectedAttributeCurrency) {
-            if ($expectedAttributeCurrency['name'] === $attributeCurrency['name']
+            if (
+                $expectedAttributeCurrency['name'] === $attributeCurrency['name']
                 && $expectedAttributeCurrency['currency'] === $attributeCurrency['currency']
             ) {
                 return true;

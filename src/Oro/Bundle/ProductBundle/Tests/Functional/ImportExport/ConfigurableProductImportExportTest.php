@@ -27,7 +27,7 @@ class ConfigurableProductImportExportTest extends AbstractImportExportTestCase
 
         $this->assertImportWorks(
             $this->getExportImportConfiguration(),
-            __DIR__.'/data/import_configurable_product.csv'
+            __DIR__ . '/data/import_configurable_product.csv'
         );
 
         // Consume postponed message for configurable product import after variants import

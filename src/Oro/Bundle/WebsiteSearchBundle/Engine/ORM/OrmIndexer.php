@@ -185,8 +185,10 @@ class OrmIndexer extends AbstractIndexer
                 $name = $fieldItem->getField();
 
                 // Skip update of fields if data is already in the index
-                if (isset($entityData[$fieldType][$name])
-                    && $entityData[$fieldType][$name] === $fieldItem->getValue()) {
+                if (
+                    isset($entityData[$fieldType][$name])
+                    && $entityData[$fieldType][$name] === $fieldItem->getValue()
+                ) {
                     continue;
                 }
                 if ($this->shouldBeRemoved($name, $newFields, $newRegexps)) {

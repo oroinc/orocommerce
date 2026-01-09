@@ -70,8 +70,10 @@ class ReindexProductOrderListener
     public function processOrderRemove(Order $order): void
     {
         $website = $order->getWebsite();
-        if ($this->isFeaturesEnabledForWebsite($website)
-            && $this->isAllowedStatus($order->getInternalStatus()->getId())) {
+        if (
+            $this->isFeaturesEnabledForWebsite($website)
+            && $this->isAllowedStatus($order->getInternalStatus()->getId())
+        ) {
             $this->reindexOrderProducts($order, [$website]);
         }
     }

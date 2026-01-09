@@ -44,7 +44,8 @@ class AjaxCheckoutController extends AbstractController
     private function setCorrectCheckoutShippingMethodData(Checkout $checkout, Request $request): void
     {
         $workflowTransitionData = $request->request->all('oro_workflow_transition');
-        if (!\array_key_exists('shipping_method', $workflowTransitionData)
+        if (
+            !\array_key_exists('shipping_method', $workflowTransitionData)
             || !\array_key_exists('shipping_method_type', $workflowTransitionData)
         ) {
             return;

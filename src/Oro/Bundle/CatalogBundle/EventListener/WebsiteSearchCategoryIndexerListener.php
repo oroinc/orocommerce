@@ -63,7 +63,8 @@ class WebsiteSearchCategoryIndexerListener
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event): void
     {
-        if (!$this->hasContextFieldGroup($event->getContext(), 'main')
+        if (
+            !$this->hasContextFieldGroup($event->getContext(), 'main')
             && !$this->hasContextFieldGroup($event->getContext(), 'category_sort_order')
         ) {
             return;

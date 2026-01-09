@@ -23,7 +23,8 @@ class SlugifyFormHelper
      */
     private function addSlugifyComponentOptions(FormView $view, array $options, $fieldPattern)
     {
-        if (empty($options['slug_suggestion_enabled'])
+        if (
+            empty($options['slug_suggestion_enabled'])
             || empty($options['source_field'])
             || empty($view->parent)
         ) {

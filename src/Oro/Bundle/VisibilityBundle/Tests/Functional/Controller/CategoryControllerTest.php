@@ -271,7 +271,7 @@ class CategoryControllerTest extends WebTestCase
             if (!$pos) {
                 continue;
             }
-            $key = '['.substr($key, 0, $pos).']'.substr($key, $pos);
+            $key = '[' . substr($key, 0, $pos) . ']' . substr($key, $pos);
             $accessor->setValue($parameters, $key, $val);
         }
 

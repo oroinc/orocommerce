@@ -45,8 +45,10 @@ class AddProductToSearchTermsDatagridListener
     public function onResultAfter(OrmResultAfter $event): void
     {
         foreach ($event->getRecords() as $result) {
-            if ($result->getValue('actionType') !== 'redirect'
-                || $result->getValue('redirectActionType') !== 'product') {
+            if (
+                $result->getValue('actionType') !== 'redirect'
+                || $result->getValue('redirectActionType') !== 'product'
+            ) {
                 continue;
             }
 

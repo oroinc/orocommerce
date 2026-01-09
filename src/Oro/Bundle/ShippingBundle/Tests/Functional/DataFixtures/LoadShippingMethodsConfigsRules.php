@@ -26,7 +26,7 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture
      */
     protected function getShippingMethodsConfigsRulesData()
     {
-        return Yaml::parse(file_get_contents(__DIR__.'/data/shipping_methods_configs_rules.yml'));
+        return Yaml::parse(file_get_contents(__DIR__ . '/data/shipping_methods_configs_rules.yml'));
     }
 
     /**

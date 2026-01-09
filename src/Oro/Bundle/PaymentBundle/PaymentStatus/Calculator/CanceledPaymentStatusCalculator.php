@@ -84,8 +84,10 @@ class CanceledPaymentStatusCalculator implements PaymentStatusCalculatorInterfac
                 continue;
             }
 
-            if ($paymentTransaction->isSuccessful() &&
-                $paymentTransaction->getAction() === PaymentMethodInterface::CANCEL) {
+            if (
+                $paymentTransaction->isSuccessful() &&
+                $paymentTransaction->getAction() === PaymentMethodInterface::CANCEL
+            ) {
                 $filteredTransactions[] = $paymentTransaction;
             }
         }

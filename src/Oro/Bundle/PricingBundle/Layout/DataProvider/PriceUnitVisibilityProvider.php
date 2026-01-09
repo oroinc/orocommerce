@@ -26,7 +26,8 @@ class PriceUnitVisibilityProvider
 
         $hasVisibleUnit = false;
         foreach ($product->getUnitPrecisions() as $unitPrecision) {
-            if ($unitPrecision->isSell()
+            if (
+                $unitPrecision->isSell()
                 && $this->unitVisibility->isUnitCodeVisible($unitPrecision->getUnit()->getCode())
             ) {
                 $hasVisibleUnit = true;

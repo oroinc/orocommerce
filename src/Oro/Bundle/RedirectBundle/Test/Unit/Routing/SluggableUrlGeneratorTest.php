@@ -36,7 +36,7 @@ class SluggableUrlGeneratorTest extends TestCase
     public function testInvalidRouteName(string $name)
     {
         self::expectException(RouteNotFoundException::class);
-        self::expectExceptionMessage('Unable to generate a URL for the named route'.
+        self::expectExceptionMessage('Unable to generate a URL for the named route' .
             ' as such route does not fit [a-zA-Z0-9_] regexp.');
 
         $this->urlGenerator->generate($name);

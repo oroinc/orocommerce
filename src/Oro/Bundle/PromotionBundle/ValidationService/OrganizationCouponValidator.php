@@ -13,7 +13,8 @@ class OrganizationCouponValidator implements CouponValidatorInterface
     #[\Override]
     public function getViolationMessages(Coupon $coupon, object $entity): array
     {
-        if ($entity instanceof OrganizationAwareInterface
+        if (
+            $entity instanceof OrganizationAwareInterface
             && $entity->getOrganization()
             && $coupon->getOrganization()->getId() !== $entity->getOrganization()->getId()
         ) {

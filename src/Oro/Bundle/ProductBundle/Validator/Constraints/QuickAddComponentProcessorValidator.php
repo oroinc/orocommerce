@@ -35,7 +35,8 @@ class QuickAddComponentProcessorValidator extends ConstraintValidator
             throw new UnexpectedValueException($value, 'string');
         }
 
-        if (!$this->processorRegistry->hasProcessor($value)
+        if (
+            !$this->processorRegistry->hasProcessor($value)
             || !$this->processorRegistry->getProcessor($value)->isAllowed()
         ) {
             $this->context

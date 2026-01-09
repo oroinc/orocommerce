@@ -6,6 +6,7 @@ use Oro\Bundle\CMSBundle\Form\Extension\ContentTemplatesInWysiwygFormExtension;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Provider\ContentTemplatesForWysiwygPreviewProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -15,13 +16,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ContentTemplatesInWysiwygFormExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    private ContentTemplatesForWysiwygPreviewProvider|\PHPUnit\Framework\MockObject\MockObject
-        $contentTemplatesForWysiwygPreviewProvider;
-
-    private AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker;
-
+    private ContentTemplatesForWysiwygPreviewProvider|MockObject $contentTemplatesForWysiwygPreviewProvider;
+    private AuthorizationCheckerInterface|MockObject $authorizationChecker;
     private TokenAccessorInterface $tokenAccessor;
-
     private ContentTemplatesInWysiwygFormExtension $extension;
 
     #[\Override]

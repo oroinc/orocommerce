@@ -105,7 +105,8 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
     protected function updateCustomersFirstLevel(Category $category, $visibility)
     {
         // if not first level - check if category has fallback to original category
-        if ($category->getId() != $this->category->getId()
+        if (
+            $category->getId() != $this->category->getId()
             && empty($this->customerGroupIdsWithChangedVisibility[$category->getId()])
         ) {
             return [];

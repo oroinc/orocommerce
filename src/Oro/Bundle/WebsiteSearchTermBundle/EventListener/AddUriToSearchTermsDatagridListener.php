@@ -25,9 +25,11 @@ class AddUriToSearchTermsDatagridListener
     public function onResultAfter(OrmResultAfter $event): void
     {
         foreach ($event->getRecords() as $result) {
-            if ($result->getValue('actionType') === 'redirect'
+            if (
+                $result->getValue('actionType') === 'redirect'
                 && $result->getValue('redirectActionType') === 'uri'
-                && $result->getValue('redirectUri') !== null) {
+                && $result->getValue('redirectUri') !== null
+            ) {
                 $redirectUri = $result->getValue('redirectUri');
                 $truncatedRedirectUri = (string)(new UnicodeString($redirectUri))->truncate(50, '...');
                 $title = htmlspecialchars($truncatedRedirectUri, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');

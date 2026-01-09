@@ -38,8 +38,10 @@ class SimpleProductPriceByMatchingCriteriaProvider implements ProductPriceByMatc
         $matchedQuantity = 0;
 
         foreach ($productPrices as $productPrice) {
-            if ($matchedQuantity <= $productPriceCriteria->getQuantity()
-                && $productPriceCriteria->getQuantity() >= $productPrice->getQuantity()) {
+            if (
+                $matchedQuantity <= $productPriceCriteria->getQuantity()
+                && $productPriceCriteria->getQuantity() >= $productPrice->getQuantity()
+            ) {
                 $matchedQuantity = $productPrice->getQuantity();
                 $matchedProductPrice = $productPrice;
             }
@@ -58,7 +60,8 @@ class SimpleProductPriceByMatchingCriteriaProvider implements ProductPriceByMatc
 
     private function isFractionalQuantityLessThenUnitPriceCalculation(ProductPriceCriteria $productPriceCriteria): bool
     {
-        if ($this->configManager->get('oro_pricing.fractional_quantity_less_then_unit_price_calculation')
+        if (
+            $this->configManager->get('oro_pricing.fractional_quantity_less_then_unit_price_calculation')
             && $productPriceCriteria->getQuantity() > 0 && $productPriceCriteria->getQuantity() < 1
             && $productPriceCriteria->getProduct()->getPrimaryUnitPrecision()->getPrecision() > 0
         ) {
@@ -71,7 +74,8 @@ class SimpleProductPriceByMatchingCriteriaProvider implements ProductPriceByMatc
     private function isFractionalQuantityLessThenMinimumPricedPriceCalculation(
         ProductPriceCriteria $productPriceCriteria
     ): bool {
-        if ($this->configManager->get('oro_pricing.fractional_quantity_less_then_minimum_priced_price_calculation')
+        if (
+            $this->configManager->get('oro_pricing.fractional_quantity_less_then_minimum_priced_price_calculation')
             && $productPriceCriteria->getProduct()->getPrimaryUnitPrecision()->getPrecision() > 0
         ) {
             return  true;
@@ -82,7 +86,8 @@ class SimpleProductPriceByMatchingCriteriaProvider implements ProductPriceByMatc
 
     private function isQuantityLessThenMinimumPricedPriceCalculation(ProductPriceCriteria $productPriceCriteria): bool
     {
-        if ($this->configManager->get('oro_pricing.quantity_less_then_minimum_priced_price_calculation')
+        if (
+            $this->configManager->get('oro_pricing.quantity_less_then_minimum_priced_price_calculation')
             && $productPriceCriteria->getProduct()->getPrimaryUnitPrecision()->getPrecision() === 0
         ) {
             return true;

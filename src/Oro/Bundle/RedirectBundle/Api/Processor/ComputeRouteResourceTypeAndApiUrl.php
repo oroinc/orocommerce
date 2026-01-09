@@ -35,7 +35,8 @@ class ComputeRouteResourceTypeAndApiUrl implements ProcessorInterface
 
         $data = $context->getData();
         $apiUrlFieldRequested = $context->isFieldRequested(self::API_URL_FIELD_NAME, $data);
-        if (!\array_key_exists(self::RESOURCE_TYPE_FIELD_NAME, $data)
+        if (
+            !\array_key_exists(self::RESOURCE_TYPE_FIELD_NAME, $data)
             && ($apiUrlFieldRequested || $context->isFieldRequested(self::RESOURCE_TYPE_FIELD_NAME))
         ) {
             $resourceType = $this->resourceTypeResolver->resolveType(

@@ -35,7 +35,8 @@ class AssignedProductsConverter implements QueryExpressionConverterInterface
             if ($operation === 'in' || $operation === 'not in') {
                 /** @var Node\ContainerHolderNodeInterface $right */
                 $right = $node->getRight();
-                if ($right instanceof Node\NameNode
+                if (
+                    $right instanceof Node\NameNode
                     && $right->getContainer() === PriceList::class && $right->getField() === 'assignedProducts'
                 ) {
                     /** @var Node\ContainerHolderNodeInterface|Node\NodeInterface $left */

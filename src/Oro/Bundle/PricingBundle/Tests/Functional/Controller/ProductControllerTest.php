@@ -407,7 +407,7 @@ class ProductControllerTest extends ProductHelperTestCase
         $this->assertArrayHasKey('redirectUrl', $data);
 
         $this->client->request('GET', $data['redirectUrl']);
-        $newProduct = $this->getProductDataBySku($product->getSku().'-1');
+        $newProduct = $this->getProductDataBySku($product->getSku() . '-1');
 
         $shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
         /** @var ProductPriceRepository $productPriceRepository */

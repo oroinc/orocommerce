@@ -33,7 +33,7 @@ class OnlySimpleProductsInProductKitItemProductsCollectionValidator extends Cons
         foreach ($value->getKitItemProducts() as $index => $kitItemProduct) {
             if ($kitItemProduct->getProduct()?->getType() !== Product::TYPE_SIMPLE) {
                 $this->context->buildViolation($constraint->message)
-                    ->atPath('kitItemProducts[' . $index .']')
+                    ->atPath('kitItemProducts[' . $index . ']')
                     ->addViolation();
             }
         }

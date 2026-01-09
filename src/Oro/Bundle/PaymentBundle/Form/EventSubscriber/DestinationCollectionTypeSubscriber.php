@@ -20,7 +20,8 @@ class DestinationCollectionTypeSubscriber implements EventSubscriberInterface
     {
         $data = $event->getData();
 
-        if (!$data ||
+        if (
+            !$data ||
             !(is_array($data) && array_key_exists('destinations', $data)) ||
             !is_array($data['destinations'])
         ) {

@@ -20,7 +20,8 @@ class WebsiteLocalizationConfigListener
 
     public function onLocalizationSettingsChange(ConfigUpdateEvent $event): void
     {
-        if ($event->isChanged('oro_locale.default_localization')
+        if (
+            $event->isChanged('oro_locale.default_localization')
             || $event->isChanged('oro_locale.enabled_localizations')
         ) {
             $reindexationEvent = $this->getReindexationRequestEvent($event);

@@ -31,7 +31,8 @@ class AjaxLocalizationController extends AbstractController
             ->getLocalization($request->get('localization'), false);
 
         $localizationManager = $this->container->get(UserLocalizationManager::class);
-        if ($localization instanceof Localization
+        if (
+            $localization instanceof Localization
             && \array_key_exists($localization->getId(), $localizationManager->getEnabledLocalizations())
         ) {
             $localizationManager->setCurrentLocalization($localization);

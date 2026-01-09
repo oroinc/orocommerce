@@ -342,7 +342,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             ]
         );
 
-        $items = $this->getResultItems(['alias' => 'oro_product_'.  $notExistingId]);
+        $items = $this->getResultItems(['alias' => 'oro_product_' .  $notExistingId]);
 
         $this->assertCount(0, $items);
     }

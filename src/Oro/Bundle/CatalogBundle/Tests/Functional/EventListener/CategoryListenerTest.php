@@ -33,9 +33,12 @@ class CategoryListenerTest extends WebTestCase
         $this->entityManager->persist($category1);
         $this->entityManager->flush();
 
-        $this->assertEquals($this->rootCategory->getId().'_'.$category1->getId(), $category1->getMaterializedPath());
         $this->assertEquals(
-            $this->rootCategory->getId().'_'.$category1->getId().'_'.$category2->getId(),
+            $this->rootCategory->getId() . '_' . $category1->getId(),
+            $category1->getMaterializedPath()
+        );
+        $this->assertEquals(
+            $this->rootCategory->getId() . '_' . $category1->getId() . '_' . $category2->getId(),
             $category2->getMaterializedPath()
         );
 
@@ -58,11 +61,12 @@ class CategoryListenerTest extends WebTestCase
         $this->entityManager->flush();
 
         $this->assertEquals(
-            $this->rootCategory->getId().'_'.$category3->getId().'_'.$category1->getId(),
+            $this->rootCategory->getId() . '_' . $category3->getId() . '_' . $category1->getId(),
             $category1->getMaterializedPath()
         );
         $this->assertEquals(
-            $this->rootCategory->getId().'_'.$category3->getId().'_'.$category1->getId().'_'.$category2->getId(),
+            $this->rootCategory->getId() . '_' . $category3->getId() . '_' . $category1->getId()
+            . '_' . $category2->getId(),
             $category2->getMaterializedPath()
         );
 
@@ -79,7 +83,10 @@ class CategoryListenerTest extends WebTestCase
         $this->entityManager->persist($category2);
         $this->entityManager->flush();
 
-        $this->assertEquals($this->rootCategory->getId().'_'.$category2->getId(), $category2->getMaterializedPath());
+        $this->assertEquals(
+            $this->rootCategory->getId() . '_' . $category2->getId(),
+            $category2->getMaterializedPath()
+        );
     }
 
     private function createCategory(string $title, Category $parentCategory): Category

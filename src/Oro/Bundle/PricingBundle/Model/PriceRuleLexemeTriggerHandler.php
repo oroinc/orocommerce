@@ -95,7 +95,8 @@ class PriceRuleLexemeTriggerHandler
 
         $priceListOrganizationId = $priceList->getOrganization()->getId();
         foreach ($products as $product) {
-            if (null === $product
+            if (
+                null === $product
                 || (\is_object($product) && $priceListOrganizationId !== $product->getOrganization()->getId())
             ) {
                 continue;

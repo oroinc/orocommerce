@@ -174,9 +174,9 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
                         ],
                         'select' => [
                             'COALESCE(agpt_customerGroupPaymentTerm.label) as customer_group_payment_term',
-                            'COALESCE(IDENTITY(rootAlias.customerPaymentTerm),'.
+                            'COALESCE(IDENTITY(rootAlias.customerPaymentTerm),' .
                                 'agpt_customerGroupPaymentTerm.id) as customerPaymentTerm_resolved_id',
-                            'COALESCE(agpt_customerGroupPaymentTerm.label)'.
+                            'COALESCE(agpt_customerGroupPaymentTerm.label)' .
                                 ' as customerPaymentTerm_resolved_value',
                         ],
                     ],
@@ -253,15 +253,15 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                     'select' => [
-                        'COALESCE(agpt_customerGroupPaymentTerm.label,agpt_customerGroupPaymentTerm2.label)'.
+                        'COALESCE(agpt_customerGroupPaymentTerm.label,agpt_customerGroupPaymentTerm2.label)' .
                             ' as customer_group_payment_term',
-                        'COALESCE(IDENTITY(rootAlias.customerPaymentTerm),agpt_customerGroupPaymentTerm.id,'.
+                        'COALESCE(IDENTITY(rootAlias.customerPaymentTerm),agpt_customerGroupPaymentTerm.id,' .
                             'agpt_customerGroupPaymentTerm2.id) as customerPaymentTerm_resolved_id',
-                        'COALESCE(agpt_customerGroupPaymentTerm.label,'.
+                        'COALESCE(agpt_customerGroupPaymentTerm.label,' .
                             'agpt_customerGroupPaymentTerm2.label) as customerPaymentTerm_resolved_value',
-                        'COALESCE(IDENTITY(rootAlias.customerPaymentTerm2),agpt_customerGroupPaymentTerm.id,'.
+                        'COALESCE(IDENTITY(rootAlias.customerPaymentTerm2),agpt_customerGroupPaymentTerm.id,' .
                             'agpt_customerGroupPaymentTerm2.id) as customerPaymentTerm2_resolved_id',
-                        'COALESCE(agpt_customerGroupPaymentTerm.label,'.
+                        'COALESCE(agpt_customerGroupPaymentTerm.label,' .
                             'agpt_customerGroupPaymentTerm2.label) as customerPaymentTerm2_resolved_value',
                     ],
                 ],

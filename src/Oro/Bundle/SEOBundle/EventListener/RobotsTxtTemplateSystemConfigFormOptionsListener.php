@@ -37,7 +37,8 @@ class RobotsTxtTemplateSystemConfigFormOptionsListener
         }
 
         $robotsTxtTemplateValue = $settings[$robotsTxtTemplateKey]['value'];
-        if ($robotsTxtTemplateValue === null
+        if (
+            $robotsTxtTemplateValue === null
             || (is_string($robotsTxtTemplateValue) && $robotsTxtTemplateValue !== '')
         ) {
             return;

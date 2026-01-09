@@ -40,7 +40,8 @@ class InventoryLevelsImportListener
 
         $processorAlias = $context->get('processorAlias');
         $entityName = $context->get('entityName');
-        if (!($processorAlias == self::INVENTORY_IMPORT_PROCESSOR_ALIAS
+        if (
+            !($processorAlias == self::INVENTORY_IMPORT_PROCESSOR_ALIAS
             && $entityName == InventoryLevel::class)
         ) {
             return;

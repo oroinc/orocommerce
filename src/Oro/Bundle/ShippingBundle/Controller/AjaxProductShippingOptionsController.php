@@ -90,7 +90,8 @@ class AjaxProductShippingOptionsController extends AbstractController
     private function buildActiveShippingOptions(array $productData, $unitCode)
     {
         $shippingOptionsData = [];
-        if (array_key_exists(ProductFormExtension::FORM_ELEMENT_NAME, $productData) &&
+        if (
+            array_key_exists(ProductFormExtension::FORM_ELEMENT_NAME, $productData) &&
             is_array($productData[ProductFormExtension::FORM_ELEMENT_NAME])
         ) {
             $shippingOptionsData = $productData[ProductFormExtension::FORM_ELEMENT_NAME];

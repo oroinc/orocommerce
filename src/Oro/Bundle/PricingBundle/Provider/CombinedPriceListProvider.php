@@ -176,7 +176,8 @@ class CombinedPriceListProvider
         foreach ($priceListsRelations as $priceListsRelation) {
             $priceListId = $priceListsRelation->getPriceList()->getId();
             $isMergeAllowed = $priceListsRelation->isMergeAllowed();
-            if (($isMergeAllowed && isset($usedPriceMap[$priceListId][$isMergeAllowed]))
+            if (
+                ($isMergeAllowed && isset($usedPriceMap[$priceListId][$isMergeAllowed]))
                 || (!$isMergeAllowed && isset($usedPriceMap[$priceListId]))
             ) {
                 continue;

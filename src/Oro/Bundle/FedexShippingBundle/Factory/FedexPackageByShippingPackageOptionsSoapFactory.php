@@ -6,6 +6,8 @@ use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptionsInterface;
 
 /**
  * Create shipping package data by shipping options.
+ *
+ * phpcs:ignore
  * @deprecated. Will be removed when SOAP support will be dropped by FedEx.
  */
 class FedexPackageByShippingPackageOptionsSoapFactory implements FedexPackageByShippingPackageOptionsFactoryInterface

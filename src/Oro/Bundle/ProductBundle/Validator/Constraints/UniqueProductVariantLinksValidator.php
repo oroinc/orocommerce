@@ -100,7 +100,8 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
     private function getSimpleProducts(Product $value)
     {
         $variantLinks = $value->getVariantLinks();
-        if ($value->getId()
+        if (
+            $value->getId()
             && $variantLinks instanceof AbstractLazyCollection
             && !$variantLinks->isInitialized()
         ) {

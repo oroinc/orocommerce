@@ -100,8 +100,8 @@ class ShardManagerTest extends WebTestCase
         $pricePl2 = $this->createPrice('27cdc013-1340-46f4-ba80-8ea623772bfe', $pl2, $product, $prodSku);
 
         $baseTableName = 'oro_price_product';
-        $shardName1 = 'oro_price_product_'.$pl1;
-        $shardName2 = 'oro_price_product_'.$pl2;
+        $shardName1 = 'oro_price_product_' . $pl1;
+        $shardName2 = 'oro_price_product_' . $pl2;
 
         try {
             // move data from base table

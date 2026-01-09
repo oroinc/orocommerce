@@ -31,7 +31,8 @@ class PrepareCheckoutSettings implements PrepareCheckoutSettingsInterface
                 ->duplicateOrderAddress($source->getShippingAddress());
         }
 
-        if ($source instanceof PreConfiguredShippingMethodConfigurationInterface
+        if (
+            $source instanceof PreConfiguredShippingMethodConfigurationInterface
             && $source->getShippingMethod()
             && $source->getShippingMethodType()
         ) {

@@ -96,8 +96,10 @@ class ProductVariantCustomFieldsDatagridListener
         $customFieldsData = $this->customFieldProvider->getEntityCustomFields($this->productClass);
         $variantAndWherePart = [];
         foreach ($variantFields as $variantFieldName) {
-            if (isset($customFieldsData[$variantFieldName]['type'])
-                && ExtendHelper::isEnumerableType($customFieldsData[$variantFieldName]['type'])) {
+            if (
+                isset($customFieldsData[$variantFieldName]['type'])
+                && ExtendHelper::isEnumerableType($customFieldsData[$variantFieldName]['type'])
+            ) {
                 $variantAndWherePart[] = sprintf(
                     'JSON_EXTRACT(%s.serialized_data, \'%s\') IS NOT NULL',
                     $rootEntityAlias,
@@ -111,7 +113,7 @@ class ProductVariantCustomFieldsDatagridListener
         return $variantAndWherePart;
     }
 
-    private function removeExtendFields(BuildAfter $event, array  $variantFields)
+    private function removeExtendFields(BuildAfter $event, array $variantFields)
     {
         $datagridConfig = $event->getDatagrid()->getConfig();
 

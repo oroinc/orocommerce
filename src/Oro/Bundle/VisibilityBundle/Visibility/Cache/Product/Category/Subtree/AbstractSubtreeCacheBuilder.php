@@ -188,7 +188,8 @@ abstract class AbstractSubtreeCacheBuilder
     protected function isExcludedByParent(array $node)
     {
         foreach ($this->excludedCategories as $excludedCategory) {
-            if ($node['level'] > $excludedCategory['level']
+            if (
+                $node['level'] > $excludedCategory['level']
                 && $node['left'] > $excludedCategory['left']
                 && $node['right'] < $excludedCategory['right']
             ) {

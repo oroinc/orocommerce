@@ -39,7 +39,8 @@ class AccessTokenProvider implements AccessTokenProviderInterface
     ): ?string {
         $client = $this->restClientFactory->createRestClient($baseUrl, []);
         $tokenExpiresAt = $settings->getAccessTokenExpiresAt();
-        if ($isCheckMode
+        if (
+            $isCheckMode
             || null === $tokenExpiresAt
             || $tokenExpiresAt < new \DateTime('now', new \DateTimeZone('UTC'))
         ) {

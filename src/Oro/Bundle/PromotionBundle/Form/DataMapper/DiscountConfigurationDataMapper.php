@@ -55,7 +55,8 @@ class DiscountConfigurationDataMapper implements DataMapperInterface
     private function setDataFromOptions(array &$forms, $options)
     {
         foreach ($forms as $form) {
-            if ($form->getConfig()->getName() === DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD
+            if (
+                $form->getConfig()->getName() === DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD
                 && isset($options[AbstractDiscount::DISCOUNT_VALUE], $options[AbstractDiscount::DISCOUNT_CURRENCY])
             ) {
                 $forms[DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD]->setData(
@@ -64,7 +65,8 @@ class DiscountConfigurationDataMapper implements DataMapperInterface
                         $options[AbstractDiscount::DISCOUNT_CURRENCY]
                     )
                 );
-            } elseif ($form->getConfig()->getName() === DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD
+            } elseif (
+                $form->getConfig()->getName() === DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD
                 && isset($options[AbstractDiscount::DISCOUNT_VALUE], $options[AbstractDiscount::DISCOUNT_TYPE])
                 && DiscountInterface::TYPE_PERCENT === $options[AbstractDiscount::DISCOUNT_TYPE]
             ) {
@@ -90,18 +92,21 @@ class DiscountConfigurationDataMapper implements DataMapperInterface
         $options = [];
 
         foreach ($forms as $form) {
-            if ($form->getConfig()->getName() === DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD
+            if (
+                $form->getConfig()->getName() === DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD
                 && $this->isAmountDiscountData($forms)
                 && $form->getData() instanceof MultiCurrency
             ) {
                 $options[AbstractDiscount::DISCOUNT_VALUE] = $form->getData()->getValue();
                 $options[AbstractDiscount::DISCOUNT_CURRENCY] = $form->getData()->getCurrency();
-            } elseif ($form->getConfig()->getName() === DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD
+            } elseif (
+                $form->getConfig()->getName() === DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD
                 && $this->isPercentDiscountData($forms)
             ) {
                 $options[AbstractDiscount::DISCOUNT_VALUE] = $form->getData();
                 unset($options[AbstractDiscount::DISCOUNT_CURRENCY]);
-            } elseif (DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD !== $form->getName()
+            } elseif (
+                DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD !== $form->getName()
                 && DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD !== $form->getName()
             ) {
                 $options[$form->getName()] = $form->getData();

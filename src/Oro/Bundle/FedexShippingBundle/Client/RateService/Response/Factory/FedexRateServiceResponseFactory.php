@@ -47,8 +47,10 @@ class FedexRateServiceResponseFactory implements FedexRateServiceResponseFactory
         }
 
         $prices = [];
-        if (\array_key_exists('output', $data)
-            && \array_key_exists('rateReplyDetails', $data['output'])) {
+        if (
+            \array_key_exists('output', $data)
+            && \array_key_exists('rateReplyDetails', $data['output'])
+        ) {
             $prices = $this->createPricesByResponse($data['output']['rateReplyDetails']);
         }
 

@@ -19,7 +19,7 @@ class LoadSearchTermReportData extends AbstractFixture
 
     protected function getCsvPath(): string
     {
-        return __DIR__.'/data/search_term_report.csv';
+        return __DIR__ . '/data/search_term_report.csv';
     }
 
     #[\Override]

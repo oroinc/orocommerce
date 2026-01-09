@@ -217,7 +217,8 @@ class ExpressionLanguageConverter
             if (!$left instanceof ExpressionNode\ContainerHolderNodeInterface) {
                 throw new SyntaxError(sprintf('Left operand of %s must be field expression', $operator));
             }
-            if ((!$right instanceof ExpressionNode\ContainerHolderNodeInterface
+            if (
+                (!$right instanceof ExpressionNode\ContainerHolderNodeInterface
                     && !$right instanceof ExpressionNode\ValueNode)
                 || ($right instanceof ExpressionNode\ValueNode && !is_array($right->getValue()))
             ) {

@@ -42,9 +42,11 @@ abstract class AbstractResolveVisibilityTopic extends AbstractTopic
             ->setDefined('id')
             ->setAllowedTypes('id', ['int', 'null'])
             ->setDefault('id', function (Options $options) {
-                if (!isset($options['target_class_name'])
+                if (
+                    !isset($options['target_class_name'])
                     && !isset($options['target_id'])
-                    && !isset($options['scope_id'])) {
+                    && !isset($options['scope_id'])
+                ) {
                     throw new InvalidOptionsException('The option "id" is expected to be not empty.');
                 }
 

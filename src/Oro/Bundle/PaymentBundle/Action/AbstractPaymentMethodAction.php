@@ -233,13 +233,17 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
 
     protected function extractPaymentMethodFromOptions(array $options): ?PaymentMethodInterface
     {
-        if (!empty($options['paymentMethodInstance']) &&
-            $options['paymentMethodInstance'] instanceof PaymentMethodInterface) {
+        if (
+            !empty($options['paymentMethodInstance']) &&
+            $options['paymentMethodInstance'] instanceof PaymentMethodInterface
+        ) {
             return $options['paymentMethodInstance'];
         }
 
-        if (empty($options['paymentMethod']) ||
-            !$this->paymentMethodProvider->hasPaymentMethod($options['paymentMethod'])) {
+        if (
+            empty($options['paymentMethod']) ||
+            !$this->paymentMethodProvider->hasPaymentMethod($options['paymentMethod'])
+        ) {
             return null;
         }
 

@@ -106,8 +106,10 @@ class FrontendConsentContentNodeValidFilter implements ConsentFilterInterface
         $contentNode = $consent->getContentNode();
         $currentWebCatalog = $this->webCatalogProvider->getWebCatalog();
 
-        if ($this->isLogErrorsEnabled($params) &&
-            ($currentWebCatalog === null || $currentWebCatalog !== $contentNode->getWebCatalog())) {
+        if (
+            $this->isLogErrorsEnabled($params) &&
+            ($currentWebCatalog === null || $currentWebCatalog !== $contentNode->getWebCatalog())
+        ) {
             $this->logger->error(
                 sprintf(
                     "Consent with id '%d' point to the WebCatalog that doesn't use in the website with id '%d'!",

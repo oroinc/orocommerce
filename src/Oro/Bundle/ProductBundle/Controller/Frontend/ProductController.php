@@ -91,7 +91,8 @@ class ProductController extends AbstractController
             'chosenProductVariant' => null
         ];
 
-        if (!$request->get('ignoreProductVariant', false)
+        if (
+            !$request->get('ignoreProductVariant', false)
             && $product->isConfigurable()
             && $this->isSimpleFormAvailable($product)
         ) {

@@ -40,7 +40,8 @@ class DenyCheckoutShippingMethodChange implements ProcessorInterface
     private function validateFieldValueChange(CustomizeFormDataContext $context, string $fieldName): void
     {
         $fieldForm = $context->findFormField($fieldName);
-        if (null !== $fieldForm
+        if (
+            null !== $fieldForm
             && FormUtil::isSubmittedAndValid($fieldForm)
             && $this->isFieldValueChanged($context, $fieldForm)
         ) {

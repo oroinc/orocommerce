@@ -75,7 +75,8 @@ class ProductImageTypeValidator extends ConstraintValidator
 
     private function validateDuplicateType(EntityProductImageType $value, $constraint, $validTypes)
     {
-        if (null === $value->getProductImage() ||
+        if (
+            null === $value->getProductImage() ||
             ($existingProductImageTypes = $value->getProductImage()->getTypes())->contains($value)
         ) {
             return;

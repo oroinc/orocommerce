@@ -44,8 +44,10 @@ class AddCategoryToSearchTermsDatagridListener
     public function onResultAfter(OrmResultAfter $event): void
     {
         foreach ($event->getRecords() as $result) {
-            if ($result->getValue('actionType') !== 'redirect'
-                || $result->getValue('redirectActionType') !== 'category') {
+            if (
+                $result->getValue('actionType') !== 'redirect'
+                || $result->getValue('redirectActionType') !== 'category'
+            ) {
                 continue;
             }
 

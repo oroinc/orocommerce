@@ -95,7 +95,8 @@ class CheckoutStateListener
 
         // If protect_transitions is configured - protect only listed transitions
         $protectTransitionsList = $this->getCheckoutStateConfig($event->getWorkflowItem())['protect_transitions'] ?? [];
-        if (!empty($protectTransitionsList)
+        if (
+            !empty($protectTransitionsList)
             && !\in_array($event->getTransition()->getName(), $protectTransitionsList, true)
         ) {
             return;

@@ -81,7 +81,7 @@ class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
             }
         );
 
-        $website->setName('updated_'.$website->getName());
+        $website->setName('updated_' . $website->getName());
 
         $this->entityManager->persist($website);
         $this->entityManager->flush();
@@ -93,7 +93,7 @@ class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
     {
         $website = new Website();
 
-        $website->setName('test_'.uniqid());
+        $website->setName('test_' . uniqid());
 
         $this->entityManager->persist($website);
         $this->entityManager->flush();

@@ -55,7 +55,7 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
                     'product-8',
                 ],
                 'filter' => [
-                    $sort.'[minimal_price_sort]' => AbstractSorterExtension::DIRECTION_ASC,
+                    $sort . '[minimal_price_sort]' => AbstractSorterExtension::DIRECTION_ASC,
                 ]
             ],
             'filter by price sort by sku' => [
@@ -64,10 +64,10 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
                     'product-1',
                 ],
                 'filter' => [
-                    $filter.'[minimal_price][value]' => 12,
-                    $filter.'[minimal_price][type]' => NumberRangeFilterType::TYPE_LESS_THAN,
-                    $filter.'[minimal_price][unit]' => 'liter',
-                    $sort.'[sku]' => AbstractSorterExtension::DIRECTION_DESC
+                    $filter . '[minimal_price][value]' => 12,
+                    $filter . '[minimal_price][type]' => NumberRangeFilterType::TYPE_LESS_THAN,
+                    $filter . '[minimal_price][unit]' => 'liter',
+                    $sort . '[sku]' => AbstractSorterExtension::DIRECTION_DESC
                 ]
             ],
             'filter and sort by price' => [
@@ -76,11 +76,11 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
                     'product-1',
                 ],
                 'filter' => [
-                    $filter.'[minimal_price][value]' => 8,
-                    $filter.'[minimal_price][value_end]' => 15,
-                    $filter.'[minimal_price][type]' => NumberRangeFilterType::TYPE_BETWEEN,
-                    $filter.'[minimal_price][unit]' => 'liter',
-                    $sort.'[minimal_price_sort]' => AbstractSorterExtension::DIRECTION_DESC,
+                    $filter . '[minimal_price][value]' => 8,
+                    $filter . '[minimal_price][value_end]' => 15,
+                    $filter . '[minimal_price][type]' => NumberRangeFilterType::TYPE_BETWEEN,
+                    $filter . '[minimal_price][unit]' => 'liter',
+                    $sort . '[minimal_price_sort]' => AbstractSorterExtension::DIRECTION_DESC,
                 ],
             ],
         ];

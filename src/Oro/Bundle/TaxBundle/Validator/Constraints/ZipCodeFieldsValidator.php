@@ -50,7 +50,8 @@ class ZipCodeFieldsValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if ($value->getZipRangeStart()
+        if (
+            $value->getZipRangeStart()
             && $value->getZipRangeEnd()
             && (!$this->isInteger($value->getZipRangeStart()) || !$this->isInteger($value->getZipRangeEnd()))
         ) {

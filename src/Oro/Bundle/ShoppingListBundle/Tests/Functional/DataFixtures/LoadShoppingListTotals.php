@@ -79,8 +79,8 @@ class LoadShoppingListTotals extends AbstractFixture implements DependentFixture
             $shoppingList = $this->getReference($data['shopping_list']);
             $connection->executeStatement(
                 'INSERT INTO oro_shopping_list_total'
-                .' (currency, subtotal_value, is_valid, shopping_list_id, customer_user_id)'
-                .' VALUES (:currency, :subtotal, false, :shoppingList, NULL)',
+                . ' (currency, subtotal_value, is_valid, shopping_list_id, customer_user_id)'
+                . ' VALUES (:currency, :subtotal, false, :shoppingList, NULL)',
                 [
                     'currency' => $shoppingList->getCurrency(),
                     'subtotal' => $data['subtotal'],

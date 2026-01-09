@@ -46,6 +46,6 @@ class LoadShippingServices extends AbstractFixture implements DependentFixtureIn
      */
     protected function getShippingServicesData()
     {
-        return Yaml::parse(file_get_contents(__DIR__.'/data/shipping_services.yml'));
+        return Yaml::parse(file_get_contents(__DIR__ . '/data/shipping_services.yml'));
     }
 }

@@ -33,7 +33,7 @@ class RequestACLTest extends WebTestCase
     /**
      * @dataProvider permissionsDataProvider
      */
-    public function testRFPPermissions(int $level, array  $permissions, int $expectedCode)
+    public function testRFPPermissions(int $level, array $permissions, int $expectedCode)
     {
         $this->manager->deactivateWorkflow('b2b_rfq_frontoffice_default');
 

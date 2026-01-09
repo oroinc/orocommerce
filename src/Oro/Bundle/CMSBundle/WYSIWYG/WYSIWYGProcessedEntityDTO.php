@@ -109,8 +109,10 @@ class WYSIWYGProcessedEntityDTO
             return true;
         }
 
-        if (\array_key_exists('serialized_data', $this->changeSet)
-            && \array_key_exists($this->getFieldName(), $this->changeSet['serialized_data'][1])) {
+        if (
+            \array_key_exists('serialized_data', $this->changeSet)
+            && \array_key_exists($this->getFieldName(), $this->changeSet['serialized_data'][1])
+        ) {
             return true;
         }
 

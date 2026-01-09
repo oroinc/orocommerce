@@ -57,7 +57,8 @@ class TaxationAddressProvider
                 continue;
             }
 
-            if ($address->getRegion()
+            if (
+                $address->getRegion()
                 && $exclusion->getRegion()->getCombinedCode() !== $address->getRegion()->getCombinedCode()
             ) {
                 continue;

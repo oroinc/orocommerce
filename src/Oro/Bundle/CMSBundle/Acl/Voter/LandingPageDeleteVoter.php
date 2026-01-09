@@ -29,7 +29,8 @@ class LandingPageDeleteVoter extends AbstractEntityVoter
     #[\Override]
     protected function getPermissionForAttribute($class, $identifier, $attribute): int
     {
-        if ($this->isSelectedInSystemConfiguration($identifier) ||
+        if (
+            $this->isSelectedInSystemConfiguration($identifier) ||
             $this->isSelectedAsContentVariant($identifier)
         ) {
             return self::ACCESS_DENIED;

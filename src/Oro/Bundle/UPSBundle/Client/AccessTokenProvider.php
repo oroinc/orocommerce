@@ -33,7 +33,8 @@ class AccessTokenProvider implements AccessTokenProviderInterface
         bool $isCheckMode = false
     ): ?string {
         $tokenExpiresAt = $transport->getUpsAccessTokenExpiresAt();
-        if ($isCheckMode
+        if (
+            $isCheckMode
             || null === $tokenExpiresAt
             || $tokenExpiresAt < new \DateTime('now', new \DateTimeZone('UTC'))
         ) {

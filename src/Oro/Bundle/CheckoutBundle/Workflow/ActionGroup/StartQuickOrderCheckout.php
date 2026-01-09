@@ -60,7 +60,8 @@ class StartQuickOrderCheckout implements StartQuickOrderCheckoutInterface
 
         $checkout = $startResult['checkout'] ?? null;
         $workflowItem = $startResult['workflowItem'] ?? null;
-        if (empty($startResult['errors'])
+        if (
+            empty($startResult['errors'])
             && $transitionName
             && $checkout instanceof Checkout
             && $workflowItem instanceof WorkflowItem

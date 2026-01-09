@@ -35,7 +35,7 @@ class CategoryMaterializedPathModifier
         $path = (string) $category->getId();
         $parent = $category->getParentCategory();
         if ($parent && $parent->getMaterializedPath()) {
-            $path = $parent->getMaterializedPath().Category::MATERIALIZED_PATH_DELIMITER.$path;
+            $path = $parent->getMaterializedPath() . Category::MATERIALIZED_PATH_DELIMITER . $path;
         }
 
         $category->setMaterializedPath($path);

@@ -41,6 +41,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             self::fail('Failed to get current domain');
         }
 
-        $this->visitPath('/media/sitemaps/robots.'.$domain.'.txt');
+        $this->visitPath('/media/sitemaps/robots.' . $domain . '.txt');
     }
 }

@@ -23,7 +23,9 @@ class CustomerTaxCodeDeleteOperationTest extends ActionTestCase
 
     public function testDelete()
     {
-        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
+        $customerTaxCode = $this->getReference(
+            LoadCustomerTaxCodes::REFERENCE_PREFIX . '.' . LoadCustomerTaxCodes::TAX_1
+        );
 
         $this->assertDeleteOperation(
             $customerTaxCode->getId(),

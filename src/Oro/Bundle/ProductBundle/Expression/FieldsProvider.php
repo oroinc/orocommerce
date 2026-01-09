@@ -151,7 +151,8 @@ class FieldsProvider implements FieldsProviderInterface
                 }
 
                 $fieldName = $field['name'];
-                if ($this->isBlacklistedField($className, $fieldName)
+                if (
+                    $this->isBlacklistedField($className, $fieldName)
                     || (
                         !$this->isWhitelistedField($className, $fieldName)
                         && $this->isSkippedField($field, $numericOnly, $withRelations)

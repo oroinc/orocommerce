@@ -83,7 +83,8 @@ class MultiShippingCostProvider
                     $shippingCost += $shippingData[self::AMOUNT];
                 } elseif (isset($shippingData[self::METHOD])) {
                     $organization = null;
-                    if ($isLineItemsGroupedByOrganization
+                    if (
+                        $isLineItemsGroupedByOrganization
                         && GroupLineItemHelper::OTHER_ITEMS_KEY !== $lineItemGroupKey
                     ) {
                         $organization = $this->groupLineItemHelper->getGroupingFieldValue(

@@ -42,7 +42,8 @@ class DefaultVariantChoiceExtension extends AbstractTypeExtension
         $form = $event->getForm();
         $data = $event->getData();
 
-        if ($form->has(DefaultVariantChoiceType::DEFAULT_VARIANT_FORM_FIELD)
+        if (
+            $form->has(DefaultVariantChoiceType::DEFAULT_VARIANT_FORM_FIELD)
             && isset($data[DefaultVariantChoiceType::DEFAULT_VARIANT_FORM_FIELD])
         ) {
             $selectedId = $data[DefaultVariantChoiceType::DEFAULT_VARIANT_FORM_FIELD];
