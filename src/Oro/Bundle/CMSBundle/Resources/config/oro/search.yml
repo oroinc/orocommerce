@@ -20,10 +20,6 @@ search:
                         target_type: text
                         target_fields: [titles]
             -
-                name:                   defaultSlug
-                target_type:            text
-                target_fields:          [defaultSlug]
-            -
                 name: slugs
                 relation_type: many-to-many
                 relation_fields:
@@ -52,10 +48,6 @@ search:
                 name:                   widgetType
                 target_type:            text
                 target_fields:          [widgetType]
-            -
-                name:                   template
-                target_type:            text
-                target_fields:          [template]
 
     Oro\Bundle\CMSBundle\Entity\ContentTemplate:
         alias:                          oro_cms_content_template

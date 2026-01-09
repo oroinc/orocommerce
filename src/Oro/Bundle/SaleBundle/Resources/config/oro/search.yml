@@ -25,7 +25,7 @@ search:
                 target_fields:          [shipUntil]
             -
                 name:                   poNumber
-                target_type:            datetime
+                target_type:            text
                 target_fields:          [poNumber]
             -
                 name:                   email
