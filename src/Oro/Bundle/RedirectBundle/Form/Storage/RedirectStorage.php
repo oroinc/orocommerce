@@ -4,6 +4,14 @@ namespace Oro\Bundle\RedirectBundle\Form\Storage;
 
 use Oro\Bundle\RedirectBundle\Model\PrefixWithRedirect;
 
+/**
+ * Storage for managing URL prefix configurations with redirect creation preferences.
+ *
+ * This class provides temporary storage for {@see PrefixWithRedirect} objects during form processing,
+ * allowing the system to track which URL prefixes should be applied to slugs and whether automatic redirects
+ * should be created when those prefixes change. It acts as a registry that can be populated during form submission
+ * and queried when generating or updating slugs.
+ */
 class RedirectStorage
 {
     /**

@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\Config;
 
+/**
+ * Defines the contract for payment method configuration objects.
+ *
+ * Implementations provide access to payment method labels and identifiers used for
+ * displaying and identifying payment methods throughout the system.
+ */
 interface PaymentConfigInterface
 {
     /**

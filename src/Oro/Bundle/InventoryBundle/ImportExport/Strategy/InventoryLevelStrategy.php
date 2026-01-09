@@ -5,6 +5,12 @@ namespace Oro\Bundle\InventoryBundle\ImportExport\Strategy;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\AbstractImportStrategy;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
+/**
+ * Import strategy for inventory level entities.
+ *
+ * Orchestrates the import process for inventory level data, delegating to strategy helpers
+ * and managing validation errors and import statistics.
+ */
 class InventoryLevelStrategy extends AbstractImportStrategy
 {
     /** @var  InventoryLevelStrategyHelperInterface $inventoryLevelStrategyHelper */

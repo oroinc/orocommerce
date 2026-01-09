@@ -11,6 +11,12 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
+/**
+ * Provides criteria data for promotion evaluation.
+ *
+ * Extracts customer, customer group, and website information from entities that implement customer and
+ * website awareness interfaces, using relations providers to resolve customer relationships and website context.
+ */
 class CriteriaDataProvider
 {
     /**

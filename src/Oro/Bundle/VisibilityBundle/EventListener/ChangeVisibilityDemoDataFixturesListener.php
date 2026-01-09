@@ -8,6 +8,12 @@ use Oro\Bundle\PlatformBundle\EventListener\AbstractDemoDataFixturesListener;
 use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
 use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;
 
+/**
+ * Updates customer visibility data in the search index after demo data fixtures are loaded.
+ *
+ * This listener ensures that the website search index is properly updated with customer-specific visibility
+ * information after demo data is loaded, maintaining consistency between visibility settings and search results.
+ */
 class ChangeVisibilityDemoDataFixturesListener extends AbstractDemoDataFixturesListener
 {
     /** @var CustomerPartialUpdateDriverInterface */

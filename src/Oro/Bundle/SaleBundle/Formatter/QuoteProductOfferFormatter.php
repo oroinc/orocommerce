@@ -4,6 +4,12 @@ namespace Oro\Bundle\SaleBundle\Formatter;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Formats quote product offer price type labels for display.
+ *
+ * Translates price type labels to localized strings suitable for presentation in the UI,
+ * supporting both single and batch formatting of price type labels.
+ */
 class QuoteProductOfferFormatter
 {
     /**

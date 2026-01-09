@@ -7,6 +7,13 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Converter\ShippingContextToRulesValuesConverterInterface;
 use Oro\Bundle\ShippingBundle\RuleFiltration\MethodsConfigsRulesFiltrationServiceInterface;
 
+/**
+ * Filters shipping method configuration rules based on shipping context.
+ *
+ * This service evaluates shipping rules against the current shipping context, filtering out rules that don't match
+ * the context conditions (destination, line items, customer, etc.),
+ * and returning only the applicable shipping method configurations.
+ */
 class BasicMethodsConfigsRulesFiltrationService implements MethodsConfigsRulesFiltrationServiceInterface
 {
     /**

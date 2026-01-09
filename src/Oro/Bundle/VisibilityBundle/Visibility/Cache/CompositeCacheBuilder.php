@@ -5,6 +5,13 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 
+/**
+ * Composite cache builder that delegates visibility cache operations to multiple child builders.
+ *
+ * This class implements the composite pattern to manage multiple visibility cache builders, allowing
+ * different cache building strategies to be combined. It delegates cache building operations to all
+ * registered child builders that support the given visibility settings.
+ */
 class CompositeCacheBuilder implements CacheBuilderInterface
 {
     /**

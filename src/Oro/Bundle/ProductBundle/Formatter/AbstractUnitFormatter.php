@@ -4,6 +4,13 @@ namespace Oro\Bundle\ProductBundle\Formatter;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Provides common functionality for formatting product units.
+ *
+ * This base class manages the translation prefix used for unit label translations and provides access
+ * to the translator service. Subclasses should implement specific formatting logic
+ * for different unit display formats (e.g., short, long, code).
+ */
 abstract class AbstractUnitFormatter
 {
     /** @var TranslatorInterface */

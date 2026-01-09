@@ -6,6 +6,15 @@ use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Manages inventory quantity operations for products.
+ *
+ * This class provides core functionality for checking and modifying inventory levels,
+ * including decrement/increment operations, quantity validation, and availability checks.
+ * It respects product-level fallback settings for inventory management, back-order policies,
+ * and inventory thresholds when determining available quantities and whether inventory
+ * can be decremented.
+ */
 class InventoryQuantityManager
 {
     /**

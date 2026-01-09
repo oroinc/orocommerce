@@ -9,6 +9,13 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 
+/**
+ * Enriches order datagrid records with payment method information.
+ *
+ * Listens to datagrid result events and augments order records with associated payment methods
+ * by querying the payment transaction repository.
+ * This allows the datagrid to display payment method information alongside order data.
+ */
 class OrderDatagridListener
 {
     /** @var DoctrineHelper */

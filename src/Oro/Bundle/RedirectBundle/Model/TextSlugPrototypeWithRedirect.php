@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\RedirectBundle\Model;
 
+/**
+ * Represents a text-based slug prototype with redirect creation preference.
+ *
+ * This model object encapsulates a text-based slug prototype string and a boolean flag
+ * indicating whether automatic redirects should be created when the slug URL changes.
+ * It supports reference-based initialization for dynamic slug prototype values.
+ */
 class TextSlugPrototypeWithRedirect
 {
     /**

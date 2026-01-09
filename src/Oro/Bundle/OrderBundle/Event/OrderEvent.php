@@ -7,6 +7,12 @@ use Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Event dispatched during order form processing and manipulation.
+ *
+ * Carries order, form, and submitted data information to event listeners, allowing them to react
+ * to order-related events and modify order data during form submission and processing workflows.
+ */
 class OrderEvent extends Event implements EntityDataAwareEventInterface
 {
     public const NAME = 'oro_order.order';

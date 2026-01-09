@@ -5,6 +5,13 @@ namespace Oro\Bundle\RedirectBundle\Entity;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 
+/**
+ * Defines the contract for entities that support URL slugs.
+ *
+ * Entities implementing this interface can manage a collection of URL slugs, which are
+ * SEO-friendly URL identifiers for the entity. This interface provides methods to add, remove,
+ * and retrieve slugs, including locale-specific slug retrieval for multi-language support.
+ */
 interface SlugAwareInterface
 {
     /**

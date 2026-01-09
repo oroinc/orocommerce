@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * Configures currency option for PayPal Payflow transactions.
+ *
+ * Specifies the transaction currency code (USD, EUR, GBP, etc.),
+ * with configurable requirement based on transaction type.
+ */
 class Currency implements OptionInterface
 {
     public const CURRENCY = 'CURRENCY';

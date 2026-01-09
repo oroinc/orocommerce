@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\ShippingBundle\Model;
 
+/**
+ * Container for shipping package physical characteristics.
+ *
+ * This class provides access to package dimensions and weight, implementing the
+ * {@see ShippingPackageOptionsInterface} to expose individual measurements and calculated values
+ * needed for shipping cost calculations.
+ */
 class ShippingPackageOptions implements ShippingPackageOptionsInterface
 {
     /**

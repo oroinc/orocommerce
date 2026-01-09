@@ -4,6 +4,13 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
+/**
+ * Handles normalization and denormalization of product variant fields during import/export.
+ *
+ * This listener converts variant fields between array format (used internally) and
+ * comma-separated string format (used in import/export files), ensuring proper data transformation
+ * during product data exchange operations.
+ */
 class ProductNormalizerEventListener
 {
     public const DELIMITER = ',';

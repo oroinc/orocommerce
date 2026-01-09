@@ -4,6 +4,12 @@ namespace Oro\Bundle\PromotionBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 
+/**
+ * Form type for order discount options.
+ *
+ * Extends {@see DiscountOptionsType} to provide form configuration for order-level discounts
+ * that apply to the entire order subtotal.
+ */
 class OrderDiscountOptionsType extends AbstractType
 {
     public const NAME = 'oro_promotion_order_discount_options';

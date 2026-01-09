@@ -5,6 +5,13 @@ namespace Oro\Bundle\SEOBundle\EventListener;
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 
+/**
+ * Restricts sitemap to include only products visible to anonymous users.
+ *
+ * This listener applies product visibility restrictions to the sitemap query builder, ensuring that only products
+ * visible to anonymous (guest) users are included in the generated sitemap. This respects the product visibility
+ * configuration and prevents products with restricted visibility from being indexed by search engines.
+ */
 class RestrictSitemapProductByVisibilityListener
 {
     /**

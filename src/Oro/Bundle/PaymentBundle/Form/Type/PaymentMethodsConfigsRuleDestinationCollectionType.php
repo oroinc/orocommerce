@@ -6,6 +6,12 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing collections of payment method rule destinations.
+ *
+ * This form type provides a collection interface for managing multiple destination
+ * configurations within a payment method rule.
+ */
 class PaymentMethodsConfigsRuleDestinationCollectionType extends AbstractType
 {
     public const NAME = 'oro_payment_methods_configs_rule_destination_collection';

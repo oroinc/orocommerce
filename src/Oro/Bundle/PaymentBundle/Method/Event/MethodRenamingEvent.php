@@ -4,6 +4,12 @@ namespace Oro\Bundle\PaymentBundle\Method\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Dispatched when a payment method identifier is renamed.
+ *
+ * This event carries the old and new payment method identifiers, allowing listeners
+ * to update references to the payment method throughout the system.
+ */
 class MethodRenamingEvent extends Event
 {
     public const NAME = 'oro_payment.method_renaming';

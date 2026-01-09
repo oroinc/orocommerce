@@ -10,6 +10,13 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing a collection of shipping method type configurations.
+ *
+ * This form type provides a collection of {@see ShippingMethodTypeConfigType} forms, allowing administrators
+ * to configure multiple shipping method types (e.g., Ground, Express, Overnight)
+ * within a single shipping method configuration.
+ */
 class ShippingMethodTypeConfigCollectionType extends AbstractType
 {
     public const BLOCK_PREFIX = 'oro_shipping_method_type_config_collection';

@@ -7,6 +7,12 @@ use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfigurationInterfa
 use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfigurationProviderInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 
+/**
+ * Provides import/export configuration for coupons.
+ *
+ * Configures the import and export processors and template processor aliases
+ * for coupon entity import/export operations.
+ */
 class CouponImportExportConfigurationProvider implements ImportExportConfigurationProviderInterface
 {
     /**

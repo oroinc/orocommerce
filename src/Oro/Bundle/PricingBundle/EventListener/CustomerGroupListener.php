@@ -6,6 +6,13 @@ use Oro\Bundle\CustomerBundle\Event\CustomerGroupEvent;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Handles price list changes for customer groups.
+ *
+ * Manages price list assignments and fallback configurations for customer groups,
+ * triggering necessary updates when customer groups are removed or their price list
+ * associations change.
+ */
 class CustomerGroupListener extends AbstractPriceListCollectionAwareListener
 {
     /**

@@ -5,6 +5,12 @@ namespace Oro\Bundle\CheckoutBundle\WorkflowState\Manager;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperRegistry;
 
+/**
+ * Manages checkout state differences using a registry of specialized mappers.
+ *
+ * Coordinates multiple state diff mappers to capture the current state of a checkout entity
+ * and compare states to detect changes in checkout data.
+ */
 class CheckoutStateDiffManager
 {
     /**

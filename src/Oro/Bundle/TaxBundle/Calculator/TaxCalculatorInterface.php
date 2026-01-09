@@ -4,6 +4,13 @@ namespace Oro\Bundle\TaxBundle\Calculator;
 
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 
+/**
+ * Defines the contract for tax calculation strategies.
+ *
+ * Implementations of this interface provide different approaches to calculating taxes,
+ * such as calculating tax on prices that include tax versus prices that exclude tax.
+ * The calculator determines the tax amount, amounts with and without tax, and any rounding adjustments.
+ */
 interface TaxCalculatorInterface
 {
     /**

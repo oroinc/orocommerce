@@ -10,6 +10,13 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting a content node from a web catalog tree.
+ *
+ * This form type provides a tree-based selector for choosing content nodes within a specific web catalog.
+ * It renders the web catalog's content node hierarchy as an interactive tree, allowing users to navigate
+ * and select nodes. The tree structure is dynamically generated based on the provided web catalog.
+ */
 class ContentNodeSelectType extends AbstractType
 {
     public const NAME = 'oro_web_catalog_content_node_select';

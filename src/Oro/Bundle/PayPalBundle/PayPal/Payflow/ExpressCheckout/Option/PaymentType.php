@@ -6,6 +6,11 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\AbstractOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsDependentInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
+/**
+ * Configures payment type option for PayPal Express Checkout transactions.
+ *
+ * Restricts payment type to instantonly or any, applicable only for SET_EC and DO_EC actions.
+ */
 class PaymentType extends AbstractOption implements OptionsDependentInterface
 {
     public const PAYMENTTYPE = 'PAYMENTTYPE';

@@ -5,7 +5,12 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Request;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 /**
- * @link https://developer.paypal.com/docs/classic/payflow/integration-guide/#core-credit-card-parameters
+ * Provides common functionality for PayPal Payflow API requests.
+ *
+ * This base class implements the core request configuration logic, including required options
+ * (credentials, transaction type) and a fluent interface for building request configurations.
+ * Subclasses should implement specific request types by overriding the configuration methods
+ * to add their specific options and validation rules.
  */
 abstract class AbstractRequest implements RequestInterface
 {

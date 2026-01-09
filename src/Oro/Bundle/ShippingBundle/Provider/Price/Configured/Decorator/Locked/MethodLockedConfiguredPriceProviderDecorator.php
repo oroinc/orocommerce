@@ -7,6 +7,12 @@ use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMeth
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\AbstractShippingConfiguredPriceProviderDecorator;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
 
+/**
+ * Filters shipping methods to show only the locked method when configured.
+ *
+ * This decorator restricts available shipping methods to only the pre-configured locked method and type when
+ * the shipping method is locked in the configuration, preventing customers from selecting alternative shipping options.
+ */
 class MethodLockedConfiguredPriceProviderDecorator extends AbstractShippingConfiguredPriceProviderDecorator
 {
     public function __construct(ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider)

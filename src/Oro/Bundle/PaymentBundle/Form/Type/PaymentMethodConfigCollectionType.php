@@ -10,6 +10,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing collections of payment method configurations.
+ *
+ * This form type provides a collection interface for managing payment method configurations
+ * within a rule, filtering out configurations for payment methods that are no longer registered.
+ */
 class PaymentMethodConfigCollectionType extends AbstractType
 {
     public const NAME = 'oro_payment_method_config_collection';

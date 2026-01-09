@@ -8,6 +8,12 @@ use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfigurationProvide
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Provides import/export configuration for product entities.
+ *
+ * This provider defines the configuration settings for product import and export operations,
+ * including processor aliases, entity class, and UI labels used throughout the import/export interface.
+ */
 class ProductImportExportConfigurationProvider implements ImportExportConfigurationProviderInterface
 {
     /**

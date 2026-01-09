@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * Provides common functionality for PayPal Payflow boolean options.
+ *
+ * This base class handles the normalization of boolean values to PayPal-specific string representations
+ * (such as 'Y'/'N' or 'TRUE'/'FALSE'). Subclasses should use the provided normalizer to ensure
+ * boolean options are properly formatted for the PayPal Payflow API.
+ */
 abstract class AbstractBooleanOption extends AbstractOption
 {
     public const YES = 'Y';

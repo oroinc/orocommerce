@@ -5,6 +5,12 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Applies scope-specific restrictions to product search queries.
+ *
+ * Extends the base {@see ProductSearchQueryRestrictionEventListener} to add scope-based filtering, ensuring
+ * that product search query restrictions are only applied when configured scope matches the current request context.
+ */
 class ScopedProductSearchQueryRestrictionEventListener extends ProductSearchQueryRestrictionEventListener
 {
     /**

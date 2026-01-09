@@ -8,6 +8,12 @@ use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
+/**
+ * Template fixture for coupon import/export.
+ *
+ * Provides example coupon data for import/export templates, including
+ * promotion association, usage limits, and validity date configuration.
+ */
 class CouponFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
     public const COUPON_CODE = 'example-coupon';

@@ -7,6 +7,13 @@ use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\Provider\PaymentTermConfigProviderInterface;
 use Oro\Bundle\PaymentTermBundle\Method\View\Factory\PaymentTermPaymentMethodViewFactoryInterface;
 
+/**
+ * Provides payment term payment method view instances.
+ *
+ * This provider collects all available payment term configurations and creates corresponding
+ * payment method view instances, making them available to the payment method view system
+ * for rendering payment term options in the storefront.
+ */
 class PaymentTermMethodViewProvider extends AbstractPaymentMethodViewProvider
 {
     /**

@@ -6,6 +6,12 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackArgumentException;
 use Oro\Bundle\EntityBundle\Fallback\Provider\AbstractEntityFallbackProvider;
 
+/**
+ * Provides fallback functionality for parent category fields.
+ *
+ * Implements entity fallback provider to enable fallback to parent category values,
+ * allowing category fields to inherit values from their parent category when not explicitly set.
+ */
 class ParentCategoryFallbackProvider extends AbstractEntityFallbackProvider
 {
     public const FALLBACK_ID = 'parentCategory';

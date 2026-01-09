@@ -3,7 +3,11 @@
 namespace Oro\Bundle\ProductBundle\Model;
 
 /**
- * @codeCoverageIgnore No need to test it. It's a simple ValueObject
+ * Represents a field in the quick add form with its name and value.
+ *
+ * This value object encapsulates a single field's data for the quick add product functionality,
+ * storing both the field identifier and its associated value. It provides a simple, immutable structure
+ * for passing field data through the quick add workflow.
  */
 class QuickAddField
 {

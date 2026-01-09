@@ -6,6 +6,12 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Event dispatched after a category tree is created.
+ *
+ * Provides access to the created categories and allows listeners to perform additional
+ * operations or modifications after the category tree creation process is complete.
+ */
 class CategoryTreeCreateAfterEvent extends Event
 {
     public const NAME = 'oro_catalog.category.tree.create_after';

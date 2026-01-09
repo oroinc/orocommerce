@@ -6,6 +6,13 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\Layout\ContextConfiguratorInterface;
 use Oro\Component\Layout\ContextInterface;
 
+/**
+ * Configures the layout context with the currently active web catalog ID.
+ *
+ * This configurator adds the web catalog ID from system configuration to the layout context, making it available
+ * to all layout blocks and data providers. This allows the storefront layout system to render content
+ * based on the configured web catalog structure and content variants.
+ */
 class WebCatalogContextConfigurator implements ContextConfiguratorInterface
 {
     public const CONTEXT_VARIABLE = 'web_catalog_id';

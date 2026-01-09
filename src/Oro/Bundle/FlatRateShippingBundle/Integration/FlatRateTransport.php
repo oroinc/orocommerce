@@ -8,6 +8,12 @@ use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+/**
+ * Transport implementation for flat rate shipping integration.
+ *
+ * Provides transport configuration and settings management for the flat rate shipping
+ * integration channel.
+ */
 class FlatRateTransport implements TransportInterface
 {
     /** @var ParameterBag */

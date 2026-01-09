@@ -7,6 +7,13 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 
+/**
+ * Loads FedEx shipping service rules data fixture.
+ *
+ * This fixture creates predefined shipping service rules with weight and dimension
+ * limitations for different FedEx service types and address types (residential/commercial).
+ * Rules are defined with both imperial (lbs) and metric (kg) unit expressions.
+ */
 class LoadShippingServiceRulesData extends AbstractFixture implements OrderedFixtureInterface
 {
     public const REFERENCE_RULE1 = 'fedex_shipping_service_rule1';

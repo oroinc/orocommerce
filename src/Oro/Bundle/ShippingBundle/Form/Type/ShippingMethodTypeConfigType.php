@@ -11,6 +11,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Form type for configuring a single shipping method type.
+ *
+ * This form type allows administrators to enable/disable and configure options for a specific shipping method type
+ * (e.g., Ground, Express) within a shipping method, providing type-specific settings and validation.
+ */
 class ShippingMethodTypeConfigType extends AbstractType
 {
     public const BLOCK_PREFIX = 'oro_shipping_method_type_config';

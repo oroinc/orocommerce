@@ -4,6 +4,12 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Constraint to validate individual product image types.
+ *
+ * This constraint validates that image types assigned to product images are valid
+ * and do not already exist for the same image, preventing duplicate type assignments.
+ */
 class ProductImageType extends Constraint
 {
     /**

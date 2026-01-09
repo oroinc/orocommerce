@@ -4,6 +4,13 @@ namespace Oro\Bundle\PaymentBundle\Formatter;
 
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 
+/**
+ * Formats payment method labels for display in the user interface.
+ *
+ * This formatter retrieves payment method views and provides their labels in various
+ * formats (short label, full label, admin label), with graceful fallback to empty string
+ * if the payment method is not found.
+ */
 class PaymentMethodLabelFormatter
 {
     /**

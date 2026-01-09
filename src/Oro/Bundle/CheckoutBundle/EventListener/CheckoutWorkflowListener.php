@@ -6,6 +6,12 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\WorkflowBundle\Event\WorkflowChangesEvent;
 
+/**
+ * Handles workflow definition changes for checkout entities.
+ *
+ * Listens to workflow deactivation events and removes checkouts that are no longer associated
+ * with an active workflow, maintaining data consistency.
+ */
 class CheckoutWorkflowListener
 {
     /** @var ManagerRegistry */

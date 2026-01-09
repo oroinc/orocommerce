@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\ShippingBundle\Model;
 
+/**
+ * Represents the dimensional values (length, width, height) of a shipping package.
+ *
+ * This value object encapsulates the three-dimensional measurements of a package without the unit of measurement,
+ * which is stored separately in the {@see Dimensions} class.
+ */
 class DimensionsValue
 {
     /**

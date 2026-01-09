@@ -13,6 +13,13 @@ use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * Provides visibility entity data for form fields based on scope criteria.
+ *
+ * This service retrieves existing visibility entities from the database for form population and creates
+ * new visibility entities when needed. It handles scope resolution and ensures that visibility data
+ * is properly associated with the correct scope (website, customer group, or customer) and target entity.
+ */
 class VisibilityFormFieldDataProvider
 {
     /**

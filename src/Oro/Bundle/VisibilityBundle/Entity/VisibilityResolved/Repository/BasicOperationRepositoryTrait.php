@@ -9,6 +9,13 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
+ * Provides basic CRUD operations for visibility resolved entity repositories.
+ *
+ * This trait implements low-level database operations (insert, update, delete, check existence)
+ * for visibility resolved entities. It provides optimized methods that work directly with the database layer
+ * for better performance when managing visibility resolution data.
+ * Repositories using this trait must extend Doctrine's EntityRepository to provide the required methods.
+ *
  * @method ClassMetadataInfo getClassMetadata()
  * @method EntityManager getEntityManager()
  * @method string getEntityName()

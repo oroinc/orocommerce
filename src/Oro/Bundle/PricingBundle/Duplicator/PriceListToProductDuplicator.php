@@ -7,6 +7,12 @@ use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 
+/**
+ * Duplicates price list to product relationships from one price list to another.
+ *
+ * Copies all product assignments from a source price list to a target price list,
+ * preserving the relationships and enabling efficient price list duplication.
+ */
 class PriceListToProductDuplicator
 {
     /**

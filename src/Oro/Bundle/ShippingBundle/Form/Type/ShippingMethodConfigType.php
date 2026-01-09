@@ -14,6 +14,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for configuring a single shipping method within a shipping rule.
+ *
+ * This form type allows administrators to configure a shipping method and its type-specific configurations,
+ * providing the interface for setting up method-specific options and pricing within a shipping rule.
+ */
 class ShippingMethodConfigType extends AbstractType
 {
     public const NAME = 'oro_shipping_method_config';

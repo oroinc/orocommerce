@@ -7,6 +7,11 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validator for ensuring product prices use allowed product units.
+ *
+ * Validates that product prices are only created for units that are configured for the associated product.
+ */
 class ProductPriceAllowedUnitsValidator extends ConstraintValidator
 {
     /**

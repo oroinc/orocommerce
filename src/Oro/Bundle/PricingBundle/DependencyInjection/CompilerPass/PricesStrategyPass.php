@@ -6,6 +6,12 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * Compiler pass that registers price combining strategies in the strategy register.
+ *
+ * Collects all services tagged with `oro_pricing.price_strategy` and registers them
+ * in the StrategyRegister service, making them available for price calculation operations.
+ */
 class PricesStrategyPass implements CompilerPassInterface
 {
     public const STRATEGY_REGISTER = 'oro_pricing.pricing_strategy.strategy_register';

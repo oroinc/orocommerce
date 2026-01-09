@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\CheckoutBundle\Exception;
 
+/**
+ * Thrown when a converter for a checkout line item source cannot be found.
+ *
+ * Indicates that no appropriate converter exists for the given source type,
+ * preventing the conversion of the source to a checkout line item.
+ */
 class CheckoutLineItemConverterNotFoundException extends \RuntimeException
 {
     public const MESSAGE_PATTERN = 'Unable to find proper converter for "%s"';

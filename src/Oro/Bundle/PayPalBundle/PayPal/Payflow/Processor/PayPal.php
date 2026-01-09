@@ -5,6 +5,12 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * Processor for PayPal Payflow transactions.
+ *
+ * Handles PayPal-specific transaction processing and option configuration,
+ * removing unsupported options like swipe data.
+ */
 class PayPal implements Option\OptionsAwareInterface, ProcessorInterface
 {
     public const CODE = 'PayPal';

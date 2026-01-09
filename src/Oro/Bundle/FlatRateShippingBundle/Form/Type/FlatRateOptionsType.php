@@ -13,6 +13,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
 
+/**
+ * Form type for configuring flat rate shipping method options.
+ *
+ * Provides form fields for setting the shipping price, handling fee, and processing type
+ * (per item or per order) for flat rate shipping methods.
+ */
 class FlatRateOptionsType extends AbstractType
 {
     public const BLOCK_PREFIX = 'oro_flat_rate_options_type';

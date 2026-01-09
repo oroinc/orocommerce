@@ -9,6 +9,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Handles form submission for shipping methods configuration rules.
+ *
+ * This handler processes the shipping rule form, validates the submitted data, and persists
+ * the {@see ShippingMethodsConfigsRule} entity to the database. It supports an update flag
+ * to allow form updates without persistence for dynamic form modifications.
+ */
 class ShippingMethodsConfigsRuleHandler
 {
     use RequestHandlerTrait;

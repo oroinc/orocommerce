@@ -9,6 +9,12 @@ use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
+/**
+ * Defines the contract for promotion data entities.
+ *
+ * Extends multiple interfaces to provide a comprehensive promotion contract including
+ * rule ownership, scope management, schedule intervals, and coupon support.
+ */
 interface PromotionDataInterface extends
     RuleOwnerInterface,
     ScopeCollectionAwareInterface,

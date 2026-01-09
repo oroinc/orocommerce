@@ -6,6 +6,13 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfigurationInterface;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
 
+/**
+ * Base decorator for shipping configured price providers.
+ *
+ * This abstract class provides a foundation for decorators that modify shipping price provider behavior,
+ * delegating to the wrapped provider by default and allowing subclasses to override specific methods
+ * to apply custom logic.
+ */
 class AbstractShippingConfiguredPriceProviderDecorator implements ShippingConfiguredPriceProviderInterface
 {
     /**

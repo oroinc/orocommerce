@@ -4,6 +4,12 @@ namespace Oro\Bundle\PricingBundle\ImportExport\DataConverter;
 
 use Oro\Bundle\ImportExportBundle\Converter\ConfigurableTableDataConverter;
 
+/**
+ * Converts price attribute product price data between import and internal formats.
+ *
+ * Handles the transformation of price attribute product price data from import format
+ * to internal format with proper field mapping.
+ */
 class PriceAttributeProductPriceDataConverter extends ConfigurableTableDataConverter
 {
     #[\Override]

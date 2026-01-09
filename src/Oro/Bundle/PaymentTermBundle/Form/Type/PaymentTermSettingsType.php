@@ -13,6 +13,13 @@ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
 
+/**
+ * Form type for configuring payment term settings.
+ *
+ * This form type handles the configuration of payment term labels and short labels with localization support.
+ * It is used in the payment term integration settings to allow administrators to define
+ * how payment terms are displayed in the system.
+ */
 class PaymentTermSettingsType extends AbstractType
 {
     public const BLOCK_PREFIX = 'oro_payment_term_settings';

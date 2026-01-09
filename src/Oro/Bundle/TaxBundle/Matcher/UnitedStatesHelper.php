@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\TaxBundle\Matcher;
 
+/**
+ * Helper class for the United States tax-related logic.
+ *
+ * This helper provides functionality specific to US tax calculations, particularly for identifying states
+ * that do not impose taxes on digital products. It is used in tax calculation logic to apply US-specific tax rules
+ * and exemptions based on the customer's location within the United States.
+ */
 class UnitedStatesHelper
 {
     public const COUNTRY_CODE_USA = 'US';

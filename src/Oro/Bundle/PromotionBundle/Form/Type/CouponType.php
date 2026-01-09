@@ -8,6 +8,12 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for coupon creation and editing.
+ *
+ * Extends {@see BaseCouponType} to add coupon code field and validation groups
+ * for complete coupon management in the admin interface.
+ */
 class CouponType extends AbstractType
 {
     public const NAME = 'oro_promotion_coupon_type';

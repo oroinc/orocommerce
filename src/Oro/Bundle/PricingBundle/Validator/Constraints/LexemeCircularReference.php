@@ -4,6 +4,12 @@ namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Constraint for detecting circular references in price rule lexemes.
+ *
+ * Validates that price rule expressions do not contain circular references that would
+ * cause infinite loops during price calculation.
+ */
 class LexemeCircularReference extends Constraint
 {
     /**

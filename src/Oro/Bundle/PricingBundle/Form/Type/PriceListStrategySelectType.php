@@ -8,6 +8,12 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Form type for selecting a price combining strategy.
+ *
+ * Provides a choice field for selecting from available price combining strategies,
+ * with translated labels for each strategy option.
+ */
 class PriceListStrategySelectType extends AbstractType
 {
     public const NAME = 'oro_pricing_list_strategy_selection';

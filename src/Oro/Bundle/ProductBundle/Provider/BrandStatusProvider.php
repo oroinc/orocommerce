@@ -4,6 +4,12 @@ namespace Oro\Bundle\ProductBundle\Provider;
 
 use Oro\Bundle\ProductBundle\Entity\Brand;
 
+/**
+ * Provides available brand status options.
+ *
+ * This provider returns the list of valid brand statuses (enabled/disabled)
+ * for use in forms, filters, and other UI components.
+ */
 class BrandStatusProvider
 {
     /**

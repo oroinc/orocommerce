@@ -4,6 +4,12 @@ namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Constraint for validating price rule relation expressions.
+ *
+ * Ensures that price rule expressions use only allowed relations and follow
+ * the correct syntax for relation-based price calculations.
+ */
 class PriceRuleRelationExpressions extends Constraint
 {
     public const ALIAS = 'oro_pricing.validator_constraints.price_rule_relation_expressions_validator';

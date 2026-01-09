@@ -20,6 +20,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 
+/**
+ * Base form type for discount options.
+ *
+ * Provides common discount configuration fields including discount type selection
+ * and dynamic value fields (amount or percentage) with client-side switching logic.
+ * Serves as the parent type for specific discount option types.
+ */
 class DiscountOptionsType extends AbstractType
 {
     public const NAME = 'oro_promotion_discount_options';

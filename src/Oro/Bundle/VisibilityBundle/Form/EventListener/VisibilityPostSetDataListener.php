@@ -9,6 +9,13 @@ use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * Populates visibility form fields with existing visibility data when the form is initialized.
+ *
+ * This listener handles form POST_SET_DATA events to load and set visibility values for all visibility levels
+ * (all customers, customer groups, individual customers) from the database into the form fields, ensuring
+ * the form displays current visibility settings for the target entity.
+ */
 class VisibilityPostSetDataListener
 {
     /**

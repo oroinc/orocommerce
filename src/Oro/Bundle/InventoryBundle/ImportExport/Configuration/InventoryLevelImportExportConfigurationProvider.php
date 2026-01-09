@@ -10,6 +10,12 @@ use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTemplateTypeEx
 use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTypeExtension;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Provides import/export configuration for inventory level entities.
+ *
+ * Configures the import and export jobs, processors, and UI elements for inventory level
+ * data import and export operations.
+ */
 class InventoryLevelImportExportConfigurationProvider implements ImportExportConfigurationProviderInterface
 {
     /**

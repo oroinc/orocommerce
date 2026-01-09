@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Response;
 
+/**
+ * Maps PayPal Payflow communication error codes to human-readable messages.
+ *
+ * Provides mapping of PayPal Payflow API communication error codes to descriptive
+ * messages for network and connection issue interpretation.
+ */
 class CommunicationErrorsStatusMap
 {
     public const FAILED_TO_CONNECT_TO_HOST = '-1';

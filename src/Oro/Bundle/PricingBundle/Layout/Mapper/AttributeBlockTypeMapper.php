@@ -5,6 +5,12 @@ namespace Oro\Bundle\PricingBundle\Layout\Mapper;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Layout\Mapper\AbstractAttributeBlockTypeMapper;
 
+/**
+ * Maps pricing-related attributes to their corresponding layout block types.
+ *
+ * Provides custom block type mappings for price attributes, allowing specialized
+ * rendering of pricing-related fields in layout templates.
+ */
 class AttributeBlockTypeMapper extends AbstractAttributeBlockTypeMapper
 {
     /** @var array */

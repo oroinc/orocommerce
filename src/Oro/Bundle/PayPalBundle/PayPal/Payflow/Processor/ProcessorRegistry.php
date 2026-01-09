@@ -4,6 +4,12 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Partner;
 
+/**
+ * Registry for PayPal Payflow transaction processors.
+ *
+ * Manages processor instances by code, providing lookup and fallback processor support
+ * for different payment processor types.
+ */
 class ProcessorRegistry
 {
     /** @var ProcessorInterface[] */

@@ -4,6 +4,12 @@ namespace Oro\Bundle\InventoryBundle\Form\Extension;
 
 use Oro\Bundle\ImportExportBundle\Form\Type\ExportType;
 
+/**
+ * Form type extension for inventory level export functionality.
+ *
+ * Extends the export form type to add inventory level-specific export processors,
+ * enabling export of inventory status and detailed inventory level data.
+ */
 class InventoryLevelExportTypeExtension extends InventoryLevelExportTemplateTypeExtension
 {
     public const NAME = 'oro_importexport_export_type_extension';

@@ -5,6 +5,13 @@ namespace Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction;
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\Actions\Ajax\AjaxMassAction;
 
+/**
+ * Configures default options for the "add products to shopping list" mass action in datagrids.
+ *
+ * This mass action allows users to select multiple products from a datagrid and add them to a shopping list.
+ * It sets up the frontend type, handler, route, and other configuration options required for the AJAX-based mass action
+ * to function properly.
+ */
 class AddProductsMassAction extends AjaxMassAction
 {
     #[\Override]

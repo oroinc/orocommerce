@@ -2,6 +2,12 @@
 
 namespace Oro\Component\Expression\Node;
 
+/**
+ * Represents a literal value node in an expression tree.
+ *
+ * A value node holds a constant value (integer, float, or string) that appears directly in an expression.
+ * These nodes are leaf nodes in the expression tree and do not contain any subnodes.
+ */
 class ValueNode implements NodeInterface
 {
     /**

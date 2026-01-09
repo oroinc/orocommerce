@@ -16,6 +16,13 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for configuring payment method rule destinations.
+ *
+ * This form type allows administrators to specify geographic destinations (country, region,
+ * postal codes) where specific payment methods are available, enabling location-based
+ * payment method filtering.
+ */
 class PaymentMethodsConfigsRuleDestinationType extends AbstractType
 {
     public const NAME = 'oro_payment_methods_configs_rule_destination';

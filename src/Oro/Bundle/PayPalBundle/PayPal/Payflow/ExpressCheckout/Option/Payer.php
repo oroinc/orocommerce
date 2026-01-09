@@ -6,6 +6,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\AbstractOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsDependentInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
+/**
+ * Configures payer ID option for PayPal Express Checkout transactions.
+ *
+ * Manages the payer ID parameter, required only for DO_EC actions to identify
+ * the customer completing the Express Checkout transaction.
+ */
 class Payer extends AbstractOption implements OptionsDependentInterface
 {
     public const PAYERID = 'PAYERID';

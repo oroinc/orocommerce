@@ -8,6 +8,13 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings;
 use Oro\Bundle\PaymentTermBundle\Method\Config\Factory\Settings\PaymentTermConfigBySettingsFactoryInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBag\ParameterBagPaymentTermConfig;
 
+/**
+ * Creates payment term configurations from payment term settings using parameter bags.
+ *
+ * This factory converts {@see PaymentTermSettings} entities into {@see ParameterBagPaymentTermConfig} instances
+ * by extracting localized labels, short labels, and generating a unique payment method identifier
+ * based on the integration channel.
+ */
 class ParameterBagPaymentTermConfigBySettingsFactory implements PaymentTermConfigBySettingsFactoryInterface
 {
     /**

@@ -5,6 +5,12 @@ namespace Oro\Bundle\ProductBundle\ImportExport\Event;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Dispatched before and after product import strategy processing.
+ *
+ * This event allows listeners to modify or validate product data during import operations, providing access to
+ * both the product entity and the raw import data for custom processing before or after the main import strategy logic.
+ */
 class ProductStrategyEvent extends Event
 {
     public const PROCESS_BEFORE = 'oro_product.strategy.process_before';

@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Request;
 
+/**
+ * Registry for PayPal Payflow transaction requests.
+ *
+ * Manages request instances by transaction type, providing lookup and validation
+ * for different PayPal Payflow request types.
+ */
 class RequestRegistry
 {
     /** @var RequestInterface[] */

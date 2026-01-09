@@ -7,6 +7,12 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+/**
+ * Validator for {@see UniqueProductUnitShippingOptions} constraint.
+ *
+ * This validator checks that each product unit appears only once in a collection of shipping options,
+ * adding a validation violation if duplicate units are found.
+ */
 class UniqueProductUnitShippingOptionsValidator extends ConstraintValidator
 {
     #[\Override]

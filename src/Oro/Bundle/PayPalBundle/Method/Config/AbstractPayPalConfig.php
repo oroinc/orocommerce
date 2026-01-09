@@ -4,6 +4,13 @@ namespace Oro\Bundle\PayPalBundle\Method\Config;
 
 use Oro\Bundle\PaymentBundle\Method\Config\ParameterBag\AbstractParameterBagPaymentConfig;
 
+/**
+ * Provides common configuration functionality for PayPal payment methods.
+ *
+ * This base class implements the core configuration options shared across different PayPal payment integrations,
+ * including credentials management, test mode settings, and purchase action configuration.
+ * Subclasses should extend this to provide specific PayPal method configurations.
+ */
 abstract class AbstractPayPalConfig extends AbstractParameterBagPaymentConfig implements PayPalConfigInterface
 {
     public const CREDENTIALS_KEY  = 'credentials';

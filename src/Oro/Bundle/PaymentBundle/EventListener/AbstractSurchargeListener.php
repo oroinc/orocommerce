@@ -7,6 +7,13 @@ use Oro\Bundle\PaymentBundle\Model\Surcharge;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 
+/**
+ * Provides common functionality for listeners that calculate payment surcharges.
+ *
+ * This base class handles the collection of subtotals from entities and calculates the total amount
+ * that should be used for surcharge calculations. Subclasses must implement the setAmount method
+ * to define how the calculated amount should be applied to the surcharge model.
+ */
 abstract class AbstractSurchargeListener
 {
     /** @var SubtotalProviderInterface */

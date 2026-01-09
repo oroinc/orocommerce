@@ -12,6 +12,13 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for configuring shipping origin address.
+ *
+ * This form type allows administrators to define the warehouse or fulfillment center address
+ * from which shipments originate, which is used for calculating shipping costs and determining
+ * available shipping methods based on origin location.
+ */
 class ShippingOriginType extends AbstractType
 {
     public const NAME = 'oro_shipping_origin';

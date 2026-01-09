@@ -5,6 +5,12 @@ namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 
+/**
+ * Maps shipping method changes for checkout state diff tracking.
+ *
+ * Tracks changes to the shipping method, type, and price in a checkout, enabling detection of
+ * shipping method modifications during the checkout workflow.
+ */
 class ShippingMethodDiffMapper implements CheckoutStateDiffMapperInterface
 {
     public const DATA_NAME = 'shipping_method';

@@ -6,6 +6,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
+/**
+ * Form type for configuring shipping origin in system configuration.
+ *
+ * This form type extends {@see ShippingOriginType} to handle configuration scope inheritance,
+ * propagating the 'use_parent_scope_value' flag to child form fields for proper configuration fallback behavior.
+ */
 class ShippingOriginConfigType extends AbstractType
 {
     public const NAME = 'oro_shipping_origin_config';

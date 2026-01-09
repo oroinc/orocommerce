@@ -5,6 +5,14 @@ namespace Oro\Bundle\WebCatalogBundle\Model;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 
+/**
+ * Calculates and updates materialized paths for content nodes in the web catalog tree.
+ *
+ * Materialized paths are denormalized representations of the tree hierarchy stored directly on each node,
+ * enabling efficient tree queries without recursive joins. The path is constructed by concatenating node IDs
+ * from the root to the current node, separated by underscores (e.g., "1_5_12" for a node with ID 12 whose parent is 5
+ * and grandparent is 1). This service recalculates paths when nodes are moved or restructured.
+ */
 class ContentNodeMaterializedPathModifier
 {
     public const MATERIALIZED_PATH_DELIMITER = '_';

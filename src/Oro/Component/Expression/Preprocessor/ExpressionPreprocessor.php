@@ -2,6 +2,14 @@
 
 namespace Oro\Component\Expression\Preprocessor;
 
+/**
+ * Orchestrates multiple expression preprocessors to transform expressions iteratively.
+ *
+ * This class manages a collection of preprocessors and applies them sequentially to an expression
+ * until the expression stabilizes (no further changes occur). It prevents infinite loops by enforcing
+ * a maximum iteration limit, ensuring that preprocessing terminates even if preprocessors create
+ * circular transformations.
+ */
 class ExpressionPreprocessor implements ExpressionPreprocessorInterface
 {
     public const MAX_ITERATIONS = 100;

@@ -4,6 +4,12 @@ namespace Oro\Bundle\FrontendTestFrameworkBundle\Datagrid;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 
+/**
+ * Provides helper methods for testing datagrids in frontend tests.
+ *
+ * Offers utilities for requesting datagrid data with filters and sorters,
+ * simplifying datagrid testing in frontend test cases.
+ */
 trait DatagridTestTrait
 {
     /**

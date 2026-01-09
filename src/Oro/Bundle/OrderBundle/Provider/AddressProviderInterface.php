@@ -7,6 +7,13 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 
+/**
+ * Defines the contract for providing customer and customer user addresses.
+ *
+ * Implementations of this interface are responsible for retrieving addresses
+ * for customers and customer users based on address type (e.g., billing, shipping).
+ * Provides validation of address types to ensure only valid types are used.
+ */
 interface AddressProviderInterface
 {
     /**

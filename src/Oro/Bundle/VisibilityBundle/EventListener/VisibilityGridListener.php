@@ -12,6 +12,13 @@ use Oro\Bundle\ScopeBundle\Entity\ScopeAwareInterface;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
 
+/**
+ * Configures visibility datagrids with scope-aware filtering and visibility choice options.
+ *
+ * This listener handles datagrid build events to dynamically configure visibility grids based on the target entity
+ * and scope. It sets up visibility choices for filters and columns, applies scope criteria to queries, and ensures
+ * that visibility data is properly filtered for the selected scope (website, customer group, or customer).
+ */
 class VisibilityGridListener
 {
     public const VISIBILITY_FIELD = 'visibilityAlias.visibility';

@@ -7,6 +7,9 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 
+/**
+ * Repository for {@see QuoteDemand} entities.
+ */
 class QuoteDemandRepository extends EntityRepository
 {
     /**

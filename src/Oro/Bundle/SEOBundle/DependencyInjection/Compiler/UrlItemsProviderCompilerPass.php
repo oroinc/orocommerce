@@ -7,6 +7,14 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * Registers URL item providers with a configurable service and tag.
+ *
+ * This compiler pass collects all services tagged with a specified tag and registers them with a target service.
+ * It is designed to be flexible and reusable for different provider registries by accepting the service name
+ * and tag name as constructor parameters. This allows multiple instances to handle different provider types
+ * (e.g., regular providers, access denied providers) with a single implementation.
+ */
 class UrlItemsProviderCompilerPass implements CompilerPassInterface
 {
     /**

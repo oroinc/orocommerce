@@ -11,6 +11,13 @@ use Oro\Bundle\RedirectBundle\Model\TextSlugPrototypeWithRedirect;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
+/**
+ * Provides helper methods for configuring slug change confirmation UI components.
+ *
+ * This helper prepares form views with the necessary configuration options for displaying
+ * slug change confirmation dialogs. It handles both localized and non-localized slug forms,
+ * and manages the state of redirect creation checkboxes based on system configuration.
+ */
 class ConfirmSlugChangeFormHelper
 {
     /**

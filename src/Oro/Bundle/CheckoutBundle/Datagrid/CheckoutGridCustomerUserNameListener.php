@@ -6,6 +6,12 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
+/**
+ * Handles checkout datagrid configuration to control customer user name visibility.
+ *
+ * Listens to datagrid build events and removes the customer user name column, sorter, and filter
+ * if the current user lacks permission to view all past checkouts.
+ */
 class CheckoutGridCustomerUserNameListener
 {
     /**

@@ -5,6 +5,14 @@ namespace Oro\Bundle\PaymentBundle\Method\Provider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
+/**
+ * Provides common functionality for payment method providers.
+ *
+ * This base class implements lazy loading of payment methods through the collectMethods template method.
+ * It provides a collection-based storage mechanism and standard lookup operations for payment methods.
+ * Subclasses must implement the collectMethods method to populate the methods collection
+ * with their specific payment method instances.
+ */
 abstract class AbstractPaymentMethodProvider implements PaymentMethodProviderInterface
 {
     /**

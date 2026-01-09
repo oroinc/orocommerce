@@ -8,6 +8,12 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for configuring price list settings with fallback options.
+ *
+ * Provides a form for managing price list collections and fallback strategies,
+ * supporting website-scoped configuration of pricing rules.
+ */
 class PriceListsSettingsType extends AbstractType
 {
     public const NAME = 'oro_pricing_price_lists_settings';

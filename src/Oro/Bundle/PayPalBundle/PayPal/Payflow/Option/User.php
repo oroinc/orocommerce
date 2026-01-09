@@ -2,6 +2,11 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * Configures user option for PayPal Payflow authentication.
+ *
+ * Manages the merchant user credential for PayPal Payflow API authentication.
+ */
 class User extends AbstractOption
 {
     public const USER = 'USER';

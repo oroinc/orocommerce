@@ -4,6 +4,14 @@ namespace Oro\Bundle\MoneyOrderBundle\Method\Config;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+/**
+ * Stores and provides access to Money Order payment method configuration parameters.
+ *
+ * This class extends {@see ParameterBag} to manage Money Order-specific configuration data including
+ * labels, identifiers, and payment details. It implements {@see MoneyOrderConfigInterface} to provide
+ * type-safe access to configuration values through dedicated getter methods, ensuring proper
+ * data retrieval and type casting for use throughout the payment system.
+ */
 class MoneyOrderConfig extends ParameterBag implements MoneyOrderConfigInterface
 {
     public const LABEL_KEY = 'label';

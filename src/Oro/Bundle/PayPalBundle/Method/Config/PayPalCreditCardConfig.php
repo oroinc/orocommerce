@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config;
 
+/**
+ * Represents PayPal Credit Card payment method configuration.
+ *
+ * Extends base PayPal configuration with credit card-specific settings including
+ * zero-amount authorization, proxy settings, SSL verification, and CVV requirements.
+ */
 class PayPalCreditCardConfig extends AbstractPayPalConfig implements PayPalCreditCardConfigInterface
 {
     public const TYPE = 'credit_card';

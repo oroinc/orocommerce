@@ -4,6 +4,13 @@ namespace Oro\Bundle\UPSBundle\TimeInTransit\Result\Factory;
 
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\EstimatedArrivalInterface;
 
+/**
+ * Defines the contract for factories that create EstimatedArrival instances.
+ *
+ * Implementations of this interface create {@see EstimatedArrivalInterface} value objects
+ * from UPS Time In Transit API response data. These objects encapsulate delivery estimates
+ * including arrival dates, transit times, and service-specific metadata.
+ */
 interface EstimatedArrivalFactoryInterface
 {
     /**

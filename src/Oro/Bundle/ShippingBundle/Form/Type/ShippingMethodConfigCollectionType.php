@@ -10,6 +10,13 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing a collection of shipping method configurations.
+ *
+ * This form type provides a collection of {@see ShippingMethodConfigType} forms, allowing administrators to configure
+ * multiple shipping methods within a single shipping rule.
+ * It uses {@see MethodConfigCollectionSubscriber} to filter out unavailable methods.
+ */
 class ShippingMethodConfigCollectionType extends AbstractType
 {
     public const NAME = 'oro_shipping_method_config_collection';

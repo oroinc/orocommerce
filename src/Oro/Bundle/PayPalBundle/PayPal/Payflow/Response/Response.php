@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Response;
 
+/**
+ * Represents a PayPal Payflow API response.
+ *
+ * Parses and provides access to PayPal Payflow response data including transaction status,
+ * reference numbers, and error messages.
+ */
 class Response implements ResponseInterface
 {
     public const PNREF_KEY = 'PNREF';

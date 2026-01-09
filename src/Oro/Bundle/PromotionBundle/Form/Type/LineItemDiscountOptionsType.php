@@ -12,6 +12,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 
+/**
+ * Form type for line item discount options.
+ *
+ * Provides form fields for configuring line item discounts including product unit selection,
+ * application strategy (per-item or total), and optional quantity limits.
+ */
 class LineItemDiscountOptionsType extends AbstractType
 {
     public const NAME = 'oro_promotion_line_item_discount_options';

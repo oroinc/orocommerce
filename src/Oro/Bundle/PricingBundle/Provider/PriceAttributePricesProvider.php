@@ -7,6 +7,12 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Provides price attribute prices organized by unit and currency.
+ *
+ * Retrieves price attribute product prices for a given product and price attribute list,
+ * organizing them by product unit and currency for easy access and display.
+ */
 class PriceAttributePricesProvider
 {
     /**

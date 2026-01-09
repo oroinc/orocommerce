@@ -9,6 +9,13 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing collections of shipping tracking information.
+ *
+ * Specialized collection form type for order shipping tracking entries with page component integration.
+ * Configures the collection to use {@see OrderShippingTrackingType} entries and provides JavaScript component options
+ * for enhanced UI interactions.
+ */
 class OrderShippingTrackingCollectionType extends AbstractType
 {
     public const NAME = 'oro_order_shipping_tracking_collection';

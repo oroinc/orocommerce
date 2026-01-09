@@ -10,6 +10,12 @@ use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Dynamically adds image type fields to product image forms based on configured theme image types.
+ *
+ * This subscriber listens to form events and adds checkbox or radio fields for each configured image type,
+ * allowing users to specify which image types should be associated with a product image.
+ */
 class ProductImageTypesSubscriber implements EventSubscriberInterface
 {
     /**

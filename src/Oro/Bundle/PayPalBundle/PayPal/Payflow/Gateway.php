@@ -11,6 +11,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestRegistry;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseInterface;
 
+/**
+ * PayPal Payflow Gateway client for processing transactions.
+ *
+ * Orchestrates PayPal Payflow transaction processing by coordinating request configuration,
+ * processor selection, and API communication with support for test mode and proxy settings.
+ */
 class Gateway
 {
     /** @var ClientInterface */

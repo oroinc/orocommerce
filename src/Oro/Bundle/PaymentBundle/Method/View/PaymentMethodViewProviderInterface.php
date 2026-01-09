@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\View;
 
+/**
+ * Defines the contract for accessing payment method view representations.
+ *
+ * Implementations provide access to payment method views for rendering and display,
+ * supporting both single and batch retrieval of views by identifier.
+ */
 interface PaymentMethodViewProviderInterface
 {
     /**

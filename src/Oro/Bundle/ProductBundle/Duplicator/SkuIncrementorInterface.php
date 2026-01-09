@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Duplicator;
 
+/**
+ * Defines the contract for generating unique SKUs for duplicated products.
+ *
+ * Implementations should provide a strategy for incrementing product SKUs to ensure that duplicated products
+ * receive unique identifiers while maintaining a logical relationship to the original SKU.
+ */
 interface SkuIncrementorInterface
 {
     /**

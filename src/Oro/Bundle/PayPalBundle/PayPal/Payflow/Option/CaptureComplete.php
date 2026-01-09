@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * Configures capture complete option for PayPal Payflow transactions.
+ *
+ * Controls whether to mark an authorization as complete for capture,
+ * preventing additional authorizations on the same transaction.
+ */
 class CaptureComplete extends AbstractBooleanOption
 {
     public const CAPTURECOMPLETE = 'CAPTURECOMPLETE';

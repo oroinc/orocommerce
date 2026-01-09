@@ -5,6 +5,12 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\AbstractBooleanOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
+/**
+ * Configures transparent redirect option for PayPal Payflow Gateway transactions.
+ *
+ * Controls whether to use silent transaction mode for transparent redirect payment processing,
+ * suppressing the default Payflow response page.
+ */
 class TransparentRedirect extends AbstractBooleanOption
 {
     public const SILENTTRAN = 'SILENTTRAN';

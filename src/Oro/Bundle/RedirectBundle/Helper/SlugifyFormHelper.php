@@ -4,6 +4,13 @@ namespace Oro\Bundle\RedirectBundle\Helper;
 
 use Symfony\Component\Form\FormView;
 
+/**
+ * Provides helper methods for configuring slug suggestion UI components.
+ *
+ * This helper prepares form views with the necessary configuration options for displaying
+ * slug suggestion functionality. It handles both localized and non-localized slug forms,
+ * enabling automatic slug generation suggestions based on source field values.
+ */
 class SlugifyFormHelper
 {
     public function addSlugifyOptionsLocalized(FormView $view, array $options)

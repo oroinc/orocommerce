@@ -8,6 +8,13 @@ use Oro\Bundle\UserBundle\Form\Type\UserSelectType as BaseUserSelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting users with email transformation in RFP context.
+ *
+ * This form type extends the base {@see BaseUserSelectType} and applies a custom data transformer
+ * ({@see UserIdToEmailTransformer}) to convert between user IDs and email addresses. This is
+ * particularly useful in RFP workflows where user assignments need to be handled via email identifiers.
+ */
 class UserSelectType extends AbstractType
 {
     public const NAME = 'oro_rfp_user_select';

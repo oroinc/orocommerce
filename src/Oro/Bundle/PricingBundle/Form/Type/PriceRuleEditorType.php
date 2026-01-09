@@ -9,6 +9,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for editing price rules with expression support.
+ *
+ * Provides a specialized editor for price rule expressions with configurable options
+ * and validation, supporting dynamic rule configuration.
+ */
 class PriceRuleEditorType extends AbstractType
 {
     public const NAME = 'oro_pricing_price_rule_editor';

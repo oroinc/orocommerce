@@ -2,6 +2,14 @@
 
 namespace Oro\Component\Expression\Node;
 
+/**
+ * Represents a binary operation node in an expression tree.
+ *
+ * A binary node combines two operands (left and right) with an operation (e.g., +, -, and, or, ==, !=, etc.).
+ * It supports boolean operations (and, or), comparison expressions (==, !=, >, <, <=, >=, like, in, not in),
+ * and mathematical operations (+, -, *, /). The class normalizes operation symbols to a canonical form
+ * and provides methods to determine whether the operation is boolean, mathematical, or a comparison.
+ */
 class BinaryNode implements NodeInterface
 {
     /**

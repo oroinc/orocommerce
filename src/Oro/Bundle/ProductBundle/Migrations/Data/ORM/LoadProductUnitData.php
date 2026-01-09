@@ -6,6 +6,12 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
+/**
+ * Loads default product units into the database.
+ *
+ * This fixture creates the standard set of product units (each, hour, item, kg, piece, set)
+ * with their default precision settings, providing the foundation for product unit management.
+ */
 class LoadProductUnitData extends AbstractFixture
 {
     /**

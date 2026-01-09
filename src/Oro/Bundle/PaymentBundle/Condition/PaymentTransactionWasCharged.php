@@ -10,6 +10,13 @@ use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
+/**
+ * Evaluates whether a payment transaction has been successfully charged.
+ *
+ * This condition checks if there are any successful capture transactions related to the given
+ * payment transaction. It is used in workflow and action configurations to determine if a
+ * payment has been charged.
+ */
 class PaymentTransactionWasCharged extends AbstractCondition implements ContextAccessorAwareInterface
 {
     use ContextAccessorAwareTrait;

@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
+/**
+ * Applies scope-specific restrictions to product database queries.
+ *
+ * Extends the base {@see ProductDBQueryRestrictionEventListener} to add scope-based filtering,
+ * ensuring that product query restrictions are only applied when the configured scope matches
+ * the current request context.
+ */
 class ScopedProductDBQueryRestrictionEventListener extends ProductDBQueryRestrictionEventListener
 {
     /**

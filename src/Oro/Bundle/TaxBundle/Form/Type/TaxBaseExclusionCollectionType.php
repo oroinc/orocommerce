@@ -6,6 +6,13 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing a collection of tax base exclusions.
+ *
+ * Tax base exclusions define which components (such as shipping costs or handling fees) should be excluded
+ * from the taxable amount when calculating taxes. This collection type allows administrators to configure
+ * multiple exclusions that will be applied during tax calculations.
+ */
 class TaxBaseExclusionCollectionType extends AbstractType
 {
     public const NAME = 'oro_tax_base_exclusion_collection';

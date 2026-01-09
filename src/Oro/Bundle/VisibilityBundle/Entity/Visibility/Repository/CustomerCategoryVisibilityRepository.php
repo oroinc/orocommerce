@@ -4,6 +4,12 @@ namespace Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 
+/**
+ * Repository for {@see CustomerCategoryVisibility} entities.
+ *
+ * Provides specialized query methods for managing category visibility settings at the individual customer level,
+ * including retrieving customer IDs that have specific visibility settings for a given category.
+ */
 class CustomerCategoryVisibilityRepository extends AbstractCategoryVisibilityRepository
 {
     /**

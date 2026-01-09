@@ -5,6 +5,12 @@ namespace Oro\Bundle\ShippingBundle\EventListener;
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
+/**
+ * Handles {@see ShippingMethodConfigDataEvent} to provide configuration template for shipping methods.
+ *
+ * This listener sets the template for displaying shipping method configuration in the admin interface
+ * when the requested method is available in the shipping method provider.
+ */
 class ShippingRuleViewMethodTemplateListener
 {
     /**

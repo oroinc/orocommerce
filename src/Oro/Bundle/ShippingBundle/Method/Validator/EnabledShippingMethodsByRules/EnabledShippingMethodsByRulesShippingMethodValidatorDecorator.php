@@ -11,6 +11,12 @@ use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Validates shipping methods by checking for active usage in shipping rules.
+ *
+ * This decorator extends shipping method validation to prevent deletion of method types that are actively used
+ * in enabled shipping rules, providing error messages with details about which types are in use and cannot be removed.
+ */
 class EnabledShippingMethodsByRulesShippingMethodValidatorDecorator implements ShippingMethodValidatorInterface
 {
     public const USED_SHIPPING_METHODS_ERROR = 'oro.shipping.method_type.used.error';

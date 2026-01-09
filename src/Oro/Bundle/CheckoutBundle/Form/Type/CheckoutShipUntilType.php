@@ -7,6 +7,12 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for the checkout "ship until" date field.
+ *
+ * Provides a date picker form type for selecting the date by which an order must be shipped,
+ * with validation to ensure the date is not in the past.
+ */
 class CheckoutShipUntilType extends AbstractType
 {
     public const NAME = 'oro_checkout_ship_until';

@@ -7,6 +7,12 @@ use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMeth
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\AbstractShippingConfiguredPriceProviderDecorator;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
 
+/**
+ * Applies overridden shipping costs to all shipping method types.
+ *
+ * This decorator replaces calculated shipping prices with a configured override cost when the shipping cost override
+ * is enabled in the configuration, allowing custom pricing to take precedence over standard rate calculations.
+ */
 class OverriddenCostShippingConfiguredPriceProviderDecorator extends AbstractShippingConfiguredPriceProviderDecorator
 {
     public function __construct(ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider)

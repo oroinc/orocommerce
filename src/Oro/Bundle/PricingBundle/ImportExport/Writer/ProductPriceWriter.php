@@ -12,6 +12,12 @@ use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Writes product prices to the database during import.
+ *
+ * Handles persistence of product prices with support for disabling optional listeners
+ * and clearing import context to ensure proper price processing.
+ */
 class ProductPriceWriter extends PersistentBatchWriter
 {
     /**

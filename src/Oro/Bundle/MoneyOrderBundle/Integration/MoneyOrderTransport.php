@@ -7,6 +7,14 @@ use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 use Oro\Bundle\MoneyOrderBundle\Form\Type\MoneyOrderSettingsType;
 
+/**
+ * Provides transport configuration for Money Order payment method integration.
+ *
+ * This class handles the integration transport layer for Money Order payments, managing the
+ * settings form type and entity class used to store Money Order configuration. It acts as a bridge
+ * between the integration framework and Money Order-specific settings, enabling the system to
+ * properly initialize and configure Money Order payment channels.
+ */
 class MoneyOrderTransport implements TransportInterface
 {
     #[\Override]

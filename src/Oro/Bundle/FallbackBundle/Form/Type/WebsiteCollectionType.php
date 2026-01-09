@@ -14,6 +14,12 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing website-specific fallback values.
+ *
+ * Provides a form type that creates a collection of fallback value fields, one for each website,
+ * allowing users to configure website-specific values with fallback support.
+ */
 class WebsiteCollectionType extends AbstractType
 {
     public const NAME = 'oro_fallback_website_collection';

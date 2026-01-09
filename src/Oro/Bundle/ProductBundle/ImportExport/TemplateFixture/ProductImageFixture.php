@@ -8,6 +8,12 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 
+/**
+ * Provides template fixture data for product image import/export.
+ *
+ * This fixture generates sample product image data used in import/export templates,
+ * helping users understand the expected format and structure for product image data.
+ */
 class ProductImageFixture implements TemplateFixtureInterface
 {
     #[\Override]

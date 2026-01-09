@@ -7,6 +7,15 @@ use Oro\Bundle\SearchBundle\Engine\EngineInterface;
 use Oro\Bundle\SearchBundle\Query\AbstractSearchQuery;
 use Oro\Bundle\SearchBundle\Query\Query;
 
+/**
+ * Represents a website search query that executes against the website search index.
+ *
+ * This class extends {@see AbstractSearchQuery} to provide website-specific search functionality.
+ * It encapsulates a {@see Query} object and an {@see EngineInterface} to execute searches against
+ * the website search index (as opposed to the standard search index). The query supports all standard
+ * search operations including field selection, filtering, ordering, and pagination. It is typically
+ * created by query factories and used through {@see WebsiteSearchRepository} for type-safe search operations.
+ */
 class WebsiteSearchQuery extends AbstractSearchQuery
 {
     /** @var EngineInterface */

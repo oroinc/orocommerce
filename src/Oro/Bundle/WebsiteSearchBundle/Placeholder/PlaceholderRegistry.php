@@ -2,6 +2,15 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
+/**
+ * Central registry for all website search placeholder implementations.
+ *
+ * This registry stores and provides access to all registered {@see PlaceholderInterface} implementations
+ * that are used throughout the website search system. Placeholders are registered during dependency
+ * injection container compilation by {@see WebsiteSearchCompilerPass}. The registry allows retrieval
+ * of specific placeholders by name and provides access to all registered placeholders for bulk operations
+ * such as replacing all placeholders in a string or expression.
+ */
 class PlaceholderRegistry
 {
     /**

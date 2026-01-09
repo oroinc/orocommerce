@@ -5,6 +5,12 @@ namespace Oro\Bundle\ProductBundle\Form\Handler;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Handles the first step of the product creation wizard.
+ *
+ * This handler processes the initial product creation form, validating and persisting
+ * the basic product information before proceeding to subsequent creation steps.
+ */
 class ProductCreateStepOneHandler
 {
     /** @var FormInterface */

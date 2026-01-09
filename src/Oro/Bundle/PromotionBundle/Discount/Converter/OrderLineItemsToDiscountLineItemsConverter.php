@@ -4,6 +4,12 @@ namespace Oro\Bundle\PromotionBundle\Discount\Converter;
 
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
+/**
+ * Converts order line items to discount line items.
+ *
+ * Transforms OrderLineItem entities into DiscountLineItem objects, extracting
+ * price and quantity information for discount calculation and application.
+ */
 class OrderLineItemsToDiscountLineItemsConverter extends AbstractLineItemsToDiscountLineItemsConverter
 {
     #[\Override]

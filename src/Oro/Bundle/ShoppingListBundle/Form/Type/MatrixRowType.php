@@ -10,6 +10,15 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for a single row in the matrix order form for configurable products.
+ *
+ * This form type represents one row in the matrix grid used for ordering configurable products with multiple variants.
+ * Each row corresponds to one value of the first variant field (e.g., "Size") and contains a collection of columns
+ * representing the second variant field values (e.g., "Color").
+ * The form allows customers to specify quantities for multiple product variants simultaneously in a grid layout,
+ * providing an efficient way to add multiple variants to a shopping list.
+ */
 class MatrixRowType extends AbstractType
 {
     #[\Override]

@@ -8,6 +8,12 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Oro\Component\Routing\RouteData;
 
+/**
+ * Provides routing information for brand entities.
+ *
+ * This provider supplies route data for brand pages, enabling the redirect bundle
+ * to generate URLs for brand entities based on system configuration and routing rules.
+ */
 class BrandRoutingInformationProvider implements RoutingInformationProviderInterface
 {
     /**

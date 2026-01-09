@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\CommerceEntityBundle\Storage;
 
+/**
+ * Defines the contract for storing entities scheduled for extra insert operations.
+ */
 interface ExtraActionEntityStorageInterface
 {
     /**

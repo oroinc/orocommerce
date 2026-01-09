@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * Configures amount option for PayPal Payflow transactions.
+ *
+ * Manages transaction amount and related amounts (tax, shipping, discount, etc.),
+ * with automatic calculation and normalization to two decimal places.
+ */
 class Amount implements OptionInterface
 {
     public const AMT = 'AMT';

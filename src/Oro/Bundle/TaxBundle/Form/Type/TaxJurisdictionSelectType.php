@@ -6,6 +6,13 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting or creating tax jurisdictions.
+ *
+ * This form type provides a select widget with autocomplete functionality for choosing existing tax jurisdictions,
+ * along with the ability to create new jurisdictions inline.
+ * It is used in tax rule forms to specify the geographic area where a tax rule applies.
+ */
 class TaxJurisdictionSelectType extends AbstractType
 {
     public const NAME = 'oro_tax_jurisdiction_select';

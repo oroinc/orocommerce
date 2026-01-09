@@ -10,6 +10,12 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Strategy helper for processing product unit information during inventory level import.
+ *
+ * Handles the extraction and validation of product units and product unit precision data
+ * during inventory level import operations.
+ */
 class ProductUnitStrategyHelper extends AbstractInventoryLevelStrategyHelper
 {
     /** @var ProductUnitTransformer $productUnitTransformer */

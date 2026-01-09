@@ -8,6 +8,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Form type for selecting a price list with priority/sort order.
+ *
+ * Provides a form for selecting a price list and managing its priority in a collection,
+ * supporting sortable price list relations.
+ */
 class PriceListSelectWithPriorityType extends AbstractType
 {
     public const NAME = 'oro_pricing_price_list_select_with_priority';

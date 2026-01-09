@@ -9,6 +9,13 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\SoapBundle\Client\Settings\SoapClientSettingsInterface;
 use Oro\Bundle\SoapBundle\Client\SoapClientInterface;
 
+/**
+ * Sends FedEx rate service requests via SOAP and returns parsed responses.
+ *
+ * This client handles communication with the FedEx SOAP API for rate requests,
+ * selecting between production and test endpoints based on integration settings,
+ * and gracefully handling exceptions by returning empty responses.
+ */
 class FedexRateServiceSoapClient implements FedexRateServiceBySettingsClientInterface
 {
     /**

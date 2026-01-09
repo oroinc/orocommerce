@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\TaxBundle\Model;
 
+/**
+ * Provides common functionality for tax calculation result models.
+ *
+ * This base class extends ArrayObject to provide array-like access to tax calculation results
+ * while adding convenience methods for safe offset access with default values.
+ * Subclasses should extend this to create specific result types for different tax calculation scenarios.
+ */
 abstract class AbstractResult extends \ArrayObject
 {
     /**

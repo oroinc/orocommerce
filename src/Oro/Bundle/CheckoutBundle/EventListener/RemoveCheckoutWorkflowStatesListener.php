@@ -6,6 +6,12 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+/**
+ * Handles checkout removal to clean up associated workflow states.
+ *
+ * Listens to checkout pre-remove events and deletes all associated workflow state records,
+ * ensuring data consistency when checkouts are removed from the system.
+ */
 class RemoveCheckoutWorkflowStatesListener
 {
     /**

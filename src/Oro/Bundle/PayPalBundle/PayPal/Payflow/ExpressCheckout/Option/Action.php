@@ -5,6 +5,12 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
+/**
+ * Configures action option for PayPal Express Checkout transactions.
+ *
+ * Defines the Express Checkout action type (SET_EC, GET_EC_DETAILS, DO_EC),
+ * controlling the flow and behavior of the Express Checkout process.
+ */
 class Action implements OptionInterface
 {
     public const ACTION = 'ACTION';

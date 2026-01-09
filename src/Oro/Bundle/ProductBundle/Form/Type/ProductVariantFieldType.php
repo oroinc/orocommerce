@@ -7,6 +7,12 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Form type for configuring individual product variant fields.
+ *
+ * This form type provides fields for setting the priority and selection state of a variant field, allowing users
+ * to configure which product attributes should be used as variant fields in configurable products.
+ */
 class ProductVariantFieldType extends AbstractType
 {
     public const NAME = 'oro_product_variant_field';

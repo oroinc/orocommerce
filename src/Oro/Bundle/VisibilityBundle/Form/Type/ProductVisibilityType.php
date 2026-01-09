@@ -7,6 +7,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting default product visibility in system configuration.
+ *
+ * This form type provides a choice field for administrators to set the default visibility for products
+ * (visible or hidden) in the system configuration UI.
+ */
 class ProductVisibilityType extends AbstractType
 {
     public const NAME = 'oro_visibility_product_default_visibility';

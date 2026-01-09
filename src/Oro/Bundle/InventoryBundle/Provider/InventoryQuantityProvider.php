@@ -9,6 +9,13 @@ use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
+/**
+ * Provides inventory quantity information for products.
+ *
+ * This implementation retrieves inventory levels from the database and uses the
+ * {@see InventoryQuantityManager} to calculate available quantities and determine whether
+ * inventory can be decremented based on product configuration and current inventory levels.
+ */
 class InventoryQuantityProvider implements InventoryQuantityProviderInterface
 {
     /** @var DoctrineHelper */

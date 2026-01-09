@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\ProductVariant\Registry;
 
+/**
+ * Registry for product variant field value handlers.
+ *
+ * This registry manages handlers that process and format variant field values based on their field type,
+ * allowing custom handling of different attribute types used in product variant configurations.
+ */
 class ProductVariantFieldValueHandlerRegistry
 {
     /** @var ProductVariantFieldValueHandlerInterface[] */

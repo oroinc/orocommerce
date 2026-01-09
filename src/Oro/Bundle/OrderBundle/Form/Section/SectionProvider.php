@@ -6,6 +6,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Component\Form\FormRegistryInterface;
 
+/**
+ * Manages form sections for order forms.
+ *
+ * Provides functionality to register and retrieve form sections for specific form types.
+ * Sections are organized by form name and can be sorted by order, allowing for flexible composition of form layouts.
+ */
 class SectionProvider
 {
     /**

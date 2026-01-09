@@ -4,6 +4,12 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Constraint to validate that a product image has an associated image file.
+ *
+ * This constraint ensures that product image entities are not empty and have a valid image file
+ * attached before being saved.
+ */
 class ProductImage extends Constraint
 {
     /**

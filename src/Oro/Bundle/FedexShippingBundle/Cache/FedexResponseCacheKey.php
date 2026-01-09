@@ -5,6 +5,13 @@ namespace Oro\Bundle\FedexShippingBundle\Cache;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequestInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 
+/**
+ * Encapsulates a FedEx request and integration settings for cache key generation.
+ *
+ * This class combines a FedEx request with its associated integration settings
+ * and provides a method to generate a unique cache key based on the request data
+ * using CRC32 hashing of the serialized request.
+ */
 class FedexResponseCacheKey implements FedexResponseCacheKeyInterface
 {
     /**

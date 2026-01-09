@@ -7,6 +7,12 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+/**
+ * Validator for {@see EnabledTypeConfigsValidationGroup} constraint.
+ *
+ * This validator counts the number of enabled shipping method type configurations and ensures that
+ * at least the minimum required number are enabled, adding a validation violation if the requirement is not met.
+ */
 class EnabledTypeConfigsValidationGroupValidator extends ConstraintValidator
 {
     /**

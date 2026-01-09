@@ -12,6 +12,13 @@ use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
+/**
+ * Data transfer object for promotion information.
+ *
+ * Implements {@see PromotionDataInterface} to provide a flexible container for promotion
+ * data including rules, scopes, discount configuration, coupons, and product segments.
+ * Used for transferring promotion information between layers.
+ */
 class AppliedPromotionData implements PromotionDataInterface
 {
     /**

@@ -5,6 +5,12 @@ namespace Oro\Bundle\PaymentBundle\Extension\Action\Actions;
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 use Oro\Bundle\DataGridBundle\Extension\Action\Actions\AbstractAction;
 
+/**
+ * Datagrid action for deleting payment-related records.
+ *
+ * This action extends the base datagrid action to provide payment-specific deletion
+ * functionality with automatic confirmation dialog support.
+ */
 class PaymentDeleteAction extends AbstractAction
 {
     /**

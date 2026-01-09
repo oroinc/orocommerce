@@ -7,6 +7,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
+/**
+ * Configures action-dependent options for PayPal Express Checkout transactions.
+ *
+ * Dynamically configures transaction options based on the Express Checkout action type
+ * (SET_EC, GET_EC_DETAILS, DO_EC), applying different option sets for each action.
+ */
 class ActionDependent implements OptionInterface
 {
     /**

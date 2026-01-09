@@ -6,6 +6,13 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * Provides product retrieval functionality for form types.
+ *
+ * This trait offers a helper method to extract the product entity from various sources within a form hierarchy,
+ * including form options, parent forms, and product holder objects,
+ * enabling form types to access the current product context.
+ */
 trait ProductAwareTrait
 {
     /**

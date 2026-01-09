@@ -4,6 +4,12 @@ namespace Oro\Bundle\ShippingBundle\Method\Event;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Dispatches shipping method removal events.
+ *
+ * This dispatcher creates and dispatches {@see MethodRemovalEvent} instances when shipping methods are removed
+ * from the system, notifying listeners to perform cleanup operations.
+ */
 class BasicMethodRemovalEventDispatcher implements MethodRemovalEventDispatcherInterface
 {
     /**

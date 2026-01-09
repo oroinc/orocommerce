@@ -4,6 +4,12 @@ namespace Oro\Bundle\PricingBundle\Duplicator;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 
+/**
+ * Duplicates price list schedules from one price list to another.
+ *
+ * Copies active and future schedules from a source price list to a target price list,
+ * excluding schedules that have already been deactivated.
+ */
 class ScheduleDuplicator
 {
     public function duplicateSchedule(PriceList $sourcePriceList, PriceList $duplicatedPriceList)

@@ -4,6 +4,15 @@ namespace Oro\Bundle\UPSBundle\TimeInTransit\Result\Factory;
 
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\EstimatedArrival;
 
+/**
+ * Creates EstimatedArrival instances from UPS Time In Transit API response data.
+ *
+ * This factory constructs {@see EstimatedArrival} value objects containing delivery estimates
+ * for specific UPS shipping services. Each estimated arrival includes the expected delivery date,
+ * transit time in business days, and additional metadata such as customer center cutoff times.
+ *
+ * @see EstimatedArrivalFactoryInterface
+ */
 class EstimatedArrivalFactory implements EstimatedArrivalFactoryInterface
 {
     #[\Override]

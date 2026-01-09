@@ -7,6 +7,12 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 
+/**
+ * Adjusts product unit and quantity column visibility in datagrids based on single unit mode.
+ *
+ * This listener modifies datagrid configurations to hide or show unit-related columns depending on whether
+ * single unit mode is enabled, providing a simplified interface when only one product unit is in use.
+ */
 class UnitVisibilityModeDataGridListener
 {
     public const TEMPLATE_TYPE = 'twig';

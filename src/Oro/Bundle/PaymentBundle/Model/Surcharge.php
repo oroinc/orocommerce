@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PaymentBundle\Model;
 
+/**
+ * Represents surcharge amounts for payment processing.
+ *
+ * This model holds various surcharge amounts including shipping, handling, discount,
+ * and insurance, which are collected during the payment process and sent to payment gateways.
+ */
 class Surcharge
 {
     /** @var float */

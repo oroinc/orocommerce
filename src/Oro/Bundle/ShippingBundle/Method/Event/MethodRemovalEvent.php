@@ -4,6 +4,12 @@ namespace Oro\Bundle\ShippingBundle\Method\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Event dispatched when a shipping method is removed from the system.
+ *
+ * This event notifies listeners that a shipping method has been removed, allowing them to clean up
+ * related configurations, rules, and data that reference the removed method.
+ */
 class MethodRemovalEvent extends Event
 {
     public const NAME = 'oro_shipping.method_removal';

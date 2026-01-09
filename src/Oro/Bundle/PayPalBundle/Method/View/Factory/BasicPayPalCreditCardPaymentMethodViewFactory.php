@@ -7,6 +7,12 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayPalCreditCardPaymentMethodView;
 use Symfony\Component\Form\FormFactoryInterface;
 
+/**
+ * Creates PayPal Credit Card payment method view instances.
+ *
+ * Constructs view objects with form factory and payment transaction provider
+ * for rendering credit card payment forms.
+ */
 class BasicPayPalCreditCardPaymentMethodViewFactory implements PayPalCreditCardPaymentMethodViewFactoryInterface
 {
     /**

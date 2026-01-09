@@ -6,6 +6,12 @@ use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerIn
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormFactory;
 
+/**
+ * Handles form creation for boolean-type product variant fields.
+ *
+ * This handler creates choice forms for boolean variant fields, converting boolean values into
+ * user-friendly choice options for variant selection in the storefront.
+ */
 class BooleanTypeHandler implements ProductVariantTypeHandlerInterface
 {
     public const TYPE = 'boolean';

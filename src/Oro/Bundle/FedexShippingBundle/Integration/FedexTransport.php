@@ -7,6 +7,12 @@ use Oro\Bundle\FedexShippingBundle\Form\Type\FedexIntegrationSettingsType;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 
+/**
+ * Provides FedEx integration transport configuration.
+ *
+ * This transport implementation defines the form type and settings entity
+ * for FedEx integration channels within the integration framework.
+ */
 class FedexTransport implements TransportInterface
 {
     #[\Override]

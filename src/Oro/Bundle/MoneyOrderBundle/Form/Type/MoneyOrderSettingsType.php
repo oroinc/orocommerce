@@ -15,6 +15,14 @@ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
 
+/**
+ * Form type for configuring Money Order payment method settings.
+ *
+ * This form type defines the fields required to configure a Money Order payment method,
+ * including localized labels, short labels, payment recipient information (pay to), and
+ * shipping address details (send to). It is used in the admin interface to create and edit
+ * Money Order payment channel configurations.
+ */
 class MoneyOrderSettingsType extends AbstractType
 {
     public const BLOCK_PREFIX = 'oro_money_order_settings';

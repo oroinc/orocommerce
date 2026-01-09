@@ -13,6 +13,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for discount configuration.
+ *
+ * Manages the selection of discount type and dynamic configuration of discount-specific
+ * options through form prototypes and event listeners that respond to type changes.
+ */
 class DiscountConfigurationType extends AbstractType
 {
     public const NAME = 'oro_promotion_discount_configuration';

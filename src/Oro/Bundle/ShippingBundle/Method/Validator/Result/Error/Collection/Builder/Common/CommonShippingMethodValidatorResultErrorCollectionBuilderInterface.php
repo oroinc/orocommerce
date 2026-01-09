@@ -4,6 +4,12 @@ namespace Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Collection\Bui
 
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error;
 
+/**
+ * Defines the contract for builders that create shipping method validator result error collections.
+ *
+ * Implementations of this interface provide a fluent API for building error collections,
+ * supporting both individual error addition and cloning from existing collections.
+ */
 interface CommonShippingMethodValidatorResultErrorCollectionBuilderInterface
 {
     /**

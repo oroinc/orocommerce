@@ -5,6 +5,12 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 use Oro\Bundle\DataGridBundle\Datagrid\RequestParameterBagFactory;
 use Oro\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
 
+/**
+ * Enriches product grid widget route parameters with datagrid request parameters.
+ *
+ * This listener handles {@see ProductGridWidgetRenderEvent} events and merges the current datagrid parameters
+ * into the widget route parameters, ensuring proper state preservation when rendering product grid widgets.
+ */
 class ProductGridWidgetRenderEventListener
 {
     /**

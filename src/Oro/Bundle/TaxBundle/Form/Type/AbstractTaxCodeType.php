@@ -7,6 +7,13 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Provides common functionality for tax code form types.
+ *
+ * This base class defines the standard form structure for tax codes, including code and description fields.
+ * Subclasses should extend this to create specific tax code forms (e.g., product tax codes, customer tax codes)
+ * by setting the appropriate data class and adding any additional fields as needed.
+ */
 abstract class AbstractTaxCodeType extends AbstractType
 {
     /**

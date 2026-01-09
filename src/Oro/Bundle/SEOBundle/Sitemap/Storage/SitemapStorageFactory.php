@@ -4,6 +4,13 @@ namespace Oro\Bundle\SEOBundle\Sitemap\Storage;
 
 use Oro\Bundle\SEOBundle\Sitemap\Exception\UnsupportedStorageTypeException;
 
+/**
+ * Factory for creating sitemap storage instances.
+ *
+ * This factory creates appropriate sitemap storage instances based on the requested type.
+ * It supports creating storage for regular sitemaps and sitemap index files, throwing an exception
+ * for unsupported storage types.
+ */
 class SitemapStorageFactory
 {
     public const TYPE_SITEMAP = 'sitemap';

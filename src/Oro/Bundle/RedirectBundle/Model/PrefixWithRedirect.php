@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\RedirectBundle\Model;
 
+/**
+ * Represents a URL prefix with associated redirect creation preference.
+ *
+ * This model object encapsulates a URL prefix string and a boolean flag indicating whether
+ * automatic redirects should be created when the prefix is applied to slug URLs. It is used
+ * to pass prefix configuration through the slug generation system.
+ */
 class PrefixWithRedirect
 {
     /**

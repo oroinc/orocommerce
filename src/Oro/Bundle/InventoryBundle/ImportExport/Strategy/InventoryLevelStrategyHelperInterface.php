@@ -4,6 +4,12 @@ namespace Oro\Bundle\InventoryBundle\ImportExport\Strategy;
 
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
+/**
+ * Defines the contract for inventory level import strategy helpers.
+ *
+ * Specifies methods for processing inventory level entities during import, including
+ * validation, entity extraction, and error management.
+ */
 interface InventoryLevelStrategyHelperInterface
 {
     /**

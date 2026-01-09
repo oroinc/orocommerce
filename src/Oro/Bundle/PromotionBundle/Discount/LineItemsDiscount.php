@@ -4,6 +4,13 @@ namespace Oro\Bundle\PromotionBundle\Discount;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Applies discounts to individual line items or their totals.
+ *
+ * Calculates and applies discounts to line items based on product matching,
+ * supporting both per-item and total-based discount application with optional
+ * quantity limits. Handles both fixed amount and percentage discount types.
+ */
 class LineItemsDiscount extends AbstractDiscount implements DiscountProductUnitCodeAwareInterface
 {
     public const APPLY_TO = 'apply_to';

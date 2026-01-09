@@ -5,6 +5,12 @@ namespace Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Factory\Common
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Factory;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\ParameterBag\ParameterBagShippingMethodValidatorResultError;
 
+/**
+ * Creates parameter bag-based shipping method validator result errors.
+ *
+ * This factory produces {@see ParameterBagShippingMethodValidatorResultError} instances
+ * containing validation error messages for shipping method validation failures.
+ */
 class ParameterBagCommonShippingMethodValidatorResultErrorFactory implements
     Factory\Common\CommonShippingMethodValidatorResultErrorFactoryInterface
 {

@@ -6,6 +6,9 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 
+/**
+ * Repository for {@see \Oro\Bundle\PromotionBundle\Entity\CouponUsage} entities.
+ */
 class CouponUsageRepository extends EntityRepository
 {
     /**

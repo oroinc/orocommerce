@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\ProductVariant\Registry;
 
+/**
+ * Registry for product variant type handlers.
+ *
+ * This registry manages handlers that create forms for different variant field types,
+ * providing a centralized way to retrieve the appropriate handler based on field type
+ * when building variant selection interfaces.
+ */
 class ProductVariantTypeHandlerRegistry
 {
     /** @var ProductVariantTypeHandlerInterface[] */

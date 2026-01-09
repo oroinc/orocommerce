@@ -7,6 +7,12 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProviderInterface;
 use Oro\Bundle\PayPalBundle\Method\View\Factory\PayPalExpressCheckoutPaymentMethodViewFactoryInterface;
 
+/**
+ * Provides PayPal Express Checkout payment method view instances.
+ *
+ * Builds and manages Express Checkout payment method views from configuration,
+ * creating view instances using the configured factory.
+ */
 class ExpressCheckoutMethodViewProvider extends AbstractPaymentMethodViewProvider
 {
     /** @var PayPalExpressCheckoutPaymentMethodViewFactoryInterface */

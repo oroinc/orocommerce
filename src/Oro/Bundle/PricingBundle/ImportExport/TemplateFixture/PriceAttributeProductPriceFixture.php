@@ -10,6 +10,12 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
+/**
+ * Provides template fixture data for price attribute product prices.
+ *
+ * Generates sample price attribute product price data for import/export templates,
+ * demonstrating the structure and format of price attribute prices.
+ */
 class PriceAttributeProductPriceFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
     public const PRODUCT_SKU = 'sku001';

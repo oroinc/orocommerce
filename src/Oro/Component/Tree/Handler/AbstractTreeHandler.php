@@ -7,6 +7,14 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\UIBundle\Model\TreeItem;
 use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
+/**
+ * Provides common functionality for handling nested tree structures.
+ *
+ * This base class implements tree creation, node movement, and tree formatting operations for entities
+ * organized in a nested set hierarchy. It provides methods for generating tree representations suitable
+ * for UI components (e.g., jsTree), managing node positions, and converting entities to tree items.
+ * Subclasses must implement entity-specific formatting and movement logic.
+ */
 abstract class AbstractTreeHandler
 {
     public const ROOT_PARENT_VALUE = '#';

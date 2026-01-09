@@ -7,6 +7,13 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
+/**
+ * Applies visibility restrictions to product variant queries based on system configuration.
+ *
+ * This listener handles {@see RestrictProductVariantEvent} events and modifies the query to filter product variants
+ * according to the configured visibility settings, ensuring that only appropriate variants are available
+ * in the current context.
+ */
 class RestrictProductVariantEventListener
 {
     /** @var ConfigManager */

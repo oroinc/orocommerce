@@ -5,6 +5,12 @@ namespace Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Collection\Bui
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Collection\Builder;
 
+/**
+ * Builds Doctrine-based shipping method validator result error collections.
+ *
+ * This builder provides a fluent API for constructing {@see DoctrineShippingMethodValidatorResultErrorCollection}
+ * instances, allowing errors to be added individually or cloned from existing collections.
+ */
 class DoctrineCommonShippingMethodValidatorResultErrorCollectionBuilder implements
     Builder\Common\CommonShippingMethodValidatorResultErrorCollectionBuilderInterface
 {

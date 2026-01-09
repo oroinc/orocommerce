@@ -4,6 +4,12 @@ namespace Oro\Bundle\CatalogBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
+/**
+ * Handles product normalization events during import/export operations.
+ *
+ * Listens to product normalization events and adds category information to the normalized
+ * product data, ensuring that category relationships are preserved during import/export.
+ */
 class ProductNormalizerEventListener extends AbstractProductImportEventListener
 {
     public function onNormalize(ProductNormalizerEvent $event)

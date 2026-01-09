@@ -4,6 +4,12 @@ namespace Oro\Bundle\ProductBundle\ImportExport\DataConverter;
 
 use Oro\Bundle\ImportExportBundle\Converter\AbstractTableDataConverter;
 
+/**
+ * Converts inventory status data between import/export format and internal format.
+ *
+ * This data converter maps column headers for inventory status import/export operations,
+ * translating between user-friendly column names and internal field paths.
+ */
 class InventoryStatusDataConverter extends AbstractTableDataConverter
 {
     #[\Override]

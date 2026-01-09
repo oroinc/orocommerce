@@ -9,6 +9,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Handles form submission and persistence for payment methods configuration rules.
+ *
+ * This handler processes POST and PUT requests for payment method configuration rules,
+ * validates the form data, and persists the rule entity to the database when valid.
+ */
 class PaymentMethodsConfigsRuleHandler
 {
     use RequestHandlerTrait;

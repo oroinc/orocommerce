@@ -9,6 +9,12 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+/**
+ * Manages product query restrictions for database and search queries.
+ *
+ * This manager dispatches events that allow listeners to apply custom restrictions to product queries,
+ * enabling features like visibility filtering, access control, and context-specific product filtering.
+ */
 class ProductManager
 {
     /**

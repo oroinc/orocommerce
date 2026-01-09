@@ -6,6 +6,12 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
 
+/**
+ * Creates PayPal configuration objects from system configuration.
+ *
+ * Builds configuration objects for different PayPal integration types (Payments Pro, Payflow Gateway),
+ * retrieving settings from the system configuration manager.
+ */
 class PayPalConfigFactory
 {
     /**

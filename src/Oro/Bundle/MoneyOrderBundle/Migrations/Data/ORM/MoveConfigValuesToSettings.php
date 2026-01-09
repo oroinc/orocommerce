@@ -13,6 +13,14 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\PaymentBundle\Migrations\Data\ORM\AbstractMoveConfigValuesToSettings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Migrates Money Order configuration from system config to integration-based settings.
+ *
+ * This data migration class handles the transition of Money Order payment configuration from
+ * the legacy system configuration storage to the new integration-based settings model. It creates
+ * Money Order integration channels with proper settings, converts legacy configuration values,
+ * and dispatches payment method renaming events to ensure proper system state after migration.
+ */
 class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
 {
     public const SECTION_NAME = 'oro_money_order';

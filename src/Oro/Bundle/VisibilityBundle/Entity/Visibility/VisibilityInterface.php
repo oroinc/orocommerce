@@ -4,6 +4,14 @@ namespace Oro\Bundle\VisibilityBundle\Entity\Visibility;
 
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
+/**
+ * Defines the contract for visibility entities that control product and category visibility.
+ *
+ * Implementations of this interface represent visibility settings at different scopes (all customers,
+ * customer groups, individual customers) and provide methods to manage visibility values, scope associations,
+ * and target entities (products or categories). This is a core interface that enables the flexible visibility system
+ * allowing merchants to control what products and categories are visible to different audiences.
+ */
 interface VisibilityInterface
 {
     public const HIDDEN = 'hidden';

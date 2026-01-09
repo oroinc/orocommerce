@@ -14,6 +14,14 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for configuring the origin address used in tax calculations.
+ *
+ * The origin address represents the location from which goods are shipped or services are provided.
+ * This address is used in certain tax calculation scenarios, particularly for origin-based tax systems.
+ * The form includes fields for country, region, postal code, and handles the 'Use Default' checkbox
+ * for scope-specific configuration.
+ */
 class OriginAddressType extends AbstractType
 {
     public const NAME = 'oro_tax_origin_address';

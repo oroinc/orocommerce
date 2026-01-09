@@ -6,6 +6,13 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting or creating a web catalog.
+ *
+ * This form type provides an autocomplete selector for choosing an existing web catalog or creating a new one inline.
+ * It is used throughout the application where web catalog selection is required, such as in system configuration
+ * or when assigning web catalogs to specific scopes.
+ */
 class WebCatalogSelectType extends AbstractType
 {
     public const NAME = 'oro_web_catalog_select';

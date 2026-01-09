@@ -7,6 +7,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting a discount application strategy.
+ *
+ * Extends {@see ChoiceType} to provide a dropdown selection of available discount strategies
+ * registered in the strategy registry.
+ */
 class DiscountStrategySelectType extends AbstractType
 {
     public const NAME = 'oro_discount_strategy_select';

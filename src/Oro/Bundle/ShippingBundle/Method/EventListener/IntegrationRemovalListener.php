@@ -6,6 +6,12 @@ use Oro\Bundle\IntegrationBundle\Event\Action\ChannelDeleteEvent;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodRemovalEventDispatcherInterface;
 
+/**
+ * Handles {@see ChannelDeleteEvent} to dispatch shipping method removal events.
+ *
+ * This listener monitors integration channel deletions and dispatches method removal events for shipping methods
+ * associated with the deleted integration, allowing cleanup of related shipping configurations and rules.
+ */
 class IntegrationRemovalListener
 {
     /**

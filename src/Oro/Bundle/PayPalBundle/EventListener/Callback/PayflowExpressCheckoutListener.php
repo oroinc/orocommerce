@@ -7,6 +7,12 @@ use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
 use Psr\Log\LoggerAwareTrait;
 
+/**
+ * Handles callback events for PayPal Payflow Express Checkout transactions.
+ *
+ * Processes error and return callbacks from PayPal, updating payment transaction
+ * status and response data based on the callback event type and validation.
+ */
 class PayflowExpressCheckoutListener
 {
     use LoggerAwareTrait;

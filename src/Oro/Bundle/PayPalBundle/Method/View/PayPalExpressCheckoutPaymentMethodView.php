@@ -8,6 +8,12 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
+/**
+ * Renders PayPal Express Checkout payment method view.
+ *
+ * Provides minimal view configuration for Express Checkout payments,
+ * delegating transaction handling to the Express Checkout payment method.
+ */
 class PayPalExpressCheckoutPaymentMethodView implements PaymentMethodViewInterface
 {
     /**

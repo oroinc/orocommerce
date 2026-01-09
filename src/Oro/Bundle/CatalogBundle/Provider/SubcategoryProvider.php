@@ -5,6 +5,12 @@ namespace Oro\Bundle\CatalogBundle\Provider;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
+/**
+ * Provides available subcategories for a given category.
+ *
+ * Retrieves subcategories that are accessible to the current user, leveraging the category tree
+ * provider to ensure proper security and visibility filtering.
+ */
 class SubcategoryProvider
 {
     /** @var TokenAccessorInterface */

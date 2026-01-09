@@ -6,6 +6,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsDependentInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\ShippingAddress as BaseShippingAddress;
 
+/**
+ * Configures shipping address option for PayPal Express Checkout transactions.
+ *
+ * Extends base shipping address option with Express Checkout-specific applicability,
+ * allowing shipping address configuration for SET_EC and DO_EC actions.
+ */
 class ShippingAddress extends BaseShippingAddress implements OptionsDependentInterface
 {
     #[\Override]

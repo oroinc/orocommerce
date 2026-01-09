@@ -7,6 +7,12 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\PromotionBundle\Layout\DataProvider\DTO\ObjectStorage;
 
+/**
+ * Provides discount information for layout rendering.
+ *
+ * Executes promotions on source entities and collects discount information
+ * for line items, formatted with currency information for display.
+ */
 class DiscountsInformationDataProvider
 {
     /**

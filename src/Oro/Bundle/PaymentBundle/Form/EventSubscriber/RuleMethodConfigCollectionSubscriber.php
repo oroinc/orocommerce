@@ -10,6 +10,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Handles form submission for payment method configuration collections in rules.
+ *
+ * This subscriber filters payment method configurations to ensure only those with
+ * registered payment methods are included in the form, both during initial data binding
+ * and form submission.
+ */
 class RuleMethodConfigCollectionSubscriber implements EventSubscriberInterface
 {
     /**

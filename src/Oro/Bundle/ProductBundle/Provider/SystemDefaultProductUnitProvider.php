@@ -8,6 +8,12 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
+/**
+ * Provides the system-configured default product unit precision.
+ *
+ * This provider retrieves the default product unit from system configuration, creating a ProductUnitPrecision instance
+ * with the configured unit and its default precision value.
+ */
 class SystemDefaultProductUnitProvider implements DefaultProductUnitProviderInterface
 {
     /**

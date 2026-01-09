@@ -12,6 +12,12 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing category unit precision settings.
+ *
+ * Provides form fields for configuring product unit and precision values at the category level,
+ * with visibility controls based on whether default product options are available.
+ */
 class CategoryUnitPrecisionType extends AbstractType
 {
     public const NAME = 'oro_catalog_category_unit_precision';

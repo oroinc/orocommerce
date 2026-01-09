@@ -5,6 +5,12 @@ namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 
+/**
+ * Maps shipping method availability for checkout state diff tracking.
+ *
+ * Tracks whether a shipping method is available and enabled for a checkout,
+ * enabling detection of changes in shipping method availability.
+ */
 class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
 {
     public const DATA_NAME = 'shipping_method_enabled';

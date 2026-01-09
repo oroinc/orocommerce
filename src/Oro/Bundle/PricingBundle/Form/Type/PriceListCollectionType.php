@@ -15,6 +15,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing collections of price lists with priority ordering.
+ *
+ * Provides a collection form for managing multiple price list assignments with automatic
+ * reordering and validation to ensure unique price list selections.
+ */
 class PriceListCollectionType extends AbstractType
 {
     public const NAME = 'oro_pricing_price_list_collection';

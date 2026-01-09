@@ -4,6 +4,11 @@ namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Constraint for validating product price currencies within a price list.
+ *
+ * Ensures that all product prices in a price list use currencies that are configured for that price list.
+ */
 class PriceListProductPricesCurrency extends Constraint
 {
     /**

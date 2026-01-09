@@ -4,6 +4,13 @@ namespace Oro\Bundle\SEOBundle\Sitemap\Storage;
 
 use Oro\Component\SEO\Model\DTO\UrlItemInterface;
 
+/**
+ * XML storage for sitemap index files.
+ *
+ * This class extends the abstract XML sitemap storage to provide storage for sitemap index files.
+ * It generates XML output conforming to the sitemap index protocol specification, including references
+ * to individual sitemap files and their last modification dates.
+ */
 class XmlSitemapIndexStorage extends AbstractXmlSitemapStorage
 {
     #[\Override]

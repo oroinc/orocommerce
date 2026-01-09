@@ -6,6 +6,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing category default product options.
+ *
+ * Provides a form for configuring default product unit and precision settings at the category level,
+ * allowing administrators to set default options that apply to products in the category.
+ */
 class CategoryDefaultProductOptionsType extends AbstractType
 {
     public const NAME = 'oro_catalog_category_default_product_options';

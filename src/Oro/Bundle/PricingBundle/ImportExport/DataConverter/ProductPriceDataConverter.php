@@ -6,6 +6,12 @@ use Oro\Bundle\ImportExportBundle\Context\ContextAwareInterface;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Converter\ConfigurableTableDataConverter;
 
+/**
+ * Converts product price data between import and internal formats.
+ *
+ * Handles the transformation of product price data from import format to internal format,
+ * including automatic price list ID injection from import context.
+ */
 class ProductPriceDataConverter extends ConfigurableTableDataConverter implements ContextAwareInterface
 {
     /**

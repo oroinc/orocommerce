@@ -6,6 +6,12 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
+/**
+ * Encapsulates FedEx rate service request settings.
+ *
+ * This class combines integration settings, shipping context, and service rules
+ * into a single object that can be used to construct FedEx rate service requests.
+ */
 class FedexRateServiceRequestSettings implements FedexRateServiceRequestSettingsInterface
 {
     /**

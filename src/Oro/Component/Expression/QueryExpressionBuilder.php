@@ -8,6 +8,14 @@ use Oro\Component\Expression\QueryExpressionConverter\ConverterAwareInterface;
 use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
 use Oro\Component\PhpUtils\ArrayUtil;
 
+/**
+ * Orchestrates the conversion of expression nodes to Doctrine ORM query expressions.
+ *
+ * This builder manages a collection of specialized converters for different node types and
+ * delegates node conversion to the appropriate converter based on node type. Converters are
+ * registered with sort orders to control the order in which they are consulted, allowing for
+ * flexible and extensible expression-to-query conversion.
+ */
 class QueryExpressionBuilder implements QueryExpressionConverterInterface
 {
     public const CONVERTER = 'converter';

@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\Settings\DataProvider;
 
+/**
+ * Provides basic credit card types supported by PayPal.
+ *
+ * Returns the list of supported credit card types (Visa, Mastercard, Discover, American Express)
+ * and the default card types for PayPal payment processing.
+ */
 class BasicCardTypesDataProvider implements CreditCardTypesDataProviderInterface
 {
     /**

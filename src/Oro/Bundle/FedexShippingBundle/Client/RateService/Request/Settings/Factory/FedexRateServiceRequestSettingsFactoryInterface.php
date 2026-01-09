@@ -7,6 +7,9 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
+/**
+ * Defines the contract for creating FedEx rate service request settings.
+ */
 interface FedexRateServiceRequestSettingsFactoryInterface
 {
     public function create(

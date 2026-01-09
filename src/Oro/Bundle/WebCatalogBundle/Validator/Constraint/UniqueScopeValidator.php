@@ -7,6 +7,13 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validates that content variant scopes are unique within a collection.
+ *
+ * This validator enforces the {@see UniqueScope} constraint by checking that no two non-default content variants
+ * share the same scope. It iterates through the collection of content variants and tracks which scopes have been used,
+ * adding a validation violation when a duplicate scope is detected.
+ */
 class UniqueScopeValidator extends ConstraintValidator
 {
     /**

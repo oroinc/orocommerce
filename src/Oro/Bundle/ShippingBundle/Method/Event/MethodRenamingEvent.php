@@ -4,6 +4,12 @@ namespace Oro\Bundle\ShippingBundle\Method\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Event dispatched when a shipping method identifier is changed.
+ *
+ * This event notifies listeners that a shipping method's identifier has been renamed,
+ * allowing them to update references and configurations that use the old identifier.
+ */
 class MethodRenamingEvent extends Event
 {
     public const NAME = 'oro_shipping.method_renaming';

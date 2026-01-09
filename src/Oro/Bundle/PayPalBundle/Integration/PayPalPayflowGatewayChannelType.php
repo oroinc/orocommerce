@@ -5,6 +5,12 @@ namespace Oro\Bundle\PayPalBundle\Integration;
 use Oro\Bundle\IntegrationBundle\Provider\ChannelInterface;
 use Oro\Bundle\IntegrationBundle\Provider\IconAwareIntegrationInterface;
 
+/**
+ * Defines the PayPal Payflow Gateway integration channel type.
+ *
+ * Provides channel configuration and branding for PayPal Payflow Gateway payment method,
+ * including label and icon resources for the integration interface.
+ */
 class PayPalPayflowGatewayChannelType implements ChannelInterface, IconAwareIntegrationInterface
 {
     public const TYPE = 'paypal_payflow_gateway';

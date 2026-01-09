@@ -6,6 +6,12 @@ use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\Factory;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\ParameterBag\ParameterBagShippingMethodValidatorResult;
 
+/**
+ * Creates parameter bag-based shipping method validator results.
+ *
+ * This factory produces {@see ParameterBagShippingMethodValidatorResult} instances representing
+ * both successful and failed validation outcomes for shipping methods.
+ */
 class ParameterBagCommonShippingMethodValidatorResultFactory implements
     Factory\Common\CommonShippingMethodValidatorResultFactoryInterface
 {

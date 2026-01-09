@@ -8,6 +8,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for rendering collections as interactive tables.
+ *
+ * Extends the collection form type to provide table-based rendering with page component integration.
+ * Allows configuration of template names and page component options for enhanced UI presentation of collection items.
+ */
 class OrderCollectionTableType extends AbstractType
 {
     public const NAME = 'oro_order_collection_table';

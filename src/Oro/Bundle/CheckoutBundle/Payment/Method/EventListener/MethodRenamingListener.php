@@ -5,6 +5,12 @@ namespace Oro\Bundle\CheckoutBundle\Payment\Method\EventListener;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\PaymentBundle\Method\Event\MethodRenamingEvent;
 
+/**
+ * Handles payment method renaming events to update checkout references.
+ *
+ * Listens to payment method renaming events and updates all checkouts that reference
+ * the old payment method identifier to use the new identifier.
+ */
 class MethodRenamingListener
 {
     /**

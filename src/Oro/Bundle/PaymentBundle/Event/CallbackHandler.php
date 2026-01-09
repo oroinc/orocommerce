@@ -7,6 +7,13 @@ use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Handles payment callback events from external payment gateways.
+ *
+ * This handler processes callback events by dispatching them to registered listeners,
+ * persisting any changes to the associated payment transaction, and returning an appropriate
+ * HTTP response to the payment gateway.
+ */
 class CallbackHandler
 {
     use LoggerAwareTrait;

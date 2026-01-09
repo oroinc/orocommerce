@@ -7,6 +7,12 @@ use Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalCreditCardConfigFactoryI
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Provides PayPal Credit Card payment method configurations.
+ *
+ * Retrieves and caches Credit Card configuration objects for available payment methods,
+ * supporting lookup by payment method identifier.
+ */
 class PayPalCreditCardConfigProvider extends AbstractPayPalConfigProvider implements
     PayPalCreditCardConfigProviderInterface
 {

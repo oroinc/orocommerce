@@ -5,6 +5,12 @@ namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 
+/**
+ * Provides payment method identifiers for PayPal integration channels.
+ *
+ * Generates unique payment method identifiers for different PayPal integration types
+ * (Payflow Gateway and Payments Pro) and payment methods (Credit Card and Express Checkout).
+ */
 class PaymentMethodIdentifierByChannelProvider
 {
     /**

@@ -8,6 +8,12 @@ use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validates product variant field configurations.
+ *
+ * This validator checks that variant fields selected for configurable products are valid custom fields
+ * that exist in the product's attribute family and can be used for product variation.
+ */
 class ProductVariantFieldValidator extends ConstraintValidator
 {
     public const ALIAS = 'oro_product_variant_field';

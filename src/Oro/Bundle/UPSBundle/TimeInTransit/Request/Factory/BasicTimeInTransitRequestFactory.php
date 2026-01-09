@@ -6,6 +6,14 @@ use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\UPSBundle\Client\Request\UpsClientRequestInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 
+/**
+ * Creates basic UPS Time In Transit API requests.
+ *
+ * This factory implementation creates TNT requests with essential parameters including shipment weight,
+ * origin and destination addresses, and pickup date.
+ * It delegates to a {@see TimeInTransitRequestBuilderFactoryInterface} to create the builder and then
+ * configures it with the shipment weight from the transport settings.
+ */
 class BasicTimeInTransitRequestFactory implements TimeInTransitRequestFactoryInterface
 {
     /**

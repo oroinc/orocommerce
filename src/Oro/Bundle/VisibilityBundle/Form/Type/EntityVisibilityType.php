@@ -16,6 +16,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing entity visibility across all visibility levels.
+ *
+ * This form type provides fields for configuring visibility settings at three levels: all customers,
+ * customer groups, and individual customers. It is used for both product and category visibility management
+ * and supports scope-aware visibility configuration.
+ */
 class EntityVisibilityType extends AbstractType
 {
     public const NAME = 'oro_visibility_entity_visibility_type';

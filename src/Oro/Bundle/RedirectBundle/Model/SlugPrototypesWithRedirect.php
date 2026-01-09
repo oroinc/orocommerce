@@ -5,6 +5,13 @@ namespace Oro\Bundle\RedirectBundle\Model;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
+/**
+ * Represents a collection of localized slug prototypes with redirect creation preference.
+ *
+ * This model object encapsulates a collection of localized slug prototypes and a boolean flag
+ * indicating whether automatic redirects should be created when slug URLs change. It provides
+ * methods to manage the collection of prototypes while maintaining the redirect preference.
+ */
 class SlugPrototypesWithRedirect
 {
     /**

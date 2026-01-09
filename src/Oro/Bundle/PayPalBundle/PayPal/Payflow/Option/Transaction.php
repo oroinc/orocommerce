@@ -2,6 +2,11 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * Configures transaction type option for PayPal Payflow transactions.
+ *
+ * Defines the transaction type (authorization, sale, credit, void, etc.) for PayPal Payflow requests.
+ */
 class Transaction extends AbstractOption
 {
     public const TRXTYPE = 'TRXTYPE';
