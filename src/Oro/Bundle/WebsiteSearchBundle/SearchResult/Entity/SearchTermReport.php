@@ -20,7 +20,7 @@ use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchTermRepo
 #[ORM\Index(columns: ['id', 'organization_id'], name: 'website_search_term_report_organization_id_idx')]
 #[ORM\UniqueConstraint(
     name: 'website_search_term_report_term_unq',
-    columns: ['search_date', 'normalized_search_term_hash']
+    columns: ['search_date', 'normalized_search_term_hash', 'business_unit_owner_id']
 )]
 #[Config(
     defaultValues: [

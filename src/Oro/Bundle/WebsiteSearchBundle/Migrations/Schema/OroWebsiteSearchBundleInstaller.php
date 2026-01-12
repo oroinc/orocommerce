@@ -28,7 +28,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_8_3';
+        return 'v1_8_4';
     }
 
     /**
@@ -204,7 +204,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $queries->addPostQuery(
             'ALTER TABLE oro_website_search_term_report'
             . ' ADD CONSTRAINT "website_search_term_report_term_unq"'
-            . ' UNIQUE ("search_date", "normalized_search_term_hash")'
+            . ' UNIQUE ("search_date", "normalized_search_term_hash", "business_unit_owner_id")'
         );
     }
 
