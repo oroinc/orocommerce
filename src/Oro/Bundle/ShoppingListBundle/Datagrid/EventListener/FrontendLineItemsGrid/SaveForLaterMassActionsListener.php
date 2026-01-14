@@ -7,6 +7,7 @@ namespace Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendLineItems
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
+use Oro\Bundle\ThemeBundle\Provider\ThemeConfigurationProvider;
 
 /**
  * Adds save_for_later mass action to frontend-customer-user-shopping-list-edit-grid
@@ -19,12 +20,27 @@ class SaveForLaterMassActionsListener implements FeatureToggleableInterface
     /** @var array<string> */
     private array $limitedToDatagrids = [];
 
+    /** @var array<string> */
+    private array $oldThemes;
+
+    private ThemeConfigurationProvider $themeConfigurationProvider;
+
     /**
      * @param array<string> $datagrids
      */
     public function setLimitedToDatagrids(array $datagrids): void
     {
         $this->limitedToDatagrids = $datagrids;
+    }
+
+    public function setOldThemes(array $oldThemes): void
+    {
+        $this->oldThemes = $oldThemes;
+    }
+
+    public function setThemeConfigurationProvider(ThemeConfigurationProvider $themeConfigurationProvider): void
+    {
+        $this->themeConfigurationProvider = $themeConfigurationProvider;
     }
 
     public function onBuildBefore(BuildBefore $event): void
@@ -37,6 +53,10 @@ class SaveForLaterMassActionsListener implements FeatureToggleableInterface
         $gridName = $config->getName();
 
         if (!empty($this->limitedToDatagrids) && !\in_array($gridName, $this->limitedToDatagrids, true)) {
+            return;
+        }
+
+        if ($this->isOldTheme()) {
             return;
         }
 
@@ -67,5 +87,12 @@ class SaveForLaterMassActionsListener implements FeatureToggleableInterface
                 'success' => 'oro.shoppinglist.mass_actions.save_for_later.success_message'
             ]
         ]);
+    }
+
+    private function isOldTheme(): bool
+    {
+        $themeName = $this->themeConfigurationProvider->getThemeName();
+
+        return \in_array($themeName, $this->oldThemes, true);
     }
 }

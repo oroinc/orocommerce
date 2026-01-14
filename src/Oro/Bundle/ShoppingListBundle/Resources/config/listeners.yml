@@ -237,6 +237,8 @@ services:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendLineItemsGrid\SaveForLaterMassActionsListener
         calls:
             - [ setLimitedToDatagrids, [ ['frontend-customer-user-shopping-list-edit-grid'] ] ]
+            - [ setOldThemes, [ ['default_60', 'default_51', 'default_50'] ] ]
+            - [ setThemeConfigurationProvider, [ '@oro_theme.provider.theme_configuration' ] ]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-user-shopping-list-edit-grid, method: onBuildBefore }
             - { name: oro_featuretogle.feature, feature: 'saved_for_later' }
