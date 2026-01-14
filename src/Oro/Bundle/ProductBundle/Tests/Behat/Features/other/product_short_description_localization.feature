@@ -21,7 +21,7 @@ Feature: Product short description localization
     And I click "Localization1"
     And I click "Default Value"
     And fill "ProductForm" with:
-      | Short Description | <strong>Edited default localization</strong> |
+      | Short Description | <strong>LÅS FOR EKKOLODD</strong> |
     When I save and close form
     Then I should see "Product has been saved" flash message
 
@@ -30,7 +30,8 @@ Feature: Product short description localization
     And I am on homepage
     When type "SKU1" in "search"
     And I click "Search Button"
-    Then I should see "Edited default localization" in the "Short Description With Strong Tag" element
+    Then I should see "LÅS FOR EKKOLODD" in the "Short Description With Strong Tag" element
+    And I should not see "L&Aring;S"
 
   Scenario: Localization 1 not affected
     When I click "Localization Switcher"

@@ -143,7 +143,7 @@ class ProductType extends AbstractType
                             'autoRender' => false,
                             'elementpath' => true,
                             'resize' => true,
-                            'height' => 300,
+                            'height' => 300
                         ]
                     ],
                     'use_tabs' => true,
