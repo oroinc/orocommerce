@@ -171,6 +171,17 @@ oro.cms:
                 bottom_left: Bottom-Left
                 bottom_center: Bottom-Center
                 bottom_right: Bottom-Right
+        loading:
+            label: Loading
+            value:
+                lazy: Lazy
+                eager: Eager
+        fetch_priority:
+            label: Fetch Priority
+            value:
+                auto: Auto
+                high: High
+                low: Low
         extra_large_image.label: Extra Large Image
         extra_large_image2x.label: Extra Large Image 2x
         extra_large_image3x.label: Extra Large Image 3x
@@ -229,6 +240,8 @@ oro.cms:
             small_image2x.label: Upload a background image for the slide, or select an existing one.
             small_image3x.label: Upload a background image for the slide, or select an existing one.
             header.label: If provided it will be accompanied by a styled clickable button.
+            loading.label: Controls when slider images are loaded. Use "Eager" only for images that are immediately visible when the page opens. Use "Lazy" for images shown only after sliding, or for sliders placed lower on the page.
+            fetch_priority.label: Sets how important the image is for page load. Use "High" only for images visible right when the page opens. Choose "Low" or "Auto" for images shown only after sliding, or for sliders placed below the initial view.
 
     tabbedcontentitem:
         entity_label: Tabbed Content Item

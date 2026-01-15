@@ -69,6 +69,26 @@ class ImageSlideType extends AbstractType
                 'choices' => $this->getTextAlignmentOptions(),
             ]
         )->add(
+            'loading',
+            ChoiceType::class,
+            [
+                'label' => 'oro.cms.imageslide.loading.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.loading.label',
+                'required' => true,
+                'placeholder' => false,
+                'choices' => $this->getLoadingOptions(),
+            ]
+        )->add(
+            'fetchPriority',
+            ChoiceType::class,
+            [
+                'label' => 'oro.cms.imageslide.fetch_priority.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.fetch_priority.label',
+                'required' => true,
+                'placeholder' => false,
+                'choices' => $this->getFetchPriorityOptions(),
+            ]
+        )->add(
             'extraLargeImage',
             ImageType::class,
             [
@@ -250,6 +270,23 @@ class ImageSlideType extends AbstractType
             'oro.cms.imageslide.text_alignment.value.bottom_left' => ImageSlide::TEXT_ALIGNMENT_BOTTOM_LEFT,
             'oro.cms.imageslide.text_alignment.value.bottom_center' => ImageSlide::TEXT_ALIGNMENT_BOTTOM_CENTER,
             'oro.cms.imageslide.text_alignment.value.bottom_right' => ImageSlide::TEXT_ALIGNMENT_BOTTOM_RIGHT,
+        ];
+    }
+
+    private function getLoadingOptions(): array
+    {
+        return [
+            'oro.cms.imageslide.loading.value.lazy' => ImageSlide::LOADING_LAZY,
+            'oro.cms.imageslide.loading.value.eager' => ImageSlide::LOADING_EAGER,
+        ];
+    }
+
+    private function getFetchPriorityOptions(): array
+    {
+        return [
+            'oro.cms.imageslide.fetch_priority.value.auto' => ImageSlide::FETCH_PRIORITY_AUTO,
+            'oro.cms.imageslide.fetch_priority.value.high' => ImageSlide::FETCH_PRIORITY_HIGH,
+            'oro.cms.imageslide.fetch_priority.value.low' => ImageSlide::FETCH_PRIORITY_LOW,
         ];
     }
 }

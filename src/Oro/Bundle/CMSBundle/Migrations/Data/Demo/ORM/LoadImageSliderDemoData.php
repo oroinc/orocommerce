@@ -43,6 +43,8 @@ class LoadImageSliderDemoData extends AbstractFixture implements DependentFixtur
                 <p>Get 25 Percent Off the Order Total With a Coupon Code <em>SALE25</em></p>
                 <p>Explore our bestselling collections of industrial, medical, and furniture supplies.</p>
             ',
+            'loading' => ImageSlide::LOADING_EAGER,
+            'fetchPriority' => ImageSlide::FETCH_PRIORITY_HIGH,
             'extraLargeImage' => 'promo-slider-1-extra-large',
             'extraLargeImage2x' => 'promo-slider-1-extra-large-2x',
             'largeImage' => 'promo-slider-1-large',
@@ -61,6 +63,8 @@ class LoadImageSliderDemoData extends AbstractFixture implements DependentFixtur
             'text' => '
                 <p>Explore our new-season collection of models and brands</p>
             ',
+            'loading' => ImageSlide::LOADING_LAZY,
+            'fetchPriority' => ImageSlide::FETCH_PRIORITY_AUTO,
             'extraLargeImage' => 'promo-slider-2-extra-large',
             'extraLargeImage2x' => 'promo-slider-2-extra-large-2x',
             'largeImage' => 'promo-slider-2-large',
@@ -80,6 +84,8 @@ class LoadImageSliderDemoData extends AbstractFixture implements DependentFixtur
             'text' => '
                 <p>Find and buy quality medical equipment and home healthcare supplies</p>
             ',
+            'loading' => ImageSlide::LOADING_LAZY,
+            'fetchPriority' => ImageSlide::FETCH_PRIORITY_AUTO,
             'extraLargeImage' => 'promo-slider-3-extra-large',
             'extraLargeImage2x' => 'promo-slider-3-extra-large-2x',
             'largeImage' => 'promo-slider-3-large',
@@ -166,6 +172,8 @@ class LoadImageSliderDemoData extends AbstractFixture implements DependentFixtur
             $slide->setText($data['text']);
             $slide->setOrganization($organization);
             $slide->setHeader($data['header']);
+            $slide->setLoading($data['loading']);
+            $slide->setFetchPriority($data['fetchPriority']);
 
             $manager->persist($slide);
             $manager->flush();

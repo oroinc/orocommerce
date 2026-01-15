@@ -34,7 +34,7 @@ class OroCMSBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_16';
+        return 'v1_17';
     }
 
     #[\Override]
@@ -432,6 +432,8 @@ class OroCMSBundleInstaller implements
         $table->addColumn('header', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('text', 'text', ['notnull' => false]);
         $table->addColumn('text_alignment', 'string', ['length' => 20, 'default' => ImageSlide::TEXT_ALIGNMENT_CENTER]);
+        $table->addColumn('loading', 'string', ['length' => 10, 'default' => ImageSlide::LOADING_LAZY]);
+        $table->addColumn('fetch_priority', 'string', ['length' => 10, 'default' => ImageSlide::FETCH_PRIORITY_AUTO]);
 
         $this->addSlideImageRelation($schema, 'extraLargeImage');
         $this->addSlideImageRelation($schema, 'extraLargeImage2x');

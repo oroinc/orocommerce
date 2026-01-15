@@ -84,7 +84,8 @@
                                 src: product_filtered_image(imageSlide.extraLargeImage, 'original'),
                                 alt: imageSlide.altImageText,
                                 'data-item-name': imageSlide.header|default(imageSlide.altImageText),
-                                loading: 'eager',
+                                loading: imageSlide.loading,
+                                fetchpriority: imageSlide.fetchPriority,
                                 class: 'promo-slider__img'
                             }
                         } %}

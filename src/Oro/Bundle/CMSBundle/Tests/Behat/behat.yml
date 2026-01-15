@@ -207,6 +207,8 @@ oro_behat_extension:
                     Text Alignment 1: 'oro_cms_content_widget[settings][imageSlides][0][textAlignment]'
                     Text 1: 'oro_cms_content_widget[settings][imageSlides][0][text]'
                     Header 1: 'oro_cms_content_widget[settings][imageSlides][0][header]'
+                    Loading 1: 'oro_cms_content_widget[settings][imageSlides][0][loading]'
+                    Fetch Priority 1: 'oro_cms_content_widget[settings][imageSlides][0][fetchPriority]'
 
                     Slide Order 2: 'oro_cms_content_widget[settings][imageSlides][1][slideOrder]'
                     URL 2: 'oro_cms_content_widget[settings][imageSlides][1][url]'
@@ -215,6 +217,8 @@ oro_behat_extension:
                     Text Alignment 2: 'oro_cms_content_widget[settings][imageSlides][1][textAlignment]'
                     Text 2: 'oro_cms_content_widget[settings][imageSlides][1][text]'
                     Header 2: 'oro_cms_content_widget[settings][imageSlides][1][header]'
+                    Loading 2: 'oro_cms_content_widget[settings][imageSlides][1][loading]'
+                    Fetch Priority 2: 'oro_cms_content_widget[settings][imageSlides][1][fetchPriority]'
 
         Choose Extra Large Slider Image1x 1:
             selector:
