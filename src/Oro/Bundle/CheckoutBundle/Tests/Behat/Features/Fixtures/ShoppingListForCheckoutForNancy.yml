@@ -71,7 +71,9 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist6:
         label: 'Shopping List 6'
+        customer: '@nancy->customer'
         customerUser: '@nancy'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
 
@@ -105,6 +107,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
        unit: '@item'
        customerUser: '@nancy'
        shoppingList: '@shoppinglist6'
+       owner: '@admin'
        organization: '@organization'
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:

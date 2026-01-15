@@ -294,7 +294,9 @@ datagrids:
                 select:
                     - (CASE WHEN shopping_list.id = :shopping_list_id THEN true ELSE false END) AS selected
             bind_parameters:
-                - shopping_list_id
+                -
+                    name: shopping_list_id
+                    default: 0
         columns:
             assigned:
                 label: ''
@@ -360,6 +362,7 @@ datagrids:
             hiddenLineItems: null
         source:
             type: orm
+            skip_acl_apply: true # Access to line items is checked by the ShoppingListLineItemsAccessListener based on the Shopping List access
             query:
                 select:
                     - >

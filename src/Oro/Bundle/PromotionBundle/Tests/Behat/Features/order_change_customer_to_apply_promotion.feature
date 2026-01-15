@@ -1,5 +1,6 @@
 @ticket-BB-24934
-@fixture-OroPromotionBundle:order_customer_promotions.yml
+@fixture-OroPromotionBundle:promotion_for_order.yml
+@fixture-OroPromotionBundle:order_with_customer.yml
 
 Feature: Order change customer to apply promotion
   Verify that all discouns calculate correctly if order customer have been changed.

@@ -43,11 +43,11 @@ class PromotionExecutorTest extends FrontendWebTestCase
 
         $this->configManager = self::getConfigManager('global');
         $this->loadFixtures([
+            LoadPromotionDiscountData::class,
+            LoadCouponPromotionDiscountData::class,
             LoadOrderData::class,
             LoadCheckoutData::class,
-            LoadCombinedProductPrices::class,
-            LoadPromotionDiscountData::class,
-            LoadCouponPromotionDiscountData::class
+            LoadCombinedProductPrices::class
         ]);
 
         $this->updateCustomerUserSecurityToken(LoadCustomerUserData::EMAIL);

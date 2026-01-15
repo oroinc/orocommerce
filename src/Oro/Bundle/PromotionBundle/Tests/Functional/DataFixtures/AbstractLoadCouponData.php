@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 abstract class AbstractLoadCouponData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -17,6 +18,7 @@ abstract class AbstractLoadCouponData extends AbstractFixture implements Depende
     {
         return [
             LoadPromotionData::class,
+            LoadOrganization::class,
         ];
     }
 
@@ -25,8 +27,10 @@ abstract class AbstractLoadCouponData extends AbstractFixture implements Depende
      */
     public function load(ObjectManager $manager)
     {
+        $organization = $this->getReference(LoadOrganization::ORGANIZATION);
         foreach ($this->getCoupons() as $key => $couponData) {
             $coupon = new Coupon();
+            $coupon->setOrganization($organization);
             $coupon
                 ->setCode($couponData['code'])
                 ->setUsesPerCoupon($couponData['usesPerCoupon'])

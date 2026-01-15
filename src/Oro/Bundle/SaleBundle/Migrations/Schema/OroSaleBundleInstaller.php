@@ -64,7 +64,7 @@ class OroSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_19_1';
+        return 'v1_19_2';
     }
 
     /**
@@ -149,6 +149,7 @@ class OroSaleBundleInstaller implements
         $table = $schema->createTable('oro_sale_quote');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('guest_access_id', 'guid', ['notnull' => false]);
+        $table->addColumn('visitor_id', 'integer', ['notnull' => false]);
         $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('request_id', 'integer', ['notnull' => false]);
@@ -364,6 +365,12 @@ class OroSaleBundleInstaller implements
             ['shipping_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_visitor'),
+            ['visitor_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 

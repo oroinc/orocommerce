@@ -15,8 +15,12 @@ Feature: Promotions with coupons on Order view page
       | Product2 | Second Product |
       | Price2   | 5              |
     Then I should see next rows in "Promotions" table
-      | Promotion       | Type        | Status | Discount |
-      | Order Promotion | Order Total | Active | -$7.00   |
+      | Promotion       | Type        | Status   | Discount |
+      | Order Promotion | Order Total | Inactive | $0.00    |
+    When I click "Activate" on row "Order Promotion" in "Promotions"
+    Then I should see next rows in "Promotions" table
+      | Promotion       | Type        | Status   | Discount |
+      | Order Promotion | Order Total | Active   | -$7.00   |
     And I save and close form
     And click "Save" in modal window
 

@@ -1,0 +1,22 @@
+include:
+    - '@OroCustomerBundle:CustomerUserAmandaRCole.yml'
+    - '@OroProductBundle:ProductsWithUnits.yml'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppingList:
+        label: 'Shopping List'
+        customer: '@CustomerUser_AmandaRCole->customer'
+        customerUser: '@CustomerUser_AmandaRCole'
+        owner: '@admin'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    shoppingListLineitem:
+        product: '@product2'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@CustomerUser_AmandaRCole'
+        shoppingList: '@shoppingList'
+        owner: '@admin'
+        organization: '@organization'

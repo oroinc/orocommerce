@@ -22,6 +22,7 @@ oro_behat_extension:
                 - Oro\Bundle\ShippingBundle\Tests\Behat\Context\SingleCurrencyContext
                 - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
                 - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
+                - Oro\Bundle\CustomerBundle\Tests\Behat\Context\ACLContext
             paths:
                 - '@OroRFPBundle/Tests/Behat/Features'
 

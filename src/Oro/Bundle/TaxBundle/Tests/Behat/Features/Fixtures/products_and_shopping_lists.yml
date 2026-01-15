@@ -79,12 +79,14 @@ Oro\Bundle\ProductBundle\Entity\Product:
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist:
         label: 'List 1'
+        customer: '@amanda->customer'
         customerUser: '@amanda'
         organization: '@organization'
         owner: '@admin'
         website: '@website1'
     shoppinglist2:
         label: 'List 2'
+        customer: '@amanda->customer'
         customerUser: '@amanda'
         organization: '@organization'
         owner: '@admin'

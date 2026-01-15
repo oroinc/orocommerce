@@ -799,6 +799,12 @@ services:
         arguments:
             - '@.inner'
 
+    oro_promotion.provider.new_promotion_filter_discounts_provider_decorator:
+        class: Oro\Bundle\PromotionBundle\Provider\NewPromotionFilterDiscountsProviderDecorator
+        decorates: oro_promotion.provider.order_promotion_discounts_provider_decorator
+        arguments:
+            - '@.inner'
+
     oro_promotion.event_listener.order_applied_promotion_event_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderAppliedPromotionEventListener
         arguments:
@@ -899,3 +905,34 @@ services:
             - !tagged_iterator oro_promotion.coupon_validator
         tags:
             - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest, priority: -150 }
+
+    Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\PromotionBundle\Entity\Coupon'
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]
+        tags:
+            - { name: doctrine.repository_service }
+
+    oro_promotion.validator.config_coupon_case_insensitive_option:
+        class: Oro\Bundle\PromotionBundle\Validator\Constraints\ConfigCouponCaseInsensitiveOptionValidator
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_promotion.validator.unique_case_insensitive_coupon_code:
+        class: Oro\Bundle\PromotionBundle\Validator\Constraints\UniqueCaseInsensitiveCouponCodeValidator
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_promotion.access_rule.frontend_organization_for_coupon_rule:
+        class: Oro\Bundle\OrganizationBundle\Acl\AccessRule\OrganizationAwareAccessRule
+        arguments:
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\PromotionBundle\Entity\Coupon, frontend: true}

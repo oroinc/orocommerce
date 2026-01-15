@@ -9,6 +9,8 @@ use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableInterface;
 use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EmailBundle\Entity\EmailOwnerInterface;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
@@ -69,7 +71,8 @@ class Request extends ExtendRequest implements
     EmailOwnerInterface,
     SoftDeleteableInterface,
     OrganizationAwareInterface,
-    WebsiteAwareInterface
+    WebsiteAwareInterface,
+    CustomerVisitorOwnerAwareInterface
 {
     use SoftDeleteableTrait;
     use DatesAwareTrait;
@@ -297,6 +300,14 @@ class Request extends ExtendRequest implements
      * )
      */
     protected $website;
+
+    /**
+     * @var CustomerVisitor|null
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerVisitor", cascade={"persist"})
+     * @ORM\JoinColumn(name="visitor_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected ?CustomerVisitor $visitor = null;
 
     /**
      * Constructor
@@ -750,5 +761,20 @@ class Request extends ExtendRequest implements
     public function getClass()
     {
         return self::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getVisitor()
+    {
+        return $this->visitor;
+    }
+
+    public function setVisitor(CustomerVisitor $visitor)
+    {
+        $this->visitor = $visitor;
+
+        return $this;
     }
 }

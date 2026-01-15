@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
+use Oro\Bundle\ImportExportBundle\Async\Import\PreImportMessageProcessor;
 use Oro\Bundle\ImportExportBundle\Async\Topic\ImportTopic;
 use Oro\Bundle\ImportExportBundle\Async\Topic\PreImportTopic;
 use Oro\Bundle\ImportExportBundle\File\FileManager;
@@ -14,6 +15,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\Testing\ReflectionUtil;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -56,8 +58,6 @@ class ProductImportWarningLogTest extends WebTestCase
 
     private function expectToLogImportCritical(string $expectedMessagePart): void
     {
-        $preImportProcessor = self::getContainer()->get('oro_importexport.async.pre_import');
-
         $logger = $this->createMock(LoggerInterface::class);
         $logger
             ->expects($this->once())
@@ -68,7 +68,7 @@ class ProductImportWarningLogTest extends WebTestCase
                 return true;
             }));
 
-        $preImportProcessor->setLogger($logger);
+        $this->getPreImportProcessor()->setLogger($logger);
     }
 
     private function assertImportOfInvalidFile(string $importFilePath): void
@@ -78,12 +78,11 @@ class ProductImportWarningLogTest extends WebTestCase
         $preImportMessageData = $this->getOneSentMessageWithTopic(PreImportTopic::getName());
         self::clearMessageCollector();
 
-        $this->assertMessageProcessorRejected(
-            'oro_importexport.async.pre_import',
-            $preImportMessageData
-        );
+        $this->assertMessageProcessorRejected($preImportMessageData);
 
         static::assertMessagesEmpty(ImportTopic::getName());
+
+        $this->assertTmpFilesRemoved();
 
         $this->deleteImportFile($preImportMessageData['fileName']);
     }
@@ -91,9 +90,7 @@ class ProductImportWarningLogTest extends WebTestCase
     private function assertPreImportActionExecuted(string $importCsvFilePath): void
     {
         $file = new UploadedFile($importCsvFilePath, basename($importCsvFilePath));
-        $fileName = static::getContainer()
-            ->get('oro_importexport.file.file_manager')
-            ->saveImportingFile($file);
+        $fileName = $this->getFileManager()->saveImportingFile($file);
 
         $this->ajaxRequest(
             'POST',
@@ -137,48 +134,44 @@ class ProductImportWarningLogTest extends WebTestCase
         return [];
     }
 
-    private function assertMessageProcessorRejected(string $processorServiceName, array $messageData): void
-    {
-        $processorResult = static::getContainer()
-            ->get($processorServiceName)
-            ->process(
-                $this->createMessage($messageData),
-                $this->createSessionInterfaceMock()
-            );
-
-        static::assertEquals(MessageProcessorInterface::REJECT, $processorResult);
-    }
-
-    private function deleteImportFile(string $filename): void
-    {
-        self::assertFileDoesNotExist(FileManager::generateTmpFilePath($filename));
-
-        static::getContainer()
-            ->get('oro_importexport.file.file_manager')
-            ->deleteFile($filename);
-    }
-
     private function getCurrentUser(): User
     {
         return $this->getSecurityToken()->getUser();
     }
 
-    private function createMessage(array $messageData): Message
+    private function assertMessageProcessorRejected(array $messageData): void
     {
         $message = new Message();
-
         $message->setMessageId('abc');
         $message->setBody($messageData);
 
-        return $message;
+        $processorResult = $this->getPreImportProcessor()
+            ->process($message, $this->createMock(SessionInterface::class));
+
+        static::assertEquals(MessageProcessorInterface::REJECT, $processorResult);
     }
 
-    /**
-     * @return SessionInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createSessionInterfaceMock(): SessionInterface
+    private function assertTmpFilesRemoved(): void
     {
-        return $this->getMockBuilder(SessionInterface::class)->getMock();
+        $tempFileHandles = ReflectionUtil::getPropertyValue($this->getFileManager(), 'tempFileHandles');
+        foreach ($tempFileHandles as $tempFileHandle) {
+            self::assertFileDoesNotExist(stream_get_meta_data($tempFileHandle)['uri']);
+        }
+    }
+
+    private function deleteImportFile(string $filename): void
+    {
+        $this->getFileManager()->deleteFile($filename);
+    }
+
+    private function getPreImportProcessor(): PreImportMessageProcessor
+    {
+        return self::getContainer()->get('oro_importexport.async.pre_import');
+    }
+
+    private function getFileManager(): FileManager
+    {
+        return self::getContainer()->get('oro_importexport.file.file_manager');
     }
 
     private function getSecurityToken(): UsernamePasswordOrganizationToken
