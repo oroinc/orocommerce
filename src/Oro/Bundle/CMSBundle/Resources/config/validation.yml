@@ -96,6 +96,19 @@ Oro\Bundle\CMSBundle\Entity\ImageSlide:
             - Length:
                   min: 1
                   max: 255
+        loading:
+            - NotBlank: ~
+            - Choice:
+                choices:
+                    - !php/const Oro\Bundle\CMSBundle\Entity\ImageSlide::LOADING_LAZY
+                    - !php/const Oro\Bundle\CMSBundle\Entity\ImageSlide::LOADING_EAGER
+        fetchPriority:
+            - NotBlank: ~
+            - Choice:
+                choices:
+                    - !php/const Oro\Bundle\CMSBundle\Entity\ImageSlide::FETCH_PRIORITY_AUTO
+                    - !php/const Oro\Bundle\CMSBundle\Entity\ImageSlide::FETCH_PRIORITY_HIGH
+                    - !php/const Oro\Bundle\CMSBundle\Entity\ImageSlide::FETCH_PRIORITY_LOW
 
 Oro\Bundle\CMSBundle\Entity\TextContentVariant:
     properties:

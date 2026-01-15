@@ -37,6 +37,8 @@ Feature: Configurable image slider
       | Text Alignment 1 | Center         |
       | Text 1           | Slide text 1   |
       | Header 1         | Image Header 1 |
+      | Loading 1        | Eager          |
+      | Fetch Priority 1 | High           |
     And I save and close form
     Then I should see "At least one image is required. [Extra Large Image, Extra Large Image 2x, Extra Large Image 3x"
     And I should see "At least one image is required. [Large Image, Large Image 2x, Large Image 3x]"
@@ -92,6 +94,8 @@ Feature: Configurable image slider
       | Text Alignment 2 | Center         |
       | Text 2           | Slide text 2   |
       | Header 2         | Image Header 2 |
+      | Loading 2        | Lazy           |
+      | Fetch Priority 2 | Auto           |
 
     And I click on "Choose Extra large Slider Image1x 2"
     And I fill "Digital Asset Dialog Form" with:
@@ -128,9 +132,9 @@ Feature: Configurable image slider
     When I save and close form
     Then I should see "Content widget has been saved" flash message
     And I should see next rows in "Slides" table
-      | SLIDE ORDER | URL      | ALT IMAGE TEXT | TEXT ALIGNMENT | TARGET WINDOW | EXTRA LARGE                | LARGE                      | MEDIUM                     | SMALL                      |
-      | 1           | /product | Slide 1        | Center         | Same Window   | cat1.jpg cat1.jpg cat1.jpg | cat1.jpg cat1.jpg cat1.jpg | cat1.jpg cat1.jpg cat1.jpg | cat1.jpg cat1.jpg cat1.jpg |
-      | 2           | /about   | Slide 2        | Center         | New Window    | cat2.jpg cat2.jpg cat2.jpg | cat2.jpg cat2.jpg cat2.jpg | cat2.jpg cat2.jpg cat2.jpg | cat2.jpg cat2.jpg cat2.jpg |
+      | SLIDE ORDER | URL      | ALT IMAGE TEXT | TEXT ALIGNMENT | TARGET WINDOW | LOADING | FETCH PRIORITY | EXTRA LARGE                | LARGE                      | MEDIUM                     | SMALL                      |
+      | 1           | /product | Slide 1        | Center         | Same Window   | Eager   | High           | cat1.jpg cat1.jpg cat1.jpg | cat1.jpg cat1.jpg cat1.jpg | cat1.jpg cat1.jpg cat1.jpg | cat1.jpg cat1.jpg cat1.jpg |
+      | 2           | /about   | Slide 2        | Center         | New Window    | Lazy    | Auto           | cat2.jpg cat2.jpg cat2.jpg | cat2.jpg cat2.jpg cat2.jpg | cat2.jpg cat2.jpg cat2.jpg | cat2.jpg cat2.jpg cat2.jpg |
 
   Scenario: Edit user roles
     Given I go to System/User Management/Users

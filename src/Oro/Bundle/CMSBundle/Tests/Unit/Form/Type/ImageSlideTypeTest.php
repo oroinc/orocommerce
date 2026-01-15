@@ -81,7 +81,9 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
             ->setUrl('path/to/test')
             ->setDisplayInSameWindow(true)
             ->setAltImageText('test title')
-            ->setTextAlignment(ImageSlide::TEXT_ALIGNMENT_TOP_CENTER);
+            ->setTextAlignment(ImageSlide::TEXT_ALIGNMENT_TOP_CENTER)
+            ->setLoading(ImageSlide::LOADING_LAZY)
+            ->setFetchPriority(ImageSlide::FETCH_PRIORITY_AUTO);
 
         return [
             'minimum data' => [
@@ -91,6 +93,8 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
                     'displayInSameWindow' => true,
                     'altImageText' => 'test title',
                     'textAlignment' => ImageSlide::TEXT_ALIGNMENT_TOP_CENTER,
+                    'loading' => ImageSlide::LOADING_LAZY,
+                    'fetchPriority' => ImageSlide::FETCH_PRIORITY_AUTO,
                 ],
                 'expectedData' => $expected,
             ],
@@ -114,7 +118,9 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
                     'altImageText' => 'test title',
                     'textAlignment' => ImageSlide::TEXT_ALIGNMENT_TOP_CENTER,
                     'text' => 'test content',
-                    'header' => 'test header'
+                    'header' => 'test header',
+                    'loading' => ImageSlide::LOADING_EAGER,
+                    'fetchPriority' => ImageSlide::FETCH_PRIORITY_HIGH,
                 ],
                 'expectedData' => (clone $expected)
                     ->setExtraLargeImage($extraLargeImage)
@@ -130,7 +136,9 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
                     ->setSmallImage2x($smallImage2x)
                     ->setSmallImage3x($smallImage3x)
                     ->setText('test content')
-                    ->setHeader('test header'),
+                    ->setHeader('test header')
+                    ->setLoading(ImageSlide::LOADING_EAGER)
+                    ->setFetchPriority(ImageSlide::FETCH_PRIORITY_HIGH),
             ],
         ];
     }

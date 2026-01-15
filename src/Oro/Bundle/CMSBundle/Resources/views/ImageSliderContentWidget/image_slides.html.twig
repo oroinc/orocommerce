@@ -10,6 +10,8 @@
             <th>{{ 'oro.cms.imageslide.alt_image_text.label'|trans }}</th>
             <th>{{ 'oro.cms.imageslide.text_alignment.label'|trans }}</th>
             <th>{{ 'oro.cms.imageslide.display_in_same_window.label'|trans }}</th>
+            <th>{{ 'oro.cms.imageslide.loading.label'|trans }}</th>
+            <th>{{ 'oro.cms.imageslide.fetch_priority.label'|trans }}</th>
             <th>{{ 'oro.cms.imageslide.form.table.row.extra_large.label'|trans }}</th>
             <th>{{ 'oro.cms.imageslide.form.table.row.large.label'|trans }}</th>
             <th>{{ 'oro.cms.imageslide.form.table.row.medium.label'|trans }}</th>
@@ -38,6 +40,12 @@
                     {% else %}
                         {{ 'oro.form.link_target.value.new_window'|trans }}
                     {% endif %}
+                </td>
+                <td>
+                    {{ ('oro.cms.imageslide.loading.value.' ~ imageSlide.loading)|trans }}
+                </td>
+                <td>
+                    {{ ('oro.cms.imageslide.fetch_priority.value.' ~ imageSlide.fetchPriority)|trans }}
                 </td>
                 <td>
                     {% if imageSlide.extraLargeImage %}

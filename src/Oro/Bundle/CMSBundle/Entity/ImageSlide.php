@@ -70,6 +70,13 @@ class ImageSlide implements OrganizationAwareInterface, ExtendEntityInterface
     public const TEXT_ALIGNMENT_BOTTOM_CENTER = 'bottom_center';
     public const TEXT_ALIGNMENT_BOTTOM_RIGHT = 'bottom_right';
 
+    public const string LOADING_LAZY = 'lazy';
+    public const string LOADING_EAGER = 'eager';
+
+    public const string FETCH_PRIORITY_AUTO = 'auto';
+    public const string FETCH_PRIORITY_HIGH = 'high';
+    public const string FETCH_PRIORITY_LOW = 'low';
+
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
@@ -113,6 +120,26 @@ class ImageSlide implements OrganizationAwareInterface, ExtendEntityInterface
     #[ORM\Column(name: 'header', type: Types::STRING, nullable: true)]
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?string $header = null;
+
+    #[ORM\Column(
+        name: 'loading',
+        type: Types::STRING,
+        length: 10,
+        nullable: false,
+        options: ['default' => self::LOADING_LAZY]
+    )]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected string $loading = self::LOADING_LAZY;
+
+    #[ORM\Column(
+        name: 'fetch_priority',
+        type: Types::STRING,
+        length: 10,
+        nullable: false,
+        options: ['default' => self::FETCH_PRIORITY_AUTO]
+    )]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected string $fetchPriority = self::FETCH_PRIORITY_AUTO;
 
     public function getId(): ?int
     {
@@ -240,6 +267,30 @@ class ImageSlide implements OrganizationAwareInterface, ExtendEntityInterface
     public function setHeader(?string $header): self
     {
         $this->header = $header;
+
+        return $this;
+    }
+
+    public function getLoading(): string
+    {
+        return $this->loading;
+    }
+
+    public function setLoading(string $loading): self
+    {
+        $this->loading = $loading;
+
+        return $this;
+    }
+
+    public function getFetchPriority(): string
+    {
+        return $this->fetchPriority;
+    }
+
+    public function setFetchPriority(string $fetchPriority): self
+    {
+        $this->fetchPriority = $fetchPriority;
 
         return $this;
     }

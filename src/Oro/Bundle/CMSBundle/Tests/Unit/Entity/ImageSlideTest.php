@@ -26,6 +26,8 @@ class ImageSlideTest extends \PHPUnit\Framework\TestCase
                 ['textAlignment', 'center'],
                 ['organization', new Organization()],
                 ['header', 'test header'],
+                ['loading', 'eager'],
+                ['fetchPriority', 'high'],
             ]
         );
     }

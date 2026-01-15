@@ -49,6 +49,8 @@ Feature: Multiple content widget rendering
       | Text Alignment 1 | Center         |
       | Text 1           | Slide text 1   |
       | Header 1         | Image Header 1 |
+      | Loading 1        | Eager          |
+      | Fetch Priority 1 | High           |
     And I click on "Choose Extra Large Slider Image1x 1"
     And I fill "Digital Asset Dialog Form" with:
       | File  | cat1.jpg |
@@ -71,6 +73,8 @@ Feature: Multiple content widget rendering
       | Text Alignment 2 | Center         |
       | Text 2           | Slide text 2   |
       | Header 2         | Image Header 2 |
+      | Loading 2        | Lazy           |
+      | Fetch Priority 2 | Auto           |
     And I click on "Choose Extra large Slider Image1x 2"
     And I fill "Digital Asset Dialog Form" with:
       | File  | cat2.jpg |

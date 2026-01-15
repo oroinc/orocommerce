@@ -39,7 +39,9 @@ Feature: Content Widget in Content Block
       | Alt Image Text 1 | Slide 1        |
       | Text Alignment 1 | Center         |
       | Text 1           | Slide text 1   |
-      | Header           | Image Header 1 |
+      | Header 1         | Image Header 1 |
+      | Loading 1        | Eager          |
+      | Fetch Priority 1 | High           |
     And I click on "Choose Extra Large Slider Image1x 1"
     And I fill "Digital Asset Dialog Form" with:
       | File  | cat1.jpg |
