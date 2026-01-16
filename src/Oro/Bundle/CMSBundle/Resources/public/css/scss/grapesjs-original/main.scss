@@ -75,7 +75,6 @@ $colorsAll: (one, var(--gjs-primary-color)), (two, var(--gjs-secondary-color)), 
   @extend .#{gjs_vars.$app-prefix}no-user-select;
 
   cursor: grabbing !important;
-  cursor: -webkit-grabbing !important;
 }
 
 .#{gjs_vars.$app-prefix}grabbing {
