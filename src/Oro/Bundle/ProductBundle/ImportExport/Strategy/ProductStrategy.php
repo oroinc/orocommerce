@@ -102,6 +102,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
 
         $this->context->setValue('itemData', $data);
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
+        $event->setContext($this->context);
         $this->eventDispatcher->dispatch($event, ProductStrategyEvent::PROCESS_BEFORE);
 
         return parent::beforeProcessEntity($entity);
@@ -114,7 +115,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
     }
 
     /**
-     * @param Product $entity
+     * @param ?Product $entity returns null if the product is invalid
      * {@inheritdoc}
      */
     protected function afterProcessEntity($entity)
@@ -122,7 +123,13 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         $this->populateOwner($entity);
 
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
+        $event->setContext($this->context);
         $this->eventDispatcher->dispatch($event, ProductStrategyEvent::PROCESS_AFTER);
+
+        // Check if the event listeners marked the product as invalid.
+        if (!$event->isProductValid()) {
+            return null;
+        }
 
         /** @var Product $entity */
         $entity = parent::afterProcessEntity($entity);

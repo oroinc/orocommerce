@@ -1,0 +1,58 @@
+include:
+    - '@OroProductBundle:ConfigurableAttributeFamily.yml'
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    businessUnit:
+        name: Common Business Unit
+        organization: '@organization'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    categoryTitleElectronics:
+        string: 'Electronics'
+    categoryTitleLaptops:
+        string: 'Laptops'
+    categoryTitlePhones:
+        string: 'Phones'
+    categoryTitleAccessories1:
+        string: 'Accessories'
+    categoryTitleAccessories2:
+        string: 'Accessories'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+
+    # All Products / Electronics
+    category1:
+        __calls:
+            - addTitle: ['@categoryTitleElectronics']
+            - setParentCategory: ['@root_category']
+        organization: '@organization'
+
+    # All Products / Electronics / Laptops
+    category2:
+        __calls:
+            - addTitle: ['@categoryTitleLaptops']
+            - setParentCategory: ['@category1']
+        organization: '@organization'
+
+    # All Products / Electronics / Phones
+    category3:
+        __calls:
+            - addTitle: ['@categoryTitlePhones']
+            - setParentCategory: ['@category1']
+        organization: '@organization'
+
+    # Two categories with the same title "Accessories" to test non-unique handling:
+
+    # All Products / Electronics / Laptops / Accessories
+    category4:
+        __calls:
+            - addTitle: ['@categoryTitleAccessories1']
+            - setParentCategory: ['@category2']
+        organization: '@organization'
+
+    # All Products / Electronics / Phones / Accessories
+    category5:
+        __calls:
+            - addTitle: ['@categoryTitleAccessories2']
+            - setParentCategory: ['@category3']
+        organization: '@organization'

@@ -2,9 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\ImportExport\Event;
 
+use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Holds the product object and import data.
+ * Dispatched in:
+ * - {@see \Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy::beforeProcessEntity()}
+ * - {@see \Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy::afterProcessEntity()}
+ */
 class ProductStrategyEvent extends Event
 {
     const PROCESS_BEFORE = 'oro_product.strategy.process_before';
@@ -20,12 +27,17 @@ class ProductStrategyEvent extends Event
      */
     protected $rawData = [];
 
+    protected bool $productValid = true;
+
+    protected ?ContextInterface $context = null;
+
     /**
      * {@inheritdoc}
      */
     public function __construct(Product $product, array $rawData)
     {
         $this->product = $product;
+        $this->productValid = true;
         $this->rawData = $rawData;
     }
 
@@ -43,5 +55,25 @@ class ProductStrategyEvent extends Event
     public function getRawData()
     {
         return $this->rawData;
+    }
+
+    public function getContext(): ?ContextInterface
+    {
+        return $this->context;
+    }
+
+    public function setContext(ContextInterface $context): void
+    {
+        $this->context = $context;
+    }
+
+    public function isProductValid(): bool
+    {
+        return $this->productValid;
+    }
+
+    public function markProductInvalid(): void
+    {
+        $this->productValid = false;
     }
 }

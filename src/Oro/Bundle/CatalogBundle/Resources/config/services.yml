@@ -83,18 +83,30 @@ services:
     oro_catalog.event_listener.product_strategy:
         class: 'Oro\Bundle\CatalogBundle\EventListener\ProductStrategyEventListener'
         parent: oro_catalog.event_listener.abstract_product_import
+        calls:
+            - [setConfigManager, ['@oro_config.manager']]
+            - [setMasterCatalogRootProvider, ['@oro_catalog.provider.master_catalog_root']]
+            - [setFieldHeaderHelper, ['@Oro\Bundle\ImportExportBundle\Field\FieldHeaderHelper']]
+            - [setFieldHelper, ['@oro_entity.helper.field_helper']]
+            - [setAclHelper, ['@oro_security.acl_helper']]
+            - [setCategoryPathMapper, ['@oro_catalog.importexport.mapper.category_path']]
         tags:
             - { name: kernel.event_listener, event: oro_product.strategy.process_after, method: onProcessAfter }
             - { name: doctrine.event_listener, event: onClear }
 
     oro_catalog.event_listener.product_data_converter:
         class: 'Oro\Bundle\CatalogBundle\EventListener\ProductDataConverterEventListener'
+        calls:
+            - [setConfigManager, ['@oro_config.manager']]
         tags:
             - { name: kernel.event_listener, event: oro_product.data_converter.backend_header, method: onBackendHeader }
 
     oro_catalog.event_listener.product_normalizer:
         class: 'Oro\Bundle\CatalogBundle\EventListener\ProductNormalizerEventListener'
         parent: oro_catalog.event_listener.abstract_product_import
+        calls:
+            - [setConfigManager, ['@oro_config.manager']]
+            - [setCategoryPathMapper, ['@oro_catalog.importexport.mapper.category_path']]
         tags:
             - { name: kernel.event_listener, event: oro_product.normalizer.normalizer, method: onNormalize }
             - { name: doctrine.event_listener, event: onClear }

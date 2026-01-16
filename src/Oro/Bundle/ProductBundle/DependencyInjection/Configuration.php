@@ -86,6 +86,20 @@ class Configuration implements ConfigurationInterface
     const PRODUCT_TYPES = 'product_types';
     public const EXCLUDE_CURRENT_BREADCRUMB_ON_PRODUCT_VIEW = 'breadcrumbs_exclude_current_on_product_view';
 
+    // Product Import/Export - Category Options
+
+    public const EXPORT_CATEGORY_PATH = 'export_category_path';
+    public const EXPORT_CATEGORY_DEFAULT_TITLE = 'export_category_default_title';
+
+    public const IMPORT_CATEGORY_NON_UNIQUE_RESOLUTION = 'import_category_non_unique_resolution';
+    public const IMPORT_CATEGORY_NON_UNIQUE_RESOLUTION_FAIL = 'fail_on_nonunique';
+    public const IMPORT_CATEGORY_NON_UNIQUE_RESOLUTION_FIRST = 'assign_first_match';
+
+    public const IMPORT_CATEGORY_MISMATCH_RESOLUTION = 'import_category_mismatch_resolution';
+    public const IMPORT_CATEGORY_MISMATCH_RESOLUTION_FAIL = 'fail_on_mismatch';
+    public const IMPORT_CATEGORY_MISMATCH_RESOLUTION_ID_WINS = 'id_wins';
+    public const IMPORT_CATEGORY_MISMATCH_RESOLUTION_PATH_OR_TITLE_WINS = 'path_or_title_wins';
+
     /**
      * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -219,6 +233,22 @@ class Configuration implements ConfigurationInterface
                 self::EXCLUDE_CURRENT_BREADCRUMB_ON_PRODUCT_VIEW => [
                     'value' => false,
                     'type' => 'boolean',
+                ],
+                static::EXPORT_CATEGORY_PATH => [
+                    'type' => 'boolean',
+                    'value' => false,
+                ],
+                static::EXPORT_CATEGORY_DEFAULT_TITLE => [
+                    'type' => 'boolean',
+                    'value' => true,
+                ],
+                static::IMPORT_CATEGORY_NON_UNIQUE_RESOLUTION => [
+                    'type' => 'string',
+                    'value' => static::IMPORT_CATEGORY_NON_UNIQUE_RESOLUTION_FIRST,
+                ],
+                static::IMPORT_CATEGORY_MISMATCH_RESOLUTION => [
+                    'type' => 'string',
+                    'value' => static::IMPORT_CATEGORY_MISMATCH_RESOLUTION_PATH_OR_TITLE_WINS,
                 ],
             ]
         );

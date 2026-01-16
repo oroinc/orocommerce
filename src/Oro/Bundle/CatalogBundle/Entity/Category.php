@@ -30,7 +30,15 @@ use Oro\Component\Tree\Entity\TreeTrait;
  * @ORM\Table(
  *      name="oro_catalog_category",
  *      indexes={
- *              @ORM\Index(name="idx_oro_category_default_title", columns={"title"})
+ *              @ORM\Index(name="idx_oro_category_default_title", columns={"title"}),
+ *              @ORM\Index(
+ *                  name="idx_oro_category_org_tree_root_parent_title",
+ *                  columns={"organization_id", "tree_root", "parent_id", "title"}
+ *              ),
+ *              @ORM\Index(
+ *                  name="idx_oro_category_org_tree_root_title_level",
+ *                  columns={"organization_id", "tree_root", "title", "tree_level"}
+ *              )
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository")

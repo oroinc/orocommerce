@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\Strategy;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
@@ -13,6 +15,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 use Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
@@ -22,6 +25,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @dbIsolationPerTest
@@ -287,6 +291,76 @@ class ProductStrategyTest extends WebTestCase
             'Error in row #0. Name Localization Name: Product default name is blank',
             $context->getErrors()
         );
+    }
+
+    public function testProcessAfterEventMarksProductInvalid()
+    {
+        $context = new Context([]);
+        $context->setValue('itemData', []);
+        $this->strategy->setImportExportContext($context);
+
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference(LoadProductUnits::BOX);
+        $attributeFamily = $this->createAttributeFamily('test_family');
+        $inventoryStatus = $this->getInventoryStatus();
+
+        $product = $this->createProduct('TEST-SKU-INVALID', $attributeFamily, $unit, $inventoryStatus);
+
+        // Add event listener that marks the product as invalid
+        /** @var EventDispatcherInterface $eventDispatcher */
+        $eventDispatcher = $this->getContainer()->get('event_dispatcher');
+        $listenerCalled = false;
+
+        $listener = function (ProductStrategyEvent $event) use (&$listenerCalled) {
+            $listenerCalled = true;
+            $this->assertInstanceOf(Product::class, $event->getProduct());
+            $this->assertIsArray($event->getRawData());
+            $this->assertInstanceOf(Context::class, $event->getContext());
+            $this->assertTrue($event->isProductValid());
+
+            $event->markProductInvalid();
+        };
+
+        $eventDispatcher->addListener(ProductStrategyEvent::PROCESS_AFTER, $listener);
+
+        $result = $this->strategy->process($product);
+
+        $this->assertTrue($listenerCalled);
+
+        // Verify the product was rejected due to being marked invalid
+        $this->assertNull($result);
+    }
+
+    public function testProcessBeforeEventReceivesContext()
+    {
+        $context = new Context([]);
+        $itemData = ['sku' => 'TEST-SKU', 'name' => 'Test Product'];
+        $context->setValue('itemData', $itemData);
+        $this->strategy->setImportExportContext($context);
+
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference(LoadProductUnits::BOX);
+        $attributeFamily = $this->createAttributeFamily('test_family_2');
+        $inventoryStatus = $this->getInventoryStatus();
+
+        $product = $this->createProduct('TEST-SKU-CONTEXT', $attributeFamily, $unit, $inventoryStatus);
+
+        // Add event listener to verify context is passed
+        /** @var EventDispatcherInterface $eventDispatcher */
+        $eventDispatcher = $this->getContainer()->get('event_dispatcher');
+        $listenerCalled = false;
+
+        $listener = function (ProductStrategyEvent $event) use (&$listenerCalled, $itemData) {
+            $listenerCalled = true;
+            $this->assertInstanceOf(Context::class, $event->getContext());
+            $this->assertSame($itemData, $event->getRawData());
+        };
+
+        $eventDispatcher->addListener(ProductStrategyEvent::PROCESS_BEFORE, $listener);
+
+        $this->strategy->process($product);
+
+        $this->assertTrue($listenerCalled);
     }
 
     private function getInventoryStatus(): AbstractEnumValue

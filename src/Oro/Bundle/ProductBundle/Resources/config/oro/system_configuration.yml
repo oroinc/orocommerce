@@ -106,6 +106,11 @@ system_configuration:
             icon: fa-search
         product_seo_breadcrumbs_rendering:
             title: oro.product.system_configuration.groups.product_seo_breadcrumbs_rendering.title
+        product_import_export:
+            title: oro.product.system_configuration.groups.product_import_export.title
+            icon: 'fa-upload'
+        category_options:
+            title: oro.product.system_configuration.groups.category_options.title
     fields:
         oro_product.related_products_enabled:
             data_type: boolean
@@ -686,6 +691,49 @@ system_configuration:
                 label: oro.product.system_configuration.fields.breadcrumbs_exclude_current_on_product_view.label
                 tooltip: oro.product.system_configuration.fields.breadcrumbs_exclude_current_on_product_view.tooltip
 
+        oro_product.export_category_path:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.product.system_configuration.fields.export_category_path.label
+                tooltip: oro.product.system_configuration.fields.export_category_path.tooltip
+
+        oro_product.export_category_default_title:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.product.system_configuration.fields.export_category_default_title.label
+                tooltip: oro.product.system_configuration.fields.export_category_default_title.tooltip
+
+        oro_product.import_category_non_unique_resolution:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            search_type: choice
+            options:
+                label: oro.product.system_configuration.fields.import_category_non_unique_resolution.label
+                tooltip: oro.product.system_configuration.fields.import_category_non_unique_resolution.tooltip
+                required: true
+                choices:
+                    oro.product.system_configuration.fields.import_category_non_unique_resolution.choices.fail_on_nonunique.label: fail_on_nonunique
+                    oro.product.system_configuration.fields.import_category_non_unique_resolution.choices.assign_first_match.label: assign_first_match
+                constraints:
+                    - NotBlank: ~
+
+        oro_product.import_category_mismatch_resolution:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            search_type: choice
+            options:
+                label: oro.product.system_configuration.fields.import_category_mismatch_resolution.label
+                tooltip: oro.product.system_configuration.fields.import_category_mismatch_resolution.tooltip
+                required: true
+                choices:
+                    oro.product.system_configuration.fields.import_category_mismatch_resolution.choices.fail_on_mismatch.label: fail_on_mismatch
+                    oro.product.system_configuration.fields.import_category_mismatch_resolution.choices.id_wins.label: id_wins
+                    oro.product.system_configuration.fields.import_category_mismatch_resolution.choices.path_or_title_wins.label: path_or_title_wins
+                constraints:
+                    - NotBlank: ~
+
     tree:
         system_configuration:
             platform:
@@ -823,6 +871,15 @@ system_configuration:
                                     product_seo_breadcrumbs_rendering:
                                         children:
                                             - oro_product.breadcrumbs_exclude_current_on_product_view
+                            product_import_export:
+                                priority: 0
+                                children:
+                                    category_options:
+                                        children:
+                                            - oro_product.export_category_path
+                                            - oro_product.export_category_default_title
+                                            - oro_product.import_category_non_unique_resolution
+                                            - oro_product.import_category_mismatch_resolution
 
                     product_inventory:
                         priority: 650

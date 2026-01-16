@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\ProductBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
@@ -9,6 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class OroProductExtensionTest extends \PHPUnit\Framework\TestCase
 {
+    /** @SuppressWarnings(PHPMD.ExcessiveMethodLength) */
     public function testLoad(): void
     {
         $container = new ContainerBuilder();
@@ -88,6 +91,22 @@ class OroProductExtensionTest extends \PHPUnit\Framework\TestCase
                         'schema_org_description_field' => ['value' => 'oro_product_full_description', 'scope' => 'app'],
                         Configuration::EXCLUDE_CURRENT_BREADCRUMB_ON_PRODUCT_VIEW => [
                             'value' => false,
+                            'scope' => 'app'
+                        ],
+                        Configuration::EXPORT_CATEGORY_PATH => [
+                            'value' => false,
+                            'scope' => 'app'
+                        ],
+                        Configuration::EXPORT_CATEGORY_DEFAULT_TITLE => [
+                            'value' => true,
+                            'scope' => 'app'
+                        ],
+                        Configuration::IMPORT_CATEGORY_NON_UNIQUE_RESOLUTION => [
+                            'value' => Configuration::IMPORT_CATEGORY_NON_UNIQUE_RESOLUTION_FIRST,
+                            'scope' => 'app'
+                        ],
+                        Configuration::IMPORT_CATEGORY_MISMATCH_RESOLUTION => [
+                            'value' => Configuration::IMPORT_CATEGORY_MISMATCH_RESOLUTION_PATH_OR_TITLE_WINS,
                             'scope' => 'app'
                         ],
                     ]
