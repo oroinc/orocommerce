@@ -312,4 +312,61 @@ class CategoryRepository extends NestedTreeRepository
             ->getQuery()
             ->getSingleColumnResult();
     }
+
+    public function findByDefaultTitleQueryBuilder(string $title): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('category');
+        $qb->select('partial category.{id}')
+            ->andWhere('category.denormalizedDefaultTitle = :title')
+            ->setParameter('title', $title)
+        ;
+
+        return $qb;
+    }
+
+    /**
+     * Builds a query to find categories by a path composed of default category titles,
+     * starting from the root of the master catalog (e.g. `['All Products', 'Medical', 'Medical Apparel', 'Footwear']`).
+     *
+     * The query is intended to be additionally scoped by organization by the caller.
+     * Filtering by organization is important both for correctness and for performance, as it significantly
+     * reduces the candidate set and allows PostgreSQL to resolve the path via index lookups rather than scans.
+     *
+     * @see getCategoryPath() for the inverse lookup (get an array of default titles for a category).
+     *
+     * @param string[] $pathTitles default category titles starting from the root of the master catalog, e.g.
+     *                             `['All Products', 'Medical', 'Medical Apparel', 'Footwear']`
+     * @param Category $root the master catalog root to ensure we are searching in the correct master catalog tree
+     */
+    public function findByTitlesPathQueryBuilder(array $pathTitles, Category $root): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('category');
+
+        // The last title is the category we're looking for
+        $leafTitle = \array_pop($pathTitles);
+        $leafLevel = \count($pathTitles); // root is level 0, so leaf level = segmentsCount - 1
+
+        $qb->andWhere('category.denormalizedDefaultTitle = :leafTitle')
+            ->setParameter('leafTitle', $leafTitle)
+            ->andWhere('category.level = :leafLevel')
+            ->setParameter('leafLevel', $leafLevel)
+            ->andWhere('category.root = :root')
+            ->setParameter('root', $root)
+        ;
+
+        // Traverse from leaf to root, joining parent categories and matching titles.
+        $currentAlias = 'category';
+        // Using array_values to make sure keys are numeric and safe for use in the query.
+        foreach (\array_reverse(\array_values($pathTitles)) as $index => $parentTitle) {
+            $parentAlias = 'parent' . $index;
+
+            $qb->innerJoin($currentAlias . '.parentCategory', $parentAlias)
+                ->andWhere($parentAlias . '.denormalizedDefaultTitle = :parentTitle' . $index)
+                ->setParameter('parentTitle' . $index, $parentTitle);
+
+            $currentAlias = $parentAlias;
+        }
+
+        return $qb;
+    }
 }

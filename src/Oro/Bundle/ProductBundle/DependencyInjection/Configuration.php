@@ -97,6 +97,20 @@ class Configuration implements ConfigurationInterface
     public const INVENTORY_FILTER_IN_STOCK_STATUSES_FOR_SIMPLE_FILTER =
         'inventory_filter_in_stock_statuses_for_simple_filter';
 
+    // Product Import/Export - Category Options
+
+    public const string EXPORT_CATEGORY_PATH = 'export_category_path';
+    public const string EXPORT_CATEGORY_DEFAULT_TITLE = 'export_category_default_title';
+
+    public const string IMPORT_CATEGORY_NON_UNIQUE_RESOLUTION = 'import_category_non_unique_resolution';
+    public const string IMPORT_CATEGORY_NON_UNIQUE_RESOLUTION_FAIL = 'fail_on_nonunique';
+    public const string IMPORT_CATEGORY_NON_UNIQUE_RESOLUTION_FIRST = 'assign_first_match';
+
+    public const string IMPORT_CATEGORY_MISMATCH_RESOLUTION = 'import_category_mismatch_resolution';
+    public const string IMPORT_CATEGORY_MISMATCH_RESOLUTION_FAIL = 'fail_on_mismatch';
+    public const string IMPORT_CATEGORY_MISMATCH_RESOLUTION_ID_WINS = 'id_wins';
+    public const string IMPORT_CATEGORY_MISMATCH_RESOLUTION_PATH_OR_TITLE_WINS = 'path_or_title_wins';
+
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
@@ -252,6 +266,22 @@ class Configuration implements ConfigurationInterface
                             Product::INVENTORY_STATUS_IN_STOCK
                         ),
                     ],
+                ],
+                static::EXPORT_CATEGORY_PATH => [
+                    'type' => 'boolean',
+                    'value' => true,
+                ],
+                static::EXPORT_CATEGORY_DEFAULT_TITLE => [
+                    'type' => 'boolean',
+                    'value' => false,
+                ],
+                static::IMPORT_CATEGORY_NON_UNIQUE_RESOLUTION => [
+                    'type' => 'string',
+                    'value' => static::IMPORT_CATEGORY_NON_UNIQUE_RESOLUTION_FAIL,
+                ],
+                static::IMPORT_CATEGORY_MISMATCH_RESOLUTION => [
+                    'type' => 'string',
+                    'value' => static::IMPORT_CATEGORY_MISMATCH_RESOLUTION_FAIL,
                 ],
             ]
         );

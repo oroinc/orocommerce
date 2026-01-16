@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -17,6 +20,7 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganizatio
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class CategoryRepositoryTest extends WebTestCase
 {
@@ -212,5 +216,277 @@ class CategoryRepositoryTest extends WebTestCase
     public function testGetMaxLeft()
     {
         static::assertEquals(11, $this->getRepository()->getMaxLeft());
+    }
+
+    public function testFindByDefaultTitleQueryBuilder()
+    {
+        $expectedCategory = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        $expectedTitle = $expectedCategory->getDefaultTitle()->getString();
+
+        $qb = $this->getRepository()->findByDefaultTitleQueryBuilder($expectedTitle);
+        $categories = $qb->getQuery()->getResult();
+
+        $this->assertCount(1, $categories);
+        $this->assertInstanceOf(Category::class, $categories[0]);
+        $this->assertEquals($expectedCategory->getId(), $categories[0]->getId());
+    }
+
+    public function testFindByDefaultTitleQueryBuilderWhenNotExists()
+    {
+        $qb = $this->getRepository()->findByDefaultTitleQueryBuilder('Non-existent Category');
+        $categories = $qb->getQuery()->getResult();
+
+        $this->assertCount(0, $categories);
+    }
+
+    public function testFindByDefaultTitlesPathQueryBuilder()
+    {
+        $root = $this->getRootCategory();
+        $expectedCategory = $this->getReference(LoadCategoryData::THIRD_LEVEL1);
+
+        $pathTitles = [
+            'All Products',
+            LoadCategoryData::FIRST_LEVEL,
+            LoadCategoryData::SECOND_LEVEL1,
+            LoadCategoryData::THIRD_LEVEL1,
+        ];
+
+        $qb = $this->getRepository()->findByTitlesPathQueryBuilder($pathTitles, $root);
+        $categories = $qb->getQuery()->getResult();
+
+        $this->assertCount(1, $categories);
+        $this->assertInstanceOf(Category::class, $categories[0]);
+        $this->assertEquals($expectedCategory->getId(), $categories[0]->getId());
+    }
+
+    public function testFindByDefaultTitlesPathQueryBuilderWhenNotExists()
+    {
+        $root = $this->getRootCategory();
+        $pathTitles = ['All Products', 'Non-existent', 'Category'];
+
+        $qb = $this->getRepository()->findByTitlesPathQueryBuilder($pathTitles, $root);
+        $categories = $qb->getQuery()->getResult();
+
+        $this->assertCount(0, $categories);
+    }
+
+    public function testFindByDefaultTitleQueryBuilderWithMultipleMatches()
+    {
+        // Create two categories with the same title
+        $root = $this->getRootCategory();
+        /** @var Category $firstLevel */
+        $firstLevel = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+
+        $category1 = new Category();
+        $category1->setParentCategory($root);
+        $category1->setOrganization($this->getOrganization());
+        $category1->addTitle((new CategoryTitle())->setString('Duplicate Title'));
+
+        $category2 = new Category();
+        $category2->setParentCategory($firstLevel);
+        $category2->setOrganization($this->getOrganization());
+        $category2->addTitle((new CategoryTitle())->setString('Duplicate Title'));
+
+        $em = $this->getEntityManager();
+        $em->persist($category1);
+        $em->persist($category2);
+        $em->flush();
+
+        $qb = $this->getRepository()->findByDefaultTitleQueryBuilder('Duplicate Title');
+        $categories = $qb->getQuery()->getResult();
+
+        $this->assertCount(2, $categories);
+        $this->assertInstanceOf(Category::class, $categories[0]);
+        $this->assertInstanceOf(Category::class, $categories[1]);
+    }
+
+    public function testFindByDefaultTitlesPathQueryBuilderForLevelOneCategory()
+    {
+        $root = $this->getRootCategory();
+        $expectedCategory = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+
+        $pathTitles = ['All Products', LoadCategoryData::FIRST_LEVEL];
+
+        $qb = $this->getRepository()->findByTitlesPathQueryBuilder($pathTitles, $root);
+        $categories = $qb->getQuery()->getResult();
+
+        $this->assertCount(1, $categories);
+        $this->assertInstanceOf(Category::class, $categories[0]);
+        $this->assertEquals($expectedCategory->getId(), $categories[0]->getId());
+    }
+
+    public function testFindByDefaultTitlesPathQueryBuilderForRootCategory()
+    {
+        $root = $this->getRootCategory();
+
+        // Build path for root: just "All Products"
+        $pathTitles = ['All Products'];
+
+        $qb = $this->getRepository()->findByTitlesPathQueryBuilder($pathTitles, $root);
+        $categories = $qb->getQuery()->getResult();
+
+        $this->assertCount(1, $categories);
+        $this->assertInstanceOf(Category::class, $categories[0]);
+        $this->assertEquals($root->getId(), $categories[0]->getId());
+    }
+
+    public function testFindByDefaultTitlesPathQueryBuilderWithWrongRoot()
+    {
+        // Use a non-root category as the "root" parameter
+        /** @var Category $wrongRoot */
+        $wrongRoot = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+
+        $pathTitles = [
+            'All Products',
+            LoadCategoryData::FIRST_LEVEL,
+            LoadCategoryData::SECOND_LEVEL1,
+            LoadCategoryData::THIRD_LEVEL1,
+        ];
+
+        $qb = $this->getRepository()->findByTitlesPathQueryBuilder($pathTitles, $wrongRoot);
+        $categories = $qb->getQuery()->getResult();
+
+        // Should return no results because the root doesn't match
+        $this->assertCount(0, $categories);
+    }
+
+    public function testFindByDefaultTitlesPathQueryBuilderWithWrongParentHierarchy()
+    {
+        $root = $this->getRootCategory();
+
+        // SECOND_LEVEL1 is actually a child of FIRST_LEVEL, not a direct child of root, so this path is incorrect
+        $pathTitles = ['All Products', LoadCategoryData::SECOND_LEVEL1];
+
+        $qb = $this->getRepository()->findByTitlesPathQueryBuilder($pathTitles, $root);
+        $categories = $qb->getQuery()->getResult();
+
+        // Should return no results because SECOND_LEVEL1 is at level 2, not level 1
+        $this->assertCount(0, $categories);
+    }
+
+    public function testFindByDefaultTitlesPathQueryBuilderForDeepestLevel()
+    {
+        $root = $this->getRootCategory();
+        $expectedCategory = $this->getReference(LoadCategoryData::FOURTH_LEVEL1);
+
+        $pathTitles = [
+            'All Products',
+            LoadCategoryData::FIRST_LEVEL,
+            LoadCategoryData::SECOND_LEVEL1,
+            LoadCategoryData::THIRD_LEVEL1,
+            LoadCategoryData::FOURTH_LEVEL1,
+        ];
+
+        $qb = $this->getRepository()->findByTitlesPathQueryBuilder($pathTitles, $root);
+        $categories = $qb->getQuery()->getResult();
+
+        $this->assertCount(1, $categories);
+        $this->assertInstanceOf(Category::class, $categories[0]);
+        $this->assertEquals($expectedCategory->getId(), $categories[0]->getId());
+    }
+
+    public function testFindByDefaultTitlesPathQueryBuilderWithDuplicatePaths()
+    {
+        $root = $this->getRootCategory();
+
+        // Create two categories with identical paths: "All Products / Duplicate Parent / Duplicate Child"
+        $parent1 = new Category();
+        $parent1->setParentCategory($root);
+        $parent1->setOrganization($this->getOrganization());
+        $parent1->addTitle((new CategoryTitle())->setString('Duplicate Parent'));
+
+        $child1 = new Category();
+        $child1->setParentCategory($parent1);
+        $child1->setOrganization($this->getOrganization());
+        $child1->addTitle((new CategoryTitle())->setString('Duplicate Child'));
+
+        // Create a second branch with the same path
+        $parent2 = new Category();
+        $parent2->setParentCategory($root);
+        $parent2->setOrganization($this->getOrganization());
+        $parent2->addTitle((new CategoryTitle())->setString('Duplicate Parent'));
+
+        $child2 = new Category();
+        $child2->setParentCategory($parent2);
+        $child2->setOrganization($this->getOrganization());
+        $child2->addTitle((new CategoryTitle())->setString('Duplicate Child'));
+
+        $em = $this->getEntityManager();
+        $em->persist($parent1);
+        $em->persist($child1);
+        $em->persist($parent2);
+        $em->persist($child2);
+        $em->flush();
+
+        $pathTitles = ['All Products', 'Duplicate Parent', 'Duplicate Child'];
+
+        $qb = $this->getRepository()->findByTitlesPathQueryBuilder($pathTitles, $root);
+        $categories = $qb->getQuery()->getResult();
+
+        // Should return both categories since they have identical paths
+        $this->assertCount(2, $categories);
+        $this->assertInstanceOf(Category::class, $categories[0]);
+        $this->assertInstanceOf(Category::class, $categories[1]);
+
+        // Verify both children are in the results
+        $resultIds = [$categories[0]->getId(), $categories[1]->getId()];
+        $this->assertContains($child1->getId(), $resultIds);
+        $this->assertContains($child2->getId(), $resultIds);
+    }
+
+    /**
+     * @dataProvider getCategoryPathDataProvider
+     */
+    public function testGetCategoryPath(?string $categoryReference, array $expectedPath): void
+    {
+        $category = $categoryReference ? $this->getReference($categoryReference) : $this->getRootCategory();
+        $path = $this->getRepository()->getCategoryPath($category);
+
+        $this->assertSame($expectedPath, $path);
+    }
+
+    public function getCategoryPathDataProvider(): array
+    {
+        return [
+            'root category' => [
+                'categoryReference' => null,
+                'expectedPath' => ['All Products'],
+            ],
+            'first level category' => [
+                'categoryReference' => LoadCategoryData::FIRST_LEVEL,
+                'expectedPath' => ['All Products', 'category_1'],
+            ],
+            'second level category' => [
+                'categoryReference' => LoadCategoryData::SECOND_LEVEL1,
+                'expectedPath' => ['All Products' , 'category_1' , 'category_1_2'],
+            ],
+            'third level category' => [
+                'categoryReference' => LoadCategoryData::THIRD_LEVEL1,
+                'expectedPath' => ['All Products' , 'category_1' , 'category_1_2' , 'category_1_2_3'],
+            ],
+            'fourth level category' => [
+                'categoryReference' => LoadCategoryData::FOURTH_LEVEL1,
+                'expectedPath' =>
+                    ['All Products' , 'category_1' , 'category_1_2' , 'category_1_2_3' , 'category_1_2_3_4'],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getCategoryPathDataProvider
+     */
+    public function testGetCategoryPathRoundTrip(?string $categoryReference, array $expectedPath): void
+    {
+        $category = $categoryReference ? $this->getReference($categoryReference) : $this->getRootCategory();
+        $pathTitles = $this->getRepository()->getCategoryPath($category);
+
+        $this->assertSame($expectedPath, $pathTitles);
+
+        // Use the path to find the category back
+        $qb = $this->getRepository()->findByTitlesPathQueryBuilder($pathTitles, $this->getRootCategory());
+        $foundCategories = $qb->getQuery()->getResult();
+
+        $this->assertCount(1, $foundCategories);
+        $this->assertSame($category->getId(), $foundCategories[0]->getId());
     }
 }

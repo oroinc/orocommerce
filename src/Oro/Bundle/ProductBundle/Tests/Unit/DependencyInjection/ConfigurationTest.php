@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\ProductBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
@@ -90,6 +92,22 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'expectedExceptionMessage' => $notAllowedProductTypeMessage,
             ],
         ];
+    }
+
+    public function testDefaultImportExportCategoryConfiguration(): void
+    {
+        $processedConfig = $this->processConfiguration([]);
+
+        self::assertTrue($processedConfig['settings'][Configuration::EXPORT_CATEGORY_PATH]['value']);
+        self::assertFalse($processedConfig['settings'][Configuration::EXPORT_CATEGORY_DEFAULT_TITLE]['value']);
+        self::assertEquals(
+            Configuration::IMPORT_CATEGORY_NON_UNIQUE_RESOLUTION_FAIL,
+            $processedConfig['settings'][Configuration::IMPORT_CATEGORY_NON_UNIQUE_RESOLUTION]['value']
+        );
+        self::assertEquals(
+            Configuration::IMPORT_CATEGORY_MISMATCH_RESOLUTION_FAIL,
+            $processedConfig['settings'][Configuration::IMPORT_CATEGORY_MISMATCH_RESOLUTION]['value']
+        );
     }
 
     private function processConfiguration(array $config): array

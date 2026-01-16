@@ -1,5 +1,10 @@
 # Configuration for https://github.com/oroinc/phpstan-rules/
 trusted_data:
+    variables:
+        Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository:
+            findByTitlesPathQueryBuilder:
+                parentAlias: true
+                index: true
     safe_methods:
         Oro\Bundle\CatalogBundle\EventListener\ExportDatagridListener:
             applyCategory: true
