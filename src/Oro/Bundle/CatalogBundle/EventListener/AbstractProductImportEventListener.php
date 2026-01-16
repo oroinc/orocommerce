@@ -9,11 +9,12 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
- * Gets categories depending on different criterias
+ * Gets categories depending on different criteria
  */
 abstract class AbstractProductImportEventListener
 {
     const CATEGORY_KEY = 'category.default.title';
+    public const CATEGORY_PATH_KEY = 'category.path';
 
     /** @var ManagerRegistry */
     protected $registry;

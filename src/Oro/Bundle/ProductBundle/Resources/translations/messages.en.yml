@@ -605,6 +605,8 @@ oro:
                         Please check product detail page for unexpected layout shifts after changing Schema.org settings in test environment before making these changes on live website.
                 product_seo_settings.title: 'SEO'
                 product_seo_breadcrumbs_rendering.title: 'Breadcrumbs Rendering'
+                product_import_export.title: 'Product Import/Export'
+                category_options.title: 'Category Options'
             fields:
                 original_file_names_enabled:
                     label: 'Enable Original File Names'
@@ -801,6 +803,29 @@ oro:
                 breadcrumbs_exclude_current_on_product_view:
                     label: 'Exclude Current Page in Breadcrumbs on Product View'
                     tooltip: 'According to SEO best practices, the current page should not be included in the breadcrumbs. Starting with version 6.1 LTS, OroCommerce will exclude the current page from breadcrumbs by default.'
+
+                export_category_path:
+                    label: 'Export Category Path'
+                    tooltip: 'When enabled, the export includes the "category.path" column with the full category path, starting from the Master Catalog root. The path is composed of the short default (non-translated) titles of the category and its parent categories and uses " / " (space, slash, space) as a delimiter (for example, "All Products / Electronics / Chargers / Phone Chargers"). If the delimiter occurs within an individual category title, it is encoded as " // " (space, slash, slash, space), for example, the title "Chargers / Power Banks" will appear in the path as "Chargers // Power Banks" to avoid ambiguity.'
+
+                export_category_default_title:
+                    label: 'Export Category Default Title'
+                    tooltip: 'When enabled, the export includes the "category.default.title" column with the category''s short default (non-translated) title only (for example, "Phone Chargers").'
+
+                import_category_non_unique_resolution:
+                    label: 'Category Identification When Not Unique'
+                    tooltip: 'If the import file does not contain the "category.id" value, categories are matched by "category.path" (preferred) or by "category.default.title". Because category paths and titles may not be unique, this option defines whether the import should fail when multiple matches are found, or assign the first match.'
+                    choices:
+                        fail_on_nonunique.label: 'Fail if multiple matches are found'
+                        assign_first_match.label: 'Assign the first match'
+
+                import_category_mismatch_resolution:
+                    label: 'Category ID and Path/Title Mismatch Resolution'
+                    tooltip: 'Defines how the import behaves when "category.id" is provided together with "category.path" and/or "category.default.title", and the resolved category does not match the category with the specified ID. This check helps detect potential user mistakes, for example when the category ID is provided but the path or title was modified without updating the ID, while still allowing intentional overrides. The ID identifies the target category; the path or title is used only for validation. If both "category.path" and "category.default.title" are present and the path resolves to a category, the title is not used for lookup or comparison.'
+                    choices:
+                        fail_on_mismatch.label: 'Fail if category ID and path/title do not match'
+                        id_wins.label: 'Category ID takes precedence'
+                        path_or_title_wins.label: 'Category path/title takes precedence'
 
             notice:
                 product_image_watermark: >

@@ -89,3 +89,9 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_security.acl_helper'
+
+    oro_catalog.importexport.mapper.category_path:
+        class: Oro\Bundle\CatalogBundle\ImportExport\Mapper\CategoryPathMapper
+
+    Oro\Bundle\CatalogBundle\ImportExport\Mapper\CategoryPathMapperInterface:
+        alias: oro_catalog.importexport.mapper.category_path
