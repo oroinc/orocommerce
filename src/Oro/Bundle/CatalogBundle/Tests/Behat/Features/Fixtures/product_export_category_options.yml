@@ -1,0 +1,89 @@
+include:
+    - '@OroProductBundle:ConfigurableAttributeFamily.yml'
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    businessUnit:
+        name: Common Business Unit
+        organization: '@organization'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    categoryTitleElectronics:
+        string: 'Electronics'
+    categoryTitleLaptops:
+        string: 'Laptops'
+    categoryTitlePhones:
+        string: 'Phones'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryElectronics:
+        __calls:
+            - addTitle: ['@categoryTitleElectronics']
+            - setParentCategory: ['@root_category']
+        organization: '@organization'
+    categoryLaptops:
+        __calls:
+            - addTitle: ['@categoryTitleLaptops']
+            - setParentCategory: ['@categoryElectronics']
+        organization: '@organization'
+    categoryPhones:
+        __calls:
+            - addTitle: ['@categoryTitlePhones']
+            - setParentCategory: ['@categoryElectronics']
+        organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    productName1:
+        string: 'Product 1'
+    productName2:
+        string: 'Product 2'
+    productName3:
+        string: 'Product 3'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@set'
+        precision: 1
+    precision2:
+        unit: '@set'
+        precision: 1
+    precision3:
+        unit: '@set'
+        precision: 1
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        primaryUnitPrecision: '@precision1'
+        category: '@categoryLaptops'
+        __calls:
+            - addName: ['@productName1']
+    product2:
+        sku: 'PSKU2'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        primaryUnitPrecision: '@precision2'
+        category: '@categoryPhones'
+        __calls:
+            - addName: ['@productName2']
+    product3:
+        sku: 'PSKU3'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        primaryUnitPrecision: '@precision3'
+        category: '@categoryElectronics'
+        __calls:
+            - addName: ['@productName3']

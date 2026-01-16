@@ -62,6 +62,14 @@ use Symfony\Component\Validator\Constraints\All;
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ORM\Table(name: 'oro_catalog_category')]
 #[ORM\Index(columns: ['title'], name: 'idx_oro_category_default_title')]
+#[ORM\Index(
+    columns: ['organization_id', 'tree_root', 'parent_id', 'title'],
+    name: 'idx_oro_category_org_tree_root_parent_title'
+)]
+#[ORM\Index(
+    columns: ['organization_id', 'tree_root', 'title', 'tree_level'],
+    name: 'idx_oro_category_org_tree_root_title_level'
+)]
 #[ORM\AssociationOverrides([
     new ORM\AssociationOverride(
         name: 'slugPrototypes',
