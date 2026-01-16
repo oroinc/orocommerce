@@ -29,11 +29,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class MoveProductsMassActionHandlerTest extends WebTestCase
 {
-    /** @var CustomerUser */
-    private $customerUser;
-
-    /** @var MoveProductsMassActionHandler */
-    private $handler;
+    private CustomerUser $customerUser;
+    private MoveProductsMassActionHandler $handler;
 
     #[\Override]
     protected function setUp(): void
@@ -79,10 +76,35 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         self::assertTrue($result->isSuccessful());
         self::assertEquals('One entity has been moved successfully.', $result->getMessage());
         self::assertEquals(['count' => 1], $result->getOptions());
+    }
 
-        $lineItem = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_1);
+    public function testHandleWhenSavedForLater(): void
+    {
+        $sourceShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        $targetShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
 
-        self::assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
+        $datagrid = self::getContainer()
+            ->get('oro_datagrid.datagrid.manager')
+            ->getDatagrid(
+                'frontend-customer-user-shopping-list-saved-for-later-edit-grid',
+                [
+                    'shopping_list_id' => $sourceShoppingList->getId(),
+                ]
+            );
+
+        $result = $this->handler->handle(
+            new MassActionHandlerArgs(
+                $this->getMoveProductsMassAction(),
+                $datagrid,
+                new IterableResult($this->getQuery($sourceShoppingList)),
+                ['shopping_list_id' => $targetShoppingList->getId()]
+            )
+        );
+
+        self::assertInstanceOf(MassActionResponse::class, $result);
+        self::assertTrue($result->isSuccessful());
+        self::assertEquals('One entity has been moved successfully.', $result->getMessage());
+        self::assertEquals(['count' => 1], $result->getOptions());
     }
 
     /**

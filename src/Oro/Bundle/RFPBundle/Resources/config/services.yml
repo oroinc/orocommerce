@@ -133,6 +133,14 @@ services:
         tags:
             - { name: oro_multi_currency.currency_checker_provider }
 
+    oro_rfp.resolver.shopping_list_to_request_quote_validation_group:
+        class: Oro\Bundle\RFPBundle\Resolver\ShoppingListToRequestQuoteValidationGroupResolver
+        arguments:
+            - '@security.authorization_checker'
+        tags:
+            - { name: oro_shopping_list.validation_group, priority: 5 }
+            - { name: oro_featuretogle.feature, feature: rfp_frontend }
+
     oro_rfp.provider.product_rfp_availability:
        class: Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider
        arguments:

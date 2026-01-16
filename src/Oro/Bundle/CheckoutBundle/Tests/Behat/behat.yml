@@ -278,6 +278,11 @@ oro_behat_extension:
         type: xpath
         locator: './/button[contains(normalize-space(),"Submit Order")]'
 
+    Checkout Continue:
+      selector:
+        type: xpath
+        locator: './/div[contains(@class,"checkout-summary-widget__combined-buttons")]//button[contains(normalize-space(.),"Continue")]'
+
     # Disabled Submit order button is actually other element (div)
     Disabled Submit Order Button:
       selector:

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Action;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Action\ClearCheckoutSourceEntity;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
@@ -14,14 +16,18 @@ use Oro\Component\Action\Event\ExecuteActionEvents;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-class ClearCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
+final class ClearCheckoutSourceEntityTest extends TestCase
 {
     use EntityTrait;
 
-    private EventDispatcher|\PHPUnit\Framework\MockObject\MockObject $dispatcher;
+    private EventDispatcher&MockObject $dispatcher;
+    private ManagerRegistry&MockObject $registry;
+    private ObjectManager&MockObject $manager;
 
     private ClearCheckoutSourceEntity $action;
 
@@ -30,7 +36,14 @@ class ClearCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
     {
         $contextAccessor = new ContextAccessor();
         $this->dispatcher = $this->createMock(EventDispatcher::class);
-        $this->action = new ClearCheckoutSourceEntity($contextAccessor);
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->manager = $this->createMock(ObjectManager::class);
+
+        $this->registry->expects(self::any())
+            ->method('getManager')
+            ->willReturn($this->manager);
+
+        $this->action = new ClearCheckoutSourceEntity($contextAccessor, $this->registry);
         $this->action->setDispatcher($this->dispatcher);
     }
 
@@ -100,9 +113,10 @@ class ClearCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
 
     public function testExecute(): void
     {
+        $lineItem = new LineItem();
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
-        $shoppingList->addLineItem(new LineItem());
+        $shoppingList->addLineItem($lineItem);
 
         $checkoutSource = $this->createMock(CheckoutSource::class);
         $checkoutSource
@@ -125,6 +139,10 @@ class ClearCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
             );
 
         $target = new PropertyPath('checkout');
+
+        $this->manager->expects(self::once())
+            ->method('remove')
+            ->with($lineItem);
 
         $this->action->initialize([$target]);
         $this->action->execute($context);

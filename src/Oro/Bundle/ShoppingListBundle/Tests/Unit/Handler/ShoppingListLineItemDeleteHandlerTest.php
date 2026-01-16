@@ -11,17 +11,15 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemDeleteHandler;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ShoppingListLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
+final class ShoppingListLineItemDeleteHandlerTest extends TestCase
 {
-    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $em;
+    private EntityManagerInterface&MockObject $em;
+    private ShoppingListTotalManager&MockObject $totalManager;
 
-    /** @var ShoppingListTotalManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $totalManager;
-
-    /** @var ShoppingListLineItemDeleteHandler */
-    private $handler;
+    private ShoppingListLineItemDeleteHandler $handler;
 
     #[\Override]
     protected function setUp(): void
@@ -52,7 +50,7 @@ class ShoppingListLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->setExtensionRegistry($extensionRegistry);
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         $lineItem = new LineItem();
         $shoppingList = new ShoppingList();
@@ -75,7 +73,7 @@ class ShoppingListLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(0, $shoppingList->getLineItems());
     }
 
-    public function testDeleteWithoutFlush()
+    public function testDeleteWithoutFlush(): void
     {
         $lineItem = new LineItem();
         $shoppingList = new ShoppingList();
@@ -91,14 +89,37 @@ class ShoppingListLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('invalidateAndRecalculateTotals');
 
         $this->assertEquals(
-            ['entity' => $lineItem],
+            ['entity' => $lineItem, 'associatedList' => $shoppingList],
             $this->handler->delete($lineItem, false)
         );
 
         $this->assertCount(0, $shoppingList->getLineItems());
     }
 
-    public function testFlush()
+    public function testDeleteSavedForLaterLineItemWithoutFlush(): void
+    {
+        $lineItem = new LineItem();
+        $shoppingList = new ShoppingList();
+        $shoppingList->addSavedForLaterLineItem($lineItem);
+
+        $this->em->expects($this->once())
+            ->method('remove')
+            ->with($this->identicalTo($lineItem));
+        $this->em->expects($this->never())
+            ->method('flush');
+
+        $this->totalManager->expects($this->never())
+            ->method('invalidateAndRecalculateTotals');
+
+        $this->assertEquals(
+            ['entity' => $lineItem, 'associatedList' => $shoppingList],
+            $this->handler->delete($lineItem, false)
+        );
+
+        $this->assertCount(0, $shoppingList->getSavedForLaterLineItems());
+    }
+
+    public function testFlush(): void
     {
         $lineItem = new LineItem();
         $shoppingList = new ShoppingList();
@@ -107,14 +128,30 @@ class ShoppingListLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->em->expects($this->once())
             ->method('flush');
 
-        $this->totalManager->expects($this->once())
+        $this->totalManager->expects(self::once())
+            ->method('invalidateAndRecalculateTotals')
+            ->with($this->identicalTo($shoppingList), $this->isFalse());
+
+        $this->handler->flush(['entity' => $lineItem, 'associatedList' => $shoppingList]);
+    }
+
+    public function testFlushWithoutAssociatedList(): void
+    {
+        $lineItem = new LineItem();
+        $shoppingList = new ShoppingList();
+        $shoppingList->addLineItem($lineItem);
+
+        $this->em->expects($this->once())
+            ->method('flush');
+
+        $this->totalManager->expects(self::never())
             ->method('invalidateAndRecalculateTotals')
             ->with($this->identicalTo($shoppingList), $this->isFalse());
 
         $this->handler->flush(['entity' => $lineItem]);
     }
 
-    public function testFlushAll()
+    public function testFlushAll(): void
     {
         $lineItem1 = new LineItem();
         $lineItem2 = new LineItem();
@@ -137,9 +174,9 @@ class ShoppingListLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
             );
 
         $this->handler->flushAll([
-            ['entity' => $lineItem1],
-            ['entity' => $lineItem2],
-            ['entity' => $lineItem3]
+            ['entity' => $lineItem1, 'associatedList' => $shoppingList1],
+            ['entity' => $lineItem2, 'associatedList' => $shoppingList2],
+            ['entity' => $lineItem3, 'associatedList' => $shoppingList2]
         ]);
     }
 }

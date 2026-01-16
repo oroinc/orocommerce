@@ -3,3 +3,77 @@
         <span>{{ 'oro.frontend.shoppinglist.view.not_have_available'|trans }}</span>
     </div>
 {% endblock %}
+
+{% block __customer_user_shopping_list__checkout_errors_modal_button_widget %}
+    {% set checkoutBtnTrans = 'oro.workflow.b2b_flow_checkout.transition.start_from_shoppinglist.button_label'|trans({},'workflows') %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' summary-widget__order-limit-disabled-checkout-button',
+    }) %}
+
+    {% set btnOptions = {
+        route: 'oro_shopping_list_frontend_update',
+        routeParams: {id: shoppingList.id},
+        invalidIds: invalidIds,
+        modalTitle: 'oro.shoppinglist.checkout_errors_modal.title',
+        modalContent: 'oro.shoppinglist.checkout_errors_modal.message_cannot_edit'
+    } %}
+
+    {% if is_granted('oro_shopping_list_frontend_update') %}
+        {% set btnOptions = btnOptions|merge({
+            modalContent: 'oro.shoppinglist.checkout_errors_modal.message_can_edit',
+            okText: 'Update'
+        }) %}
+    {% endif %}
+
+    <div {{ block('block_attributes') }}>
+        {% import '@OroUI/layouts/macros.html.twig' as LayoutUI %}
+        {{ LayoutUI.clientLink({
+            'aCss': 'btn btn--default btn--full',
+            'label': checkoutBtnTrans,
+            'ariaLabel': checkoutBtnTrans,
+            'ariaHaspopup': true,
+            'labelInIcon': false,
+            'pageComponent': {
+                'view': 'oroshoppinglist/js/app/views/shopping-list-view-proceed-confirmation',
+                'options': btnOptions
+            }
+        }) }}
+    </div>
+{% endblock %}
+
+{% block __customer_user_shopping_list__rfq_errors_modal_button_widget %}
+    {% set rfqBtnTrans = 'oro.frontend.shoppinglist.btn.request_quote_create_rfp'|trans %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' summary-widget__combined-bottons summary-widget__disabled-rfp-button'
+    }) %}
+
+    {% set btnOptions = {
+        route: 'oro_shopping_list_frontend_update',
+        routeParams: {id: shoppingList.id},
+        invalidIds: invalidIds,
+        modalTitle: 'oro.shoppinglist.rfq_errors_modal.title',
+        modalContent: 'oro.shoppinglist.rfq_errors_modal.message_cannot_edit'
+    } %}
+
+    {% if is_granted('oro_shopping_list_frontend_update') %}
+        {% set btnOptions = btnOptions|merge({
+            modalContent: 'oro.shoppinglist.rfq_errors_modal.message_can_edit',
+            okText: 'Update'
+        }) %}
+    {% endif %}
+
+    <div {{ block('block_attributes') }}>
+        {% import '@OroUI/layouts/macros.html.twig' as LayoutUI %}
+        {{ LayoutUI.clientLink({
+            'aCss': 'btn btn--outlined btn--full',
+            'label': rfqBtnTrans,
+            'ariaLabel': rfqBtnTrans,
+            'ariaHaspopup': true,
+            'labelInIcon': false,
+            'pageComponent': {
+                'view': 'oroshoppinglist/js/app/views/shopping-list-view-proceed-confirmation',
+                'options': btnOptions
+            }
+        }) }}
+    </div>
+{% endblock %}

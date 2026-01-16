@@ -1,10 +1,13 @@
 aliases:
     oro/datagrid/action/add-notes-action$: oroshoppinglist/js/datagrid/action/add-notes-action
+    oro/datagrid/action/save-for-later-mass-action$: oroshoppinglist/js/datagrid/action/save-for-later-mass-action
+    oro/datagrid/action/remove-from-saved-for-later-mass-action$: oroshoppinglist/js/datagrid/action/remove-from-saved-for-later-mass-action
     oro/datagrid/action/add-products-mass-action$: oroshoppinglist/js/datagrid/action/add-products-mass-action
     oro/datagrid/action/delete-product-action$: oroshoppinglist/js/datagrid/action/delete-product-action
     oro/datagrid/action/move-products-mass-action$: oroshoppinglist/js/datagrid/action/move-products-mass-action
     oro/datagrid/action/update-configurable-product-action$: oroshoppinglist/js/datagrid/action/update-configurable-product-action
     oro/datagrid/action/update-product-kit-line-item-action$: oroshoppinglist/js/datagrid/action/update-product-kit-line-item-action
+    oro/datagrid/action/select-all-items-action$: oroshoppinglist/js/datagrid/action/select-all-items-action
     oro/datagrid/cell/shoppinglist-html-template-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-html-template-cell
     oro/datagrid/cell/shoppinglist-item-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-item-cell
     oro/datagrid/cell/shoppinglist-line-item-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-line-item-cell
@@ -17,6 +20,7 @@ aliases:
     oro/product-shopping-lists-widget$: oroshoppinglist/js/app/widget/product-shopping-lists-widget
     oro/shopping-list-create-widget$: oroshoppinglist/js/app/widget/shopping-list-create-widget
     oro/filter/composed-sku-string-filter$: orofrontend/default/js/app/views/choice-filter
+    oro/shopping-list-errors-modal-widget$: oroshoppinglist/js/app/widget/shopping-list-errors-modal-widget
 app-modules:
     - oroshoppinglist/js/app/modules/template-macros-module
 dynamic-imports:
@@ -26,6 +30,7 @@ dynamic-imports:
         - oro/product-kit-in-shopping-lists-widget
         - oro/product-shopping-lists-widget
         - oro/shopping-list-create-widget
+        - oro/shopping-list-errors-modal-widget
         - oroshoppinglist/js/app/components/shoppinglist-collection-component
         - oroshoppinglist/js/app/components/shoppinglist-widget-view-component
         - oroshoppinglist/js/app/views/product-add-to-shopping-list-view
@@ -34,6 +39,8 @@ dynamic-imports:
         - oroshoppinglist/js/app/views/shoppinglist-widget-view
     orodatagrid:
         - oro/datagrid/action/add-notes-action
+        - oro/datagrid/action/save-for-later-mass-action
+        - oro/datagrid/action/remove-from-saved-for-later-mass-action
         - oro/datagrid/action/add-products-mass-action
         - oro/datagrid/action/delete-product-action
         - oro/datagrid/action/move-products-mass-action
@@ -55,7 +62,9 @@ dynamic-imports:
         - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-representation-builder
         - oroshoppinglist/js/datagrid/builder/shoppinglist-rfp-confirmation-builder
         - oroshoppinglist/js/datagrid/builder/shoppinglist-product-kit-builder
+        - oroshoppinglist/js/datagrid/builder/shoppinglist-plugins-builder
         - oroshoppinglist/js/datagrid/builder/product-kit-in-shopping-list-plugins-builder
+        - oroshoppinglist/js/datagrid/builder/shoppinglist-invalid-items-builder
         - oroshoppinglist/js/datagrid/plugins/shopping-list-inline-editing-plugin
         - oroshoppinglist/js/datagrid/row/shopping-list-row
         - oroshoppinglist/js/inline-editing/shopping-list-editors
@@ -80,6 +89,9 @@ dynamic-imports:
         - oroshoppinglist/js/shopping-list-item-errors-handler
         - oroshoppinglist/js/shoppinglist-request-quote-confirmation
         - oroshoppinglist/js/app/views/shopping-list-add-notes-button-view
+        - oroshoppinglist/js/app/views/shopping-list-view-proceed-confirmation
+        - oroshoppinglist/js/app/views/shopping-list-errors-dialog-view
+        - oro/datagrid/action/select-all-items-action
         - tpl-loader!oroshoppinglist/templates/actions/add-notes-action.html
         - tpl-loader!oroshoppinglist/templates/datagrid/action/dialog-actions.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/inventory_status.html
@@ -93,8 +105,12 @@ dynamic-imports:
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/sku-with-action.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/sku-message.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/unit.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/invalid-items/cell/subtotal.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/invalid-items/cell/item.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/invalid-items/cell/line-item.html
         - tpl-loader!oroshoppinglist/templates/editor/shoppinglist-line-item-editor.html
         - tpl-loader!oroshoppinglist/templates/editor/shoppinglist-update-all-btn.html
+        - tpl-loader!oroshoppinglist/templates/datagrid/launchers/select-all-items-launcher.html
 map:
     '*':
         orodatagrid/js/app/components/cell-popup-editor-component: oroshoppinglist/js/app/components/shopping-list-cell-popup-editor-component

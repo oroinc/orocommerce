@@ -15,7 +15,7 @@ Feature: Allowed inventory statuses configuration
 
   Scenario: Check product availability for the Order/Quote in the select dropdown and on hamburger grid
     Given I go to Sales/Orders
-    When click "Create Order"
+    And click "Create Order"
     And click "Add Product"
     Then I should see the following options for "Product" select in form "Order Form":
       | SKU1 - Product1 |
@@ -224,16 +224,97 @@ Feature: Allowed inventory statuses configuration
   Scenario: Check that it is impossible to create Order from the shopping list with Discontinued product
     Given I proceed as the Manager
     When I open page with shopping list List 2
-    And click "Create Order"
-    Then I should see "Some products have not been added to this order. Please create an RFQ to request price."
-    And should not see "Product1"
+    Then I should see following "Frontend Shopping List Edit Grid" grid:
+      | SKU                                                                                                                                                                | Product  | Availability | Qty Update All | Price | Subtotal |
+      | SKU1                                                                                                                                                               | Product1 | Discontinued | 5 item         | $2.00 | $10.00   |
+      | This item can't be added to checkout because the inventory status is not supported. This item can't be added to RFQ because the inventory status is not supported. |          |              |                |       |          |
+      | SKU3                                                                                                                                                               | Product3 | In Stock     | 5 item         | $2.00 | $10.00   |
+
+    When I click "Create Order"
+    Then I should see next rows in "Frontend Customer User Shopping List Invalid Line Items Table" table without headers
+      | Product1 SKU1 5 items $2.00 $10.00                                                  |
+      | This item can't be added to checkout because the inventory status is not supported. |
+    When I click "Save For Later & Proceed"
+    And I click "Order products"
+    Then I should see following "Multi Shipping Checkout Line Items Grid" grid:
+      | SKU  | Product  | Qty | Price | Subtotal | Availability |
+      | SKU3 | Product3 | 5   | $2.00 | $10.00   | In Stock     |
+    And I should not see "Product1"
 
   Scenario: Check that it is impossible to create RFQ from the shopping list with Discontinued product
-    Given I open page with shopping list List 2
-    And click "Request Quote"
-    Then I should see "Some products are not available and cannot be added to RFQ: Product1 (Item # SKU1)"
+    When I open page with shopping list List 2
+    Then I should see following "Frontend Shopping List Edit Grid" grid:
+      | SKU  | Product  | Availability | Qty Update All | Price | Subtotal |
+      | SKU3 | Product3 | In Stock     | 5 item         | $2.00 | $10.00   |
+    And I should see following "Frontend Shopping List Saved For Later Line Items Grid" grid:
+      | SKU  | Product  | Availability | Qty    | Price | Subtotal |
+      | SKU1 | Product1 | Discontinued | 5 item | $2.00 | $10.00   |
 
-  Scenario: Check that it is impossible to create RFQ from the shopping list with Discontinued product
-    And click "Order History Menu"
-    When I click "Re-Order" on row "$23.00" in grid
-    Then should see "Please note that the current order differs from the original one due to the absence or insufficient quantity in stock of the following products: SKU1."
+    When I click "Remove From "Saved For Later"" on row "SKU1" in grid
+    And I click "Yes, Remove"
+    Then I should see following "Frontend Shopping List Edit Grid" grid:
+      | SKU                                                                                                                                                                | Product  | Availability | Qty    | Price | Subtotal |
+      | SKU1                                                                                                                                                               | Product1 | Discontinued | 5 item | $2.00 | $10.00   |
+      | This item can't be added to checkout because the inventory status is not supported. This item can't be added to RFQ because the inventory status is not supported. |          |              |        |       |          |
+      | SKU3                                                                                                                                                               | Product3 | In Stock     | 5 item | $2.00 | $10.00   |
+
+    When I click "Request Quote"
+    Then I should see next rows in "Frontend Customer User Shopping List Invalid Line Items Table" table without headers
+      | Product1 SKU1 5 items $2.00 $10.00                                             |
+      | This item can't be added to RFQ because the inventory status is not supported. |
+    When I click "Save For Later & Proceed"
+    Then Request a Quote contains products
+      | SKU3 - Product3 | 5 | item |
+    And I should not see "Product1"
+
+  Scenario: Check that it is impossible to re-order from the Order History with Discontinued product
+    When I click "Order History Menu"
+    And I click "Re-Order" on row "$23.00" in grid
+    Then I should see "Please note that the current order differs from the original one due to the absence or insufficient quantity in stock of the following products: SKU1."
+
+  Scenario: Disable Save for later
+    When I open page with shopping list List 2
+    Then I should see following "Frontend Shopping List Saved For Later Line Items Grid" grid:
+      | SKU  | Product  | Availability | Qty    | Price | Subtotal |
+      | SKU1 | Product1 | Discontinued | 5 item | $2.00 | $10.00   |
+    When I click "Remove From "Saved For Later"" on row "SKU1" in grid
+    And I click "Yes, Remove"
+    Then I should see following "Frontend Shopping List Edit Grid" grid:
+      | SKU                                                                                                                                                                | Product  | Availability | Qty    | Price | Subtotal |
+      | SKU1                                                                                                                                                               | Product1 | Discontinued | 5 item | $2.00 | $10.00   |
+      | This item can't be added to checkout because the inventory status is not supported. This item can't be added to RFQ because the inventory status is not supported. |          |              |        |       |          |
+      | SKU3                                                                                                                                                               | Product3 | In Stock     | 5 item | $2.00 | $10.00   |
+    Given I proceed as the Admin
+    And I go to System/Configuration
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
+    And I fill "Shopping List Configuration Form" with:
+      | Enable Save For Later Use default                            | false |
+      | Enable Save For Later                                        | false |
+    And I save setting
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Check that it is impossible to create Order from the shopping list with Discontinued product (delete invalid items)
+    Given I proceed as the Manager
+    When I open page with shopping list List 2
+    Then I should see following "Frontend Shopping List Edit Grid" grid:
+      | SKU                                                                                                                                                                | Product  | Availability | Qty Update All | Price | Subtotal |
+      | SKU1                                                                                                                                                               | Product1 | Discontinued | 5 item         | $2.00 | $10.00   |
+      | This item can't be added to checkout because the inventory status is not supported. This item can't be added to RFQ because the inventory status is not supported. |          |              |                |       |          |
+      | SKU3                                                                                                                                                               | Product3 | In Stock     | 5 item         | $2.00 | $10.00   |
+
+    When I click "Create Order"
+    Then I should see next rows in "Frontend Customer User Shopping List Invalid Line Items Table" table without headers
+      | Product1 SKU1 5 items $2.00 $10.00                                                  |
+      | This item can't be added to checkout because the inventory status is not supported. |
+    When I click "Delete All & Proceed"
+    And I click "Order products"
+    Then I should see following "Multi Shipping Checkout Line Items Grid" grid:
+      | SKU  | Product  | Qty | Price | Subtotal | Availability |
+      | SKU3 | Product3 | 5   | $2.00 | $10.00   | In Stock     |
+    And I should not see "Product1"
+    And I open page with shopping list List 2
+    Then I should see following "Frontend Shopping List Edit Grid" grid:
+      | SKU  | Product  | Availability | Qty Update All | Price | Subtotal |
+      | SKU3 | Product3 | In Stock     | 5 item         | $2.00 | $10.00   |
+    And I should not see "SKU1"
+    And I should not see "Product1"

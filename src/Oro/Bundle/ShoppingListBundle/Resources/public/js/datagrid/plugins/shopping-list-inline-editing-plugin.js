@@ -200,8 +200,13 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
         });
     },
 
-    onSaveComplete() {
-        mediator.trigger('shopping-list:refresh');
+    onSaveComplete(data) {
+        let eventName = 'shopping-list:refresh';
+
+        if (this.options?.themeOptions?.shoppingListEditItemPrefixEventName) {
+            eventName = `${this.options.themeOptions.shoppingListEditItemPrefixEventName}:updated`;
+        }
+        mediator.trigger(eventName, data);
 
         this.toggleUpdateAll();
     },

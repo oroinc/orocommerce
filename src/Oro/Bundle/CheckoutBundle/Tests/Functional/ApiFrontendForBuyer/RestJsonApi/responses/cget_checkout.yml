@@ -16,12 +16,12 @@ data:
             createdAt: '@checkout.ready_for_completion->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@checkout.ready_for_completion->updatedAt->format("Y-m-d\TH:i:s\Z")'
             shipToBillingAddress: false
-            totalValue: '100.5000'
+            totalValue: '121.4000'
             totals:
                 -
                     subtotalType: subtotal
                     description: Subtotal
-                    amount: '100.5000'
+                    amount: '121.4000'
         relationships:
             order:
                 data: null

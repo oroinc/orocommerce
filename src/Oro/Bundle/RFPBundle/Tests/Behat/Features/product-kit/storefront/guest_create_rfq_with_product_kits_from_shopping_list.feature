@@ -17,7 +17,8 @@ Feature: Guest create RFQ with Product Kits from Shopping List
     And I check "Enable Guest RFQ"
     And I save setting
     Then I should see "Configuration saved" flash message
-    When I follow "Commerce/Sales/Shopping List" on configuration sidebar
+    When I go to System/Configuration
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     And uncheck "Use default" for "Enable Guest Shopping List" field
     And I check "Enable Guest Shopping List"
     And I save setting

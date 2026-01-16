@@ -21,7 +21,7 @@ use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class FrontendShoppingListProductsProviderTest extends TestCase
+final class FrontendShoppingListProductsProviderTest extends TestCase
 {
     private LineItemRepository&MockObject $lineItemRepository;
     private FrontendProductPricesDataProvider&MockObject $frontendProductPricesDataProvider;

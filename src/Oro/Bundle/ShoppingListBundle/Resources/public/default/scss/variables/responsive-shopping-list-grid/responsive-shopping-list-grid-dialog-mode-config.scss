@@ -1,0 +1,11 @@
+/* @theme: default; */
+
+$responsive-shopping-list-grid-dialog-mode-border: 1px solid get-color('neutral', 'grey2') !default;
+$responsive-shopping-list-grid-dialog-mode-row-selected-bg-color: get-color('primary', 'light') !default;
+$responsive-shopping-list-grid-dialog-mode-toolbar-separator-border: 1px solid get-color('neutral', 'grey2') !default;
+
+$responsive-shopping-list-grid-dialog-mode-cell-color: get-color('text', 'secondary') !default;
+$responsive-shopping-list-grid-dialog-mode-cell-offset: 52px !default;
+$responsive-shopping-list-grid-dialog-mode-sku-cell-offset: 106px !default;
+
+$responsive-shopping-list-grid-dialog-mode-subtotal-cell-font-size: $base-font-size--s !default;

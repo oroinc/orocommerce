@@ -46,6 +46,7 @@ services:
             - '@oro_shopping_list.model.product_price_scope_criteria_factory'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: -10 }
+            - { name: oro_featuretogle.feature, feature: saved_for_later }
 
     oro_promotion.api.build_form_builder_for_checkout_coupon_subresource:
         class: Oro\Bundle\ApiBundle\Processor\Subresource\ChangeSubresource\BuildFormBuilder

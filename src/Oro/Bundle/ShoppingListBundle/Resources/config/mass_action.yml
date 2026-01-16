@@ -37,3 +37,37 @@ services:
             - '@request_stack'
             - '@oro_shopping_list.manager.shopping_list'
             - '@oro_shopping_list.manager.shopping_list_total'
+
+    oro_shopping_list.mass_action.save_for_later:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\SaveForLaterMassAction'
+        shared: false
+        tags:
+            - { name: oro_datagrid.extension.mass_action.type, type: save-for-later }
+
+    oro_shopping_list.mass_action.save_for_later_handler:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\SaveForLaterMassActionHandler'
+        public: true
+        arguments:
+            - '@doctrine'
+            - '@translator'
+            - '@security.authorization_checker'
+            - '@oro_shopping_list.manager.shopping_list'
+            - '@oro_shopping_list.manager.shopping_list_total'
+
+    oro_shopping_list.mass_action.remove_from_saved_for_later:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\RemoveFromSavedForLaterMassAction'
+        shared: false
+        tags:
+            - { name: oro_datagrid.extension.mass_action.type, type: remove-from-saved-for-later }
+
+    oro_shopping_list.mass_action.remove_from_saved_for_later_handler:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\SaveForLaterMassActionHandler'
+        public: true
+        arguments:
+            - '@doctrine'
+            - '@translator'
+            - '@security.authorization_checker'
+            - '@oro_shopping_list.manager.shopping_list'
+            - '@oro_shopping_list.manager.shopping_list_total'
+        calls:
+            - [setSaveForLaterFlag, [false]]

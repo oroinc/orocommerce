@@ -71,6 +71,13 @@ system_configuration:
             options:
                 label: oro.shoppinglist.system_configuration.fields.show_all_in_shopping_list_widget.label
                 tooltip: oro.shoppinglist.system_configuration.fields.show_all_in_shopping_list_widget.tooltip
+        oro_shopping_list.saved_for_later_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.shoppinglist.system_configuration.fields.saved_for_later_enabled.label
+                tooltip: oro.shoppinglist.system_configuration.fields.saved_for_later_enabled.tooltip
+                required: false
         oro_shopping_list.shopping_lists_max_line_items_per_page:
             data_type: integer
             type: Symfony\Component\Form\Extension\Core\Type\IntegerType
@@ -114,3 +121,4 @@ system_configuration:
                                             - oro_shopping_list.mass_adding_on_product_listing_enabled
                                             - oro_shopping_list.shopping_lists_max_line_items_per_page
                                             - oro_shopping_list.show_all_in_shopping_list_widget
+                                            - oro_shopping_list.saved_for_later_enabled

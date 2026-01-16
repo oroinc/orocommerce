@@ -54,6 +54,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         if ($this->getShoppingListLimit() !== $this->initialShoppingListLimit) {
             $this->setShoppingListLimit($this->initialShoppingListLimit);
         }
+        $this->initialShoppingListLimit = null;
         parent::tearDown();
     }
 
@@ -176,7 +177,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertEquals(3, $response->headers->get('X-Include-Total-Count'));
     }
 
-    public function testGetListWithLineItemsAndKits(): void
+    public function testGetListWithItemsAndKits(): void
     {
         // clear the entity manager to be sure that "compute prices" API processors work correctly
         $this->getEntityManager()->clear();
@@ -184,8 +185,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $response = $this->cget(
             ['entity' => 'shoppinglists'],
             [
-                'include' => 'items,items.kitItems',
-                'fields[shoppinglists]' => 'name,currency,total,subTotal,items',
+                'include' => 'items,items.kitItems,savedForLaterItems,savedForLaterItems.kitItems',
+                'fields[shoppinglists]' => 'name,currency,total,subTotal,items,savedForLaterItems',
                 'fields[shoppinglistitems]' => 'currency,value,quantity,subTotal,kitItems',
                 'fields[shoppinglistkititems]' => 'currency,value,quantity,subTotal'
             ],
@@ -196,7 +197,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertEquals(3, $response->headers->get('X-Include-Total-Count'));
     }
 
-    public function testGetListWithLineItemsAndWithoutKits(): void
+    public function testGetListWithItemsAndWithoutKits(): void
     {
         // clear the entity manager to be sure that "compute prices" API processors work correctly
         $this->getEntityManager()->clear();
@@ -204,8 +205,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $response = $this->cget(
             ['entity' => 'shoppinglists'],
             [
-                'include' => 'items,items.kitItems',
-                'fields[shoppinglists]' => 'name,currency,total,subTotal,items',
+                'include' => 'items,items.kitItems,savedForLaterItems,savedForLaterItems.kitItems',
+                'fields[shoppinglists]' => 'name,currency,total,subTotal,items,savedForLaterItems',
                 'fields[shoppinglistitems]' => 'currency,value,quantity,subTotal'
             ],
             ['HTTP_X-Include' => 'totalCount']
@@ -239,13 +240,13 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_shopping_list.yml', $response);
     }
 
-    public function testGetWithTotalOnlyIncludingSubTotalForLineItemsAndKits(): void
+    public function testGetWithTotalOnlyIncludingSubTotalForItemsAndKits(): void
     {
         $response = $this->get(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>'],
             [
-                'include' => 'items,items.kitItems',
-                'fields[shoppinglists]' => 'total,subTotal,items',
+                'include' => 'items,items.kitItems,savedForLaterItems,savedForLaterItems.kitItems',
+                'fields[shoppinglists]' => 'total,subTotal,items,savedForLaterItems',
                 'fields[shoppinglistitems]' => 'subTotal,kitItems',
                 'fields[shoppinglistkititems]' => 'subTotal'
             ]
@@ -544,6 +545,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $totalId = $this->getShoppingListTotal($shoppingListId)->getId();
         $lineItem1Id = $this->getReference('line_item1')->getId();
         $lineItem2Id = $this->getReference('line_item2')->getId();
+        $savedForLaterItem1Id = $this->getReference('saved_for_later_line_item1')->getId();
 
         $this->delete(
             ['entity' => 'shoppinglists', 'id' => (string)$shoppingListId]
@@ -555,7 +557,12 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $shoppingListTotal = $this->getEntityManager()->find(ShoppingListTotal::class, $totalId);
         self::assertTrue(null === $shoppingListTotal);
 
-        $deletedLineItemIds = ['line_item1' => $lineItem1Id, 'line_item2' => $lineItem2Id];
+        $deletedLineItemIds = [
+            'line_item1' => $lineItem1Id,
+            'line_item2' => $lineItem2Id,
+            'saved_for_later_line_item1' => $savedForLaterItem1Id
+        ];
+
         foreach ($deletedLineItemIds as $deletedLineItemReference => $deletedLineItemId) {
             $deletedLineItem = $this->getEntityManager()->find(LineItem::class, $deletedLineItemId);
             self::assertTrue(null === $deletedLineItem, $deletedLineItemReference);
@@ -623,6 +630,38 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
 
         $deletedLineItem = $this->getEntityManager()->find(LineItem::class, $lineItem2Id);
         self::assertTrue(null === $deletedLineItem);
+    }
+
+    public function testTryToUpdateSavedForLaterItems(): void
+    {
+        $shoppingListId = $this->getReference('shopping_list1')->getId();
+        $lineItem1Id = $this->getReference('line_item1')->getId();
+        $data = [
+            'data' => [
+                'type' => 'shoppinglists',
+                'id' => (string)$shoppingListId,
+                'relationships' => [
+                    'savedForLaterItems' => [
+                        'data' => [
+                            ['type' => 'shoppinglistitems', 'id' => (string)$lineItem1Id]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $response = $this->patch(
+            ['entity' => 'shoppinglists', 'id' => (string)$shoppingListId],
+            $data
+        );
+
+        $data['data']['attributes']['currency'] = 'USD';
+        $data['data']['attributes']['total'] = '59.1500';
+        $data['data']['attributes']['subTotal'] = '59.1500';
+        $data['data']['relationships']['savedForLaterItems']['data'] = [
+            ['type' => 'shoppinglistitems', 'id' => '<toString(@saved_for_later_line_item1->id)>']
+        ];
+        $this->assertResponseContains($data, $response);
     }
 
     public function testTryToCreateWhenCustomerUserDoesNotBelongsToCustomer(): void
@@ -1857,6 +1896,36 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
+    public function testGetSubresourceSavedForLaterItems(): void
+    {
+        // clear the entity manager to be sure that "compute prices" API processors work correctly
+        $this->getEntityManager()->clear();
+
+        $response = $this->getSubresource([
+            'entity' => 'shoppinglists',
+            'id' => '<toString(@shopping_list1->id)>',
+            'association' => 'savedForLaterItems'
+        ]);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type' => 'shoppinglistitems',
+                        'id' => '<toString(@saved_for_later_line_item1->id)>',
+                        'attributes' => [
+                            'quantity' => 5,
+                            'currency' => 'USD',
+                            'value' => '1.2300',
+                            'subTotal' => '6.1500'
+                        ]
+                    ],
+                ]
+            ],
+            $response
+        );
+    }
+
     public function testTryToUpdateSubresourceRelationshipItems(): void
     {
         $response = $this->patchSubresource(
@@ -1869,6 +1938,18 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertAllowResponseHeader($response, 'OPTIONS, GET, POST');
     }
 
+    public function testTryToUpdateSubresourceRelationshipSavedForLaterItems(): void
+    {
+        $params = [
+            'entity' => 'shoppinglists',
+            'id' => '<toString(@shopping_list1->id)>',
+            'association' => 'savedForLaterItems'
+        ];
+        $response = $this->patchSubresource($params, [], [], false);
+
+        self::assertAllowResponseHeader($response, 'OPTIONS, GET');
+    }
+
     public function testTryToDeleteSubresourceRelationshipItems(): void
     {
         $response = $this->deleteSubresource(
@@ -1879,6 +1960,18 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
 
         self::assertAllowResponseHeader($response, 'OPTIONS, GET, POST');
+    }
+
+    public function testTryToDeleteSubresourceRelationshipSavedForLaterItems(): void
+    {
+        $params = [
+            'entity' => 'shoppinglists',
+            'id' => '<toString(@shopping_list1->id)>',
+            'association' => 'savedForLaterItems'
+        ];
+        $response = $this->deleteSubresource($params, [], [], false);
+
+        self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }
 
     public function testGetRelationshipItems(): void
@@ -1899,6 +1992,24 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
+    public function testGetRelationshipSavedForLaterItems(): void
+    {
+        $response = $this->getRelationship([
+            'entity' => 'shoppinglists',
+            'id' => '<toString(@shopping_list1->id)>',
+            'association' => 'savedForLaterItems'
+        ]);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'shoppinglistitems', 'id' => '<toString(@saved_for_later_line_item1->id)>'],
+                ]
+            ],
+            $response
+        );
+    }
+
     public function testTryToUpdateRelationshipItems(): void
     {
         $response = $this->patchRelationship(
@@ -1907,6 +2018,19 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
+
+        self::assertAllowResponseHeader($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToUpdateRelationshipSavedForLaterItems(): void
+    {
+        $params = [
+            'entity' => 'shoppinglists',
+            'id' => '<toString(@shopping_list1->id)>',
+            'association' => 'savedForLaterItems'
+        ];
+
+        $response = $this->patchRelationship($params, [], [], false);
 
         self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }
@@ -1923,6 +2047,19 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }
 
+    public function testTryToAddRelationshipSavedForLaterItems(): void
+    {
+        $params = [
+            'entity' => 'shoppinglists',
+            'id' => '<toString(@shopping_list1->id)>',
+            'association' => 'savedForLaterItems'
+        ];
+
+        $response = $this->postRelationship($params, [], [], false);
+
+        self::assertAllowResponseHeader($response, 'OPTIONS, GET');
+    }
+
     public function testTryToDeleteRelationshipItems(): void
     {
         $response = $this->deleteRelationship(
@@ -1931,6 +2068,19 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
+
+        self::assertAllowResponseHeader($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToDeleteRelationshipSavedForLaterItems(): void
+    {
+        $params = [
+            'entity' => 'shoppinglists',
+            'id' => '<toString(@shopping_list1->id)>',
+            'association' => 'savedForLaterItems'
+        ];
+
+        $response = $this->deleteRelationship($params, [], [], false);
 
         self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }

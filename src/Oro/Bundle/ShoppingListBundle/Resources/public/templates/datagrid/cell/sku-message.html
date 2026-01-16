@@ -8,13 +8,13 @@
     <%= oroshoppinglist.renderWarnings({warnings: obj.warnings}) %>
     <%= oroshoppinglist.renderUpcoming({isUpcoming: obj.isUpcoming, availabilityDate: obj.availabilityDate}) %>
     <% if (obj.success && obj.message) { %>
-    <div class="notification--success" role="alert">
-        <%= oroui.renderIcon({
-            name: 'check-circle',
-            class: 'theme-icon theme-icon--small'
-        }) %>
-        <span class="notification__text"><%- obj.message %></span>
-    </div>
+        <div class="notification--success" role="alert">
+            <%= oroui.renderIcon({
+                name: 'check-circle',
+                class: 'theme-icon theme-icon--small'
+            }) %>
+            <span class="notification__text"><%- obj.message %></span>
+        </div>
     <% } %>
 </div>
 <% } %>

@@ -51,6 +51,26 @@ class ShoppingListManagerTest extends WebTestCase
         self::assertCount(2, $shoppingList->getLineItems());
     }
 
+    public function testAddLineItemForSavedForLater(): void
+    {
+        /** @var Product $productKit */
+        $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        $lineItem = $this->productKitLineItemFactory->createProductKitLineItem($productKit);
+
+        $lineItem->setSavedForLaterList($shoppingList);
+        $lineItem->removeShoppingList();
+
+        self::assertCount(1, $shoppingList->getLineItems());
+        self::assertCount(0, $shoppingList->getSavedForLaterLineItems());
+
+        $this->shoppingListManager->addLineItem($lineItem, $shoppingList);
+
+        self::assertCount(1, $shoppingList->getLineItems());
+        self::assertCount(1, $shoppingList->getSavedForLaterLineItems());
+    }
+
     public function testAddLineItemForProductKitWhenLineItemIsDuplicate(): void
     {
         $this->client->request('GET', '/'); // any page to set default currency
@@ -144,6 +164,29 @@ class ShoppingListManagerTest extends WebTestCase
         $this->shoppingListManager->removeLineItem($lineItem, true);
 
         self::assertCount(1, $shoppingList->getLineItems(), '$newLineItem was not expected to be removed');
+    }
+
+    public function testRemoveLineItemForSavedForLater(): void
+    {
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getReference(LoadShoppingListProductKitLineItems::LINE_ITEM_1);
+        $shoppingList = $lineItem->getShoppingList();
+
+        self::assertCount(1, $shoppingList->getLineItems());
+
+        $newLineItem = $this->productKitLineItemFactory->createProductKitLineItem($lineItem->getProduct());
+        $newLineItem->setSavedForLaterList($shoppingList);
+        $newLineItem->removeShoppingList();
+
+        $this->shoppingListManager->addLineItem($newLineItem, $shoppingList);
+
+        self::assertCount(1, $shoppingList->getLineItems());
+        self::assertCount(1, $shoppingList->getSavedForLaterLineItems());
+
+        $this->shoppingListManager->removeLineItem($newLineItem, true);
+
+        self::assertCount(1, $shoppingList->getLineItems());
+        self::assertCount(0, $shoppingList->getSavedForLaterLineItems());
     }
 
     public function testRemoveLineItemForProductKitWhenThereAreMultipleProductKitLineItems(): void

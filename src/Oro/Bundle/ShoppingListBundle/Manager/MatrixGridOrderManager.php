@@ -306,10 +306,14 @@ class MatrixGridOrderManager
      * @param Product      $product
      * @param LineItem[]   $lineItems
      */
-    public function addEmptyMatrixIfAllowed(ShoppingList $shoppingList, Product $product, array $lineItems): void
-    {
+    public function addEmptyMatrixIfAllowed(
+        ShoppingList $shoppingList,
+        Product $product,
+        array $lineItems,
+        bool $savedForLater = false
+    ): void {
         if ($this->emptyMatrixGridManager->isAddEmptyMatrixAllowed($lineItems)) {
-            $this->emptyMatrixGridManager->addEmptyMatrix($shoppingList, $product);
+            $this->emptyMatrixGridManager->addEmptyMatrix($shoppingList, $product, $savedForLater);
         }
     }
 }

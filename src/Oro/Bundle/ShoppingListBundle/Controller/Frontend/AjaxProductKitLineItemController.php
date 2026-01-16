@@ -105,7 +105,7 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
             return new JsonResponse(['successful' => false, 'messages' => $messages], 400);
         }
 
-        $shoppingList = $productKitLineItem->getShoppingList();
+        $shoppingList = $productKitLineItem->getAssociatedList();
         $this->checkShoppingListAcl($shoppingList);
 
         $form = $this->createForm(

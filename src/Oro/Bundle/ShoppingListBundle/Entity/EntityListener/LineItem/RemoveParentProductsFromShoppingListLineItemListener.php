@@ -7,11 +7,14 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 /**
  * Removes the line item with the product specified as parent product of the currently persisted line item.
+ * Replaced by RemoveParentAndVariantLineItemsFromShoppingListListener, will be removed in master
  */
 class RemoveParentProductsFromShoppingListLineItemListener
 {
     public function prePersist(LineItem $lineItem, LifecycleEventArgs $event): void
     {
+        return;
+
         if (!$lineItem->getParentProduct()) {
             return;
         }

@@ -29,11 +29,11 @@ Feature: Checkout With Multi Shipping And Suborders Creation
     And I signed in as AmandaRCole@example.org on the store frontend
     And I open page with shopping list List 1
     And I should see following "Multi Shipping Shopping List" grid:
-      | SKU  | Product                             | Price  | Subtotal |
-      | SKU1 | 400-Watt Bulb Work Light            | $2.00  | $10.00   |
-      | SKU2 | iPhone 13                           | $2.00  | $20.00   |
-      | SKU3 | iPhone X                            | $2.00  | $20.00   |
-      | SKU4 | Round Meeting Table, 30 in. x 30in. |        |          |
+      | SKU  | Product                             | Price | Subtotal |
+      | SKU1 | 400-Watt Bulb Work Light            | $2.00 | $10.00   |
+      | SKU2 | iPhone 13                           | $2.00 | $20.00   |
+      | SKU3 | iPhone X                            | $2.00 | $20.00   |
+      | SKU4 | Round Meeting Table, 30 in. x 30in. | $0.00 | $0.00    |
     And I should see notification "This product will be available later" for "SKU1" line item "Checkout Line Item"
     And I should see notification "This product will be available later" for "SKU3" line item "Checkout Line Item"
     When I click "Create Order"
@@ -41,35 +41,37 @@ Feature: Checkout With Multi Shipping And Suborders Creation
     # Grouped line items grids should be visible starting from first step.
     And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Product                  | Qty | Price  | Subtotal |
-      | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
+      | SKU  | Product                  | Qty | Price | Subtotal |
+      | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00 | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I click "Phones"
     And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Product   | Qty | Price  | Subtotal |
-      | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
-      | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
-    And records in "Second Checkout Shipping Grid" should be 2
+      | SKU  | Product                             | Qty | Price | Subtotal |
+      | SKU2 | iPhone 13                           | 10  | $2.00 | $20.00   |
+      | SKU3 | iPhone X                            | 10  | $2.00 | $20.00   |
+      | SKU4 | Round Meeting Table, 30 in. x 30in. | 10  | $0.00 | $0.00    |
+    And records in "Second Checkout Shipping Grid" should be 3
     And I click "Continue"
     Then Page title equals to "Shipping Information - Checkout"
     And I click "Continue"
     Then Page title equals to "Shipping Method - Checkout"
     And I should see an "Lighting Products Checkout Category Name" element
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Product                  | Qty | Price  | Subtotal | Shipping {{ "type": "visible_value" }} |
-      | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   | Flat Rate $3.00                        |
+      | SKU  | Product                  | Qty | Price | Subtotal | Shipping {{ "type": "visible_value" }} |
+      | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00 | $10.00   | Flat Rate $3.00                        |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Product   | Qty | Price  | Subtotal | Shipping {{ "type": "visible_value" }} |
-      | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate $3.00                        |
-      | SKU3 | iPhone X  | 10  | $2.00  | $20.00   | Flat Rate $3.00                        |
-    And records in "Second Checkout Shipping Grid" should be 2
+      | SKU  | Product                             | Qty | Price | Subtotal | Shipping {{ "type": "visible_value" }} |
+      | SKU2 | iPhone 13                           | 10  | $2.00 | $20.00   | Flat Rate $3.00                        |
+      | SKU3 | iPhone X                            | 10  | $2.00 | $20.00   | Flat Rate $3.00                        |
+      | SKU4 | Round Meeting Table, 30 in. x 30in. | 10  | $0.00 | $0.00    | Flat Rate $3.00                        |
+    And records in "Second Checkout Shipping Grid" should be 3
     And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
       | Subtotal | $50.00 |
-      | Shipping | $9.00  |
+      | Shipping | $12.00 |
     When I click "Continue"
     Then Page title equals to "Payment - Checkout"
     And I click "Continue"
@@ -98,12 +100,12 @@ Feature: Checkout With Multi Shipping And Suborders Creation
       | SimpleOrder  | John Doe |
     And number of records should be 4
     # Click on order number 2
-    When I click view "$59.00" in grid
+    When I click view "$62.00" in grid
     Then I should see "Sub-Orders"
     When I scroll to "SubOrders Grid"
     Then I should see following "SubOrders Grid" grid:
       | Order Number | Total  |
-      | 2-2          | $46.00 |
+      | 2-2          | $49.00 |
       | 2-1          | $13.00 |
     And records in "SubOrders Grid" should be 2
     When I click "View" on row "$13.00" in grid "SubOrders Grid"
@@ -116,14 +118,15 @@ Feature: Checkout With Multi Shipping And Suborders Creation
     When I click "#2"
     Then I should see "Sub-Orders"
     When I scroll to "SubOrders Grid"
-    When I click "View" on row "$46.00" in grid "SubOrders Grid"
+    When I click "View" on row "$49.00" in grid "SubOrders Grid"
     Then I should see "Order #2-2"
     And I should see "Main Order #2"
     And I should see following "BackendOrderLineItemsGrid" grid:
       | Sku  |
       | SKU2 |
       | SKU3 |
-    And number of records should be 2
+      | SKU4 |
+    And number of records should be 3
 
   Scenario: Hide suborders in order history
     Given I go to System/Configuration

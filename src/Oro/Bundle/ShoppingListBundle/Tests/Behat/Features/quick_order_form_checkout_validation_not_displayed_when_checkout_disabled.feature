@@ -16,6 +16,7 @@ Feature: Quick Order Form Checkout Validation Not Displayed When Checkout Disabl
       |Enable Guest Quick Order Form Default|false|
       |Enable Guest Quick Order Form        |true |
     And click "Save settings"
+    Then I should see "Configuration saved" flash message
 
   Scenario: Enable guest checkout and shopping list
     When go to System/Configuration
@@ -25,7 +26,8 @@ Feature: Quick Order Form Checkout Validation Not Displayed When Checkout Disabl
       | Enable Guest Checkout         | false |
     And click "Save settings"
     Then I should see "Configuration saved" flash message
-    When I follow "Commerce/Sales/Shopping List" on configuration sidebar
+    When go to System/Configuration
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     And fill "Shopping List Configuration Form" with:
       | Enable Guest Shopping List Default | false |
       | Enable Guest Shopping List         | true  |

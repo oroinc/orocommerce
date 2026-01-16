@@ -20,7 +20,6 @@ layout:
             optionName: grid_render_parameters.themeOptions.disableStickedScrollbar
             optionValue: true
 
-
         - '@setOption':
             id: __datagrid
             optionName: split_to_cells
@@ -39,6 +38,7 @@ layout:
                 cellLauncherOptions:
                     launcherMode: 'icon-only'
                     dropdownLauncherMode: 'icon-text'
+                selectCellEventActionName: 'backgrid:selectAllVisible'
 
         - '@appendOption':
             id: __datagrid

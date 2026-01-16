@@ -1620,6 +1620,9 @@ services:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData, priority: 100 }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: 100 }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData, priority: 100 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-saved-for-later-grid, method: onLineItemData, priority: 100 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-saved-for-later-edit-grid, method: onLineItemData, priority: 100 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-invalid-line-items-grid, method: onLineItemData, priority: 100 }
 
     oro_pricing.event_listener.product_autocomplete:
         class: Oro\Bundle\PricingBundle\EventListener\ProductAutocompleteListener

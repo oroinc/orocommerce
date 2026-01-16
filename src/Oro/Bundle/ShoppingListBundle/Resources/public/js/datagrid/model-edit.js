@@ -46,6 +46,16 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
         return this.collection.get(this.get('messageModelId'));
     },
 
+    /**
+     * Get related models by ids
+     *
+     * @param {string[]} ids
+     * @returns
+     */
+    getRelatedModels(ids = []) {
+        return this.collection.filter(model => ids.includes(model.id));
+    },
+
     highlightRow(type = 'success') {
         this.classList().add(type);
         const messageModel = this.getMessageModel();

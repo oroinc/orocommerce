@@ -32,6 +32,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.LongClass)
  */
 class ShoppingListManagerTest extends TestCase
 {
@@ -278,6 +282,24 @@ class ShoppingListManagerTest extends TestCase
         self::assertNull($lineItem->getOrganization());
     }
 
+    /**
+     * @dataProvider addLineItemDataProvider
+     */
+    public function testAddSavedForLaterLineItem(LineItem $lineItem): void
+    {
+        $shoppingList = new ShoppingList();
+        $lineItem->setSavedForLaterList(new ShoppingList());
+
+        $this->em->expects(self::exactly(2))
+            ->method('persist')
+            ->withConsecutive([$lineItem], [$shoppingList]);
+
+        $this->manager->addLineItem($lineItem, $shoppingList);
+        self::assertCount(1, $shoppingList->getSavedForLaterLineItems());
+        self::assertNull($lineItem->getCustomerUser());
+        self::assertNull($lineItem->getOrganization());
+    }
+
     public function addLineItemDataProvider(): array
     {
         $configurableLineItem = new LineItem();
@@ -312,6 +334,23 @@ class ShoppingListManagerTest extends TestCase
         self::assertEquals($checksum, $lineItem->getChecksum());
     }
 
+    public function testAddSavedForLaterLineItemWithChecksum(): void
+    {
+        $shoppingList = new ShoppingList();
+        $lineItem = new LineItem();
+        $lineItem->setSavedForLaterList(new ShoppingList());
+        $checksum = 'sample_checksum';
+
+        $this->lineItemChecksumGenerator->expects(self::once())
+            ->method('getChecksum')
+            ->with($lineItem)
+            ->willReturn($checksum);
+
+        $this->manager->addLineItem($lineItem, $shoppingList);
+        self::assertCount(1, $shoppingList->getSavedForLaterLineItems());
+        self::assertEquals($checksum, $lineItem->getChecksum());
+    }
+
     public function testAddLineItemWithShoppingListData(): void
     {
         $shoppingList = new ShoppingList();
@@ -321,6 +360,20 @@ class ShoppingListManagerTest extends TestCase
 
         $this->manager->addLineItem($lineItem, $shoppingList);
         self::assertCount(1, $shoppingList->getLineItems());
+        self::assertSame($shoppingList->getCustomerUser(), $lineItem->getCustomerUser());
+        self::assertSame($shoppingList->getOrganization(), $lineItem->getOrganization());
+    }
+
+    public function testAddSavedForLaterLineItemWithShoppingListData(): void
+    {
+        $shoppingList = new ShoppingList();
+        $shoppingList->setCustomerUser(new CustomerUser());
+        $shoppingList->setOrganization(new Organization());
+        $lineItem = new LineItem();
+        $lineItem->setSavedForLaterList(new ShoppingList());
+
+        $this->manager->addLineItem($lineItem, $shoppingList);
+        self::assertCount(1, $shoppingList->getSavedForLaterLineItems());
         self::assertSame($shoppingList->getCustomerUser(), $lineItem->getCustomerUser());
         self::assertSame($shoppingList->getOrganization(), $lineItem->getOrganization());
     }
@@ -347,6 +400,32 @@ class ShoppingListManagerTest extends TestCase
         self::assertCount(1, $shoppingList->getLineItems());
         /** @var LineItem $resultingItem */
         $resultingItem = $shoppingList->getLineItems()->first();
+        self::assertEquals(15, $resultingItem->getQuantity());
+    }
+
+    public function testAddSavedForLaterLineItemDuplicate(): void
+    {
+        $shoppingList = $this->getShoppingList(1);
+        $this->em->expects(self::exactly(2))
+            ->method('flush');
+
+        $lineItem = new LineItem();
+        $lineItem->setUnit($this->getProductUnit('test', 1));
+        $lineItem->setQuantity(10);
+        $lineItem->setSavedForLaterList(new ShoppingList());
+
+        $this->lineItemRepository->expects(self::exactly(2))
+            ->method('findDuplicateInShoppingList')
+            ->willReturnOnConsecutiveCalls(null, $lineItem);
+
+        $this->manager->addLineItem($lineItem, $shoppingList);
+        self::assertCount(1, $shoppingList->getSavedForLaterLineItems());
+        $lineItemDuplicate = clone $lineItem;
+        $lineItemDuplicate->setQuantity(5);
+        $this->manager->addLineItem($lineItemDuplicate, $shoppingList);
+        self::assertCount(1, $shoppingList->getSavedForLaterLineItems());
+        /** @var LineItem $resultingItem */
+        $resultingItem = $shoppingList->getSavedForLaterLineItems()->first();
         self::assertEquals(15, $resultingItem->getQuantity());
     }
 
@@ -384,6 +463,41 @@ class ShoppingListManagerTest extends TestCase
         self::assertEquals(20, $resultingItem->getQuantity());
     }
 
+    public function testAddSavedForLaterLineItemDuplicateWhenAlreadyAdded(): void
+    {
+        $shoppingList = $this->getShoppingList(1);
+        $this->em->expects(self::exactly(3))
+            ->method('flush');
+
+        $unitItem = $this->getProductUnit('item', 1);
+        $unitEach = $this->getProductUnit('each', 1);
+
+        $lineItem = new LineItem();
+        $lineItem->setUnit($unitItem);
+        $lineItem->setQuantity(10);
+        $lineItem->setSavedForLaterList(new ShoppingList());
+
+        $this->lineItemRepository->expects(self::exactly(3))
+            ->method('findDuplicateInShoppingList')
+            ->willReturnOnConsecutiveCalls(null, null, $lineItem);
+
+        $this->manager->addLineItem($lineItem, $shoppingList);
+        $lineItemDuplicate = clone $lineItem;
+        $lineItemDuplicate->setUnit($unitEach);
+
+        $this->manager->addLineItem($lineItemDuplicate, $shoppingList);
+        self::assertCount(2, $shoppingList->getSavedForLaterLineItems());
+
+        $lineItemDuplicate->setUnit($unitItem);
+
+        $this->manager->addLineItem($lineItemDuplicate, $shoppingList);
+        self::assertCount(1, $shoppingList->getSavedForLaterLineItems());
+
+        /** @var LineItem $resultingItem */
+        $resultingItem = $shoppingList->getSavedForLaterLineItems()->first();
+        self::assertEquals(20, $resultingItem->getQuantity());
+    }
+
     public function testAddLineItemDuplicateAndConcatNotes(): void
     {
         $shoppingList = $this->getShoppingList(1);
@@ -409,6 +523,35 @@ class ShoppingListManagerTest extends TestCase
 
         /** @var LineItem $resultingItem */
         $resultingItem = $shoppingList->getLineItems()->first();
+        self::assertSame('Notes Duplicated Notes', $resultingItem->getNotes());
+    }
+
+    public function testAddSavedForLaterLineItemDuplicateAndConcatNotes(): void
+    {
+        $shoppingList = $this->getShoppingList(1);
+        $this->em->expects(self::exactly(2))
+            ->method('flush');
+
+        $lineItem = new LineItem();
+        $lineItem->setUnit($this->getProductUnit('test', 1));
+        $lineItem->setNotes('Notes');
+        $lineItem->setSavedForLaterList(new ShoppingList());
+
+        $this->lineItemRepository->expects(self::exactly(2))
+            ->method('findDuplicateInShoppingList')
+            ->willReturnOnConsecutiveCalls(null, $lineItem);
+
+        $this->manager->addLineItem($lineItem, $shoppingList);
+
+        $lineItemDuplicate = clone $lineItem;
+        $lineItemDuplicate->setNotes('Duplicated Notes');
+
+        $this->manager->addLineItem($lineItemDuplicate, $shoppingList, true, true);
+
+        self::assertCount(1, $shoppingList->getSavedForLaterLineItems());
+
+        /** @var LineItem $resultingItem */
+        $resultingItem = $shoppingList->getSavedForLaterLineItems()->first();
         self::assertSame('Notes Duplicated Notes', $resultingItem->getNotes());
     }
 

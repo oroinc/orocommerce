@@ -24,6 +24,9 @@ use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class EmptyMatrixGridManagerTest extends TestCase
 {
     private DoctrineHelper&MockObject $doctrineHelper;
@@ -98,6 +101,36 @@ class EmptyMatrixGridManagerTest extends TestCase
         $this->manager->addEmptyMatrix($shoppingList, $product);
     }
 
+    public function testAddSavedForLaterEmptyMatrixShoppingListHasProductVariants(): void
+    {
+        $shoppingList = new ShoppingList();
+        $unit = new ProductUnit();
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision->setUnit($unit);
+
+        $product = $this->getProduct(100, Product::TYPE_CONFIGURABLE);
+        $product->setPrimaryUnitPrecision($unitPrecision);
+        $product->addVariantLink(new ProductVariantLink($product, $this->getProduct(1, Product::TYPE_SIMPLE)));
+        $product->addVariantLink(new ProductVariantLink($product, $this->getProduct(2, Product::TYPE_SIMPLE)));
+
+        $repository = $this->createMock(EntityRepository::class);
+        $repository->expects(self::once())
+            ->method('findOneBy')
+            ->with(['savedForLaterList' => $shoppingList, 'unit' => $unit, 'parentProduct' => $product])
+            ->willReturn(new LineItem());
+
+        $this->doctrineHelper->expects(self::once())
+            ->method('getEntityRepository')
+            ->with(LineItem::class)
+            ->willReturn($repository);
+
+        $this->doctrineHelper->expects(self::never())
+            ->method('getEntityManagerForClass');
+
+        $this->manager->addEmptyMatrix($shoppingList, $product, true);
+    }
+
     public function testAddEmptyMatrixShoppingListHasConfigurableProduct(): void
     {
         $shoppingList = new ShoppingList();
@@ -129,6 +162,39 @@ class EmptyMatrixGridManagerTest extends TestCase
             ->method('getEntityManagerForClass');
 
         $this->manager->addEmptyMatrix($shoppingList, $product);
+    }
+
+    public function testAddSavedForLaterEmptyMatrixShoppingListHasConfigurableProduct(): void
+    {
+        $shoppingList = new ShoppingList();
+        $unit = new ProductUnit();
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision->setUnit($unit);
+
+        $product = $this->getProduct(100, Product::TYPE_CONFIGURABLE);
+        $product->setPrimaryUnitPrecision($unitPrecision);
+        $product->addVariantLink(new ProductVariantLink($product, $this->getProduct(1, Product::TYPE_SIMPLE)));
+        $product->addVariantLink(new ProductVariantLink($product, $this->getProduct(1, Product::TYPE_SIMPLE)));
+
+        $repository = $this->createMock(EntityRepository::class);
+        $repository->expects(self::exactly(2))
+            ->method('findOneBy')
+            ->withConsecutive(
+                [['savedForLaterList' => $shoppingList, 'unit' => $unit, 'parentProduct' => $product]],
+                [['savedForLaterList' => $shoppingList, 'unit' => $unit, 'product' => $product]]
+            )
+            ->willReturnOnConsecutiveCalls(null, new LineItem());
+
+        $this->doctrineHelper->expects(self::exactly(2))
+            ->method('getEntityRepository')
+            ->with(LineItem::class)
+            ->willReturn($repository);
+
+        $this->doctrineHelper->expects(self::never())
+            ->method('getEntityManagerForClass');
+
+        $this->manager->addEmptyMatrix($shoppingList, $product, true);
     }
 
     public function testAddEmptyMatrix(): void
@@ -178,6 +244,55 @@ class EmptyMatrixGridManagerTest extends TestCase
             ->willReturn($entityManager);
 
         $this->manager->addEmptyMatrix($shoppingList, $product);
+    }
+
+    public function testAddSavedForLaterListEmptyMatrix(): void
+    {
+        $shoppingList = new ShoppingList();
+        $unit = new ProductUnit();
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision->setUnit($unit);
+
+        $product = $this->getProduct(100, Product::TYPE_CONFIGURABLE);
+        $product->setPrimaryUnitPrecision($unitPrecision);
+        $product->addVariantLink(new ProductVariantLink($product, $this->getProduct(1, Product::TYPE_SIMPLE)));
+        $product->addVariantLink(new ProductVariantLink($product, $this->getProduct(2, Product::TYPE_SIMPLE)));
+
+        $repository = $this->createMock(EntityRepository::class);
+        $repository->expects(self::exactly(2))
+            ->method('findOneBy')
+            ->withConsecutive(
+                [['savedForLaterList' => $shoppingList, 'unit' => $unit, 'parentProduct' => $product]],
+                [['savedForLaterList' => $shoppingList, 'unit' => $unit, 'product' => $product]]
+            )
+            ->willReturnOnConsecutiveCalls(null, null);
+
+        $lineItem = new LineItem();
+
+        $this->lineItemFactory->expects(self::once())
+            ->method('create')
+            ->with($shoppingList, $product)
+            ->willReturn($lineItem);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects(self::once())
+            ->method('persist')
+            ->with($lineItem);
+        $entityManager->expects(self::once())
+            ->method('flush');
+
+        $this->doctrineHelper->expects(self::exactly(2))
+            ->method('getEntityRepository')
+            ->with(LineItem::class)
+            ->willReturn($repository);
+
+        $this->doctrineHelper->expects(self::once())
+            ->method('getEntityManagerForClass')
+            ->with(LineItem::class)
+            ->willReturn($entityManager);
+
+        $this->manager->addEmptyMatrix($shoppingList, $product, true);
     }
 
     public function isAddEmptyMatrixAllowedDataProvider(): array

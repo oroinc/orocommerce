@@ -82,6 +82,33 @@ class MatrixGridOrderFormHandler implements FormHandlerInterface
 
     protected function saveData(MatrixCollection $data, FormInterface $form, Request $request): void
     {
+        [$shoppingList, $product] = $this->getRequestParameters($request);
+
+        $this->eventDispatcher->dispatch(new AfterFormProcessEvent($form, $data), Events::BEFORE_FLUSH);
+
+        $lineItems = $this->matrixGridOrderManager->convertMatrixIntoLineItems(
+            $form->getData(),
+            $product,
+            $request->request->all('matrix_collection')
+        );
+
+        $isSavedForLaterGrid = $this->isSavedForLaterGrid($request);
+
+        foreach ($lineItems as $lineItem) {
+            if ($isSavedForLaterGrid) {
+                $lineItem->removeShoppingList();
+                $lineItem->setSavedForLaterList($shoppingList);
+            }
+            $this->shoppingListManager->updateLineItem($lineItem, $shoppingList);
+        }
+
+        $this->matrixGridOrderManager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
+
+        $this->eventDispatcher->dispatch(new AfterFormProcessEvent($form, $data), Events::AFTER_FLUSH);
+    }
+
+    private function getRequestParameters(Request $request): array
+    {
         $shoppingList = $request->attributes->get('shoppingList');
         if (!$shoppingList instanceof ShoppingList) {
             throw new \InvalidArgumentException('The "shoppingList" request argument should be present');
@@ -92,20 +119,13 @@ class MatrixGridOrderFormHandler implements FormHandlerInterface
             throw new \InvalidArgumentException('The "product" request argument should be present');
         }
 
-        $this->eventDispatcher->dispatch(new AfterFormProcessEvent($form, $data), Events::BEFORE_FLUSH);
+        return [$shoppingList, $product];
+    }
 
-        $lineItems = $this->matrixGridOrderManager->convertMatrixIntoLineItems(
-            $form->getData(),
-            $product,
-            $request->request->all('matrix_collection')
-        );
+    private function isSavedForLaterGrid(Request $request): bool
+    {
+        $isSavedForLaterGrid = $request->get('savedForLaterGrid', false);
 
-        foreach ($lineItems as $lineItem) {
-            $this->shoppingListManager->updateLineItem($lineItem, $shoppingList);
-        }
-
-        $this->matrixGridOrderManager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
-
-        $this->eventDispatcher->dispatch(new AfterFormProcessEvent($form, $data), Events::AFTER_FLUSH);
+        return \filter_var($isSavedForLaterGrid, FILTER_VALIDATE_BOOLEAN);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendLineItemsGrid;
 
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -29,6 +30,7 @@ class LineItemsActionsOnResultAfterListener
         }
 
         $isEditGranted = $this->isEditGranted($event);
+        $isGrouped = $this->isGrouped($event);
         $defaultActionsConfig = [
             'add_notes' => false,
             'edit_notes' => false,
@@ -40,8 +42,8 @@ class LineItemsActionsOnResultAfterListener
         foreach ($records as $record) {
             if ($record->getValue('isConfigurable')) {
                 $actionsConfig = $this->getConfigurableActionsConfig($record, $isEditGranted, $defaultActionsConfig);
-
-                $this->setVariantsActionsConfig($record, $isEditGranted, $defaultActionsConfig);
+                $this->setGroupedConfig($actionsConfig, $isGrouped);
+                $this->setVariantsActionsConfig($record, $isEditGranted, $defaultActionsConfig, $isGrouped);
             } elseif ($record->getValue('isKit')) {
                 $actionsConfig = $this->getKitActionsConfig($record, $isEditGranted, $defaultActionsConfig);
 
@@ -69,12 +71,14 @@ class LineItemsActionsOnResultAfterListener
     private function setVariantsActionsConfig(
         ResultRecordInterface $record,
         bool $isEditGranted,
-        array $defaultActionsConfig
+        array $defaultActionsConfig,
+        bool $isGrouped
     ): void {
         $subData = (array)$record->getValue('subData') ?: [];
         foreach ($subData as &$lineItemData) {
             $subDataActionsConfig = $defaultActionsConfig;
             $subDataActionsConfig['add_notes'] = $isEditGranted && (string)($lineItemData['notes'] ?? '') === '';
+            $this->setGroupedConfig($subDataActionsConfig, $isGrouped);
 
             $lineItemData['action_configuration'] = $subDataActionsConfig;
         }
@@ -101,6 +105,9 @@ class LineItemsActionsOnResultAfterListener
         foreach ($subData as &$kitItemLineItemData) {
             $subDataActionsConfig = $defaultActionsConfig;
             $subDataActionsConfig['delete'] = false;
+            $subDataActionsConfig['update'] = false;
+            $subDataActionsConfig['oro_shoppinglist_line_item_save_for_later'] = false;
+            $subDataActionsConfig['oro_shoppinglist_line_item_remove_from_saved_for_later'] = false;
 
             $kitItemLineItemData['action_configuration'] = $subDataActionsConfig;
         }
@@ -109,11 +116,26 @@ class LineItemsActionsOnResultAfterListener
         $record->setValue('subData', $subData);
     }
 
+    private function setGroupedConfig(array &$config, bool $isGrouped): void
+    {
+        if ($isGrouped) {
+            $config['oro_shoppinglist_line_item_save_for_later'] = false;
+            $config['oro_shoppinglist_line_item_remove_from_saved_for_later'] = false;
+        }
+    }
+
     private function isEditGranted(OrmResultAfter $event): bool
     {
         $shoppingList = $this->getShoppingList($event);
 
         return $shoppingList && $this->isEditPermissionGrantedForShoppingList($shoppingList);
+    }
+
+    private function isGrouped(OrmResultAfter $event): bool
+    {
+        $parameters = $event->getDatagrid()->getParameters()->get(ParameterBag::ADDITIONAL_PARAMETERS, []);
+
+        return isset($parameters['group']) ? \filter_var($parameters['group'], FILTER_VALIDATE_BOOLEAN) : false;
     }
 
     private function getShoppingList(OrmResultAfter $event): ?ShoppingList

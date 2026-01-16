@@ -15,9 +15,11 @@ Feature: Delete line item from Shopping List
     And I click "Shopping List Actions"
     And I click "Edit"
     And I should see following grid:
-      | SKU | Qty Update All |
-      | AA1 | 1 item ( set ) |
-      | AA1 | 2 ( item ) set |
+      | SKU                                                                     | Qty Update All |
+      | AA1                                                                     | 1 item ( set ) |
+      | This item can't be added to checkout because the price is not available |                |
+      | AA1                                                                     | 2 ( item ) set |
+      | This item can't be added to checkout because the price is not available |                |
     And I click on "Shopping List Line Item 1 Quantity"
     And I type "5" in "Shopping List Line Item 1 Quantity Input"
     When I click Delete AA1 in grid

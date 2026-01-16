@@ -33,6 +33,7 @@ class OroShoppingListExtensionTest extends \PHPUnit\Framework\TestCase
                         'mass_adding_on_product_listing_enabled' => ['value' => true, 'scope' => 'app'],
                         'shopping_lists_max_line_items_per_page' => ['value' => 1000, 'scope' => 'app'],
                         'show_all_in_shopping_list_widget' => ['value' => false, 'scope' => 'app'],
+                        'saved_for_later_enabled' => ['value' => true, 'scope' => 'app']
                     ]
                 ]
             ],

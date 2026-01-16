@@ -27,6 +27,50 @@ The current file describes significant changes in the code that may affect the u
 
 ### Added
 
+#### ShoppingListBundle
+* Added new `savedForLaterList` relation to `\Oro\Bundle\ShoppingListBundle\Entity\LineItem`.
+* Added new `savedForLaterLineItems` relation to `\Oro\Bundle\ShoppingListBundle\Entity\ShoppingList`.
+* Added new `oro_shopping_list_line_item_only_one_list` database constraint ensures that either `shopping_list_id` or `saved_for_later_list_id` is set, but not both.
+* Added `savedForLaterList` field to `shoppinglistitems` storefront API resource.
+* Added read-only `savedForLaterItems` field to `shoppinglists` storefront API resource.
+* Added "Saved For Later" functionality to the shopping list page.
+* Added `\Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider` to identify invalid shopping list line items and sort them by severity.
+* Added new datagrids:
+  * `shopping-list-saved-for-later-line-items-grid`;
+  * `frontend-customer-user-shopping-list-saved-for-later-grid`;
+  * `frontend-customer-user-shopping-list-saved-for-later-edit-grid`;
+  * `frontend-customer-user-shopping-list-invalid-line-items-grid`.
+* Added `\Oro\Bundle\ShoppingListBundle\Validator\Constraints\OnlyOneRequiredList` validation constraint to ensure that either `savedForLaterList` or `shoppingList` is set, but not both.
+* Added new `datagrid_line_items_data_for_checkout` and `datagrid_line_items_data_for_rfq` validation groups.
+* Added `saved_for_later` feature toggle with corresponding system configuration option to gate the "Saved for Later" UI.
+* Added checkout and RFQ shopping list validation group resolvers (`ShoppingListToCheckoutValidationGroupResolver`, `ShoppingListToRequestQuoteValidationGroupResolver`) tagged with `oro_shopping_list.validation_group` and priority support.
+
+#### InventoryBundle
+* Added new `oro_inventory_availability_code` and `oro_inventory_availability_label` twig functions.
+
+#### CommerceBundle
+* Added a new `\Oro\Bundle\CommerceBundle\ContentWidget\ScorecardContentWidgetType` content widget.
+* Added new `users`, `shopping-lists`, `open-rfqs`, `total-orders` content widgets for default data.
+* Added new theme configuration options for `customer_user_dashboard` section:
+  * `scorecard_widget`;
+  * `scorecard_widget_2`;
+  * `scorecard_widget_3`;
+  * `scorecard_widget_4`;
+* Added new system configuration settings for global/organization/website levels:
+  * `oro_commerce.company_name`;
+  * `oro_commerce.business_address`;
+  * `oro_commerce.phone_number`;
+  * `oro_commerce.contact_email`;
+  * `oro_commerce.website`;
+  * `oro_commerce.tax_id`;
+* Added new system variables for email templates:
+  * `sellerCompanyName`;
+  * `sellerBusinessAddress`;
+  * `sellerPhoneNumber`;
+  * `sellerContactEmail`;
+  * `sellerWebsiteURL`;
+  * `sellerTaxID`;
+
 #### CMSBundle
 * Added `orocms/js/app/views/content-widget-collection-variant` view component
 
@@ -67,11 +111,40 @@ The current file describes significant changes in the code that may affect the u
 
 ### Changed
 
+##### Product inventory statuses
+* Updated product availability display statuses according to new design:
+  * showing "Coming Soon" status for upcoming products.
+  * showing "Low Inventory" status for in-stock products with low inventory.
+  * if both upcoming and low inventory, show only "Coming Soon".
+
+#### CheckoutBundle
+* Changed logic in `\Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActions` - instead of deleting the shopping list after finishing checkout, it now clears it if there are any "Saved for later" line items.
+
+#### ShoppingListBundle
+* Move import `FilteredProductVariantsPlugin`, `ShoppingListRefreshPlugin`, `HighlightRelatedRowsPlugin` from `oroshoppinglist/js/datagrid/builder/shoppinglist-flat-data-builder` to separate datagrid builder `oroshoppinglist/js/datagrid/builder/shoppinglist-plugins-builder`
+* Updated `oro_shopping_list_line_item_uidx` unique index in `\Oro\Bundle\ShoppingListBundle\Entity\LineItem` - now uses `NULLS NOT DISTINCT` and the following fields: 
+  * `product_id`;
+  * `shopping_list_id`;
+  * `saved_for_later_list_id`;
+  * `unit_code`;
+  * `checksum`.
+* Updated access denial logic in `\Oro\Bundle\ShoppingListBundle\Acl\AccessRule\LineItemAssociationAwareAccessRule` — now considers both shopping list and saved-for-later list relations.
+* Updated invalid line items handling on the shopping list page for Checkout and RFQ:
+  * prevents starting Checkout or RFQ if there are unresolved errors;
+  * errors are shown first, warnings after errors;
+  * clicking `Checkout` or `RFQ` buttons for invalid shopping list now opens an "Invalid Line Items" modal.
+
+#### CommerceBundle
+* Updated `Oro\Bundle\CommerceBundle\Layout\DataProvider\PurchaseVolumeChartDataProvider` by:
+    * replacing the `Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface` construct argument with `Oro\Bundle\PricingBundle\Manager\UserCurrencyManager`.
+    * removing the `Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface` construct argument.
+
 #### CMSBundle
 * Changed the `oro_cms_tabbed_content_item_collection_row` block markup. Added collapsable markup.
 * Changed the `oro_cms_tabbed_content_collection_item_prototype` macro
 
 #### OrderBundle
+* Updated `Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository` by removing the required `$customerId` argument from the `getOrdersPurchaseVolume` and `getOrdersPurchaseVolumeQueryBuilder` methods.
 * Changed the order total amount label appearance on the order view back-office page.
 
 #### PaymentBundle

@@ -208,6 +208,9 @@
     .label-on-tablet-end::after {
         content: attr(data-label);
         color: $grid-line-field-label-color;
+    }
+
+    .label-on-tablet-start::before {
         margin-right: $grid-line-field-label-offset;
     }
 
@@ -308,19 +311,15 @@
 @include breakpoint('tablet') {
     .responsive-shopping-list-grid {
         @include responsive-shopping-list-grid-tablet;
-    }
 
-    .responsive-shopping-list-grid-tablet-alignment {
-        @include responsive-shopping-list-grid-tablet-alignment;
-    }
-}
-
-@include breakpoint('tablet') {
-    .responsive-shopping-list-grid {
         .show-on-tablet-small {
             display: inline-flex;
             flex-wrap: wrap;
         }
+    }
+
+    .responsive-shopping-list-grid-tablet-alignment {
+        @include responsive-shopping-list-grid-tablet-alignment;
     }
 }
 
@@ -370,13 +369,16 @@
                 padding-top: $responsive-shopping-body-cell-offset-y-mobile;
             }
 
-            &:not(.sub-row) .notification-container {
-                padding-left: 60px;
-            }
-
             &.extension-row {
                 .grid-body-cell-sku {
                     padding-right: 0;
+                }
+            }
+
+            &.notification-row {
+                .grid-body-cell-sku {
+                    display: initial;
+                    grid-column: massAction / action;
                 }
             }
 

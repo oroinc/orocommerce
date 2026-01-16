@@ -168,7 +168,7 @@ Delete a collection of shopping list line item records.
 
 {@inheritdoc}
 
-**The required field.**
+**Only one of "shoppingList" or "savedForLaterList" must be specified.**
 
 #### update
 
@@ -181,6 +181,20 @@ Delete a collection of shopping list line item records.
 {@inheritdoc}
 
 **The read-only field. A passed value will be ignored.**
+
+### savedForLaterList
+
+#### create
+
+{@inheritdoc}
+
+**Only one of "shoppingList" or "savedForLaterList" must be specified.**
+
+#### update
+
+{@inheritdoc}
+
+**This field must not be empty, if it is passed.**
 
 ### value
 

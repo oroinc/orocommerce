@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
@@ -23,7 +24,6 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderDTO;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactoryInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductKitItemLineItemStub;
-use Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

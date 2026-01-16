@@ -28,7 +28,7 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
             $manager->persist($lineItem);
             $this->addReference($name, $lineItem);
 
-            $shoppingList = $lineItem->getShoppingList();
+            $shoppingList = $lineItem->getAssociatedList();
             $shoppingLists[$shoppingList->getId()] = $shoppingList;
         }
 
@@ -51,14 +51,29 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
     protected function createLineItem(ObjectManager $manager, array $lineItemData): LineItem
     {
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getReference($lineItemData['shoppingList']);
+        $shoppingList = isset($lineItemData['shoppingList']) ?
+            $this->getReference($lineItemData['shoppingList']) :
+            null;
+        $savedForLaterList = isset($lineItemData['savedForLaterList']) ?
+            $this->getReference($lineItemData['savedForLaterList']) :
+            null;
 
         $lineItem = new LineItem();
         $lineItem->setNotes('Test Notes');
-        $lineItem->setCustomerUser($shoppingList->getCustomerUser());
-        $lineItem->setOrganization($shoppingList->getOrganization());
         $lineItem->setOwner($this->getReference(LoadUser::USER));
-        $lineItem->setShoppingList($shoppingList);
+
+        if ($shoppingList) {
+            $lineItem->setShoppingList($shoppingList);
+            $lineItem->setCustomerUser($shoppingList->getCustomerUser());
+            $lineItem->setOrganization($shoppingList->getOrganization());
+        }
+
+        if ($savedForLaterList) {
+            $lineItem->setSavedForLaterList($savedForLaterList);
+            $lineItem->setCustomerUser($savedForLaterList->getCustomerUser());
+            $lineItem->setOrganization($savedForLaterList->getOrganization());
+        }
+
         $lineItem->setUnit($this->getReference($lineItemData['unit']));
         $lineItem->setProduct($this->getReference($lineItemData['product']));
 

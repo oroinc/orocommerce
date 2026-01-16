@@ -123,12 +123,12 @@ Feature: Product view page for configurable product
       | SKU     | Qty Update All  | Price     |
       | tpc_w   | 1 item          | $1,100.00 |
       | tpc_b_r | 1 ( item ) each | $800.00   |
-    When I click on "tpc_b_r" configurable product in "Shopping List Line Items Table"
+    When I click on "tpc_b_r" configurable product in "Shopping List Line Items Edit Table"
     Then "Configurable Product Form" must contains values:
       | Color       | Black |
       | Refurbished | Yes   |
     When I open page with shopping list "Shopping List"
-    When I click on "tpc_w" configurable product in "Shopping List Line Items Table"
+    When I click on "tpc_w" configurable product in "Shopping List Line Items Edit Table"
     Then "Configurable Product Form" must contains values:
       | Color       | White |
       | Refurbished | No    |

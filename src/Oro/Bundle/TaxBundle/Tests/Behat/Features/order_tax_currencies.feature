@@ -21,13 +21,15 @@ Feature: Order tax currencies
     And I should see "This currency can't be removed because it is used as base for all currency related operations."
     And I click "Save settings"
     Then I should see "Configuration saved" flash message
-    When I follow "Commerce/Catalog/Pricing" on configuration sidebar
+    When I go to System / Configuration
+    And I follow "Commerce/Catalog/Pricing" on configuration sidebar
     And fill "Pricing Form" with:
       | Enabled Currencies System | false                     |
       | Enabled Currencies        | [US Dollar ($), Euro (€)] |
     And click "Save settings"
     Then I should see "Configuration saved" flash message
-    When I follow "Commerce/Taxation/Tax Calculation" on configuration sidebar
+    When I go to System / Configuration
+    And I follow "Commerce/Taxation/Tax Calculation" on configuration sidebar
     And uncheck "Use default" for "Origin Address" field
     And I fill "Tax Calculation Form" with:
       | Use As Base By Default | Origin  |

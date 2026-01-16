@@ -13,6 +13,8 @@ data:
                 -
                     type: shoppinglistitems
                     id: new
+        savedForLaterItems:
+            data: []
 included:
     -
         type: shoppinglistitems

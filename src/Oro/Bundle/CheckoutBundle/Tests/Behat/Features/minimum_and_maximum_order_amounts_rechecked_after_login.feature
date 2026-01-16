@@ -29,7 +29,8 @@ Feature: Minimum and maximum order amounts rechecked after login
     Then I should see "Configuration saved" flash message
 
   Scenario: Enable guest shopping list and checkout
-    Given I follow "Commerce/Sales/Shopping List" on configuration sidebar
+    Given I go to System/Configuration
+    When I follow "Commerce/Sales/Shopping List" on configuration sidebar
     And I fill "Shopping List Configuration Form" with:
       | Enable Guest Shopping List Default | false |
       | Enable Guest Shopping List         | true  |

@@ -30,13 +30,16 @@ Feature: My Shopping List Accessibility
     When I press "ArrowRight" key on "Shopping List Edit Grid Select Row 1 Price" element
     Then I should see "Shopping List Edit Grid Select Row 1 Subtotal" element focused
     When I press "ArrowRight" key on "Shopping List Edit Grid Select Row 1 Subtotal" element
-    Then I should see "Shopping List Edit Grid Select Row 1 Delete" element focused
-    When I press "ArrowRight" key on "Shopping List Edit Grid Select Row 1 Delete" element
-    Then I should see "Shopping List Edit Grid Select Row 1 Delete" element focused
+    Then I should see "Shopping List Edit Grid Select Row 1 Actions" element focused
+    When I press "Space" key on "Shopping List Edit Grid Select Row 1 Actions" element
+    Then I should see "Shopping List Edit Grid Select Row 1 Save For Later" element focused
+    When I press "ArrowRight" key on "Shopping List Edit Grid Select Row 1 Save For Later" element
 
   Scenario: Navigation inside of grid by Arrow Right key
     Given I focus on "Shopping List Edit Grid Select Row 1 Delete"
-    When I press "ArrowLeft" key on "Shopping List Edit Grid Select Row 1 Delete" element
+    When I press "Esc" key on "Shopping List Edit Grid Select Row 1 Delete" element
+    Then I should see "Shopping List Edit Grid Select Row 1 Actions" element focused
+    When I press "ArrowLeft" key on "Shopping List Edit Grid Select Row 1 Actions" element
     Then I should see "Shopping List Edit Grid Select Row 1 Subtotal" element focused
     When I press "ArrowLeft" key on "Shopping List Edit Grid Select Row 1 Subtotal" element
     Then I should see "Shopping List Edit Grid Select Row 1 Price" element focused
@@ -92,7 +95,7 @@ Feature: My Shopping List Accessibility
     When I press "Home" key on "Shopping List Edit Grid Select Row 1 Delete" element
     Then I should see focus within "Shopping List Edit Grid Select Row 1 Mass Action" element
     When I press "End" key on "Shopping List Edit Grid Select Row 1 Input" element
-    Then I should see "Shopping List Edit Grid Select Row 1 Delete" element focused
+    Then I should see "Shopping List Edit Grid Select Row 1 Actions" element focused
     When I press "Home" key on "Shopping List Edit Grid Select Row 1 Delete" element
     Then I should see "Shopping List Edit Grid Select Row 1 Input" element focused
 
@@ -127,7 +130,7 @@ Feature: My Shopping List Accessibility
     And I should see focus within "UiWindow" element
     When I press "Space" key on "UiWindow okButton" element
     Then I should see focus within "Frontend Customer User Shopping List Edit Grid" element
-    And I should see "Shopping List Edit Grid Select Row 1 Delete" element focused
+    And I should see "Shopping List Edit Grid Select Row 1 Actions" element focused
     And I should see "Summary 31 Items"
 
   Scenario: Edit product note by keyboard

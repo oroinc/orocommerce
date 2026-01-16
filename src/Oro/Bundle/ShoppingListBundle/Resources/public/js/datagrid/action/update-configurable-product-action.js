@@ -91,6 +91,10 @@ const UpdateConfigurableProductAction = DialogAction.extend({
         this.widgetOptions.options.initLayoutOptions = {
             productModel: this.model
         };
+        this.widgetOptions.options.widgetData = {
+            savedForLaterGrid: this.model.collection.options?.savedForLaterGrid ?? false
+        };
+
         if (!this.widgetComponent) {
             this.widgetComponent = new WidgetComponent(this.widgetOptions);
         }
@@ -111,10 +115,16 @@ const UpdateConfigurableProductAction = DialogAction.extend({
             }
 
             this.widgetComponent.listenTo(this.widgetComponent.view, 'adoptedFormSubmitClick', () => {
+                const data = $form.serializeArray();
+                data.push({
+                    name: 'savedForLaterGrid',
+                    value: this.model.collection.options?.savedForLaterGrid ?? false
+                });
+
                 $.ajax({
                     method: 'POST',
                     url: this.getLink(),
-                    data: $form.serialize(),
+                    data: data,
                     success: response => {
                         if (response.message) {
                             messenger.notificationFlashMessage('success', response.message);

@@ -38,6 +38,12 @@ oro_shopping_list_mass_action_frontend:
     options:
         frontend: true
 
+oro_shopping_list_errors_modal_frontend:
+    resource: "@OroShoppingListBundle/Controller/Frontend/AjaxShoppingListErrorsModalController.php"
+    type:     attribute
+    prefix:   /customer/shoppinglist/errors-modal/ajax
+    options:
+        frontend: true
 
 #
 # OLD REST API ROUTES

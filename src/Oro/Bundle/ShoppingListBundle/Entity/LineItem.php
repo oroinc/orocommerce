@@ -35,7 +35,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 #[ORM\Table(name: 'oro_shopping_list_line_item')]
 #[ORM\UniqueConstraint(
     name: 'oro_shopping_list_line_item_uidx',
-    columns: ['product_id', 'shopping_list_id', 'unit_code', 'checksum']
+    columns: ['product_id', 'shopping_list_id', 'saved_for_later_list_id', 'unit_code', 'checksum']
 )]
 #[Config(
     defaultValues: [
@@ -102,7 +102,7 @@ class LineItem implements
     protected ?string $checksum = '';
 
     #[ORM\ManyToOne(targetEntity: ShoppingList::class, inversedBy: 'lineItems')]
-    #[ORM\JoinColumn(name: 'shopping_list_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'shopping_list_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?ShoppingList $shoppingList = null;
 
@@ -126,6 +126,11 @@ class LineItem implements
     #[ORM\JoinColumn(name: 'customer_user_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?CustomerUser $customerUser = null;
+
+    #[ORM\ManyToOne(targetEntity: ShoppingList::class, inversedBy: 'savedForLaterLineItems')]
+    #[ORM\JoinColumn(name: 'saved_for_later_list_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?ShoppingList $savedForLaterList = null;
 
     public function __construct()
     {
@@ -182,6 +187,11 @@ class LineItem implements
         return $this;
     }
 
+    public function getAssociatedList(): ?ShoppingList
+    {
+        return $this->getShoppingList() ?? $this->getSavedForLaterList();
+    }
+
     /**
      * @return ShoppingList
      */
@@ -190,14 +200,17 @@ class LineItem implements
         return $this->shoppingList;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     *
-     * @return $this
-     */
-    public function setShoppingList(ShoppingList $shoppingList)
+    public function setShoppingList(ShoppingList $shoppingList): self
     {
         $this->shoppingList = $shoppingList;
+        $this->removeSavedForLaterList();
+
+        return $this;
+    }
+
+    public function removeShoppingList(): self
+    {
+        $this->shoppingList = null;
 
         return $this;
     }
@@ -333,7 +346,7 @@ class LineItem implements
     #[\Override]
     public function getVisitor()
     {
-        return $this->getShoppingList()->getVisitor();
+        return $this->getAssociatedList()->getVisitor();
     }
 
     /**
@@ -378,6 +391,40 @@ class LineItem implements
     #[\Override]
     public function getLineItemsHolder(): ?ProductLineItemsHolderInterface
     {
-        return $this->shoppingList;
+        return $this->getAssociatedList();
+    }
+
+    public function getSavedForLaterList(): ?ShoppingList
+    {
+        return $this->savedForLaterList;
+    }
+
+    public function setSavedForLaterList(ShoppingList $savedForLaterList): self
+    {
+        $this->savedForLaterList = $savedForLaterList;
+        $this->removeShoppingList();
+
+        return $this;
+    }
+
+    public function removeSavedForLaterList(): self
+    {
+        $this->savedForLaterList = null;
+
+        return $this;
+    }
+
+    public function isSavedForLaterList(): bool
+    {
+        return $this->getSavedForLaterList() !== null;
+    }
+
+    public function removeFromAssociatedList(): void
+    {
+        if ($this->isSavedForLaterList()) {
+            $this->getSavedForLaterList()?->removeSavedForLaterLineItem($this);
+        } else {
+            $this->getShoppingList()?->removeLineItem($this);
+        }
     }
 }

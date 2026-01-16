@@ -16,7 +16,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class LineItemsActionsOnResultAfterListenerTest extends TestCase
+final class LineItemsActionsOnResultAfterListenerTest extends TestCase
 {
     private AuthorizationCheckerInterface&MockObject $authorizationChecker;
     private LineItemsActionsOnResultAfterListener $listener;
@@ -57,7 +57,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
         ResultRecordInterface $expectedRecord
     ): void {
         $event = $this->createMock(OrmResultAfter::class);
-        $event->expects(self::once())
+        $event->expects(self::exactly(2))
             ->method('getDatagrid')
             ->willReturn($this->getDatagrid());
 
@@ -82,7 +82,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
     ): void {
         $shoppingListId = 1;
         $event = $this->createMock(OrmResultAfter::class);
-        $event->expects(self::once())
+        $event->expects(self::exactly(2))
             ->method('getDatagrid')
             ->willReturn($this->getDatagrid(['shopping_list_id' => $shoppingListId]));
 
@@ -254,7 +254,10 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'edit_notes' => false,
                                     'update_configurable' => false,
                                     'update_product_kit_line_item' => false,
-                                    'delete' => false
+                                    'delete' => false,
+                                    'oro_shoppinglist_line_item_save_for_later' => false,
+                                    'oro_shoppinglist_line_item_remove_from_saved_for_later' => false,
+                                    'update' => false
                                 ]
                             ]
                         ],
@@ -283,7 +286,10 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'edit_notes' => false,
                                     'update_configurable' => false,
                                     'update_product_kit_line_item' => false,
-                                    'delete' => false
+                                    'delete' => false,
+                                    'oro_shoppinglist_line_item_save_for_later' => false,
+                                    'oro_shoppinglist_line_item_remove_from_saved_for_later' => false,
+                                    'update' => false
                                 ]
                             ]
                         ],
@@ -305,13 +311,17 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
      */
     public function testOnResultAfterWhenShoppingList(
         ResultRecordInterface $record,
-        ResultRecordInterface $expectedRecord
+        ResultRecordInterface $expectedRecord,
+        bool $isGrouped
     ): void {
         $shoppingListId = 1;
         $event = $this->createMock(OrmResultAfter::class);
-        $event->expects(self::once())
+        $event->expects(self::exactly(2))
             ->method('getDatagrid')
-            ->willReturn($this->getDatagrid(['shopping_list_id' => $shoppingListId]));
+            ->willReturn($this->getDatagrid([
+                'shopping_list_id' => $shoppingListId,
+                '_parameters' => ['group' => $isGrouped]
+            ]));
 
         $query = $this->createMock(AbstractQuery::class);
         $event->expects(self::once())
@@ -362,7 +372,8 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'delete' => true
                         ]
                     ]
-                )
+                ),
+                'isGrouped' => false
             ],
             'simple row without notes' => [
                 'record' => new ResultRecord(['sample_key' => 'sample value']),
@@ -377,7 +388,8 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'delete' => true
                         ]
                     ]
-                )
+                ),
+                'isGrouped' => false
             ],
             'configurable row with subdata with notes' => [
                 'record' => new ResultRecord(['isConfigurable' => true, 'subData' => [['notes' => 'sample notes']]]),
@@ -392,7 +404,9 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'edit_notes' => false,
                                     'update_configurable' => false,
                                     'update_product_kit_line_item' => false,
-                                    'delete' => true
+                                    'delete' => true,
+                                    'oro_shoppinglist_line_item_save_for_later' => false,
+                                    'oro_shoppinglist_line_item_remove_from_saved_for_later' => false
                                 ]
                             ]
                         ],
@@ -401,10 +415,13 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => false,
-                            'delete' => true
+                            'delete' => true,
+                            'oro_shoppinglist_line_item_save_for_later' => false,
+                            'oro_shoppinglist_line_item_remove_from_saved_for_later' => false
                         ]
                     ]
-                )
+                ),
+                'isGrouped' => true
             ],
             'configurable row with subdata without notes' => [
                 'record' => new ResultRecord(
@@ -433,7 +450,8 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'delete' => true
                         ]
                     ]
-                )
+                ),
+                'isGrouped' => false
             ],
             'configurable without subdata' => [
                 'record' => new ResultRecord(['isConfigurable' => true]),
@@ -449,7 +467,8 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'delete' => true
                         ]
                     ]
-                )
+                ),
+                'isGrouped' => false
             ],
             'configurable with matrix form available' => [
                 'record' => new ResultRecord(['isConfigurable' => true, 'isMatrixFormAvailable' => true]),
@@ -466,7 +485,8 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'delete' => true
                         ]
                     ]
-                )
+                ),
+                'isGrouped' => false
             ],
             'kit with subdata with notes' => [
                 'record' => new ResultRecord(['isKit' => true, 'subData' => [['notes' => 'sample notes']]]),
@@ -481,7 +501,10 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'edit_notes' => false,
                                     'update_configurable' => false,
                                     'update_product_kit_line_item' => false,
-                                    'delete' => false
+                                    'delete' => false,
+                                    'oro_shoppinglist_line_item_save_for_later' => false,
+                                    'oro_shoppinglist_line_item_remove_from_saved_for_later' => false,
+                                    'update' => false
                                 ]
                             ]
                         ],
@@ -493,7 +516,8 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'delete' => true
                         ]
                     ]
-                )
+                ),
+                'isGrouped' => false
             ],
             'kit with subdata without notes' => [
                 'record' => new ResultRecord(
@@ -510,7 +534,10 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'edit_notes' => false,
                                     'update_configurable' => false,
                                     'update_product_kit_line_item' => false,
-                                    'delete' => false
+                                    'delete' => false,
+                                    'oro_shoppinglist_line_item_save_for_later' => false,
+                                    'oro_shoppinglist_line_item_remove_from_saved_for_later' => false,
+                                    'update' => false
                                 ]
                             ]
                         ],
@@ -522,7 +549,8 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'delete' => true
                         ]
                     ]
-                )
+                ),
+                'isGrouped' => false
             ]
         ];
     }

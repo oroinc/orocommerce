@@ -2,35 +2,30 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\DatagridKitLineItemsDataListener;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderDTO;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
-use Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener;
+use Oro\Bundle\ShoppingListBundle\Mapper\ShoppingListInvalidLineItemsMapper;
+use Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider;
+use Oro\Bundle\ShoppingListBundle\Provider\ShoppingListValidationGroupsProvider;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Stub\LineItemStub;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints\GroupSequence;
-use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\ConstraintViolation;
-use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DatagridLineItemsDataValidationListenerTest extends TestCase
 {
-    private ValidatorInterface&MockObject $validator;
+    private InvalidShoppingListLineItemsProvider&MockObject $invalidShoppingListLineItemsProvider;
+    private ShoppingListValidationGroupsProvider&MockObject $validationGroupsProvider;
     private DatagridLineItemsDataValidationListener $listener;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->validator = $this->createMock(ValidatorInterface::class);
+        $this->invalidShoppingListLineItemsProvider = $this->createMock(InvalidShoppingListLineItemsProvider::class);
         $lineItemsHolderFactory = new ProductLineItemsHolderFactory();
 
         $translator = $this->createMock(TranslatorInterface::class);
@@ -38,35 +33,26 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
             ->method('trans')
             ->willReturnCallback(static fn (string $id) => $id . '.translated');
 
+        $this->validationGroupsProvider = $this->createMock(ShoppingListValidationGroupsProvider::class);
+        $this->validationGroupsProvider->expects(self::any())
+            ->method('getAllValidationGroups')
+            ->willReturn(['datagrid_line_items_data']);
+
         $this->listener = new DatagridLineItemsDataValidationListener(
-            $this->validator,
+            $this->invalidShoppingListLineItemsProvider,
             $lineItemsHolderFactory,
-            $translator
+            $translator,
+            $this->validationGroupsProvider
         );
     }
 
-    private function createConstraint(string $severity): Constraint
+    private function createViolation(string $message): ConstraintViolation
     {
-        return new NotNull([], null, null, ['severity' => $severity]);
-    }
-
-    private function createViolation(
-        string $message,
-        string $severity,
-        ProductLineItemInterface $lineItem,
-        ProductLineItemsHolderInterface $lineItemsHolder
-    ): ConstraintViolation {
-        return new ConstraintViolation(
-            $message,
-            null,
-            [],
-            $lineItemsHolder,
-            'lineItems[' . $lineItemsHolder->getLineItems()->indexOf($lineItem) . ']',
-            $lineItem,
-            null,
-            null,
-            $this->createConstraint($severity)
-        );
+        $violation = $this->createMock(ConstraintViolation::class);
+        $violation->expects(self::any())
+            ->method('getMessage')
+            ->willReturn($message);
+        return $violation;
     }
 
     public function testOnLineItemDataWhenNoLineItems(): void
@@ -88,20 +74,19 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
         $lineItems = [$lineItem1->getId() => $lineItem1, $lineItem2->getId() => $lineItem2];
         $event = new DatagridLineItemsDataEvent($lineItems, [], $this->createMock(Datagrid::class), []);
 
-        $this->validator->expects(self::once())
-            ->method('validate')
-            ->with(
-                (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems)),
-                null,
-                [new GroupSequence(['Default', 'datagrid_line_items_data'])]
-            )
-            ->willReturn(new ConstraintViolationList());
+        $this->invalidShoppingListLineItemsProvider->expects(self::once())
+            ->method('getInvalidItemsViolations')
+            ->with($lineItems, null)
+            ->willReturn([
+                ShoppingListInvalidLineItemsMapper::ERRORS => [],
+                ShoppingListInvalidLineItemsMapper::WARNINGS => []
+            ]);
 
         $this->listener->onLineItemData($event);
 
         $emptyData = [
-            DatagridLineItemsDataValidationListener::WARNINGS => [],
-            DatagridLineItemsDataValidationListener::ERRORS => []
+            ShoppingListInvalidLineItemsMapper::WARNINGS => [],
+            ShoppingListInvalidLineItemsMapper::ERRORS => []
         ];
         self::assertEquals(
             [$lineItem1->getId() => $emptyData, $lineItem2->getId() => $emptyData],
@@ -115,30 +100,42 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
         $lineItem2 = (new LineItemStub())->setId(20);
         $lineItems = [$lineItem1->getId() => $lineItem1, $lineItem2->getId() => $lineItem2];
         $event = new DatagridLineItemsDataEvent($lineItems, [], $this->createMock(Datagrid::class), []);
-        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
-        $constraintViolationList = new ConstraintViolationList();
-        $constraintViolationList->add($this->createViolation('warning1', 'warning', $lineItem1, $lineItemsHolder));
-        $constraintViolationList->add($this->createViolation('warning2', 'warning', $lineItem2, $lineItemsHolder));
-        $constraintViolationList->add($this->createViolation('error3', 'error', $lineItem2, $lineItemsHolder));
 
-        $this->validator->expects(self::once())
-            ->method('validate')
-            ->with($lineItemsHolder, null, [new GroupSequence(['Default', 'datagrid_line_items_data'])])
-            ->willReturn($constraintViolationList);
+        $this->invalidShoppingListLineItemsProvider->expects(self::once())
+            ->method('getInvalidItemsViolations')
+            ->with($lineItems, null)
+            ->willReturn([
+                ShoppingListInvalidLineItemsMapper::ERRORS => [
+                    20 => [
+                        ShoppingListInvalidLineItemsMapper::MESSAGES => [$this->createViolation('error3')],
+                        ShoppingListInvalidLineItemsMapper::SUB_DATA => []
+                    ]
+                ],
+                ShoppingListInvalidLineItemsMapper::WARNINGS => [
+                    10 => [
+                        ShoppingListInvalidLineItemsMapper::MESSAGES => [$this->createViolation('warning1')],
+                        ShoppingListInvalidLineItemsMapper::SUB_DATA => []
+                    ],
+                    20 => [
+                        ShoppingListInvalidLineItemsMapper::MESSAGES => [$this->createViolation('warning2')],
+                        ShoppingListInvalidLineItemsMapper::SUB_DATA => []
+                    ]
+                ]
+            ]);
 
         $this->listener->onLineItemData($event);
 
         self::assertEquals(
             [
-                DatagridLineItemsDataValidationListener::WARNINGS => ['warning1'],
-                DatagridLineItemsDataValidationListener::ERRORS => []
+                ShoppingListInvalidLineItemsMapper::WARNINGS => ['warning1'],
+                ShoppingListInvalidLineItemsMapper::ERRORS => []
             ],
             $event->getDataForLineItem(10)
         );
         self::assertEquals(
             [
-                DatagridLineItemsDataValidationListener::WARNINGS => ['warning2'],
-                DatagridLineItemsDataValidationListener::ERRORS => ['error3']
+                ShoppingListInvalidLineItemsMapper::WARNINGS => ['warning2'],
+                ShoppingListInvalidLineItemsMapper::ERRORS => ['error3']
             ],
             $event->getDataForLineItem(20)
         );
@@ -160,21 +157,26 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
             $this->createMock(Datagrid::class),
             []
         );
-        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
-        $constraintViolationList = new ConstraintViolationList();
-        $constraintViolationList->add($this->createViolation('warning1', 'warning', $lineItem1, $lineItemsHolder));
 
-        $this->validator->expects(self::once())
-            ->method('validate')
-            ->with($lineItemsHolder, null, [new GroupSequence(['Default', 'datagrid_line_items_data'])])
-            ->willReturn($constraintViolationList);
+        $this->invalidShoppingListLineItemsProvider->expects(self::once())
+            ->method('getInvalidItemsViolations')
+            ->with($lineItems, null)
+            ->willReturn([
+                ShoppingListInvalidLineItemsMapper::ERRORS => [],
+                ShoppingListInvalidLineItemsMapper::WARNINGS => [
+                    10 => [
+                        ShoppingListInvalidLineItemsMapper::MESSAGES => [$this->createViolation('warning1')],
+                        ShoppingListInvalidLineItemsMapper::SUB_DATA => []
+                    ]
+                ]
+            ]);
 
         $this->listener->onLineItemData($event);
 
         self::assertEquals(
             [
-                DatagridLineItemsDataValidationListener::WARNINGS => ['warning1'],
-                DatagridLineItemsDataValidationListener::ERRORS => []
+                ShoppingListInvalidLineItemsMapper::WARNINGS => ['warning1'],
+                ShoppingListInvalidLineItemsMapper::ERRORS => []
             ],
             $event->getDataForLineItem(10)
         );
@@ -182,8 +184,8 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
             [
                 DatagridKitLineItemsDataListener::IS_KIT => true,
                 DatagridKitLineItemsDataListener::SUB_DATA => [],
-                DatagridLineItemsDataValidationListener::WARNINGS => [],
-                DatagridLineItemsDataValidationListener::ERRORS => [],
+                ShoppingListInvalidLineItemsMapper::WARNINGS => [],
+                ShoppingListInvalidLineItemsMapper::ERRORS => [],
                 DatagridLineItemsDataValidationListener::KIT_HAS_GENERAL_ERROR => false
             ],
             $event->getDataForLineItem(20)
@@ -201,41 +203,62 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
                 $lineItem2->getId() => [
                     DatagridKitLineItemsDataListener::IS_KIT => true,
                     DatagridKitLineItemsDataListener::SUB_DATA => [
-                        [DatagridLineItemsDataValidationListener::ERRORS => ['sample_error1']]
+                        0 => [ShoppingListInvalidLineItemsMapper::ERRORS => ['sample_error1']]
                     ]
                 ]
             ],
             $this->createMock(Datagrid::class),
             []
         );
-        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
-        $constraintViolationList = new ConstraintViolationList();
-        $constraintViolationList->add($this->createViolation('warning1', 'warning', $lineItem1, $lineItemsHolder));
 
-        $this->validator->expects(self::once())
-            ->method('validate')
-            ->with($lineItemsHolder, null, [new GroupSequence(['Default', 'datagrid_line_items_data'])])
-            ->willReturn($constraintViolationList);
+        // Note: Since LineItemStub doesn't have kit items, createKitItemIdToIndexMap will return empty map
+        // So kit item violations won't be added to SUB_DATA, only existing errors will remain
+        $this->invalidShoppingListLineItemsProvider->expects(self::once())
+            ->method('getInvalidItemsViolations')
+            ->with($lineItems, null)
+            ->willReturn([
+                ShoppingListInvalidLineItemsMapper::ERRORS => [
+                    20 => [
+                        ShoppingListInvalidLineItemsMapper::MESSAGES => [],
+                        ShoppingListInvalidLineItemsMapper::SUB_DATA => [
+                            30 => [
+                                ShoppingListInvalidLineItemsMapper::MESSAGES => [$this->createViolation('kit_error1')]
+                            ]
+                        ]
+                    ]
+                ],
+                ShoppingListInvalidLineItemsMapper::WARNINGS => [
+                    10 => [
+                        ShoppingListInvalidLineItemsMapper::MESSAGES => [$this->createViolation('warning1')],
+                        ShoppingListInvalidLineItemsMapper::SUB_DATA => []
+                    ]
+                ]
+            ]);
 
         $this->listener->onLineItemData($event);
 
         self::assertEquals(
             [
-                DatagridLineItemsDataValidationListener::WARNINGS => ['warning1'],
-                DatagridLineItemsDataValidationListener::ERRORS => []
+                ShoppingListInvalidLineItemsMapper::WARNINGS => ['warning1'],
+                ShoppingListInvalidLineItemsMapper::ERRORS => []
             ],
             $event->getDataForLineItem(10)
         );
+        // Kit item violations won't be added because LineItemStub doesn't have kit items
+        // But KIT_HAS_GENERAL_ERROR will be true because sample_error1 exists in SUB_DATA
         self::assertEquals(
             [
                 DatagridKitLineItemsDataListener::IS_KIT => true,
                 DatagridKitLineItemsDataListener::SUB_DATA => [
-                    [DatagridLineItemsDataValidationListener::ERRORS => ['sample_error1']]
+                    0 => [
+                        ShoppingListInvalidLineItemsMapper::ERRORS => ['sample_error1'],
+                        ShoppingListInvalidLineItemsMapper::WARNINGS => []
+                    ]
                 ],
-                DatagridLineItemsDataValidationListener::WARNINGS => [],
-                DatagridLineItemsDataValidationListener::ERRORS => [
+                ShoppingListInvalidLineItemsMapper::WARNINGS => [
                     'oro.shoppinglist.product_kit_line_item.general_error.message.translated'
                 ],
+                ShoppingListInvalidLineItemsMapper::ERRORS => [],
                 DatagridLineItemsDataValidationListener::KIT_HAS_GENERAL_ERROR => true
             ],
             $event->getDataForLineItem(20)
@@ -259,21 +282,26 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
             $this->createMock(Datagrid::class),
             []
         );
-        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
-        $constraintViolationList = new ConstraintViolationList();
-        $constraintViolationList->add($this->createViolation('warning1', 'warning', $lineItem1, $lineItemsHolder));
 
-        $this->validator->expects(self::once())
-            ->method('validate')
-            ->with($lineItemsHolder, null, [new GroupSequence(['Default', 'datagrid_line_items_data'])])
-            ->willReturn($constraintViolationList);
+        $this->invalidShoppingListLineItemsProvider->expects(self::once())
+            ->method('getInvalidItemsViolations')
+            ->with($lineItems, null)
+            ->willReturn([
+                ShoppingListInvalidLineItemsMapper::ERRORS => [],
+                ShoppingListInvalidLineItemsMapper::WARNINGS => [
+                    10 => [
+                        ShoppingListInvalidLineItemsMapper::MESSAGES => [$this->createViolation('warning1')],
+                        ShoppingListInvalidLineItemsMapper::SUB_DATA => []
+                    ]
+                ]
+            ]);
 
         $this->listener->onLineItemData($event);
 
         self::assertEquals(
             [
-                DatagridLineItemsDataValidationListener::WARNINGS => ['warning1'],
-                DatagridLineItemsDataValidationListener::ERRORS => []
+                ShoppingListInvalidLineItemsMapper::WARNINGS => ['warning1'],
+                ShoppingListInvalidLineItemsMapper::ERRORS => []
             ],
             $event->getDataForLineItem(10)
         );
@@ -281,10 +309,10 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
             [
                 DatagridKitLineItemsDataListener::IS_KIT => true,
                 DatagridKitLineItemsDataListener::SUB_DATA => [],
-                DatagridLineItemsDataValidationListener::WARNINGS => [],
-                DatagridLineItemsDataValidationListener::ERRORS => [
+                ShoppingListInvalidLineItemsMapper::WARNINGS => [
                     'oro.shoppinglist.product_kit_line_item.general_error.message.translated'
                 ],
+                ShoppingListInvalidLineItemsMapper::ERRORS => [],
                 DatagridLineItemsDataValidationListener::KIT_HAS_GENERAL_ERROR => true
             ],
             $event->getDataForLineItem(20)

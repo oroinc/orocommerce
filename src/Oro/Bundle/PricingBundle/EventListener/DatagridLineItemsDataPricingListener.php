@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Brick\Math\BigDecimal;
+use Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
@@ -14,7 +15,6 @@ use Oro\Bundle\ProductBundle\EventListener\DatagridKitLineItemsDataListener;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactoryInterface;
-use Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener;
 
 /**
  * Adds line items pricing data.

@@ -121,6 +121,14 @@ The currency for the shopping list aggregated amounts, such as total and subTota
 
 **The read-only field. A passed value will be ignored.**
 
+### savedForLaterItems
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ## SUBRESOURCES
 
 ### items
@@ -175,6 +183,16 @@ Example:
 }
 ```
 {@/request}
+
+### savedForLaterItems
+
+#### get_subresource
+
+Retrieve saved for later item records assigned to a specific shopping list record.
+
+#### get_relationship
+
+Retrieve IDs of saved for later item records assigned to a specific shopping list record.
 
 ### customer
 

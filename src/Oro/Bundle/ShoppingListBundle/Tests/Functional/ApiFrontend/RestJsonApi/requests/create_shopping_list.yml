@@ -14,6 +14,11 @@ data:
                 -
                     type: shoppinglistitems
                     id: 'item1'
+        savedForLaterItems:
+            data:
+                -
+                    type: shoppinglistitems
+                    id: 'item1'
 included:
     -
         type: shoppinglistitems

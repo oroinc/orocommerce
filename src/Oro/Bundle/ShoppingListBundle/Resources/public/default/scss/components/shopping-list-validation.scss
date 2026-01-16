@@ -1,0 +1,7 @@
+/* @theme: default; */
+
+.shopping-list-validation {
+    &:has(.notification-flash) {
+        margin: $shopping-lists-validation-offset;
+    }
+}

@@ -31,9 +31,11 @@ Feature: Shopping list duplication
     And I signed in as AmandaRCole@example.org on the store frontend
     When Buyer is on "Shopping List A" shopping list
     Then I should see following grid:
-      | SKU | Qty | Unit  |
-      | AA1 | 10  | items |
-      | AA3 | 20  | items |
+      | SKU                                                                     | Qty | Unit  |
+      | AA1                                                                     | 10  | items |
+      | This item can't be added to checkout because the price is not available |     |       |
+      | AA3                                                                     | 20  | items |
+      | This item can't be added to checkout because the price is not available |     |       |
     And I click "Shopping List Actions"
     And I click "Duplicate"
     And I click "Yes, duplicate"
@@ -41,16 +43,20 @@ Feature: Shopping list duplication
     And I should not see "Some products are not available and cannot be added to shopping list" flash message
     And I should see "Shopping List A (copied "
     And I should see following grid:
-      | SKU | Qty Update All |
-      | AA1 | 10 item        |
-      | AA3 | 20 item        |
+      | SKU                                                                     | Qty Update All |
+      | AA1                                                                     | 10 item        |
+      | This item can't be added to checkout because the price is not available |                |
+      | AA3                                                                     | 20 item        |
+      | This item can't be added to checkout because the price is not available |                |
 
   Scenario: Duplicate shopping list with restricted items
     When Buyer is on "Shopping List B" shopping list
     Then I should see following grid:
-      | SKU | Qty | Unit  |
-      | AA2 | 30  | items |
-      | AA3 | 40  | items |
+      | SKU                                                                     | Qty | Unit  |
+      | AA2                                                                     | 30  | items |
+      | This item can't be added to checkout because the price is not available |     |       |
+      | AA3                                                                     | 40  | items |
+      | This item can't be added to checkout because the price is not available |     |       |
 
     When I proceed as the Admin
     And I go to Products / Products
@@ -68,12 +74,15 @@ Feature: Shopping list duplication
     And I should see "Some products are not available and cannot be added to shopping list" flash message
     And I should see "Shopping List B (copied "
     And I should see following grid:
-      | SKU | Qty Update All |
-      | AA3 | 40 item        |
+      | SKU                                                                     | Qty Update All |
+      | AA3                                                                     | 40 item        |
+      | This item can't be added to checkout because the price is not available |                |
     And I should not see "AA2"
 
   Scenario: Check duplicate button for shopping list with all restricted items
     When Buyer is on "Shopping List C" shopping list
+    And I should see "Some products are not available and have been removed from the shopping list." flash message
+    And I click "Close"
     And I click "Shopping List Actions"
     Then I should not see "Duplicate List"
 
@@ -90,9 +99,11 @@ Feature: Shopping list duplication
     When I signed in as NancyJSallee@example.org on the store frontend
     And Buyer is on "Shopping List A" shopping list
     Then I should see following grid:
-      | SKU | Qty | Unit  |
-      | AA1 | 10  | items |
-      | AA3 | 20  | items |
+      | SKU                                                                     | Qty | Unit  |
+      | AA1                                                                     | 10  | items |
+      | This item can't be added to checkout because the price is not available |     |       |
+      | AA3                                                                     | 20  | items |
+      | This item can't be added to checkout because the price is not available |     |       |
 
     And click "Shopping List Actions"
     And click "Duplicate"
@@ -100,6 +111,8 @@ Feature: Shopping list duplication
     Then I should see "The shopping list has been duplicated" flash message and I close it
     And should see "Shopping List A (copied "
     And should see following grid:
-      | SKU | Qty Update All |
-      | AA1 | 10 item        |
-      | AA3 | 20 item        |
+      | SKU                                                                     | Qty Update All |
+      | AA1                                                                     | 10 item        |
+      | This item can't be added to checkout because the price is not available |                |
+      | AA3                                                                     | 20 item        |
+      | This item can't be added to checkout because the price is not available |                |

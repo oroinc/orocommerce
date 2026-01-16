@@ -48,3 +48,9 @@ features:
             - oro_shopping_list_frontend_view
             - oro_shopping_list_frontend_update
             - oro_shopping_list_frontend_create
+
+    saved_for_later:
+        label: oro.shoppinglist.feature.saved_for_later.label
+        description: oro.shoppinglist.feature.saved_for_later.description
+        toggle: oro_shopping_list.saved_for_later_enabled
+        strategy: affirmative

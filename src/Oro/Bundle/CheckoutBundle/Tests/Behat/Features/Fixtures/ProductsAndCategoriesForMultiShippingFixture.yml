@@ -164,6 +164,14 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         unit: '@item'
         value: 1.9
         currency: 'EUR'
+    productPriceUsd4:
+        pricelist: '@defaultPriceList'
+        product: '@product4'
+        productSku: 'SKU4'
+        quantity: 10
+        unit: '@item'
+        value: 0
+        currency: 'USD'
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:

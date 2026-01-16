@@ -9,8 +9,8 @@ Feature: Mass Product Actions processing
 
   Scenario: Create different window session
     Given sessions active:
-      | Admin  |first_session |
-      | User   |second_session|
+      | Admin | first_session  |
+      | User  | second_session |
 
   Scenario: Administrator enables all products feature
     Given I proceed as the Admin
@@ -45,8 +45,8 @@ Feature: Mass Product Actions processing
     And I click "Close" if present
     And I check PSKU1 record in "Product Frontend Grid" grid
     And I fill line item with "PSKU1" in frontend product grid:
-      | Quantity | 10   |
-      | Unit     | set  |
+      | Quantity | 10  |
+      | Unit     | set |
     And I check PSKU2 record in "Product Frontend Grid" grid
     And I fill line item with "PSKU2" in frontend product grid:
       | Quantity | 15   |
@@ -60,9 +60,10 @@ Feature: Mass Product Actions processing
     When I hover on "Shopping Cart"
     And I click "Shopping List of Amanda" on shopping list widget
     Then I should see following grid:
-      | SKU   | Qty Update All  |
-      | PSKU1 | 10 item ( set ) |
-      | PSKU2 | 15 ( item ) set |
+      | SKU                                                                     | Qty Update All  |
+      | PSKU1                                                                   | 10 item ( set ) |
+      | This item can't be added to checkout because the price is not available |                 |
+      | PSKU2                                                                   | 15 ( item ) set |
 
   Scenario: "Add to Shopping List of Amanda" mass action on the category list view
     Given I proceed as the User
@@ -70,8 +71,8 @@ Feature: Mass Product Actions processing
     And I click "Search Button"
     And I check PSKU3 record in "Product Frontend Grid" grid
     And I fill line item with "PSKU3" in frontend product grid:
-      | Quantity | 7    |
-      | Unit     | set  |
+      | Quantity | 7   |
+      | Unit     | set |
     And I click "Header"
     And I click "Add to Shopping List of Amanda" in "ProductFrontendMassPanelInBottomSticky" element
     Then I should see "1 product was added" flash message
@@ -79,10 +80,12 @@ Feature: Mass Product Actions processing
     When I hover on "Shopping Cart"
     And I click "Shopping List of Amanda" on shopping list widget
     Then I should see following grid:
-      | SKU   | Qty Update All  |
-      | PSKU1 | 10 item ( set ) |
-      | PSKU2 | 15 ( item ) set |
-      | PSKU3 | 7 item ( set )  |
+      | SKU                                                                     | Qty Update All  |
+      | PSKU1                                                                   | 10 item ( set ) |
+      | This item can't be added to checkout because the price is not available |                 |
+      | PSKU3                                                                   | 7 item ( set )  |
+      | This item can't be added to checkout because the price is not available |                 |
+      | PSKU2                                                                   | 15 ( item ) set |
 
   Scenario: Should be possible to check mass action checkbox on All products page
     Given I proceed as the User

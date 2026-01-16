@@ -6,8 +6,11 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutValidationGroupsBySourceEntityProvider;
+use Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
+use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -15,19 +18,15 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class ValidateCheckoutOnStartEventListener
 {
-    private ValidatorInterface $validator;
-
-    private CheckoutValidationGroupsBySourceEntityProvider $validationGroupsProvider;
-
     /** @var array<string|array<string>> */
     private array $validationGroups = [['Default', 'checkout_start%from_alias%']];
 
     public function __construct(
-        ValidatorInterface $validator,
-        CheckoutValidationGroupsBySourceEntityProvider $checkoutValidationGroupsBySourceEntityProvider
+        private readonly ValidatorInterface $validator,
+        private readonly CheckoutValidationGroupsBySourceEntityProvider $checkoutValidationGroupsBySourceEntityProvider,
+        private readonly InvalidShoppingListLineItemsProvider $invalidShoppingListLineItemsProvider,
+        private readonly ShoppingListToCheckoutValidationGroupResolver $checkoutValidationGroupResolver
     ) {
-        $this->validator = $validator;
-        $this->validationGroupsProvider = $checkoutValidationGroupsBySourceEntityProvider;
     }
 
     /**
@@ -54,7 +53,7 @@ class ValidateCheckoutOnStartEventListener
             return;
         }
 
-        $validationGroups = $this->validationGroupsProvider
+        $validationGroups = $this->checkoutValidationGroupsBySourceEntityProvider
             ->getValidationGroupsBySourceEntity($this->validationGroups, $checkout->getSourceEntity());
 
         $this->validateOnStart($event, $checkout, $validationGroups);
@@ -62,14 +61,38 @@ class ValidateCheckoutOnStartEventListener
 
     public function onStartFromShoppingList(ExtendableConditionEvent $event): void
     {
+        if (!$this->checkoutValidationGroupResolver->isApplicable()) {
+            return;
+        }
+
         $shoppingList = $event->getData()?->offsetGet('shoppingList');
         if (!$shoppingList instanceof ShoppingList) {
             return;
         }
 
-        $validationGroups = $this->validationGroupsProvider
-            ->getValidationGroupsBySourceEntity($this->validationGroups, $shoppingList);
+        $validationResult = $this->invalidShoppingListLineItemsProvider->getInvalidItemsViolations(
+            $shoppingList->getLineItems(),
+            ShoppingListToCheckoutValidationGroupResolver::TYPE
+        );
 
-        $this->validateOnStart($event, $shoppingList, $validationGroups);
+        $errors = $validationResult[InvalidShoppingListLineItemsProvider::ERRORS];
+
+        foreach ($errors as $errorItem) {
+            /**
+             * @var ConstraintViolationInterface $error
+             */
+            foreach ($errorItem['messages'] as $error) {
+                $event->addError($error->getMessage(), $error);
+            }
+
+            // Process subData messages if they exist
+            if (!empty($errorItem['subData'])) {
+                foreach ($errorItem['subData'] as $errorSubData) {
+                    foreach ($errorSubData['messages'] as $subDataMessage) {
+                        $event->addError($subDataMessage->getMessage(), $subDataMessage);
+                    }
+                }
+            }
+        }
     }
 }

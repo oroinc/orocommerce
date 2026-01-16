@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Action\Action\ExtendableAction;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -118,6 +119,9 @@ class CheckoutActions implements CheckoutActionsInterface
         );
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     #[\Override]
     public function finalizeSourceEntity(
         Checkout $checkout,
@@ -126,10 +130,20 @@ class CheckoutActions implements CheckoutActionsInterface
         bool $removeSource = false,
         bool $clearSource = false
     ): void {
-        if (!$autoRemoveSource && !$allowManualSourceRemove && !$removeSource && $clearSource) {
+        $isClearSourceEntity = !$autoRemoveSource && !$allowManualSourceRemove && !$removeSource && $clearSource;
+        $isRemoveSource = $autoRemoveSource || ($allowManualSourceRemove && $removeSource);
+        // shopping list with 'Saved for Later' items can't be removed, only non-saved items can be cleared
+        $isSavedForLater = $this->isSavedForLater($checkout);
+
+        if ($isClearSourceEntity || ($isRemoveSource && $isSavedForLater)) {
             $this->actionExecutor->executeAction('clear_checkout_source_entity', [$checkout]);
+
+            if ($isSavedForLater) {
+                return;
+            }
         }
-        if ($autoRemoveSource || ($allowManualSourceRemove && $removeSource)) {
+
+        if ($isRemoveSource) {
             $this->actionExecutor->executeAction('remove_checkout_source_entity', [$checkout]);
         }
     }
@@ -171,5 +185,15 @@ class CheckoutActions implements CheckoutActionsInterface
                 $this->entityNameResolver->getName($checkout->getSourceEntity()->getSourceDocument())
             );
         }
+    }
+
+    private function isSavedForLater(Checkout $checkout): bool
+    {
+        $shoppingList = $checkout->getSourceEntity();
+        if (!$shoppingList instanceof ShoppingList) {
+            return false;
+        }
+
+        return !$shoppingList->getSavedForLaterLineItems()->isEmpty();
     }
 }

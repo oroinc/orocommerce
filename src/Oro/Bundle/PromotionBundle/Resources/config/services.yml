@@ -836,6 +836,9 @@ services:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData, priority: 80 }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: 80 }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData, priority: 80 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-saved-for-later-grid, method: onLineItemData, priority: 80 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-saved-for-later-edit-grid, method: onLineItemData, priority: 80 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-invalid-line-items-grid, method: onLineItemData, priority: 80 }
 
     oro_promotion.order_tax.mapper.order_after_discounts_mapper:
         class: Oro\Bundle\PromotionBundle\OrderTax\Mapper\OrderAfterDiscountsMapper

@@ -274,13 +274,16 @@
 
 {% block _product_view_brand_inventory_status_widget %}
     {% import '@OroUI/layouts/renderStatus.html.twig' as renderStatus %}
+
     {{ renderStatus.status({
-        label: oro_inventory_status_label(product),
-        code: oro_inventory_status_code(product),
+        label: oro_inventory_availability_label(product)|trans,
+        code: oro_inventory_availability_code(product),
         map: {
             'prod_inventory_status.in_stock': 'success',
             'prod_inventory_status.out_of_stock': 'destructive',
-            'prod_inventory_status.discontinued': 'destructive'
+            'prod_inventory_status.discontinued': 'destructive',
+            'prod_inventory_status.is_low_inventory': 'warning',
+            'prod_inventory_status.is_upcoming': 'warning'
         }
     }) }}
 {% endblock %}

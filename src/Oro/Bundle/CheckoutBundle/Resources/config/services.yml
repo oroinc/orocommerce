@@ -57,6 +57,14 @@ parameters:
             productUnit: []
 
 services:
+    oro_checkout.resolver.shopping_list_to_checkout_validation_group:
+        class: Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+        arguments:
+            - '@security.authorization_checker'
+            - '@oro_checkout.condition.is_workflow_start_from_shopping_list_allowed'
+        tags:
+            - { name: oro_shopping_list.validation_group, priority: 10 }
+
     oro_checkout.access_rule.frontend_checkout_line_item:
         class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
         arguments:
@@ -952,6 +960,7 @@ services:
         class: Oro\Bundle\CheckoutBundle\Action\ClearCheckoutSourceEntity
         arguments:
             - '@oro_action.expression.context_accessor'
+            - '@doctrine'
         tags:
             - { name: oro_action.action, alias: clear_checkout_source_entity }
 
@@ -1069,30 +1078,28 @@ services:
             - '@oro_checkout.provider.grouped_line_items'
 
     oro_checkout.event_listener.datagrid_line_items_data.validation:
-        class: Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+        class: Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
         arguments:
-            - '@validator'
+            - '@oro_shopping_list.provider.invalid_shopping_list_line_items'
             - '@oro_product.model.product_line_items_holder_factory'
             - '@translator'
+            - '@oro_shopping_list.provider.shopping_list_validation_groups'
         tags:
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-saved-for-later-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-saved-for-later-edit-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-invalid-line-items-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
-
-    oro_checkout.event_listener.datagrid_kit_item_line_items_data.validation:
-        class: Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
-        arguments:
-            - '@validator'
-            - '@oro_product.model.product_line_items_holder_factory'
-            - '@translator'
-        tags:
-            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
-            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
 
     oro_checkout.event_listener.validate_checkout_on_start:
         class: Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
         arguments:
             - '@validator'
             - '@oro_checkout.provider.checkout_validation_groups_by_source_entity'
+            - '@oro_shopping_list.provider.invalid_shopping_list_line_items'
+            - '@oro_checkout.resolver.shopping_list_to_checkout_validation_group'
         tags:
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStart }
             - { name: kernel.event_listener, event: extendable_condition.shopping_list_start, method: onStartFromShoppingList }

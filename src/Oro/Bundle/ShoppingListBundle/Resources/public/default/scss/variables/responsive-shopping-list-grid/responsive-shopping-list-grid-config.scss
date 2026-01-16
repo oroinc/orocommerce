@@ -45,7 +45,7 @@ $responsive-shopping-grid-row-offset-mobile: spacing('lg') !default;
 $responsive-shopping-grid-row-offset-bottom-mobile: 20px !default;
 $responsive-shopping-sub-row-offset-top-mobile: spacing('lg') !default;
 $responsive-shopping-sub-row-offset-bottom-mobile: spacing('lg') !default;
-$responsive-shopping-sub-row-border-mobile-color: $base-table-border-color !default;
+$responsive-shopping-sub-row-border-mobile-color: get-color('neutral', 'grey3') !default;
 $responsive-shopping-sub-row-border-mobile: 1px solid $responsive-shopping-sub-row-border-mobile-color !default;
 $responsive-shopping-grid-row-border-mobile: 1px solid $responsive-shopping-sub-row-border-mobile-color;
 $responsive-shopping-header-row-border-mobile: 1px solid $responsive-shopping-sub-row-border-mobile-color !default;

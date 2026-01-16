@@ -1,9 +1,32 @@
+<% 
+    const inventoryStatusLabel = inventoryStatus => {
+        if (isUpcoming) {
+            return _.__('oro.frontend.shoppinglist.lineitem.status.is_upcoming');
+        }
+
+        if (isLowInventory && inventoryStatus === 'prod_inventory_status.in_stock') {
+            return _.__('oro.frontend.shoppinglist.lineitem.status.is_low_inventory');
+        }
+
+        return _metadata.inventory_statuses[inventoryStatus] ? _metadata.inventory_statuses[inventoryStatus] : inventoryStatus;
+    };
+    const inventoryStatusName = inventoryStatus => {
+        if (isUpcoming) {
+            return 'prod_inventory_status.is_upcoming';
+        }
+
+        if (isLowInventory && inventoryStatus === 'prod_inventory_status.in_stock') {
+            return 'prod_inventory_status.is_low_inventory';
+        }
+
+        return inventoryStatus;
+    };
+%>
 <% if (!obj.isConfigurable && !obj._isKitItemLineItem) { %>
     <% if (obj.inventoryLevelsMacros) { %>
         <%= inventoryLevelsMacros(obj) %>
     <% } else { %>
         <% let renderInventoryStatus = _.macros('oroshoppinglist::renderInventoryStatus') %>
-        <% let inventoryStatusLabel = _metadata.inventory_statuses[inventoryStatus] ? _metadata.inventory_statuses[inventoryStatus] : inventoryStatus %>
-        <%= renderInventoryStatus({name: inventoryStatus, label: inventoryStatusLabel, isLowInventory: isLowInventory}) %>
+        <%= renderInventoryStatus({name: inventoryStatusName(inventoryStatus), label: inventoryStatusLabel(inventoryStatus), isLowInventory: isLowInventory}) %>
     <% } %>
 <% } %>

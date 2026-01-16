@@ -11,6 +11,8 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
  */
 class ShoppingListLineItemDeleteHandler extends AbstractEntityDeleteHandler
 {
+    private const string ASSOCIATED_LIST = 'associatedList';
+
     /** @var ShoppingListTotalManager */
     private $totalManager;
 
@@ -20,11 +22,28 @@ class ShoppingListLineItemDeleteHandler extends AbstractEntityDeleteHandler
     }
 
     #[\Override]
+    public function delete($entity, bool $flush = true, array $options = []): ?array
+    {
+        $flushOptions = $options;
+        $flushOptions[self::ENTITY] = $entity;
+        $flushOptions[self::ASSOCIATED_LIST] = $entity->getAssociatedList();
+
+        $this->assertDeleteGranted($entity);
+        $this->deleteWithoutFlush($entity, $options);
+
+        if ($flush) {
+            $this->flush($flushOptions);
+
+            return null;
+        }
+
+        return $flushOptions;
+    }
+
+    #[\Override]
     public function flush(array $options): void
     {
-        /** @var LineItem $lineItem */
-        $lineItem = $options[self::ENTITY];
-        $shoppingList = $lineItem->getShoppingList();
+        $shoppingList = $options[self::ASSOCIATED_LIST] ?? null;
         if (null !== $shoppingList) {
             $this->totalManager->invalidateAndRecalculateTotals($shoppingList, false);
         }
@@ -36,9 +55,7 @@ class ShoppingListLineItemDeleteHandler extends AbstractEntityDeleteHandler
     {
         $processedShoppingLists = [];
         foreach ($listOfOptions as $options) {
-            /** @var LineItem $lineItem */
-            $lineItem = $options[self::ENTITY];
-            $shoppingList = $lineItem->getShoppingList();
+            $shoppingList = $options[self::ASSOCIATED_LIST] ?? null;
             if (null !== $shoppingList) {
                 $shoppingListHash = spl_object_hash($shoppingList);
                 if (!isset($processedShoppingLists[$shoppingListHash])) {
@@ -54,11 +71,8 @@ class ShoppingListLineItemDeleteHandler extends AbstractEntityDeleteHandler
     protected function deleteWithoutFlush($entity, array $options): void
     {
         /** @var LineItem $entity */
+        $entity->removeFromAssociatedList();
 
-        $shoppingList = $entity->getShoppingList();
-        if (null !== $shoppingList) {
-            $shoppingList->removeLineItem($entity);
-        }
         parent::deleteWithoutFlush($entity, $options);
     }
 }

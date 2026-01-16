@@ -18,9 +18,11 @@ Feature: Shopping List Line Items
     When I click "Shopping List Actions"
     And I click "Edit"
     Then I should see following grid:
-      | SKU | Qty Update All |
-      | AA1 | 1 item ( set ) |
-      | AA1 | 2 ( item ) set |
+      | SKU                                                                     | Qty Update All |
+      | AA1                                                                     | 1 item ( set ) |
+      | This item can't be added to checkout because the price is not available |                |
+      | AA1                                                                     | 2 ( item ) set |
+      | This item can't be added to checkout because the price is not available |                |
     When I click on "Shopping List Line Item 2 Quantity"
     And I fill "Shopping List Line Item Form" with:
       | Quantity | 1   |
@@ -33,9 +35,11 @@ Feature: Shopping List Line Items
       | Unit     | item |
     And I click "Update All"
     Then I should see following grid:
-      | SKU | Qty Update All |
-      | AA1 | 1 item ( set ) |
-      | AA1 | 3 ( item ) set |
+      | SKU                                                                     | Qty Update All |
+      | AA1                                                                     | 1 item ( set ) |
+      | This item can't be added to checkout because the price is not available |                |
+      | AA1                                                                     | 3 ( item ) set |
+      | This item can't be added to checkout because the price is not available |                |
 
   Scenario: Merge Line items
     When I click on "Shopping List Line Item 1 Quantity"
@@ -44,10 +48,11 @@ Feature: Shopping List Line Items
       | Unit     | item |
     And I click on "Shopping List Line Item 2 Quantity"
     And I type "4" in "Shopping List Line Item 2 Quantity Input"
-    When I save changes for "Shopping List Line Item 1" row
+    When I click on "Shopping List Line Item 1 Save Changes Button"
     Then I should see following grid:
-      | SKU | Qty Update All |
-      | AA1 | 5 ( item ) set |
+      | SKU                                                                     | Qty Update All |
+      | AA1                                                                     | 5 ( item ) set |
+      | This item can't be added to checkout because the price is not available |                |
 
   Scenario: Add an additional product unit to the product
     When I proceed as the Admin
@@ -61,32 +66,34 @@ Feature: Shopping List Line Items
     And save and close form
     Then I should see "Product has been saved" flash message
 
-    Scenario: Check inline editing for simple products with three available units per product
-      When I proceed as the Buyer
-      And I reload the page
-      Then I should see following grid:
-        | SKU | Qty Update All |
-        | AA1 | 5 item         |
-      When I click on "Shopping List Line Item 1 Quantity"
-      And I fill "Shopping List Line Item Form" with:
-        | Quantity | 7    |
-        | Unit     | each |
-      And I save changes for "Shopping List Line Item 1" row
-      Then I should see following grid:
-        | SKU | Qty Update All |
-        | AA1 | 7 each         |
+  Scenario: Check inline editing for simple products with three available units per product
+    When I proceed as the Buyer
+    And I reload the page
+    Then I should see following grid:
+      | SKU                                                                     | Qty Update All |
+      | AA1                                                                     | 5 item         |
+      | This item can't be added to checkout because the price is not available |                |
+    When I click on "Shopping List Line Item 1 Quantity"
+    And I fill "Shopping List Line Item Form" with:
+      | Quantity | 7    |
+      | Unit     | each |
+    And I save changes for "Shopping List Line Item 1" row
+    Then I should see following grid:
+      | SKU                                                                     | Qty Update All |
+      | AA1                                                                     | 7 each         |
+      | This item can't be added to checkout because the price is not available |                |
 
-      And I click on "Decrement Product Quantity In Row 1"
-      And I fill "Shopping List Line Item Form" with:
-        | Quantity | 6    |
-        | Unit     | each |
-      And I save changes for "Shopping List Line Item 1" row
+    And I click on "Decrement Product Quantity In Row 1"
+    And I fill "Shopping List Line Item Form" with:
+      | Quantity | 6    |
+      | Unit     | each |
+    And I save changes for "Shopping List Line Item 1" row
 
-      And I click on "Increment Product Quantity In Row 1"
-      And I fill "Shopping List Line Item Form" with:
-        | Quantity | 7    |
-        | Unit     | each |
-      And I save changes for "Shopping List Line Item 1" row
+    And I click on "Increment Product Quantity In Row 1"
+    And I fill "Shopping List Line Item Form" with:
+      | Quantity | 7    |
+      | Unit     | each |
+    And I save changes for "Shopping List Line Item 1" row
 
   Scenario: Enable "Plain" view mode for product quantity
     When I proceed as the Admin
@@ -126,5 +133,6 @@ Feature: Shopping List Line Items
     When I proceed as the Buyer
     And I reload the page
     Then I should see only following actions for row #1 on grid:
-      | Add a note |
-      | Delete     |
+      | Save For Later |
+      | Add a note     |
+      | Delete         |

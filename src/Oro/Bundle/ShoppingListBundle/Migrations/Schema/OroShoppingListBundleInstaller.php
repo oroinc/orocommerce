@@ -17,7 +17,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_16';
+        return 'v1_17';
     }
 
     #[\Override]
@@ -37,6 +37,8 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
 
         $this->addShoppingListCheckoutSource($schema);
         $this->addShoppingListCustomerVisitor($schema);
+
+        $this->addIndexesToOroShoppingListLineItem($queries);
     }
 
     /**
@@ -93,7 +95,8 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
-        $table->addColumn('shopping_list_id', 'integer');
+        $table->addColumn('shopping_list_id', 'integer', ['notnull' => false]);
+        $table->addColumn('saved_for_later_list_id', 'integer', ['notnull' => false]);
         $table->addColumn('product_id', 'integer');
         $table->addColumn('parent_product_id', 'integer', ['notnull' => false]);
         $table->addColumn('unit_code', 'string', ['length' => 255]);
@@ -101,10 +104,6 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         $table->addColumn('notes', 'text', ['notnull' => false]);
         $table->addColumn('checksum', 'string', ['length' => 40, 'notnull' => true, 'default' => '']);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(
-            ['product_id', 'shopping_list_id', 'unit_code', 'checksum'],
-            'oro_shopping_list_line_item_uidx'
-        );
     }
 
     /**
@@ -192,6 +191,12 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_shopping_list'),
             ['shopping_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_shopping_list'),
+            ['saved_for_later_list_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -339,5 +344,46 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
             ['code'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+    }
+
+    private function addIndexesToOroShoppingListLineItem(QueryBag $queries): void
+    {
+        self::addUniqueIndexToLineItem($queries);
+        self::addExclusiveListIndexToLineItem($queries);
+    }
+
+    public static function addUniqueIndexToLineItem(QueryBag $queries): void
+    {
+        $sql = <<<SQL
+            CREATE UNIQUE INDEX
+                oro_shopping_list_line_item_uidx
+            ON oro_shopping_list_line_item (
+                product_id, 
+                shopping_list_id,
+                saved_for_later_list_id,
+                unit_code,
+                checksum
+            )
+            NULLS NOT DISTINCT
+SQL;
+
+        $queries->addPostQuery($sql);
+    }
+
+    public static function addExclusiveListIndexToLineItem(QueryBag $queries): void
+    {
+        $sql = <<<SQL
+            ALTER TABLE
+                oro_shopping_list_line_item
+            ADD CONSTRAINT 
+                oro_shopping_list_line_item_only_one_list
+            CHECK (
+                (shopping_list_id IS NOT NULL AND saved_for_later_list_id IS NULL)
+            OR
+                (shopping_list_id IS NULL AND saved_for_later_list_id IS NOT NULL)
+            )
+SQL;
+
+        $queries->addPostQuery($sql);
     }
 }

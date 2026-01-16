@@ -5,6 +5,8 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
 use Doctrine\Persistence\ManagerRegistry;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\EntityBundle\Handler\EntityDeleteHandlerRegistry;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerAwareInterface;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -22,8 +24,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * Controller for shopping list line item REST API requests.
  */
-class LineItemController extends RestController
+class LineItemController extends RestController implements FeatureCheckerAwareInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @ApiDoc(
      *      description="Delete Line Item",
@@ -44,10 +48,14 @@ class LineItemController extends RestController
             ->getRepository(LineItem::class)
             ->find($id);
 
+        if (!$this->isFeaturesEnabled() && $lineItem?->getSavedForLaterList() !== null) {
+            $lineItem = null;
+        }
+
         $view = $this->view(null, Response::HTTP_NO_CONTENT);
 
         if ($lineItem) {
-            if ($this->isGranted('DELETE', $lineItem) && $this->isGranted('EDIT', $lineItem->getShoppingList())) {
+            if ($this->isGranted('DELETE', $lineItem) && $this->isGranted('EDIT', $lineItem->getAssociatedList())) {
                 $this->container->get(ShoppingListManager::class)->removeLineItem(
                     $lineItem,
                     (bool) $onlyCurrent
@@ -72,13 +80,20 @@ class LineItemController extends RestController
     #[AclAncestor('oro_shopping_list_frontend_update')]
     public function deleteConfigurableAction(int $shoppingListId, int $productId, string $unitCode): Response
     {
+        if (!$this->isFeaturesEnabled() && $this->isSavedForLater()) {
+            $this->createAccessDeniedException();
+        }
+
         $success = false;
 
+        $repo = $this->container->get('doctrine')->getRepository(LineItem::class);
         /** @var LineItem[] $lineItems */
-        $lineItems = $this->container->get('doctrine')
-            ->getManagerForClass(LineItem::class)
-            ->getRepository(LineItem::class)
-            ->findLineItemsByParentProductAndUnit($shoppingListId, $productId, $unitCode);
+        $lineItems = $repo->findLineItemsByParentProductAndUnit(
+            $shoppingListId,
+            $productId,
+            $unitCode,
+            $this->isSavedForLater()
+        );
 
         $view = $this->view(null, Response::HTTP_NO_CONTENT);
 
@@ -87,7 +102,10 @@ class LineItemController extends RestController
 
         if ($lineItems) {
             foreach ($lineItems as $lineItem) {
-                if (!$this->isGranted('DELETE', $lineItem) || !$this->isGranted('EDIT', $lineItem->getShoppingList())) {
+                if (
+                    !$this->isGranted('DELETE', $lineItem) ||
+                    !$this->isGranted('EDIT', $lineItem->getAssociatedList())
+                ) {
                     break;
                 }
 
@@ -137,7 +155,7 @@ class LineItemController extends RestController
         $entity = $this->getManager()->find($id);
 
         if ($entity) {
-            if ($this->isGranted('EDIT', $entity) && $this->isGranted('EDIT', $entity->getShoppingList())) {
+            if ($this->isGranted('EDIT', $entity) && $this->isGranted('EDIT', $entity->getAssociatedList())) {
                 $form = $this->createForm(FrontendLineItemType::class, $entity, ['csrf_protection' => false]);
 
                 $handler = new LineItemHandler(
@@ -165,6 +183,13 @@ class LineItemController extends RestController
         }
 
         return $this->buildResponse($view, self::ACTION_UPDATE, ['id' => $id, 'entity' => $entity]);
+    }
+
+    private function isSavedForLater(): bool
+    {
+        $request = $this->container->get('request_stack')?->getMainRequest();
+
+        return \filter_var($request->get('savedForLaterGrid', false), FILTER_VALIDATE_BOOLEAN);
     }
 
     #[\Override]

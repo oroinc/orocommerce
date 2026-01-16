@@ -47,7 +47,7 @@ class ShoppingListItemForBuyerTest extends FrontendRestJsonApiTestCase
         $response = $this->cget(['entity' => 'shoppinglistitems'], [], ['HTTP_X-Include' => 'totalCount']);
 
         $this->assertResponseContains('cget_line_item_buyer.yml', $response);
-        self::assertEquals(4, $response->headers->get('X-Include-Total-Count'));
+        self::assertEquals(5, $response->headers->get('X-Include-Total-Count'));
     }
 
     public function testGet()

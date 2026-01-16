@@ -92,6 +92,13 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     constraints:
+        -   Oro\Bundle\ShoppingListBundle\Validator\Constraints\OnlyOneRequiredList:
+                groups:
+                    - Default
+                    # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                    - create
+                    # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                    - update
         -   Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem:
                 groups:
                     # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
@@ -107,20 +114,45 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
                     - add_product
                     # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
                     - add_product_kit_line_item
+                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                    # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
+                    - datagrid_line_items_data
+                    # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                    - datagrid_line_items_data_for_checkout
+                    # Used by \Oro\Bundle\RFPBundle\Resolver\ShoppingListToRequestQuoteValidationGroupResolver
+                    - datagrid_line_items_data_for_rfq
         -   Oro\Bundle\InventoryBundle\Validator\Constraints\QuantityToOrder:
                 groups:
                     # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
                     - create
                     # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
                     - update
-                    # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                    # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
                     - datagrid_line_items_data
+                    # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                    - datagrid_line_items_data_for_checkout
         -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitLineItemContainsRequiredKitItems:
                 groups:
                     # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
                     - add_product_kit_line_item
-                    # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                    # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
                     - datagrid_line_items_data
+                    # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                    - datagrid_line_items_data_for_checkout
+        -   Oro\Bundle\InventoryBundle\Validator\Constraints\HasEnoughInventoryLevel:
+                groups:
+                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                    # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
+                    - datagrid_line_items_data
+                    # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                    - datagrid_line_items_data_for_checkout
+        -   Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemHasPrice:
+                groups:
+                    - datagrid_line_items_data
+                    # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                    - datagrid_line_items_data_for_checkout
     properties:
         product:
             -   NotBlank:
@@ -143,8 +175,49 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
                         - add_product
                         # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
                         - add_product_kit_line_item
-                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
                         - datagrid_line_items_data
+                        # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                        - datagrid_line_items_data_for_checkout
+                        # Used by \Oro\Bundle\RFPBundle\Resolver\ShoppingListToRequestQuoteValidationGroupResolver
+                        - datagrid_line_items_data_for_rfq
+            -   Expression:
+                    negate: false
+                    message: 'oro.shoppinglist.lineitem.product.type.configurable.message'
+                    expression: 'value !== null && value.isConfigurable()'
+                    groups:
+                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
+                        - datagrid_line_items_data
+                        # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                        - datagrid_line_items_data_for_checkout
+                        # Used by \Oro\Bundle\RFPBundle\Resolver\ShoppingListToRequestQuoteValidationGroupResolver
+                        - datagrid_line_items_data_for_rfq
+            -   Oro\Bundle\OrderBundle\Validator\Constraints\HasSupportedInventoryStatus:
+                    message: 'oro.shoppinglist.lineitem.inventory_status.checkout_not_supported'
+                    configurationPath: 'oro_order.frontend_product_visibility'
+                    payload:
+                        severity: warning
+                        shopping_list_group_key: HasSupportedInventoryStatus
+                    groups:
+                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
+                        - datagrid_line_items_data
+                        # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                        - datagrid_line_items_data_for_checkout
+            -   Oro\Bundle\OrderBundle\Validator\Constraints\HasSupportedInventoryStatus:
+                    message: 'oro.shoppinglist.lineitem.inventory_status.rfq_not_supported'
+                    configurationPath: 'oro_rfp.frontend_product_visibility'
+                    payload:
+                        severity: warning
+                        shopping_list_group_key: HasSupportedInventoryStatus
+                    groups:
+                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
+                        - datagrid_line_items_data
+                        # Used by \Oro\Bundle\RFPBundle\Resolver\ShoppingListToRequestQuoteValidationGroupResolver
+                        - datagrid_line_items_data_for_rfq
         quantity:
             -   NotBlank:
                     groups:
@@ -176,8 +249,13 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
                         - add_product
                         # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
                         - add_product_kit_line_item
-                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
                         - datagrid_line_items_data
+                        # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                        - datagrid_line_items_data_for_checkout
+                        # Used by \Oro\Bundle\RFPBundle\Resolver\ShoppingListToRequestQuoteValidationGroupResolver
+                        - datagrid_line_items_data_for_rfq
                     payload:
                         jsValidation:
                             type: Range
@@ -194,14 +272,6 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
                         - update
                         # Used by \Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType
                         - add_product
-        shoppingList:
-            -   NotBlank:
-                    groups:
-                        - Default
-                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
-                        - create
-                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
-                        - update
         notes:
             -   Length:
                     max: 2048
@@ -219,12 +289,24 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
                         - Default
                         # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
                         - add_product_kit_line_item
+                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
+                        # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                        - datagrid_line_items_data_for_checkout
+                        # Used by \Oro\Bundle\RFPBundle\Resolver\ShoppingListToRequestQuoteValidationGroupResolver
+                        - datagrid_line_items_data_for_rfq
         checksum:
             -   NotNull: ~
             -   Length:
                     max: 40
 
 Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
+    constraints:
+        - Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemHasPrice:
+            groups:
+                - datagrid_line_items_data
+                # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                - datagrid_line_items_data_for_checkout
     properties:
         lineItem:
             -   NotNull: ~
@@ -243,8 +325,11 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
                     groups:
                         # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
                         - add_product_kit_line_item
-                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
                         - datagrid_line_items_data
+                        # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                        - datagrid_line_items_data_for_checkout
             -   AtLeastOneOf:
                     constraints:
                         -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductAvailable:
@@ -256,8 +341,11 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
                     groups:
                         # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
                         - add_product_kit_line_item
-                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
                         - datagrid_line_items_data
+                        # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                        - datagrid_line_items_data_for_checkout
         quantity:
             -   NotBlank:
                     message: 'oro.shoppinglist.product_kit_item_line_item.quantity.not_blank.message'
@@ -273,29 +361,41 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
                     groups:
                         # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
                         - add_product_kit_line_item
-                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
                         - datagrid_line_items_data
+                        # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                        - datagrid_line_items_data_for_checkout
             -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityRange:
                     notInRangeMessage: 'oro.shoppinglist.product_kit_item_line_item.quantity.range.not_in_range_message'
                     groups:
                         # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
                         - add_product_kit_line_item
-                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
                         - datagrid_line_items_data
+                        # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                        - datagrid_line_items_data_for_checkout
             -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecision:
                     groups:
                         # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
                         - add_product_kit_line_item
-                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
                         - datagrid_line_items_data
+                        # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                        - datagrid_line_items_data_for_checkout
         unit:
             -   NotNull: ~
             -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductUnitAvailable:
                     groups:
                         # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
                         - add_product_kit_line_item
-                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataValidationListener
+                        # and Oro\Bundle\ShoppingListBundle\Provider\InvalidShoppingListLineItemsProvider
                         - datagrid_line_items_data
+                        # Used by \Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver
+                        - datagrid_line_items_data_for_checkout
         sortOrder:
             -   NotNull: ~
             -   Type:

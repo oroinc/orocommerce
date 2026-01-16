@@ -3,3 +3,92 @@
         <span>{{ 'oro.frontend.shoppinglist.view.not_have_available'|trans }}</span>
     </div>
 {% endblock %}
+
+{% block __customer_user_shopping_list__checkout_errors_modal_button_widget %}
+    {% import '@OroUI/layouts/macros.html.twig' as LayoutUI %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' summary-widget__order-limit-disabled-checkout-button',
+        'data-layout': 'deferred-initialize'
+    }) %}
+    {% set checkoutBtnTrans = 'oro.workflow.b2b_flow_checkout.transition.start_from_shoppinglist.button_label'|trans({},'workflows') %}
+
+    {% set modalAction = feature_enabled('saved_for_later') ? 'save_for_later' : 'delete' %}
+
+    <div {{ block('block_attributes') }}>
+        {{ LayoutUI.clientLink({
+            'aCss': 'btn btn--default btn--full',
+            'label': checkoutBtnTrans,
+            'ariaLabel': checkoutBtnTrans,
+            'ariaHaspopup': true,
+            'labelInIcon': false,
+            'pageComponent': {
+                view: 'oroshoppinglist/js/app/views/shopping-list-errors-dialog-view',
+                options: {
+                    route: 'oro_shopping_list_frontend_errors_modal',
+                    routeParams: {
+                        id: shoppingList.id
+                    },
+                    triggeredBy: 'checkout',
+                    action: modalAction,
+                    invalidIds: invalidIds,
+                    dialogTitle: 'oro.shoppinglist.shopping_list_errors_modal.title'|trans,
+                    refreshGrids: [
+                        'frontend-customer-user-shopping-list-edit-grid',
+                        'frontend-customer-user-shopping-list-saved-for-later-edit-grid'
+                    ],
+                    gridName: 'frontend-customer-user-shopping-list-invalid-line-items-grid',
+                    errorValidationMessages: 'oro.shoppinglist.validators.dialog.checkout'|trans,
+                    successValidationMessages: {
+                        message: 'oro.shoppinglist.validators.success.checkout.title'|trans,
+                        description: 'oro.shoppinglist.validators.success.checkout.message'|trans
+                    },
+                    successProceedBtnLabel: 'oro.shoppinglist.validators.success.submit_btn.checkout'|trans
+                }
+            }
+        }) }}
+    </div>
+{% endblock %}
+
+{% block __customer_user_shopping_list__rfq_errors_modal_button_widget %}
+    {% import '@OroUI/layouts/macros.html.twig' as LayoutUI %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' summary-widget__combined-bottons summary-widget__disabled-rfp-button',
+        'data-layout': 'deferred-initialize'
+    }) %}
+    {% set rfqBtnTrans = 'oro.frontend.shoppinglist.btn.request_quote_create_rfp'|trans %}
+    {% set modalAction = feature_enabled('saved_for_later') ? 'save_for_later' : 'delete' %}
+
+    <div {{ block('block_attributes') }}>
+        {{ LayoutUI.clientLink({
+            'aCss': 'btn btn--outlined btn--full',
+            'label': rfqBtnTrans,
+            'ariaLabel': rfqBtnTrans,
+            'ariaHaspopup': true,
+            'labelInIcon': false,
+            'pageComponent': {
+                view: 'oroshoppinglist/js/app/views/shopping-list-errors-dialog-view',
+                options: {
+                    route: 'oro_shopping_list_frontend_errors_modal',
+                    routeParams: {
+                        id: shoppingList.id
+                    },
+                    triggeredBy: 'rfq',
+                    action: modalAction,
+                    invalidIds: invalidIds,
+                    dialogTitle: 'oro.shoppinglist.shopping_list_errors_modal.rfq.title'|trans,
+                    refreshGrids: [
+                        'frontend-customer-user-shopping-list-edit-grid',
+                        'frontend-customer-user-shopping-list-saved-for-later-edit-grid'
+                    ],
+                    gridName: 'frontend-customer-user-shopping-list-invalid-line-items-grid',
+                    errorValidationMessages: 'oro.shoppinglist.validators.dialog.rfq'|trans,
+                    successValidationMessages: {
+                        message: 'oro.shoppinglist.validators.success.rfq.title'|trans,
+                        description: 'oro.shoppinglist.validators.success.rfq.message'|trans
+                    },
+                    successProceedBtnLabel: 'oro.shoppinglist.validators.success.submit_btn.rfq'|trans
+                }
+            }
+        }) }}
+    </div>
+{% endblock %}

@@ -10,6 +10,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Provides info about shopping lists contains a specific products.
@@ -21,6 +22,7 @@ class ProductShoppingListsDataProvider
     private AclHelper $aclHelper;
     private TokenAccessorInterface $tokenAccessor;
     private ConfigManager $configManager;
+    private RequestStack $requestStack;
 
     private ?bool $isShowAllShoppingLists = null;
 
@@ -36,6 +38,11 @@ class ProductShoppingListsDataProvider
         $this->aclHelper = $aclHelper;
         $this->tokenAccessor = $tokenAccessor;
         $this->configManager = $configManager;
+    }
+
+    public function setRequestStack(RequestStack $requestStack): void
+    {
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -88,11 +95,19 @@ class ProductShoppingListsDataProvider
      */
     private function prepareShoppingLists(array $productIds): array
     {
-        $lineItems = $this->lineItemRepository->getProductItemsWithShoppingListNames(
-            $this->aclHelper,
-            $productIds,
-            $this->isShowAllInShoppingListWidget() ? null : $this->tokenAccessor->getUser()
-        );
+        if ($this->isSavedForLaterGrid()) {
+            $lineItems = $this->lineItemRepository->getAllProductItemsWithShoppingListNames(
+                $this->aclHelper,
+                $productIds,
+                $this->isShowAllInShoppingListWidget() ? null : $this->tokenAccessor->getUser()
+            );
+        } else {
+            $lineItems = $this->lineItemRepository->getProductItemsWithShoppingListNames(
+                $this->aclHelper,
+                $productIds,
+                $this->isShowAllInShoppingListWidget() ? null : $this->tokenAccessor->getUser()
+            );
+        }
 
         return $this->prepareShoppingListsData($lineItems);
     }
@@ -145,9 +160,12 @@ class ProductShoppingListsDataProvider
      */
     private function saveShoppingListData(int $productId, LineItem $lineItem, array $shoppingLists): array
     {
-        $shoppingList = $lineItem->getShoppingList();
-        $shoppingListId = $shoppingList->getId();
+        $shoppingList = $lineItem->getAssociatedList();
+        if (!$shoppingList) {
+            return [];
+        }
 
+        $shoppingListId = $shoppingList->getId();
         $productShoppingLists = $shoppingLists[$productId] ?? [];
 
         if (!isset($productShoppingLists[$shoppingListId])) {
@@ -190,5 +208,12 @@ class ProductShoppingListsDataProvider
         }
 
         return $sortedShoppingLists;
+    }
+
+    private function isSavedForLaterGrid(): bool
+    {
+        $isSavedForLaterGrid = $this->requestStack->getMainRequest()?->get('savedForLaterGrid', false);
+
+        return \filter_var($isSavedForLaterGrid, FILTER_VALIDATE_BOOLEAN);
     }
 }

@@ -187,6 +187,7 @@ datagrids:
             jsmodules:
                 - orodatagrid/js/datagrid/builder/html-templates-preloader
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-flat-data-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-plugins-builder
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-options-builder
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-representation-builder
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-product-kit-builder

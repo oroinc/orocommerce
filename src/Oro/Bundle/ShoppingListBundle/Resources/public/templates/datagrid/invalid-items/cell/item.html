@@ -1,0 +1,89 @@
+<% let clipLength = 30 %>
+<% let oroshoppinglist = _.macros('oroshoppinglist') %>
+<% productId = typeof productId !== 'undefined' ? productId : null %>
+<% variantId = typeof variantId !== 'undefined' ? variantId : null %>
+<% let imageAlt = _.__('oro.frontend.shoppinglist.lineitem.image.alt', {
+    name: name,
+    sku: sku ?? ''
+}) %>
+
+<div class="product-item grid-line-items">
+    <%= oroshoppinglist.renderProductItemImage({
+        src: obj.image,
+        srcWebp: obj.imageWebp,
+        placeholder: _metadata.image_placeholder,
+        productId: variantId ? variantId : productId,
+        title: sku,
+        alt: imageAlt,
+        isConfigurable: obj.isConfigurable,
+        _cid: _cid
+    }) %>
+    <div class="grid-line-items__row">
+        <% let productUrl = function (productId, variantId) { %>
+          <% return oroshoppinglist.routing.generate('oro_product_frontend_product_view', variantId ? {id: productId, variantProductId: variantId} : {id: productId} ) %>
+        <% } %>
+
+        <% if (obj._isVariant) { %>
+            <div class="grid-line-items__row-item height-as-image-tablet">
+                <div class="grid-line-items__row-entry grid-line-items__sku">
+                    <span class="break-all"><%- sku %></span>
+                </div>
+            </div>
+            <div class="grid-line-items__configuration">
+                <% _.each(productConfiguration, function(field) { %>
+                <div class="grid-line-items__field">
+                    <span class="grid-line-items__field-label"><%- field.label %>:</span>
+                    <span class="grid-line-items__field-val"><%- field.value %></span>
+                </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <% if (obj._isKitItemLineItem) { %>
+                <div class="grid-line-items__row-item height-as-image-tablet grid-line-items__multi-row">
+                    <div class="bold"><%- obj.kitItemLabel %>:</div>
+                    <%= oroshoppinglist.renderProductItemName({...obj, link: productUrl(productId)}) %>
+                </div>
+            <% } else { %>
+                <div class="grid-line-items__row-item height-as-image-tablet">
+                    <% if (name && name.length <= clipLength) { %>
+                        <%= oroshoppinglist.renderProductItemName({...obj, link: productUrl(productId, variantId)}) %>
+                    <% } else { %>
+                    <div class="grid-line-items__clip-container">
+                        <%= oroshoppinglist.renderProductItemName({...obj, clip: true, link: productUrl(productId, variantId)}) %>
+                    </div>
+                    <% } %>
+                    <% if (obj.isConfigurable && obj.quantity) { %>
+                    <div class="line-item-configurable" data-label="<%- _.__('oro.frontend.shoppinglist.lineitem.sku.label') %>:">
+                        <% var formattedQuantity = oroshoppinglist.quantityHelper.formatQuantity(quantity, precision) %>
+                        <span class="line-item-container__qty"><%- _.__('oro.product.product_unit.' + unit + '.value.full', {count: formattedQuantity}, quantity) %></span>
+                    </div>
+                    <% } %>
+                </div>
+        <% } %>
+            <% if (obj.sku) { %>
+                <div class="grid-line-items__row-entry grid-line-items__sku">
+                    <span class="break-all"><%- sku %></span>
+                </div>
+            <% } %>
+            <% if (obj.subTitle) { %>
+                <div class="grid-line-items__sub-title">
+                    <%= obj.subTitle %>
+                </div>
+            <% } %>
+            <% if (obj.productConfiguration) { %>
+                <div class="grid-line-items__configuration">
+                    <% _.each(productConfiguration, function(field) { %>
+                        <div class="grid-line-items__field">
+                            <span class="grid-line-items__field-label"><%- field.label %>:</span>
+                            <span class="grid-line-items__field-val"><%- field.value %></span>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+        <% } %>
+    </div>
+</div>
+
+<% if (obj.filteredOutData) { %>
+    <%= oroshoppinglist.renderMoreVariantsButton(filteredOutData) %>
+<% } %>

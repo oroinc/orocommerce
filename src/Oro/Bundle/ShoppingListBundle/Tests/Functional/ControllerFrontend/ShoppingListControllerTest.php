@@ -373,7 +373,6 @@ class ShoppingListControllerTest extends WebTestCase
         );
 
         self::assertStringContainsString($shoppingList->getLabel(), $pageCrawler->html());
-        self::assertStringContainsString('Checkout', $buttonsCrawler->html());
 
         $response = $this->client->requestFrontendGrid(
             'frontend-customer-user-shopping-list-grid',

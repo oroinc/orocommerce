@@ -13,6 +13,8 @@ import renderWarnings from 'tpl-loader!oroshoppinglist/templates/macros/product-
 import renderMoreVariantsButton from 'tpl-loader!oroshoppinglist/templates/macros/product-item__variants-btn.html';
 import renderUnit from 'tpl-loader!oroshoppinglist/templates/macros/product-item__unit.html';
 import renderExpandKitsButton from 'tpl-loader!oroshoppinglist/templates/macros/product-kit__expand-btn.html';
+import renderLineItemQuantityUnitInput
+    from 'tpl-loader!oroshoppinglist/templates/macros/line-item-quantity-unit__input.html';
 
 _.macros('oroshoppinglist', {
     /**
@@ -81,7 +83,7 @@ _.macros('oroshoppinglist', {
     /**
      * Renders warnings for product item
      *
-     * @param {array} errors
+     * @param {array} warnings
      */
     renderWarnings,
 
@@ -123,5 +125,17 @@ _.macros('oroshoppinglist', {
      * @param {string} data.productName
      * @param {boolean} data.showLabel
      */
-    renderExpandKitsButton
+    renderExpandKitsButton,
+
+    /**
+     * Render line item quantity and unit input
+     *
+     * @param {Object} obj
+     * @param {number} quantity
+     * @param {number} precision
+     * @param {Array} units
+     * @param {string} unitCode
+     * @param {Object} gridThemeOptions
+     */
+    renderLineItemQuantityUnitInput
 });

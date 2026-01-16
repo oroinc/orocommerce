@@ -14,7 +14,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
-class LineItemTest extends TestCase
+final class LineItemTest extends TestCase
 {
     use EntityTestCaseTrait;
 
@@ -25,6 +25,7 @@ class LineItemTest extends TestCase
             ['product', new Product()],
             ['parentProduct', new Product()],
             ['shoppingList', new ShoppingList()],
+            ['savedForLaterList', new ShoppingList()],
             ['organization', new Organization()],
             ['notes', 'notes-test-123'],
             ['unit', new ProductUnit()],
@@ -69,5 +70,56 @@ class LineItemTest extends TestCase
 
         self::assertSame($unitItem, $lineItem->getProductUnit());
         self::assertSame($unitItem->getCode(), $lineItem->getProductUnitCode());
+    }
+
+    public function testSetAndRemoveShoppingList(): void
+    {
+        $lineItem = new LineItem();
+
+        self::assertNull($lineItem->getShoppingList());
+        self::assertNull($lineItem->getSavedForLaterList());
+        self::assertNull($lineItem->getAssociatedList());
+        self::assertNull($lineItem->getLineItemsHolder());
+        self::assertFalse($lineItem->isSavedForLaterList());
+
+        $shoppingList = new ShoppingList();
+        $lineItem->setSavedForLaterList($shoppingList);
+
+        self::assertNull($lineItem->getShoppingList());
+        self::assertSame($shoppingList, $lineItem->getSavedForLaterList());
+        self::assertSame($shoppingList, $lineItem->getAssociatedList());
+        self::assertSame($shoppingList, $lineItem->getLineItemsHolder());
+        self::assertTrue($lineItem->isSavedForLaterList());
+
+        $lineItem->setShoppingList($shoppingList);
+
+        self::assertSame($shoppingList, $lineItem->getShoppingList());
+
+        $lineItem->removeSavedForLaterList();
+
+        self::assertNull($lineItem->getSavedForLaterList());
+        self::assertSame($shoppingList, $lineItem->getAssociatedList());
+        self::assertSame($shoppingList, $lineItem->getLineItemsHolder());
+        self::assertFalse($lineItem->isSavedForLaterList());
+
+        $lineItem->removeShoppingList();
+
+        self::assertNull($lineItem->getShoppingList());
+        self::assertNull($lineItem->getAssociatedList());
+        self::assertNull($lineItem->getLineItemsHolder());
+        self::assertFalse($lineItem->isSavedForLaterList());
+    }
+
+    public function testRemoveFromAssociatedList(): void
+    {
+        $lineItem = new LineItem();
+        $shoppingList = new ShoppingList();
+        $shoppingList->addSavedForLaterLineItem($lineItem);
+
+        self::assertSame([$lineItem], $shoppingList->getSavedForLaterLineItems()->toArray());
+
+        $lineItem->removeFromAssociatedList();
+
+        self::assertSame([], $shoppingList->getSavedForLaterLineItems()->toArray());
     }
 }

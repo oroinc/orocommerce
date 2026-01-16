@@ -62,6 +62,22 @@
         }
     ]) %}
 
+    {% if feature_enabled('saved_for_later') %}
+        {% set dataBlocks = dataBlocks|merge([
+            {
+                'title' : 'oro.shoppinglist.saved_for_later_line_items.label'|trans,
+                'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'spanClass': 'shopping-list-line-items',
+                    'data' : [dataGrid.renderGrid('shopping-list-saved-for-later-line-items-grid', {shopping_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+            }
+        ]) %}
+    {% endif %}
+
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.shoppinglist.sections.subtotals'|trans,
         'subblocks': [{'data' : [subtotals]}]

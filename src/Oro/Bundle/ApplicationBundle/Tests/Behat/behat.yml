@@ -178,6 +178,10 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//div[contains(@id,"s2id_oro_customer_type_priceListsByWebsites_1_priceListCollection_1_priceList-uid")]//input'
             element: Select2Entity
+          Price List For Second Website:
+            type: 'xpath'
+            locator: '//div[contains(@id,"s2id_oro_customer_type_priceListsByWebsites_2_priceListCollection_0_priceList-uid")]//input'
+            element: Select2Entity
           Price List Fallback: 'oro_customer_type[priceListsByWebsites][1][fallback]'
           Group:
             type: 'xpath'
@@ -521,6 +525,8 @@ oro_behat_extension:
           Shopping List Limit Default: 'shopping_list[oro_shopping_list___shopping_list_limit][use_parent_scope_value]'
           Show All Lists in Shopping List Widgets Use default: 'shopping_list[oro_shopping_list___show_all_in_shopping_list_widget][use_parent_scope_value]'
           Show All Lists in Shopping List Widgets: 'shopping_list[oro_shopping_list___show_all_in_shopping_list_widget][value]'
+          Enable Save For Later Use default: 'shopping_list[oro_shopping_list___saved_for_later_enabled][use_parent_scope_value]'
+          Enable Save For Later: 'shopping_list[oro_shopping_list___saved_for_later_enabled][value]'
 
     Save on conf window:
       selector:

@@ -285,6 +285,7 @@ class StartCheckoutTest extends FrontendRestJsonApiTestCase
         foreach ($shoppingList->getLineItems() as $lineItem) {
             if ($lineItem !== $firstLineItem) {
                 $shoppingList->removeLineItem($lineItem);
+                $em->remove($lineItem);
             }
         }
         $em->flush();

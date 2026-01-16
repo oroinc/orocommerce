@@ -17,6 +17,7 @@ class LoadShoppingListLineItems extends AbstractShoppingListLineItemsFixture
     public const LINE_ITEM_9 = 'shopping_list_line_item.9';
     public const LINE_ITEM_10 = 'shopping_list_lin_item.10';
     public const LINE_ITEM_11 = 'shopping_list_lin_item.11';
+    public const SAVED_FOR_LATER_LINE_ITEM_1 = 'saved_for_later_lin_item.1';
 
     protected static array $lineItems = [
         self::LINE_ITEM_1 => [
@@ -81,6 +82,12 @@ class LoadShoppingListLineItems extends AbstractShoppingListLineItemsFixture
             'unit' => 'product_unit.milliliter',
             'quantity' => 4
         ],
+        self::SAVED_FOR_LATER_LINE_ITEM_1 => [
+            'product' => LoadProductData::PRODUCT_1,
+            'savedForLaterList' => LoadShoppingLists::SHOPPING_LIST_3,
+            'unit' => 'product_unit.bottle',
+            'quantity' => 5
+        ]
     ];
 
     #[\Override]

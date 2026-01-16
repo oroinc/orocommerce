@@ -38,6 +38,10 @@ class UpdateInventoryLevelsQuantities extends AbstractFixture implements Depende
                     $this->getReference('product_unit.' . $item['unit'])
                 );
 
+                if (!$inventoryLevel) {
+                    continue;
+                }
+
                 $inventoryLevel->setQuantity($item['quantity']);
 
                 $manager->persist($inventoryLevel);

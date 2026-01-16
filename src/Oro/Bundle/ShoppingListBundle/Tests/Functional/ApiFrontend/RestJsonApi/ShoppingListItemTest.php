@@ -51,6 +51,9 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         if ($this->getShoppingListLimit() !== $this->initialShoppingListLimit) {
             $this->setShoppingListLimit($this->initialShoppingListLimit);
         }
+
+        $this->initialShoppingListLimit = null;
+
         parent::tearDown();
     }
 
@@ -149,7 +152,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $response = $this->cget(['entity' => 'shoppinglistitems'], [], ['HTTP_X-Include' => 'totalCount']);
 
         $this->assertResponseContains('cget_line_item.yml', $response);
-        self::assertEquals(6, $response->headers->get('X-Include-Total-Count'));
+        self::assertEquals(7, $response->headers->get('X-Include-Total-Count'));
     }
 
     public function testGetListFilteredByShoppingList(): void
@@ -162,6 +165,18 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseContains('cget_line_item_filter.yml', $response);
         self::assertEquals(3, $response->headers->get('X-Include-Total-Count'));
+    }
+
+    public function testGetListFilteredBySavedForLaterList(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'shoppinglistitems'],
+            ['filter' => ['savedForLaterList' => '<toString(@shopping_list1->id)>']],
+            ['HTTP_X-Include' => 'totalCount']
+        );
+
+        $this->assertResponseContains('cget_saved_for_later_item_filter.yml', $response);
+        self::assertEquals(1, $response->headers->get('X-Include-Total-Count'));
     }
 
     public function testGetListWithPriceOnly(): void
@@ -274,6 +289,32 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         self::assertEquals(123.45, $lineItem->getQuantity());
         $this->assertShoppingListTotal($lineItem->getShoppingList(), 177.68, 'USD');
+    }
+
+    public function testUpdateSavedForLaterLineItem(): void
+    {
+        $lineItemId = $this->getReference('saved_for_later_line_item1')->getId();
+        $data = [
+            'data' => [
+                'type' => 'shoppinglistitems',
+                'id' => (string)$lineItemId,
+                'attributes' => [
+                    'quantity' => 123.45
+                ]
+            ]
+        ];
+
+        $response = $this->patch(
+            ['entity' => 'shoppinglistitems', 'id' => (string)$lineItemId],
+            $data
+        );
+
+        $this->assertResponseContains($data, $response);
+
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
+        self::assertEquals(123.45, $lineItem->getQuantity());
+        $this->assertShoppingListTotal($lineItem->getSavedForLaterList(), 59.15, 'USD');
     }
 
     public function testTryToUpdateFloatQuantityWhenPrecisionIsZero(): void
@@ -581,6 +622,36 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $this->assertShoppingListTotal($lineItem->getShoppingList(), 159.7, 'USD');
     }
 
+    public function testCreateSavedForLaterLineItem(): void
+    {
+        $shoppingListId = $this->getReference('shopping_list1')->getId();
+
+        $data = $this->getRequestData('create_line_item.yml');
+        $data['data']['relationships']['shoppingList']['data'] = null;
+        $data['data']['relationships']['savedForLaterList']['data']['type'] = 'shoppinglists';
+        $data['data']['relationships']['savedForLaterList']['data']['id'] = (string)$shoppingListId;
+        $response = $this->post(
+            ['entity' => 'shoppinglistitems'],
+            $data
+        );
+
+        $lineItemId = (int)$this->getResourceId($response);
+        $responseContent = $this->updateResponseContent('create_line_item.yml', $response);
+        $responseContent['data']['relationships']['shoppingList']['data'] = null;
+        $responseContent['data']['relationships']['savedForLaterList']['data']['type'] = 'shoppinglists';
+        $responseContent['data']['relationships']['savedForLaterList']['data']['id'] = (string)$shoppingListId;
+        $this->assertResponseContains($responseContent, $response);
+
+        /** @var LineItem|null $lineItem */
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
+        self::assertNotNull($lineItem);
+        self::assertNull($lineItem->getShoppingList());
+        $shoppingList = $lineItem->getSavedForLaterList();
+        self::assertEquals($shoppingListId, $shoppingList->getId());
+        self::assertCount(2, $shoppingList->getSavedForLaterLineItems());
+        $this->assertShoppingListTotal($lineItem->getSavedForLaterList(), 59.15, 'USD');
+    }
+
     public function testDelete(): void
     {
         $lineItemId = $this->getReference('line_item1')->getId();
@@ -598,21 +669,41 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $this->assertShoppingListTotal($shoppingList, 53.0, 'USD');
     }
 
-    public function testDeleteList(): void
+    public function testDeleteSavedForLaterItem(): void
     {
-        $lineItemId = $this->getReference('line_item1')->getId();
+        $lineItemId = $this->getReference('saved_for_later_line_item1')->getId();
         $shoppingListId = $this->getReference('shopping_list1')->getId();
 
-        $this->cdelete(
-            ['entity' => 'shoppinglistitems'],
-            ['filter' => ['id' => (string)$lineItemId]]
+        $this->delete(
+            ['entity' => 'shoppinglistitems', 'id' => (string)$lineItemId]
         );
 
         $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         self::assertTrue(null === $lineItem);
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
+        self::assertCount(0, $shoppingList->getSavedForLaterLineItems());
+    }
+
+    public function testDeleteList(): void
+    {
+        $lineItemId = $this->getReference('line_item1')->getId();
+        $savedForLaterItemId = $this->getReference('saved_for_later_line_item1')->getId();
+        $shoppingListId = $this->getReference('shopping_list1')->getId();
+
+        $this->cdelete(
+            ['entity' => 'shoppinglistitems'],
+            ['filter' => ['id' => $lineItemId . ',' . $savedForLaterItemId]]
+        );
+
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
+        $savedForLaterItem = $this->getEntityManager()->find(LineItem::class, $savedForLaterItemId);
+        self::assertTrue(null === $lineItem);
+        self::assertTrue(null === $savedForLaterItem);
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertCount(2, $shoppingList->getLineItems());
+        self::assertCount(0, $shoppingList->getSavedForLaterLineItems());
         $this->assertShoppingListTotal($shoppingList, 53.0, 'USD');
     }
 
@@ -799,14 +890,15 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToSetNullShoppingList(): void
+    public function testTryToSetNullShoppingListAndSavedForLaterList(): void
     {
         $data = [
             'data' => [
                 'type' => 'shoppinglistitems',
                 'id' => '<toString(@line_item1->id)>',
                 'relationships' => [
-                    'shoppingList' => ['data' => null]
+                    'shoppingList' => ['data' => null],
+                    'savedForLaterList' => ['data' => null]
                 ]
             ]
         ];
@@ -820,9 +912,8 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title' => 'not blank constraint',
-                'detail' => 'This value should not be blank.',
-                'source' => ['pointer' => '/data/relationships/shoppingList/data']
+                'title' => 'only one required list constraint',
+                'detail' => 'Line item must be assigned to either the shopping list or the saved for later list.',
             ],
             $response
         );
@@ -947,14 +1038,13 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationErrors(
             [
                 [
-                    'title' => 'not blank constraint',
-                    'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/relationships/product/data']
+                    'title' => 'only one required list constraint',
+                    'detail' => 'Line item must be assigned to either the shopping list or the saved for later list.',
                 ],
                 [
                     'title' => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/relationships/shoppingList/data']
+                    'source' => ['pointer' => '/data/relationships/product/data']
                 ],
                 [
                     'title' => 'not blank constraint',
@@ -1023,11 +1113,63 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         );
     }
 
+    public function testTryToAddDuplicatedSavedForLaterItem(): void
+    {
+        $shoppingListId = $this->getReference('shopping_list1')->getId();
+
+        $data = $this->getRequestData('create_line_item_duplicate.yml');
+        $data['data']['relationships']['shoppingList']['data'] = null;
+        $data['data']['relationships']['savedForLaterList']['data']['type'] = 'shoppinglists';
+        $data['data']['relationships']['savedForLaterList']['data']['id'] = (string)$shoppingListId;
+
+        $response = $this->post(
+            ['entity' => 'shoppinglistitems'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'conflict constraint',
+                'detail' => 'The entity already exists.'
+            ],
+            $response,
+            Response::HTTP_CONFLICT
+        );
+    }
+
     public function testTryToUpdateThatCausesDuplicatedLineItem(): void
     {
         $response = $this->patch(
             ['entity' => 'shoppinglistitems', 'id' => '<toString(@line_item2->id)>'],
             'update_line_item_duplicate.yml',
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'line item constraint',
+                'detail' => 'Line Item with the same product and unit already exists'
+            ],
+            $response
+        );
+    }
+
+    public function testTryToUpdateThatCausesDuplicatedSavedForLaterItem(): void
+    {
+        $shoppingListId = $this->getReference('shopping_list1')->getId();
+
+        $data = $this->getRequestData('update_line_item_duplicate.yml');
+        $data['data']['relationships']['shoppingList']['data'] = null;
+        $data['data']['relationships']['savedForLaterList']['data']['type'] = 'shoppinglists';
+        $data['data']['relationships']['savedForLaterList']['data']['id'] = (string)$shoppingListId;
+        $data['data']['id'] = '<toString(@line_item1->id)>';
+
+        $response = $this->patch(
+            ['entity' => 'shoppinglistitems', 'id' => '<toString(@line_item1->id)>'],
+            $data,
             [],
             false
         );
@@ -1052,6 +1194,18 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $this->assertUnsupportedSubresourceResponse($response);
     }
 
+    public function testTryToGetSubresourceSavedForLaterList(): void
+    {
+        $params = [
+            'entity' => 'shoppinglistitems',
+            'id' => '<toString(@saved_for_later_line_item1->id)>',
+            'association' => 'savedForLaterList'
+        ];
+        $response = $this->getSubresource($params, [], [], false);
+
+        $this->assertUnsupportedSubresourceResponse($response);
+    }
+
     public function testTryToGetRelationshipShoppingList(): void
     {
         $response = $this->getRelationship(
@@ -1063,6 +1217,17 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $this->assertUnsupportedSubresourceResponse($response);
     }
 
+    public function testTryToGetRelationshipSavedForLaterList(): void
+    {
+        $params = [
+            'entity' => 'shoppinglistitems',
+            'id' => '<toString(@saved_for_later_line_item1->id)>',
+            'association' => 'savedForLaterList'
+        ];
+        $response = $this->getRelationship($params, [], [], false);
+        $this->assertUnsupportedSubresourceResponse($response);
+    }
+
     public function testTryToUpdateRelationshipShoppingList(): void
     {
         $response = $this->patchRelationship(
@@ -1071,6 +1236,17 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             [],
             false
         );
+        $this->assertUnsupportedSubresourceResponse($response);
+    }
+
+    public function testTryToUpdateRelationshipSavedForLaterList(): void
+    {
+        $params = [
+            'entity' => 'shoppinglistitems',
+            'id' => '<toString(@saved_for_later_line_item1->id)>',
+            'association' => 'savedForLaterList'
+        ];
+        $response = $this->patchRelationship($params, [], [], false);
         $this->assertUnsupportedSubresourceResponse($response);
     }
 
@@ -1520,5 +1696,68 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertCount(2, $shoppingList->getLineItems());
         $this->assertShoppingListTotal($shoppingList, 29.55, 'USD');
+    }
+
+    public function testMoveSavedForLaterItemToShoppingList(): void
+    {
+        $this->delete(
+            ['entity' => 'shoppinglistitems', 'id' => '<toString(@line_item1->id)>']
+        );
+
+        $shoppingList = $this->getReference('shopping_list1');
+        $this->assertShoppingListTotal($shoppingList, 53, 'USD');
+
+        $lineItemId = $this->getReference('saved_for_later_line_item1')->getId();
+        $data = [
+            'data' => [
+                'type' => 'shoppinglistitems',
+                'id' => (string)$lineItemId,
+                'relationships' => [
+                    'shoppingList' => ['data' => ['type' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>']]
+                ]
+            ]
+        ];
+
+        $response = $this->patch(
+            ['entity' => 'shoppinglistitems', 'id' => (string)$lineItemId],
+            $data
+        );
+
+        $this->assertResponseContains($data, $response);
+
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
+        self::assertNull($lineItem->getSavedForLaterList());
+        self::assertNotNull($lineItem->getShoppingList());
+        $this->assertShoppingListTotal($lineItem->getShoppingList(), 59.15, 'USD');
+    }
+
+    public function testMoveLineItemToSavedForLaterList(): void
+    {
+        $lineItemId = $this->getReference('line_item2')->getId();
+        $data = [
+            'data' => [
+                'type' => 'shoppinglistitems',
+                'id' => (string)$lineItemId,
+                'relationships' => [
+                    'savedForLaterList' => [
+                        'data' => ['type' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>']
+                    ]
+                ]
+            ]
+        ];
+
+        $response = $this->patch(
+            ['entity' => 'shoppinglistitems', 'id' => (string)$lineItemId],
+            $data
+        );
+
+        $this->assertResponseContains($data, $response);
+
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
+        self::assertNotNull($lineItem->getSavedForLaterList());
+        self::assertNull($lineItem->getShoppingList());
+        $this->assertShoppingListTotal($lineItem->getSavedForLaterList(), 35.75, 'USD');
     }
 }

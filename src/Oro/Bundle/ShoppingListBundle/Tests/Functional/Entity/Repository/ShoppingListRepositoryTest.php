@@ -231,7 +231,7 @@ class ShoppingListRepositoryTest extends WebTestCase
         self::assertCount(7, $shoppingLists);
 
         $lineItems = $lineItemRepo->findBy(['customerUser' => null]);
-        self::assertCount(13, $lineItems);
+        self::assertCount(14, $lineItems);
     }
 
     public function testHasEmptyConfigurableLineItems(): void
