@@ -49,7 +49,7 @@ class LoadProductSearchAggregatedData implements ProcessorInterface
     private function getSearchAggregationFilterName(ListContext $context): ?string
     {
         $filterValues = $context->getFilterValues()->getAll();
-        foreach ($filterValues as $filterKey => $filterValue) {
+        foreach ($filterValues as $filterKey => $values) {
             if ($context->getFilters()->get($filterKey) instanceof SearchAggregationFilter) {
                 return $filterKey;
             }
