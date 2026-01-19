@@ -4,6 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Exception\RuntimeException;
 use Oro\Bundle\ApiBundle\Filter\FilterValue;
+use Oro\Bundle\ApiBundle\Filter\FilterValueAccessor;
 use Oro\Bundle\ApiBundle\Model\Range;
 use Oro\Bundle\ApiBundle\Processor\Context;
 use Oro\Bundle\CatalogBundle\Api\Repository\CategoryNodeRepository;
@@ -37,14 +38,16 @@ class RemoveNotAvailableCategoryNodeFromFilter implements ProcessorInterface
             return;
         }
 
-        $filterValues = $context->getFilterValues();
-        $filterValue = $filterValues->get($this->filterKey);
-        if (null === $filterValue) {
+        /** @var FilterValueAccessor $filterValues */
+        $filterValues = $context->getFilterValues()->getMultiple($this->filterKey);
+        if (!$filterValues) {
             // the filtering was not requested
             return;
         }
 
-        $this->correctFilterValue($filterValue, $context);
+        foreach ($filterValues as $filterValue) {
+            $this->correctFilterValue($filterValue, $context);
+        }
     }
 
     private function correctFilterValue(FilterValue $filterValue, Context $context): void
