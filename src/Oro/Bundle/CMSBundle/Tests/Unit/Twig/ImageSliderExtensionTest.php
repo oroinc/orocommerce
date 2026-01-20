@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Twig;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ApiBundle\Provider\ApiUrlResolver;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\AttachmentBundle\Tests\Unit\Stub\FileProxyStub;
@@ -23,8 +24,9 @@ class ImageSliderExtensionTest extends TestCase
 
     private const PLACEHOLDER = 'placeholder/image.png';
 
-    private AttachmentManager|MockObject $attachmentManager;
-    private ManagerRegistry|MockObject $doctrine;
+    private AttachmentManager&MockObject $attachmentManager;
+    private ManagerRegistry&MockObject $doctrine;
+    private ApiUrlResolver&MockObject $apiUrlResolver;
     private ImageSliderExtension $extension;
 
     #[\Override]
@@ -32,11 +34,18 @@ class ImageSliderExtensionTest extends TestCase
     {
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->apiUrlResolver = $this->createMock(ApiUrlResolver::class);
 
         $this->attachmentManager->expects(self::any())
             ->method('getFilteredImageUrl')
             ->willReturnCallback(static function (File $file, string $filter, string $format) {
                 return '/' . $filter . '/' . $file->getFilename() . ($format ? '.' . $format : '');
+            });
+
+        $this->apiUrlResolver->expects(self::any())
+            ->method('getEffectiveReferenceType')
+            ->willReturnCallback(static function (int $defaultReferenceType) {
+                return $defaultReferenceType;
             });
 
         $imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
@@ -52,6 +61,7 @@ class ImageSliderExtensionTest extends TestCase
             ->add('oro_cms.provider.image_slider_image_placeholder.default', $imagePlaceholderProvider)
             ->add(PropertyAccessorInterface::class, $propertyAccessor)
             ->add(ManagerRegistry::class, $this->doctrine)
+            ->add('oro_api.provider.api_url_resolver', $this->apiUrlResolver)
             ->getContainer($this);
 
         $this->extension = new ImageSliderExtension($container);

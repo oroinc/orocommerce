@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Twig;
 
+use Oro\Bundle\ApiBundle\Provider\ApiUrlResolver;
 use Oro\Bundle\AttachmentBundle\Exception\FileNotFoundException;
 use Oro\Bundle\AttachmentBundle\Provider\FileUrlByUuidProvider;
 use Oro\Bundle\AttachmentBundle\Provider\FileUrlProviderInterface;
@@ -19,6 +20,7 @@ use Twig\TwigFunction;
 class DigitalAssetExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     private ContainerInterface $container;
+    private ?ApiUrlResolver $apiUrlResolver = null;
 
     public function __construct(ContainerInterface $container)
     {
@@ -42,11 +44,17 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH
     ): string {
         try {
+            // Only override referenceType if it was not explicitly passed
+            $args = func_get_args();
+            $effectiveReferenceType = isset($args[4])
+                ? $referenceType
+                : $this->getEffectiveReferenceType($referenceType);
+
             return $this->getFileUrlByUuidProvider()->getFilteredImageUrl(
                 $fileUuid,
                 $filterName,
                 $format,
-                $referenceType
+                $effectiveReferenceType
             );
         } catch (FileNotFoundException $e) {
             return '';
@@ -60,10 +68,16 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH
     ): string {
         try {
+            // Only override referenceType if it was not explicitly passed
+            $args = func_get_args();
+            $effectiveReferenceType = isset($args[3])
+                ? $referenceType
+                : $this->getEffectiveReferenceType($referenceType);
+
             return $this->getFileUrlByUuidProvider()->getFileUrl(
                 $fileUuid,
                 $action,
-                $referenceType
+                $effectiveReferenceType
             );
         } catch (FileNotFoundException $e) {
             return '';
@@ -75,11 +89,26 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
     {
         return [
             FileUrlByUuidProvider::class,
+            'oro_api.provider.api_url_resolver' => ApiUrlResolver::class,
         ];
     }
 
     private function getFileUrlByUuidProvider(): FileUrlByUuidProvider
     {
         return $this->container->get(FileUrlByUuidProvider::class);
+    }
+
+    private function getApiUrlResolver(): ApiUrlResolver
+    {
+        if (null === $this->apiUrlResolver) {
+            $this->apiUrlResolver = $this->container->get('oro_api.provider.api_url_resolver');
+        }
+
+        return $this->apiUrlResolver;
+    }
+
+    private function getEffectiveReferenceType(int $referenceType): int
+    {
+        return $this->getApiUrlResolver()->getEffectiveReferenceType($referenceType);
     }
 }

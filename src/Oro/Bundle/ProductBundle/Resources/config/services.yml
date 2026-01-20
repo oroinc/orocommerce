@@ -755,6 +755,8 @@ services:
             - '@oro_product.provider.product_image_placeholder'
             - '@oro_attachment.tools.webp_configuration'
             - '@oro_ui.tools.url_helper'
+        calls:
+            - [setApiUrlResolver, ['@oro_api.provider.api_url_resolver']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product_list.build_query, method: onBuildQuery, priority: 10 }
             - { name: kernel.event_listener, event: oro_product.product_list.build_result, method: onBuildResult, priority: 10 }
