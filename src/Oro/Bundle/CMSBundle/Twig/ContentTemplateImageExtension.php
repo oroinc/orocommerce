@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Twig;
 
+use Oro\Bundle\ApiBundle\Provider\ApiUrlResolver;
 use Oro\Bundle\CMSBundle\Entity\ContentTemplate;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Psr\Container\ContainerInterface;
@@ -17,6 +18,7 @@ class ContentTemplateImageExtension extends AbstractExtension implements Service
     private ContainerInterface $container;
 
     private ?ImagePlaceholderProviderInterface $imagePlaceholderProvider = null;
+    private ?ApiUrlResolver $apiUrlResolver = null;
 
     public function __construct(ContainerInterface $container)
     {
@@ -39,12 +41,15 @@ class ContentTemplateImageExtension extends AbstractExtension implements Service
     {
         return [
             'oro_cms.provider.content_template_preview_image_placeholder' => ImagePlaceholderProviderInterface::class,
+            'oro_api.provider.api_url_resolver' => ApiUrlResolver::class,
         ];
     }
 
     public function getPreviewImagePlaceholder(string $filter, string $format = ''): string
     {
-        return $this->getImagePlaceholderProvider()->getPath($filter, $format);
+        $referenceType = $this->getEffectiveReferenceType();
+
+        return $this->getImagePlaceholderProvider()->getPath($filter, $format, $referenceType);
     }
 
     private function getImagePlaceholderProvider(): ImagePlaceholderProviderInterface
@@ -55,5 +60,19 @@ class ContentTemplateImageExtension extends AbstractExtension implements Service
         }
 
         return $this->imagePlaceholderProvider;
+    }
+
+    private function getApiUrlResolver(): ApiUrlResolver
+    {
+        if (null === $this->apiUrlResolver) {
+            $this->apiUrlResolver = $this->container->get('oro_api.provider.api_url_resolver');
+        }
+
+        return $this->apiUrlResolver;
+    }
+
+    private function getEffectiveReferenceType(): int
+    {
+        return $this->getApiUrlResolver()->getEffectiveReferenceType();
     }
 }

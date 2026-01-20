@@ -4,10 +4,10 @@ namespace Oro\Bundle\CMSBundle\Twig;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\Proxy;
+use Oro\Bundle\ApiBundle\Provider\ApiUrlResolver;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\CMSBundle\Entity\ImageSlide;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -21,6 +21,7 @@ use Twig\TwigFunction;
 class ImageSliderExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     private ContainerInterface $container;
+    private ?ApiUrlResolver $apiUrlResolver = null;
     private ?AttachmentManager $attachmentManager = null;
     private ?ImagePlaceholderProviderInterface $imagePlaceholderProvider = null;
     private ?PropertyAccessorInterface $propertyAccessor = null;
@@ -46,7 +47,8 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
             AttachmentManager::class,
             'oro_cms.provider.image_slider_image_placeholder.default' => ImagePlaceholderProviderInterface::class,
             PropertyAccessorInterface::class,
-            DoctrineHelper::class
+            ManagerRegistry::class,
+            'oro_api.provider.api_url_resolver' => ApiUrlResolver::class,
         ];
     }
 
@@ -141,14 +143,26 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
 
     public function getImageSlideImage(ImageSlide $imageSlide, string $format = ''): ?string
     {
+        $effectiveReferenceType = $this->getEffectiveReferenceType();
+
         $image = $this->getImage($imageSlide, 'extraLargeImage');
         if (null !== $image) {
-            return $this->getAttachmentManager()->getFilteredImageUrl($image, 'original', $format);
+            return $this->getAttachmentManager()->getFilteredImageUrl(
+                $image,
+                'original',
+                $format,
+                $effectiveReferenceType
+            );
         }
 
         $image = $this->getFallbackImage($imageSlide, 'extraLargeImage');
         if (null !== $image) {
-            return $this->getAttachmentManager()->getFilteredImageUrl($image, 'slider_extra_large', $format);
+            return $this->getAttachmentManager()->getFilteredImageUrl(
+                $image,
+                'slider_extra_large',
+                $format,
+                $effectiveReferenceType
+            );
         }
 
         return $this->getImagePlaceholderProvider()->getPath('original', $format);
@@ -161,6 +175,8 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
         ImageSlide $imageSlide,
         $format = ''
     ): string {
+        $effectiveReferenceType = $this->getEffectiveReferenceType();
+
         $srcset = [];
         foreach ($imageVariants as $size => $imageVariant) {
             $image = $this->getImage($imageSlide, $imageVariant);
@@ -178,7 +194,12 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
                 continue;
             }
 
-            $src = $this->getAttachmentManager()->getFilteredImageUrl($image, $filterName, $format);
+            $src = $this->getAttachmentManager()->getFilteredImageUrl(
+                $image,
+                $filterName,
+                $format,
+                $effectiveReferenceType
+            );
             if ($size) {
                 $src .= ' ' . $size;
             }
@@ -297,5 +318,19 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
     private function getDoctrine(): ManagerRegistry
     {
         return $this->container->get(ManagerRegistry::class);
+    }
+
+    private function getApiUrlResolver(): ApiUrlResolver
+    {
+        if (null === $this->apiUrlResolver) {
+            $this->apiUrlResolver = $this->container->get('oro_api.provider.api_url_resolver');
+        }
+
+        return $this->apiUrlResolver;
+    }
+
+    private function getEffectiveReferenceType(): int
+    {
+        return $this->getApiUrlResolver()->getEffectiveReferenceType();
     }
 }

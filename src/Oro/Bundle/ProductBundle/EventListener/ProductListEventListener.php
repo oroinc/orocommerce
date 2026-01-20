@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
+use Oro\Bundle\ApiBundle\Provider\ApiUrlResolver;
 use Oro\Bundle\AttachmentBundle\Tools\WebpConfiguration;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -20,14 +21,18 @@ class ProductListEventListener
 
     private UrlHelper $urlHelper;
 
+    private ApiUrlResolver $apiUrlResolver;
+
     public function __construct(
         ImagePlaceholderProviderInterface $imagePlaceholderProvider,
         WebpConfiguration $webpConfiguration,
-        UrlHelper $urlHelper
+        UrlHelper $urlHelper,
+        ApiUrlResolver $apiUrlResolver
     ) {
         $this->imagePlaceholderProvider = $imagePlaceholderProvider;
         $this->webpConfiguration = $webpConfiguration;
         $this->urlHelper = $urlHelper;
+        $this->apiUrlResolver = $apiUrlResolver;
     }
 
     public function onBuildQuery(BuildQueryProductListEvent $event): void
@@ -81,7 +86,10 @@ class ProductListEventListener
         if ($path !== '') {
             // The image URL obtained from the search index does not contain a base url
             // so may not represent an absolute path.
-            $imageUrl = $this->urlHelper->getAbsolutePath($path);
+            // For API requests, generate full absolute URL, otherwise use base path only.
+            $imageUrl = $this->apiUrlResolver->shouldUseAbsoluteUrls()
+                ? $this->urlHelper->getAbsoluteUrl($path)
+                : $this->urlHelper->getAbsolutePath($path);
         } else {
             $imageUrl = $this->imagePlaceholderProvider->getPath($placeholderFilter, $format);
         }
