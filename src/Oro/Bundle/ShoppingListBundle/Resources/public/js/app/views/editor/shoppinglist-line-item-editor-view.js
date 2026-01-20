@@ -3,6 +3,7 @@ import $ from 'jquery';
 import TextEditorView from 'oroform/js/app/views/editor/text-editor-view';
 import NumberFormatter from 'orofilter/js/formatter/number-formatter';
 import NumberFormat from 'orolocale/js/formatter/number';
+import numeral from 'numeral';
 import template from 'tpl-loader!oroshoppinglist/templates/editor/shoppinglist-line-item-editor.html';
 
 const ShoppinglistLineItemEditorView = TextEditorView.extend({
@@ -101,6 +102,8 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
                 this.$(focused).trigger('focus').attr('checked', 'checked').trigger('change');
             } else if (this.$(focused).is('.input-quantity-btn')) {
                 this.$(focused).trigger('focus').trigger('click');
+            } else {
+                this.setInitialValue(event);
             }
 
             if (this.$el.data('validator')) {
@@ -116,6 +119,39 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
             $input.setCursorToEnd();
         }
         $input.trigger('focus');
+    },
+
+    setInitialValue(event) {
+        const $input = this.$('input[name="quantity"]');
+        const type = event.target.dataset.type;
+        const value = NumberFormat.unformatStrict($input.val()) || 0;
+        const step = Number.isNaN(Number.parseInt($input.attr('step'))) ? 1 : step;
+        const min = $input.attr('min') ?? 0;
+        const max = $input.attr('max') ?? Infinity;
+
+        if (type === 'decrement') {
+            if (value <= NumberFormat.unformatStrict(min)) {
+                return;
+            }
+
+            $input.val(
+                NumberFormat.unformatStrict(
+                    numeral(value).subtract(step).value()
+                )
+            );
+        }
+
+        if (type === 'increment') {
+            if (value >= NumberFormat.unformatStrict(max)) {
+                return;
+            }
+
+            $input.val(
+                NumberFormat.unformatStrict(
+                    numeral(value).add(step).value()
+                )
+            );
+        }
     },
 
     isChanged() {

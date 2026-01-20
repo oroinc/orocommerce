@@ -73,6 +73,11 @@ Feature: Shopping List Line Items
       | SKU                                                                     | Qty Update All |
       | AA1                                                                     | 5 item         |
       | This item can't be added to checkout because the price is not available |                |
+    When I click on "Increment Product Quantity In Row 1"
+    Then I fill "Shopping List Line Item Form" with:
+      | Quantity | 6    |
+      | Unit     | item |
+    And I click on "Shopping List Line Item 1 Cancel Button"
     When I click on "Shopping List Line Item 1 Quantity"
     And I fill "Shopping List Line Item Form" with:
       | Quantity | 7    |
