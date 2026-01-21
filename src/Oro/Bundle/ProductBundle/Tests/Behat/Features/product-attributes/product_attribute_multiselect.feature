@@ -70,9 +70,18 @@ Feature: Product attribute multiselect
     And I save and close form
     Then I should see "Successfully updated" flash message
 
+  Scenario: Check multiselect attribute without value not exist for customer
+    Given I proceed as the Buyer
+    And I am on the homepage
+    When I type "SKU123" in "search"
+    And I click "Search Button"
+    When I click "View Details" for "SKU123" product
+    Then I should not see "MultiSelectField"
+
   Scenario: Update product
-    Given I go to Products/ Products
-    When I click "Edit" on row "SKU123" in grid
+    Given I proceed as the Admin
+    When I go to Products/ Products
+    And I click "Edit" on row "SKU123" in grid
     And I check "TestMultiValueOne"
     And I check "TestMultiValueThree"
     And I save and close form
