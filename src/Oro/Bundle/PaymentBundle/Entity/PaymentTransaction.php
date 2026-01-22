@@ -26,6 +26,8 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 #[ORM\Entity(repositoryClass: PaymentTransactionRepository::class)]
 #[ORM\Table(name: 'oro_payment_transaction')]
 #[ORM\UniqueConstraint(name: 'oro_pay_trans_access_uidx', columns: ['access_identifier', 'access_token'])]
+#[ORM\Index(columns: ['entity_class', 'entity_identifier', 'payment_method'], name: 'idx_pay_txn_cls_ident_method')]
+#[ORM\Index(columns: ['entity_class', 'entity_identifier', 'id'], name: 'idx_pay_txn_cls_ident_id')]
 #[Config]
 class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterface
 {
