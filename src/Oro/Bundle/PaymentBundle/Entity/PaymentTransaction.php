@@ -22,7 +22,14 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *      name="oro_payment_transaction",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(name="oro_pay_trans_access_uidx", columns={"access_identifier", "access_token"})
- *      }
+ *      },
+ *      indexes={
+ *          @ORM\Index(
+ *              name="idx_pay_txn_cls_ident_method",
+ *              columns={"entity_class", "entity_identifier", "payment_method"}
+ *          ),
+ *          @ORM\Index(name="idx_pay_txn_cls_ident_id", columns={"entity_class", "entity_identifier", "id"})
+ *    }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository")
  * @Config()

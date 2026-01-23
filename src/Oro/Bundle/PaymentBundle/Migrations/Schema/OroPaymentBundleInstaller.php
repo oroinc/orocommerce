@@ -24,7 +24,7 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_11';
+        return 'v1_11_1';
     }
 
     /**
@@ -79,6 +79,8 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['access_identifier', 'access_token'], 'oro_pay_trans_access_uidx');
+        $table->addIndex(['entity_class', 'entity_identifier', 'payment_method'], 'idx_pay_txn_cls_ident_method');
+        $table->addIndex(['entity_class', 'entity_identifier', 'id'], 'idx_pay_txn_cls_ident_id');
     }
 
     /**
