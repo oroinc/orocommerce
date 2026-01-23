@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "69f4ebdb6af15bf4969e805c86c63b7e",
+    "content-hash": "26bd5b67426f1c0142436647b8151229",
     "packages": [
         {
             "name": "ass/xmlsecurity",
@@ -69,74 +69,6 @@
                 "source": "https://github.com/aschamberger/XmlSecurity"
             },
             "time": "2015-05-31T10:10:35+00:00"
-        },
-        {
-            "name": "besimple/soap-client",
-            "version": "v0.2.6",
-            "target-dir": "BeSimple/SoapClient",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/BeSimple/BeSimpleSoapClient.git",
-                "reference": "50f186fd3e9fafc4ce2d194d5d18e3987d5fbf41"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/BeSimple/BeSimpleSoapClient/zipball/50f186fd3e9fafc4ce2d194d5d18e3987d5fbf41",
-                "reference": "50f186fd3e9fafc4ce2d194d5d18e3987d5fbf41",
-                "shasum": ""
-            },
-            "require": {
-                "ass/xmlsecurity": "~1.0",
-                "besimple/soap-common": "0.2.*",
-                "ext-curl": "*",
-                "ext-soap": "*",
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "mikey179/vfsstream": "~1.0",
-                "symfony/filesystem": "~2.0",
-                "symfony/process": "~2.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.2-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "BeSimple\\SoapClient": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Andreas Schamberger",
-                    "email": "mail@andreass.net"
-                },
-                {
-                    "name": "Christian Kerl",
-                    "email": "christian-kerl@web.de"
-                },
-                {
-                    "name": "Francis Besset",
-                    "email": "francis.besset@gmail.com"
-                }
-            ],
-            "description": "Build and consume SOAP Client based web services",
-            "homepage": "https://github.com/BeSimple/BeSimpleSoapClient",
-            "keywords": [
-                "soap",
-                "soap-client"
-            ],
-            "support": {
-                "issues": "https://github.com/BeSimple/BeSimpleSoapClient/issues",
-                "source": "https://github.com/BeSimple/BeSimpleSoapClient/tree/0.2"
-            },
-            "time": "2014-08-18T09:45:53+00:00"
         },
         {
             "name": "besimple/soap-common",
@@ -1460,16 +1392,16 @@
         },
         {
             "name": "doctrine/event-manager",
-            "version": "2.0.1",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/event-manager.git",
-                "reference": "b680156fa328f1dfd874fd48c7026c41570b9c6e"
+                "reference": "c07799fcf5ad362050960a0fd068dded40b1e312"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/event-manager/zipball/b680156fa328f1dfd874fd48c7026c41570b9c6e",
-                "reference": "b680156fa328f1dfd874fd48c7026c41570b9c6e",
+                "url": "https://api.github.com/repos/doctrine/event-manager/zipball/c07799fcf5ad362050960a0fd068dded40b1e312",
+                "reference": "c07799fcf5ad362050960a0fd068dded40b1e312",
                 "shasum": ""
             },
             "require": {
@@ -1479,10 +1411,10 @@
                 "doctrine/common": "<2.9"
             },
             "require-dev": {
-                "doctrine/coding-standard": "^12",
-                "phpstan/phpstan": "^1.8.8",
-                "phpunit/phpunit": "^10.5",
-                "vimeo/psalm": "^5.24"
+                "doctrine/coding-standard": "^14",
+                "phpdocumentor/guides-cli": "^1.4",
+                "phpstan/phpstan": "^2.1.32",
+                "phpunit/phpunit": "^10.5.58"
             },
             "type": "library",
             "autoload": {
@@ -1531,7 +1463,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/event-manager/issues",
-                "source": "https://github.com/doctrine/event-manager/tree/2.0.1"
+                "source": "https://github.com/doctrine/event-manager/tree/2.1.0"
             },
             "funding": [
                 {
@@ -1547,7 +1479,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-05-22T20:47:39+00:00"
+            "time": "2026-01-17T22:40:21+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -3961,16 +3893,16 @@
         },
         {
             "name": "laminas/laminas-validator",
-            "version": "3.12.0",
+            "version": "3.13.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-validator.git",
-                "reference": "eb972023dfdad6ba87482ccaa3c9e937686ea759"
+                "reference": "305d6101df90f9c51a69de274e06a8cd7d45ce1e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-validator/zipball/eb972023dfdad6ba87482ccaa3c9e937686ea759",
-                "reference": "eb972023dfdad6ba87482ccaa3c9e937686ea759",
+                "url": "https://api.github.com/repos/laminas/laminas-validator/zipball/305d6101df90f9c51a69de274e06a8cd7d45ce1e",
+                "reference": "305d6101df90f9c51a69de274e06a8cd7d45ce1e",
                 "shasum": ""
             },
             "require": {
@@ -4034,7 +3966,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2025-12-15T10:21:07+00:00"
+            "time": "2026-01-20T17:33:57+00:00"
         },
         {
             "name": "liip/imagine-bundle",
@@ -5958,6 +5890,72 @@
                 }
             ],
             "time": "2025-10-15T12:58:50+00:00"
+        },
+        {
+            "name": "oroinc/soap-client",
+            "version": "0.2.7",
+            "target-dir": "BeSimple/SoapClient",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/oroinc/BeSimpleSoapClient.git",
+                "reference": "bae45d74aa563501b7234488cd2360ab09e8df3b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/oroinc/BeSimpleSoapClient/zipball/bae45d74aa563501b7234488cd2360ab09e8df3b",
+                "reference": "bae45d74aa563501b7234488cd2360ab09e8df3b",
+                "shasum": ""
+            },
+            "require": {
+                "ass/xmlsecurity": "~1.0",
+                "besimple/soap-common": "0.2.*",
+                "ext-curl": "*",
+                "ext-soap": "*",
+                "php": ">=8.5"
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "~1.0",
+                "symfony/filesystem": "~2.0",
+                "symfony/process": "~2.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "BeSimple\\SoapClient": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Francis Besset",
+                    "email": "francis.besset@gmail.com"
+                },
+                {
+                    "name": "Christian Kerl",
+                    "email": "christian-kerl@web.de"
+                },
+                {
+                    "name": "Andreas Schamberger",
+                    "email": "mail@andreass.net"
+                }
+            ],
+            "description": "Build and consume SOAP Client based web services",
+            "homepage": "https://github.com/BeSimple/BeSimpleSoapClient",
+            "keywords": [
+                "soap",
+                "soap-client"
+            ],
+            "support": {
+                "source": "https://github.com/oroinc/BeSimpleSoapClient/tree/0.2.7"
+            },
+            "time": "2026-01-23T10:32:52+00:00"
         },
         {
             "name": "oroinc/web-socket-bundle",
