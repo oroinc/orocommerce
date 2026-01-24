@@ -6,6 +6,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Amount as BaseAmount;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsDependentInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
+/**
+ * Configures amount option for PayPal Express Checkout transactions.
+ *
+ * Extends base amount option with Express Checkout-specific applicability,
+ * making amount required for SET_EC and DO_EC actions.
+ */
 class Amount extends BaseAmount implements OptionsDependentInterface
 {
     public function __construct()

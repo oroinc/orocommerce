@@ -4,6 +4,12 @@ namespace Oro\Bundle\FedexShippingBundle\Transformer;
 
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 
+/**
+ * Transforms weight units between FedEx and shipping system formats.
+ *
+ * Converts between FedEx weight units (LB for pounds, KG for kilograms)
+ * and the shipping system's weight representations (lbs, kg).
+ */
 class FedexToShippingWeightUnitTransformer implements FedexToShippingUnitTransformerInterface
 {
     const SHIPPING_WEIGHT_KG = 'kg';

@@ -9,6 +9,14 @@ use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Manages dynamic form fields for content variant collections based on variant types.
+ *
+ * This subscriber handles the dynamic addition and removal of form fields in content variant collections,
+ * ensuring that each variant has the appropriate form type based on its content variant type (e.g., system page,
+ * landing page, category, product page, product collection). It synchronizes the form structure with the data
+ * during form lifecycle events, allowing users to add, edit, and remove variants of different types.
+ */
 class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterface
 {
     /**

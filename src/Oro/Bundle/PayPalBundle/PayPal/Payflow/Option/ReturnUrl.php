@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * Configures return URL option for PayPal Payflow transactions.
+ *
+ * Specifies the URL to redirect to after successful transaction completion,
+ * with configurable requirement based on transaction type.
+ */
 class ReturnUrl implements OptionInterface
 {
     const RETURNURL = 'RETURNURL';

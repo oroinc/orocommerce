@@ -7,6 +7,14 @@ use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfigurationInterfa
 use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfigurationProviderInterface;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 
+/**
+ * Provides import/export configuration for TaxRule entities.
+ *
+ * This configuration provider defines how tax rule entities should be imported from and exported to
+ * external data sources. It specifies the entity class, processor aliases, and other settings required
+ * for the import/export functionality to work with tax rules, which define the relationships
+ * between customer tax codes, product tax codes, tax rates, and jurisdictions.
+ */
 class TaxRuleImportExportConfigurationProvider implements ImportExportConfigurationProviderInterface
 {
     #[\Override]

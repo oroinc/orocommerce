@@ -4,6 +4,12 @@ namespace Oro\Bundle\PricingBundle\PricingStrategy;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+/**
+ * Registry for price combining strategies.
+ *
+ * Manages the registration and retrieval of price combining strategies,
+ * supporting dynamic strategy selection based on system configuration.
+ */
 class StrategyRegister
 {
     /**

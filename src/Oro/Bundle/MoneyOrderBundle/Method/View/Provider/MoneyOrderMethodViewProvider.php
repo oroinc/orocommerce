@@ -7,6 +7,14 @@ use Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProviderI
 use Oro\Bundle\MoneyOrderBundle\Method\View\Factory\MoneyOrderPaymentMethodViewFactoryInterface;
 use Oro\Bundle\PaymentBundle\Method\View\AbstractPaymentMethodViewProvider;
 
+/**
+ * Provides Money Order payment method views for rendering in the storefront.
+ *
+ * This provider builds and manages Money Order payment method views by retrieving configurations
+ * from the config provider and creating view instances using the view factory. It extends the
+ * abstract payment method view provider to integrate Money Order views into the payment system's
+ * view management infrastructure.
+ */
 class MoneyOrderMethodViewProvider extends AbstractPaymentMethodViewProvider
 {
     /** @var MoneyOrderPaymentMethodViewFactoryInterface */

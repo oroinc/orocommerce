@@ -4,6 +4,12 @@ namespace Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Cached\Memory;
 
 use Oro\Bundle\PaymentTermBundle\Method\Config\Provider\PaymentTermConfigProviderInterface;
 
+/**
+ * Caches payment term configurations in memory for improved performance.
+ *
+ * This provider wraps another {@see PaymentTermConfigProviderInterface} and caches the retrieved configurations
+ * in memory, avoiding repeated lookups during a single request lifecycle.
+ */
 class CachedMemoryPaymentTermConfigProvider implements PaymentTermConfigProviderInterface
 {
     /**

@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\RedirectBundle\Cache;
 
+/**
+ * Factory for managing and retrieving URL cache implementations.
+ *
+ * This factory maintains a registry of URL cache implementations keyed by type and provides
+ * access to the currently configured cache type. It allows different cache strategies to be
+ * registered and retrieved based on the application's configuration.
+ */
 class UrlCacheFactory
 {
     /**

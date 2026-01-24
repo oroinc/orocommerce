@@ -6,6 +6,12 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 
+/**
+ * Provides single unit mode information for layout rendering.
+ *
+ * This data provider exposes single unit mode settings to layout templates, allowing templates to adjust
+ * their rendering based on whether the system is configured to use a single product unit or multiple units.
+ */
 class SingleUnitModeProvider
 {
     /** @var SingleUnitModeService */

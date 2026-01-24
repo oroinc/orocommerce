@@ -5,6 +5,12 @@ namespace Oro\Bundle\PricingBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for configuring default price lists in system configuration.
+ *
+ * Provides a collection form for managing system-wide default price list assignments
+ * with priority ordering.
+ */
 class PriceListSystemConfigType extends AbstractType
 {
     const NAME = 'oro_pricing_price_list_system_config';

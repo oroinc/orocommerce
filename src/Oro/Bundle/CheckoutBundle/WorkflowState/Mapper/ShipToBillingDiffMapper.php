@@ -4,6 +4,12 @@ namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
+/**
+ * Maps "ship to billing address" flag changes for checkout state diff tracking.
+ *
+ * Tracks changes to the "ship to billing address" flag in a checkout, enabling detection of
+ * shipping address preference modifications during the checkout workflow.
+ */
 class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
 {
     const DATA_NAME = 'ship_to_billing_address';

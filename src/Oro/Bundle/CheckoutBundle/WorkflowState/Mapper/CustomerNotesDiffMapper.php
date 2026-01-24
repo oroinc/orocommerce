@@ -4,6 +4,12 @@ namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
+/**
+ * Maps customer notes changes for checkout state diff tracking.
+ *
+ * Tracks changes to customer notes in a checkout, enabling detection of modifications
+ * to customer-provided notes during the checkout workflow.
+ */
 class CustomerNotesDiffMapper implements CheckoutStateDiffMapperInterface
 {
     const DATA_NAME = 'customer_notes';

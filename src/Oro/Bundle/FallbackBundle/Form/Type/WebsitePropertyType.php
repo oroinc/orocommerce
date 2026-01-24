@@ -7,6 +7,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing website-specific properties with default fallback.
+ *
+ * Provides a form type that combines a default value field with website-specific values,
+ * allowing users to configure both global defaults and website-specific overrides.
+ */
 class WebsitePropertyType extends AbstractType
 {
     const NAME = 'oro_fallback_website_property';

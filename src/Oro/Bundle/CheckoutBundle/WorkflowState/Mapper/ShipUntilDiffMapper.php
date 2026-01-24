@@ -4,6 +4,12 @@ namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
+/**
+ * Maps "ship until" date changes for checkout state diff tracking.
+ *
+ * Tracks changes to the "ship until" date in a checkout, enabling detection of
+ * modifications to the shipping deadline during the checkout workflow.
+ */
 class ShipUntilDiffMapper implements CheckoutStateDiffMapperInterface
 {
     const DATA_NAME = 'ship_until';

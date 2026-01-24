@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Storage;
 
+/**
+ * Defines the contract for storing and retrieving checkout state differences.
+ *
+ * Specifies methods for persisting checkout state snapshots and retrieving them for
+ * comparison and change detection.
+ */
 interface CheckoutDiffStorageInterface
 {
     /**

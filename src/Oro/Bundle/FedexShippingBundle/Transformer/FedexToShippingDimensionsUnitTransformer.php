@@ -4,6 +4,12 @@ namespace Oro\Bundle\FedexShippingBundle\Transformer;
 
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 
+/**
+ * Transforms dimension units between FedEx and shipping system formats.
+ *
+ * Converts between FedEx dimension units (IN for inches, CM for centimeters)
+ * and the shipping system's dimension representations (inch, cm).
+ */
 class FedexToShippingDimensionsUnitTransformer implements FedexToShippingUnitTransformerInterface
 {
     const SHIPPING_DIMENSION_CM = 'cm';

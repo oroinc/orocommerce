@@ -7,6 +7,12 @@ use Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalExpressCheckoutConfigFac
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Provides PayPal Express Checkout payment method configurations.
+ *
+ * Retrieves and caches Express Checkout configuration objects for available payment methods,
+ * supporting lookup by payment method identifier.
+ */
 class PayPalExpressCheckoutConfigProvider extends AbstractPayPalConfigProvider implements
     PayPalExpressCheckoutConfigProviderInterface
 {

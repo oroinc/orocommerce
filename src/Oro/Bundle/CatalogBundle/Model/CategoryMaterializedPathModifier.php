@@ -5,6 +5,12 @@ namespace Oro\Bundle\CatalogBundle\Model;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+/**
+ * Manages materialized path calculations for category hierarchies.
+ *
+ * Calculates and updates the materialized path for categories and their children,
+ * enabling efficient hierarchical queries and navigation in the category tree structure.
+ */
 class CategoryMaterializedPathModifier
 {
     /**

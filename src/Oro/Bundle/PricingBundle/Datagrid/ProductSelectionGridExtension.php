@@ -11,6 +11,12 @@ use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+/**
+ * Extends the product selection grid with pricing-related filtering for frontend customers.
+ *
+ * Applies price list limitations to the product selection grid based on the current customer's
+ * currency and pricing configuration, ensuring only products with appropriate pricing are displayed.
+ */
 class ProductSelectionGridExtension extends AbstractExtension
 {
     const SUPPORTED_GRID = 'products-select-grid-frontend';

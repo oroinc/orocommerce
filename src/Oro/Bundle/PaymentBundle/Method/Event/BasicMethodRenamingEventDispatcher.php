@@ -4,6 +4,12 @@ namespace Oro\Bundle\PaymentBundle\Method\Event;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Dispatches payment method renaming events.
+ *
+ * This dispatcher creates and dispatches {@see MethodRenamingEvent} instances when a payment
+ * method identifier changes, notifying all registered listeners of the change.
+ */
 class BasicMethodRenamingEventDispatcher implements MethodRenamingEventDispatcherInterface
 {
     /**

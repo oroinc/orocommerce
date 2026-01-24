@@ -5,6 +5,12 @@ namespace Oro\Bundle\CheckoutBundle\Provider;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface;
 
+/**
+ * Provides error messages for payment transaction results in checkout.
+ *
+ * Determines appropriate error messages based on the payment transaction and available payment methods,
+ * helping users understand why a payment failed.
+ */
 class PaymentResultMessageProvider implements PaymentResultMessageProviderInterface
 {
     /**

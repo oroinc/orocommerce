@@ -10,6 +10,13 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Handles rendering of payment term values in entity extended fields.
+ *
+ * This listener intercepts value render events for customer entities and displays the associated payment term.
+ * If a customer has a direct payment term assignment, it displays that term. Otherwise, it checks the customer's group
+ * for a payment term and displays it with an indication that it is inherited from the customer group.
+ */
 class ValueRenderEventListener
 {
     /** @var TranslatorInterface */

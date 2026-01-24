@@ -14,6 +14,13 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 
+/**
+ * ORM-based implementation for partial updates of customer-specific product visibility in the website search index.
+ *
+ * This driver uses Doctrine ORM to efficiently update visibility data in the search index when customer-specific
+ * visibility settings change. It handles creating, updating, and deleting customer visibility entries using
+ * optimized batch operations and database transactions to ensure data consistency.
+ */
 class OrmCustomerPartialUpdateDriver extends AbstractCustomerPartialUpdateDriver
 {
     /**

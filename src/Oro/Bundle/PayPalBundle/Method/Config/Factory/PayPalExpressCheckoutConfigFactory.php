@@ -5,6 +5,12 @@ namespace Oro\Bundle\PayPalBundle\Method\Config\Factory;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
 
+/**
+ * Creates PayPal Express Checkout payment method configuration from PayPal settings.
+ *
+ * Builds configuration objects containing payment method identifiers, labels, credentials,
+ * and payment action settings for Express Checkout transactions.
+ */
 class PayPalExpressCheckoutConfigFactory extends AbstractPayPalConfigFactory implements
     PayPalExpressCheckoutConfigFactoryInterface
 {

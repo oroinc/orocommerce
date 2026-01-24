@@ -9,6 +9,13 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting offers from RFP request product items.
+ *
+ * This form type extends {@see ChoiceType} to present available offers (quantity/unit/price combinations
+ * from {@see RequestProductItem} entities) as selectable choices when creating quotes or orders from an RFP request.
+ * The offers are passed via the 'offers' option and rendered as expanded radio buttons.
+ */
 class OffersType extends AbstractType
 {
     const NAME = 'oro_rfp_request_offers';

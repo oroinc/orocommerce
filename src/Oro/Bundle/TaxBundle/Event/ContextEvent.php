@@ -4,6 +4,13 @@ namespace Oro\Bundle\TaxBundle\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Event dispatched to build tax calculation context from domain objects.
+ *
+ * This event is triggered when the tax system needs to extract tax-related information from domain objects
+ * (such as orders, line items, or customers). Event listeners can populate the context with data like tax codes,
+ * taxation addresses, digital product flags, and other information required for accurate tax calculations.
+ */
 class ContextEvent extends Event
 {
     const NAME = 'oro_tax.mapper.context';

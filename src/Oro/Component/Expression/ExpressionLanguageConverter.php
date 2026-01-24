@@ -7,6 +7,15 @@ use Symfony\Component\ExpressionLanguage\Node;
 use Symfony\Component\ExpressionLanguage\ParsedExpression;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 
+/**
+ * Converts Symfony ExpressionLanguage AST nodes to custom expression nodes.
+ *
+ * This converter transforms parsed expressions from Symfony's ExpressionLanguage into a custom
+ * node tree structure that represents field references, relationships, and values. It handles
+ * entity field access, relationship traversal, and array notation for container identification.
+ * The converter uses a fields provider to understand entity relationships and automatically
+ * adds identity fields where needed to properly represent entity references.
+ */
 class ExpressionLanguageConverter
 {
     const FIELDS_KEY = 'fields';

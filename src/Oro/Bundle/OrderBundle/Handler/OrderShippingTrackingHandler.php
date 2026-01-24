@@ -8,6 +8,13 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * Processes and persists shipping tracking information for orders.
+ *
+ * Handles the submission of shipping tracking form data, synchronizing the submitted tracking entries
+ * with the order's existing tracking collection.
+ * Removes tracking entries that are no longer present and adds new ones, then persists the changes to the database.
+ */
 class OrderShippingTrackingHandler
 {
     /**

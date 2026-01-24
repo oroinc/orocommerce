@@ -7,6 +7,16 @@ use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
+/**
+ * Action for appending a suffix to a string with optional length constraints.
+ *
+ * This action is used in shopping list workflows, particularly when duplicating shopping lists,
+ * to generate new names by appending suffixes (like timestamps or copy indicators) to existing names.
+ * It intelligently handles maximum length constraints by truncating the original string
+ * and adding an ellipsis when necessary to ensure the final result fits within the specified length limit.
+ * This ensures that duplicated shopping list names remain within database field constraints
+ * while still being descriptive and unique.
+ */
 class AddStringSuffixAction extends AbstractAction
 {
     const ATTRIBUTE_OPTION = 'attribute';

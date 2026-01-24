@@ -5,6 +5,14 @@ namespace Oro\Bundle\RuleBundle\Datagrid;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 
+/**
+ * Determines the visibility of rule actions in datagrids based on rule state.
+ *
+ * This provider controls which actions (enable/disable) should be visible for each rule record in a datagrid.
+ * It evaluates the current state of a rule and adjusts action visibility accordingly, ensuring that only applicable
+ * actions are shown (e.g., hide the "enable" action if the rule is already enabled, and hide the "disable" action
+ * if the rule is already disabled).
+ */
 class RuleActionsVisibilityProvider
 {
     /**

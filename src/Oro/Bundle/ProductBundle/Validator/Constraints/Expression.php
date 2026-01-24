@@ -4,6 +4,12 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Constraint to validate product price calculation expressions.
+ *
+ * This constraint validates that expressions used in product price calculations contain only allowed fields
+ * and follow the correct syntax, preventing invalid or dangerous expressions from being used in price calculations.
+ */
 class Expression extends Constraint
 {
     /**

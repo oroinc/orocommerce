@@ -6,6 +6,13 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Persists product visibility form data to the database after successful form submission.
+ *
+ * This listener handles form post-submit events to save visibility settings for products across all
+ * visibility levels (all customers, customer groups, individual customers) after the form has been
+ * successfully processed and validated.
+ */
 class ProductVisibilityPostSubmitListener
 {
     /**

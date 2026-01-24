@@ -4,6 +4,12 @@ namespace Oro\Bundle\PaymentBundle\Method\View;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 
+/**
+ * Defines the contract for payment method view representations.
+ *
+ * Implementations provide display information for payment methods including labels,
+ * template blocks, and context-specific options for rendering in the user interface.
+ */
 interface PaymentMethodViewInterface
 {
     /**

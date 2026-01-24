@@ -9,6 +9,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for the first step of product creation.
+ *
+ * This form type handles the initial product creation step where users select the product type,
+ * providing the foundation for the multi-step product creation wizard.
+ */
 class ProductStepOneType extends AbstractType
 {
     const NAME = 'oro_product_step_one';

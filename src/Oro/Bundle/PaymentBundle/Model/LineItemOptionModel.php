@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\PaymentBundle\Model;
 
+/**
+ * Represents a line item option with pricing and quantity information.
+ *
+ * This model encapsulates details about a line item including its name, description,
+ * cost, quantity, currency, and unit of measurement, typically used for payment gateway
+ * integration and order line item representation.
+ */
 class LineItemOptionModel
 {
     /** @var string */

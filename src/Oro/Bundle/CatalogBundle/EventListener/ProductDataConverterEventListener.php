@@ -7,7 +7,10 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent;
 
 /**
- * Adds category fields to the list of product export fields.
+ * Handles product data converter events during import/export operations.
+ *
+ * Listens to product data converter events and adds category fields to the backend header,
+ * ensuring that category-related information is included in the exported product data.
  */
 class ProductDataConverterEventListener
 {

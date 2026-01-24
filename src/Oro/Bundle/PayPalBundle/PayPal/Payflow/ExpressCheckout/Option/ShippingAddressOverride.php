@@ -6,6 +6,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\AbstractBooleanOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsDependentInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
+/**
+ * Configures shipping address override option for PayPal Express Checkout transactions.
+ *
+ * Controls whether the provided shipping address overrides the customer's PayPal address,
+ * applicable only for SET_EC actions.
+ */
 class ShippingAddressOverride extends AbstractBooleanOption implements OptionsDependentInterface
 {
     const ADDROVERRIDE = 'ADDROVERRIDE';

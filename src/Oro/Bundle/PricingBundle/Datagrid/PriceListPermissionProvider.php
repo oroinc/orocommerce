@@ -4,6 +4,12 @@ namespace Oro\Bundle\PricingBundle\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 
+/**
+ * Provides permission checks for price list actions in datagrids.
+ *
+ * Determines which actions (such as delete or set as default) are allowed for a price list
+ * based on its current state. Prevents modification of default price lists.
+ */
 class PriceListPermissionProvider
 {
     /**

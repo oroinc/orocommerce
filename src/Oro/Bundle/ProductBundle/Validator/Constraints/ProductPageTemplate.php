@@ -4,6 +4,12 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Constraint to validate product page template selections.
+ *
+ * This constraint ensures that the selected page template for a product is valid and compatible
+ * with the configured route, preventing invalid template assignments.
+ */
 class ProductPageTemplate extends Constraint
 {
     /**

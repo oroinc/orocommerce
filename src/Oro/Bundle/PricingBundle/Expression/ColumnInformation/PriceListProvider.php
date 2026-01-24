@@ -8,6 +8,12 @@ use Oro\Component\Expression\Node\NameNode;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\RelationNode;
 
+/**
+ * Provides column information for price list expressions.
+ *
+ * Processes expression nodes to extract price list and price information,
+ * enabling proper query building for price list-based expressions.
+ */
 class PriceListProvider implements ColumnInformationProviderInterface
 {
     #[\Override]

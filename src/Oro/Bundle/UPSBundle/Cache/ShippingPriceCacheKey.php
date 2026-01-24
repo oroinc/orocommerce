@@ -5,6 +5,13 @@ namespace Oro\Bundle\UPSBundle\Cache;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 
+/**
+ * Represents a cache key for UPS shipping price calculations.
+ *
+ * This class encapsulates all the data needed to uniquely identify a cached shipping price,
+ * including the UPS transport configuration, price request details, and shipping method identifiers.
+ * It generates a unique cache key by hashing the request data and combining it with method identifiers.
+ */
 class ShippingPriceCacheKey
 {
     /**

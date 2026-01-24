@@ -11,6 +11,12 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Form type for managing collections of product attribute prices.
+ *
+ * Renders a collection of price attribute prices with dynamic currency and unit information,
+ * providing a user-friendly interface for editing multiple prices at once.
+ */
 class ProductAttributePriceCollectionType extends AbstractType
 {
     const NAME = 'oro_pricing_product_attribute_price_collection';

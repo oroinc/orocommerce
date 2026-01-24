@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP;
 
+/**
+ * Encodes and decodes PayPal Payflow NVP (Name-Value Pair) data.
+ *
+ * Serializes arrays to NVP format with length prefixes and deserializes NVP strings
+ * back to arrays for PayPal API communication.
+ */
 class Encoder implements EncoderInterface
 {
     const DECODE_REGEXP = '/(\w+)(\[(\d+)\])?=/';

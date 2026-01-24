@@ -7,6 +7,13 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Compares slug URLs before and after changes to identify modifications.
+ *
+ * This class analyzes collections of slug URLs to detect which URLs have changed between
+ * two states. It organizes changes by locale label, making it easy to identify which
+ * localized URLs have been modified and what the old and new values are.
+ */
 class SlugUrlDiffer
 {
     /**

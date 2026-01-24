@@ -7,6 +7,12 @@ use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
+/**
+ * Form type for selecting freight classes.
+ *
+ * This form type provides a dropdown for selecting freight classes, with the available options
+ * filtered based on the parent form data and applicability rules defined by freight class extensions.
+ */
 class FreightClassSelectType extends AbstractShippingOptionSelectType
 {
     const NAME = 'oro_shipping_freight_class_select';

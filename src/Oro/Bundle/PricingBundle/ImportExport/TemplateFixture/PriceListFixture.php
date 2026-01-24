@@ -9,6 +9,12 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
+/**
+ * Provides template fixture data for product prices in price lists.
+ *
+ * Generates sample product price data for import/export templates,
+ * demonstrating the structure and format of price list entries.
+ */
 class PriceListFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
     #[\Override]

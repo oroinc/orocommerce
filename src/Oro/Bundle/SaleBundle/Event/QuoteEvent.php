@@ -7,6 +7,12 @@ use Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Event dispatched during quote form processing and submission.
+ *
+ * This event carries the quote form, the quote entity, and any submitted data,
+ * allowing listeners to react to quote-related operations and modify quote data before or after form submission.
+ */
 class QuoteEvent extends Event implements EntityDataAwareEventInterface
 {
     const NAME = 'oro_sale.quote';

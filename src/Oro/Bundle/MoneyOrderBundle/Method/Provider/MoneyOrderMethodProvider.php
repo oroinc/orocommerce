@@ -7,6 +7,12 @@ use Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProviderI
 use Oro\Bundle\MoneyOrderBundle\Method\Factory\MoneyOrderPaymentMethodFactoryInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\AbstractPaymentMethodProvider;
 
+/**
+ * Provides money order payment methods from configuration.
+ *
+ * Collects and registers money order payment methods based on configuration,
+ * making them available for use in the payment system.
+ */
 class MoneyOrderMethodProvider extends AbstractPaymentMethodProvider
 {
     /**

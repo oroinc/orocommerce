@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * Configures cancel URL option for PayPal Payflow transactions.
+ *
+ * Specifies the URL to redirect to when a customer cancels the transaction,
+ * with configurable requirement based on transaction type.
+ */
 class CancelUrl implements OptionInterface
 {
     const CANCELURL = 'CANCELURL';

@@ -5,6 +5,13 @@ namespace Oro\Bundle\SEOBundle\Event;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Dispatched at the start and end of URL items provider processing.
+ *
+ * This event is triggered during the sitemap generation process to allow listeners to hook into the URL items
+ * provider lifecycle. It carries information about the current sitemap version and the website being processed,
+ * enabling listeners to perform custom logic based on the context of the URL items collection.
+ */
 class UrlItemsProviderEvent extends Event
 {
     const ON_END = 'oro_seo.event.url_items_provider_end';

@@ -6,6 +6,12 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting or creating product brands.
+ *
+ * This form type extends the entity select or create inline functionality to provide an autocomplete field
+ * for brand selection with the ability to create new brands inline.
+ */
 class BrandSelectType extends AbstractType
 {
     const NAME = 'oro_product_brand_select';

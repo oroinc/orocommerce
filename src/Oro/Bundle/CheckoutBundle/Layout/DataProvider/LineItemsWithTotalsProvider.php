@@ -10,6 +10,12 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
+/**
+ * Provides checkout line items with calculated totals for layout rendering.
+ *
+ * Retrieves checkout line items and calculates their subtotals, caching the results
+ * to optimize performance when rendering checkout layouts.
+ */
 class LineItemsWithTotalsProvider
 {
     /**

@@ -4,6 +4,12 @@ namespace Oro\Bundle\ShippingBundle\Model;
 
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 
+/**
+ * Represents the weight of a shipping package.
+ *
+ * This class encapsulates a weight value along with its unit of measurement,
+ * providing a complete representation of package weight for shipping calculations.
+ */
 class Weight
 {
     /**

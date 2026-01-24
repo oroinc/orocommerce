@@ -4,6 +4,12 @@ namespace Oro\Component\WebCatalog;
 
 use Oro\Component\Expression\Node\NodeInterface;
 
+/**
+ * Defines the contract for providers that populate column information for expression nodes in web catalog context.
+ *
+ * Implementations analyze expression nodes and populate column definitions and tracking information,
+ * enabling the system to understand which database columns are referenced in web catalog expressions.
+ */
 interface ColumnInformationProviderInterface
 {
     /**

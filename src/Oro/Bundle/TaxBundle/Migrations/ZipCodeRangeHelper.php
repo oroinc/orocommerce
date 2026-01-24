@@ -2,6 +2,14 @@
 
 namespace Oro\Bundle\TaxBundle\Migrations;
 
+/**
+ * Helper class for processing zip code ranges during data migrations.
+ *
+ * This helper analyzes collections of zip codes and intelligently groups consecutive zip codes into ranges
+ * to optimize storage and query performance. For example, zip codes 100, 101, 102, 103 would be stored
+ * as a single range (100-103) rather than four individual entries.
+ * This is particularly useful when importing tax jurisdiction data with large numbers of zip codes.
+ */
 class ZipCodeRangeHelper
 {
     /**

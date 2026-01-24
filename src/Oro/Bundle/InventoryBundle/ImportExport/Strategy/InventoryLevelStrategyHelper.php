@@ -6,6 +6,12 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
+/**
+ * Strategy helper for processing inventory level entities during import.
+ *
+ * Handles the core logic for importing inventory level data, including finding or creating
+ * inventory level entities and updating their quantity and unit precision information.
+ */
 class InventoryLevelStrategyHelper extends AbstractInventoryLevelStrategyHelper
 {
     #[\Override]

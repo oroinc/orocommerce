@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config;
 
+/**
+ * Factory for creating PayPal configuration key providers.
+ *
+ * Creates provider instances for different PayPal integration types (Payments Pro, Payflow Gateway),
+ * mapping configuration keys to their corresponding system configuration option names.
+ */
 class PayPalConfigKeysProviderFactory
 {
     /**

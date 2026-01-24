@@ -7,6 +7,12 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 
+/**
+ * Defines the contract for entities that provide product-specific shipping options.
+ *
+ * Implementations of this interface provide access to shipping-related properties such as product weight, dimensions,
+ * and unit of measure, which are used to calculate shipping costs and determine shipping method availability.
+ */
 interface ProductShippingOptionsInterface
 {
     /**

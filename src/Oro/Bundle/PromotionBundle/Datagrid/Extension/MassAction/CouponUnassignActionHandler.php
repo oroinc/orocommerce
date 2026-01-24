@@ -7,6 +7,12 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Handles mass action to unassign coupons from promotions.
+ *
+ * Removes the promotion association from selected coupons and provides
+ * a translated success message indicating the number of coupons unassigned.
+ */
 class CouponUnassignActionHandler extends AbstractCouponMassActionHandler
 {
     /**

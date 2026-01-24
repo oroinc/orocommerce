@@ -7,6 +7,14 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
+/**
+ * Represents a resolved content variant with cached data for improved performance.
+ *
+ * This class is used to store pre-computed content variant data in the cache, avoiding the need to load
+ * full Doctrine entities during content resolution. It implements {@see ContentVariantInterface} and uses
+ * magic methods to provide dynamic property access to the cached data array, making it a lightweight alternative
+ * to the full ContentVariant entity for read operations.
+ */
 class ResolvedContentVariant implements ContentVariantInterface
 {
     /**

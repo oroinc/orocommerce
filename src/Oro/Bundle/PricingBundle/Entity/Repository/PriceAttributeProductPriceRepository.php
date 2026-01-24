@@ -6,6 +6,9 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
+/**
+ * Repository for managing price attribute product prices.
+ */
 class PriceAttributeProductPriceRepository extends BaseProductPriceRepository
 {
     /**

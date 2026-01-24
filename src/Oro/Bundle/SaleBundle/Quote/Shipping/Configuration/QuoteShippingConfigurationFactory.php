@@ -6,6 +6,13 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfigurationBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfigurationInterface;
 
+/**
+ * Creates shipping method configuration objects for quotes.
+ *
+ * Builds composed shipping method configurations from quote entities, extracting and organizing
+ * shipping-related settings such as method, type, cost, and override flags
+ * for use in shipping cost calculation and validation.
+ */
 class QuoteShippingConfigurationFactory
 {
     /**

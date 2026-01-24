@@ -5,6 +5,12 @@ namespace Oro\Bundle\PricingBundle\Event;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Dispatched before calculating totals for an entity.
+ *
+ * This event allows listeners to prepare or modify an entity from the request
+ * before dynamic totals calculation is performed.
+ */
 class TotalCalculateBeforeEvent extends Event
 {
     /** Event can be used for prepare entity from request for dynamic totals calculation */

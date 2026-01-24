@@ -4,6 +4,12 @@ namespace Oro\Bundle\ShippingBundle\Method;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
+/**
+ * Creates view representations of shipping methods and method types.
+ *
+ * This factory produces array-based view structures for shipping methods and their types,
+ * used for rendering shipping options in the user interface with labels, prices, and sorting information.
+ */
 class ShippingMethodViewFactory
 {
     /**

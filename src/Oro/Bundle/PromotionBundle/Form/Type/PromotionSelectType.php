@@ -6,6 +6,12 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting a promotion.
+ *
+ * Extends {@see OroEntitySelectOrCreateInlineType} to provide autocomplete selection
+ * of promotions with support for inline creation.
+ */
 class PromotionSelectType extends AbstractType
 {
     const NAME = 'oro_promotion_select';

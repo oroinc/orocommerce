@@ -9,6 +9,14 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Provides common functionality for promotion discount implementations.
+ *
+ * This base class handles discount configuration, validation, and calculation logic shared across
+ * different discount types. It manages discount parameters (type, value, currency), matching products,
+ * and provides option resolution with validation. Subclasses should implement
+ * specific discount application logic for different contexts (e.g., line items, shipping, orders).
+ */
 abstract class AbstractDiscount implements DiscountInterface
 {
     const DISCOUNT_TYPE = 'discount_type';

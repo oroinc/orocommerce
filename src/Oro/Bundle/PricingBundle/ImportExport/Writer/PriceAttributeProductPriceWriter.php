@@ -6,6 +6,12 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\IntegrationBundle\ImportExport\Writer\PersistentBatchWriter;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
+/**
+ * Writes price attribute product prices to the database during import.
+ *
+ * Handles persistence of price attribute product prices with support for deletion
+ * of prices with null values and conditional saving based on price validity.
+ */
 class PriceAttributeProductPriceWriter extends PersistentBatchWriter
 {
     /**

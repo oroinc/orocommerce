@@ -2,6 +2,14 @@
 
 namespace Oro\Bundle\UPSBundle\TimeInTransit\Result;
 
+/**
+ * Defines the contract for UPS Time In Transit API response data.
+ *
+ * Implementations of this interface encapsulate the results from UPS Time In Transit API calls,
+ * including delivery estimates for various shipping services, request metadata, and duty information
+ * for international shipments. This interface provides access to estimated arrival times for each available UPS service
+ * between the specified origin and destination addresses.
+ */
 interface TimeInTransitResultInterface
 {
     /**

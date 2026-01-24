@@ -5,6 +5,12 @@ namespace Oro\Bundle\ProductBundle\ImportExport\Event;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Dispatched during product normalization and denormalization for import/export.
+ *
+ * This event allows listeners to modify the plain data representation of products during serialization (normalization)
+ * and deserialization (denormalization) processes, enabling custom data transformations for import/export operations.
+ */
 class ProductNormalizerEvent extends Event
 {
     const NORMALIZE = 'oro_product.normalizer.normalizer';

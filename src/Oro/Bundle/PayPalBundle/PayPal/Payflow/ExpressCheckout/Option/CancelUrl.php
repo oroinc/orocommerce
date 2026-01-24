@@ -6,6 +6,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\CancelUrl as BaseCancelUrl;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsDependentInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
+/**
+ * Configures cancel URL option for PayPal Express Checkout transactions.
+ *
+ * Extends base cancel URL option with Express Checkout-specific applicability,
+ * requiring the cancel URL only for SET_EC actions.
+ */
 class CancelUrl extends BaseCancelUrl implements OptionsDependentInterface
 {
     const CANCELURL = 'CANCELURL';

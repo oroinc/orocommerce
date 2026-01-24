@@ -2,6 +2,11 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * Configures password option for PayPal Payflow authentication.
+ *
+ * Manages the merchant password credential for PayPal Payflow API authentication.
+ */
 class Password extends AbstractOption
 {
     const PASSWORD = 'PWD';

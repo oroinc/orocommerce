@@ -6,6 +6,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Invoice as BaseInvoice;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsDependentInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
+/**
+ * Configures invoice number option for PayPal Express Checkout transactions.
+ *
+ * Extends base invoice option with Express Checkout-specific applicability rules,
+ * only allowing invoice configuration for SET_EC and DO_EC actions.
+ */
 class Invoice extends BaseInvoice implements OptionsDependentInterface
 {
     #[\Override]

@@ -5,6 +5,15 @@ namespace Oro\Component\Expression;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
+/**
+ * Parses expression strings into abstract syntax trees (AST) of expression nodes.
+ *
+ * This parser uses Symfony's ExpressionLanguage to parse expressions and converts them into
+ * a custom node tree structure. It supports name mappings for aliasing entity references and
+ * expression mappings for substituting expression patterns. Parsed expressions are cached for
+ * performance optimization. The parser can extract lexemes (field references) from expressions
+ * and provide mappings between aliases and their actual entity class names.
+ */
 class ExpressionParser
 {
     /**

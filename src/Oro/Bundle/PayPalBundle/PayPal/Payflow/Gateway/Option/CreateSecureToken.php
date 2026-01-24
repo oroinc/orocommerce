@@ -6,6 +6,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\AbstractBooleanOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\ReturnUrl;
 
+/**
+ * Configures secure token creation option for PayPal Payflow Gateway transactions.
+ *
+ * Controls whether to create a secure token for transparent redirect payment forms,
+ * adjusting related options like customer account and return URL requirements.
+ */
 class CreateSecureToken extends AbstractBooleanOption
 {
     const CREATESECURETOKEN = 'CREATESECURETOKEN';

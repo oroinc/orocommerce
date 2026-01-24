@@ -9,6 +9,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Form type for the "ship to billing address" checkbox in checkout.
+ *
+ * Provides a checkbox form type that, when selected, removes validation constraints from
+ * the shipping address field, allowing the billing address to be used for shipping.
+ */
 class ShipToBillingAddressType extends AbstractType
 {
     const NAME = 'oro_ship_to_billing_address';

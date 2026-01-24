@@ -8,6 +8,14 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 
+/**
+ * Creates Money Order payment method configurations from MoneyOrderSettings entities.
+ *
+ * This factory transforms {@see MoneyOrderSettings} entities into {@see MoneyOrderConfig} objects by extracting
+ * and processing localized labels, payment method identifiers, and payment-specific information
+ * (pay to and send to details). It uses localization helpers and integration identifier generators
+ * to ensure proper configuration for multi-language and multi-channel environments.
+ */
 class MoneyOrderConfigFactory implements MoneyOrderConfigFactoryInterface
 {
     /**

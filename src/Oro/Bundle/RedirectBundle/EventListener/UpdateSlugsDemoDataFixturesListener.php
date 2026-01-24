@@ -14,6 +14,13 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 
+/**
+ * Handles slug generation and redirect configuration during demo data fixture loading.
+ *
+ * This listener processes demo data fixtures to generate slugs for all sluggable entities
+ * and ensures that redirects are properly configured based on system settings. It updates
+ * both slug entities and redirect entities to maintain consistency when demo data is loaded.
+ */
 class UpdateSlugsDemoDataFixturesListener extends AbstractDemoDataFixturesListener
 {
     /** @var ConfigManager */

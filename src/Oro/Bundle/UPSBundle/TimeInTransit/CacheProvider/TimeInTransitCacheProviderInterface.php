@@ -5,6 +5,13 @@ namespace Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResultInterface;
 
+/**
+ * Defines the contract for caching UPS Time In Transit (TNT) data.
+ *
+ * Implementations of this interface provide caching functionality for UPS Time In Transit API responses.
+ * TNT data includes estimated delivery dates and transit times for shipments between specific addresses.
+ * Caching this data reduces API calls and improves performance when calculating shipping estimates for customers.
+ */
 interface TimeInTransitCacheProviderInterface
 {
     /**

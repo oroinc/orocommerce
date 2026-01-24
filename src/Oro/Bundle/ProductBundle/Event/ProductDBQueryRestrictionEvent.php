@@ -6,6 +6,13 @@ use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Dispatched to allow listeners to apply restrictions to product database queries.
+ *
+ * This event provides access to the QueryBuilder and contextual data parameters,
+ * enabling listeners to add WHERE clauses, joins, or other query modifications
+ * based on business rules such as visibility, access control, or filtering requirements.
+ */
 class ProductDBQueryRestrictionEvent extends Event
 {
     const NAME = 'oro_product.product_db_query.restriction';

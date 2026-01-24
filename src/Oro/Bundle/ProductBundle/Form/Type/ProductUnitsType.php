@@ -7,6 +7,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting product units.
+ *
+ * This form type provides a choice field populated with all available product units,
+ * allowing users to select from the configured units of measure in the system.
+ */
 class ProductUnitsType extends AbstractType
 {
     const NAME = 'oro_product_units';

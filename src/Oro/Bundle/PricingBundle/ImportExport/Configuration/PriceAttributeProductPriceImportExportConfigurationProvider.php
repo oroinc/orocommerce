@@ -8,6 +8,12 @@ use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfigurationProvide
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Provides import/export configuration for price attribute product prices.
+ *
+ * Defines the configuration for importing and exporting price attribute product prices,
+ * including processor aliases, job names, and translated labels.
+ */
 class PriceAttributeProductPriceImportExportConfigurationProvider implements ImportExportConfigurationProviderInterface
 {
     /**

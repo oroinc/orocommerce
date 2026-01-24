@@ -7,6 +7,11 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting a price type (unit or bundled).
+ *
+ * Provides a choice field for selecting between unit-level pricing and bundled pricing types.
+ */
 class PriceTypeSelectorType extends AbstractType
 {
     const NAME = 'oro_pricing_price_type';

@@ -7,6 +7,12 @@ use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 
+/**
+ * Provides image dimensions for product images based on their assigned types.
+ *
+ * This provider retrieves the configured dimensions for each image type associated with a product image,
+ * enabling proper image resizing and display across the application.
+ */
 class ProductImagesDimensionsProvider
 {
     /**

@@ -10,6 +10,13 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Base form type for coupon data.
+ *
+ * Provides common form fields for coupon management including promotion selection,
+ * enabled status, usage limits, and validity date ranges. Serves as the parent
+ * type for specialized coupon form types.
+ */
 class BaseCouponType extends AbstractType
 {
     const NAME = 'oro_promotion_base_coupon_type';

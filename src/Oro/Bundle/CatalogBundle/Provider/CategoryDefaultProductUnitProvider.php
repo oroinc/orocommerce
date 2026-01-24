@@ -7,6 +7,12 @@ use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 
+/**
+ * Provides default product unit precision for categories.
+ *
+ * Implements the default product unit provider interface to supply unit and precision settings
+ * from the category hierarchy, allowing products to inherit default units from their category.
+ */
 class CategoryDefaultProductUnitProvider implements DefaultProductUnitProviderInterface
 {
     /**

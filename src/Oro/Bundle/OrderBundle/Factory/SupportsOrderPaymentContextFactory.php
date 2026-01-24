@@ -6,6 +6,13 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Context\Factory\SupportsEntityPaymentContextFactoryInterface;
 
+/**
+ * Creates payment context for orders with caching support.
+ *
+ * Implements the payment context factory interface to create payment contexts
+ * from Order entities. Caches loaded orders to optimize performance when
+ * creating multiple payment contexts for the same orders.
+ */
 class SupportsOrderPaymentContextFactory implements SupportsEntityPaymentContextFactoryInterface
 {
     /**

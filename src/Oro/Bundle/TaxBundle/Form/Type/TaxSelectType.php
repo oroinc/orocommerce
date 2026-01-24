@@ -6,6 +6,13 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting or creating tax rates.
+ *
+ * This form type provides a select widget with autocomplete functionality for choosing existing tax rates,
+ * along with the ability to create new tax rates inline.
+ * It is used in tax rule forms to specify which tax rate should be applied.
+ */
 class TaxSelectType extends AbstractType
 {
     const NAME = 'oro_tax_select';

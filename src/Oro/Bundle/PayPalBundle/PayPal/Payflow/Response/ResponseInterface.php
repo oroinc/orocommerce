@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Response;
 
+/**
+ * Defines the contract for PayPal Payflow API responses.
+ *
+ * Provides access to transaction status, reference numbers, and error information
+ * from PayPal Payflow API responses.
+ */
 interface ResponseInterface
 {
     /**

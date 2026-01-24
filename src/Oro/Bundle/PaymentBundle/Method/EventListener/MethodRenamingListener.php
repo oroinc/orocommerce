@@ -6,6 +6,12 @@ use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodConfigRepository;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 use Oro\Bundle\PaymentBundle\Method\Event\MethodRenamingEvent;
 
+/**
+ * Handles payment method renaming events.
+ *
+ * This listener updates all references to a payment method when its identifier is renamed,
+ * including payment method configurations in rules and payment transactions.
+ */
 class MethodRenamingListener
 {
     /**

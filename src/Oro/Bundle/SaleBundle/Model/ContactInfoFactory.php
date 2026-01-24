@@ -5,6 +5,12 @@ namespace Oro\Bundle\SaleBundle\Model;
 use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\UserBundle\Entity\User;
 
+/**
+ * Factory for creating {@see ContactInfo} instances from various sources.
+ *
+ * Creates {@see ContactInfo} objects populated with data from user entities or manual text input,
+ * providing a convenient way to instantiate and initialize contact information objects.
+ */
 class ContactInfoFactory implements ContactInfoFactoryInterface
 {
     /**

@@ -4,6 +4,12 @@ namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
+/**
+ * Maps PO number changes for checkout state diff tracking.
+ *
+ * Tracks changes to the purchase order number in a checkout, enabling detection of
+ * modifications to the PO number during the checkout workflow.
+ */
 class PoNumberDiffMapper implements CheckoutStateDiffMapperInterface
 {
     const DATA_NAME = 'po_number';

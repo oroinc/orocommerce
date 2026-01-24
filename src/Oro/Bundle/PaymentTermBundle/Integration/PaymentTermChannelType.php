@@ -5,6 +5,12 @@ namespace Oro\Bundle\PaymentTermBundle\Integration;
 use Oro\Bundle\IntegrationBundle\Provider\ChannelInterface;
 use Oro\Bundle\IntegrationBundle\Provider\IconAwareIntegrationInterface;
 
+/**
+ * Integration channel type for payment term payment method.
+ *
+ * This channel type defines the payment term as an integration channel within the Oro integration framework,
+ * providing a label and icon for display in the admin interface.
+ */
 class PaymentTermChannelType implements ChannelInterface, IconAwareIntegrationInterface
 {
     const TYPE = 'payment_term';

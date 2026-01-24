@@ -10,6 +10,12 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting available user contact information options.
+ *
+ * Provides a multi-select choice field for choosing which contact information options
+ * should be available to users. Defaults to all available options if none are selected.
+ */
 class ContactInfoUserAvailableOptionsType extends AbstractType
 {
     const NAME = 'oro_sale_contact_info_user_available_option';

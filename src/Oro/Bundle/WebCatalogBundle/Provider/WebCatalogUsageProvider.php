@@ -9,6 +9,13 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 
+/**
+ * Determines which web catalog is currently in use based on system configuration.
+ *
+ * This provider checks whether a specific web catalog is assigned as the active catalog in the system configuration.
+ * It is used to prevent deletion or modification of web catalogs that are currently being used
+ * to render the storefront, and to identify which web catalog is assigned to which website.
+ */
 class WebCatalogUsageProvider implements WebCatalogUsageProviderInterface
 {
     const SETTINGS_KEY = 'oro_web_catalog.web_catalog';

@@ -6,6 +6,13 @@ use Doctrine\DBAL\Logging\SQLLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
 
+/**
+ * Tracks database queries executed during test execution.
+ *
+ * This class intercepts SQL queries executed through Doctrine by installing a custom SQL logger
+ * on the database connection. It allows tests to verify the number and nature of queries executed,
+ * helping identify performance issues and unintended database access patterns.
+ */
 class QueryTracker
 {
     /**

@@ -4,6 +4,12 @@ namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
+/**
+ * Provides mapping of PayPal configuration keys to system configuration option names.
+ *
+ * Extends ParameterBag to store and retrieve configuration key mappings for different
+ * PayPal integration types, supporting both credit card and Express Checkout settings.
+ */
 class PayPalConfigKeysProvider extends ParameterBag
 {
     const LABEL_KEY = 'label';

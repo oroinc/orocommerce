@@ -7,6 +7,12 @@ use Oro\Bundle\EntityExtendBundle\Event\ValidateBeforeRemoveFieldEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Validates that product fields used as variant fields cannot be removed.
+ *
+ * This listener prevents the removal of product entity fields that are currently configured as variant fields
+ * in configurable products, ensuring data integrity and preventing broken product variant configurations.
+ */
 class ValidateBeforeRemoveFieldListener
 {
     /** @var DoctrineHelper */

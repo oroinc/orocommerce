@@ -6,6 +6,12 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting a payment term with inline creation support.
+ *
+ * This form type provides an autocomplete field for selecting existing payment terms
+ * and allows users to create new payment terms inline without leaving the form.
+ */
 class PaymentTermSelectType extends AbstractType
 {
     const NAME = 'oro_payment_term_select';

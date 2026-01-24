@@ -7,6 +7,13 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for creating and editing tax rules.
+ *
+ * Tax rules define the relationship between customer tax codes, product tax codes, tax rates, and tax jurisdictions.
+ * This form allows administrators to configure which tax rate applies when a specific combination of customer type,
+ * product type, and location is encountered during tax calculation.
+ */
 class TaxRuleType extends AbstractType
 {
     const NAME = 'oro_tax_rule_type';

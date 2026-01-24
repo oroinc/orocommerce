@@ -5,6 +5,11 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\AbstractOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
+/**
+ * Configures secure token identifier option for PayPal Payflow Gateway transactions.
+ *
+ * Manages the unique identifier for a previously created secure token.
+ */
 class SecureTokenIdentifier extends AbstractOption
 {
     const SECURETOKENID = 'SECURETOKENID';

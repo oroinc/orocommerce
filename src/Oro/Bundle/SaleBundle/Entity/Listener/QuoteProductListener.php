@@ -6,6 +6,12 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Handles quote product entity updates to preserve customer comments during quote updates.
+ *
+ * This listener ensures that when a quote is updated through the backend, the customer's comment field
+ * is not overwritten with the old value, preserving any changes made to this field.
+ */
 class QuoteProductListener
 {
     /**

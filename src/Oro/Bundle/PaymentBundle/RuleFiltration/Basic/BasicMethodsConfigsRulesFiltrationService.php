@@ -7,6 +7,12 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\RuleFiltration\MethodsConfigsRulesFiltrationServiceInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
+/**
+ * Filters payment method configuration rules based on payment context.
+ *
+ * This service uses a rule filtration engine to filter payment method configuration rules
+ * against a payment context, returning only the rules that match the context conditions.
+ */
 class BasicMethodsConfigsRulesFiltrationService implements MethodsConfigsRulesFiltrationServiceInterface
 {
     /**

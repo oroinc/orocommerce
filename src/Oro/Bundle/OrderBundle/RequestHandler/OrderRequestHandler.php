@@ -8,6 +8,13 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Extracts order-related data from HTTP requests.
+ *
+ * Provides methods to retrieve customer and customer user information from the current HTTP request,
+ * specifically from order form data. Handles entity lookup using the Doctrine registry to resolve entity IDs
+ * to actual objects.
+ */
 class OrderRequestHandler
 {
     /** @var RequestStack */

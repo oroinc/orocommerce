@@ -5,6 +5,13 @@ namespace Oro\Bundle\SEOBundle\EventListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
+/**
+ * Handles form view events for web catalog content nodes to add SEO metadata fields.
+ *
+ * This listener extends the base form view listener to provide SEO metadata editing capabilities for content nodes
+ * in the web catalog. It hooks into the content node view and edit events to inject SEO-related form blocks,
+ * and customizes block priorities to ensure proper layout of SEO fields alongside other content node metadata.
+ */
 class ContentNodeFormViewListener extends BaseFormViewListener
 {
     public function onContentNodeView(BeforeListRenderEvent $event)

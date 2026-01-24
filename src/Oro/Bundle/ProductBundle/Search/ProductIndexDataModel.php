@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Search;
 
+/**
+ * Represents a single field's data for product search indexing.
+ *
+ * This model encapsulates all the information needed to index a product field,
+ * including the field name, value, placeholders for dynamic content, and flags
+ * indicating whether the field is localized and searchable.
+ */
 class ProductIndexDataModel
 {
     /** @var string */

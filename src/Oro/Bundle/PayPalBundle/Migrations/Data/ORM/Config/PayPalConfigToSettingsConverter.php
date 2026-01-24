@@ -4,6 +4,12 @@ namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config;
 
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 
+/**
+ * Converts legacy PayPal system configuration to PayPal settings entities.
+ *
+ * Migrates configuration data from the old system configuration format to the new
+ * PayPalSettings entity format, organizing settings by category (display, integration, connection, etc.).
+ */
 class PayPalConfigToSettingsConverter
 {
     /**

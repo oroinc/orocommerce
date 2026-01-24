@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\PaymentBundle\Entity;
 
+/**
+ * Defines the contract for entities that are aware of and can store a payment method identifier.
+ */
 interface PaymentMethodAwareInterface
 {
     /**

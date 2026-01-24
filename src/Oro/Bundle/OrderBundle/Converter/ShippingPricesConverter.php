@@ -4,6 +4,12 @@ namespace Oro\Bundle\OrderBundle\Converter;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
+/**
+ * Converts shipping price objects to array representation.
+ *
+ * Transforms {@see Price} objects within shipping method and type data structures into plain arrays
+ * containing value and currency information, suitable for serialization and API responses.
+ */
 class ShippingPricesConverter
 {
     /**

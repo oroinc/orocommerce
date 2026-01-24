@@ -5,6 +5,9 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\PricingBundle\Entity\NotificationMessage;
 
+/**
+ * Repository for managing notification messages related to pricing operations.
+ */
 class NotificationMessageRepository extends EntityRepository
 {
     /**

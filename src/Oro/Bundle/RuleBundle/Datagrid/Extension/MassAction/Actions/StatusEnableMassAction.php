@@ -6,6 +6,14 @@ use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\Actions\AbstractMassAction;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Handles bulk enable/disable actions for rules in datagrids.
+ *
+ * This mass action allows administrators to enable or disable multiple rules at once through the datagrid interface.
+ * It extends the base mass action functionality and configures itself with a specific handler service, route,
+ * and enabled state. The action automatically sets up the required options for processing bulk rule status changes
+ * via AJAX POST requests, providing a seamless user experience for managing rule states in bulk operations.
+ */
 class StatusEnableMassAction extends AbstractMassAction
 {
     /** @var array */

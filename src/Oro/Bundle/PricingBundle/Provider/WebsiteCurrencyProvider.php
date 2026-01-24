@@ -7,6 +7,11 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Provides currency information for websites.
+ *
+ * Retrieves default currencies for websites and aggregates currency information across all websites in the system.
+ */
 class WebsiteCurrencyProvider
 {
     /**

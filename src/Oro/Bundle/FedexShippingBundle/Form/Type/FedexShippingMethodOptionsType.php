@@ -8,6 +8,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Form type for configuring FedEx shipping method options.
+ *
+ * This form type provides a surcharge field for FedEx shipping methods,
+ * with precision and rounding mode configured from the rounding service.
+ */
 class FedexShippingMethodOptionsType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_fedex_shipping_method_options';

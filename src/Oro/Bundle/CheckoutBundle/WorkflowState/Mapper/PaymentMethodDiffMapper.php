@@ -4,6 +4,12 @@ namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
+/**
+ * Maps payment method changes for checkout state diff tracking.
+ *
+ * Tracks changes to the payment method selected in a checkout, enabling detection of
+ * payment method modifications during the checkout workflow.
+ */
 class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
 {
     const DATA_NAME = 'payment_method';

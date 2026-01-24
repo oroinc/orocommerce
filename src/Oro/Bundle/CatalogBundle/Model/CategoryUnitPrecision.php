@@ -5,6 +5,12 @@ namespace Oro\Bundle\CatalogBundle\Model;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
+/**
+ * Represents unit and precision settings for a category.
+ *
+ * Holds product unit and precision information at the category level, implementing the
+ * ProductUnitHolderInterface to provide unit-related data for category-level product configurations.
+ */
 class CategoryUnitPrecision implements ProductUnitHolderInterface
 {
     /**

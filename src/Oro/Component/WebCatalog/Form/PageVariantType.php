@@ -4,6 +4,9 @@ namespace Oro\Component\WebCatalog\Form;
 
 use Symfony\Component\Form\AbstractType;
 
+/**
+ * Form type for page variant content variants.
+ */
 class PageVariantType extends AbstractType
 {
     const NAME = 'page_variant';

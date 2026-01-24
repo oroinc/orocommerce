@@ -5,6 +5,12 @@ namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
+/**
+ * Maps total amount changes for checkout state diff tracking.
+ *
+ * Tracks changes to the total amount and currency in a checkout, enabling detection of
+ * price modifications during the checkout workflow.
+ */
 class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
 {
     const DATA_NAME = 'total_amount';

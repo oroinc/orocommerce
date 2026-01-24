@@ -9,6 +9,13 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Applies product restrictions to datagrids based on request context.
+ *
+ * This listener modifies product datagrids after they are built, applying restrictions
+ * based on the current request parameters to ensure that only appropriate products are displayed in grid views
+ * throughout the application.
+ */
 class RestrictedProductsDatagridEventListener
 {
     /** @var  RequestStack */

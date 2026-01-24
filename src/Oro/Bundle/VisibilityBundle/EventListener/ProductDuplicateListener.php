@@ -9,6 +9,13 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 
+/**
+ * Copies visibility settings from source product to duplicated product.
+ *
+ * This listener handles {@see ProductDuplicateAfterEvent} events to ensure that when a product is duplicated,
+ * all visibility settings (for all customers, customer groups, and individual customers) are copied from
+ * the source product to the new product, maintaining consistent visibility configuration.
+ */
 class ProductDuplicateListener
 {
     /** @var  string */

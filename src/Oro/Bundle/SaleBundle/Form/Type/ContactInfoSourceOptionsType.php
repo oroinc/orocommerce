@@ -7,6 +7,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting the source of contact information.
+ *
+ * Provides a choice field for selecting where contact information should be sourced from,
+ * such as customer, customer user, or pre-configured system values.
+ */
 class ContactInfoSourceOptionsType extends AbstractType
 {
     const NAME = 'oro_sale_contact_info_customer_option';

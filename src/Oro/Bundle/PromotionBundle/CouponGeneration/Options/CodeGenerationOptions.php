@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PromotionBundle\CouponGeneration\Options;
 
+/**
+ * Holds configuration options for coupon code generation.
+ *
+ * Manages code length, type (numeric, alphanumeric, alphabetic), prefix, suffix,
+ * and dash sequence settings used to customize the generation of coupon codes.
+ */
 class CodeGenerationOptions
 {
     const NUMERIC_CODE_TYPE = 'numeric';

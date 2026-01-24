@@ -4,6 +4,14 @@ namespace Oro\Bundle\SEOBundle\Sitemap\Storage;
 
 use Oro\Component\SEO\Model\DTO\UrlItemInterface;
 
+/**
+ * Provides common functionality for storing XML sitemap data.
+ *
+ * This base class manages the creation of XML sitemaps with automatic size and URL count limits
+ * according to sitemap protocol specifications. It handles XML generation, item appending, and
+ * ensures compliance with sitemap constraints (max 10,000 URLs and 10MB file size by default).
+ * Subclasses must implement the XML template structure and item formatting methods.
+ */
 abstract class AbstractXmlSitemapStorage implements SitemapStorageInterface
 {
     const URL_NUMBER_LIMIT = 10000;

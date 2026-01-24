@@ -7,6 +7,12 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 
+/**
+ * Checks if a price list is referenced by price rule lexemes.
+ *
+ * Determines whether a price list is used in price rule expressions,
+ * preventing deletion of price lists that are actively referenced in rules.
+ */
 class PriceListReferenceChecker
 {
     /**

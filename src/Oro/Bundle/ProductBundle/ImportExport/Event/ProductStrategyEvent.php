@@ -8,9 +8,13 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Holds the product object and import data.
- * Dispatched in:
+ *
+ * Dispatched before and after product import strategy processing:
  * - {@see \Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy::beforeProcessEntity()}
  * - {@see \Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy::afterProcessEntity()}
+ *
+ * This event allows listeners to modify or validate product data during import operations, providing access to
+ * both the product entity and the raw import data for custom processing before or after the main import strategy logic.
  */
 class ProductStrategyEvent extends Event
 {

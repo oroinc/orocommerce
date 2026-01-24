@@ -9,6 +9,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Form event subscriber that filters shipping method configurations based on method availability.
+ *
+ * This subscriber removes shipping method configurations from the form when the corresponding shipping method
+ * is no longer available in the system, ensuring that only valid methods can be configured in shipping rules.
+ */
 class MethodConfigCollectionSubscriber implements EventSubscriberInterface
 {
     /**

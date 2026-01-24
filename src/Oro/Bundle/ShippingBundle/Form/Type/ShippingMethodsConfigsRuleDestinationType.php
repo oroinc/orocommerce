@@ -18,6 +18,12 @@ use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Form type for configuring shipping rule destination criteria.
+ *
+ * This form type allows administrators to define geographic destinations (country, region, postal codes)
+ * for shipping rules, determining where specific shipping methods and rates should be applied.
+ */
 class ShippingMethodsConfigsRuleDestinationType extends AbstractType
 {
     const NAME = 'oro_shipping_methods_configs_rule_destination';

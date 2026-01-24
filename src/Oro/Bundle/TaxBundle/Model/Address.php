@@ -4,6 +4,14 @@ namespace Oro\Bundle\TaxBundle\Model;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
+/**
+ * Address model used for tax calculation purposes.
+ *
+ * This class extends the base address functionality to provide a flexible data container for address information
+ * used in tax calculations. It stores address components in an internal {@see \ArrayObject},
+ * allowing for dynamic access to address data while maintaining compatibility with the standard address interface.
+ * This is particularly useful when working with addresses from various sources during tax resolution.
+ */
 class Address extends AbstractAddress
 {
     /** @var \ArrayObject */

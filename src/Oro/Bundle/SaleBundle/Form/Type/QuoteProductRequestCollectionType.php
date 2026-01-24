@@ -6,6 +6,12 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing a collection of quote product requests.
+ *
+ * Extends the base CollectionType to provide specialized handling for quote product request collections,
+ * configured to display existing requests without allowing additions or deletions.
+ */
 class QuoteProductRequestCollectionType extends AbstractType
 {
     const NAME = 'oro_sale_quote_product_request_collection';

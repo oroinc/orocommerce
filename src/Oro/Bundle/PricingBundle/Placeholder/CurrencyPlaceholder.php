@@ -5,6 +5,12 @@ namespace Oro\Bundle\PricingBundle\Placeholder;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AbstractPlaceholder;
 
+/**
+ * Placeholder for the current user's currency in website search queries.
+ *
+ * Provides the CURRENCY placeholder value based on the current user's selected currency,
+ * enabling currency-aware search indexing and filtering.
+ */
 class CurrencyPlaceholder extends AbstractPlaceholder
 {
     const NAME = 'CURRENCY';

@@ -5,6 +5,15 @@ namespace Oro\Bundle\ShoppingListBundle\Datagrid\Helper;
 use Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface;
 use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 
+/**
+ * Generates SQL `CASE` statements for determining the appropriate currency in shopping list datagrids.
+ *
+ * This helper is used in shopping list grids to dynamically select the correct currency based on the website
+ * associated with each shopping list. It builds SQL CASE expressions that map website IDs
+ * to their configured currencies, falling back to the default system currency when no specific website currency
+ * is configured. This ensures that shopping list totals are displayed in the correct currency for multi-website
+ * and multi-currency OroCommerce installations.
+ */
 class ShoppingListGridTotalCurrencyHelper
 {
     /**

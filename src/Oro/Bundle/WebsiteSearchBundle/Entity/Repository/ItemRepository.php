@@ -6,6 +6,16 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 
+/**
+ * Repository for managing website search index items with specialized operations.
+ *
+ * This repository extends {@see EntityRepository} to provide specialized operations for managing {@see Item} entities
+ * in the website search index. It handles index maintenance operations such as removing items by alias
+ * (used during reindexation), renaming index aliases (for atomic index swaps), and removing specific entities
+ * from the index.
+ * The repository also manages the associated {@see IndexText} fulltext data, which requires manual deletion
+ * due to MySQL MyISAM engine limitations with foreign key cascades.
+ */
 class ItemRepository extends EntityRepository
 {
     /**

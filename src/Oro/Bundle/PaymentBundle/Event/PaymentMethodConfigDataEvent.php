@@ -4,6 +4,13 @@ namespace Oro\Bundle\PaymentBundle\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Dispatched to collect configuration data for a payment method.
+ *
+ * This event allows listeners to provide or modify configuration data (such as templates)
+ * for a specific payment method identifier, enabling customization of payment method
+ * configuration presentation.
+ */
 class PaymentMethodConfigDataEvent extends Event
 {
     const NAME = 'oro_payment_method.config_data';

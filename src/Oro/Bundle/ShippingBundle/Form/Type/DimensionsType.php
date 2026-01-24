@@ -7,6 +7,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for entering package dimensions.
+ *
+ * This form type allows users to input package dimensions (length, width, height) and select the unit of measurement,
+ * providing the data needed for shipping cost calculations.
+ */
 class DimensionsType extends AbstractType
 {
     const NAME = 'oro_shipping_dimensions';

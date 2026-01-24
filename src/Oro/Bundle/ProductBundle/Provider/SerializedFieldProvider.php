@@ -5,6 +5,13 @@ namespace Oro\Bundle\ProductBundle\Provider;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Provider\SerializedFieldProvider as BaseSerializedFieldProvider;
 
+/**
+ * Determines which product entity fields should be stored as serialized data.
+ *
+ * This provider extends the base serialized field logic with product-specific rules,
+ * ensuring that boolean attributes used in configurable products are stored as table columns
+ * rather than serialized data for proper variant field functionality.
+ */
 class SerializedFieldProvider extends BaseSerializedFieldProvider
 {
     #[\Override]

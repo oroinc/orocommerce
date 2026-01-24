@@ -6,6 +6,14 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
+/**
+ * Defines the contract for resolving category visibility for different customer contexts.
+ *
+ * Implementations of this interface provide methods to determine whether categories are visible for all customers,
+ * specific customer groups, or individual customers. They resolve the visibility fallback chain
+ * and return the final visibility state, as well as provide lists of visible and hidden category IDs
+ * for efficient filtering in queries.
+ */
 interface CategoryVisibilityResolverInterface
 {
     /**

@@ -5,6 +5,12 @@ namespace Oro\Bundle\CMSBundle\Layout\DataProvider;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\LoginPage;
 
+/**
+ * Provides access to the default login page entity.
+ *
+ * Retrieves and caches the default login page from the database, allowing layout data providers
+ * to access the configured login page for rendering in the storefront.
+ */
 class LoginPageProvider
 {
     /**

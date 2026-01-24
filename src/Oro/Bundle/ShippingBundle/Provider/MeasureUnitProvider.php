@@ -6,6 +6,13 @@ use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
+/**
+ * Provides measure units (length, weight, freight classes) filtered by system configuration.
+ *
+ * This provider retrieves measure units from the repository and filters them based on system configuration settings,
+ * returning only enabled units when requested, which are available for use in shipping calculations
+ * and product configuration.
+ */
 class MeasureUnitProvider
 {
     /** @var ObjectRepository */

@@ -8,6 +8,13 @@ use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Creates discount instances from discount configuration.
+ *
+ * Factory that instantiates appropriate discount objects based on type,
+ * configures them with provided options, and associates them with promotions.
+ * Supports extensibility through type-to-service mapping.
+ */
 class DiscountFactory
 {
     /**

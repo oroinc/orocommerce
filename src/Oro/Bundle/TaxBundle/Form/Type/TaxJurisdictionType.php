@@ -13,6 +13,13 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for creating and editing tax jurisdictions.
+ *
+ * Tax jurisdictions define geographic areas where specific tax rules apply. A jurisdiction can be defined by country,
+ * region (state/province), and optionally zip/postal codes or zip code ranges.
+ * This form allows administrators to configure these geographic boundaries for tax calculation purposes.
+ */
 class TaxJurisdictionType extends AbstractType
 {
     const NAME = 'oro_tax_jurisdiction_type';

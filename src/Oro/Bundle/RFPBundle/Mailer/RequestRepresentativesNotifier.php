@@ -5,6 +5,14 @@ namespace Oro\Bundle\RFPBundle\Mailer;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RFPBundle\Entity\Request;
 
+/**
+ * Handles email notifications to sales representatives and owners for RFP requests.
+ *
+ * This service manages the notification workflow when RFP requests are created or updated,
+ * determining which sales representatives, customer user owners, and customer owners should receive notifications
+ * based on system configuration settings. It coordinates with the {@see Processor} to send templated emails
+ * and handles guest customer confirmation emails.
+ */
 class RequestRepresentativesNotifier
 {
     /**

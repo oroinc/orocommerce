@@ -7,6 +7,12 @@ use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMeth
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 
+/**
+ * Provides shipping prices based on standard shipping method calculations.
+ *
+ * This provider delegates to the shipping price provider to retrieve applicable shipping methods and their prices
+ * without applying any configuration-based modifications or overrides.
+ */
 class BasicShippingConfiguredPriceProvider implements ShippingConfiguredPriceProviderInterface
 {
     /**

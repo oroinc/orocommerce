@@ -5,6 +5,12 @@ namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Provider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 
+/**
+ * Encapsulates constructor arguments for subtotal providers.
+ *
+ * Provides a convenient way to pass currency-related dependencies to subtotal provider
+ * implementations, supporting both user and website-specific currency handling.
+ */
 class SubtotalProviderConstructorArguments
 {
     /** @var UserCurrencyManager */

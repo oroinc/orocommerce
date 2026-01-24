@@ -7,6 +7,12 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
+/**
+ * Provides identifiers of shipping method types that are used in enabled shipping rules.
+ *
+ * This provider identifies shipping method types that cannot be deleted because they are actively configured
+ * and enabled in shipping rules, ensuring that required shipping options remain available for order processing.
+ */
 class ShippingRulesNonDeletableMethodTypeIdentifiersProvider implements
     NonDeletableMethodTypeIdentifiersProviderInterface
 {

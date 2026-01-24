@@ -4,6 +4,17 @@ namespace Oro\Bundle\RedirectBundle\Migration\Extension;
 
 use Doctrine\DBAL\Schema\Schema;
 
+/**
+ * Migration extension for simplifying database schema creation for sluggable entities.
+ *
+ * This extension provides helper methods for creating the necessary database tables and relationships
+ * when adding slug support to entities during migrations. It handles the creation of many-to-many relation tables
+ * for both localized slug prototypes (templates for generating slugs) and actual slugs (the generated
+ * SEO-friendly URLs). By using this extension, developers can ensure consistent database schema structure
+ * across all sluggable entities without manually defining foreign keys, indexes, and cascade rules.
+ * Migrations that introduce new sluggable entities should implement {@see SlugExtensionAwareInterface}
+ * and use these methods to maintain compatibility with the core slug management infrastructure.
+ */
 class SlugExtension
 {
     /**

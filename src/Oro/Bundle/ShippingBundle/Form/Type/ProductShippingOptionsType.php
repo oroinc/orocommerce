@@ -7,6 +7,13 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for configuring product-specific shipping options.
+ *
+ * This form type allows administrators to define shipping-related properties for products,
+ * including product unit, weight, dimensions, and freight class, which are used to calculate shipping costs
+ * and determine applicable shipping methods.
+ */
 class ProductShippingOptionsType extends AbstractType
 {
     const NAME = 'oro_shipping_product_shipping_options';

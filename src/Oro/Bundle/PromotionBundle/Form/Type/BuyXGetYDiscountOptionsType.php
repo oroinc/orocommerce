@@ -14,6 +14,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
 
+/**
+ * Form type for `Buy X Get Y` discount options.
+ *
+ * Provides form fields for configuring `Buy X Get Y` promotions including quantities,
+ * product units, application strategy, and discount limits.
+ */
 class BuyXGetYDiscountOptionsType extends AbstractType
 {
     const NAME = 'oro_promotion_buy_x_get_y_discount_options';

@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\RedirectBundle\Provider;
 
+/**
+ * Factory for managing and retrieving URL provider implementations.
+ *
+ * This factory maintains a registry of URL provider implementations keyed by type and provides
+ * access to the currently configured provider type. It allows different URL generation strategies
+ * to be registered and retrieved based on the application's configuration.
+ */
 class UrlProviderFactory
 {
     /**

@@ -6,6 +6,12 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing collections of order line items.
+ *
+ * Specialized collection form type configured for handling order line items with appropriate defaults
+ * for prototype naming, error handling, and form behavior specific to line item collections.
+ */
 class OrderLineItemsCollectionType extends AbstractType
 {
     const NAME = 'oro_order_line_items_collection';

@@ -4,6 +4,13 @@ namespace Oro\Bundle\SEOBundle\Sitemap\Storage;
 
 use Oro\Component\SEO\Model\DTO\UrlItemInterface;
 
+/**
+ * XML storage for sitemap URLs.
+ *
+ * This class extends the abstract XML sitemap storage to provide storage for regular sitemap URLs.
+ * It generates XML output conforming to the sitemap protocol specification, including URL location,
+ * change frequency, priority, and last modification date for each URL item.
+ */
 class XmlSitemapUrlsStorage extends AbstractXmlSitemapStorage
 {
     #[\Override]

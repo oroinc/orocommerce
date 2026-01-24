@@ -9,6 +9,13 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Provides common functionality for form types that need access to a product entity.
+ *
+ * This base class configures product-related form options and provides helper methods to retrieve the product
+ * from form data or view hierarchy. It supports both direct product assignment and product holder patterns,
+ * making it useful for forms that need product context for validation or rendering purposes.
+ */
 abstract class AbstractProductAwareType extends AbstractType
 {
     use ProductAwareTrait;

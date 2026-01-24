@@ -5,6 +5,12 @@ namespace Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 
+/**
+ * Repository for {@see CustomerProductVisibility} entities.
+ *
+ * Provides specialized query methods for managing product visibility settings at the individual customer level,
+ * including operations to clean up visibility entries when products lose their category associations.
+ */
 class CustomerProductVisibilityRepository extends AbstractProductVisibilityRepository
 {
     const BATCH_SIZE = 1000;

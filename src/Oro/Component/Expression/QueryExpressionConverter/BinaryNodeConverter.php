@@ -7,6 +7,15 @@ use Oro\Component\Expression\Node\BinaryNode;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\ValueNode;
 
+/**
+ * Converts binary expression nodes to Doctrine ORM query expressions.
+ *
+ * This converter handles binary operations (logical, mathematical, and comparison) by delegating
+ * the conversion of operands to the parent converter and then applying the appropriate Doctrine
+ * expression method. It supports logical operations (and, or), mathematical operations (+, -, *, /, %),
+ * and comparison operations (==, !=, >, <, >=, <=, like, in, not in), with special handling for
+ * collection membership operations.
+ */
 class BinaryNodeConverter implements QueryExpressionConverterInterface, ConverterAwareInterface
 {
     const TYPE_LOGICAL = 1;

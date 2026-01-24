@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\TaxBundle\Matcher;
 
+/**
+ * Helper class for identifying European Union member countries.
+ *
+ * This helper provides functionality to determine whether a given country code belongs to a European Union
+ * member state. It is used in tax calculation logic to apply EU-specific tax rules, such as VAT regulations
+ * for cross-border transactions within the European Union.
+ */
 class EuropeanUnionHelper
 {
     /**

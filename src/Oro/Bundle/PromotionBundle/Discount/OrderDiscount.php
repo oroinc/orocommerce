@@ -4,6 +4,12 @@ namespace Oro\Bundle\PromotionBundle\Discount;
 
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 
+/**
+ * Applies discounts to the order subtotal.
+ *
+ * Calculates and applies a discount to the entire order subtotal,
+ * supporting both fixed amount and percentage discount types.
+ */
 class OrderDiscount extends AbstractDiscount
 {
     #[\Override]

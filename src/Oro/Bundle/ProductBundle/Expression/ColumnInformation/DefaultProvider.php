@@ -8,6 +8,12 @@ use Oro\Component\Expression\Node\NameNode;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\RelationNode;
 
+/**
+ * Provides column information for product expression nodes.
+ *
+ * This provider converts expression nodes (name nodes and relation nodes) into column definitions
+ * and query builder modifications, enabling the expression language to work with product fields and relationships.
+ */
 class DefaultProvider implements ColumnInformationProviderInterface
 {
     /**

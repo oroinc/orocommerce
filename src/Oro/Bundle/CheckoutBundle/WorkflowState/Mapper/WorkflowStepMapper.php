@@ -5,6 +5,12 @@ namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowAwareManager;
 
+/**
+ * Maps workflow step changes for checkout state diff tracking.
+ *
+ * Tracks changes to the current workflow step in a checkout, enabling detection of
+ * workflow progression during the checkout process.
+ */
 class WorkflowStepMapper implements CheckoutStateDiffMapperInterface
 {
     const DATA_NAME = 'workflow_step';

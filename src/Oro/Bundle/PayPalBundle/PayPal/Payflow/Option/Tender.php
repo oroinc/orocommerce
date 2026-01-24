@@ -2,6 +2,11 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * Configures tender type option for PayPal Payflow transactions.
+ *
+ * Defines the payment method type (credit card, ACH, PayPal, etc.) for the transaction.
+ */
 class Tender extends AbstractOption
 {
     const TENDER = 'TENDER';

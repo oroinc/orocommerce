@@ -6,6 +6,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Currency as BaseCurrency;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsDependentInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
+/**
+ * Configures currency option for PayPal Express Checkout transactions.
+ *
+ * Extends base currency option with Express Checkout-specific applicability,
+ * requiring currency only for SET_EC actions.
+ */
 class Currency extends BaseCurrency implements OptionsDependentInterface
 {
     public function __construct()

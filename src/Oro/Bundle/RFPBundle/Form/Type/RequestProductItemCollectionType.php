@@ -6,6 +6,13 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing a collection of request product items within a request product.
+ *
+ * This form type extends {@see CollectionType} to handle multiple {@see RequestProductItem} entries for
+ * a single product in an RFP request. Each item represents a specific quantity/unit/price combination that the customer
+ * is requesting a quote for (e.g., "10 pieces at $5 each" and "100 pieces at $4 each" for the same product).
+ */
 class RequestProductItemCollectionType extends AbstractType
 {
     const NAME = 'oro_rfp_request_product_item_collection';

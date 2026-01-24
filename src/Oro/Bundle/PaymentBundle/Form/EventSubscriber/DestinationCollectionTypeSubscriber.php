@@ -6,6 +6,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Handles form submission for payment method destination collections.
+ *
+ * This subscriber filters out empty destination entries during form submission,
+ * ensuring that only valid destination configurations are persisted.
+ */
 class DestinationCollectionTypeSubscriber implements EventSubscriberInterface
 {
     #[\Override]

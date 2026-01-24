@@ -4,6 +4,12 @@ namespace Oro\Bundle\ShippingBundle\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Event dispatched to collect shipping method configuration template data.
+ *
+ * This event allows shipping method integrations to provide their own configuration templates
+ * for display in the admin interface when configuring shipping rules.
+ */
 class ShippingMethodConfigDataEvent extends Event
 {
     const NAME = 'oro_shipping_method.config_data';

@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount;
 
+/**
+ * Encapsulates discount information including the discount object and calculated amount.
+ *
+ * Holds a reference to a discount and its calculated amount for a specific entity,
+ * used to track and communicate discount details throughout the promotion system.
+ */
 class DiscountInformation
 {
     /**

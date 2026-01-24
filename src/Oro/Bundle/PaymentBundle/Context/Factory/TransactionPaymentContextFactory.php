@@ -4,6 +4,13 @@ namespace Oro\Bundle\PaymentBundle\Context\Factory;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
+/**
+ * Creates payment context from a payment transaction.
+ *
+ * This factory delegates to a composite factory to create a payment context based on the
+ * entity class and identifier stored in the payment transaction. Returns null if the entity
+ * type is not supported by any registered factory.
+ */
 class TransactionPaymentContextFactory implements TransactionPaymentContextFactoryInterface
 {
     /**

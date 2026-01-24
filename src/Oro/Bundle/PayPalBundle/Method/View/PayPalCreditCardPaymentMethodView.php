@@ -12,6 +12,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Symfony\Component\Form\FormFactoryInterface;
 
+/**
+ * Renders PayPal Credit Card payment method view.
+ *
+ * Provides payment form options and view configuration for credit card payments,
+ * including support for zero-amount authorization and saved card selection.
+ */
 class PayPalCreditCardPaymentMethodView implements PaymentMethodViewInterface
 {
     /**

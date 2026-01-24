@@ -12,6 +12,12 @@ use Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config\PayPalConfigFactory;
 use Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config\PayPalConfigToSettingsConverter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Migrates PayPal configuration from system config to integration channel settings.
+ *
+ * Handles the migration of legacy PayPal system configuration to the new integration-based
+ * settings model, creating PayPal integration channels and dispatching payment method renaming events.
+ */
 class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
 {
     const SECTION_NAME = 'oro_paypal';

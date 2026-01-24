@@ -8,6 +8,13 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
 
+/**
+ * Form type for entering sitemap priority values.
+ *
+ * This form type provides a numeric input field for specifying the priority of URLs in the sitemap.
+ * It extends the Symfony NumberType and enforces constraints to ensure values are between 0 and 1 (inclusive)
+ * and are valid decimal numbers, conforming to the sitemap protocol specification.
+ */
 class SitemapPriorityType extends AbstractType
 {
     const NAME = 'oro_sitemap_priority';

@@ -6,6 +6,12 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 
+/**
+ * Manager for payment term operations and associations.
+ *
+ * This manager provides utilities for working with payment terms, including checking if a payment term is assigned
+ * to entities, retrieving payment term references, and determining the association name for a given entity class.
+ */
 class PaymentTermManager
 {
     /** @var DoctrineHelper */

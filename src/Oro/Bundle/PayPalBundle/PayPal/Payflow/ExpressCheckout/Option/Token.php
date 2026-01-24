@@ -6,6 +6,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\AbstractOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsDependentInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
+/**
+ * Configures Express Checkout token option for PayPal transactions.
+ *
+ * Manages the Express Checkout token parameter, making it required for GET_EC_DETAILS
+ * and DO_EC actions while remaining optional for other action types.
+ */
 class Token extends AbstractOption implements OptionsDependentInterface
 {
     const TOKEN = 'TOKEN';

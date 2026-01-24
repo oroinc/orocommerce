@@ -6,6 +6,12 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Dispatched when building product assignments for a price list.
+ *
+ * This event carries the price list and products being processed, allowing listeners
+ * to customize or extend the product assignment building process.
+ */
 class AssignmentBuilderBuildEvent extends Event
 {
     const NAME = 'oro_pricing.assignment_rule_builder.build';

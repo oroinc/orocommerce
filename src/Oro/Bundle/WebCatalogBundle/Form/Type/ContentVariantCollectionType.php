@@ -12,6 +12,14 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing a collection of content variants within a content node.
+ *
+ * This form type handles the complex collection of content variants that can be assigned to a web catalog
+ * content node. It dynamically generates form prototypes for each available content variant type (system page,
+ * landing page, category, product page, product collection), allowing users to add multiple variants with
+ * different types and scopes. The form manages the lifecycle of variant forms through event subscribers.
+ */
 class ContentVariantCollectionType extends AbstractType
 {
     const NAME = 'oro_web_catalog_content_variant_collection';

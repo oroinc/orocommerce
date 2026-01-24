@@ -2,6 +2,11 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host;
 
+/**
+ * Provides PayPal Payflow Gateway host addresses and form action URLs.
+ *
+ * Returns appropriate host addresses and form action URLs based on test/production mode.
+ */
 interface HostAddressProviderInterface
 {
     /**

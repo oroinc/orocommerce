@@ -4,6 +4,13 @@ namespace Oro\Bundle\SEOBundle\Model\DTO;
 
 use Oro\Component\SEO\Model\DTO\UrlItemInterface;
 
+/**
+ * Data transfer object representing a single URL item in a sitemap.
+ *
+ * This class encapsulates the information about a URL that should be included in a sitemap, including the URL location,
+ * change frequency, priority, and last modification date. It implements the {@see UrlItemInterface}
+ * and provides methods to retrieve these properties in the format required by the sitemap protocol.
+ */
 class UrlItem implements UrlItemInterface
 {
     /**

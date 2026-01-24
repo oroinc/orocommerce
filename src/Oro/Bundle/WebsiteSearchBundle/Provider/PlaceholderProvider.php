@@ -5,6 +5,15 @@ namespace Oro\Bundle\WebsiteSearchBundle\Provider;
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 
+/**
+ * Provides placeholder-resolved field names and entity aliases for website search operations.
+ *
+ * This provider combines search mapping information with placeholder replacement to generate concrete field names
+ * and entity aliases from their placeholder-containing templates. It works with {@see AbstractSearchMappingProvider}
+ * to retrieve field configurations and applies {@see PlaceholderInterface} to replace tokens with actual values.
+ * This is essential for translating abstract field definitions (e.g., "price_WEBSITE_ID_CURRENCY") into concrete
+ * field names (e.g., "price_1_USD") used in search queries and indexation.
+ */
 class PlaceholderProvider
 {
     /**

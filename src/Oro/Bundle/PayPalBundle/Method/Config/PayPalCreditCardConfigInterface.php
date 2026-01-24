@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config;
 
+/**
+ * Defines the contract for PayPal Credit Card payment method configuration.
+ *
+ * Extends base PayPal configuration with credit card-specific methods for accessing
+ * zero-amount authorization, proxy, SSL verification, and CVV settings.
+ */
 interface PayPalCreditCardConfigInterface extends PayPalConfigInterface
 {
     /**

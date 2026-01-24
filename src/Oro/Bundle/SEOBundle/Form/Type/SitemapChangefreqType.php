@@ -7,6 +7,14 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting sitemap change frequency values.
+ *
+ * This form type provides a choice field for selecting the change frequency of URLs in the sitemap.
+ * It extends the Symfony {@see ChoiceType} and offers predefined options
+ * (always, hourly, daily, weekly, monthly, yearly, never)
+ * that correspond to the standard sitemap protocol change frequency values.
+ */
 class SitemapChangefreqType extends AbstractType
 {
     const NAME = 'oro_sitemap_changefreq';

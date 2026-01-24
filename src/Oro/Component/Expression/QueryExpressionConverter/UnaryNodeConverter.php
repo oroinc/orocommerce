@@ -6,6 +6,13 @@ use Doctrine\ORM\Query\Expr;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\UnaryNode;
 
+/**
+ * Converts unary expression nodes to Doctrine ORM query expressions.
+ *
+ * This converter handles unary operations (not, -, +) by delegating the conversion of the operand
+ * to the parent converter and then applying the appropriate operation. The 'not' operation is converted
+ * to a Doctrine NOT expression, while '-' and '+' are handled as arithmetic operations.
+ */
 class UnaryNodeConverter implements QueryExpressionConverterInterface, ConverterAwareInterface
 {
     /**

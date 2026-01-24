@@ -5,6 +5,13 @@ namespace Oro\Bundle\ProductBundle\Service;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 
+/**
+ * Manages single unit mode functionality based on system configuration.
+ *
+ * This service provides access to single unit mode settings, determining whether the system should operate
+ * with a single product unit and controlling the visibility of unit codes in the user interface
+ * when single unit mode is enabled.
+ */
 class SingleUnitModeService implements SingleUnitModeServiceInterface
 {
     /**

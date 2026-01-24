@@ -6,6 +6,12 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting CMS pages.
+ *
+ * Provides an entity select or create inline form type specifically configured for selecting
+ * CMS pages with autocomplete functionality and the ability to create new pages inline.
+ */
 class PageSelectType extends AbstractType
 {
     const NAME = 'oro_cms_page_select';

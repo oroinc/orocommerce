@@ -2,6 +2,11 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host;
 
+/**
+ * Provides PayPal Payflow Gateway host addresses and form action URLs.
+ *
+ * Returns production or pilot host addresses and form action URLs based on test mode setting.
+ */
 class HostAddressProvider implements HostAddressProviderInterface
 {
     const PRODUCTION_HOST_ADDRESS = 'https://payflowpro.paypal.com';

@@ -9,6 +9,12 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Handles extraction of quote-related data from HTTP requests.
+ *
+ * Provides methods to retrieve customer and customer user information from request parameters,
+ * facilitating the creation and processing of quotes based on request data.
+ */
 class QuoteRequestHandler
 {
     /** @var RequestStack */

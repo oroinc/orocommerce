@@ -5,6 +5,12 @@ namespace Oro\Bundle\SaleBundle\Provider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SaleBundle\DependencyInjection\Configuration;
 
+/**
+ * Provides contact information source options.
+ *
+ * Manages the available sources for contact information (customer, customer user, or pre-configured), retrieves
+ * the currently selected source from system configuration, and determines if the selected source is pre-configured.
+ */
 class ContactInfoSourceOptionsProvider implements OptionsProviderInterface
 {
     const DONT_DISPLAY = 'dont_display';

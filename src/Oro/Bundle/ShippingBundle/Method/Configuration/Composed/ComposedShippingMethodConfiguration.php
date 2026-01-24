@@ -4,6 +4,13 @@ namespace Oro\Bundle\ShippingBundle\Method\Configuration\Composed;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+/**
+ * Container for composed shipping method configuration data.
+ *
+ * This class aggregates multiple shipping method configuration aspects
+ * including pre-configured shipping method selection, cost overrides, method locking, and unlisted method allowance,
+ * providing a unified configuration object for complex shipping scenarios.
+ */
 class ComposedShippingMethodConfiguration extends ParameterBag implements ComposedShippingMethodConfigurationInterface
 {
     const FIELD_ALLOW_UNLISTED_SHIPPING_METHOD = 'is_allow_unlisted_shipping_method';

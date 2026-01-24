@@ -7,6 +7,13 @@ use Oro\Bundle\SaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\SaleBundle\Provider\ContactInfoAvailableUserOptionsProvider as UserOptionsProvider;
 use Oro\Bundle\SaleBundle\Provider\ContactInfoSourceOptionsProvider as SourceOptionsProvider;
 
+/**
+ * Provides user contact information options with default value support.
+ *
+ * Manages the available contact information options for users, including system-configured options
+ * and user-selectable options, with support for retrieving the default option
+ * based on the configured contact information source.
+ */
 class ContactInfoUserOptionsProvider implements OptionProviderWithDefaultValueInterface
 {
     const USE_SYSTEM = 'use_system';

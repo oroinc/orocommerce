@@ -7,6 +7,12 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProviderInterface;
 use Oro\Bundle\PayPalBundle\Method\Factory\PayPalExpressCheckoutPaymentMethodFactoryInterface;
 
+/**
+ * Provides PayPal Express Checkout payment method instances.
+ *
+ * Collects and manages Express Checkout payment methods from configuration,
+ * creating method instances using the configured factory.
+ */
 class ExpressCheckoutMethodProvider extends AbstractPaymentMethodProvider
 {
     const TYPE = 'express_checkout';

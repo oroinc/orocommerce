@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
+/**
+ * Defines the contract for mapping checkout state differences.
+ *
+ * Specifies methods for determining entity support, capturing current state, and comparing
+ * state changes for checkout workflow state tracking.
+ */
 interface CheckoutStateDiffMapperInterface
 {
     /**

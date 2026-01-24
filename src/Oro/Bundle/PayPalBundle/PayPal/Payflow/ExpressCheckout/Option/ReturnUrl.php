@@ -6,6 +6,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsDependentInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\ReturnUrl as BaseReturnUrl;
 
+/**
+ * Configures return URL option for PayPal Express Checkout transactions.
+ *
+ * Extends base return URL option with Express Checkout-specific applicability,
+ * requiring the return URL only for SET_EC actions.
+ */
 class ReturnUrl extends BaseReturnUrl implements OptionsDependentInterface
 {
     const RETURNURL = 'RETURNURL';

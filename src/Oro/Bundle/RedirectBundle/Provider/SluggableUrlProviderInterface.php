@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\RedirectBundle\Provider;
 
+/**
+ * Defines the contract for providing URLs for sluggable entities.
+ *
+ * Implementations of this interface generate URLs for sluggable entities based on route names,
+ * route parameters, and localization preferences. They support context-aware URL generation
+ * and can be configured with additional context information to influence URL computation.
+ */
 interface SluggableUrlProviderInterface
 {
     /**

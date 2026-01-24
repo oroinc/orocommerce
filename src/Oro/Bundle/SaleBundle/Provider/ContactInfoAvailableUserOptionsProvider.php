@@ -5,6 +5,13 @@ namespace Oro\Bundle\SaleBundle\Provider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SaleBundle\DependencyInjection\Configuration;
 
+/**
+ * Provides available contact information options for users.
+ *
+ * Manages the list of contact information options that can be selected by users,
+ * including options to not display contact info, use user profile data, or enter manually.
+ * Retrieves the selected options from system configuration.
+ */
 class ContactInfoAvailableUserOptionsProvider implements OptionsProviderInterface
 {
     const DON_T_DISPLAY_CONTACT_INFO = 'dont_display';

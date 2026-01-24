@@ -8,6 +8,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing a collection of applied coupons.
+ *
+ * Extends {@see CollectionType} to provide a specialized form for handling multiple
+ * applied coupons with dialog widget integration and page component support.
+ */
 class AppliedCouponCollectionType extends AbstractType
 {
     const NAME = 'oro_promotion_applied_coupon_collection';

@@ -9,6 +9,12 @@ use Oro\Bundle\SaleBundle\Quote\Shipping\Configuration\QuoteShippingConfiguratio
 use Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
 
+/**
+ * Decorator that adds shipping cost calculation to quote demand subtotals.
+ *
+ * Wraps another {@see QuoteDemandSubtotalsCalculator} to augment its functionality by calculating and setting
+ * the estimated shipping cost on the quote before delegating to the wrapped calculator for final subtotal computation.
+ */
 class ShippingCostQuoteDemandSubtotalsCalculatorDecorator extends AbstractQuoteDemandSubtotalsCalculatorDecorator
 {
     /**

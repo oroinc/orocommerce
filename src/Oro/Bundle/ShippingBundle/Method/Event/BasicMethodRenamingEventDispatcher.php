@@ -4,6 +4,12 @@ namespace Oro\Bundle\ShippingBundle\Method\Event;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Dispatches shipping method renaming events.
+ *
+ * This dispatcher creates and dispatches {@see MethodRenamingEvent} instances when shipping method identifiers
+ * are changed, allowing listeners to update references and configurations.
+ */
 class BasicMethodRenamingEventDispatcher implements MethodRenamingEventDispatcherInterface
 {
     /**

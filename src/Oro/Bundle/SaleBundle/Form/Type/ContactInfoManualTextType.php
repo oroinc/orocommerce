@@ -8,6 +8,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for manually entered contact information text.
+ *
+ * Provides a textarea field for entering contact information manually. The field is disabled
+ * when user configuration is allowed, preventing manual entry in favor of system-configured options.
+ */
 class ContactInfoManualTextType extends AbstractType
 {
     const NAME = 'oro_sale_contact_info_manual_text';

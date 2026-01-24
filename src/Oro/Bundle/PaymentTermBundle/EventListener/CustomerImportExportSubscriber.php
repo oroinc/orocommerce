@@ -9,6 +9,12 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * Handles import/export of customer payment term associations.
+ *
+ * This subscriber listens to import/export events and automatically assigns a default payment term (net 90)
+ * to customers loaded from template fixtures during the import process.
+ */
 class CustomerImportExportSubscriber implements EventSubscriberInterface
 {
     /**

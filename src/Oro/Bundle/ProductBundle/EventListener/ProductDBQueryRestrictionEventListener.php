@@ -7,6 +7,13 @@ use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
+/**
+ * Applies product visibility restrictions to database queries based on system configuration.
+ *
+ * This listener handles {@see ProductDBQueryRestrictionEvent} events and modifies queries to filter products
+ * according to visibility settings configured for both frontend and backend,
+ * ensuring proper access control and product filtering throughout the application.
+ */
 class ProductDBQueryRestrictionEventListener
 {
     /**

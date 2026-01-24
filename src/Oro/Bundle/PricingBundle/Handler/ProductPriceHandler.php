@@ -10,6 +10,12 @@ use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * Handles form submission and persistence of product prices.
+ *
+ * Extends the base form handler to provide specialized handling for product price data,
+ * including custom persistence logic through the PriceManager.
+ */
 class ProductPriceHandler extends FormHandler
 {
     /**

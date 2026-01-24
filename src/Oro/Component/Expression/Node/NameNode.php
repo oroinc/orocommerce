@@ -2,6 +2,13 @@
 
 namespace Oro\Component\Expression\Node;
 
+/**
+ * Represents a named field reference in an expression.
+ *
+ * A name node refers to a specific field within a container (entity). It optionally includes
+ * a container ID to distinguish between multiple instances of the same entity. This node type
+ * is used to reference simple entity properties in expressions.
+ */
 class NameNode implements NodeInterface, ContainerHolderNodeInterface
 {
     /**

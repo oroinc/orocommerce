@@ -4,6 +4,11 @@ namespace Oro\Bundle\PromotionBundle\Form\Autocomplete;
 
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
 
+/**
+ * Autocomplete search handler for promotions that use coupons.
+ *
+ * Filters promotions by the useCoupons flag, returning only promotions that support coupon-based discounts.
+ */
 class PromotionsUseCouponsSearchHandler extends SearchHandler
 {
     #[\Override]

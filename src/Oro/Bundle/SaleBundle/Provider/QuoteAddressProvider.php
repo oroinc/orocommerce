@@ -4,6 +4,12 @@ namespace Oro\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 
+/**
+ * Provides address-related functionality and permissions for quotes.
+ *
+ * Extends the order address provider to support quote-specific address types and permissions,
+ * including shipping address handling with customer and customer user address options.
+ */
 class QuoteAddressProvider extends OrderAddressProvider
 {
     const ADDRESS_TYPE_SHIPPING = 'shipping';

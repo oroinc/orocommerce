@@ -9,6 +9,12 @@ use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Event\BeforeSearchEvent;
 
+/**
+ * Applies product visibility restrictions to website search queries.
+ *
+ * This listener modifies search queries to filter products based on visibility settings, ensuring that only products
+ * meeting the configured visibility criteria are included in search results on the storefront.
+ */
 class ProductVisibilityRestrictionListener
 {
     /**

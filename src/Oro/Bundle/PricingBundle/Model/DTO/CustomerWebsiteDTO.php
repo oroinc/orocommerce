@@ -5,6 +5,12 @@ namespace Oro\Bundle\PricingBundle\Model\DTO;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Data transfer object representing a customer-website pair.
+ *
+ * Encapsulates the relationship between a customer and a website for pricing operations,
+ * enabling efficient passing of customer-website context through the application.
+ */
 class CustomerWebsiteDTO
 {
     /**

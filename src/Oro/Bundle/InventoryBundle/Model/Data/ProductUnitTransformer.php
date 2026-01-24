@@ -5,6 +5,14 @@ namespace Oro\Bundle\InventoryBundle\Model\Data;
 use Doctrine\Inflector\Inflector;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
+/**
+ * Transforms product unit names to their corresponding codes.
+ *
+ * This class provides functionality to convert full product unit names (e.g., "pieces")
+ * to their corresponding unit codes (e.g., "piece") by leveraging the {@see ProductUnitsProvider}
+ * and applying singularization rules via the {@see Inflector}. It caches available units for
+ * performance optimization.
+ */
 class ProductUnitTransformer
 {
     /** @var array $unitsCache */

@@ -5,6 +5,12 @@ namespace Oro\Bundle\ProductBundle\ImportExport\DataConverter;
 use Oro\Bundle\ImportExportBundle\Converter\AbstractTableDataConverter;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 
+/**
+ * Converts product image data between import/export format and internal format.
+ *
+ * This data converter maps column headers for product image import/export operations,
+ * dynamically including columns for all configured image types in the system.
+ */
 class ProductImageDataConverter extends AbstractTableDataConverter
 {
     /** @var  ImageTypeProvider */

@@ -5,6 +5,9 @@ namespace Oro\Bundle\CheckoutBundle\Mapper;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
+/**
+ * Defines the contract for mapping checkout data to order entities.
+ */
 interface MapperInterface
 {
     /**

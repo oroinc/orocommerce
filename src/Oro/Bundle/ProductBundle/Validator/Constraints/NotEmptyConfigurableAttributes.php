@@ -4,6 +4,12 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Constraint to validate that attribute families for configurable products have attributes.
+ *
+ * This constraint ensures that attribute families assigned to configurable products
+ * contain at least one attribute that can be used as a variant field.
+ */
 class NotEmptyConfigurableAttributes extends Constraint
 {
     /** @var string */

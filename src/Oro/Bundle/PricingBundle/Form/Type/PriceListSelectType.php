@@ -6,6 +6,12 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for selecting a price list with inline creation support.
+ *
+ * Provides an autocomplete field for selecting existing price lists with the ability
+ * to create new price lists inline.
+ */
 class PriceListSelectType extends AbstractType
 {
     const NAME = 'oro_pricing_price_list_select';

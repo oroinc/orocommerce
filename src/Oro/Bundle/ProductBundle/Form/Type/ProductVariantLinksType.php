@@ -8,6 +8,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing product variant links in configurable products.
+ *
+ * This form type provides fields for appending and removing product variants, using a data transformer
+ * to handle the conversion between form data and the actual product variant link entities.
+ */
 class ProductVariantLinksType extends AbstractType
 {
     const NAME = 'oro_product_variant_links';

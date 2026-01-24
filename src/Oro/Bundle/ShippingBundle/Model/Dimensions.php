@@ -4,6 +4,12 @@ namespace Oro\Bundle\ShippingBundle\Model;
 
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 
+/**
+ * Represents the physical dimensions of a shipping package.
+ *
+ * This class encapsulates length, width, and height values along with the unit of measurement,
+ * providing a complete representation of package dimensions for shipping calculations.
+ */
 class Dimensions
 {
     /**

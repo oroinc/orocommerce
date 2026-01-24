@@ -6,6 +6,13 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistryInterface;
 use Oro\Component\Website\WebsiteInterface;
 
+/**
+ * Provides website-specific URL items providers based on guest access configuration.
+ *
+ * This service returns different sets of URL providers depending on whether guest access is enabled for a website.
+ * When guest access is disabled, it returns providers from the access denied registry; otherwise, it returns
+ * providers from the regular URL items provider registry.
+ */
 class WebsiteUrlProvidersService implements WebsiteUrlProvidersServiceInterface
 {
     /**

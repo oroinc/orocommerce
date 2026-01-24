@@ -7,6 +7,12 @@ use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 
+/**
+ * Duplicates product prices from one price list to another.
+ *
+ * Copies all product price entries from a source price list to a target price list,
+ * enabling efficient duplication of pricing data across price lists.
+ */
 class ProductPriceDuplicator
 {
     /**

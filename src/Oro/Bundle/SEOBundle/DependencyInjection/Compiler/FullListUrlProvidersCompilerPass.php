@@ -7,6 +7,14 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * Registers all URL item providers and website access denied URL providers with the full list URL provider registry.
+ *
+ * This compiler pass collects all services tagged with `oro_seo.sitemap.url_items_provider` and
+ * `oro_seo.sitemap.website_access_denied_urls_provider`, and registers them with the full list URL provider
+ * registry service. This allows the sitemap generation system to discover and use all available URL providers
+ * for generating complete sitemaps.
+ */
 class FullListUrlProvidersCompilerPass implements CompilerPassInterface
 {
     const PROVIDER_REGISTRY = 'oro_seo.sitemap.provider.full_list_urls_provider_registry';

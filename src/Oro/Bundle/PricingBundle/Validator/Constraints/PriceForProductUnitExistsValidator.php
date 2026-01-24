@@ -10,6 +10,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validator for ensuring product units with prices cannot be deleted.
+ *
+ * Validates that product units being removed do not have associated price attribute prices,
+ * preventing data integrity issues from orphaned price records.
+ */
 class PriceForProductUnitExistsValidator extends ConstraintValidator
 {
     const PRICE_LIST_KEY = 'priceList';

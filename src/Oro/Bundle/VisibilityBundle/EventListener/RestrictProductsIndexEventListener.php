@@ -13,6 +13,14 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
+/**
+ * Restricts product indexing to only include visible products in the website search index.
+ *
+ * This listener handles {@see RestrictIndexEntityEvent} events during product indexing to apply visibility
+ * restrictions. It ensures that only products visible according to the resolved visibility settings
+ * (considering all customers, customer groups, and individual customer visibility rules) are included
+ * in the website search index for each website.
+ */
 class RestrictProductsIndexEventListener
 {
     use ProductVisibilityTrait;

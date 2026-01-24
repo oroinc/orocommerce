@@ -5,6 +5,14 @@ namespace Oro\Bundle\WebCatalogBundle\Feature\Voter;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FeatureToggleBundle\Checker\Voter\VoterInterface;
 
+/**
+ * Determines whether the frontend master catalog feature should be enabled or disabled.
+ *
+ * This voter controls the availability of the master catalog feature on the storefront based on whether
+ * a web catalog is configured. When a web catalog is assigned in the system configuration, the master catalog feature
+ * is disabled (as the web catalog takes precedence). When no web catalog is configured,
+ * the master catalog feature is enabled, allowing the default category-based navigation.
+ */
 class FeatureVoter implements VoterInterface
 {
     const FEATURE_NAME = 'frontend_master_catalog';

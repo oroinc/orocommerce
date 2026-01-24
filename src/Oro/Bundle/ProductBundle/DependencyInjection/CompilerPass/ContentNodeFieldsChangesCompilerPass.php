@@ -6,6 +6,13 @@ use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+/**
+ * Registers content node fields to be tracked for changes in services
+ * implementing {@see ContentNodeFieldsChangesAwareInterface}.
+ *
+ * This compiler pass validates that the target service implements the required interface
+ * and then registers all configured fields by calling addField() for each one during container compilation.
+ */
 class ContentNodeFieldsChangesCompilerPass implements CompilerPassInterface
 {
     /**

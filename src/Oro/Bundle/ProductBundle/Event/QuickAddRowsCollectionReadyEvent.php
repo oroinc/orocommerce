@@ -5,6 +5,12 @@ namespace Oro\Bundle\ProductBundle\Event;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Dispatched when a quick add rows collection is ready for processing.
+ *
+ * This event allows listeners to modify or validate the collection of quick add rows before they are processed,
+ * enabling custom validation, data transformation, or enrichment of the quick add functionality.
+ */
 class QuickAddRowsCollectionReadyEvent extends Event
 {
     const NAME = 'oro_product.quick_add_rows_collection_ready';

@@ -13,6 +13,13 @@ use Oro\Bundle\PaymentTermBundle\Migrations\Data\ORM\Config\PaymentTermConfigFac
 use Oro\Bundle\PaymentTermBundle\Migrations\Data\ORM\Config\PaymentTermConfigToSettingsConverter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Migrates payment term configuration from system config to integration settings.
+ *
+ * This migration moves legacy payment term configuration values stored in the system configuration
+ * to the new integration-based PaymentTermSettings entities. It creates a payment term integration channel
+ * and dispatches events to notify the system of the payment method renaming.
+ */
 class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
 {
     const SECTION_NAME = 'oro_payment_term';

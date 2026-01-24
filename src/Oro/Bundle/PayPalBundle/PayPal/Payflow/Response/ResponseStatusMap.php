@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Response;
 
+/**
+ * Maps PayPal Payflow response status codes to human-readable messages.
+ *
+ * Provides comprehensive mapping of PayPal Payflow API response codes to descriptive
+ * error and status messages for transaction result interpretation.
+ */
 class ResponseStatusMap
 {
     const APPROVED = '0';

@@ -7,6 +7,13 @@ use Oro\Bundle\ShippingBundle\Method\Configuration\MethodLockedShippingMethodCon
 use Oro\Bundle\ShippingBundle\Method\Configuration\OverriddenCostShippingMethodConfigurationInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\PreConfiguredShippingMethodConfigurationInterface;
 
+/**
+ * Defines the contract for builders that create composed shipping method configurations.
+ *
+ * Implementations of this interface provide a fluent API for building
+ * {@see ComposedShippingMethodConfigurationInterface} instances by aggregating configuration data from various sources
+ * including pre-configured methods, cost overrides, method locking, and unlisted method allowance settings.
+ */
 interface ComposedShippingMethodConfigurationBuilderInterface
 {
     /**

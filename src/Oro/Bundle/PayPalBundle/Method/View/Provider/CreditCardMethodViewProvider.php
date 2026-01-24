@@ -7,6 +7,12 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProviderInterface;
 use Oro\Bundle\PayPalBundle\Method\View\Factory\PayPalCreditCardPaymentMethodViewFactoryInterface;
 
+/**
+ * Provides PayPal Credit Card payment method view instances.
+ *
+ * Builds and manages Credit Card payment method views from configuration,
+ * creating view instances using the configured factory.
+ */
 class CreditCardMethodViewProvider extends AbstractPaymentMethodViewProvider
 {
     /** @var PayPalCreditCardPaymentMethodViewFactoryInterface */

@@ -6,6 +6,12 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
+/**
+ * Handles product duplication events to maintain category relationships.
+ *
+ * Listens to product duplication events and ensures that the duplicated product is linked
+ * to the same category as the source product, maintaining category-product relationships.
+ */
 class ProductDuplicateListener
 {
     /**

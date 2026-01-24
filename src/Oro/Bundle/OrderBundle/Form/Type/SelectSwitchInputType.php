@@ -9,6 +9,13 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for a switchable select/input field with dynamic mode toggling.
+ *
+ * Provides a choice-based form field that can dynamically switch between select and input modes via a JavaScript
+ * page component. Allows users to either choose from predefined options or enter custom values
+ * based on the configured mode.
+ */
 class SelectSwitchInputType extends AbstractType
 {
     const NAME = 'oro_select_switch_input';

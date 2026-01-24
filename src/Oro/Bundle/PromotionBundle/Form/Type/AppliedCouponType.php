@@ -8,6 +8,12 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for applied coupon data.
+ *
+ * Provides form fields for coupon code, source promotion ID, and source coupon ID
+ * to represent an applied coupon in a form context.
+ */
 class AppliedCouponType extends AbstractType
 {
     const NAME = 'oro_promotion_applied_coupon';

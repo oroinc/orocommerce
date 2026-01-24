@@ -4,6 +4,12 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Constraint to validate product variant field configurations.
+ *
+ * This constraint ensures that variant fields selected for configurable products are valid attributes
+ * that can be used for product variation, preventing invalid variant field configurations.
+ */
 class ProductVariantField extends Constraint
 {
     /** @var string */

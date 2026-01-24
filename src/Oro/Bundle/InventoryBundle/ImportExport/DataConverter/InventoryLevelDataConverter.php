@@ -4,6 +4,12 @@ namespace Oro\Bundle\InventoryBundle\ImportExport\DataConverter;
 
 use Oro\Bundle\ImportExportBundle\Converter\AbstractTableDataConverter;
 
+/**
+ * Data converter for inventory level import/export operations.
+ *
+ * Converts between CSV headers and backend field names for inventory level data,
+ * enabling proper mapping during import and export processes.
+ */
 class InventoryLevelDataConverter extends AbstractTableDataConverter
 {
     #[\Override]

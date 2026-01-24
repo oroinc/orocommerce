@@ -5,6 +5,12 @@ namespace Oro\Bundle\CheckoutBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState;
 
+/**
+ * Repository for managing checkout workflow state entities.
+ *
+ * Provides database access methods for retrieving and deleting checkout workflow states,
+ * enabling efficient management of workflow state data associated with checkout entities.
+ */
 class CheckoutWorkflowStateRepository extends EntityRepository
 {
     /**

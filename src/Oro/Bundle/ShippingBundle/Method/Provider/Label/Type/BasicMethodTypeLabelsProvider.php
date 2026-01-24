@@ -5,6 +5,12 @@ namespace Oro\Bundle\ShippingBundle\Method\Provider\Label\Type;
 use Oro\Bundle\ShippingBundle\Method\Exception\InvalidArgumentException;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
+/**
+ * Provides shipping method type labels from the shipping method provider.
+ *
+ * This provider retrieves localized labels for shipping method types by querying the shipping method provider,
+ * validating that both the method and types exist before returning their labels.
+ */
 class BasicMethodTypeLabelsProvider implements MethodTypeLabelsProviderInterface
 {
     /**

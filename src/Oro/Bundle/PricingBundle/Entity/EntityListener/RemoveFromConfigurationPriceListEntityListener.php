@@ -8,6 +8,12 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 
+/**
+ * Removes price lists from system configuration when they are deleted.
+ *
+ * Listens to price list deletion events and removes any references to the deleted price list
+ * from the system configuration, ensuring configuration consistency.
+ */
 class RemoveFromConfigurationPriceListEntityListener
 {
     /**

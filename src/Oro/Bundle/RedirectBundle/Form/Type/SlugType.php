@@ -9,6 +9,14 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for slug input fields with automatic slug generation suggestions.
+ *
+ * This form type extends {@see TextType} to provide specialized slug input functionality with
+ * automatic slug suggestion capabilities. It integrates with the {@see SlugifyFormHelper} to enable
+ * real-time slug generation based on a source field (e.g., product name, category title).
+ * The form type supports configurable slugification routes and can be enabled/disabled per field.
+ */
 class SlugType extends AbstractType
 {
     const NAME = 'oro_redirect_slug';
