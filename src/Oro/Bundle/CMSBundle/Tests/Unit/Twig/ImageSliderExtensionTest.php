@@ -61,7 +61,7 @@ class ImageSliderExtensionTest extends TestCase
             ->add('oro_cms.provider.image_slider_image_placeholder.default', $imagePlaceholderProvider)
             ->add(PropertyAccessorInterface::class, $propertyAccessor)
             ->add(ManagerRegistry::class, $this->doctrine)
-            ->add('oro_api.provider.api_url_resolver', $this->apiUrlResolver)
+            ->add('oro_api.api_url_resolver', $this->apiUrlResolver)
             ->getContainer($this);
 
         $this->extension = new ImageSliderExtension($container);

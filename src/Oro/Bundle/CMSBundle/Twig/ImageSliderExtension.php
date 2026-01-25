@@ -48,7 +48,7 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
             'oro_cms.provider.image_slider_image_placeholder.default' => ImagePlaceholderProviderInterface::class,
             PropertyAccessorInterface::class,
             ManagerRegistry::class,
-            'oro_api.provider.api_url_resolver' => ApiUrlResolver::class,
+            'oro_api.api_url_resolver' => ApiUrlResolver::class,
         ];
     }
 
@@ -143,7 +143,7 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
 
     public function getImageSlideImage(ImageSlide $imageSlide, string $format = ''): ?string
     {
-        $effectiveReferenceType = $this->getEffectiveReferenceType();
+        $effectiveReferenceType = $this->getApiUrlResolver()->getEffectiveReferenceType();
 
         $image = $this->getImage($imageSlide, 'extraLargeImage');
         if (null !== $image) {
@@ -175,7 +175,7 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
         ImageSlide $imageSlide,
         $format = ''
     ): string {
-        $effectiveReferenceType = $this->getEffectiveReferenceType();
+        $effectiveReferenceType = $this->getApiUrlResolver()->getEffectiveReferenceType();
 
         $srcset = [];
         foreach ($imageVariants as $size => $imageVariant) {
@@ -323,14 +323,9 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
     private function getApiUrlResolver(): ApiUrlResolver
     {
         if (null === $this->apiUrlResolver) {
-            $this->apiUrlResolver = $this->container->get('oro_api.provider.api_url_resolver');
+            $this->apiUrlResolver = $this->container->get('oro_api.api_url_resolver');
         }
 
         return $this->apiUrlResolver;
-    }
-
-    private function getEffectiveReferenceType(): int
-    {
-        return $this->getApiUrlResolver()->getEffectiveReferenceType();
     }
 }

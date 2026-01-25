@@ -41,13 +41,13 @@ class ContentTemplateImageExtension extends AbstractExtension implements Service
     {
         return [
             'oro_cms.provider.content_template_preview_image_placeholder' => ImagePlaceholderProviderInterface::class,
-            'oro_api.provider.api_url_resolver' => ApiUrlResolver::class,
+            'oro_api.api_url_resolver' => ApiUrlResolver::class,
         ];
     }
 
     public function getPreviewImagePlaceholder(string $filter, string $format = ''): string
     {
-        $referenceType = $this->getEffectiveReferenceType();
+        $referenceType = $this->getApiUrlResolver()->getEffectiveReferenceType();
 
         return $this->getImagePlaceholderProvider()->getPath($filter, $format, $referenceType);
     }
@@ -65,14 +65,9 @@ class ContentTemplateImageExtension extends AbstractExtension implements Service
     private function getApiUrlResolver(): ApiUrlResolver
     {
         if (null === $this->apiUrlResolver) {
-            $this->apiUrlResolver = $this->container->get('oro_api.provider.api_url_resolver');
+            $this->apiUrlResolver = $this->container->get('oro_api.api_url_resolver');
         }
 
         return $this->apiUrlResolver;
-    }
-
-    private function getEffectiveReferenceType(): int
-    {
-        return $this->getApiUrlResolver()->getEffectiveReferenceType();
     }
 }

@@ -48,7 +48,7 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
             $args = func_get_args();
             $effectiveReferenceType = isset($args[4])
                 ? $referenceType
-                : $this->getEffectiveReferenceType($referenceType);
+                : $this->getApiUrlResolver()->getEffectiveReferenceType($referenceType);
 
             return $this->getFileUrlByUuidProvider()->getFilteredImageUrl(
                 $fileUuid,
@@ -72,7 +72,7 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
             $args = func_get_args();
             $effectiveReferenceType = isset($args[3])
                 ? $referenceType
-                : $this->getEffectiveReferenceType($referenceType);
+                : $this->getApiUrlResolver()->getEffectiveReferenceType($referenceType);
 
             return $this->getFileUrlByUuidProvider()->getFileUrl(
                 $fileUuid,
@@ -89,7 +89,7 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
     {
         return [
             FileUrlByUuidProvider::class,
-            'oro_api.provider.api_url_resolver' => ApiUrlResolver::class,
+            'oro_api.api_url_resolver' => ApiUrlResolver::class,
         ];
     }
 
@@ -101,14 +101,9 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
     private function getApiUrlResolver(): ApiUrlResolver
     {
         if (null === $this->apiUrlResolver) {
-            $this->apiUrlResolver = $this->container->get('oro_api.provider.api_url_resolver');
+            $this->apiUrlResolver = $this->container->get('oro_api.api_url_resolver');
         }
 
         return $this->apiUrlResolver;
-    }
-
-    private function getEffectiveReferenceType(int $referenceType): int
-    {
-        return $this->getApiUrlResolver()->getEffectiveReferenceType($referenceType);
     }
 }

@@ -92,7 +92,7 @@ class ContentTemplateImageExtensionTest extends TestCase
 
         $container = self::getContainerBuilder()
             ->add('oro_cms.provider.content_template_preview_image_placeholder', $imagePlaceholderProvider)
-            ->add('oro_api.provider.api_url_resolver', $apiUrlResolver)
+            ->add('oro_api.api_url_resolver', $apiUrlResolver)
             ->getContainer($this);
 
         return new ContentTemplateImageExtension($container);
@@ -119,7 +119,7 @@ class ContentTemplateImageExtensionTest extends TestCase
 
         $container = self::getContainerBuilder()
             ->add('oro_cms.provider.content_template_preview_image_placeholder', $imagePlaceholderProvider)
-            ->add('oro_api.provider.api_url_resolver', $apiUrlResolver)
+            ->add('oro_api.api_url_resolver', $apiUrlResolver)
             ->getContainer($this);
 
         return new ContentTemplateImageExtension($container);
