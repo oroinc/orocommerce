@@ -17,7 +17,7 @@ class TaxValueTest extends \PHPUnit\Framework\TestCase
             ['entityClass', 'Oro\Bundle\SomeBundle\Entity\EntityClass'],
             ['entityId', 5],
             ['id', 5],
-            ['address', 'Kiev, SomeStreet str., 55'],
+            ['address', 'Kyiv, SomeStreet str., 55'],
         ];
 
         $this->assertPropertyAccessors($this->createTaxValue(), $properties);

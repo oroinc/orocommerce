@@ -120,7 +120,7 @@ Feature: Single page checkout with consents
       | Street 2     | B Street 2       |
       | City         | B City           |
       | Country      | Albania          |
-      | State        | Has              |
+      | State        | Elbasan          |
       | Postal Code  | 12345            |
     And I click "Add Address" in modal window
     And I scroll to top

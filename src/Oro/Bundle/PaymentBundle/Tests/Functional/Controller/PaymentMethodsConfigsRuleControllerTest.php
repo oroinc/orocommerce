@@ -150,7 +150,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         $formValues['oro_payment_methods_configs_rule']['destinations'] = [
             [
                 'country' => 'FR',
-                'region' => 'FR-75'
+                'region' => 'FR-75C'
             ]
         ];
         $formValues['oro_payment_methods_configs_rule']['methodConfigs'] = [

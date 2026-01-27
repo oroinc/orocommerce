@@ -149,7 +149,7 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
             'BG' => 'Bulgaria',
             'HR' => 'Croatia',
             'CY' => 'Cyprus',
-            'CZ' => 'Czech Republic',
+            'CZ' => 'Czechia',
             'DK' => 'Denmark',
             'EE' => 'Estonia',
             'FI' => 'Finland',
