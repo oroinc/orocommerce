@@ -6,6 +6,8 @@ services:
     Oro\Bundle\ProductBundle\Async\Topic\ReindexProductCollectionBySegmentTopic: ~
     Oro\Bundle\ProductBundle\Async\Topic\ReindexRequestItemProductsByRelatedJobIdTopic: ~
     Oro\Bundle\ProductBundle\Async\Topic\ReindexProductsByAttributesTopic: ~
+    Oro\Bundle\ProductBundle\Async\Topic\ResizeAllProductImagesTopic: ~
+    Oro\Bundle\ProductBundle\Async\Topic\ResizeProductImageChunkTopic: ~
     Oro\Bundle\ProductBundle\Async\Topic\ResizeProductImageTopic: ~
     Oro\Bundle\ProductBundle\Async\Topic\ProductFallbackUpdateTopic: ~
     Oro\Bundle\ProductBundle\Async\Topic\ProductFallbackProcessChunkTopic: ~

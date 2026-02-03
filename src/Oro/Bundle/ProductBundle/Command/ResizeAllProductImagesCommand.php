@@ -5,16 +5,13 @@ declare(strict_types=1);
 namespace Oro\Bundle\ProductBundle\Command;
 
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
-use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
+use Oro\Bundle\ProductBundle\Async\Topic\ResizeAllProductImagesTopic;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Schedules the (re)build of resized versions of all product images.
@@ -25,14 +22,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 )]
 class ResizeAllProductImagesCommand extends Command
 {
-    private const BATCH_SIZE = 1000;
-
     protected array $noImagesPath = [];
 
     public function __construct(
-        private DoctrineHelper $doctrineHelper,
-        private EventDispatcherInterface $eventDispatcher,
-        private CacheManager $cacheManager
+        private CacheManager $cacheManager,
+        protected MessageProducerInterface $messageProducer
     ) {
         parent::__construct();
     }
@@ -63,7 +57,7 @@ to get the images actually resized.
 The <info>--force</info> option can be used to overwrite existing images:
 
   <info>php %command.full_name% --force</info>
-  
+
 The list of target dimensions can be provided using the <info>--dimension</info> option:
 
   <info>php %command.full_name% --dimension=<dimension1> --dimension=<dimension2> --dimension=<dimensionN></info>
@@ -79,41 +73,20 @@ HELP
     #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $iterator = $this->getProductImagesIterator();
-        $entitiesProcessed = 0;
-        $forceOption = $this->getForceOption($input);
-
-        foreach ($iterator as $productImage) {
-            $this->getEventDispatcher()->dispatch(
-                new ProductImageResizeEvent($productImage['id'], $forceOption, $this->getDimensionsOption($input)),
-                ProductImageResizeEvent::NAME
-            );
-            $entitiesProcessed++;
-        }
+        $this->messageProducer->send(
+            ResizeAllProductImagesTopic::getName(),
+            [
+                ResizeAllProductImagesTopic::FORCE => $this->getForceOption($input),
+                ResizeAllProductImagesTopic::DIMENSIONS => $this->getDimensionsOption($input),
+            ]
+        );
 
         $this->removeNoImagesCache($output);
 
-        $output->writeln(sprintf('%d product image(s) queued for resize.', $entitiesProcessed));
+        $output->writeln('<info>Product image resize has been scheduled.</info>');
+        $output->writeln('Ensure message consumers are running to process the images.');
 
         return Command::SUCCESS;
-    }
-
-    protected function getEventDispatcher(): EventDispatcherInterface
-    {
-        return $this->eventDispatcher;
-    }
-
-    protected function getProductImagesIterator(): BufferedIdentityQueryResultIterator
-    {
-        $queryBuilder = $this->doctrineHelper
-            ->getEntityRepositoryForClass(ProductImage::class)
-            ->createQueryBuilder('productImage')
-            ->select('productImage.id');
-
-        $iterator = new BufferedIdentityQueryResultIterator($queryBuilder);
-        $iterator->setBufferSize(self::BATCH_SIZE);
-
-        return $iterator;
     }
 
     protected function getForceOption(InputInterface $input): bool

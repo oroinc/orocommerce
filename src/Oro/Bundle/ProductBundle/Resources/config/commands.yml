@@ -14,9 +14,8 @@ services:
 
     Oro\Bundle\ProductBundle\Command\ResizeAllProductImagesCommand:
         arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@event_dispatcher'
             - '@liip_imagine.cache.manager'
+            - '@oro_message_queue.message_producer'
         calls:
             - [ addNoImagePath, [ '/bundles/oroproduct/images/no_image.png' ] ]
             - [ addNoImagePath, [ '/bundles/orocms/images/no_image.png' ] ]
