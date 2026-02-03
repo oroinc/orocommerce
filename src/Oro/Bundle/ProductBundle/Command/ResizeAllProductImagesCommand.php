@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Oro\Bundle\ProductBundle\Command;
 
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
-use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
+use Oro\Bundle\ProductBundle\Async\Topic\ResizeAllProductImagesTopic;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -20,8 +20,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ResizeAllProductImagesCommand extends Command
 {
-    private const BATCH_SIZE = 1000;
-
     /** @var string */
     protected static $defaultName = 'product:image:resize-all';
 
@@ -31,6 +29,8 @@ class ResizeAllProductImagesCommand extends Command
 
     private EventDispatcherInterface $eventDispatcher;
 
+    protected MessageProducerInterface $messageProducer;
+
     protected array $noImagesPath = [];
 
     public function __construct(DoctrineHelper $doctrineHelper, EventDispatcherInterface $eventDispatcher)
@@ -39,6 +39,11 @@ class ResizeAllProductImagesCommand extends Command
         $this->eventDispatcher = $eventDispatcher;
 
         parent::__construct();
+    }
+
+    public function setMessageProducer(MessageProducerInterface $messageProducer): void
+    {
+        $this->messageProducer = $messageProducer;
     }
 
     /** @noinspection PhpMissingParentCallCommonInspection */
@@ -53,7 +58,6 @@ class ResizeAllProductImagesCommand extends Command
                 'Resize to given dimension(s)',
                 []
             )
-            ->setDescription('Schedules the (re)build of resized versions of all product images.')
             ->setHelp(
                 <<<'HELP'
 The <info>%command.name%</info> command schedules the (re)build of resized versions of all product images.
@@ -67,7 +71,7 @@ to get the images actually resized.
 The <info>--force</info> option can be used to overwrite existing images:
 
   <info>php %command.full_name% --force</info>
-  
+
 The list of target dimensions can be provided using the <info>--dimension</info> option:
 
   <info>php %command.full_name% --dimension=<dimension1> --dimension=<dimension2> --dimension=<dimensionN></info>
@@ -82,21 +86,18 @@ HELP
     /** @noinspection PhpMissingParentCallCommonInspection */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $iterator = $this->getProductImagesIterator();
-        $entitiesProcessed = 0;
-        $forceOption = $this->getForceOption($input);
-
-        foreach ($iterator as $productImage) {
-            $this->getEventDispatcher()->dispatch(
-                new ProductImageResizeEvent($productImage['id'], $forceOption, $this->getDimensionsOption($input)),
-                ProductImageResizeEvent::NAME
-            );
-            $entitiesProcessed++;
-        }
+        $this->messageProducer->send(
+            ResizeAllProductImagesTopic::getName(),
+            [
+                ResizeAllProductImagesTopic::FORCE => $this->getForceOption($input),
+                ResizeAllProductImagesTopic::DIMENSIONS => $this->getDimensionsOption($input),
+            ]
+        );
 
         $this->removeNoImagesCache($output);
 
-        $output->writeln(sprintf('%d product image(s) queued for resize.', $entitiesProcessed));
+        $output->writeln('<info>Product image resize has been scheduled.</info>');
+        $output->writeln('Ensure message consumers are running to process the images.');
 
         return Command::SUCCESS;
     }
@@ -108,15 +109,8 @@ HELP
 
     protected function getProductImagesIterator(): BufferedIdentityQueryResultIterator
     {
-        $queryBuilder = $this->doctrineHelper
-            ->getEntityRepositoryForClass(ProductImage::class)
-            ->createQueryBuilder('productImage')
-            ->select('productImage.id');
-
-        $iterator = new BufferedIdentityQueryResultIterator($queryBuilder);
-        $iterator->setBufferSize(self::BATCH_SIZE);
-
-        return $iterator;
+        return $this->doctrineHelper->getEntityRepository(Product::class)
+            ->getAllProductImagesIterator();
     }
 
     protected function getForceOption(InputInterface $input): bool
@@ -137,6 +131,11 @@ HELP
         $this->noImagesPath[] = $path;
     }
 
+    public function setCacheManager(CacheManager $cacheManager): void
+    {
+        $this->cacheManager = $cacheManager;
+    }
+
     /**
      * We need to align default no cache image with custom no image for using or not using watermark
      * Custom no image creates as usual product image and all rules implements for this image as for product
@@ -152,10 +151,5 @@ HELP
             $this->cacheManager->remove($noImagesWebpPaths);
             $output->writeln('Default no_image images were removed.');
         }
-    }
-
-    public function setCacheManager(CacheManager $cacheManager): void
-    {
-        $this->cacheManager = $cacheManager;
     }
 }

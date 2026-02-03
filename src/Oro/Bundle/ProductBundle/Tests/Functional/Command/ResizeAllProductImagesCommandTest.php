@@ -3,9 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Command;
 
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\ProductBundle\Async\Topic\ResizeProductImageTopic;
-use Oro\Bundle\ProductBundle\Command\ResizeAllProductImagesCommand;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\ProductImageData;
+use Oro\Bundle\ProductBundle\Async\Topic\ResizeAllProductImagesTopic;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -19,24 +17,54 @@ class ResizeAllProductImagesCommandTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-
-        $this->getOptionalListenerManager()->enableListener('oro_product.event_listener.product_image_resize_listener');
     }
 
-    public function testRun(): void
+    public function testRunDefault(): void
     {
-        $this->loadFixtures([ProductImageData::class]);
-        $output = self::runCommand(ResizeAllProductImagesCommand::getDefaultName(), ['--force' => true]);
+        $output = self::runCommand('product:image:resize-all');
 
-        self::assertCountMessages(ResizeProductImageTopic::getName(), 4);
-        self::assertStringContainsString('4 product image(s) queued for resize', $output);
+        self::assertMessageSent(ResizeAllProductImagesTopic::getName(), [
+            ResizeAllProductImagesTopic::FORCE => false,
+            ResizeAllProductImagesTopic::DIMENSIONS => [],
+        ]);
+        self::assertStringContainsString('Product image resize has been scheduled', $output);
     }
 
-    public function testRunNoImagesAvailable(): void
+    public function testRunWithForce(): void
     {
-        $output = self::runCommand(ResizeAllProductImagesCommand::getDefaultName(), ['--force' => true]);
+        $output = self::runCommand('product:image:resize-all', ['--force' => true]);
 
-        self::assertMessagesEmpty(ResizeProductImageTopic::getName());
-        self::assertStringContainsString('0 product image(s) queued for resize', $output);
+        self::assertMessageSent(ResizeAllProductImagesTopic::getName(), [
+            ResizeAllProductImagesTopic::FORCE => true,
+            ResizeAllProductImagesTopic::DIMENSIONS => [],
+        ]);
+        self::assertStringContainsString('Product image resize has been scheduled', $output);
+    }
+
+    public function testRunWithDimensions(): void
+    {
+        $output = self::runCommand('product:image:resize-all', [
+            '--dimension' => 'large',
+        ]);
+
+        self::assertMessageSent(ResizeAllProductImagesTopic::getName(), [
+            ResizeAllProductImagesTopic::FORCE => false,
+            ResizeAllProductImagesTopic::DIMENSIONS => ['large'],
+        ]);
+        self::assertStringContainsString('Product image resize has been scheduled', $output);
+    }
+
+    public function testRunWithAllOptions(): void
+    {
+        $output = self::runCommand('product:image:resize-all', [
+            '--force' => true,
+            '--dimension' => 'original',
+        ]);
+
+        self::assertMessageSent(ResizeAllProductImagesTopic::getName(), [
+            ResizeAllProductImagesTopic::FORCE => true,
+            ResizeAllProductImagesTopic::DIMENSIONS => ['original'],
+        ]);
+        self::assertStringContainsString('Product image resize has been scheduled', $output);
     }
 }

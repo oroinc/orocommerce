@@ -188,17 +188,17 @@ class ProductRepository extends ServiceEntityRepository
     public function getImagesFilesByProductId($productId)
     {
         $qb = $this->_em->createQueryBuilder()
-                        ->select('imageFile')
-                        ->from(File::class, 'imageFile')
-                        ->join(
-                            ProductImage::class,
-                            'pi',
-                            Expr\Join::WITH,
-                            'imageFile.id = pi.image'
-                        );
+            ->select('imageFile')
+            ->from(File::class, 'imageFile')
+            ->join(
+                ProductImage::class,
+                'pi',
+                Expr\Join::WITH,
+                'imageFile.id = pi.image'
+            );
 
         $qb->where($qb->expr()->eq('pi.product', ':product_id'))
-           ->setParameter('product_id', $productId);
+            ->setParameter('product_id', $productId);
 
         return $qb->getQuery()->execute();
     }

@@ -12,6 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductImageRepository;
 
 /**
  * Represents different types of product image, such as a image is used in the product details view,
@@ -22,7 +23,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
  * @method ProductImage setImage(File $image)
  * @mixin OroProductBundle_Entity_ProductImage
  */
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: ProductImageRepository::class)]
 #[ORM\Table(name: 'oro_product_image')]
 #[ORM\HasLifecycleCallbacks]
 #[Config]

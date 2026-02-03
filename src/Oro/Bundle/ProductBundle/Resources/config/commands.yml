@@ -18,6 +18,7 @@ services:
             - '@event_dispatcher'
         calls:
             - [ setCacheManager, [ '@liip_imagine.cache.manager' ] ]
+            - [ setMessageProducer, [ '@oro_message_queue.message_producer' ] ]
             - [ addNoImagePath,  [ '/bundles/oroproduct/images/no_image.png' ] ]
             - [ addNoImagePath,  [ '/bundles/orocms/images/no_image.png' ] ]
             - [ addNoImagePath,  [ '/bundles/orocatalog/images/no_image.png' ] ]
