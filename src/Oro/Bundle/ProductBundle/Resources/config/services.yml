@@ -1004,6 +1004,23 @@ services:
         tags:
             - { name: oro_message_queue.client.message_processor }
 
+    oro_product.async.resize_all_product_image_message_processor:
+        class: Oro\Bundle\ProductBundle\Async\ResizeAllProductImagesProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_product.async.resize_product_image_chunk_message_processor:
+        class: Oro\Bundle\ProductBundle\Async\ResizeProductImageChunkProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
     oro_product.product_visibility_restriction_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionListener'
         arguments:
