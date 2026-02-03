@@ -13,6 +13,7 @@ use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Job\DependentJobService;
 use Oro\Component\MessageQueue\Job\Job;
+use Oro\Component\MessageQueue\Job\JobProcessor;
 use Oro\Component\MessageQueue\Job\JobRunner;
 
 /**
@@ -25,6 +26,7 @@ class AsyncReindexProductCollectionHandler implements AsyncReindexProductCollect
     private DependentJobService $dependentJobService;
     private MessageProducerInterface $messageProducer;
     private SegmentMessageFactory $messageFactory;
+    private ?JobProcessor $jobProcessor = null;
 
     public function __construct(
         JobRunner $jobRunner,
@@ -36,6 +38,13 @@ class AsyncReindexProductCollectionHandler implements AsyncReindexProductCollect
         $this->dependentJobService = $dependentJobService;
         $this->messageProducer = $messageProducer;
         $this->messageFactory = $messageFactory;
+    }
+
+    public function setJobProcessor(JobProcessor $jobProcessor): self
+    {
+        $this->jobProcessor = $jobProcessor;
+
+        return $this;
     }
 
     /**
@@ -51,6 +60,20 @@ class AsyncReindexProductCollectionHandler implements AsyncReindexProductCollect
         bool $throwExceptionOnFailToRunJob = false,
         array $indexationFieldGroups = null
     ): bool {
+        /**
+         * Ensures the reindex cycle is complete before starting a new one.
+         *
+         * runUnique() only checks the Root Job status. This check ensures the Dependent Job from the previous
+         * run has also completed before allowing a new cycle.
+         */
+        if ($this->hasActiveReindexJob($uniqueJobName)) {
+            if ($throwExceptionOnFailToRunJob) {
+                throw new FailedToRunReindexProductCollectionJobException($uniqueJobName);
+            }
+
+            return false;
+        }
+
         $runCallback = fn (JobRunner $jobRunner, Job $job) => $this->doJob(
             $jobRunner,
             $job,
@@ -65,6 +88,35 @@ class AsyncReindexProductCollectionHandler implements AsyncReindexProductCollect
         }
 
         return (bool)$result;
+    }
+
+    /**
+     * Checks if there is an active reindex job from a previous run.
+     * This prevents starting a new reindex while the previous one is still in progress.
+     */
+    private function hasActiveReindexJob(string $jobName): bool
+    {
+        $lastJob = $this->jobProcessor->findRootJobByJobNameAndStatuses(
+            $jobName,
+            [Job::STATUS_SUCCESS]
+        );
+
+        if (!$lastJob) {
+            return false;
+        }
+
+        $reindexJobName = sprintf(
+            '%s:%s',
+            ReindexRequestItemProductsByRelatedJobIdTopic::NAME,
+            $lastJob->getId()
+        );
+
+        $activeReindexJob = $this->jobProcessor->findRootJobByJobNameAndStatuses(
+            $reindexJobName,
+            [Job::STATUS_NEW, Job::STATUS_RUNNING]
+        );
+
+        return $activeReindexJob !== null;
     }
 
     private function doJob(
