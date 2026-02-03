@@ -54,7 +54,6 @@ class LocalizationVoterTest extends \PHPUnit\Framework\TestCase
 
         $r = new \ReflectionClass(LocalizationVoter::class);
         $p = $r->getProperty('usedLocalizationIds');
-        $p->setAccessible(true);
         $p->setValue($isCached ? [$currentId, $notCurrentId] : null);
         $this->doctrineHelper->expects($this->exactly((int)!$isCached))
             ->method('getEntityRepositoryForClass')

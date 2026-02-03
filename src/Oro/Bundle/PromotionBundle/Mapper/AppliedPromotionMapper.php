@@ -140,7 +140,6 @@ class AppliedPromotionMapper
         if (!$promotion) {
             $promotion = new Promotion();
             $property = new \ReflectionProperty(Promotion::class, 'id');
-            $property->setAccessible(true);
             $property->setValue($promotion, $id);
         }
 

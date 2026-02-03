@@ -60,7 +60,6 @@ class CheckoutSource implements ExtendEntityInterface
 
         foreach ($properties as $property) {
             if ($property->getName() !== 'id') {
-                $property->setAccessible(true);
                 $value = $property->getValue($this);
                 if ($value instanceof CheckoutSourceEntityInterface) {
                     return $value;
@@ -76,7 +75,6 @@ class CheckoutSource implements ExtendEntityInterface
         $reflectionClass = new EntityReflectionClass($this);
         $properties = $reflectionClass->getProperties();
         foreach ($properties as $property) {
-            $property->setAccessible(true);
             $value = $property->getValue($this);
             if ($value instanceof CheckoutSourceEntityInterface) {
                 $property->setValue($this, null);

@@ -86,7 +86,6 @@ class EntityCouponsProvider implements EntityCouponsProviderInterface
         $entity = $this->doctrineHelper->createEntityInstance($entityClass);
         $identifierField = $this->doctrineHelper->getSingleEntityIdentifierFieldName($entityClass);
         $reflectionProperty = new \ReflectionProperty($entityClass, $identifierField);
-        $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($entity, $id);
 
         return $entity;

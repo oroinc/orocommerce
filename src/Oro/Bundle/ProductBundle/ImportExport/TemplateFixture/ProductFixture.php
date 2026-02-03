@@ -235,7 +235,6 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
     {
         $reflectionClass = new \ReflectionClass($entity);
         $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
         $method->setValue($entity, $id);
     }
 

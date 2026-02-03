@@ -20,7 +20,6 @@ trait ConfigsGeneratorTrait
         for ($i = 1; $i <= $count; $i++) {
             $priceList = new PriceList();
             $reflectionProperty = $reflectionClass->getProperty('id');
-            $reflectionProperty->setAccessible(true);
             $reflectionProperty->setValue($priceList, $i);
             $priceList->setName('Price List ' . $i);
 

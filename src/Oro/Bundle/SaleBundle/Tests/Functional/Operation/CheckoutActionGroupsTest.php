@@ -390,7 +390,6 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
         $reflection = new \ReflectionClass($entity);
         foreach ($reflection->getProperties() as $property) {
-            $property->setAccessible(true);
             $data[$property->getName()] = $property->getValue($entity);
         }
 
