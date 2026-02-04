@@ -1449,6 +1449,8 @@ services:
             - '@oro_message_queue.job.dependent_job_service'
             - '@oro_message_queue.message_producer'
             - '@oro_product.model.segment_message_factory'
+        calls:
+            - [ setJobProcessor, ['@oro_message_queue.job.processor']]
 
     oro_product.datagrid.event_listener.product_collection_content_variant_filtering:
         class: Oro\Bundle\ProductBundle\DataGrid\EventListener\ProductCollectionContentVariantFilteringEventListener
