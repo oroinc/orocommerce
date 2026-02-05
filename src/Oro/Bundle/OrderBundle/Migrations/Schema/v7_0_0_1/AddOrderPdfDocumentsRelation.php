@@ -14,6 +14,10 @@ class AddOrderPdfDocumentsRelation implements Migration
     #[Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
+        if ($schema->hasTable('oro_order_pdf_document')) {
+            return;
+        }
+
         $this->createOroOrderPdfDocumentTable($schema);
     }
 
