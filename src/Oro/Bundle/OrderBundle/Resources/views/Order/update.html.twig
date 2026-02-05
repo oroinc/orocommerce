@@ -187,75 +187,77 @@
         }]) %}
     {% endif %}
 
-    {% if isShippingAddressGranted and form.shippingAddress is defined %}
-        {% set shippingAddress %}
-            {% if form.shippingAddress.customerAddress is defined %}
-                {% set idAddressBlock = '#' ~ form.shippingAddress.customerAddress.vars.id %}
-            {% else %}
-                {% set idAddressBlock = null %}
-            {% endif %}
-            <div
-                data-content="address-form"
-                data-layout="separate"
-                data-page-component-module="oroui/js/app/components/view-component"
-                data-page-component-options="{{ {
-                    view: 'oroorder/js/app/views/address-view',
-                    type: 'shipping',
-                    selectors: {
-                        address: idAddressBlock ,
-                        subtotalsFields: [
-                        '#' ~ form.shippingAddress.country.vars.id,
-                        '#' ~ form.shippingAddress.street.vars.id,
-                        '#' ~ form.shippingAddress.street2.vars.id,
-                        '#' ~ form.shippingAddress.city.vars.id,
-                        '#' ~ form.shippingAddress.region.vars.id,
-                        '#' ~ form.shippingAddress.postalCode.vars.id
-                        ]
+    {% if entity.subOrders is empty %}
+        {% if isShippingAddressGranted and form.shippingAddress is defined %}
+            {% set shippingAddress %}
+                {% if form.shippingAddress.customerAddress is defined %}
+                    {% set idAddressBlock = '#' ~ form.shippingAddress.customerAddress.vars.id %}
+                {% else %}
+                    {% set idAddressBlock = null %}
+                {% endif %}
+                <div
+                    data-content="address-form"
+                    data-layout="separate"
+                    data-page-component-module="oroui/js/app/components/view-component"
+                    data-page-component-options="{{ {
+                        view: 'oroorder/js/app/views/address-view',
+                        type: 'shipping',
+                        selectors: {
+                            address: idAddressBlock ,
+                            subtotalsFields: [
+                            '#' ~ form.shippingAddress.country.vars.id,
+                            '#' ~ form.shippingAddress.street.vars.id,
+                            '#' ~ form.shippingAddress.street2.vars.id,
+                            '#' ~ form.shippingAddress.city.vars.id,
+                            '#' ~ form.shippingAddress.region.vars.id,
+                            '#' ~ form.shippingAddress.postalCode.vars.id
+                            ]
+                        }
+                    }|json_encode }}">
+                    {{ form_widget(form.shippingAddress) }}
+                </div>
+            {% endset %}
+            {% set dataBlocks = dataBlocks|merge([{
+                'title': 'oro.order.shipping_address.label'|trans,
+                'subblocks': [{
+                    'data': [shippingAddress]
+                }]
+            }]) %}
+        {% endif %}
+    
+        {% if form.shippingMethod is defined %}
+        {% set shippingInformation %}
+            <div class="possible-shipping-methods-info">
+                {{ UI.renderControlGroup('oro.order.form.shipping_options.label'|trans,
+                    '<div class="possible_shipping_methods_container">' ~ SM.renderPossibleShippingMethods(form, entity) ~ '</div>',
+                    {
+                        rootClass: null
                     }
-                }|json_encode }}">
-                {{ form_widget(form.shippingAddress) }}
+                ) }}
+    
+                {% set options = {
+                    view: 'oroorder/js/app/views/shipping-cost-view'
+                } %}
+    
+                <div
+                    data-layout="separate"
+                    data-page-component-module="oroui/js/app/components/view-component"
+                    data-page-component-options="{{ options|json_encode }}">
+                    {{ form_row(form.overriddenShippingCostAmount) }}
+                </div>
             </div>
         {% endset %}
+    
         {% set dataBlocks = dataBlocks|merge([{
-            'title': 'oro.order.shipping_address.label'|trans,
+            'title': 'oro.order.sections.shipping_information'|trans,
             'subblocks': [{
-                'data': [shippingAddress]
+                'data': [
+                    form_row(form.shippingStatus),
+                    shippingInformation
+                ]
             }]
         }]) %}
-    {% endif %}
-
-    {% if form.shippingMethod is defined %}
-    {% set shippingInformation %}
-        <div class="possible-shipping-methods-info">
-            {{ UI.renderControlGroup('oro.order.form.shipping_options.label'|trans,
-                '<div class="possible_shipping_methods_container">' ~ SM.renderPossibleShippingMethods(form, entity) ~ '</div>',
-                {
-                    rootClass: null
-                }
-            ) }}
-
-            {% set options = {
-                view: 'oroorder/js/app/views/shipping-cost-view'
-            } %}
-
-            <div
-                data-layout="separate"
-                data-page-component-module="oroui/js/app/components/view-component"
-                data-page-component-options="{{ options|json_encode }}">
-                {{ form_row(form.overriddenShippingCostAmount) }}
-            </div>
-        </div>
-    {% endset %}
-
-    {% set dataBlocks = dataBlocks|merge([{
-        'title': 'oro.order.sections.shipping_information'|trans,
-        'subblocks': [{
-            'data': [
-                form_row(form.shippingStatus),
-                shippingInformation
-            ]
-        }]
-    }]) %}
+        {% endif %}
     {% endif %}
 
     {% set additionalData = [
