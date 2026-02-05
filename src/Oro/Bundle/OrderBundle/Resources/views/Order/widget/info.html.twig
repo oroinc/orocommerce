@@ -55,7 +55,12 @@
 
         <div class="responsive-block">
             {{ UI.renderHtmlProperty('oro.order.billing_address.label'|trans, address.renderAddress(order.billingAddress, true)) }}
-            {{ UI.renderHtmlProperty('oro.order.shipping_address.label'|trans, address.renderAddress(order.shippingAddress, true)) }}
+            {% if order.subOrders is empty %}
+                    {{ UI.renderHtmlProperty(
+                        'oro.order.shipping_address.label'|trans, 
+                        address.renderAddress(order.shippingAddress, true)
+                ) }}
+            {% endif %}
             {{ UI.renderProperty('oro.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
         </div>
     </div>
