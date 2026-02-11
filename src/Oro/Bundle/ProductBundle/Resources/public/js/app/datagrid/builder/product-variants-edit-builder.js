@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import _ from 'underscore';
-import __ from 'orotranslation/js/translator';
 
 const ProductVariantsEdit = function(options) {
     this.initialize(options);
@@ -30,18 +29,7 @@ _.extend(ProductVariantsEdit.prototype, {
         this.defaultProductVariantField = this.grid.$el.closest('form')
             .find(this.options.defaultProductVariantFieldSelector);
 
-        if (this.grid.collection.length === 0) {
-            this.clearDefaultVariantSelector();
-        }
         this.grid.collection.on('backgrid:selected', this.updateDefaultVariantSelector.bind(this));
-    },
-
-    clearDefaultVariantSelector: function() {
-        if (this.defaultProductVariantField.length !== 1) {
-            return;
-        }
-
-        this.defaultProductVariantField.find('option').remove();
     },
 
     updateDefaultVariantSelector: function(model, selected) {
@@ -49,25 +37,20 @@ _.extend(ProductVariantsEdit.prototype, {
             return;
         }
 
-        this.selectedDefaultVariant = this.defaultProductVariantField.find('option:selected').val();
+        const currentVal = this.defaultProductVariantField.val();
 
-        this.clearDefaultVariantSelector();
+        // Remove existing option first to avoid duplicates when navigating between grid pages,
+        // then re-add it only if the variant is selected.
+        this.defaultProductVariantField.find('option[value="' + model.id + '"]').remove();
+        if (selected) {
+            this.defaultProductVariantField.append($('<option>', {
+                value: model.id,
+                text: model.get('productName')
+            }));
+        }
 
-        this.defaultProductVariantField.append($('<option>', {
-            value: '',
-            text: __('oro.product.product_variants.default_variant.no_default_variant.label')
-        }));
-
-        this.grid.collection.each(function(model) {
-            if (model.attributes.isVariant) {
-                this.defaultProductVariantField.append($('<option>', {
-                    value: model.id,
-                    text: model.attributes.productName,
-                    selected: model.id === this.selectedDefaultVariant
-                }));
-            }
-        }, this);
-
+        // Restore selection if the removed-and-re-added option was previously selected
+        this.defaultProductVariantField.val(currentVal);
         this.defaultProductVariantField.trigger('change');
     },
 
