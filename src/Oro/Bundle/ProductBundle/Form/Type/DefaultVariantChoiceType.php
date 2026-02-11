@@ -22,10 +22,16 @@ class DefaultVariantChoiceType extends AbstractType
             'class'    => Product::class,
             'required' => false,
             'multiple' => false,
+            'placeholder' => 'oro.product.default_variant.no_default_variant.label',
             'choices'     => function (Options $options) {
                 /** @var Product $parentProduct */
                 $parentProduct = $options['parentProduct'];
-                return $parentProduct->getDefaultVariant() ? [$parentProduct->getDefaultVariant()] : [];
+                $choices = [];
+                foreach ($parentProduct->getVariantLinks() as $variantLink) {
+                    $choices[] = $variantLink->getProduct();
+                }
+
+                return $choices;
             },
             'parentProduct' => null,
         ]);

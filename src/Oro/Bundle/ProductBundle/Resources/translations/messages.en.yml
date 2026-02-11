@@ -96,6 +96,7 @@ oro:
         default_variant:
             label: Default Variant
             description: The default variant for the configurable product
+            no_default_variant.label: ' - No Default Variant - '
         parent_variant_links.label: Parent Product Variant Links
         quick_edit.label: Quick edit
         images:

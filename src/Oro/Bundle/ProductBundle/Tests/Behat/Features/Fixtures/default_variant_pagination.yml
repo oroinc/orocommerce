@@ -1,0 +1,152 @@
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    variant_name_1:
+        string: 'Red Sneakers'
+    variant_name_2:
+        string: 'Blue Jacket'
+    variant_name_3:
+        string: 'Green T-Shirt'
+    variant_name_4:
+        string: 'Yellow Cap'
+    variant_name_5:
+        string: 'Orange Hoodie'
+    variant_name_6:
+        string: 'Purple Shorts'
+    variant_name_7:
+        string: 'Pink Dress'
+    variant_name_8:
+        string: 'Brown Boots'
+    variant_name_9:
+        string: 'Black Jeans'
+    variant_name_10:
+        string: 'White Polo'
+    variant_name_11:
+        string: 'Gray Coat'
+    configurable_name:
+        string: 'Configurable Clothing'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    unit_precision_{1..12}:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    variant_product_1:
+        type: 'simple'
+        sku: 'RSNK'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision_1'
+        __calls:
+            - addName: ['@variant_name_1']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    variant_product_2:
+        type: 'simple'
+        sku: 'BJCK'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision_2'
+        __calls:
+            - addName: ['@variant_name_2']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    variant_product_3:
+        type: 'simple'
+        sku: 'GTSH'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision_3'
+        __calls:
+            - addName: ['@variant_name_3']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    variant_product_4:
+        type: 'simple'
+        sku: 'YCAP'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision_4'
+        __calls:
+            - addName: ['@variant_name_4']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    variant_product_5:
+        type: 'simple'
+        sku: 'OHDY'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision_5'
+        __calls:
+            - addName: ['@variant_name_5']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    variant_product_6:
+        type: 'simple'
+        sku: 'PSRT'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision_6'
+        __calls:
+            - addName: ['@variant_name_6']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    variant_product_7:
+        type: 'simple'
+        sku: 'PDRS'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision_7'
+        __calls:
+            - addName: ['@variant_name_7']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    variant_product_8:
+        type: 'simple'
+        sku: 'BBTS'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision_8'
+        __calls:
+            - addName: ['@variant_name_8']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    variant_product_9:
+        type: 'simple'
+        sku: 'BJNS'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision_9'
+        __calls:
+            - addName: ['@variant_name_9']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    variant_product_10:
+        type: 'simple'
+        sku: 'WPLO'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision_10'
+        __calls:
+            - addName: ['@variant_name_10']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    variant_product_11:
+        type: 'simple'
+        sku: 'GCAT'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision_11'
+        __calls:
+            - addName: ['@variant_name_11']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    configurable_product:
+        type: 'configurable'
+        sku: 'CNFG'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision_12'
+        __calls:
+            - addName: ['@configurable_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
