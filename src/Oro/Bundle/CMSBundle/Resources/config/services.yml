@@ -1,7 +1,3 @@
-parameters:
-    # Override ApiBundle parameter to enable absolute URLs for CMS assets in API responses
-    oro_api.use_absolute_urls_for_api: true
-
 services:
     oro_cms.form.autocomplete.page.search_handler:
         parent: oro_form.autocomplete.search_handler
