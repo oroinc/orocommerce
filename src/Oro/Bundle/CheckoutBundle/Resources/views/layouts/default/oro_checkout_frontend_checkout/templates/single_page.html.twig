@@ -134,7 +134,8 @@
             containerCssClass: 'oro-select2 select-multiline',
             dropdownAutoWidth: false
         } %}
-        {% set hideAddressSelect = form.shipping_address.vars.address_count == 0 %}
+        {% set hideAddressSelect = form.shipping_address.vars.address_count == 0
+            and form.shipping_address.vars.value|default('') is empty %}
         {% if checkout.customerUser.isGuest|default(false) %}
             {% set hideAddressSelect = form.shipping_address.vars.value|default('') is empty  %}
         {% endif %}
@@ -174,7 +175,8 @@
             containerCssClass: 'oro-select2 select-multiline',
             dropdownAutoWidth: false
         } %}
-        {% set hideAddressSelect = form.billing_address.vars.address_count == 0 %}
+        {% set hideAddressSelect = form.billing_address.vars.address_count == 0
+            and form.billing_address.vars.value|default('') is empty %}
         {% if checkout.customerUser.isGuest|default(false) %}
             {% set hideAddressSelect = form.billing_address.vars.value|default('') is empty  %}
         {% endif %}
