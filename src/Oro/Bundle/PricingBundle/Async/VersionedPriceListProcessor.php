@@ -2,18 +2,22 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\MessageQueueBundle\Client\BufferedMessageProducer;
 use Oro\Bundle\PricingBundle\Async\Topic\CombineSingleCombinedPriceListPricesTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByVersionedPriceListTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\RunCombinedPriceListPostProcessingStepsTopic;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListBuildActivity;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListBuildActivityRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListStatusHandlerInterface;
+use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -35,27 +39,15 @@ class VersionedPriceListProcessor implements MessageProcessorInterface, TopicSub
 
     private int $productsBatchSize = ProductPriceRepository::BUFFER_SIZE;
 
-    private ManagerRegistry $doctrine;
-    private JobRunner $jobRunner;
-    private DependentJobService $dependentJob;
-    private MessageProducerInterface $producer;
-    private CombinedPriceListStatusHandlerInterface $statusHandler;
-    private ShardManager $shardManager;
-
     public function __construct(
-        ManagerRegistry $doctrine,
-        JobRunner $jobRunner,
-        DependentJobService $dependentJob,
-        MessageProducerInterface $producer,
-        CombinedPriceListStatusHandlerInterface $statusHandler,
-        ShardManager $shardManager
+        private ManagerRegistry $doctrine,
+        private JobRunner $jobRunner,
+        private DependentJobService $dependentJob,
+        private MessageProducerInterface $producer,
+        private CombinedPriceListStatusHandlerInterface $statusHandler,
+        private ShardManager $shardManager,
+        private PriceListRelationTriggerHandler $priceListRelationTriggerHandler
     ) {
-        $this->doctrine = $doctrine;
-        $this->jobRunner = $jobRunner;
-        $this->dependentJob = $dependentJob;
-        $this->producer = $producer;
-        $this->statusHandler = $statusHandler;
-        $this->shardManager = $shardManager;
     }
 
     public function setProductsBatchSize(int $productsBatchSize): void
@@ -78,34 +70,30 @@ class VersionedPriceListProcessor implements MessageProcessorInterface, TopicSub
         }
 
         try {
+            if ($this->producer instanceof BufferedMessageProducer) {
+                $this->producer->disableBuffering();
+            }
+
             $version = $body['version'];
             $priceLists = $body['priceLists'];
 
             $result = $this->jobRunner->runUniqueByMessage(
                 $message,
                 function (JobRunner $jobRunner, Job $job) use ($priceLists, $version) {
-                    $combinedPriceLists = $this->getCombinedPriceListsByPriceList($priceLists);
-
                     $this->schedulePostCplJobs($job);
-                    $this->addCplBuildActivity($job, $combinedPriceLists);
 
-                    foreach ($combinedPriceLists as $combinedPriceList) {
-                        $jobRunner->createDelayed(
-                            sprintf('%s:cpl:%s', $job->getName(), $combinedPriceList->getName()),
-                            function (JobRunner $jobRunner, Job $child) use ($version, $combinedPriceList) {
-                                $products = $this->getProductsForCombinedPriceList($combinedPriceList, $version);
-                                foreach ($products as $productBatch) {
-                                    $this->producer->send(
-                                        CombineSingleCombinedPriceListPricesTopic::getName(),
-                                        [
-                                            'cpl' => $combinedPriceList->getId(),
-                                            'products' => $productBatch,
-                                            'jobId' => $child->getId()
-                                        ]
-                                    );
-                                }
-                            }
-                        );
+                    $priceListsWithAllNewPrices = $this->triggerCplRebuildMessagesForPreviouslyEmptyPriceLists(
+                        $priceLists,
+                        $version
+                    );
+
+                    // Filter out price lists that have all new prices.
+                    $priceLists = array_filter(
+                        $priceLists,
+                        static fn (int $priceListId) => empty($priceListsWithAllNewPrices[$priceListId])
+                    );
+                    if ($priceLists) {
+                        $this->addCplRecombinationJobs($job, $jobRunner, $priceLists, $version);
                     }
 
                     return true;
@@ -120,7 +108,54 @@ class VersionedPriceListProcessor implements MessageProcessorInterface, TopicSub
             );
 
             return self::REJECT;
+        } finally {
+            if ($this->producer instanceof BufferedMessageProducer) {
+                $this->producer->enableBuffering();
+            }
         }
+    }
+
+    private function addCplRecombinationJobs(Job $job, JobRunner $jobRunner, array $priceListId, int $version): void
+    {
+        $combinedPriceLists = $this->getCombinedPriceListsByPriceList($priceListId);
+        $this->addCplBuildActivity($job, $combinedPriceLists);
+        foreach ($combinedPriceLists as $combinedPriceList) {
+            $products = $this->getProductsForCombinedPriceList($combinedPriceList, $version);
+            $batchNum = 0;
+            foreach ($products as $productBatch) {
+                $jobRunner->createDelayed(
+                    sprintf('%s:cpl:%s:batch:%d', $job->getName(), $combinedPriceList->getName(), $batchNum++),
+                    function (JobRunner $jobRunner, Job $child) use ($productBatch, $combinedPriceList) {
+                        $this->producer->send(
+                            CombineSingleCombinedPriceListPricesTopic::getName(),
+                            [
+                                'cpl' => $combinedPriceList->getId(),
+                                'products' => $productBatch,
+                                'jobId' => $child->getId()
+                            ]
+                        );
+                    }
+                );
+            }
+        }
+    }
+
+    private function triggerCplRebuildMessagesForPreviouslyEmptyPriceLists(array $priceListIds, int $version): array
+    {
+        $emptyPls = [];
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrine->getManagerForClass(PriceList::class);
+        $repo = $this->getProductPriceRepository();
+        foreach ($priceListIds as $priceListId) {
+            /** @var PriceList $priceList */
+            $priceList = $em->getReference(PriceList::class, $priceListId);
+            if ($repo->areAllVersionedPricesNewInPriceList($this->shardManager, $priceList, $version)) {
+                $this->priceListRelationTriggerHandler->handlePriceListStatusChange($priceList);
+                $emptyPls[$priceList->getId()] = true;
+            }
+        }
+
+        return $emptyPls;
     }
 
     private function schedulePostCplJobs(Job $job): void

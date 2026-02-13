@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Async;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\MessageQueueBundle\Client\BufferedMessageProducer;
 use Oro\Bundle\PricingBundle\Async\Topic\CombineSingleCombinedPriceListPricesTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\RunCombinedPriceListPostProcessingStepsTopic;
@@ -69,6 +70,10 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     {
         $body = $message->getBody();
         try {
+            if ($this->producer instanceof BufferedMessageProducer) {
+                $this->producer->disableBuffering();
+            }
+
             $result = $this->jobRunner->runUniqueByMessage(
                 $message,
                 function (JobRunner $jobRunner, Job $job) use ($body) {
@@ -80,16 +85,17 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
                     $this->addCplBuildActivity($job, $activeCpls);
 
                     foreach ($activeCpls as $cpl) {
-                        $jobRunner->createDelayed(
-                            sprintf('%s:cpl:%s', $job->getName(), $cpl->getName()),
-                            function (JobRunner $jobRunner, Job $child) use ($cpl2plRepository, $cpl, $allProducts) {
-                                $products = $this->getProductsForCombinedPriceList(
-                                    $cpl2plRepository,
-                                    $cpl,
-                                    $allProducts
-                                );
+                        $products = $this->getProductsForCombinedPriceList(
+                            $cpl2plRepository,
+                            $cpl,
+                            $allProducts
+                        );
 
-                                foreach ($this->getProductBatches($products) as $productBatch) {
+                        $batchNum = 0;
+                        foreach ($this->getProductBatches($products) as $productBatch) {
+                            $jobRunner->createDelayed(
+                                sprintf('%s:cpl:%s:batch:%d', $job->getName(), $cpl->getName(), $batchNum++),
+                                function (JobRunner $jobRunner, Job $child) use ($cpl, $productBatch) {
                                     $this->producer->send(
                                         CombineSingleCombinedPriceListPricesTopic::getName(),
                                         [
@@ -99,8 +105,8 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
                                         ]
                                     );
                                 }
-                            }
-                        );
+                            );
+                        }
                     }
 
                     return true;
@@ -115,6 +121,10 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
             );
 
             return self::REJECT;
+        } finally {
+            if ($this->producer instanceof BufferedMessageProducer) {
+                $this->producer->enableBuffering();
+            }
         }
     }
 

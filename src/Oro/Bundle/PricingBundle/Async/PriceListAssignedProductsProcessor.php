@@ -7,10 +7,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
-use Oro\Bundle\PricingBundle\Provider\DependentPriceListProvider;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -28,25 +28,12 @@ class PriceListAssignedProductsProcessor implements
 {
     use LoggerAwareTrait;
 
-    private PriceListProductAssignmentBuilder $assignmentBuilder;
-    private ManagerRegistry $doctrine;
-    private NotificationAlertManager $notificationAlertManager;
-    private PriceListTriggerHandler $triggerHandler;
-    private DependentPriceListProvider $dependentPriceListProvider;
-    private array $processedPriceListIds = [];
-
     public function __construct(
-        ManagerRegistry $doctrine,
-        PriceListProductAssignmentBuilder $assignmentBuilder,
-        NotificationAlertManager $notificationAlertManager,
-        PriceListTriggerHandler $triggerHandler,
-        DependentPriceListProvider $dependentPriceListProvider
+        private ManagerRegistry $doctrine,
+        private PriceListProductAssignmentBuilder $assignmentBuilder,
+        private NotificationAlertManager $notificationAlertManager,
+        private PriceListTriggerHandler $triggerHandler
     ) {
-        $this->doctrine = $doctrine;
-        $this->assignmentBuilder = $assignmentBuilder;
-        $this->notificationAlertManager = $notificationAlertManager;
-        $this->triggerHandler = $triggerHandler;
-        $this->dependentPriceListProvider = $dependentPriceListProvider;
     }
 
     #[\Override]
@@ -60,7 +47,6 @@ class PriceListAssignedProductsProcessor implements
     {
         $body = $message->getBody();
         $priceListsCount = count($body['product']);
-        $this->processedPriceListIds = [];
 
         /** @var EntityManagerInterface $em */
         $em = $this->doctrine->getManagerForClass(PriceList::class);
@@ -78,8 +64,11 @@ class PriceListAssignedProductsProcessor implements
             $em->beginTransaction();
             try {
                 $this->processPriceList($priceList, $productIds);
-
                 $em->commit();
+
+                // After price list assigned products are updated we need to recalculate price rules.
+                // Rules recalculation will trigger dependent price lists recalculations including assignments.
+                $this->triggerPriceRulesRecalculation($priceList, $productIds);
             } catch (\Exception $e) {
                 $em->rollback();
                 $this->logger?->error(
@@ -119,22 +108,20 @@ class PriceListAssignedProductsProcessor implements
 
     private function processPriceList(PriceList $priceList, array $productIds): void
     {
-        if (!empty($this->processedPriceListIds[$priceList->getId()])) {
-            return;
-        }
-
         $this->notificationAlertManager->resolveNotificationAlertByOperationAndItemIdForCurrentUser(
             PriceListCalculationNotificationAlert::OPERATION_ASSIGNED_PRODUCTS_BUILD,
             $priceList->getId()
         );
 
-        $this->assignmentBuilder->buildByPriceList($priceList, $productIds);
-        $this->processedPriceListIds[$priceList->getId()] = true;
+        $this->assignmentBuilder->buildByPriceListWithoutEventDispatch($priceList, $productIds);
+    }
 
-        foreach ($this->dependentPriceListProvider->getDirectlyDependentPriceLists($priceList) as $dependentPriceList) {
-            if ($dependentPriceList->getProductAssignmentRule()) {
-                $this->processPriceList($dependentPriceList, $productIds);
-            }
-        }
+    private function triggerPriceRulesRecalculation(PriceList $priceList, array $productIds): void
+    {
+        $this->triggerHandler->handlePriceListTopic(
+            ResolvePriceRulesTopic::getName(),
+            $priceList,
+            $productIds
+        );
     }
 }

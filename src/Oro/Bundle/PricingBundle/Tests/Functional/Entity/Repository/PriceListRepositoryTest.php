@@ -13,6 +13,9 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class PriceListRepositoryTest extends WebTestCase
 {
     #[\Override]
@@ -87,6 +90,61 @@ class PriceListRepositoryTest extends WebTestCase
     {
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
         $this->assertNull($this->getRepository()->getActivePriceListById($priceList->getId()));
+    }
+
+    public function testGetActivePriceListIdsByIds(): void
+    {
+        $priceList1 = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $priceList2 = $this->getReference(LoadPriceLists::PRICE_LIST_2);
+        $priceList6 = $this->getReference(LoadPriceLists::PRICE_LIST_6);
+
+        // Test with mixed active and inactive price lists
+        $priceListIds = [
+            $priceList1->getId(),
+            $priceList2->getId(),
+            $priceList6->getId() // inactive
+        ];
+
+        $activePriceListIds = $this->getRepository()->getActivePriceListIdsByIds($priceListIds);
+
+        // Should return only active price lists (1 and 2), not 6
+        $this->assertCount(2, $activePriceListIds);
+        $this->assertContains($priceList1->getId(), $activePriceListIds);
+        $this->assertContains($priceList2->getId(), $activePriceListIds);
+        $this->assertNotContains($priceList6->getId(), $activePriceListIds);
+    }
+
+    public function testGetActivePriceListIdsByIdsEmpty(): void
+    {
+        $activePriceListIds = $this->getRepository()->getActivePriceListIdsByIds([]);
+        $this->assertEmpty($activePriceListIds);
+    }
+
+    public function testGetActivePriceListIdsByIdsOnlyInactive(): void
+    {
+        $priceList6 = $this->getReference(LoadPriceLists::PRICE_LIST_6);
+
+        $activePriceListIds = $this->getRepository()->getActivePriceListIdsByIds([$priceList6->getId()]);
+
+        $this->assertEmpty($activePriceListIds);
+    }
+
+    public function testGetActivePriceListIdsByIdsOnlyActive(): void
+    {
+        $priceList1 = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $priceList3 = $this->getReference(LoadPriceLists::PRICE_LIST_3);
+        $priceList5 = $this->getReference(LoadPriceLists::PRICE_LIST_5);
+
+        $priceListIds = [
+            $priceList1->getId(),
+            $priceList3->getId(),
+            $priceList5->getId()
+        ];
+
+        $activePriceListIds = $this->getRepository()->getActivePriceListIdsByIds($priceListIds);
+
+        $this->assertCount(3, $activePriceListIds);
+        $this->assertEqualsCanonicalizing($priceListIds, $activePriceListIds);
     }
 
     public function testGetPriceListByCustomer(): void

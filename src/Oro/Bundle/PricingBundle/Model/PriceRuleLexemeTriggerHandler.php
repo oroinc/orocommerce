@@ -17,18 +17,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class PriceRuleLexemeTriggerHandler
 {
-    /** @var PriceListTriggerHandler */
-    private $priceListTriggerHandler;
-
-    /** @var ManagerRegistry */
-    private $doctrine;
-
     public function __construct(
-        PriceListTriggerHandler $priceListTriggerHandler,
-        ManagerRegistry $doctrine
+        private PriceListTriggerHandler $priceListTriggerHandler,
+        private ManagerRegistry $doctrine
     ) {
-        $this->priceListTriggerHandler = $priceListTriggerHandler;
-        $this->doctrine = $doctrine;
     }
 
     /**
@@ -52,13 +44,15 @@ class PriceRuleLexemeTriggerHandler
 
     /**
      * @param PriceRuleLexeme[] $lexemes
-     * @param array|Product[] $products
+     * @param array|Product[]   $products
      */
     public function processLexemes(array $lexemes, array $products = []): void
     {
         if (!$lexemes) {
             return;
         }
+
+        $this->markMentionedPriceListNotActual($lexemes, $products);
 
         $assignmentsRecalculatePriceLists = [];
         foreach ($lexemes as $lexeme) {
@@ -83,8 +77,6 @@ class PriceRuleLexemeTriggerHandler
                 );
             }
         }
-
-        $this->markMentionedPriceListNotActual($lexemes, $products);
     }
 
     private function isPriceListShouldBeProcessed(PriceList $priceList, array $products): bool
@@ -93,7 +85,7 @@ class PriceRuleLexemeTriggerHandler
             return true;
         }
 
-        $priceListOrganizationId = $priceList->getOrganization()->getId();
+        $priceListOrganizationId = $priceList->getOrganization()?->getId();
         foreach ($products as $product) {
             if (
                 null === $product
@@ -117,6 +109,10 @@ class PriceRuleLexemeTriggerHandler
         $priceLists = [];
         foreach ($lexemes as $lexeme) {
             $priceList = $lexeme->getPriceList();
+            if (!$priceList) {
+                continue;
+            }
+
             if ($this->isPriceListShouldBeProcessed($priceList, $products)) {
                 $priceLists[$priceList->getId()] = $priceList;
             }
