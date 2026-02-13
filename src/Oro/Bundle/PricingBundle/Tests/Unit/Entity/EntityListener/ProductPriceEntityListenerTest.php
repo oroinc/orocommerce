@@ -46,6 +46,8 @@ class ProductPriceEntityListenerTest extends TestCase
         $this->listener->expects(self::once())
             ->method('preUpdate')
             ->with($price, $args);
+        $this->listener->expects(self::never())
+            ->method('postPersist');
 
         $this->listener->onSave($event);
     }
@@ -70,10 +72,86 @@ class ProductPriceEntityListenerTest extends TestCase
             ->method('getEventArgs')
             ->willReturn($args);
 
+        $this->listener->expects(self::never())
+            ->method('preUpdate');
         $this->listener->expects(self::once())
             ->method('postPersist')
             ->with($price);
 
         $this->listener->onSave($event);
+    }
+
+    public function testPostPersistWithVersion()
+    {
+        $priceList = new PriceList();
+        ReflectionUtil::setId($priceList, 3);
+        $price = new ProductPrice();
+        $price->setId(UUIDGenerator::v4());
+        $price->setPriceList($priceList);
+        $price->setVersion(10);
+
+        $args = $this->createMock(PreUpdateEventArgs::class);
+        $event = $this->createMock(ProductPriceSaveAfterEvent::class);
+        $args->expects(self::once())
+            ->method('getObject')
+            ->willReturn($price);
+        $args->expects(self::once())
+            ->method('getEntityChangeSet')
+            ->willReturn([]);
+        $event->expects(self::once())
+            ->method('getEventArgs')
+            ->willReturn($args);
+
+        $this->listener->expects(self::never())
+            ->method('preUpdate');
+        $this->listener->expects(self::never())
+            ->method('postPersist');
+
+        $this->listener->onSave($event);
+    }
+
+    public function testPreUpdateWithChangedVersion()
+    {
+        $priceList = new PriceList();
+        ReflectionUtil::setId($priceList, 3);
+        $price = new ProductPrice();
+        $price->setId(UUIDGenerator::v4());
+        $price->setPriceList($priceList);
+        $price->setVersion(10);
+
+        $args = $this->createMock(PreUpdateEventArgs::class);
+        $event = $this->createMock(ProductPriceSaveAfterEvent::class);
+        $args->expects(self::once())
+            ->method('getObject')
+            ->willReturn($price);
+        $args->expects(self::any())
+            ->method('hasChangedField')
+            ->with('version')
+            ->willReturn(true);
+        $args->expects(self::any())
+            ->method('getEntityChangeSet')
+            ->willReturn([
+                'value' => [0, 10],
+                'version' => [null, 10]
+            ]);
+        $event->expects(self::once())
+            ->method('getEventArgs')
+            ->willReturn($args);
+
+        $listener = $this->getMockBuilder(ProductPriceEntityListener::class)
+            ->onlyMethods(['recalculateForOldValues', 'recalculateByEntityFieldsUpdate', 'postPersist'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $listener->expects(self::once())
+            ->method('recalculateForOldValues')
+            ->with($price);
+        $listener->expects(self::never())
+            ->method('recalculateByEntityFieldsUpdate');
+
+        $listener->expects(self::never())
+            ->method('postPersist');
+
+        $listener->onSave($event);
     }
 }

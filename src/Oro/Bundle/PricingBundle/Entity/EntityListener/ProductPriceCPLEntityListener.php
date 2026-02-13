@@ -27,6 +27,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Handles product price changes.
+ *
+ * Version presence in changeset indicates mass operation, so we should not process individual prices.
+ * All prices affected by mass update will be processed in a way like this is done in ImportExportResultListener.
  */
 class ProductPriceCPLEntityListener implements OptionalListenerInterface, FeatureToggleableInterface
 {
@@ -62,6 +65,10 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
         $productPrice = $event->getEventArgs()->getEntity();
         $this->addPriceListToProductRelation($productPrice);
 
+        if ($productPrice->getVersion()) {
+            return;
+        }
+
         if ($this->isFeaturesEnabled()) {
             $this->combinedPriceListBuildTriggerHandler->handlePriceCreation($productPrice);
         }
@@ -79,11 +86,16 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
         }
 
         $changeSets = $event->getChangeSets();
+        $saved = array_filter($event->getSaved(), static fn (ProductPrice $price) => null === $price->getVersion());
         $newPrices = array_filter($event->getUpdated(), static function (ProductPrice $price) use ($changeSets) {
             return !array_key_exists($price->getId(), $changeSets)
                 || (!empty($changeSets[$price->getId()]['id']) && !isset($changeSets[$price->getId()]['id'][0]));
         });
-        $newPrices = array_merge($event->getSaved(), $newPrices);
+        $newPrices = array_filter(
+            $newPrices,
+            static fn (ProductPrice $price) => empty($event->getChangeSets()[$price->getId()]['version'][1])
+        );
+        $newPrices = array_merge($saved, $newPrices);
 
         // Single price creation is processed in onSave method. Skip mass save logic to prevent conflicts.
         if (count($newPrices) < 2) {

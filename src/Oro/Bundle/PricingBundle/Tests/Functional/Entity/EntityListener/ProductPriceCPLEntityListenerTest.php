@@ -324,6 +324,109 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $this->assertEquals(0, count($singleRebuildMessages) + count($massRebuildMessages));
     }
 
+    public function testCplNotTriggeredOnNewPricesWithVersionAddition()
+    {
+        $priceManager = $this->getPriceManager();
+        $operationId = 12345;
+
+        $newPrice1 = $this->getProductPrice(
+            LoadProductData::PRODUCT_5,
+            LoadPriceLists::PRICE_LIST_5,
+            Price::create(10, 'USD'),
+            10
+        );
+        $newPrice1->setVersion($operationId);
+
+        $newPrice2 = $this->getProductPrice(
+            LoadProductData::PRODUCT_5,
+            LoadPriceLists::PRICE_LIST_5,
+            Price::create(20, 'USD'),
+            20
+        );
+        $newPrice2->setVersion($operationId);
+
+        $this->clearMessageCollector();
+
+        $priceManager->persist($newPrice1);
+        $priceManager->persist($newPrice2);
+        $priceManager->flush();
+
+        // Prices with version should NOT trigger individual CPL rebuild
+        // They will be processed by AfterSaveMqJobListener after batch operation completes
+        $singleRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+            RebuildCombinedPriceListsTopic::getName()
+        );
+        $massRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+            MassRebuildCombinedPriceListsTopic::getName()
+        );
+
+        $this->assertCount(
+            0,
+            $singleRebuildMessages,
+            'Single CPL rebuild messages should not be sent for prices with version'
+        );
+        $this->assertCount(
+            0,
+            $massRebuildMessages,
+            'Mass CPL rebuild messages should not be sent for prices with version'
+        );
+    }
+
+    public function testCplNotTriggeredOnPricesWithVersionUpdate()
+    {
+        $priceManager = $this->getPriceManager();
+
+        // First, create prices without version (normal flow)
+        $price1 = $this->getProductPrice(
+            LoadProductData::PRODUCT_5,
+            LoadPriceLists::PRICE_LIST_5,
+            Price::create(10, 'USD'),
+            10
+        );
+        $price2 = $this->getProductPrice(
+            LoadProductData::PRODUCT_5,
+            LoadPriceLists::PRICE_LIST_5,
+            Price::create(20, 'USD'),
+            20
+        );
+
+        $priceManager->persist($price1);
+        $priceManager->persist($price2);
+        $priceManager->flush();
+
+        // Clear messages from initial creation
+        $this->clearMessageCollector();
+
+        // Now update prices by setting version (simulating batch update)
+        $operationId = 12345;
+        $price1->setVersion($operationId);
+        $price2->setVersion($operationId);
+
+        $priceManager->persist($price1);
+        $priceManager->persist($price2);
+        $priceManager->flush();
+
+        // Prices with version update should NOT trigger individual CPL rebuild
+        // They will be processed by AfterSaveMqJobListener after batch operation completes
+        $singleRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+            RebuildCombinedPriceListsTopic::getName()
+        );
+        $massRebuildMessages = $this->getMessageCollector()->getTopicSentMessages(
+            MassRebuildCombinedPriceListsTopic::getName()
+        );
+
+        $this->assertCount(
+            0,
+            $singleRebuildMessages,
+            'Single CPL rebuild messages should not be sent for prices with version update'
+        );
+        $this->assertCount(
+            0,
+            $massRebuildMessages,
+            'Mass CPL rebuild messages should not be sent for prices with version update'
+        );
+    }
+
     public function testCplRubiltOnNewPricesAdditionToEmptyPriceListWithDisabledFeature()
     {
         [$configManager, $savedStorage] = $this->disableCplFeature();

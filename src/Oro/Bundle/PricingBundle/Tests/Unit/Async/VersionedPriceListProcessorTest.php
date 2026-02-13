@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\PricingBundle\Async\Topic\CombineSingleCombinedPriceListPricesTopic;
@@ -11,11 +12,13 @@ use Oro\Bundle\PricingBundle\Async\VersionedPriceListProcessor;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListBuildActivity;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListBuildActivityRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListStatusHandlerInterface;
+use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -26,9 +29,10 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
+class VersionedPriceListProcessorTest extends TestCase
 {
     use EntityTrait;
 
@@ -53,6 +57,9 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var ShardManager|MockObject */
     private $shardManager;
 
+    /** @var PriceListRelationTriggerHandler|MockObject */
+    private $priceListRelationTriggerHandler;
+
     /** @var VersionedPriceListProcessor */
     private $processor;
 
@@ -65,6 +72,7 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $this->producer = $this->createMock(MessageProducerInterface::class);
         $this->dependentJob = $this->createMock(DependentJobService::class);
         $this->shardManager = $this->createMock(ShardManager::class);
+        $this->priceListRelationTriggerHandler = $this->createMock(PriceListRelationTriggerHandler::class);
 
         $this->processor = new VersionedPriceListProcessor(
             $this->doctrine,
@@ -75,6 +83,7 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
             $this->shardManager
         );
         $this->processor->setLogger($this->logger);
+        $this->processor->setPriceListRelationTriggerHandler($this->priceListRelationTriggerHandler);
     }
 
     private function getMessage(array $body): MessageInterface
@@ -145,6 +154,20 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $combinedPriceList1 = $this->getEntity(CombinedPriceList::class, ['id' => 10]);
         $combinedPriceList2 = $this->getEntity(CombinedPriceList::class, ['id' => 20]);
 
+        $em = $this->createMock(EntityManagerInterface::class);
+        $priceList = $this->createMock(PriceList::class);
+
+        $this->doctrine
+            ->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
+
+        $em->expects($this->once())
+            ->method('getReference')
+            ->with(PriceList::class, 1)
+            ->willReturn($priceList);
+
         $this->doctrine
             ->expects($this->any())
             ->method('getRepository')
@@ -160,6 +183,12 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('isReadyForBuild')
             ->withConsecutive([$combinedPriceList1], [$combinedPriceList2])
             ->willReturnOnConsecutiveCalls(true, false);
+
+        $productPriceRepository
+            ->expects($this->once())
+            ->method('areAllVersionedPricesNewInPriceList')
+            ->with($this->shardManager, $priceList, $version)
+            ->willReturn(false);
 
         $productPriceRepository
             ->expects($this->once())
@@ -211,7 +240,7 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $dependentContext = $this->createMock(DependentJobContext::class);
         $dependentContext->expects($this->once())
             ->method('addDependentJob')
-            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10, 'cpls' => [10]]);
+            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10, 'cpls' => []]);
 
         $this->dependentJob
             ->expects($this->once())
@@ -258,11 +287,31 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
             $combinedPriceListBuildActivityRepository
         ] = $this->assertRepositories();
 
+        $em = $this->createMock(EntityManagerInterface::class);
+        $priceList = $this->createMock(PriceList::class);
+
+        $this->doctrine
+            ->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
+
+        $em->expects($this->once())
+            ->method('getReference')
+            ->with(PriceList::class, 1)
+            ->willReturn($priceList);
+
         $this->statusHandler
             ->expects($this->once())
             ->method('isReadyForBuild')
             ->with($combinedPriceList)
             ->willReturn(true);
+
+        $productPriceRepository
+            ->expects($this->once())
+            ->method('areAllVersionedPricesNewInPriceList')
+            ->with($this->shardManager, $priceList, $version)
+            ->willReturn(false);
 
         $productPriceRepository
             ->expects($this->once())
@@ -307,7 +356,7 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('runUniqueByMessage')
             ->willReturnCallback(fn ($message, $closure) => $closure($this->jobRunner, $job));
         $this->jobRunner
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('createDelayed')
             ->willReturnCallback(fn ($name, $closure) => $closure($this->jobRunner, $childJob));
 
@@ -315,7 +364,7 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $dependentContext
             ->expects($this->once())
             ->method('addDependentJob')
-            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10, 'cpls' => [10]]);
+            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10, 'cpls' => []]);
 
         $this->dependentJob
             ->expects($this->once())

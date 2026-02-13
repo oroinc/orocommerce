@@ -12,6 +12,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
@@ -333,14 +334,15 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->from($tableName, 'pp')
             ->where($qb->expr()->eq('pp.price_list_id', ':priceListId'))
             ->andWhere($qb->expr()->eq('pp.version', ':version'))
-            ->setParameter('priceListId', $priceList)
-            ->setParameter('version', $version);
+            ->orderBy('pp.product_id')
+            ->setParameter('priceListId', $priceList, Types::INTEGER)
+            ->setParameter('version', $version, Types::INTEGER);
 
         $stmt = $qb->execute();
 
         $batch = [];
         $count = 0;
-        while ($productId = $stmt->fetchOne()) {
+        while (($productId = $stmt->fetchOne()) !== false) {
             $batch[] = $productId;
             $count++;
             if ($batchSize === $count) {
@@ -604,7 +606,46 @@ class ProductPriceRepository extends BaseProductPriceRepository
 
         $foundPrice = (bool)$qb->execute()->fetchOne();
 
-        return !$foundPrice;
+        if ($foundPrice) {
+            return false;
+        }
+
+        // Check that all new prices are not full replacement of already present prices
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->select('1')
+            ->from(CombinedPriceListToPriceList::class, 'cpl2pl')
+            ->innerJoin(
+                'cpl2pl.combinedPriceList',
+                'cpl',
+                Join::WITH,
+                $qb->expr()->eq('cpl.id', 'cpl2pl.combinedPriceList')
+            )
+            ->andWhere($qb->expr()->eq('cpl2pl.priceList', ':priceList'))
+            ->andWhere($qb->expr()->eq('cpl.pricesCalculated', ':isPricesCalculated'))
+            ->setMaxResults(1)
+            ->setParameters([
+                'priceList' => $priceList,
+                'isPricesCalculated' => true
+            ]);
+
+        return !$qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * Get the IDs of the prices that contain a given version.
+     * Can be used only when sharding is disabled.
+     */
+    public function getPriceListIdsAffectedByVersion(int $version): array
+    {
+        $qb = $this->getEntityManager()
+            ->createQueryBuilder('pp')
+            ->select('DISTINCT IDENTITY(pp.priceList) as priceListId')
+            ->from($this->getEntityName(), 'pp')
+            ->where('pp.version = :version')
+            ->setParameter('version', $version, Types::INTEGER);
+
+        return $qb->getQuery()->getSingleColumnResult();
     }
 
     private function getPricesCheckQueryBuilder(ShardManager $shardManager, PriceList $priceList): NativeQueryBuilder
