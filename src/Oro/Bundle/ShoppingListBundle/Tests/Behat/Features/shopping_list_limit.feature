@@ -82,7 +82,7 @@ Feature: Shopping list limit
     When click "Create New List"
     And type "New Front Shopping List" in "Shopping List Name"
     And click "Create"
-    Then should see "New Front Shopping List"
+    Then should see "New Front Shopping List" flash message
     And reload the page
     And I open shopping list widget
     Then should see "New Front Shopping List"

@@ -270,7 +270,7 @@ Feature: Allowed inventory statuses configuration
   Scenario: Check that it is impossible to re-order from the Order History with Discontinued product
     When I click "Order History Menu"
     And I click "Re-Order" on row "$23.00" in grid
-    Then I should see "Please note that the current order differs from the original one due to the absence or insufficient quantity in stock of the following products: SKU1."
+    Then I should see "Please note that the current order differs from the original one due to the absence or insufficient quantity in stock of the following products: SKU1." flash message
 
   Scenario: Disable Save for later
     When I open page with shopping list List 2

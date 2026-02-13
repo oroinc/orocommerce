@@ -51,7 +51,7 @@ Feature: Country and region translations for tax jurisdictions
       | test_tax_jurisdiction |
     When I click on test_tax_jurisdiction in grid
     And I save and close form
-    Then I should see "Tax Rule has been saved"
+    Then I should see "Tax Rule has been saved" flash message
 
   Scenario: Check tax jurisdiction on "Tax Rule Update" page:
     Given I go to Taxes/ Tax Rules
@@ -72,4 +72,4 @@ Feature: Country and region translations for tax jurisdictions
       | another_test_tax_jurisdiction |
     When I click on test_tax_jurisdiction in grid
     And I save and close form
-    Then I should see "Tax Rule has been saved"
+    Then I should see "Tax Rule has been saved" flash message

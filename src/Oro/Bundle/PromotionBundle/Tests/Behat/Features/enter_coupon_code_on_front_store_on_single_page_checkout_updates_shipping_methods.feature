@@ -27,7 +27,7 @@ Feature: Enter coupon code on front store on single page checkout updates shippi
     And I click "I have a Coupon Code"
     And I type "coupon-flat-rate" in "CouponCodeInput"
     And I click "Apply"
-    Then I should see "Coupon code has been applied successfully, please review discounts"
+    Then I should see "Coupon code has been applied successfully, please review discounts" flash message
     And I scroll to top
     And I should see "SHIPPING METHOD"
     And I should see "Flat Rate $1.00"

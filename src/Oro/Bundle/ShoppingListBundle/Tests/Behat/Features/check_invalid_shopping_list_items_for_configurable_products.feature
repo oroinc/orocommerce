@@ -106,7 +106,7 @@ Feature: Check invalid shopping list items for configurable products
 
   Scenario: Buyer successfully proceeds to Checkout after fixing issues
     When I click "Checkout"
-    Then I should see "Some items in your shopping list need a quick review. Take a moment to update them before continuing. All changes will be applied immediately."
+    Then I should see "Some items in your shopping list need a quick review. Take a moment to update them before continuing. All changes will be applied immediately." flash message
     And I should see next rows in "Frontend Customer User Shopping List Invalid Line Items Table" table without headers
       | Slip-On Clog 1GB83 Select Variants                                            |
       | Please select product variants before placing an order or requesting a quote. |
@@ -117,7 +117,7 @@ Feature: Check invalid shopping list items for configurable products
       | Black | 1 | - |
       | White | - | 1 |
     And I click "Save Changes"
-    Then I should see "All issues have been fixed. You can now proceed to checkout."
+    Then I should see "All issues have been fixed. You can now proceed to checkout." flash message
 
     When I click "Proceed"
     Then I should see "Checkout Continue" button enabled
@@ -138,7 +138,7 @@ Feature: Check invalid shopping list items for configurable products
   Scenario: Buyer successfully proceeds to RFQ after fixing issues
     When I open page with shopping list Shopping List
     And I click "Request Quote"
-    Then I should see "Some items in your shopping list need a quick review. Take a moment to update them so you can continue to request a quote. All changes will be applied immediately"
+    Then I should see "Some items in your shopping list need a quick review. Take a moment to update them so you can continue to request a quote. All changes will be applied immediately" flash message
     And I should see next rows in "Frontend Customer User Shopping List Invalid Line Items Table" table without headers
       | Slip-On Clog 1GB83 Select Variants                                            |
       | Please select product variants before placing an order or requesting a quote. |
@@ -149,7 +149,7 @@ Feature: Check invalid shopping list items for configurable products
       | Black | 1 | - |
       | White | - | 1 |
     And I click "Save Changes"
-    Then I should see "All issues have been fixed. You can now proceed to request a quote."
+    Then I should see "All issues have been fixed. You can now proceed to request a quote." flash message
 
     When I click "Proceed"
     Then Request a Quote contains products
