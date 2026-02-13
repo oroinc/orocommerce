@@ -28,6 +28,8 @@ services:
             - '@oro_message_queue.client.message_producer'
             - '@oro_pricing.combined_price_list_status_handler'
             - '@oro_pricing.shard_manager'
+        calls:
+            - ['setPriceListRelationTriggerHandler', ['@oro_pricing.price_list_relation_trigger_handler']]
 
     oro_pricing.async.versioned_flat_price_processor:
         class: 'Oro\Bundle\PricingBundle\Async\VersionedFlatPriceProcessor'
@@ -97,6 +99,26 @@ services:
             - ['setDependentPriceListProvider', ['@oro_pricing.provider.dependent_price_lists']]
         tags:
             - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
+
+    oro_pricing.async.generate_dependent_price_lists_prices_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\GenerateDependentPriceListsPricesProcessor'
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.provider.dependent_price_lists'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.job.dependent_job_service'
+        calls:
+            - ['setFeatureChecker', ['@oro_featuretoggle.checker.feature_checker']]
+
+    oro_pricing.async.generate_single_price_list_prices_by_rules_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\GenerateSinglePriceListPricesByRulesProcessor'
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.builder.price_list_product_assignment_builder'
+            - '@oro_pricing.builder.product_price_builder'
+            - '@oro_pricing.notification_alert_manager'
+            - '@oro_message_queue.job.runner'
 
     oro_pricing.async.price_list_assigned_products_processor:
         class: 'Oro\Bundle\PricingBundle\Async\PriceListAssignedProductsProcessor'

@@ -25,7 +25,9 @@ class RemoveDuplicatePricesCommand extends Command implements
         parent::__construct();
     }
 
-    #[\Override]
+    /**
+     * {@inheritdoc}
+     */
     protected function configure(): void
     {
         $this->setDescription('Removes duplicated product prices.')
@@ -49,7 +51,9 @@ HELP
         return $this->garbageCollector->hasDuplicatePrices();
     }
 
-    #[\Override]
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->garbageCollector->removeDuplicatePrices();

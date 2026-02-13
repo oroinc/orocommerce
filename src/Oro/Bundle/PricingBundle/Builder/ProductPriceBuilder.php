@@ -54,6 +54,16 @@ class ProductPriceBuilder implements FeatureToggleableInterface
         $this->combinedPriceListBuildTriggerHandler = $combinedPriceListBuildTriggerHandler;
     }
 
+    public function setVersion(?int $version): void
+    {
+        $this->version = $version;
+    }
+
+    public function getVersion(): ?int
+    {
+        return $this->version;
+    }
+
     public function setBatchSize(int $batchSize)
     {
         $this->batchSize = $batchSize;

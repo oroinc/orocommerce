@@ -3,13 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Async;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\MessageQueueBundle\Client\BufferedMessageProducer;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveFlatPriceTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveVersionedFlatPriceTopic;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Async\Topic\ReindexRequestItemProductsByRelatedJobIdTopic;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Storage\ProductWebsiteReindexRequestDataStorage;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -63,6 +63,10 @@ class VersionedFlatPriceProcessor implements MessageProcessorInterface, TopicSub
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         try {
+            if ($this->producer instanceof BufferedMessageProducer) {
+                $this->producer->disableBuffering();
+            }
+
             $body = $message->getBody();
             $version = $body['version'];
             $priceLists = $body['priceLists'];
@@ -77,6 +81,10 @@ class VersionedFlatPriceProcessor implements MessageProcessorInterface, TopicSub
             );
 
             return self::REJECT;
+        } finally {
+            if ($this->producer instanceof BufferedMessageProducer) {
+                $this->producer->enableBuffering();
+            }
         }
     }
 

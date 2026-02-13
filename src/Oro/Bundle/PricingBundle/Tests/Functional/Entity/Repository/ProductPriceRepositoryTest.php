@@ -4,6 +4,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
@@ -642,6 +644,90 @@ class ProductPriceRepositoryTest extends WebTestCase
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
 
         self::assertFalse(
+            $this->repository->areAllVersionedPricesNewInPriceList(
+                $this->shardManager,
+                $priceList,
+                $version
+            )
+        );
+    }
+
+    public function testAreAllVersionedPricesNewInPriceListFalseWhenCalculatedCplExists()
+    {
+        $version = 100;
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
+
+        // Set the same version to all prices
+        $productPrice15 = $this->getReference(LoadProductPrices::PRODUCT_PRICE_15);
+        $productPrice16 = $this->getReference(LoadProductPrices::PRODUCT_PRICE_16);
+
+        $productPrice15->setVersion($version);
+        $productPrice16->setVersion($version);
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
+        $priceManager->persist($productPrice15);
+        $priceManager->persist($productPrice16);
+        $priceManager->flush();
+
+        // Create a combined price list with pricesCalculated = true
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $cpl = new CombinedPriceList();
+        $cpl->setName('Test CPL');
+        $cpl->setPricesCalculated(true);
+        $em->persist($cpl);
+
+        // Create relation between CPL and PriceList
+        $cplToPl = new CombinedPriceListToPriceList();
+        $cplToPl->setCombinedPriceList($cpl);
+        $cplToPl->setPriceList($priceList);
+        $cplToPl->setSortOrder(1);
+        $em->persist($cplToPl);
+        $em->flush();
+
+        // Even though all prices have the same version, this should return false
+        // because there's a calculated CPL associated with this price list
+        self::assertFalse(
+            $this->repository->areAllVersionedPricesNewInPriceList(
+                $this->shardManager,
+                $priceList,
+                $version
+            )
+        );
+    }
+
+    public function testAreAllVersionedPricesNewInPriceListTrueWhenCalculatedCplDoesNotExist()
+    {
+        $version = 100;
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
+
+        // Set the same version to all prices
+        $productPrice15 = $this->getReference(LoadProductPrices::PRODUCT_PRICE_15);
+        $productPrice16 = $this->getReference(LoadProductPrices::PRODUCT_PRICE_16);
+
+        $productPrice15->setVersion($version);
+        $productPrice16->setVersion($version);
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
+        $priceManager->persist($productPrice15);
+        $priceManager->persist($productPrice16);
+        $priceManager->flush();
+
+        // Create a combined price list with pricesCalculated = true
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $cpl = new CombinedPriceList();
+        $cpl->setName('Test CPL');
+        $cpl->setPricesCalculated(false);
+        $em->persist($cpl);
+
+        // Create relation between CPL and PriceList
+        $cplToPl = new CombinedPriceListToPriceList();
+        $cplToPl->setCombinedPriceList($cpl);
+        $cplToPl->setPriceList($priceList);
+        $cplToPl->setSortOrder(1);
+        $em->persist($cplToPl);
+        $em->flush();
+
+        // When all prices have the same version, this should return true
+        // because there's a not calculated CPL associated with this price list
+        self::assertTrue(
             $this->repository->areAllVersionedPricesNewInPriceList(
                 $this->shardManager,
                 $priceList,

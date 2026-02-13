@@ -9,7 +9,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class RemoveDuplicatePricesCommandTest extends WebTestCase
 {
-    #[\Override]
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

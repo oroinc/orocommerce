@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
@@ -79,6 +81,18 @@ class PriceListRepository extends BasePriceListRepository
     public function getActivePriceListById(int $priceListId): ?PriceList
     {
         return $this->findOneBy(['id' => $priceListId, 'active' => true]);
+    }
+
+    public function getActivePriceListIdsByIds(array $priceListIds): array
+    {
+        $qb = $this->createQueryBuilder('priceList');
+        $qb->select('priceList.id')
+            ->where($qb->expr()->in('priceList.id', ':priceListIds'))
+            ->andWhere($qb->expr()->eq('priceList.active', ':active'))
+            ->setParameter('active', true, Types::BOOLEAN)
+            ->setParameter('priceListIds', $priceListIds, Connection::PARAM_INT_ARRAY);
+
+        return $qb->getQuery()->getSingleColumnResult();
     }
 
     /**

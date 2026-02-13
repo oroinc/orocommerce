@@ -4,35 +4,23 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ImportExportBundle\Entity\ImportExportResult;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
-use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByVersionedPriceListTopic;
-use Oro\Bundle\PricingBundle\Async\Topic\ResolveVersionedFlatPriceTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\GenerateDependentPriceListPricesTopic;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\ImportExportResultListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ImportExportResultListenerTest extends TestCase
 {
-    use EntityTrait;
-
     private ManagerRegistry|MockObject $doctrine;
     private PriceRuleLexemeTriggerHandler|MockObject $lexemeTriggerHandler;
     private ShardManager|MockObject $shardManager;
-    private FeatureChecker|MockObject $featureChecker;
     private MessageProducerInterface|MockObject $producer;
-    private PriceListRelationTriggerHandler|MockObject $priceListRelationTriggerHandler;
-
     private ImportExportResultListener $listener;
 
     /**
@@ -44,8 +32,6 @@ class ImportExportResultListenerTest extends TestCase
         $this->lexemeTriggerHandler = $this->createMock(PriceRuleLexemeTriggerHandler::class);
         $this->shardManager = $this->createMock(ShardManager::class);
         $this->producer = $this->createMock(MessageProducerInterface::class);
-        $this->featureChecker = $this->createMock(FeatureChecker::class);
-        $this->priceListRelationTriggerHandler = $this->createMock(PriceListRelationTriggerHandler::class);
 
         $this->listener = new ImportExportResultListener(
             $this->doctrine,
@@ -53,175 +39,67 @@ class ImportExportResultListenerTest extends TestCase
             $this->shardManager,
             $this->producer
         );
-        $this->listener->setPriceListRelationTriggerHandler($this->priceListRelationTriggerHandler);
-        $this->listener->setFeatureChecker($this->featureChecker);
-        $this->listener->addFeature('oro_price_lists_combined');
     }
 
-    public function testPostPersistFeatureDisabled()
+    public function testPostPersistWithUnsupportedImportExportResult(): void
     {
-        $importExportResult = new ImportExportResult();
-        $importExportResult->setOptions(['price_list_id' => 2, 'importVersion' => 1]);
+        $importExportResult = $this->createMock(ImportExportResult::class);
+        $importExportResult->expects($this->any())
+            ->method('getOptions')
+            ->willReturn([]);
 
-        $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
-
-        $this->featureChecker->expects($this->any())
-            ->method('isFeatureEnabled')
-            ->with('oro_price_lists_combined')
-            ->willReturn(false);
-
-        $productPriceRepository = $this->createMock(ProductPriceRepository::class);
-        $productPriceRepository
-            ->expects($this->once())
-            ->method('getProductsByPriceListAndVersion')
-            ->willReturn([[1]]);
-
-        $manager = $this->createMock(EntityManagerInterface::class);
-        $manager
-            ->expects($this->once())
-            ->method('find')
-            ->with(PriceList::class, 2)
-            ->willReturn($priceList);
-
-        $this->doctrine
-            ->expects($this->any())
-            ->method('getManagerForClass')
-            ->with(PriceList::class)
-            ->willReturn($manager);
-        $this->doctrine
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(ProductPrice::class)
-            ->willReturn($productPriceRepository);
-
-        $lexemes = [new PriceRuleLexeme()];
-        $this->lexemeTriggerHandler
-            ->expects($this->once())
-            ->method('findEntityLexemes')
-            ->with(PriceList::class, ['prices'], $priceList->getId())
-            ->willReturn($lexemes);
-        $this->lexemeTriggerHandler
-            ->expects($this->once())
-            ->method('processLexemes')
-            ->with($lexemes);
-
-        $this->priceListRelationTriggerHandler->expects($this->never())
-            ->method('handlePriceListStatusChange');
-
-        $this->producer
-            ->expects($this->once())
-            ->method('send')
-            ->with(ResolveVersionedFlatPriceTopic::getName(), ['version' => 1, 'priceLists' => [2]]);
+        $this->doctrine->expects($this->never())
+            ->method('getManagerForClass');
+        $this->producer->expects($this->never())
+            ->method('send');
 
         $this->listener->postPersist($importExportResult);
     }
 
-    public function testPostPersist()
+    public function testPostPersistWithMissingPriceListId(): void
     {
-        $importExportResult = new ImportExportResult();
-        $importExportResult->setOptions(['price_list_id' => 2, 'importVersion' => 2]);
+        $importExportResult = $this->createMock(ImportExportResult::class);
+        $importExportResult->expects($this->any())
+            ->method('getOptions')
+            ->willReturn(['importVersion' => 1]);
 
-        $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
-
-        $this->featureChecker->expects($this->any())
-            ->method('isFeatureEnabled')
-            ->with('oro_price_lists_combined')
-            ->willReturn(true);
-
-        $productPriceRepository = $this->createMock(ProductPriceRepository::class);
-        $productPriceRepository
-            ->expects($this->once())
-            ->method('getProductsByPriceListAndVersion')
-            ->willReturn([[1]]);
-
-        $manager = $this->createMock(EntityManagerInterface::class);
-        $manager
-            ->expects($this->once())
-            ->method('find')
-            ->with(PriceList::class, 2)
-            ->willReturn($priceList);
-
-        $this->doctrine
-            ->expects($this->any())
-            ->method('getManagerForClass')
-            ->with(PriceList::class)
-            ->willReturn($manager);
-        $this->doctrine
-            ->expects($this->atLeastOnce())
-            ->method('getRepository')
-            ->with(ProductPrice::class)
-            ->willReturn($productPriceRepository);
-
-        $lexemes = [new PriceRuleLexeme()];
-        $this->lexemeTriggerHandler->expects($this->once())
-            ->method('findEntityLexemes')
-            ->with(PriceList::class, ['prices'], $priceList->getId())
-            ->willReturn($lexemes);
-
-        $this->lexemeTriggerHandler->expects($this->once())
-            ->method('processLexemes')
-            ->with($lexemes);
-
-        $this->priceListRelationTriggerHandler->expects($this->never())
-            ->method('handlePriceListStatusChange');
-
-        $this->producer
-            ->expects($this->once())
-            ->method('send')
-            ->with(ResolveCombinedPriceByVersionedPriceListTopic::getName(), ['version' => 2, 'priceLists' => [2]]);
+        $this->doctrine->expects($this->never())
+            ->method('getManagerForClass');
+        $this->producer->expects($this->never())
+            ->method('send');
 
         $this->listener->postPersist($importExportResult);
     }
 
-    public function testPostPersistInactivePriceList()
+    public function testPostPersistWithMissingImportVersion(): void
     {
-        $importExportResult = new ImportExportResult();
-        $importExportResult->setOptions(['price_list_id' => 2, 'importVersion' => 2]);
+        $importExportResult = $this->createMock(ImportExportResult::class);
+        $importExportResult->expects($this->any())
+            ->method('getOptions')
+            ->willReturn(['price_list_id' => 1]);
 
-        $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
-        $priceList->setActive(false);
+        $this->doctrine->expects($this->never())
+            ->method('getManagerForClass');
+        $this->producer->expects($this->never())
+            ->method('send');
 
-        $this->featureChecker->expects($this->any())
-            ->method('isFeatureEnabled')
-            ->with('oro_price_lists_combined')
-            ->willReturn(true);
+        $this->listener->postPersist($importExportResult);
+    }
 
-        $productPriceRepository = $this->createMock(ProductPriceRepository::class);
-        $productPriceRepository
-            ->expects($this->once())
-            ->method('getProductsByPriceListAndVersion')
-            ->willReturn([[1]]);
+    public function testPostPersistWithNullEntityManager(): void
+    {
+        $importExportResult = $this->createMock(ImportExportResult::class);
+        $importExportResult->expects($this->any())
+            ->method('getOptions')
+            ->willReturn(['price_list_id' => 1, 'importVersion' => 1]);
+        $importExportResult->expects($this->once())
+            ->method('getType')
+            ->willReturn(ProcessorRegistry::TYPE_IMPORT);
 
-        $manager = $this->createMock(EntityManagerInterface::class);
-        $manager
-            ->expects($this->once())
-            ->method('find')
-            ->with(PriceList::class, 2)
-            ->willReturn($priceList);
-
-        $this->doctrine
-            ->expects($this->any())
+        $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
             ->with(PriceList::class)
-            ->willReturn($manager);
-        $this->doctrine
-            ->expects($this->atLeastOnce())
-            ->method('getRepository')
-            ->with(ProductPrice::class)
-            ->willReturn($productPriceRepository);
-
-        $lexemes = [new PriceRuleLexeme()];
-        $this->lexemeTriggerHandler->expects($this->once())
-            ->method('findEntityLexemes')
-            ->with(PriceList::class, ['prices'], $priceList->getId())
-            ->willReturn($lexemes);
-
-        $this->lexemeTriggerHandler->expects($this->once())
-            ->method('processLexemes')
-            ->with($lexemes);
-
-        $this->priceListRelationTriggerHandler->expects($this->never())
-            ->method('handlePriceListStatusChange');
+            ->willReturn(null);
 
         $this->producer->expects($this->never())
             ->method('send');
@@ -229,61 +107,26 @@ class ImportExportResultListenerTest extends TestCase
         $this->listener->postPersist($importExportResult);
     }
 
-    public function testPostPersistAllVersionedPricesNew()
+    public function testPostPersistWithNullPriceList(): void
     {
-        $version = 42;
-        $importExportResult = new ImportExportResult();
-        $importExportResult->setOptions(['price_list_id' => 2, 'importVersion' => $version]);
+        $importExportResult = $this->createMock(ImportExportResult::class);
+        $importExportResult->expects($this->any())
+            ->method('getOptions')
+            ->willReturn(['price_list_id' => 1, 'importVersion' => 1]);
+        $importExportResult->expects($this->once())
+            ->method('getType')
+            ->willReturn(ProcessorRegistry::TYPE_IMPORT);
 
-        $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
-        $priceList->setActive(true);
-
-        $this->featureChecker->expects($this->any())
-            ->method('isFeatureEnabled')
-            ->with('oro_price_lists_combined')
-            ->willReturn(true);
-
-        $productPriceRepository = $this->createMock(ProductPriceRepository::class);
-        $productPriceRepository
-            ->expects($this->once())
-            ->method('getProductsByPriceListAndVersion')
-            ->willReturn([[1]]);
-        $productPriceRepository->expects($this->once())
-            ->method('areAllVersionedPricesNewInPriceList')
-            ->with($this->shardManager, $priceList, $version)
-            ->willReturn(true);
-
-        $manager = $this->createMock(EntityManagerInterface::class);
-        $manager
-            ->expects($this->once())
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->once())
             ->method('find')
-            ->with(PriceList::class, 2)
-            ->willReturn($priceList);
+            ->with(PriceList::class, 1)
+            ->willReturn(null);
 
-        $this->doctrine
-            ->expects($this->any())
+        $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
             ->with(PriceList::class)
-            ->willReturn($manager);
-        $this->doctrine
-            ->expects($this->atLeastOnce())
-            ->method('getRepository')
-            ->with(ProductPrice::class)
-            ->willReturn($productPriceRepository);
-
-        $lexemes = [new PriceRuleLexeme()];
-        $this->lexemeTriggerHandler->expects($this->once())
-            ->method('findEntityLexemes')
-            ->with(PriceList::class, ['prices'], $priceList->getId())
-            ->willReturn($lexemes);
-
-        $this->lexemeTriggerHandler->expects($this->once())
-            ->method('processLexemes')
-            ->with($lexemes);
-
-        $this->priceListRelationTriggerHandler->expects($this->once())
-            ->method('handlePriceListStatusChange')
-            ->with($priceList);
+            ->willReturn($entityManager);
 
         $this->producer->expects($this->never())
             ->method('send');
@@ -291,131 +134,69 @@ class ImportExportResultListenerTest extends TestCase
         $this->listener->postPersist($importExportResult);
     }
 
-    /**
-     * @dataProvider importExportResultProvider
-     */
-    public function testPostPersistWithoutOption(ImportExportResult $importExportResult): void
+    public function testPostPersistWithValidationTypeSkipsHandler(): void
     {
-        $this->featureChecker->expects($this->never())
-            ->method('isFeatureEnabled')
-            ->with('oro_price_lists_combined');
+        $importExportResult = $this->createMock(ImportExportResult::class);
+        $importExportResult->expects($this->any())
+            ->method('getOptions')
+            ->willReturn(['price_list_id' => 1, 'importVersion' => 1]);
+        $importExportResult->expects($this->once())
+            ->method('getType')
+            ->willReturn(ProcessorRegistry::TYPE_IMPORT_VALIDATION);
 
-        $manager = $this->createMock(EntityManagerInterface::class);
-        $manager
-            ->expects($this->never())
-            ->method('find');
+        $priceList = $this->createMock(PriceList::class);
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->once())
+            ->method('find')
+            ->with(PriceList::class, 1)
+            ->willReturn($priceList);
 
-        $this->lexemeTriggerHandler
-            ->expects($this->never())
-            ->method('findEntityLexemes');
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($entityManager);
 
-        $this->priceListRelationTriggerHandler->expects($this->never())
-            ->method('handlePriceListStatusChange');
-
-        $this->producer
-            ->expects($this->never())
+        $this->producer->expects($this->never())
             ->method('send');
 
         $this->listener->postPersist($importExportResult);
     }
 
-    public function importExportResultProvider(): \Generator
+    public function testPostPersistSuccessful(): void
     {
-        $importExportResult = new ImportExportResult();
-        $importExportResult->setOptions([]);
-        yield [$importExportResult];
+        $importExportResult = $this->createMock(ImportExportResult::class);
+        $importExportResult->expects($this->any())
+            ->method('getOptions')
+            ->willReturn(['price_list_id' => 1, 'importVersion' => 1]);
+        $importExportResult->expects($this->once())
+            ->method('getType')
+            ->willReturn(ProcessorRegistry::TYPE_IMPORT);
 
-        $importExportResult = new ImportExportResult();
-        $importExportResult->setOptions(['price_list_id' => [1]]);
-        yield [$importExportResult];
+        $priceList = $this->createMock(PriceList::class);
+        $priceList->expects($this->once())
+            ->method('getId')
+            ->willReturn(1);
 
-        $importExportResult = new ImportExportResult();
-        $importExportResult->setOptions(['version' => 1]);
-        yield [$importExportResult];
-    }
-
-    public function testPostPersistWithPriceListAndVersion()
-    {
-        $importExportResult = new ImportExportResult();
-        $importExportResult->setOptions(['price_list_id' => 2, 'importVersion' => 1]);
-
-        $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
-        $products1 = [1, 3, 5];
-        $products2 = [7];
-
-        $this->featureChecker->expects($this->any())
-            ->method('isFeatureEnabled')
-            ->with('oro_price_lists_combined')
-            ->willReturn(true);
-
-        $lexemes = [new PriceRuleLexeme()];
-        $this->lexemeTriggerHandler->expects($this->once())
-            ->method('findEntityLexemes')
-            ->with(PriceList::class, ['prices'], $priceList->getId())
-            ->willReturn($lexemes);
-
-        $repo = $this->createMock(ProductPriceRepository::class);
-        $repo->expects($this->once())
-            ->method('getProductsByPriceListAndVersion')
-            ->with($this->shardManager, $priceList->getId(), 1)
-            ->willReturn([$products1, $products2]);
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->once())
             ->method('find')
-            ->with(PriceList::class, 2)
+            ->with(PriceList::class, 1)
             ->willReturn($priceList);
-        $this->doctrine->expects($this->atLeastOnce())
-            ->method('getRepository')
-            ->with(ProductPrice::class)
-            ->willReturn($repo);
 
-        $this->doctrine->expects($this->any())
+        $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
-            ->willReturn($em);
+            ->with(PriceList::class)
+            ->willReturn($entityManager);
 
-        $this->lexemeTriggerHandler->expects($this->exactly(2))
-            ->method('processLexemes')
-            ->withConsecutive(
-                [$lexemes, $products1],
-                [$lexemes, $products2]
+        $this->producer->expects($this->once())
+            ->method('send')
+            ->with(
+                GenerateDependentPriceListPricesTopic::getName(),
+                [
+                    'sourcePriceListId' => 1,
+                    'version' => 1
+                ]
             );
-
-        $this->priceListRelationTriggerHandler->expects($this->never())
-            ->method('handlePriceListStatusChange');
-
-        $this->producer
-            ->expects($this->once())
-            ->method('send')
-            ->with(ResolveCombinedPriceByVersionedPriceListTopic::getName(), ['version' => 1, 'priceLists' => [2]]);
-
-        $this->listener->postPersist($importExportResult);
-    }
-
-    public function testPostPersistWithImportValidation()
-    {
-        $importExportResult = new ImportExportResult();
-        $importExportResult->setType(ProcessorRegistry::TYPE_IMPORT_VALIDATION);
-        $importExportResult->setOptions(['price_list_id' => 2, 'importVersion' => 2]);
-
-        $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
-
-        $this->priceListRelationTriggerHandler->expects($this->never())
-            ->method('handlePriceListStatusChange');
-
-        $this->producer
-            ->expects($this->never())
-            ->method('send');
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
-            ->method('find')
-            ->willReturn($priceList);
-
-        $this->doctrine
-            ->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
 
         $this->listener->postPersist($importExportResult);
     }

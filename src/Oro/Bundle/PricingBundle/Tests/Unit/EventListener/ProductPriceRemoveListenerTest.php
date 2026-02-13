@@ -24,7 +24,9 @@ class ProductPriceRemoveListenerTest extends TestCase
 
     private ProductPriceRemoveListener $listener;
 
-    #[\Override]
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

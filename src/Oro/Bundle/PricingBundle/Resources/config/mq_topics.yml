@@ -4,6 +4,13 @@ services:
             tags:
                 - { name: oro_message_queue.topic }
 
+    Oro\Bundle\PricingBundle\Async\Topic\GenerateDependentPriceListPricesTopic:
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.shard_manager'
+
+    Oro\Bundle\PricingBundle\Async\Topic\GenerateSinglePriceListPricesByRulesTopic: ~
+
     Oro\Bundle\PricingBundle\Async\Topic\CombineSingleCombinedPriceListPricesTopic:
         arguments:
             - '@oro_pricing.provider.combined_price_list'

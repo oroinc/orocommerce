@@ -55,6 +55,8 @@ class PriceRuleLexemeTriggerHandler
             return;
         }
 
+        $this->markMentionedPriceListNotActual($lexemes, $products);
+
         $assignmentsRecalculatePriceLists = [];
         foreach ($lexemes as $lexeme) {
             $priceList = $lexeme->getPriceList();
@@ -78,8 +80,6 @@ class PriceRuleLexemeTriggerHandler
                 );
             }
         }
-
-        $this->markMentionedPriceListNotActual($lexemes, $products);
     }
 
     private function isPriceListShouldBeProcessed(PriceList $priceList, array $products): bool
@@ -88,7 +88,7 @@ class PriceRuleLexemeTriggerHandler
             return true;
         }
 
-        $priceListOrganizationId = $priceList->getOrganization()->getId();
+        $priceListOrganizationId = $priceList->getOrganization()?->getId();
         foreach ($products as $product) {
             if (null === $product
                 || (\is_object($product) && $priceListOrganizationId !== $product->getOrganization()->getId())
@@ -111,6 +111,10 @@ class PriceRuleLexemeTriggerHandler
         $priceLists = [];
         foreach ($lexemes as $lexeme) {
             $priceList = $lexeme->getPriceList();
+            if (!$priceList) {
+                continue;
+            }
+
             if ($this->isPriceListShouldBeProcessed($priceList, $products)) {
                 $priceLists[$priceList->getId()] = $priceList;
             }

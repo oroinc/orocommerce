@@ -373,4 +373,13 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
 
         return $qb;
     }
+
+    public function testVersionGetSet()
+    {
+        self::assertNull($this->productPriceBuilder->getVersion());
+        $this->productPriceBuilder->setVersion(10);
+        self::assertEquals(10, $this->productPriceBuilder->getVersion());
+        $this->productPriceBuilder->setVersion(null);
+        self::assertNull($this->productPriceBuilder->getVersion());
+    }
 }
