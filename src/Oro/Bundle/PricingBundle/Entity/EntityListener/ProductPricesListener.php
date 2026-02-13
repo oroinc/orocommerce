@@ -14,6 +14,9 @@ use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 /**
  * Based on the prices of all price lists included in the products, determines whether to initiate the rebuilding
  * combined price list.
+ *
+ *  Version presence in changeset indicates mass operation, so we should not process individual prices.
+ *  All prices affected by mass update will be processed in a way like this is done in ImportExportResultListener.
  */
 class ProductPricesListener implements OptionalListenerInterface, FeatureToggleableInterface
 {
@@ -41,7 +44,13 @@ class ProductPricesListener implements OptionalListenerInterface, FeatureTogglea
             return; // Skip all recalculate actions.
         }
 
-        $prices = array_merge($event->getSaved(), $event->getUpdated(), $event->getRemoved());
+        $saved = array_filter($event->getSaved(), static fn (ProductPrice $price) => null === $price->getVersion());
+        $updated = array_filter(
+            $event->getUpdated(),
+            static fn (ProductPrice $price) => empty($event->getChangeSets()[$price->getId()]['version'][1])
+        );
+
+        $prices = array_merge($saved, $updated, $event->getRemoved());
         $this->handle($prices);
     }
 

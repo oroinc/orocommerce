@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Async;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\MessageQueueBundle\Client\BufferedMessageProducer;
 use Oro\Bundle\PricingBundle\Async\Topic\ActualizeCombinedPriceListTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\CombineSingleCombinedPriceListPricesTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\RunCombinedPriceListPostProcessingStepsTopic;
@@ -61,6 +62,10 @@ class ActualizeCombinedPriceListsProcessor implements
     {
         $body = $message->getBody();
         try {
+            if ($this->producer instanceof BufferedMessageProducer) {
+                $this->producer->disableBuffering();
+            }
+
             $result = $this->jobRunner->runUniqueByMessage(
                 $message,
                 function (JobRunner $jobRunner, Job $job) use ($body) {
@@ -97,6 +102,10 @@ class ActualizeCombinedPriceListsProcessor implements
             );
 
             return self::REJECT;
+        } finally {
+            if ($this->producer instanceof BufferedMessageProducer) {
+                $this->producer->enableBuffering();
+            }
         }
     }
 

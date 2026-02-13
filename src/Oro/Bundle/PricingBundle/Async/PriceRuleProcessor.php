@@ -8,7 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
-use Oro\Bundle\PricingBundle\Async\Topic\ResolveFlatPriceTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\GenerateDependentPriceListPricesTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -41,7 +41,6 @@ class PriceRuleProcessor implements
     private PriceListTriggerHandler $triggerHandler;
     private MessageProducerInterface $producer;
     private DependentPriceListProvider $dependentPriceListProvider;
-    private array $processedPriceListIds = [];
 
     public function __construct(
         ManagerRegistry $doctrine,
@@ -70,7 +69,6 @@ class PriceRuleProcessor implements
     {
         $body = $message->getBody();
         $priceListsCount = count($body['product']);
-        $this->processedPriceListIds = [];
 
         /** @var EntityManagerInterface $em */
         $em = $this->doctrine->getManagerForClass(PriceList::class);
@@ -78,19 +76,29 @@ class PriceRuleProcessor implements
             /** @var PriceList|null $priceList */
             $priceList = $em->find(PriceList::class, $priceListId);
             if (null === $priceList) {
-                $this->logger?->warning(sprintf(
-                    'PriceList entity with identifier %s not found.',
-                    $priceListId
-                ));
+                $this->logger?->warning(
+                    sprintf(
+                        'PriceList entity with identifier %s not found.',
+                        $priceListId
+                    )
+                );
                 continue;
             }
 
             $em->beginTransaction();
             try {
+                $version = random_int(0, time());
+                $this->priceBuilder->setVersion($version);
                 $this->processPriceList($em, $priceList, $productIds);
 
                 $em->commit();
-                $this->handleProductReindex($priceList, $productIds);
+
+                // handleDependentPriceLists will send an MQ message to GenerateDependentPriceListPricesTopic
+                // which will trigger dependent price lists recalculations and then run price list status change
+                // for all previously empty price lists and CPL rebuild messages for all other price lists.
+                // Because CPL tasks include source price list (the one affected by rule) it's status will be correctly
+                // handled there.
+                $this->handleDependentPriceLists($priceList, $version);
             } catch (\Exception $e) {
                 $em->rollback();
                 $this->logger?->error(
@@ -122,36 +130,38 @@ class PriceRuleProcessor implements
                         return self::REJECT;
                     }
                 }
+            } finally {
+                $this->priceBuilder->setVersion(null);
             }
         }
 
         return self::ACK;
     }
 
-    /**
-     * @param EntityManagerInterface $em
-     * @param PriceList $priceList
-     * @param int[] $productIds
-     */
-    private function processPriceList(EntityManagerInterface $em, PriceList $priceList, array $productIds): void
-    {
-        if (!empty($this->processedPriceListIds[$priceList->getId()])) {
-            return;
-        }
-
+    private function processPriceList(
+        EntityManagerInterface $em,
+        PriceList $priceList,
+        array $productIds
+    ): void {
         $this->notificationAlertManager->resolveNotificationAlertByOperationAndItemIdForCurrentUser(
             PriceListCalculationNotificationAlert::OPERATION_PRICE_RULES_BUILD,
             $priceList->getId()
         );
 
         $startTime = $priceList->getUpdatedAt();
-        $this->priceBuilder->buildByPriceList($priceList, $productIds);
+        $this->priceBuilder->buildByPriceListWithoutTriggers($priceList, $productIds);
         $this->updatePriceListActuality($em, $priceList, $startTime);
-        $this->processedPriceListIds[$priceList->getId()] = true;
+    }
 
-        foreach ($this->dependentPriceListProvider->getDirectlyDependentPriceLists($priceList) as $dependentPriceList) {
-            $this->processPriceList($em, $dependentPriceList, $productIds);
-        }
+    private function handleDependentPriceLists(PriceList $priceList, int $version): void
+    {
+        $this->producer->send(
+            GenerateDependentPriceListPricesTopic::getName(),
+            [
+                'sourcePriceListId' => $priceList->getId(),
+                'version' => $version
+            ]
+        );
     }
 
     private function updatePriceListActuality(
@@ -164,16 +174,6 @@ class PriceRuleProcessor implements
             /** @var PriceListRepository $repo */
             $repo = $em->getRepository(PriceList::class);
             $repo->updatePriceListsActuality([$priceList], true);
-        }
-    }
-
-    private function handleProductReindex(PriceList $priceList, array $productIds): void
-    {
-        if ($this->isFeaturesEnabled()) {
-            $this->producer->send(
-                ResolveFlatPriceTopic::getName(),
-                ['priceList' => $priceList->getId(), 'products' => $productIds]
-            );
         }
     }
 }

@@ -269,6 +269,27 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_submit, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: 200 }
 
+    oro_pricing.api.set_version_for_batch_operation:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\SetVersionForBatchOperation
+        tags:
+            - { name: oro.api.processor, action: batch_update, group: initialize, priority: 100 }
+
+    oro_pricing.api.set_version_to_product_price:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\SetVersionToProductPrice
+        arguments:
+            - '@oro_pricing.shard_manager'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
+
+    oro_pricing.api.batch.job_event_listener:
+        class: Oro\Bundle\PricingBundle\EventListener\AfterSaveMqJobListener
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.shard_manager'
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: kernel.event_listener, event: oro_message_queue.after_save_job, method: onAfterSave }
+
     oro_pricing.api.reset_price_rule_field:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\ResetPriceRuleField
         tags:

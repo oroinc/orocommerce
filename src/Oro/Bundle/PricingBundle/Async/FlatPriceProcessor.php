@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
+use Oro\Bundle\MessageQueueBundle\Client\BufferedMessageProducer;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveFlatPriceTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
@@ -38,6 +39,10 @@ class FlatPriceProcessor implements MessageProcessorInterface, TopicSubscriberIn
     public function process(MessageInterface $message, SessionInterface $session)
     {
         try {
+            if ($this->producer instanceof BufferedMessageProducer) {
+                $this->producer->disableBuffering();
+            }
+
             $body = $message->getBody();
             $products = $body['products'];
 
@@ -51,6 +56,10 @@ class FlatPriceProcessor implements MessageProcessorInterface, TopicSubscriberIn
             );
 
             return self::REJECT;
+        } finally {
+            if ($this->producer instanceof BufferedMessageProducer) {
+                $this->producer->enableBuffering();
+            }
         }
     }
 

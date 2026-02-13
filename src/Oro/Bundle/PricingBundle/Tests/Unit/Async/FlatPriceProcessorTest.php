@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
+use Oro\Bundle\MessageQueueBundle\Client\BufferedMessageProducer;
 use Oro\Bundle\PricingBundle\Async\FlatPriceProcessor;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveFlatPriceTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
@@ -11,58 +13,120 @@ use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
-class FlatPriceProcessorTest extends \PHPUnit\Framework\TestCase
+class FlatPriceProcessorTest extends TestCase
 {
-    /** @var FlatPriceProcessor */
-    private $processor;
-
-    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $producer;
-
-    /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
-    private $jobRunner;
+    private FlatPriceProcessor $processor;
+    private MessageProducerInterface|MockObject $producer;
+    private JobRunner|MockObject $jobRunner;
+    private LoggerInterface|MockObject $logger;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->producer = $this->createMock(MessageProducerInterface::class);
         $this->jobRunner = $this->createMock(JobRunner::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->processor = new FlatPriceProcessor($this->producer, $this->jobRunner);
+        $this->processor->setLogger($this->logger);
+    }
+
+    public function testGetSubscribedTopics(): void
+    {
+        self::assertSame(
+            [ResolveFlatPriceTopic::getName()],
+            FlatPriceProcessor::getSubscribedTopics()
+        );
     }
 
     public function testProcess(): void
     {
-        $body = ['products' => [1,2,3]];
+        $this->assertProcessCalls($this->processor, $this->producer);
+    }
+
+    public function testProcessWithBufferedProducer(): void
+    {
+        $bufferedProducer = $this->createMock(BufferedMessageProducer::class);
+        $bufferedProducer->expects(self::once())
+            ->method('disableBuffering');
+        $bufferedProducer->expects(self::once())
+            ->method('enableBuffering');
+
+        $processor = new FlatPriceProcessor($bufferedProducer, $this->jobRunner);
+        $processor->setLogger($this->logger);
+
+        $this->assertProcessCalls($processor, $bufferedProducer);
+    }
+
+    public function testProcessWithBufferedProducerEnsuresEnableBufferingOnException(): void
+    {
+        $bufferedProducer = $this->createMock(BufferedMessageProducer::class);
+        $bufferedProducer->expects(self::once())
+            ->method('disableBuffering');
+        $bufferedProducer->expects(self::once())
+            ->method('enableBuffering');
+
+        $processor = new FlatPriceProcessor($bufferedProducer, $this->jobRunner);
+        $processor->setLogger($this->logger);
+
+        $body = ['products' => [1, 2, 3]];
+
+        $e = new \Exception('Test exception');
+        $this->jobRunner
+            ->expects(self::once())
+            ->method('runUniqueByMessage')
+            ->willThrowException($e);
+
+        $this->logger->expects(self::once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during queue message processing',
+                ['exception' => $e, 'topic' => ResolveFlatPriceTopic::NAME]
+            );
+
+        self::assertSame(
+            $processor::REJECT,
+            $processor->process($this->getMessage($body), $this->getSession())
+        );
+    }
+
+    private function assertProcessCalls(
+        FlatPriceProcessor $processor,
+        MessageProducerInterface|MockObject $producer
+    ): void {
+        $body = ['products' => [1, 2, 3]];
 
         $job = $this->createMock(Job::class);
         $job
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getName')
             ->willReturn('job_name');
         $job
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getId')
             ->willReturn('childId');
 
         $jobRunner = $this->createMock(JobRunner::class);
         $jobRunner
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('createDelayed')
             ->willReturnCallback(function ($name, $closure) use ($jobRunner, $job) {
                 return $closure($jobRunner, $job);
             });
 
         $this->jobRunner
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('runUniqueByMessage')
             ->willReturnCallback(function ($message, $closure) use ($jobRunner, $job) {
                 return $closure($jobRunner, $job);
             });
 
-        $this->producer
-            ->expects($this->exactly(3))
+        $producer
+            ->expects(self::exactly(3))
             ->method('send')
             ->withConsecutive(
                 [WebsiteSearchReindexTopic::getName(), $this->getReindexMessage(1)],
@@ -70,8 +134,11 @@ class FlatPriceProcessorTest extends \PHPUnit\Framework\TestCase
                 [WebsiteSearchReindexTopic::getName(), $this->getReindexMessage(3)],
             );
 
-        $this->processor->setProductsBatchSize(1);
-        $this->processor->process($this->getMessage($body), $this->getSession());
+        $processor->setProductsBatchSize(1);
+        self::assertSame(
+            $processor::ACK,
+            $processor->process($this->getMessage($body), $this->getSession())
+        );
     }
 
     private function getReindexMessage(int $productId): array

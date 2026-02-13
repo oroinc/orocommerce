@@ -7,14 +7,20 @@ use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceRuleLexemeEntityListener;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use Psr\Cache\CacheItemPoolInterface;
 
-class PriceRuleLexemeEntityListenerTest extends \PHPUnit\Framework\TestCase
+class PriceRuleLexemeEntityListenerTest extends TestCase
 {
-    /** @var PriceRuleLexemeRepository|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var PriceRuleLexemeRepository|MockObject */
     protected $repository;
 
-    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityManager|MockObject */
     protected $entityManager;
+
+    /** @var CacheItemPoolInterface|MockObject */
+    protected $cache;
 
     /** @var PriceRuleLexemeEntityListener */
     protected $listener;
@@ -23,6 +29,7 @@ class PriceRuleLexemeEntityListenerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->repository = $this->createMock(PriceRuleLexemeRepository::class);
+        $this->cache = $this->createMock(CacheItemPoolInterface::class);
 
         $this->entityManager = $this->createMock(EntityManager::class);
         $this->entityManager->expects($this->any())
@@ -31,12 +38,16 @@ class PriceRuleLexemeEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->repository);
 
         $this->listener = new PriceRuleLexemeEntityListener();
+        $this->listener->setCache($this->cache);
     }
 
     public function testPostPersist()
     {
         $this->repository->expects($this->once())
             ->method('invalidateCache');
+
+        $this->cache->expects($this->once())
+            ->method('clear');
 
         $args = $this->getEventArgs();
 
@@ -48,6 +59,9 @@ class PriceRuleLexemeEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->repository->expects($this->once())
             ->method('invalidateCache');
 
+        $this->cache->expects($this->once())
+            ->method('clear');
+
         $args = $this->getEventArgs();
 
         $this->listener->postUpdate($args->getObject(), $args);
@@ -57,6 +71,9 @@ class PriceRuleLexemeEntityListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->repository->expects($this->once())
             ->method('invalidateCache');
+
+        $this->cache->expects($this->once())
+            ->method('clear');
 
         $args = $this->getEventArgs();
 

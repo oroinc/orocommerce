@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Async;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\MessageQueueBundle\Client\BufferedMessageProducer;
 use Oro\Bundle\PricingBundle\Async\Topic\CombineSingleCombinedPriceListPricesTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\RunCombinedPriceListPostProcessingStepsTopic;
@@ -60,6 +61,10 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     public function process(MessageInterface $message, SessionInterface $session)
     {
         try {
+            if ($this->producer instanceof BufferedMessageProducer) {
+                $this->producer->disableBuffering();
+            }
+
             if (!$this->handlePriceListRelationTrigger($message)) {
                 return self::REJECT;
             }
@@ -74,6 +79,10 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
             );
 
             return self::REJECT;
+        } finally {
+            if ($this->producer instanceof BufferedMessageProducer) {
+                $this->producer->enableBuffering();
+            }
         }
 
         return self::ACK;

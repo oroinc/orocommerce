@@ -9,7 +9,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
 use Oro\Bundle\PricingBundle\Async\PriceListCalculationNotificationAlert;
 use Oro\Bundle\PricingBundle\Async\PriceRuleProcessor;
-use Oro\Bundle\PricingBundle\Async\Topic\ResolveFlatPriceTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\GenerateDependentPriceListPricesTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -22,9 +22,10 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
+class PriceRuleProcessorTest extends TestCase
 {
     use EntityTrait;
 
@@ -173,8 +174,21 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
                 $priceList2
             );
 
+        $this->notificationAlertManager->expects(self::once())
+            ->method('resolveNotificationAlertByOperationAndItemIdForCurrentUser')
+            ->with(
+                PriceListCalculationNotificationAlert::OPERATION_PRICE_RULES_BUILD,
+                $priceListId2
+            );
+
+        $this->priceBuilder->expects(self::exactly(2))
+            ->method('setVersion')
+            ->withConsecutive(
+                [self::greaterThanOrEqual(0)],
+                [null]
+            );
         $this->priceBuilder->expects(self::once())
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutTriggers')
             ->with($priceList2, $productIds);
 
         $em->expects(self::once())
@@ -188,6 +202,19 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
         $repository->expects(self::once())
             ->method('updatePriceListsActuality')
             ->with([$priceList2], true);
+
+        $this->producer->expects(self::once())
+            ->method('send')
+            ->with(
+                GenerateDependentPriceListPricesTopic::getName(),
+                self::callback(function ($data) use ($priceListId2) {
+                    return isset($data['sourcePriceListId'])
+                        && $data['sourcePriceListId'] === $priceListId2
+                        && isset($data['version'])
+                        && is_int($data['version'])
+                        && $data['version'] >= 0;
+                })
+            );
 
         $this->logger->expects(self::once())
             ->method('warning')
@@ -232,8 +259,14 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
                 PriceListCalculationNotificationAlert::OPERATION_PRICE_RULES_BUILD,
                 $priceListId
             );
+        $this->priceBuilder->expects(self::exactly(2))
+            ->method('setVersion')
+            ->withConsecutive(
+                [self::greaterThanOrEqual(0)],
+                [null]
+            );
         $this->priceBuilder->expects(self::once())
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutTriggers')
             ->with($priceList, $productIds)
             ->willThrowException($exception);
 
@@ -254,6 +287,9 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testProcessSeveralWithSingleExceptionInBuildByPriceList()
     {
         $priceListId1 = 1;
@@ -299,8 +335,16 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
                     $priceListId2
                 ]
             );
+        $this->priceBuilder->expects(self::exactly(4))
+            ->method('setVersion')
+            ->withConsecutive(
+                [self::greaterThanOrEqual(0)],
+                [null],
+                [self::greaterThanOrEqual(0)],
+                [null]
+            );
         $this->priceBuilder->expects(self::exactly(2))
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutTriggers')
             ->withConsecutive(
                 [$priceList1, $productIds],
                 [$priceList2, $productIds]
@@ -321,6 +365,10 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('addNotificationAlert')
             ->with(self::isInstanceOf(PriceListCalculationNotificationAlert::class));
 
+        $em->expects(self::once())
+            ->method('refresh')
+            ->with($priceList2);
+
         $repository = $this->createMock(PriceListRepository::class);
         $em->expects(self::once())
             ->method('getRepository')
@@ -328,8 +376,19 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
         $repository->expects(self::once())
             ->method('updatePriceListsActuality')
             ->with([$priceList2], true);
-        $this->triggerHandler->expects(self::never())
-            ->method('handlePriceListTopic');
+
+        $this->producer->expects(self::once())
+            ->method('send')
+            ->with(
+                GenerateDependentPriceListPricesTopic::getName(),
+                self::callback(function ($data) use ($priceListId2) {
+                    return isset($data['sourcePriceListId'])
+                        && $data['sourcePriceListId'] === $priceListId2
+                        && isset($data['version'])
+                        && is_int($data['version'])
+                        && $data['version'] >= 0;
+                })
+            );
 
         $this->assertEquals(
             MessageProcessorInterface::ACK,
@@ -370,8 +429,14 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
                 PriceListCalculationNotificationAlert::OPERATION_PRICE_RULES_BUILD,
                 $priceListId
             );
+        $this->priceBuilder->expects(self::exactly(2))
+            ->method('setVersion')
+            ->withConsecutive(
+                [self::greaterThanOrEqual(0)],
+                [null]
+            );
         $this->priceBuilder->expects(self::once())
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutTriggers')
             ->with($priceList, $productIds)
             ->willThrowException($exception);
 
@@ -391,6 +456,9 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testProcessSeveralWithSingleRetryableExceptionInBuildByPriceList()
     {
         $priceListId1 = 1;
@@ -436,8 +504,16 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
                     $priceListId2
                 ]
             );
+        $this->priceBuilder->expects(self::exactly(4))
+            ->method('setVersion')
+            ->withConsecutive(
+                [self::greaterThanOrEqual(0)],
+                [null],
+                [self::greaterThanOrEqual(0)],
+                [null]
+            );
         $this->priceBuilder->expects(self::exactly(2))
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutTriggers')
             ->withConsecutive(
                 [$priceList1, $productIds],
                 [$priceList2, $productIds]
@@ -466,6 +542,10 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
                 $productIds
             );
 
+        $em->expects(self::once())
+            ->method('refresh')
+            ->with($priceList2);
+
         $repository = $this->createMock(PriceListRepository::class);
         $em->expects(self::once())
             ->method('getRepository')
@@ -473,6 +553,19 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
         $repository->expects(self::once())
             ->method('updatePriceListsActuality')
             ->with([$priceList2], true);
+
+        $this->producer->expects(self::once())
+            ->method('send')
+            ->with(
+                GenerateDependentPriceListPricesTopic::getName(),
+                self::callback(function ($data) use ($priceListId2) {
+                    return isset($data['sourcePriceListId'])
+                        && $data['sourcePriceListId'] === $priceListId2
+                        && isset($data['version'])
+                        && is_int($data['version'])
+                        && $data['version'] >= 0;
+                })
+            );
 
         $this->assertEquals(
             MessageProcessorInterface::ACK,
@@ -511,8 +604,14 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
                 PriceListCalculationNotificationAlert::OPERATION_PRICE_RULES_BUILD,
                 $priceListId
             );
+        $this->priceBuilder->expects(self::exactly(2))
+            ->method('setVersion')
+            ->withConsecutive(
+                [self::greaterThanOrEqual(0)],
+                [null]
+            );
         $this->priceBuilder->expects(self::once())
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutTriggers')
             ->with($priceList, $productIds);
 
         $em->expects(self::once())
@@ -527,101 +626,19 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('updatePriceListsActuality')
             ->with([$priceList], true);
 
-        $this->assertEquals(
-            MessageProcessorInterface::ACK,
-            $this->processor->process($this->getMessage($body), $this->getSession())
-        );
-    }
-
-    public function testProcessWithFlatPricingEnabled(): void
-    {
-        $priceListId = 1;
-        $dependentPriceListId = 2;
-        $productIds = [2];
-        $body = ['product' => [$priceListId => $productIds]];
-
-        /** @var PriceList $priceList */
-        $priceList = $this->getEntity(PriceList::class, ['id' => $priceListId, 'updatedAt' => new \DateTime()]);
-        /** @var PriceList $dependentPriceList */
-        $dependentPriceList = $this->getEntity(PriceList::class, ['id' => $dependentPriceListId]);
-        $dependentPriceList->setUpdatedAt(new \DateTime());
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(self::once())
-            ->method('beginTransaction');
-        $em->expects((self::once()))
-            ->method('commit');
-
-        $this->doctrine->expects(self::once())
-            ->method('getManagerForClass')
-            ->with(PriceList::class)
-            ->willReturn($em);
-
-        $em->expects(self::once())
-            ->method('find')
-            ->with(PriceList::class, $priceList->getId())
-            ->willReturn($priceList);
-
-        $this->dependentPriceListProvider->expects(self::exactly(2))
-            ->method('getDirectlyDependentPriceLists')
-            ->withConsecutive(
-                [$priceList],
-                [$dependentPriceList]
-            )
-            ->willReturnOnConsecutiveCalls(
-                [$dependentPriceList],
-                []
-            );
-
-        $this->notificationAlertManager->expects(self::exactly(2))
-            ->method('resolveNotificationAlertByOperationAndItemIdForCurrentUser')
-            ->withConsecutive(
-                [
-                    PriceListCalculationNotificationAlert::OPERATION_PRICE_RULES_BUILD,
-                    $priceListId
-                ],
-                [
-                    PriceListCalculationNotificationAlert::OPERATION_PRICE_RULES_BUILD,
-                    $dependentPriceListId
-                ]
-            );
-        $this->priceBuilder->expects(self::exactly(2))
-            ->method('buildByPriceList')
-            ->withConsecutive(
-                [$priceList, $productIds],
-                [$dependentPriceList, $productIds]
-            );
-
-        $em->expects(self::exactly(2))
-            ->method('refresh')
-            ->withConsecutive(
-                [$priceList],
-                [$dependentPriceList]
-            );
-
-        $repository = $this->createMock(PriceListRepository::class);
-        $em->expects(self::any())
-            ->method('getRepository')
-            ->willReturn($repository);
-        $repository->expects(self::exactly(2))
-            ->method('updatePriceListsActuality')
-            ->withConsecutive(
-                [[$priceList], true],
-                [[$dependentPriceList], true],
-            );
-
-        $this->featureChecker
-            ->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('oro_price_lists_flat')
-            ->willReturn(true);
-
-        $this->producer
-            ->expects($this->once())
+        $this->producer->expects(self::once())
             ->method('send')
-            ->with(ResolveFlatPriceTopic::getName(), ['priceList' => $priceList->getId(), 'products' => $productIds]);
+            ->with(
+                GenerateDependentPriceListPricesTopic::getName(),
+                self::callback(function ($data) use ($priceListId) {
+                    return isset($data['sourcePriceListId'])
+                        && $data['sourcePriceListId'] === $priceListId
+                        && isset($data['version'])
+                        && is_int($data['version'])
+                        && $data['version'] >= 0;
+                })
+            );
 
-        $this->processor->addFeature('oro_price_lists_flat');
         $this->assertEquals(
             MessageProcessorInterface::ACK,
             $this->processor->process($this->getMessage($body), $this->getSession())
