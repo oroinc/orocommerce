@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Provider;
 
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
@@ -11,26 +12,23 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentScopeProvider;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class RequestWebContentScopeProviderTest extends \PHPUnit\Framework\TestCase
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class RequestWebContentScopeProviderTest extends TestCase
 {
-    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
-    private $requestStack;
-
-    /** @var SlugRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $slugRepository;
-
-    /** @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $scopeManager;
-
-    /** @var MatchedUrlDecisionMaker|\PHPUnit\Framework\MockObject\MockObject */
-    private $matchedUrlDecisionMaker;
-
-    /** @var RequestWebContentScopeProvider */
-    private $provider;
+    private RequestStack&MockObject $requestStack;
+    private SlugRepository&MockObject $slugRepository;
+    private ScopeManager&MockObject $scopeManager;
+    private MatchedUrlDecisionMaker&MockObject $matchedUrlDecisionMaker;
+    private FrontendHelper&MockObject $frontendHelper;
+    private RequestWebContentScopeProvider $provider;
 
     #[\Override]
     protected function setUp(): void
@@ -39,9 +37,10 @@ class RequestWebContentScopeProviderTest extends \PHPUnit\Framework\TestCase
         $this->slugRepository = $this->createMock(SlugRepository::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);
         $this->matchedUrlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);
+        $this->frontendHelper = $this->createMock(FrontendHelper::class);
 
         $doctrine = $this->createMock(ManagerRegistry::class);
-        $doctrine->expects($this->any())
+        $doctrine->expects(self::any())
             ->method('getRepository')
             ->with(Slug::class)
             ->willReturn($this->slugRepository);
@@ -52,165 +51,175 @@ class RequestWebContentScopeProviderTest extends \PHPUnit\Framework\TestCase
             $this->scopeManager,
             $this->matchedUrlDecisionMaker
         );
+        $this->provider->setFrontendHelper($this->frontendHelper);
+        $this->provider->setApiPrefix('/api/');
     }
 
-    public function testGetScopeWhenNoRequest()
+    public function testGetScopeWhenNoRequest(): void
     {
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects(self::once())
             ->method('getCurrentRequest')
             ->willReturn(null);
-        $this->matchedUrlDecisionMaker->expects($this->never())
+        $this->matchedUrlDecisionMaker->expects(self::never())
             ->method('matches');
-        $this->scopeManager->expects($this->never())
+        $this->scopeManager->expects(self::never())
             ->method('getCriteria');
-        $this->slugRepository->expects($this->never())
+        $this->slugRepository->expects(self::never())
             ->method('findMostSuitableUsedScope');
 
-        $this->assertNull($this->provider->getScope());
+        self::assertNull($this->provider->getScope());
     }
 
-    public function testGetScopeWhenItIsAlreadySetToRequest()
+    public function testGetScopeWhenItIsAlreadySetToRequest(): void
     {
         $request = Request::create('/');
         $scope = $this->createMock(Scope::class);
         $request->attributes->set('_web_content_scope', $scope);
 
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects(self::once())
             ->method('getCurrentRequest')
             ->willReturn($request);
-        $this->matchedUrlDecisionMaker->expects($this->never())
+        $this->matchedUrlDecisionMaker->expects(self::never())
             ->method('matches');
-        $this->scopeManager->expects($this->never())
+        $this->scopeManager->expects(self::never())
             ->method('getCriteria');
-        $this->slugRepository->expects($this->never())
+        $this->slugRepository->expects(self::never())
             ->method('findMostSuitableUsedScope');
 
-        $this->assertSame($scope, $this->provider->getScope());
+        self::assertSame($scope, $this->provider->getScope());
     }
 
-    public function testGetScopeForNotMatchedRequest()
+    public function testGetScopeForNotMatchedRequest(): void
     {
         $request = Request::create('/');
 
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects(self::once())
             ->method('getCurrentRequest')
             ->willReturn($request);
-        $this->matchedUrlDecisionMaker->expects($this->once())
+        $this->matchedUrlDecisionMaker->expects(self::once())
             ->method('matches')
             ->willReturn(false);
-        $this->scopeManager->expects($this->never())
+        $this->frontendHelper->expects(self::once())
+            ->method('isFrontendUrl')
+            ->with('/')
+            ->willReturn(false);
+        $this->scopeManager->expects(self::never())
             ->method('getCriteria');
-        $this->slugRepository->expects($this->never())
+        $this->slugRepository->expects(self::never())
             ->method('findMostSuitableUsedScope');
 
-        $this->assertNull($this->provider->getScope());
-        $this->assertTrue($request->attributes->has('_web_content_scope'));
-        $this->assertNull($request->attributes->get('_web_content_scope'));
+        self::assertNull($this->provider->getScope());
+        self::assertTrue($request->attributes->has('_web_content_scope'));
+        self::assertNull($request->attributes->get('_web_content_scope'));
     }
 
-    public function testGetScope()
+    public function testGetScope(): void
     {
         $request = Request::create('/');
         $scope = $this->createMock(Scope::class);
         $criteria = $this->createMock(ScopeCriteria::class);
 
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects(self::once())
             ->method('getCurrentRequest')
             ->willReturn($request);
-        $this->matchedUrlDecisionMaker->expects($this->once())
+        $this->matchedUrlDecisionMaker->expects(self::once())
             ->method('matches')
             ->willReturn(true);
-        $this->scopeManager->expects($this->once())
+        $this->scopeManager->expects(self::once())
             ->method('getCriteria')
             ->with('web_content')
             ->willReturn($criteria);
-        $this->slugRepository->expects($this->once())
+        $this->slugRepository->expects(self::once())
             ->method('findMostSuitableUsedScope')
             ->with($criteria)
             ->willReturn($scope);
 
-        $this->assertSame($scope, $this->provider->getScope());
-        $this->assertTrue($request->attributes->has('_web_content_scope'));
-        $this->assertSame($scope, $request->attributes->get('_web_content_scope'));
+        self::assertSame($scope, $this->provider->getScope());
+        self::assertTrue($request->attributes->has('_web_content_scope'));
+        self::assertSame($scope, $request->attributes->get('_web_content_scope'));
     }
 
-    public function testGetScopeWhenScopeNotAttachedToSlug()
+    public function testGetScopeWhenScopeNotAttachedToSlug(): void
     {
         $request = Request::create('/');
         $criteria = $this->createMock(ScopeCriteria::class);
 
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects(self::once())
             ->method('getCurrentRequest')
             ->willReturn($request);
-        $this->matchedUrlDecisionMaker->expects($this->once())
+        $this->matchedUrlDecisionMaker->expects(self::once())
             ->method('matches')
             ->willReturn(true);
-        $this->scopeManager->expects($this->once())
+        $this->scopeManager->expects(self::once())
             ->method('getCriteria')
             ->with('web_content')
             ->willReturn($criteria);
-        $this->slugRepository->expects($this->once())
+        $this->slugRepository->expects(self::once())
             ->method('findMostSuitableUsedScope')
             ->with($criteria)
             ->willReturn(null);
 
-        $this->assertNull($this->provider->getScope());
-        $this->assertTrue($request->attributes->has('_web_content_scope'));
-        $this->assertNull($request->attributes->get('_web_content_scope'));
+        self::assertNull($this->provider->getScope());
+        self::assertTrue($request->attributes->has('_web_content_scope'));
+        self::assertNull($request->attributes->get('_web_content_scope'));
     }
 
-    public function testGetScopeCriteriaWhenNoRequest()
+    public function testGetScopeCriteriaWhenNoRequest(): void
     {
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects(self::once())
             ->method('getCurrentRequest')
             ->willReturn(null);
-        $this->matchedUrlDecisionMaker->expects($this->never())
+        $this->matchedUrlDecisionMaker->expects(self::never())
             ->method('matches');
-        $this->scopeManager->expects($this->never())
+        $this->scopeManager->expects(self::never())
             ->method('getCriteria');
-        $this->slugRepository->expects($this->never())
+        $this->slugRepository->expects(self::never())
             ->method('findMostSuitableUsedScope');
 
-        $this->assertNull($this->provider->getScopeCriteria());
+        self::assertNull($this->provider->getScopeCriteria());
     }
 
-    public function testGetScopeCriteriaWhenItIsAlreadySetToRequest()
+    public function testGetScopeCriteriaWhenItIsAlreadySetToRequest(): void
     {
         $request = Request::create('/');
         $criteria = $this->createMock(ScopeCriteria::class);
         $request->attributes->set('_web_content_criteria', $criteria);
 
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects(self::once())
             ->method('getCurrentRequest')
             ->willReturn($request);
-        $this->matchedUrlDecisionMaker->expects($this->never())
+        $this->matchedUrlDecisionMaker->expects(self::never())
             ->method('matches');
-        $this->scopeManager->expects($this->never())
+        $this->scopeManager->expects(self::never())
             ->method('getCriteria');
-        $this->slugRepository->expects($this->never())
+        $this->slugRepository->expects(self::never())
             ->method('findMostSuitableUsedScope');
 
-        $this->assertSame($criteria, $this->provider->getScopeCriteria());
+        self::assertSame($criteria, $this->provider->getScopeCriteria());
     }
 
-    public function testGetScopeCriteriaForNotMatchedRequest()
+    public function testGetScopeCriteriaForNotMatchedRequest(): void
     {
         $request = Request::create('/');
 
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects(self::once())
             ->method('getCurrentRequest')
             ->willReturn($request);
-        $this->matchedUrlDecisionMaker->expects($this->once())
+        $this->matchedUrlDecisionMaker->expects(self::once())
             ->method('matches')
             ->willReturn(false);
-        $this->scopeManager->expects($this->never())
+        $this->frontendHelper->expects(self::once())
+            ->method('isFrontendUrl')
+            ->with('/')
+            ->willReturn(false);
+        $this->scopeManager->expects(self::never())
             ->method('getCriteria');
-        $this->slugRepository->expects($this->never())
+        $this->slugRepository->expects(self::never())
             ->method('findMostSuitableUsedScope');
 
-        $this->assertNull($this->provider->getScopeCriteria());
-        $this->assertTrue($request->attributes->has('_web_content_criteria'));
-        $this->assertNull($request->attributes->get('_web_content_criteria'));
+        self::assertNull($this->provider->getScopeCriteria());
+        self::assertTrue($request->attributes->has('_web_content_criteria'));
+        self::assertNull($request->attributes->get('_web_content_criteria'));
     }
 
     public function testGetScopeCriteriaForNotFoundRequest(): void
@@ -226,6 +235,10 @@ class RequestWebContentScopeProviderTest extends \PHPUnit\Framework\TestCase
         $this->matchedUrlDecisionMaker->expects(self::once())
             ->method('matches')
             ->willReturn(false);
+        $this->frontendHelper->expects(self::once())
+            ->method('isFrontendUrl')
+            ->with('/not-found')
+            ->willReturn(false);
         $this->scopeManager->expects(self::once())
             ->method('getCriteria')
             ->with('web_content')
@@ -238,26 +251,110 @@ class RequestWebContentScopeProviderTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($criteria, $request->attributes->get('_web_content_criteria'));
     }
 
-    public function testGetScopeCriteria()
+    public function testGetScopeCriteria(): void
     {
         $request = Request::create('/');
         $criteria = $this->createMock(ScopeCriteria::class);
 
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects(self::once())
             ->method('getCurrentRequest')
             ->willReturn($request);
-        $this->matchedUrlDecisionMaker->expects($this->once())
+        $this->matchedUrlDecisionMaker->expects(self::once())
             ->method('matches')
             ->willReturn(true);
-        $this->scopeManager->expects($this->once())
+        $this->scopeManager->expects(self::once())
             ->method('getCriteria')
             ->with('web_content')
             ->willReturn($criteria);
-        $this->slugRepository->expects($this->never())
+        $this->slugRepository->expects(self::never())
             ->method('findMostSuitableUsedScope');
 
-        $this->assertSame($criteria, $this->provider->getScopeCriteria());
-        $this->assertTrue($request->attributes->has('_web_content_criteria'));
-        $this->assertSame($criteria, $request->attributes->get('_web_content_criteria'));
+        self::assertSame($criteria, $this->provider->getScopeCriteria());
+        self::assertTrue($request->attributes->has('_web_content_criteria'));
+        self::assertSame($criteria, $request->attributes->get('_web_content_criteria'));
+    }
+
+    public function testGetScopeCriteriaForStorefrontApiUrl(): void
+    {
+        $request = Request::create('/api/menus');
+        $criteria = $this->createMock(ScopeCriteria::class);
+
+        $this->requestStack->expects(self::once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+        $this->matchedUrlDecisionMaker->expects(self::once())
+            ->method('matches')
+            ->with('/api/menus')
+            ->willReturn(false);
+        $this->frontendHelper->expects(self::once())
+            ->method('isFrontendUrl')
+            ->with('/api/menus')
+            ->willReturn(true);
+        $this->scopeManager->expects(self::once())
+            ->method('getCriteria')
+            ->with('web_content')
+            ->willReturn($criteria);
+        $this->slugRepository->expects(self::never())
+            ->method('findMostSuitableUsedScope');
+
+        self::assertSame($criteria, $this->provider->getScopeCriteria());
+        self::assertTrue($request->attributes->has('_web_content_criteria'));
+        self::assertSame($criteria, $request->attributes->get('_web_content_criteria'));
+    }
+
+    public function testGetScopeForStorefrontApiUrl(): void
+    {
+        $request = Request::create('/api/menus?filter[depth]=1&filter[menu]=frontend_menu');
+        $scope = $this->createMock(Scope::class);
+        $criteria = $this->createMock(ScopeCriteria::class);
+
+        $this->requestStack->expects(self::once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+        $this->matchedUrlDecisionMaker->expects(self::once())
+            ->method('matches')
+            ->with('/api/menus')
+            ->willReturn(false);
+        $this->frontendHelper->expects(self::once())
+            ->method('isFrontendUrl')
+            ->with('/api/menus')
+            ->willReturn(true);
+        $this->scopeManager->expects(self::once())
+            ->method('getCriteria')
+            ->with('web_content')
+            ->willReturn($criteria);
+        $this->slugRepository->expects(self::once())
+            ->method('findMostSuitableUsedScope')
+            ->with($criteria)
+            ->willReturn($scope);
+
+        self::assertSame($scope, $this->provider->getScope());
+        self::assertTrue($request->attributes->has('_web_content_scope'));
+        self::assertSame($scope, $request->attributes->get('_web_content_scope'));
+    }
+
+    public function testGetScopeCriteriaForStorefrontApiUrlWhenNotApiPrefix(): void
+    {
+        $request = Request::create('/frontend-page');
+
+        $this->requestStack->expects(self::once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+        $this->matchedUrlDecisionMaker->expects(self::once())
+            ->method('matches')
+            ->with('/frontend-page')
+            ->willReturn(false);
+        $this->frontendHelper->expects(self::once())
+            ->method('isFrontendUrl')
+            ->with('/frontend-page')
+            ->willReturn(true);
+        $this->scopeManager->expects(self::never())
+            ->method('getCriteria');
+        $this->slugRepository->expects(self::never())
+            ->method('findMostSuitableUsedScope');
+
+        self::assertNull($this->provider->getScopeCriteria());
+        self::assertTrue($request->attributes->has('_web_content_criteria'));
+        self::assertNull($request->attributes->get('_web_content_criteria'));
     }
 }

@@ -143,6 +143,9 @@ The current file describes significant changes in the code that may affect the u
     * replacing the `Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface` construct argument with `Oro\Bundle\PricingBundle\Manager\UserCurrencyManager`.
     * removing the `Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface` construct argument.
 
+#### WebCatalogBundle
+* Changed `\Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentScopeProvider` to initialize scope for storefront API requests.
+
 #### OrderBundle
 * Updated `Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository` by removing the required `$customerId` argument from the `getOrdersPurchaseVolume` and `getOrdersPurchaseVolumeQueryBuilder` methods.
 * Changed the order total amount label appearance on the order view back-office page.

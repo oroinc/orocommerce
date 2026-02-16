@@ -62,6 +62,10 @@ The parent of the current node in the tree.
 The content variant for the node, e.g. a system page, a landing page, a master catalog category, a product,
 a product collection, etc.
 
+### webCatalog
+
+The web catalog that the node belongs to.
+
 ## FILTERS
 
 ### root
@@ -99,3 +103,13 @@ Retrieve a record of content variant for a specific node record.
 #### get_relationship
 
 Retrieve the ID of content variant record for a specific node record.
+
+### webCatalog
+
+#### get_subresource
+
+Retrieve a record of web catalog assigned to a specific node record.
+
+#### get_relationship
+
+Retrieve the ID of web catalog record assigned to a specific node record.

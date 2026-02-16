@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\Provider;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
@@ -22,28 +23,26 @@ class RequestWebContentScopeProvider
     private const REQUEST_SCOPES_ATTRIBUTE = '_web_content_scopes';
     private const REQUEST_CRITERIA_ATTRIBUTE = '_web_content_criteria';
 
-    /** @var RequestStack */
-    private $requestStack;
+    private FrontendHelper $frontendHelper;
 
-    /** @var ManagerRegistry */
-    private $doctrine;
-
-    /** @var ScopeManager */
-    private $scopeManager;
-
-    /** @var MatchedUrlDecisionMaker */
-    private $matchedUrlDecisionMaker;
+    private string $apiPrefix;
 
     public function __construct(
-        RequestStack $requestStack,
-        ManagerRegistry $doctrine,
-        ScopeManager $scopeManager,
-        MatchedUrlDecisionMaker $matchedUrlDecisionMaker
+        private readonly RequestStack $requestStack,
+        private readonly ManagerRegistry $doctrine,
+        private readonly ScopeManager $scopeManager,
+        private readonly MatchedUrlDecisionMaker $matchedUrlDecisionMaker,
     ) {
-        $this->requestStack = $requestStack;
-        $this->doctrine = $doctrine;
-        $this->scopeManager = $scopeManager;
-        $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
+    }
+
+    public function setFrontendHelper(FrontendHelper $frontendHelper): void
+    {
+        $this->frontendHelper = $frontendHelper;
+    }
+
+    public function setApiPrefix(string $apiPrefix): void
+    {
+        $this->apiPrefix = $apiPrefix;
     }
 
     public function getScope(): ?Scope
@@ -107,6 +106,7 @@ class RequestWebContentScopeProvider
         $criteria = null;
 
         if ($this->matchedUrlDecisionMaker->matches($request->getPathInfo()) ||
+            $this->isStorefrontApiUrl($request->getPathInfo()) ||
             $request->attributes->get('exception')?->getStatusCode() === Response::HTTP_NOT_FOUND
         ) {
             $criteria = $this->scopeManager->getCriteria('web_content');
@@ -114,6 +114,16 @@ class RequestWebContentScopeProvider
         $request->attributes->set(self::REQUEST_CRITERIA_ATTRIBUTE, $criteria);
 
         return $criteria;
+    }
+
+    private function isStorefrontApiUrl(string $pathInfo): bool
+    {
+        if (!isset($this->frontendHelper) || !isset($this->apiPrefix)) {
+            return false;
+        }
+
+        return $this->frontendHelper->isFrontendUrl($pathInfo)
+            && str_starts_with($pathInfo, $this->apiPrefix);
     }
 
     private function getSlugRepository(): SlugRepository
