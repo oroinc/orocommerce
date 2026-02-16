@@ -13,7 +13,7 @@ Feature: Reorder
     And I click "Re-order"
     Then I should see "Re-order based on Order #"
     When I save and close form
-    Then I should see "Order has been saved"
+    Then I should see "Order has been saved" flash message
     And I should see "Subtotal $50.00"
     And I should see "Customer first customer"
     And I should see "Product1"
@@ -23,7 +23,7 @@ Feature: Reorder
     When I click "Re-order" on row "SimpleOrder" in grid
     Then I should see "Re-order based on Order #"
     When I save and close form
-    Then I should see "Order has been saved"
+    Then I should see "Order has been saved" flash message
     And I should see "Subtotal $50.00"
     And I should see "Product1"
 
