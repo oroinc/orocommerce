@@ -143,6 +143,9 @@ The current file describes significant changes in the code that may affect the u
 * Changed the `oro_cms_tabbed_content_item_collection_row` block markup. Added collapsable markup.
 * Changed the `oro_cms_tabbed_content_collection_item_prototype` macro
 
+#### WebCatalogBundle
+* Changed `\Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentScopeProvider` to initialize scope for storefront API requests.
+
 #### OrderBundle
 * Updated `Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository` by removing the required `$customerId` argument from the `getOrdersPurchaseVolume` and `getOrdersPurchaseVolumeQueryBuilder` methods.
 * Changed the order total amount label appearance on the order view back-office page.

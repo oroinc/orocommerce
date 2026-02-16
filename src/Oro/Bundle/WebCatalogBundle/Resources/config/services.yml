@@ -161,6 +161,8 @@ services:
             - '@doctrine'
             - '@oro_scope.scope_manager'
             - '@oro_redirect.routing.web_content_matched_url_decision_maker'
+            - '@oro_frontend.request.frontend_helper'
+            - '%oro_api.rest.prefix%'
 
     oro_web_catalog.form.autocomplete.web_catalog.search_handler:
         parent: oro_form.autocomplete.search_handler
