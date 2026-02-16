@@ -80,7 +80,7 @@ Feature: Mass Product Actions Availability
     When I proceed as the Buyer
     And I click "Create New Shopping List" in "ProductFrontendMassPanelInBottomSticky" element
     And I click "Create and Add"
-    Then I should see "No products were added"
+    Then I should see "No products were added" flash message
     And I reload the page
     And there is no records in "Product Frontend Grid"
 
@@ -103,6 +103,6 @@ Feature: Mass Product Actions Availability
 
     When I proceed as the Buyer
     And I click "Add to Shopping List" in "ProductFrontendMassPanelInBottomSticky" element
-    Then I should see "No products were added"
+    Then I should see "No products were added" flash message
     And I reload the page
     And there is no records in "Product Frontend Grid"

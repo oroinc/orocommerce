@@ -87,7 +87,7 @@ Feature: Pricing rounding
     And should see an "Create New Shopping List popup" element
     And type "New Front Shopping List" in "Shopping List Name"
     And click "Create"
-    And should see "New Front Shopping List"
+    And should see "New Front Shopping List" flash message
     And click "NewCategory"
     When click "Add to New Front Shopping List" for "Light" product
     And I hover on "Shopping Cart"
@@ -277,7 +277,7 @@ Feature: Pricing rounding
     And should see an "Create New Shopping List popup" element
     And type "New Front Shopping List" in "Shopping List Name"
     And click "Create"
-    And should see "New Front Shopping List"
+    And should see "New Front Shopping List" flash message
     And click "NewCategory"
     When click "Add to New Front Shopping List" for "Light" product
     And I hover on "Shopping Cart"

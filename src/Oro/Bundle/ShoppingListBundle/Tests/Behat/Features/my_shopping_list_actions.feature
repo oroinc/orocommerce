@@ -67,7 +67,7 @@ Feature: My Shopping List Actions
     And I click on "Shopping List Widget Set Current Radio 2"
     And I close shopping list widget
     And I click "Shopping List Actions"
-    Then I should see "Set as Default"
+    Then I should see "Set as Default" flash message
 
   Scenario: Check Default Shopping List
     When I follow "Account"

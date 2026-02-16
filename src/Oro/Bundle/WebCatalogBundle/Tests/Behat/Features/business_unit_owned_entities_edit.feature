@@ -27,4 +27,4 @@ Feature: Business Unit owned entities edit
     And I fill form with:
       | Description | Updated |
     When I save and close form
-    Then I should see "Web Catalog has been saved"
+    Then I should see "Web Catalog has been saved" flash message

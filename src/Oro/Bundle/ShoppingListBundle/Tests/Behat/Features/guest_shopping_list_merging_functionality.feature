@@ -70,7 +70,7 @@ Feature: Guest shopping list merging functionality
 
   Scenario: Check guest shopping list was merged to existing customer shopping list
     Given I signed in as AmandaRCole@example.org on the store frontend in old session
-    And I should see "Shopping List"
+    And I should see "Shopping List" flash message
     And I open shopping list widget
     And I click "View List"
     And I should see following grid:

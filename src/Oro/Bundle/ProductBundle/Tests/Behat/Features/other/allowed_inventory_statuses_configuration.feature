@@ -226,17 +226,17 @@ Feature: Allowed inventory statuses configuration
     Given I proceed as the Manager
     When I open page with shopping list List 2
     And click "Create Order"
-    Then I should see "Some products have not been added to this order. Please create an RFQ to request price."
+    Then I should see "Some products have not been added to this order. Please create an RFQ to request price." flash message
     And should not see "Product1"
 
   Scenario: Check that it is impossible to create RFQ from the shopping list with Discontinued product
     Given I open page with shopping list List 2
     And click "More Actions"
     And click "Request Quote"
-    Then I should see "Some products are not available and cannot be added to RFQ: Product1 (Item # SKU1)"
+    Then I should see "Some products are not available and cannot be added to RFQ: Product1 (Item # SKU1)" flash message
 
   Scenario: Check that it is impossible to create RFQ from the shopping list with Discontinued product
     Given I follow "Account"
     And click "Order History"
     When I click "Re-Order" on row "$23.00" in grid
-    Then should see "Please note that the current order differs from the original one due to the absence or insufficient quantity in stock of the following products: SKU1."
+    Then should see "Please note that the current order differs from the original one due to the absence or insufficient quantity in stock of the following products: SKU1." flash message

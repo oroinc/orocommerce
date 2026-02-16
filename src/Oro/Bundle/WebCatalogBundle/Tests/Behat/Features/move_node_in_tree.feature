@@ -34,4 +34,4 @@ Feature: Move node in tree
 
   Scenario: Move node as new root
     When I drag and drop "By Brand" before "Default Web Catalog"
-    Then I should see "You can not create new root content node."
+    Then I should see "You can not create new root content node." flash message

@@ -547,7 +547,7 @@ Feature: Commerce smoke e2e
     And should see "Your Price: $100.00 / item" for "Lenovo_Vibe_sku" product
     And should see "Listed Price: $100.00 / item" for "Lenovo_Vibe_sku" product
     And click "Add to Shopping List" for "Lenovo_Vibe_sku" product
-    And should see "Product has been added to "
+    And I should see "Product has been added to " flash message
     And should see "Green Box" for "Lenovo_Vibe_sku" product
     And should see "Update Shopping list" for "Lenovo_Vibe_sku" product
     And should see "View Details" for "Xiaomi_Redmi_3S_sku" product
@@ -586,7 +586,7 @@ Feature: Commerce smoke e2e
     And should see "Your Price: $80.00 / item" for "Lenovo_Vibe_sku" product
     And should see "Listed Price: $80.00 / item" for "Lenovo_Vibe_sku" product
     And click "Add to Shopping List" for "Lenovo_Vibe_sku" product
-    And should see "Product has been added to "
+    And I should see "Product has been added to " flash message
     And should see "Green Box" for "Lenovo_Vibe_sku" product
     And should see "Update Shopping List button" for "Lenovo_Vibe_sku" product
     And should see "View Details" for "Xiaomi_Redmi_3S_sku" product
@@ -626,7 +626,7 @@ Feature: Commerce smoke e2e
     Then should see "Your Price: $90.00 / item" for "Lenovo_Vibe_sku" product
     And should see "Listed Price: $80.00 / item" for "Lenovo_Vibe_sku" product
     When click "Add to Shopping List" for "Lenovo_Vibe_sku" product
-    Then should see "Product has been added to "
+    Then I should see "Product has been added to " flash message
     And I scroll to top
     When click "View Details" for "Xiaomi_Redmi_3S_sku" product
     Then should see "1 $120.00"
