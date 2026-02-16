@@ -326,7 +326,7 @@ Feature: Consent management via Management Console UI
       | Administrator | False |
       | Buyer         | True  |
     When I click "Save"
-    Then I should see "Customer User has been saved"
+    Then I should see "Customer User has been saved" flash message
     And I proceed as the Admin
     And go to Customers/Customer Users
     And click view "AmandaRCole1@example.org" in grid

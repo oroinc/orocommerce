@@ -220,7 +220,7 @@ Feature: Product attribute select
     When I go to Products/ Products
     And I click "Delete" on row "SKUCONF" in grid
     And I click "Yes, Delete"
-    Then I should see "Product Deleted"
+    Then I should see "Product Deleted" flash message
     When I go to Products/ Product Families
     And I click "Edit" on row "default_family" in grid
     And I clear "Attributes" field

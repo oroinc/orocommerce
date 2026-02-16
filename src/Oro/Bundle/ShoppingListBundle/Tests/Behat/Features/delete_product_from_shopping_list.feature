@@ -18,7 +18,7 @@ Feature: Delete product from Shopping List
     And I should not see "Create Order"
     And I should not see "Request Quote"
     And I should not see "Duplicate List"
-    And I should see "Delete"
+    And I should see "Delete" flash message
 
   Scenario: Delete product from Shopping List using popup
     Given I am on the homepage

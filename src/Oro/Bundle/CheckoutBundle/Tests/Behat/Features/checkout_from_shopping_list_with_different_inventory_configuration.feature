@@ -35,7 +35,7 @@ Feature: Checkout from Shopping List with different Inventory configuration
     Given I operate as the Buyer
     And I reload the page
     Then I should see "Checkout Continue" button disabled
-    And I should see "No products can be added to this order. Please create an RFQ to request price."
+    And I should see "No products can be added to this order. Please create an RFQ to request price." flash message
 
   Scenario: Check the validation on shopping list page for "Can Be Added to Orders"
     Given I open page with shopping list List 1

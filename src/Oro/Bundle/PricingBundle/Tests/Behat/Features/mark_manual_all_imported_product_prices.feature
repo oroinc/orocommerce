@@ -44,7 +44,7 @@ Feature: Mark manual all imported product prices
       | Product SKU | Quantity | Unit  | Value   | Currency | Type      |
       | PSKU1       | 1        | item  | 105.00  | USD      | Manual    |
     When I click "Recalculate"
-    Then I should see "Product Prices have been successfully recalculated"
+    Then I should see "Product Prices have been successfully recalculated" flash message
     And should see following grid:
       | Product SKU | Quantity | Unit  | Value   | Currency | Type      |
       | PSKU1       | 1        | item  | 105.00  | USD      | Manual    |
