@@ -163,7 +163,7 @@ services:
             - [setClassName, ['Oro\Bundle\RFPBundle\Entity\Request']]
         tags:
             - { name: security.voter }
-            - { name: container.service_subscriber, id: oro_workflow.manager }
+            - { name: container.service_subscriber, id: oro_workflow.manager, key: Oro\Bundle\WorkflowBundle\Model\WorkflowManager }
 
     oro_rfp.datagrid.listener.column:
         class: 'Oro\Bundle\WorkflowBundle\Datagrid\HideWorkflowStepColumnListener'

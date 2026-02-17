@@ -7,19 +7,16 @@ use Oro\Bundle\PricingBundle\Acl\Voter\PriceListVoter;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker;
 use Oro\Component\Testing\Unit\TestContainerBuilder;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
-class PriceListVoterTest extends \PHPUnit\Framework\TestCase
+class PriceListVoterTest extends TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var PriceListReferenceChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $priceListReferenceChecker;
-
-    /** @var PriceListVoter */
-    private $voter;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private PriceListReferenceChecker&MockObject $priceListReferenceChecker;
+    private PriceListVoter $voter;
 
     #[\Override]
     protected function setUp(): void
@@ -28,45 +25,42 @@ class PriceListVoterTest extends \PHPUnit\Framework\TestCase
         $this->priceListReferenceChecker = $this->createMock(PriceListReferenceChecker::class);
 
         $container = TestContainerBuilder::create()
-            ->add('oro_pricing.price_list_reference_checker', $this->priceListReferenceChecker)
+            ->add(PriceListReferenceChecker::class, $this->priceListReferenceChecker)
             ->getContainer($this);
 
         $this->voter = new PriceListVoter($this->doctrineHelper, $container);
-    }
-
-    private function getPriceList(): PriceList
-    {
-        return new PriceList();
+        $this->voter->setClassName(PriceList::class);
     }
 
     /**
      * @dataProvider attributesDataProvider
      */
-    public function testVote(object $object, bool $isReferential, int $expected)
+    public function testVote(bool $isReferential, int $expected): void
     {
-        $this->voter->setClassName(get_class($object));
+        $object = new PriceList();
 
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getSingleEntityIdentifier')
             ->with($object, false)
             ->willReturn(1);
 
-        $this->priceListReferenceChecker->expects($this->once())
+        $this->priceListReferenceChecker->expects(self::once())
             ->method('isReferential')
+            ->with(self::identicalTo($object))
             ->willReturn($isReferential);
 
         $token = $this->createMock(TokenInterface::class);
-        $this->assertEquals(
+        self::assertEquals(
             $expected,
             $this->voter->vote($token, $object, ['DELETE'])
         );
     }
 
-    public function attributesDataProvider(): array
+    public static function attributesDataProvider(): array
     {
         return [
-            [$this->getPriceList(), false, VoterInterface::ACCESS_ABSTAIN],
-            [$this->getPriceList(), true, VoterInterface::ACCESS_DENIED]
+            [false, VoterInterface::ACCESS_ABSTAIN],
+            [true, VoterInterface::ACCESS_DENIED]
         ];
     }
 }

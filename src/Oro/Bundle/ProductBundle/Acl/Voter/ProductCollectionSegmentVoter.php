@@ -17,21 +17,20 @@ class ProductCollectionSegmentVoter extends AbstractEntityVoter implements Servi
 {
     protected $supportedAttributes = [BasicPermission::EDIT, BasicPermission::DELETE];
 
-    private ContainerInterface $container;
-
     private array $segmentsStateToContentVariants = [];
 
-    public function __construct(DoctrineHelper $doctrineHelper, ContainerInterface $container)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        private readonly ContainerInterface $container
+    ) {
         parent::__construct($doctrineHelper);
-        $this->container = $container;
     }
 
     #[\Override]
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_product.provider.content_variant_segment_provider' => ContentVariantSegmentProvider::class
+            ContentVariantSegmentProvider::class
         ];
     }
 
@@ -59,6 +58,6 @@ class ProductCollectionSegmentVoter extends AbstractEntityVoter implements Servi
 
     private function getContentVariantSegmentProvider(): ContentVariantSegmentProvider
     {
-        return $this->container->get('oro_product.provider.content_variant_segment_provider');
+        return $this->container->get(ContentVariantSegmentProvider::class);
     }
 }

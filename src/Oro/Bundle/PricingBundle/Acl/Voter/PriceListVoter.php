@@ -17,21 +17,20 @@ class PriceListVoter extends AbstractEntityVoter implements ServiceSubscriberInt
 {
     protected $supportedAttributes = [BasicPermission::DELETE];
 
-    private ContainerInterface $container;
-
     private mixed $object;
 
-    public function __construct(DoctrineHelper $doctrineHelper, ContainerInterface $container)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        private readonly ContainerInterface $container
+    ) {
         parent::__construct($doctrineHelper);
-        $this->container = $container;
     }
 
     #[\Override]
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_pricing.price_list_reference_checker' => PriceListReferenceChecker::class
+            PriceListReferenceChecker::class
         ];
     }
 
@@ -58,6 +57,6 @@ class PriceListVoter extends AbstractEntityVoter implements ServiceSubscriberInt
 
     private function getPriceListReferenceChecker(): PriceListReferenceChecker
     {
-        return $this->container->get('oro_pricing.price_list_reference_checker');
+        return $this->container->get(PriceListReferenceChecker::class);
     }
 }

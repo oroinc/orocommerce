@@ -11,7 +11,7 @@ services:
             - [setClassName, ['Oro\Bundle\PricingBundle\Entity\PriceList']]
         tags:
             - { name: security.voter, priority: 10 }
-            - { name: container.service_subscriber, id: oro_pricing.price_list_reference_checker }
+            - { name: container.service_subscriber, id: oro_pricing.price_list_reference_checker, key: Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker }
 
     oro_pricing.datagrid.price_list_permissions_provider:
         class: 'Oro\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider'

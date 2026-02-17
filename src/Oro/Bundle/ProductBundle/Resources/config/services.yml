@@ -1299,7 +1299,7 @@ services:
             - [setClassName, ['Oro\Bundle\SegmentBundle\Entity\Segment']]
         tags:
             - { name: security.voter, priority: 500 }
-            - { name: container.service_subscriber, id: oro_product.provider.content_variant_segment_provider }
+            - { name: container.service_subscriber, id: oro_product.provider.content_variant_segment_provider, key: Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider }
 
     oro_product.security.acl.voter.product_status:
         class: Oro\Bundle\ProductBundle\Acl\Voter\ProductStatusVoter

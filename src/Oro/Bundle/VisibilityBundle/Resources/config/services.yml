@@ -16,7 +16,7 @@ services:
             - [setClassName, ['Oro\Bundle\ProductBundle\Entity\Product']]
         tags:
             - { name: security.voter }
-            - { name: container.service_subscriber, id: oro_visibility.provider.resolved_product_visibility_provider }
+            - { name: container.service_subscriber, id: oro_visibility.provider.resolved_product_visibility_provider, key: Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider }
 
     oro_visibility.event_listener.visibility_grid_listener:
         class: 'Oro\Bundle\VisibilityBundle\EventListener\VisibilityGridListener'

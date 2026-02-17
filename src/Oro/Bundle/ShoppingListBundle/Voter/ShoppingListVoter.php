@@ -22,19 +22,18 @@ class ShoppingListVoter extends AbstractEntityVoter implements ServiceSubscriber
         BasicPermission::DELETE
     ];
 
-    private ContainerInterface $container;
-
-    public function __construct(DoctrineHelper $doctrineHelper, ContainerInterface $container)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        private readonly ContainerInterface $container
+    ) {
         parent::__construct($doctrineHelper);
-        $this->container = $container;
     }
 
     #[\Override]
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_website.manager' => WebsiteManager::class
+            WebsiteManager::class
         ];
     }
 
@@ -59,6 +58,6 @@ class ShoppingListVoter extends AbstractEntityVoter implements ServiceSubscriber
 
     private function getWebsiteManager(): WebsiteManager
     {
-        return $this->container->get('oro_website.manager');
+        return $this->container->get(WebsiteManager::class);
     }
 }

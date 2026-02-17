@@ -18,24 +18,19 @@ class FrontendRequestVoter extends AbstractEntityVoter implements ServiceSubscri
 {
     protected $supportedAttributes = [BasicPermission::EDIT];
 
-    private FrontendHelper $frontendHelper;
-    private ContainerInterface $container;
-
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        FrontendHelper $frontendHelper,
-        ContainerInterface $container
+        private readonly FrontendHelper $frontendHelper,
+        private readonly ContainerInterface $container
     ) {
         parent::__construct($doctrineHelper);
-        $this->frontendHelper = $frontendHelper;
-        $this->container = $container;
     }
 
     #[\Override]
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_workflow.manager' => WorkflowManager::class
+            WorkflowManager::class
         ];
     }
 
@@ -70,6 +65,6 @@ class FrontendRequestVoter extends AbstractEntityVoter implements ServiceSubscri
 
     private function getWorkflowManager(): WorkflowManager
     {
-        return $this->container->get('oro_workflow.manager');
+        return $this->container->get(WorkflowManager::class);
     }
 }

@@ -17,21 +17,20 @@ class WebCatalogVoter extends AbstractEntityVoter implements ServiceSubscriberIn
 {
     protected $supportedAttributes = [BasicPermission::DELETE];
 
-    private ContainerInterface $container;
-
     private mixed $object;
 
-    public function __construct(DoctrineHelper $doctrineHelper, ContainerInterface $container)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        private readonly ContainerInterface $container
+    ) {
         parent::__construct($doctrineHelper);
-        $this->container = $container;
     }
 
     #[\Override]
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_web_catalog.provider.web_catalog_usage_provider' => WebCatalogUsageProviderInterface::class
+            WebCatalogUsageProviderInterface::class
         ];
     }
 
@@ -56,6 +55,6 @@ class WebCatalogVoter extends AbstractEntityVoter implements ServiceSubscriberIn
 
     private function getWebCatalogUsageProvider(): WebCatalogUsageProviderInterface
     {
-        return $this->container->get('oro_web_catalog.provider.web_catalog_usage_provider');
+        return $this->container->get(WebCatalogUsageProviderInterface::class);
     }
 }

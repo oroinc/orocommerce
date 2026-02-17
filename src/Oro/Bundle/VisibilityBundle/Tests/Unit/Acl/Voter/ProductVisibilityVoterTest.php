@@ -9,22 +9,17 @@ use Oro\Bundle\VisibilityBundle\Acl\Voter\ProductVisibilityVoter;
 use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\TestContainerBuilder;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
-class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
+class ProductVisibilityVoterTest extends TestCase
 {
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
-
-    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $frontendHelper;
-
-    /** @var ResolvedProductVisibilityProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $resolvedProductVisibilityProvider;
-
-    /** @var ProductVisibilityVoter */
-    private $voter;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private FrontendHelper&MockObject $frontendHelper;
+    private ResolvedProductVisibilityProvider&MockObject $resolvedProductVisibilityProvider;
+    private ProductVisibilityVoter $voter;
 
     #[\Override]
     protected function setUp(): void
@@ -34,10 +29,7 @@ class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
         $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);
 
         $container = TestContainerBuilder::create()
-            ->add(
-                'oro_visibility.provider.resolved_product_visibility_provider',
-                $this->resolvedProductVisibilityProvider
-            )
+            ->add(ResolvedProductVisibilityProvider::class, $this->resolvedProductVisibilityProvider)
             ->getContainer($this);
 
         $this->voter = new ProductVisibilityVoter($this->doctrineHelper, $this->frontendHelper, $container);

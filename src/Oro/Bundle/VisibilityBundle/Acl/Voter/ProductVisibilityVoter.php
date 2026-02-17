@@ -18,24 +18,19 @@ class ProductVisibilityVoter extends AbstractEntityVoter implements ServiceSubsc
 {
     protected $supportedAttributes = [BasicPermission::VIEW];
 
-    private FrontendHelper $frontendHelper;
-    private ContainerInterface $container;
-
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        FrontendHelper $frontendHelper,
-        ContainerInterface $container
+        private readonly FrontendHelper $frontendHelper,
+        private readonly ContainerInterface $container
     ) {
         parent::__construct($doctrineHelper);
-        $this->frontendHelper = $frontendHelper;
-        $this->container = $container;
     }
 
     #[\Override]
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_visibility.provider.resolved_product_visibility_provider' => ResolvedProductVisibilityProvider::class
+            ResolvedProductVisibilityProvider::class
         ];
     }
 
@@ -59,6 +54,6 @@ class ProductVisibilityVoter extends AbstractEntityVoter implements ServiceSubsc
 
     private function getResolvedProductVisibilityProvider(): ResolvedProductVisibilityProvider
     {
-        return $this->container->get('oro_visibility.provider.resolved_product_visibility_provider');
+        return $this->container->get(ResolvedProductVisibilityProvider::class);
     }
 }

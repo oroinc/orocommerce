@@ -442,7 +442,7 @@ services:
             - [setClassName, ['Oro\Bundle\ShoppingListBundle\Entity\ShoppingList']]
         tags:
             - { name: security.voter }
-            - { name: container.service_subscriber, id: oro_website.manager }
+            - { name: container.service_subscriber }
 
     oro_shopping_list.manager.shopping_list_limit:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager'
