@@ -354,8 +354,8 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_cms.parser.twig' => TwigParser::class,
-            'oro_cms.wysiwyg.chain_twig_function_processor' => WYSIWYGTwigFunctionProcessorInterface::class,
+            TwigParser::class,
+            WYSIWYGTwigFunctionProcessorInterface::class,
             EntityConfigManager::class,
             PropertyAccessorInterface::class,
             LoggerInterface::class
@@ -364,12 +364,12 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
 
     private function getTwigParser(): TwigParser
     {
-        return $this->container->get('oro_cms.parser.twig');
+        return $this->container->get(TwigParser::class);
     }
 
     private function getTwigFunctionProcessor(): WYSIWYGTwigFunctionProcessorInterface
     {
-        return $this->container->get('oro_cms.wysiwyg.chain_twig_function_processor');
+        return $this->container->get(WYSIWYGTwigFunctionProcessorInterface::class);
     }
 
     private function getEntityConfigManager(): EntityConfigManager

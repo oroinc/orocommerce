@@ -226,8 +226,8 @@ services:
             - { name: kernel.event_listener, event: kernel.terminate, method: onTerminate }
             - { name: kernel.event_listener, event: console.terminate, method: onTerminate }
             - { name: container.service_subscriber }
-            - { name: container.service_subscriber, id: oro_cms.parser.twig }
-            - { name: container.service_subscriber, id: oro_cms.wysiwyg.chain_twig_function_processor }
+            - { name: container.service_subscriber, id: oro_cms.parser.twig, key: Oro\Bundle\CMSBundle\Parser\TwigParser }
+            - { name: container.service_subscriber, id: oro_cms.wysiwyg.chain_twig_function_processor, key: Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGTwigFunctionProcessorInterface }
 
     oro_cms.event_listener.async.extension.wysiwyg_field_twig:
         class: Oro\Bundle\CMSBundle\Async\Extension\WYSIWYGFieldTwigConsumptionExtension
