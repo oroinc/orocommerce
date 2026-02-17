@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListProductKitLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
@@ -155,6 +156,7 @@ class AjaxProductKitLineItemControllerTest extends WebTestCase
         /** @var ProductKitItem $productKitItem */
         $productKitItem = $productKit->getKitItems()->first();
 
+        /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_8);
         self::assertCount(0, $shoppingList->getLineItems());
 
@@ -186,10 +188,10 @@ class AjaxProductKitLineItemControllerTest extends WebTestCase
 
         $result = self::getJsonResponseContent($this->client->getResponse(), 200);
 
-        $link = self::getContainer()->get(ShoppingListUrlProvider::class)->getFrontendUrl($shoppingList);
+        $link = $this->getShoppingListUrlProvider()->getFrontendUrl($shoppingList);
         $label = htmlspecialchars($shoppingList->getLabel());
 
-        $message = self::getContainer()->get(TranslatorInterface::class)->trans(
+        $message = $this->getTranslator()->trans(
             'oro.frontend.shoppinglist.product_kit_line_item.added_to_shopping_list',
             ['%shoppinglist%' => sprintf('<a href="%s">%s</a>', $link, $label)]
         );
@@ -200,8 +202,7 @@ class AjaxProductKitLineItemControllerTest extends WebTestCase
                 'message' => $message,
                 'product' => [
                     'id' => $productKit->getId(),
-                    'shopping_lists' => self::getContainer()
-                        ->get(ProductShoppingListsDataProvider::class)
+                    'shopping_lists' => $this->getProductShoppingListsDataProvider()
                         ->getProductUnitsQuantity($productKit->getId()),
                 ],
                 'shoppingList' => [
@@ -248,6 +249,7 @@ class AjaxProductKitLineItemControllerTest extends WebTestCase
         /** @var LineItem $productKitLineItem */
         $productKitLineItem = $this->getReference(LoadShoppingListProductKitLineItems::LINE_ITEM_1);
 
+        /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         self::assertCount(1, $shoppingList->getLineItems());
         $this->assertProductKitLineItem(
@@ -287,11 +289,12 @@ class AjaxProductKitLineItemControllerTest extends WebTestCase
 
         $result = self::getJsonResponseContent($this->client->getResponse(), 200);
 
+        /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
-        $link = self::getContainer()->get(ShoppingListUrlProvider::class)->getFrontendUrl($shoppingList);
+        $link = $this->getShoppingListUrlProvider()->getFrontendUrl($shoppingList);
         $label = htmlspecialchars($shoppingList->getLabel());
 
-        $message = self::getContainer()->get(TranslatorInterface::class)->trans(
+        $message = $this->getTranslator()->trans(
             'oro.frontend.shoppinglist.product_kit_line_item.updated_in_shopping_list',
             ['%shoppinglist%' => sprintf('<a href="%s">%s</a>', $link, $label)]
         );
@@ -302,8 +305,7 @@ class AjaxProductKitLineItemControllerTest extends WebTestCase
                 'message' => $message,
                 'product' => [
                     'id' => $productKit->getId(),
-                    'shopping_lists' => self::getContainer()
-                        ->get(ProductShoppingListsDataProvider::class)
+                    'shopping_lists' => $this->getProductShoppingListsDataProvider()
                         ->getProductUnitsQuantity($productKit->getId()),
                 ],
                 'shoppingList' => [
@@ -344,5 +346,20 @@ class AjaxProductKitLineItemControllerTest extends WebTestCase
             self::assertEquals($expectedKitItemLineItem['product'], $kitItemLineItem->getProduct()?->getId());
             self::assertEquals($expectedKitItemLineItem['quantity'], $kitItemLineItem->getQuantity());
         }
+    }
+
+    private function getShoppingListUrlProvider(): ShoppingListUrlProvider
+    {
+        return self::getContainer()->get('oro_shopping_list.provider.shopping_list_url');
+    }
+
+    private function getProductShoppingListsDataProvider(): ProductShoppingListsDataProvider
+    {
+        return self::getContainer()->get('oro_shopping_list.data_provider.product_shopping_lists');
+    }
+
+    private function getTranslator(): TranslatorInterface
+    {
+        return self::getContainer()->get(TranslatorInterface::class);
     }
 }

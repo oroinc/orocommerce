@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Oro\Bundle\CheckoutBundle\Resolver\ShoppingListToCheckoutValidationGroupResolver;
-use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartShoppingListCheckoutInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartShoppingListCheckout;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerAwareInterface;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\LayoutBundle\Attribute\Layout;
@@ -32,16 +32,6 @@ final class AjaxShoppingListErrorsModalController extends AbstractLineItemContro
     private const string ACTION_SAVE_FOR_LATER = 'save_for_later';
     private const string ACTION_DELETE = 'delete';
 
-    public function __construct(
-        private readonly ShoppingListManager $shoppingListManager,
-        private readonly ShoppingListTotalManager $shoppingListTotalManager,
-        private readonly StartShoppingListCheckoutInterface $startShoppingListCheckout,
-        private readonly ProductDataStorage $productDataStorage,
-        private readonly TranslatorInterface $translator,
-        private readonly LoggerInterface $logger
-    ) {
-    }
-
     #[Route(
         path: '/{id}',
         name: 'oro_shopping_list_frontend_errors_modal',
@@ -66,6 +56,18 @@ final class AjaxShoppingListErrorsModalController extends AbstractLineItemContro
         }
 
         return $this->handleAjax($shoppingList, $request, $triggeredBy, $action);
+    }
+
+    #[\Override]
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            ShoppingListManager::class,
+            ShoppingListTotalManager::class,
+            StartShoppingListCheckout::class,
+            ProductDataStorage::class,
+            LoggerInterface::class
+        ]);
     }
 
     private function handleAjax(
@@ -98,7 +100,7 @@ final class AjaxShoppingListErrorsModalController extends AbstractLineItemContro
 
     private function startCheckout(ShoppingList $shoppingList): JsonResponse
     {
-        $result = $this->startShoppingListCheckout->execute($shoppingList);
+        $result = $this->container->get(StartShoppingListCheckout::class)->execute($shoppingList);
 
         return new JsonResponse([
             'success'     => true,
@@ -108,7 +110,7 @@ final class AjaxShoppingListErrorsModalController extends AbstractLineItemContro
 
     private function startRfq(ShoppingList $shoppingList): JsonResponse
     {
-        $this->productDataStorage->saveToStorage($shoppingList);
+        $this->container->get(ProductDataStorage::class)->saveToStorage($shoppingList);
 
         return new JsonResponse([
             'success'     => true,
@@ -118,7 +120,7 @@ final class AjaxShoppingListErrorsModalController extends AbstractLineItemContro
 
     private function unsupportedAction(string $triggeredBy, ShoppingList $shoppingList): JsonResponse
     {
-        $this->logger->warning('Unsupported triggered_by value', [
+        $this->container->get(LoggerInterface::class)->warning('Unsupported triggered_by value', [
             'triggered_by'   => $triggeredBy,
             'shoppingListId' => $shoppingList->getId(),
         ]);
@@ -130,7 +132,7 @@ final class AjaxShoppingListErrorsModalController extends AbstractLineItemContro
     {
         return new JsonResponse([
             'success' => false,
-            'message'   => $this->translator->trans($translationKey),
+            'message' => $this->container->get(TranslatorInterface::class)->trans($translationKey),
         ]);
     }
 
@@ -140,9 +142,9 @@ final class AjaxShoppingListErrorsModalController extends AbstractLineItemContro
             $lineItem->setSavedForLaterList($shoppingList);
             $shoppingList->removeLineItem($lineItem);
 
-            $this->shoppingListManager->addLineItem($lineItem, $shoppingList, false);
+            $this->container->get(ShoppingListManager::class)->addLineItem($lineItem, $shoppingList, false);
         }
-        $this->shoppingListTotalManager->recalculateTotals($shoppingList, true);
+        $this->container->get(ShoppingListTotalManager::class)->recalculateTotals($shoppingList, true);
     }
 
     private function getInvalidLineItems(ShoppingList $shoppingList, Request $request): array
@@ -185,9 +187,9 @@ final class AjaxShoppingListErrorsModalController extends AbstractLineItemContro
     {
         foreach ($invalidLineItems as $lineItem) {
             $shoppingList->removeLineItem($lineItem);
-            $this->shoppingListManager->removeLineItem($lineItem, true);
+            $this->container->get(ShoppingListManager::class)->removeLineItem($lineItem, true);
         }
 
-        $this->shoppingListTotalManager->recalculateTotals($shoppingList, true);
+        $this->container->get(ShoppingListTotalManager::class)->recalculateTotals($shoppingList, true);
     }
 }

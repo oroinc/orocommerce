@@ -186,9 +186,6 @@ services:
             tags:
                 - { name: layout.data_provider, alias: oro_shopping_list_matrix_order_form }
 
-    Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider:
-        alias: 'oro_shopping_list.layout.data_provider.matrix_order_form'
-
     oro_shopping_list.layout.data_provider.customer_user_shopping_lists:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\CustomerUserShoppingListsProvider'
         arguments:
@@ -221,9 +218,6 @@ services:
               - '@doctrine'
           tags:
               - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_order }
-
-    Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider:
-        alias: oro_shopping_list.action.datagrid.mass_action_provider
 
     oro_shopping_list.action.datagrid.mass_action_provider:
         class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider'
@@ -276,9 +270,6 @@ services:
             - '@oro_config.manager'
         calls:
             - [setRequestStack, ['@request_stack']]
-
-    Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider:
-        alias: 'oro_shopping_list.data_provider.product_shopping_lists'
 
     oro_shopping_list.layout.data_provider.frontend_shopping_list_product_units:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityProvider'
@@ -347,9 +338,6 @@ services:
             - '@oro_product.provider.product_variant_availability_provider'
             - '@oro_shopping_list.manager.empty_matrix_grid'
             - '@doctrine'
-
-    Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager:
-        alias: 'oro_shopping_list.provider.matrix_grid_order_manager'
 
     oro_shopping_list.condition.rfp_allowed:
         class: 'Oro\Bundle\ShoppingListBundle\Condition\RfpAllowed'
@@ -773,18 +761,12 @@ services:
             - '@oro_shopping_list.provider.matrix_grid_order_manager'
             - '@oro_shopping_list.manager.shopping_list'
 
-    Oro\Bundle\ShoppingListBundle\Form\Handler\MatrixGridOrderFormHandler:
-        alias: 'oro_shopping_list.form.handler.matrix_grid_order'
-
     oro_shopping_list.handler.shopping_list_line_item_batch_update:
         class: Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_shopping_list.manager.shopping_list'
             - '@validator'
-
-    Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler:
-        alias: 'oro_shopping_list.handler.shopping_list_line_item_batch_update'
 
     oro_shopping_list.datagrid.frontend_shopping_lists_views_list:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\GridView\FrontendShoppingListsViewsList

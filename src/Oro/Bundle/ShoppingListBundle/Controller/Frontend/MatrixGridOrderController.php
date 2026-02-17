@@ -146,10 +146,9 @@ class MatrixGridOrderController extends AbstractLineItemController
         return array_merge(parent::getSubscribedServices(), [
             CurrentShoppingListManager::class,
             ShoppingListManager::class,
-            ProductShoppingListsDataProvider::class,
             MatrixGridOrderManager::class,
             MatrixGridOrderFormProvider::class,
-            MatrixGridOrderFormHandler::class,
+            MatrixGridOrderFormHandler::class
         ]);
     }
 }

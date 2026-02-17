@@ -2,46 +2,66 @@ services:
     _defaults:
         public: true
 
-    _instanceof:
-        Symfony\Contracts\Service\ServiceSubscriberInterface:
-            tags:
-                - { name: container.service_subscriber }
+    Oro\Bundle\ShoppingListBundle\Controller\ShoppingListController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
 
-        Symfony\Bundle\FrameworkBundle\Controller\AbstractController:
-            calls:
-                - ['setContainer', ['@Psr\Container\ContainerInterface']]
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\ShoppingListController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
 
-    Oro\Bundle\ShoppingListBundle\Controller\ShoppingListController: ~
-
-    Oro\Bundle\ShoppingListBundle\Controller\Frontend\ShoppingListController: ~
-
-    Oro\Bundle\ShoppingListBundle\Controller\Frontend\MatrixGridOrderController: ~
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\MatrixGridOrderController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_shopping_list.provider.shopping_list_url, key: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider }
+            - { name: container.service_subscriber, id: oro_shopping_list.data_provider.product_shopping_lists, key: Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider }
+            - { name: container.service_subscriber, id: oro_shopping_list.provider.matrix_grid_order_manager, key: Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager }
+            - { name: container.service_subscriber, id: oro_shopping_list.layout.data_provider.matrix_order_form, key: Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider }
+            - { name: container.service_subscriber, id: oro_shopping_list.form.handler.matrix_grid_order, key: Oro\Bundle\ShoppingListBundle\Form\Handler\MatrixGridOrderFormHandler }
 
     Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
         tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_shopping_list.provider.shopping_list_url, key: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider }
+            - { name: container.service_subscriber, id: oro_shopping_list.data_provider.product_shopping_lists, key: Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider }
             - { name: container.service_subscriber, id: oro_shopping_list.handler.shopping_list_line_item, key: Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler }
+            - { name: container.service_subscriber, id: oro_shopping_list.handler.shopping_list_line_item_batch_update, key: Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler }
 
     Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController:
-        arguments:
-            - '@oro_shopping_list.product_kit.checker.product_kit_availability_checker'
-            - '@oro_shopping_list.manager.current_shopping_list'
-            - '@oro_shopping_list.manager.shopping_list'
-            - '@oro_shopping_list.product_kit.factory.product_kit_line_item'
-            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
-            - '@oro_product.model.product_line_items_holder_factory'
-            - '@doctrine'
-            - '@validator'
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_shopping_list.provider.shopping_list_url, key: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider }
+            - { name: container.service_subscriber, id: oro_shopping_list.data_provider.product_shopping_lists, key: Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider }
+            - { name: container.service_subscriber, id: oro_shopping_list.product_kit.checker.product_kit_availability_checker, key: Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitAvailabilityChecker }
+            - { name: container.service_subscriber, id: oro_shopping_list.product_kit.factory.product_kit_line_item, key: Oro\Bundle\ShoppingListBundle\ProductKit\Factory\ProductKitLineItemFactory }
+            - { name: container.service_subscriber, id: oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced, key: Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider }
+            - { name: container.service_subscriber, id: oro_product.model.product_line_items_holder_factory, key: Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory }
 
-    Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxMassActionController: ~
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxMassActionController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_shopping_list.action.datagrid.mass_action_provider, key: Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider }
 
     Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxShoppingListErrorsModalController:
-        arguments:
-            - '@oro_shopping_list.manager.shopping_list'
-            - '@oro_shopping_list.manager.shopping_list_total'
-            - '@oro_checkout.action_group.start_from_shopping_list'
-            - '@oro_shopping_list.service.product_data_storage'
-            - '@translator'
-            - '@logger'
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: oro_featuretogle.feature, feature: saved_for_later }
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_shopping_list.provider.shopping_list_url, key: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider }
+            - { name: container.service_subscriber, id: oro_shopping_list.data_provider.product_shopping_lists, key: Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider }
+            - { name: container.service_subscriber, id: oro_shopping_list.manager.shopping_list_total, key: Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager }
+            - { name: container.service_subscriber, id: oro_shopping_list.service.product_data_storage, key: Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage }
 

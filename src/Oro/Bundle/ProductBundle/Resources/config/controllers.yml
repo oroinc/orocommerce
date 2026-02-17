@@ -9,7 +9,8 @@ services:
             - { name: container.service_subscriber }
             - { name: container.service_subscriber, id: oro_product.service.product_update_handler, key: Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler }
             - { name: container.service_subscriber, id: oro_product.provider.page_template_provider, key: Oro\Bundle\ProductBundle\Provider\PageTemplateProvider }
-            - { name: container.service_subscriber, id: oro_ui.html_tag_helper }
+            - { name: container.service_subscriber, id: oro_product.related_item.helper.config_helper, key: Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper }
+            - { name: container.service_subscriber, id: oro_ui.html_tag_helper, key: Oro\Bundle\UIBundle\Tools\HtmlTagHelper }
 
     Oro\Bundle\ProductBundle\Controller\Frontend\ProductController:
         calls:

@@ -6,9 +6,9 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\LayoutBundle\Attribute\Layout;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactoryInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory;
 use Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitAvailabilityChecker;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
@@ -33,18 +33,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class AjaxProductKitLineItemController extends AbstractLineItemController
 {
-    public function __construct(
-        private ProductKitAvailabilityChecker $productKitAvailabilityChecker,
-        private CurrentShoppingListManager $currentShoppingListManager,
-        private ShoppingListManager $shoppingListManager,
-        private ProductKitLineItemFactory $productKitLineItemFactory,
-        private SubtotalProviderInterface $lineItemNotPricedSubtotalProvider,
-        private ProductLineItemsHolderFactoryInterface $lineItemsHolderFactory,
-        private ManagerRegistry $managerRegistry,
-        private ValidatorInterface $validator
-    ) {
-    }
-
     #[Route(
         path: '/create/{productId}',
         name: 'oro_shopping_list_frontend_product_kit_line_item_create',
@@ -60,8 +48,9 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
     ): Response|array {
         $shoppingListId = $request->get('shoppingListId');
         $shoppingListId = $shoppingListId ? (int)$shoppingListId : null;
-        $shoppingList = $this->currentShoppingListManager->getForCurrentUser($shoppingListId, true);
-        $productKitLineItem = $this->productKitLineItemFactory->createProductKitLineItem(
+        $shoppingList = $this->container->get(CurrentShoppingListManager::class)
+            ->getForCurrentUser($shoppingListId, true);
+        $productKitLineItem = $this->container->get(ProductKitLineItemFactory::class)->createProductKitLineItem(
             $product,
             null,
             null,
@@ -84,7 +73,8 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
         LineItem $productKitLineItem,
         Request $request
     ): Response|array {
-        $this->productKitLineItemFactory->addKitItemLineItemsAvailableForPurchase($productKitLineItem);
+        $this->container->get(ProductKitLineItemFactory::class)
+            ->addKitItemLineItemsAvailableForPurchase($productKitLineItem);
 
         return $this->update($productKitLineItem, $request);
     }
@@ -94,7 +84,9 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
         $product = $productKitLineItem->getProduct();
 
         $constraintViolations = null;
-        if (!$this->productKitAvailabilityChecker->isAvailable($product, $constraintViolations)) {
+        if (
+            !$this->container->get(ProductKitAvailabilityChecker::class)->isAvailable($product, $constraintViolations)
+        ) {
             $messages = [];
             if ($constraintViolations !== null) {
                 foreach ($constraintViolations as $constraintViolation) {
@@ -116,8 +108,11 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
 
         if ($request->get('getSubtotal', false)) {
             $form->handleRequest($request);
-            $subtotal = $this->lineItemNotPricedSubtotalProvider
-                ->getSubtotal($this->lineItemsHolderFactory->createFromLineItems([$productKitLineItem]))
+            $subtotal = $this->container->get(LineItemNotPricedSubtotalProvider::class)
+                ->getSubtotal(
+                    $this->container->get(ProductLineItemsHolderFactory::class)
+                        ->createFromLineItems([$productKitLineItem])
+                )
                 ->toArray();
 
             return new JsonResponse([
@@ -129,10 +124,10 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
         $handler = new LineItemHandler(
             $form,
             $request,
-            $this->managerRegistry,
-            $this->shoppingListManager,
-            $this->currentShoppingListManager,
-            $this->validator
+            $this->container->get(ManagerRegistry::class),
+            $this->container->get(ShoppingListManager::class),
+            $this->container->get(CurrentShoppingListManager::class),
+            $this->container->get(ValidatorInterface::class)
         );
         $isFormHandled = $handler->process($productKitLineItem);
         if ($isFormHandled) {
@@ -185,5 +180,20 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
                 'product' => $product,
             ],
         ];
+    }
+
+    #[\Override]
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            CurrentShoppingListManager::class,
+            ShoppingListManager::class,
+            ProductKitAvailabilityChecker::class,
+            ProductKitLineItemFactory::class,
+            LineItemNotPricedSubtotalProvider::class,
+            ProductLineItemsHolderFactory::class,
+            ManagerRegistry::class,
+            ValidatorInterface::class
+        ]);
     }
 }

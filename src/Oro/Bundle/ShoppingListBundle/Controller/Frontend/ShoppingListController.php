@@ -177,7 +177,7 @@ class ShoppingListController extends AbstractController
     {
         $handler = new ShoppingListHandler(
             $this->container->get(CurrentShoppingListManager::class),
-            $this->container->get('doctrine')
+            $this->container->get(ManagerRegistry::class)
         );
 
         return $this->container->get(UpdateHandlerFacade::class)->update(
@@ -198,7 +198,7 @@ class ShoppingListController extends AbstractController
             ShoppingListManager::class,
             TranslatorInterface::class,
             UpdateHandlerFacade::class,
-            'doctrine' => ManagerRegistry::class
+            ManagerRegistry::class
         ]);
     }
 }

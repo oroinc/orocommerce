@@ -248,7 +248,7 @@ class ProductController extends AbstractController
 
         $slugsData = [];
         if ($newName !== null) {
-            $newName = $this->container->get('oro_ui.html_tag_helper')->stripTags($newName);
+            $newName = $this->container->get(HtmlTagHelper::class)->stripTags($newName);
             $newSlug = $this->container->get(SlugGenerator::class)->slugify($newName);
             $slugsData = $this->container->get(ChangedSlugsHelper::class)
                 ->getChangedDefaultSlugData($product, $newSlug);
@@ -321,7 +321,7 @@ class ProductController extends AbstractController
                 ChangedSlugsHelper::class,
                 ConfigManager::class,
                 SlugGenerator::class,
-                'oro_ui.html_tag_helper' => HtmlTagHelper::class,
+                HtmlTagHelper::class
             ]
         );
     }
