@@ -73,7 +73,6 @@
         "psr-4": {
             "Oro\\Bridge\\CalendarCommerce\\": "src/Oro/Bridge/CalendarCommerce",
             "Oro\\Bridge\\MarketingCommerce\\": "src/Oro/Bridge/MarketingCommerce",
-            "Oro\\Bundle\\AlternativeCheckoutBundle\\": "src/Oro/Bundle/AlternativeCheckoutBundle",
             "Oro\\Bundle\\ApplicationBundle\\": "src/Oro/Bundle/ApplicationBundle",
             "Oro\\Bundle\\CatalogBundle\\": "src/Oro/Bundle/CatalogBundle",
             "Oro\\Bundle\\CheckoutBundle\\": "src/Oro/Bundle/CheckoutBundle",
