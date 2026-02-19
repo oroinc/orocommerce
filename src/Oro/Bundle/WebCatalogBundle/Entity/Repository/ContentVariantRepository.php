@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -13,7 +14,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 /**
  * Entity repository for Oro\Bundle\WebCatalogBundle\Entity\ContentVariant class
  */
-class ContentVariantRepository extends EntityRepository
+class ContentVariantRepository extends ServiceEntityRepository
 {
     /**
      * @param Slug $slug
@@ -136,5 +137,15 @@ class ContentVariantRepository extends EntityRepository
         }
 
         return $queryBuilder->getQuery()->getArrayResult();
+    }
+
+    public function getSlugIdsByWebCatalogQueryBuilder(int $webCatalogId): QueryBuilder
+    {
+        return $this->createQueryBuilder('cv')
+            ->select('slug.id')
+            ->innerJoin('cv.slugs', 'slug')
+            ->innerJoin('cv.node', 'node')
+            ->where('node.webCatalog = :webCatalogId')
+            ->setParameter('webCatalogId', $webCatalogId);
     }
 }
