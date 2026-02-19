@@ -405,6 +405,9 @@ services:
         tags:
             - { name: doctrine.repository_service }
 
+    oro_redirect.repository.slug:
+        alias: 'Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository'
+
     oro_redirect.factory.sub_request:
         class: Oro\Bundle\RedirectBundle\Factory\SubRequestFactory
         arguments:

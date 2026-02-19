@@ -1,0 +1,68 @@
+Oro\Bundle\CMSBundle\Entity\Page:
+    landingPageFirst:
+        __calls:
+            - addTitle: ['@landingPageFirstTitle']
+        content: 'FIRST LANDING PAGE CONTENT'
+        organization: '@organization'
+        slugPrototypes: ['@landingPageFirstSlug']
+
+    landingPageSecond:
+        __calls:
+            - addTitle: ['@landingPageSecondTitle']
+        content: 'SECOND LANDING PAGE CONTENT'
+        organization: '@organization'
+        slugPrototypes: ['@landingPageSecondSlug']
+
+    landingPageThird:
+        __calls:
+            - addTitle: ['@landingPageThirdTitle']
+        content: 'THIRD LANDING PAGE CONTENT'
+        organization: '@organization'
+        slugPrototypes: ['@landingPageThirdSlug']
+
+    landingPageFourth:
+        __calls:
+            - addTitle: ['@landingPageFourthTitle']
+        content: 'FOURTH LANDING PAGE CONTENT'
+        organization: '@organization'
+        slugPrototypes: ['@landingPageFourthSlug']
+
+    landingPageFifth:
+        __calls:
+            - addTitle: ['@landingPageFifthTitle']
+        content: 'FIFTH LANDING PAGE CONTENT'
+        organization: '@organization'
+        slugPrototypes: ['@landingPageFifthSlug']
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    landingPageFirstTitle:
+        string: 'First Landing Page'
+    landingPageFirstSlug:
+        string: 'first-landing-page'
+
+    landingPageSecondTitle:
+        string: 'Second Landing Page'
+    landingPageSecondSlug:
+        string: 'second-landing-page'
+
+    landingPageThirdTitle:
+        string: 'Third Landing Page'
+    landingPageThirdSlug:
+        string: 'third-landing-page'
+
+    landingPageFourthTitle:
+        string: 'Fourth Landing Page'
+    landingPageFourthSlug:
+        string: 'fourth-landing-page'
+
+    landingPageFifthTitle:
+        string: 'Fifth Landing Page'
+    landingPageFifthSlug:
+        string: 'fifth-landing-page'
+
+Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
+    defaultWebCatalog:
+        name: 'Default Web Catalog'
+        description: 'Default Web Catalog for deletion test'
+        organization: '@organization'
+        owner: '@business_unit'
