@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
@@ -46,7 +47,8 @@ class SearchResultHistory implements
     ExtendEntityInterface,
     CreatedAtAwareInterface,
     OrganizationAwareInterface,
-    WebsiteAwareInterface
+    WebsiteAwareInterface,
+    CustomerOwnerAwareInterface
 {
     use BusinessUnitAwareTrait;
     use ExtendEntityTrait;
