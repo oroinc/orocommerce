@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Twig;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy;
@@ -22,11 +21,9 @@ use Twig\TwigFunction;
  */
 class ProductExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -103,16 +100,10 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_product.autocomplete_fields_provider' => AutocompleteFieldsProvider::class,
             'oro_product.related_item.related_product.finder_strategy' => FinderStrategyInterface::class,
             'oro_product.related_item.upsell_product.finder_strategy' => FinderStrategyInterface::class,
-            'oro_product.related_item.helper.config_helper' => RelatedItemConfigHelper::class,
+            RelatedItemConfigHelper::class
         ];
-    }
-
-    private function getAutocompleteFieldsProvider(): AutocompleteFieldsProvider
-    {
-        return $this->container->get('oro_product.autocomplete_fields_provider');
     }
 
     private function getRelatedProductFinderStrategy(): FinderStrategyInterface
@@ -127,6 +118,6 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
 
     private function getRelatedItemConfigHelper(): RelatedItemConfigHelper
     {
-        return $this->container->get('oro_product.related_item.helper.config_helper');
+        return $this->container->get(RelatedItemConfigHelper::class);
     }
 }

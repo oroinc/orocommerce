@@ -16,20 +16,9 @@ use Twig\TwigFunction;
  */
 class DeleteMessageTextExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * @return DeleteMessageTextGenerator
-     */
-    protected function getDeleteMessageGenerator()
-    {
-        return $this->container->get('oro_payment_term.payment_term.delete_message_generator');
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -63,7 +52,12 @@ class DeleteMessageTextExtension extends AbstractExtension implements ServiceSub
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_payment_term.payment_term.delete_message_generator' => DeleteMessageTextGenerator::class,
+            DeleteMessageTextGenerator::class
         ];
+    }
+
+    private function getDeleteMessageGenerator(): DeleteMessageTextGenerator
+    {
+        return $this->container->get(DeleteMessageTextGenerator::class);
     }
 }

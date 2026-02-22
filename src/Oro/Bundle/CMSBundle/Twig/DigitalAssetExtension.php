@@ -19,12 +19,9 @@ use Twig\TwigFunction;
  */
 class DigitalAssetExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-    private ?ApiUrlResolver $apiUrlResolver = null;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -89,7 +86,7 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
     {
         return [
             FileUrlByUuidProvider::class,
-            'oro_api.api_url_resolver' => ApiUrlResolver::class,
+            ApiUrlResolver::class
         ];
     }
 
@@ -100,10 +97,6 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
 
     private function getApiUrlResolver(): ApiUrlResolver
     {
-        if (null === $this->apiUrlResolver) {
-            $this->apiUrlResolver = $this->container->get('oro_api.api_url_resolver');
-        }
-
-        return $this->apiUrlResolver;
+        return $this->container->get(ApiUrlResolver::class);
     }
 }

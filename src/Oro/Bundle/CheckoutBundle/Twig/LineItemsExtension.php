@@ -24,51 +24,17 @@ use Twig\TwigFunction;
  */
 class LineItemsExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    protected ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    private function getTotalsProvider(): TotalProcessorProvider
-    {
-        return $this->container->get(TotalProcessorProvider::class);
-    }
-
-    private function getLineItemSubtotalProvider(): LineItemSubtotalProvider
-    {
-        return $this->container->get(LineItemSubtotalProvider::class);
-    }
-
-    private function getLocalizationHelper(): LocalizationHelper
-    {
-        return $this->container->get(LocalizationHelper::class);
-    }
-
-    private function getEntityNameResolver(): EntityNameResolver
-    {
-        return $this->container->get(EntityNameResolver::class);
-    }
-
-    private function getConfigurableProductProvider(): ConfigurableProductProvider
-    {
-        return $this->container->get('oro_product.layout.data_provider.configurable_products');
-    }
-
-    private function getProductName(?Product $product): ?string
-    {
-        return $this->getEntityNameResolver()->getName(
-            $product,
-            EntityNameProviderInterface::FULL,
-            $this->getLocalizationHelper()->getCurrentLocalization()
-        );
+    public function __construct(
+        protected readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
     public function getFunctions()
     {
-        return [new TwigFunction('order_line_items', [$this, 'getOrderLineItems'])];
+        return [
+            new TwigFunction('order_line_items', [$this, 'getOrderLineItems'])
+        ];
     }
 
     public function getOrderLineItems(Order $order): array
@@ -153,15 +119,49 @@ class LineItemsExtension extends AbstractExtension implements ServiceSubscriberI
         ];
     }
 
+    protected function getProductName(?Product $product): ?string
+    {
+        return $this->getEntityNameResolver()->getName(
+            $product,
+            EntityNameProviderInterface::FULL,
+            $this->getLocalizationHelper()->getCurrentLocalization()
+        );
+    }
+
     #[\Override]
     public static function getSubscribedServices(): array
     {
         return [
+            ConfigurableProductProvider::class,
             TotalProcessorProvider::class,
             LineItemSubtotalProvider::class,
             LocalizationHelper::class,
-            EntityNameResolver::class,
-            'oro_product.layout.data_provider.configurable_products' => ConfigurableProductProvider::class
+            EntityNameResolver::class
         ];
+    }
+
+    private function getConfigurableProductProvider(): ConfigurableProductProvider
+    {
+        return $this->container->get(ConfigurableProductProvider::class);
+    }
+
+    private function getTotalsProvider(): TotalProcessorProvider
+    {
+        return $this->container->get(TotalProcessorProvider::class);
+    }
+
+    private function getLineItemSubtotalProvider(): LineItemSubtotalProvider
+    {
+        return $this->container->get(LineItemSubtotalProvider::class);
+    }
+
+    private function getLocalizationHelper(): LocalizationHelper
+    {
+        return $this->container->get(LocalizationHelper::class);
+    }
+
+    private function getEntityNameResolver(): EntityNameResolver
+    {
+        return $this->container->get(EntityNameResolver::class);
     }
 }

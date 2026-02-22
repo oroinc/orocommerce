@@ -822,6 +822,7 @@ services:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_promotion.layout.discount_information_data_provider, key: Oro\Bundle\PromotionBundle\Layout\DataProvider\DiscountsInformationDataProvider }
 
     oro_promotion.event_listener.datagrid_line_items_data.promotions:
         class: Oro\Bundle\PromotionBundle\EventListener\DatagridLineItemsDataPromotionsListener

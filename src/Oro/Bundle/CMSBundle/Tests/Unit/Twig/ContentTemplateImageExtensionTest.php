@@ -79,23 +79,16 @@ class ContentTemplateImageExtensionTest extends TestCase
         $imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
         $imagePlaceholderProvider->expects(self::any())
             ->method('getPath')
-            ->willReturnCallback(
-                static function (string $filter, string $format) {
-                    return '/' . $filter . '/' . self::PLACEHOLDER . ($format ? '.' . $format : '');
-                }
-            );
+            ->willReturnCallback(static function (string $filter, string $format) {
+                return '/' . $filter . '/' . self::PLACEHOLDER . ($format ? '.' . $format : '');
+            });
 
         $apiUrlResolver = $this->createMock(ApiUrlResolver::class);
         $apiUrlResolver->expects(self::any())
             ->method('getEffectiveReferenceType')
             ->willReturn(UrlGeneratorInterface::ABSOLUTE_PATH);
 
-        $container = self::getContainerBuilder()
-            ->add('oro_cms.provider.content_template_preview_image_placeholder', $imagePlaceholderProvider)
-            ->add('oro_api.api_url_resolver', $apiUrlResolver)
-            ->getContainer($this);
-
-        return new ContentTemplateImageExtension($container);
+        return $this->createExtension($imagePlaceholderProvider, $apiUrlResolver);
     }
 
     /**
@@ -106,20 +99,25 @@ class ContentTemplateImageExtensionTest extends TestCase
         $imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
         $imagePlaceholderProvider->expects(self::any())
             ->method('getPath')
-            ->willReturnCallback(
-                static function (string $filter, string $format) {
-                    return 'https://example.com/' . $filter . '/' . self::PLACEHOLDER . ($format ? '.' . $format : '');
-                }
-            );
+            ->willReturnCallback(static function (string $filter, string $format) {
+                return 'https://example.com/' . $filter . '/' . self::PLACEHOLDER . ($format ? '.' . $format : '');
+            });
 
         $apiUrlResolver = $this->createMock(ApiUrlResolver::class);
         $apiUrlResolver->expects(self::any())
             ->method('getEffectiveReferenceType')
             ->willReturn(UrlGeneratorInterface::ABSOLUTE_URL);
 
+        return $this->createExtension($imagePlaceholderProvider, $apiUrlResolver);
+    }
+
+    private function createExtension(
+        ImagePlaceholderProviderInterface $imagePlaceholderProvider,
+        ApiUrlResolver $apiUrlResolver
+    ): ContentTemplateImageExtension {
         $container = self::getContainerBuilder()
             ->add('oro_cms.provider.content_template_preview_image_placeholder', $imagePlaceholderProvider)
-            ->add('oro_api.api_url_resolver', $apiUrlResolver)
+            ->add(ApiUrlResolver::class, $apiUrlResolver)
             ->getContainer($this);
 
         return new ContentTemplateImageExtension($container);

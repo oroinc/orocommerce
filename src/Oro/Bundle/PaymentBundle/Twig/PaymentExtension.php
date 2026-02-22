@@ -31,12 +31,11 @@ class PaymentExtension extends AbstractExtension implements ServiceSubscriberInt
     private const DEFAULT_METHOD_CONFIG_TEMPLATE =
         '@OroPayment/PaymentMethodsConfigsRule/paymentMethodWithOptions.html.twig';
 
-    private ContainerInterface $container;
     private array $configCache = [];
 
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -132,42 +131,42 @@ class PaymentExtension extends AbstractExtension implements ServiceSubscriberInt
     public static function getSubscribedServices(): array
     {
         return [
-            EventDispatcherInterface::class,
-            'oro_payment.provider.payment_transaction' => PaymentTransactionProvider::class,
-            'oro_payment.formatter.payment_method_label' => PaymentMethodLabelFormatter::class,
-            'oro_payment.formatter.payment_method_options' => PaymentMethodOptionsFormatter::class,
-            'oro_payment.formatter.payment_status_label' => PaymentStatusLabelFormatter::class,
-            'oro_payment.manager.payment_status' => PaymentStatusManager::class,
+            PaymentTransactionProvider::class,
+            PaymentMethodLabelFormatter::class,
+            PaymentMethodOptionsFormatter::class,
+            PaymentStatusLabelFormatter::class,
+            PaymentStatusManager::class,
+            EventDispatcherInterface::class
         ];
+    }
+
+    private function getPaymentTransactionProvider(): PaymentTransactionProvider
+    {
+        return $this->container->get(PaymentTransactionProvider::class);
+    }
+
+    private function getPaymentMethodLabelFormatter(): PaymentMethodLabelFormatter
+    {
+        return $this->container->get(PaymentMethodLabelFormatter::class);
+    }
+
+    private function getPaymentMethodOptionsFormatter(): PaymentMethodOptionsFormatter
+    {
+        return $this->container->get(PaymentMethodOptionsFormatter::class);
+    }
+
+    private function getPaymentStatusLabelFormatter(): PaymentStatusLabelFormatter
+    {
+        return $this->container->get(PaymentStatusLabelFormatter::class);
+    }
+
+    private function getPaymentStatusManager(): PaymentStatusManager
+    {
+        return $this->container->get(PaymentStatusManager::class);
     }
 
     private function getEventDispatcher(): EventDispatcherInterface
     {
         return $this->container->get(EventDispatcherInterface::class);
-    }
-
-    private function getPaymentTransactionProvider(): PaymentTransactionProvider
-    {
-        return $this->container->get('oro_payment.provider.payment_transaction');
-    }
-
-    private function getPaymentMethodLabelFormatter(): PaymentMethodLabelFormatter
-    {
-        return $this->container->get('oro_payment.formatter.payment_method_label');
-    }
-
-    private function getPaymentMethodOptionsFormatter(): PaymentMethodOptionsFormatter
-    {
-        return $this->container->get('oro_payment.formatter.payment_method_options');
-    }
-
-    private function getPaymentStatusLabelFormatter(): PaymentStatusLabelFormatter
-    {
-        return $this->container->get('oro_payment.formatter.payment_status_label');
-    }
-
-    private function getPaymentStatusManager(): PaymentStatusManager
-    {
-        return $this->container->get('oro_payment.manager.payment_status');
     }
 }

@@ -17,13 +17,10 @@ use Twig\TwigFilter;
  */
 class TwigInVariablesExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-    private LoggerInterface $logger;
-
-    public function __construct(ContainerInterface $container, LoggerInterface $logger)
-    {
-        $this->container = $container;
-        $this->logger = $logger;
+    public function __construct(
+        private readonly ContainerInterface $container,
+        private readonly LoggerInterface $logger
+    ) {
     }
 
     #[\Override]
@@ -60,7 +57,7 @@ class TwigInVariablesExtension extends AbstractExtension implements ServiceSubsc
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_cms.twig.renderer' => Environment::class,
+            'oro_cms.twig.renderer' => Environment::class
         ];
     }
 

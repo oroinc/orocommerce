@@ -26,11 +26,11 @@ services:
 
     oro_payment_term.twig.delete_message_text_extension:
         class: 'Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextExtension'
-        public: false
         arguments:
-            - "@oro_platform.twig.service_locator"
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_payment_term.payment_term.delete_message_generator, key: Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextGenerator }
 
     oro_payment_term.event_listener.datagrid:
         class: 'Oro\Bundle\PaymentTermBundle\EventListener\DatagridListener'
@@ -135,9 +135,8 @@ services:
 
     oro_payment_term.twig.payment_term_extension:
         class: 'Oro\Bundle\PaymentTermBundle\Twig\PaymentTermExtension'
-        public: false
         arguments:
-            - "@oro_platform.twig.service_locator"
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 

@@ -33,11 +33,16 @@ services:
             - '@event_dispatcher'
 
     oro_payment.twig.payment_extension:
-        class: 'Oro\Bundle\PaymentBundle\Twig\PaymentExtension'
+        class: Oro\Bundle\PaymentBundle\Twig\PaymentExtension
         arguments:
-            - "@oro_platform.twig.service_locator"
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_payment.provider.payment_transaction, key: Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider }
+            - { name: container.service_subscriber, id: oro_payment.formatter.payment_method_label, key: Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter }
+            - { name: container.service_subscriber, id: oro_payment.formatter.payment_method_options, key: Oro\Bundle\PaymentBundle\Formatter\PaymentMethodOptionsFormatter }
+            - { name: container.service_subscriber, id: oro_payment.formatter.payment_status_label, key: Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter }
+            - { name: container.service_subscriber, id: oro_payment.manager.payment_status, key: Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager }
 
     oro_payment.extension.action.type.payment_delete:
         class: 'Oro\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction'

@@ -7,23 +7,18 @@ use Oro\Bundle\CMSBundle\Provider\ContentWidgetLayoutProvider;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget\Stub\ContentWidgetTypeStub;
 use Oro\Bundle\CMSBundle\Twig\ContentWidgetTypeExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ContentWidgetTypeExtensionTest extends \PHPUnit\Framework\TestCase
+class ContentWidgetTypeExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var ContentWidgetTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $contentWidgetTypeRegistry;
-
-    /** @var ContentWidgetLayoutProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $contentWidgetLayoutProvider;
-
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
-
-    /** @var ContentWidgetTypeExtension */
-    private $extension;
+    private ContentWidgetTypeRegistry&MockObject $contentWidgetTypeRegistry;
+    private ContentWidgetLayoutProvider&MockObject $contentWidgetLayoutProvider;
+    private TranslatorInterface&MockObject $translator;
+    private ContentWidgetTypeExtension $extension;
 
     #[\Override]
     protected function setUp(): void
@@ -33,9 +28,9 @@ class ContentWidgetTypeExtensionTest extends \PHPUnit\Framework\TestCase
         $this->translator = $this->createMock(TranslatorInterface::class);
 
         $container = self::getContainerBuilder()
+            ->add(ContentWidgetTypeRegistry::class, $this->contentWidgetTypeRegistry)
+            ->add(ContentWidgetLayoutProvider::class, $this->contentWidgetLayoutProvider)
             ->add(TranslatorInterface::class, $this->translator)
-            ->add('oro_cms.content_widget.type_registry', $this->contentWidgetTypeRegistry)
-            ->add('oro_cms.provider.content_widget_layout', $this->contentWidgetLayoutProvider)
             ->getContainer($this);
 
         $this->extension = new ContentWidgetTypeExtension($container);
@@ -45,23 +40,21 @@ class ContentWidgetTypeExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $type = ContentWidgetTypeStub::getName();
 
-        $this->translator->expects($this->once())
+        $this->translator->expects(self::once())
             ->method('trans')
-            ->willReturnCallback(
-                static function ($message) {
-                    return $message;
-                }
-            );
+            ->willReturnCallback(static function ($message) {
+                return 'translated ' . $message;
+            });
 
         $widgetType = new ContentWidgetTypeStub();
 
-        $this->contentWidgetTypeRegistry->expects($this->once())
+        $this->contentWidgetTypeRegistry->expects(self::once())
             ->method('getWidgetType')
             ->with($type)
             ->willReturn($widgetType);
 
-        $this->assertEquals(
-            $widgetType->getLabel(),
+        self::assertEquals(
+            'translated ' . $widgetType->getLabel(),
             self::callTwigFilter($this->extension, 'content_widget_type_label', [$type])
         );
     }
@@ -70,17 +63,15 @@ class ContentWidgetTypeExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $type = ContentWidgetTypeStub::getName();
 
-        $this->translator->expects($this->never())
+        $this->translator->expects(self::never())
             ->method('trans');
 
-        $widgetType = new ContentWidgetTypeStub();
-
-        $this->contentWidgetTypeRegistry->expects($this->once())
+        $this->contentWidgetTypeRegistry->expects(self::once())
             ->method('getWidgetType')
             ->with($type)
             ->willReturn(null);
 
-        $this->assertEquals(
+        self::assertEquals(
             $type,
             self::callTwigFilter($this->extension, 'content_widget_type_label', [$type])
         );
@@ -91,20 +82,18 @@ class ContentWidgetTypeExtensionTest extends \PHPUnit\Framework\TestCase
         $type = ContentWidgetTypeStub::getName();
         $layout = 'template1';
 
-        $this->translator->expects($this->once())
+        $this->translator->expects(self::once())
             ->method('trans')
-            ->willReturnCallback(
-                static function ($message) {
-                    return 'translated ' . $message;
-                }
-            );
+            ->willReturnCallback(static function ($message) {
+                return 'translated ' . $message;
+            });
 
-        $this->contentWidgetLayoutProvider->expects($this->once())
+        $this->contentWidgetLayoutProvider->expects(self::once())
             ->method('getWidgetLayoutLabel')
             ->with($type, $layout)
             ->willReturn('layout label');
 
-        $this->assertEquals(
+        self::assertEquals(
             'translated layout label',
             self::callTwigFilter($this->extension, 'content_widget_layout_label', [$layout, $type])
         );

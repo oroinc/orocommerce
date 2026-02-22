@@ -328,9 +328,6 @@ services:
             - '@router'
             - '@oro_shopping_list.manager.shopping_list_limit'
 
-    Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider:
-        alias: oro_shopping_list.provider.shopping_list_url
-
     oro_shopping_list.provider.matrix_grid_order_manager:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager'
         arguments:
@@ -441,15 +438,15 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_website.manager'
 
-    Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager:
-        alias: 'oro_shopping_list.manager.shopping_list_limit'
-
     oro_shopping_list.twig.shopping_list_extension:
         class: Oro\Bundle\ShoppingListBundle\Twig\ShoppingListExtension
         arguments:
-            - "@oro_platform.twig.service_locator"
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_shopping_list.manager.shopping_list_limit, key: Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager }
+            - { name: container.service_subscriber, id: oro_shopping_list.provider.shopping_list_url, key: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider }
+            - { name: container.service_subscriber, id: oro_action.layout.data_provider.button_provider, key: Oro\Bundle\ActionBundle\Layout\DataProvider\LayoutButtonProvider }
 
     # should be executed before oro_checkout.event_listener.login_on_checkout listener
     oro_shopping_list.event_listener.interactive_login:

@@ -14,11 +14,9 @@ use Twig\TwigFunction;
  */
 class ContentBlockExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -38,12 +36,12 @@ class ContentBlockExtension extends AbstractExtension implements ServiceSubscrib
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_cms.content_block.renderer' => ContentBlockRenderer::class,
+            ContentBlockRenderer::class
         ];
     }
 
     private function getContentBlockRenderer(): ContentBlockRenderer
     {
-        return $this->container->get('oro_cms.content_block.renderer');
+        return $this->container->get(ContentBlockRenderer::class);
     }
 }

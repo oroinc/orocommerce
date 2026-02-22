@@ -5,16 +5,15 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Twig;
 use Oro\Bundle\CMSBundle\ContentBlock\ContentBlockRenderer;
 use Oro\Bundle\CMSBundle\Twig\ContentBlockExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ContentBlockExtensionTest extends \PHPUnit\Framework\TestCase
+class ContentBlockExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var ContentBlockRenderer|\PHPUnit\Framework\MockObject\MockObject */
-    private $renderer;
-
-    /** @var ContentBlockExtension */
-    private $extension;
+    private ContentBlockRenderer&MockObject $renderer;
+    private ContentBlockExtension $extension;
 
     #[\Override]
     protected function setUp(): void
@@ -22,7 +21,7 @@ class ContentBlockExtensionTest extends \PHPUnit\Framework\TestCase
         $this->renderer = $this->createMock(ContentBlockRenderer::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_cms.content_block.renderer', $this->renderer)
+            ->add(ContentBlockRenderer::class, $this->renderer)
             ->getContainer($this);
 
         $this->extension = new ContentBlockExtension($container);
@@ -33,12 +32,12 @@ class ContentBlockExtensionTest extends \PHPUnit\Framework\TestCase
         $alias = 'block_alias';
         $content = '<div>rendered content block</div>';
 
-        $this->renderer->expects($this->once())
+        $this->renderer->expects(self::once())
             ->method('render')
             ->with($alias)
             ->willReturn($content);
 
-        $this->assertEquals(
+        self::assertEquals(
             $content,
             self::callTwigFunction($this->extension, 'content_block', [$alias])
         );

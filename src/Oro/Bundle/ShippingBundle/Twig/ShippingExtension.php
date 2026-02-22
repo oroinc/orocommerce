@@ -47,12 +47,11 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
     private const DEFAULT_METHOD_CONFIG_TEMPLATE
         = '@OroShipping/ShippingMethodsConfigsRule/shippingMethodWithOptions.html.twig';
 
-    private ContainerInterface $container;
     private array $shippingMethodConfigCache = [];
 
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -248,21 +247,16 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_shipping.formatter.shipping_method_label' => ShippingMethodLabelFormatter::class,
             'oro_shipping.checker.shipping_method_enabled' => ShippingMethodEnabledByIdentifierCheckerInterface::class,
             'oro_shipping.formatter.dimensions_unit_value' => UnitValueFormatterInterface::class,
             'oro_shipping.formatter.weight_unit_label' => UnitLabelFormatterInterface::class,
             'oro_shipping.formatter.weight_unit_value' => UnitValueFormatterInterface::class,
             'oro_shipping.formatter.length_unit_label' => UnitLabelFormatterInterface::class,
             'oro_shipping.formatter.freight_class_label' => UnitLabelFormatterInterface::class,
+            ShippingMethodLabelFormatter::class,
             EventDispatcherInterface::class,
             DoctrineHelper::class
         ];
-    }
-
-    private function getShippingMethodLabelFormatter(): ShippingMethodLabelFormatter
-    {
-        return $this->container->get('oro_shipping.formatter.shipping_method_label');
     }
 
     private function getShippingMethodChecker(): ShippingMethodEnabledByIdentifierCheckerInterface
@@ -293,6 +287,11 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
     private function getFreightClassLabelFormatter(): UnitLabelFormatterInterface
     {
         return $this->container->get('oro_shipping.formatter.freight_class_label');
+    }
+
+    private function getShippingMethodLabelFormatter(): ShippingMethodLabelFormatter
+    {
+        return $this->container->get(ShippingMethodLabelFormatter::class);
     }
 
     private function getEventDispatcher(): EventDispatcherInterface

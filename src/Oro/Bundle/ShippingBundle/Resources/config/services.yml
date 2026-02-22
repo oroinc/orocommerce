@@ -104,11 +104,11 @@ services:
 
     oro_shipping.twig.shipping_extension:
         class: Oro\Bundle\ShippingBundle\Twig\ShippingExtension
-        public: false
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_shipping.formatter.shipping_method_label, key: Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter }
 
     oro_shipping.repository.shipping_methods_configs_rule:
         alias: Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository

@@ -7,7 +7,6 @@ use Oro\Bundle\InventoryBundle\Provider\InventoryStatusProvider;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductView;
-use Oro\Bundle\UIBundle\Twig\HtmlTagExtension;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
@@ -27,14 +26,9 @@ use Twig\TwigFunction;
  */
 class InventoryExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-    private ?UpcomingProductProvider $upcomingProductProvider = null;
-    private ?LowInventoryProvider $lowInventoryProvider = null;
-    private ?InventoryStatusProvider $inventoryStatusProvider = null;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -81,7 +75,8 @@ class InventoryExtension extends AbstractExtension implements ServiceSubscriberI
     {
         if ($product instanceof ProductView && $product->has('is_upcoming')) {
             return \filter_var($product->get('is_upcoming'), FILTER_VALIDATE_BOOLEAN);
-        } elseif (is_array($product) && isset($product['is_upcoming'])) {
+        }
+        if (is_array($product) && isset($product['is_upcoming'])) {
             return \filter_var($product['is_upcoming'], FILTER_VALIDATE_BOOLEAN);
         }
 
@@ -102,7 +97,8 @@ class InventoryExtension extends AbstractExtension implements ServiceSubscriberI
     {
         if ($product instanceof ProductView && $product->has('low_inventory')) {
             return \filter_var($product->get('low_inventory'), FILTER_VALIDATE_BOOLEAN);
-        } elseif (is_array($product) && isset($product['low_inventory'])) {
+        }
+        if (is_array($product) && isset($product['low_inventory'])) {
             return \filter_var($product['low_inventory'], FILTER_VALIDATE_BOOLEAN);
         }
 
@@ -122,7 +118,7 @@ class InventoryExtension extends AbstractExtension implements ServiceSubscriberI
     public function getInventoryAvailabilityCode(Product|ProductView|array $product): ?string
     {
         $statusCode = $this->getInventoryStatusProvider()->getCode($product);
-        $isInStock = $statusCode == 'prod_inventory_status.in_stock';
+        $isInStock = $statusCode === 'prod_inventory_status.in_stock';
         $isLowInventory = $this->isLowInventoryItem($product);
         $isUpcoming = $this->isUpcomingItem($product);
 
@@ -141,7 +137,7 @@ class InventoryExtension extends AbstractExtension implements ServiceSubscriberI
     {
         $statusLabel = $this->getInventoryStatusProvider()->getLabel($product);
         $statusCode = $this->getInventoryStatusProvider()->getCode($product);
-        $isInStock = $statusCode == 'prod_inventory_status.in_stock';
+        $isInStock = $statusCode === 'prod_inventory_status.in_stock';
         $isLowInventory = $this->isLowInventoryItem($product);
         $isUpcoming = $this->isUpcomingItem($product);
 
@@ -160,37 +156,24 @@ class InventoryExtension extends AbstractExtension implements ServiceSubscriberI
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_inventory.provider.upcoming_product_provider' => UpcomingProductProvider::class,
-            'oro_inventory.inventory.low_inventory_provider' => LowInventoryProvider::class,
-            'oro_inventory.provider.inventory_status' => InventoryStatusProvider::class,
-            'oro_ui.twig.html_tag' => HtmlTagExtension::class,
+            UpcomingProductProvider::class,
+            LowInventoryProvider::class,
+            InventoryStatusProvider::class
         ];
     }
 
     private function getUpcomingProductProvider(): UpcomingProductProvider
     {
-        if (null === $this->upcomingProductProvider) {
-            $this->upcomingProductProvider = $this->container->get('oro_inventory.provider.upcoming_product_provider');
-        }
-
-        return $this->upcomingProductProvider;
+        return $this->container->get(UpcomingProductProvider::class);
     }
 
     private function getLowInventoryProvider(): LowInventoryProvider
     {
-        if (null === $this->lowInventoryProvider) {
-            $this->lowInventoryProvider = $this->container->get('oro_inventory.inventory.low_inventory_provider');
-        }
-
-        return $this->lowInventoryProvider;
+        return $this->container->get(LowInventoryProvider::class);
     }
 
     private function getInventoryStatusProvider(): InventoryStatusProvider
     {
-        if (null === $this->inventoryStatusProvider) {
-            $this->inventoryStatusProvider = $this->container->get('oro_inventory.provider.inventory_status');
-        }
-
-        return $this->inventoryStatusProvider;
+        return $this->container->get(InventoryStatusProvider::class);
     }
 }

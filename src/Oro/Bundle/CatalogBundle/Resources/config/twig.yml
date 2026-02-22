@@ -1,16 +1,14 @@
 services:
-    # Twig extensions
     oro_catalog.twig.category_extension:
-        class: 'Oro\Bundle\CatalogBundle\Twig\CategoryExtension'
-        public: false
+        class: Oro\Bundle\CatalogBundle\Twig\CategoryExtension
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_catalog.category_tree_handler, key: Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler }
 
     oro_catalog.twig.category_image_extension:
-        class: 'Oro\Bundle\CatalogBundle\Twig\CategoryImageExtension'
-        public: false
+        class: Oro\Bundle\CatalogBundle\Twig\CategoryImageExtension
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:

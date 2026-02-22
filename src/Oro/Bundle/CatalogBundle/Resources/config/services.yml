@@ -8,9 +8,6 @@ services:
             - '@oro_catalog.provider.category_tree_provider'
             - '@oro_catalog.provider.master_catalog_root'
 
-    Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler:
-        alias: 'oro_catalog.category_tree_handler'
-
     oro_catalog.provider.category_tree_provider:
         class: 'Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider'
         public: false

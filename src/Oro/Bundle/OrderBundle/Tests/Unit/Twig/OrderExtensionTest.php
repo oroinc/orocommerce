@@ -8,25 +8,20 @@ use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
 use Oro\Bundle\OrderBundle\Twig\OrderExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Twig\Environment;
 use Twig\Template;
 use Twig\TemplateWrapper;
 
-class OrderExtensionTest extends \PHPUnit\Framework\TestCase
+class OrderExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
-    private $environment;
-
-    /** @var SourceDocumentFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    private $sourceDocumentFormatter;
-
-    /** @var ShippingTrackingFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingTrackingFormatter;
-
-    /** @var OrderExtension */
-    private $extension;
+    private Environment&MockObject $environment;
+    private SourceDocumentFormatter&MockObject $sourceDocumentFormatter;
+    private ShippingTrackingFormatter&MockObject $shippingTrackingFormatter;
+    private OrderExtension $extension;
 
     #[\Override]
     protected function setUp(): void
@@ -36,30 +31,41 @@ class OrderExtensionTest extends \PHPUnit\Framework\TestCase
         $this->shippingTrackingFormatter = $this->createMock(ShippingTrackingFormatter::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_order.formatter.source_document', $this->sourceDocumentFormatter)
-            ->add('oro_order.formatter.shipping_tracking', $this->shippingTrackingFormatter)
+            ->add(SourceDocumentFormatter::class, $this->sourceDocumentFormatter)
+            ->add(ShippingTrackingFormatter::class, $this->shippingTrackingFormatter)
             ->getContainer($this);
 
         $this->extension = new OrderExtension($container);
     }
 
+    private function prepareOrder(): Order
+    {
+        $order = new Order();
+        $shippingTracking = new OrderShippingTracking();
+        $shippingTracking->setMethod('shipping Method Name');
+        $shippingTracking->setNumber('7s45');
+        $order->addShippingTracking($shippingTracking);
+
+        return $order;
+    }
+
     public function testGetTemplateContent()
     {
         $context = ['parameter' => 'value'];
-        $content = 'html conten';
+        $content = 'html content';
         $template = $this->createMock(Template::class);
-        $template->expects($this->once())
+        $template->expects(self::once())
             ->method('render')
             ->with($context)
             ->willReturn($content);
 
         $templateName = 'some:name';
-        $this->environment->expects($this->once())
+        $this->environment->expects(self::once())
             ->method('resolveTemplate')
             ->with($templateName)
             ->willReturn(new TemplateWrapper($this->environment, $template));
 
-        $this->assertEquals(
+        self::assertEquals(
             $content,
             self::callTwigFunction(
                 $this->extension,
@@ -76,12 +82,12 @@ class OrderExtensionTest extends \PHPUnit\Framework\TestCase
         $sourceEntityIdentifier = 'id';
         $formattedData = 'html data';
 
-        $this->sourceDocumentFormatter->expects($this->once())
+        $this->sourceDocumentFormatter->expects(self::once())
             ->method('format')
             ->with($sourceEntityClass, $sourceEntityId, $sourceEntityIdentifier)
             ->willReturn($formattedData);
 
-        $this->assertEquals(
+        self::assertEquals(
             $formattedData,
             self::callTwigFilter(
                 $this->extension,
@@ -96,12 +102,12 @@ class OrderExtensionTest extends \PHPUnit\Framework\TestCase
         $shippingMethodName = 'shippingMethod';
         $formattedMethod = 'shipping method';
 
-        $this->shippingTrackingFormatter->expects($this->once())
+        $this->shippingTrackingFormatter->expects(self::once())
             ->method('formatShippingTrackingMethod')
             ->with($shippingMethodName)
             ->willReturn($formattedMethod);
 
-        $this->assertEquals(
+        self::assertEquals(
             $formattedMethod,
             self::callTwigFunction(
                 $this->extension,
@@ -117,12 +123,12 @@ class OrderExtensionTest extends \PHPUnit\Framework\TestCase
         $trackingNumber = '7s45';
         $formattedLink = 'shipping link';
 
-        $this->shippingTrackingFormatter->expects($this->once())
+        $this->shippingTrackingFormatter->expects(self::once())
             ->method('formatShippingTrackingLink')
             ->with($shippingMethodName, $trackingNumber)
             ->willReturn($formattedLink);
 
-        $this->assertEquals(
+        self::assertEquals(
             $formattedLink,
             self::callTwigFunction(
                 $this->extension,
@@ -137,17 +143,17 @@ class OrderExtensionTest extends \PHPUnit\Framework\TestCase
         $order = $this->prepareOrder();
         $formattedLink = 'shipping link';
 
-        $this->shippingTrackingFormatter->expects($this->once())
+        $this->shippingTrackingFormatter->expects(self::once())
             ->method('formatShippingTrackingMethod')
             ->with('shipping Method Name')
             ->willReturn('shipping Method Name');
 
-        $this->shippingTrackingFormatter->expects($this->once())
+        $this->shippingTrackingFormatter->expects(self::once())
             ->method('formatShippingTrackingLink')
             ->with('shipping Method Name', '7s45')
             ->willReturn($formattedLink);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 [
                     'method' => 'shipping Method Name',
@@ -161,16 +167,5 @@ class OrderExtensionTest extends \PHPUnit\Framework\TestCase
                 [$order]
             )
         );
-    }
-
-    private function prepareOrder(): Order
-    {
-        $order = new Order();
-        $shippingTracking = new OrderShippingTracking();
-        $shippingTracking->setMethod('shipping Method Name');
-        $shippingTracking->setNumber('7s45');
-        $order->addShippingTracking($shippingTracking);
-
-        return $order;
     }
 }

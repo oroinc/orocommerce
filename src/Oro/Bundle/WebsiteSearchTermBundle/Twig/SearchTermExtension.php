@@ -15,12 +15,9 @@ use Twig\TwigFilter;
  */
 class SearchTermExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-    private ?SearchTermPhrasesFormatter $phrasesFormatter = null;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -40,10 +37,6 @@ class SearchTermExtension extends AbstractExtension implements ServiceSubscriber
      *      'foo',
      *      'bar',
      *  ]
-     * @param string $value
-     * @param string|null $joinWith
-     *
-     * @return array|string
      */
     public function formatPhrases(string $value, ?string $joinWith = null): array|string
     {
@@ -59,18 +52,12 @@ class SearchTermExtension extends AbstractExtension implements ServiceSubscriber
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_website_search_term.formatter.search_term_phrases_formatter' => SearchTermPhrasesFormatter::class,
+            SearchTermPhrasesFormatter::class
         ];
     }
 
     private function getSearchTermPhrasesFormatter(): SearchTermPhrasesFormatter
     {
-        if (null === $this->phrasesFormatter) {
-            $this->phrasesFormatter = $this->container->get(
-                'oro_website_search_term.formatter.search_term_phrases_formatter'
-            );
-        }
-
-        return $this->phrasesFormatter;
+        return $this->container->get(SearchTermPhrasesFormatter::class);
     }
 }

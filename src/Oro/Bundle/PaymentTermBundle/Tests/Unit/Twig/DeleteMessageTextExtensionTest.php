@@ -6,16 +6,15 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextExtension;
 use Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextGenerator;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class DeleteMessageTextExtensionTest extends \PHPUnit\Framework\TestCase
+class DeleteMessageTextExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var DeleteMessageTextGenerator|\PHPUnit\Framework\MockObject\MockObject */
-    private $deleteMessageTextGenerator;
-
-    /** @var DeleteMessageTextExtension */
-    private $extension;
+    private DeleteMessageTextGenerator&MockObject $deleteMessageTextGenerator;
+    private DeleteMessageTextExtension $extension;
 
     #[\Override]
     protected function setUp(): void
@@ -23,7 +22,7 @@ class DeleteMessageTextExtensionTest extends \PHPUnit\Framework\TestCase
         $this->deleteMessageTextGenerator = $this->createMock(DeleteMessageTextGenerator::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_payment_term.payment_term.delete_message_generator', $this->deleteMessageTextGenerator)
+            ->add(DeleteMessageTextGenerator::class, $this->deleteMessageTextGenerator)
             ->getContainer($this);
 
         $this->extension = new DeleteMessageTextExtension($container);
@@ -34,12 +33,12 @@ class DeleteMessageTextExtensionTest extends \PHPUnit\Framework\TestCase
         $message = 'Delete message for payment term';
         $paymentTerm = new PaymentTerm();
 
-        $this->deleteMessageTextGenerator->expects($this->once())
+        $this->deleteMessageTextGenerator->expects(self::once())
             ->method('getDeleteMessageText')
             ->with(self::identicalTo($paymentTerm))
             ->willReturn($message);
 
-        $this->assertEquals(
+        self::assertEquals(
             $message,
             self::callTwigFunction($this->extension, 'get_payment_term_delete_message', [$paymentTerm])
         );
@@ -50,12 +49,12 @@ class DeleteMessageTextExtensionTest extends \PHPUnit\Framework\TestCase
         $message = 'Payment term delete message for datagrid';
         $paymentTermId = 1;
 
-        $this->deleteMessageTextGenerator->expects($this->once())
+        $this->deleteMessageTextGenerator->expects(self::once())
             ->method('getDeleteMessageTextForDataGrid')
             ->with($paymentTermId)
             ->willReturn($message);
 
-        $this->assertEquals(
+        self::assertEquals(
             $message,
             self::callTwigFunction($this->extension, 'get_payment_term_delete_message_datagrid', [$paymentTermId])
         );

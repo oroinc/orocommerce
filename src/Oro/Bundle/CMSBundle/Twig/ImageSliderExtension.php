@@ -20,15 +20,9 @@ use Twig\TwigFunction;
  */
 class ImageSliderExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-    private ?ApiUrlResolver $apiUrlResolver = null;
-    private ?AttachmentManager $attachmentManager = null;
-    private ?ImagePlaceholderProviderInterface $imagePlaceholderProvider = null;
-    private ?PropertyAccessorInterface $propertyAccessor = null;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -37,18 +31,6 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
         return [
             new TwigFunction('oro_cms_image_slide_sources', [$this, 'getImageSlideSources']),
             new TwigFunction('oro_cms_image_slide_image', [$this, 'getImageSlideImage']),
-        ];
-    }
-
-    #[\Override]
-    public static function getSubscribedServices(): array
-    {
-        return [
-            AttachmentManager::class,
-            'oro_cms.provider.image_slider_image_placeholder.default' => ImagePlaceholderProviderInterface::class,
-            PropertyAccessorInterface::class,
-            ManagerRegistry::class,
-            'oro_api.api_url_resolver' => ApiUrlResolver::class,
         ];
     }
 
@@ -286,33 +268,31 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
         }
     }
 
+    #[\Override]
+    public static function getSubscribedServices(): array
+    {
+        return [
+            'oro_cms.provider.image_slider_image_placeholder.default' => ImagePlaceholderProviderInterface::class,
+            AttachmentManager::class,
+            PropertyAccessorInterface::class,
+            ManagerRegistry::class,
+            ApiUrlResolver::class
+        ];
+    }
+
     private function getAttachmentManager(): AttachmentManager
     {
-        if (null === $this->attachmentManager) {
-            $this->attachmentManager = $this->container->get(AttachmentManager::class);
-        }
-
-        return $this->attachmentManager;
+        return $this->container->get(AttachmentManager::class);
     }
 
     private function getImagePlaceholderProvider(): ImagePlaceholderProviderInterface
     {
-        if (null === $this->imagePlaceholderProvider) {
-            $this->imagePlaceholderProvider = $this->container->get(
-                'oro_cms.provider.image_slider_image_placeholder.default'
-            );
-        }
-
-        return $this->imagePlaceholderProvider;
+        return $this->container->get('oro_cms.provider.image_slider_image_placeholder.default');
     }
 
     private function getPropertyAccessor(): PropertyAccessorInterface
     {
-        if (null === $this->propertyAccessor) {
-            $this->propertyAccessor = $this->container->get(PropertyAccessorInterface::class);
-        }
-
-        return $this->propertyAccessor;
+        return $this->container->get(PropertyAccessorInterface::class);
     }
 
     private function getDoctrine(): ManagerRegistry
@@ -322,10 +302,6 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
 
     private function getApiUrlResolver(): ApiUrlResolver
     {
-        if (null === $this->apiUrlResolver) {
-            $this->apiUrlResolver = $this->container->get('oro_api.api_url_resolver');
-        }
-
-        return $this->apiUrlResolver;
+        return $this->container->get(ApiUrlResolver::class);
     }
 }

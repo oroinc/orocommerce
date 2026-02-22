@@ -14,11 +14,9 @@ use Twig\TwigFunction;
  */
 class VisibilityExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -29,14 +27,6 @@ class VisibilityExtension extends AbstractExtension implements ServiceSubscriber
         ];
     }
 
-    #[\Override]
-    public static function getSubscribedServices(): array
-    {
-        return [
-            'oro_visibility.provider.resolved_product_visibility_provider' => ResolvedProductVisibilityProvider::class,
-        ];
-    }
-
     public function isVisibleProduct(Product|int|null $product): bool
     {
         $productId = $product instanceof Product ? $product->getId() : (int) $product;
@@ -44,8 +34,19 @@ class VisibilityExtension extends AbstractExtension implements ServiceSubscriber
             return false;
         }
 
-        return $this->container
-            ->get('oro_visibility.provider.resolved_product_visibility_provider')
-            ->isVisible($productId);
+        return $this->getResolvedProductVisibilityProvider()->isVisible($productId);
+    }
+
+    #[\Override]
+    public static function getSubscribedServices(): array
+    {
+        return [
+            ResolvedProductVisibilityProvider::class
+        ];
+    }
+
+    private function getResolvedProductVisibilityProvider(): ResolvedProductVisibilityProvider
+    {
+        return $this->container->get(ResolvedProductVisibilityProvider::class);
     }
 }

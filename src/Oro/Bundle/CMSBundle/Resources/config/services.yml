@@ -122,33 +122,39 @@ services:
             - true # use sandbox globally in instance
 
     oro_cms.twig.widget_extension:
-        class: 'Oro\Bundle\CMSBundle\Twig\WidgetExtension'
+        class: Oro\Bundle\CMSBundle\Twig\WidgetExtension
         arguments:
-            - '@oro_cms.content_widget.renderer'
-            - '@oro_cms.content_widget.wysiwyg_widget_icon_renderer'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_cms.content_widget.renderer, key: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetRenderer }
+            - { name: container.service_subscriber, id: oro_cms.content_widget.wysiwyg_widget_icon_renderer, key: Oro\Bundle\CMSBundle\ContentWidget\WysiwygWidgetIconRenderer }
 
     oro_cms.twig.content_widget_type_extension:
-        class: 'Oro\Bundle\CMSBundle\Twig\ContentWidgetTypeExtension'
+        class: Oro\Bundle\CMSBundle\Twig\ContentWidgetTypeExtension
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_cms.content_widget.type_registry, key: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry }
+            - { name: container.service_subscriber, id: oro_cms.provider.content_widget_layout, key: Oro\Bundle\CMSBundle\Provider\ContentWidgetLayoutProvider }
 
     oro_cms.twig.content_block_extension:
-        class: 'Oro\Bundle\CMSBundle\Twig\ContentBlockExtension'
+        class: Oro\Bundle\CMSBundle\Twig\ContentBlockExtension
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_cms.content_block.renderer, key: Oro\Bundle\CMSBundle\ContentBlock\ContentBlockRenderer }
 
     oro_cms.twig.digital_asset_extension:
-        class: 'Oro\Bundle\CMSBundle\Twig\DigitalAssetExtension'
+        class: Oro\Bundle\CMSBundle\Twig\DigitalAssetExtension
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_attachment.provider.file_url_by_uuid, key: Oro\Bundle\AttachmentBundle\Provider\FileUrlByUuidProvider }
+            - { name: container.service_subscriber, id: oro_api.api_url_resolver, key: Oro\Bundle\ApiBundle\Provider\ApiUrlResolver }
 
     oro_cms.twig.array_loader:
         class: 'Twig\Loader\ArrayLoader'

@@ -39,9 +39,9 @@ class ShoppingListExtensionTest extends TestCase
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_shopping_list.manager.shopping_list_limit', $this->shoppingListLimitManager)
+            ->add(ShoppingListLimitManager::class, $this->shoppingListLimitManager)
             ->add(ShoppingListUrlProvider::class, $this->shoppingListUrlProvider)
-            ->add('oro_action.layout.data_provider.button_provider', $this->layoutButtonProvider)
+            ->add(LayoutButtonProvider::class, $this->layoutButtonProvider)
             ->add(FeatureChecker::class, $this->featureChecker)
             ->getContainer($this);
 

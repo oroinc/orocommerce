@@ -260,20 +260,21 @@ services:
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
 
     oro_order.twig.order:
-        class: 'Oro\Bundle\OrderBundle\Twig\OrderExtension'
-        public: false
+        class: Oro\Bundle\OrderBundle\Twig\OrderExtension
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_order.formatter.source_document, key: Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter }
+            - { name: container.service_subscriber, id: oro_order.formatter.shipping_tracking, key: Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter }
 
     oro_order.twig.order_shipping:
-        class: 'Oro\Bundle\OrderBundle\Twig\OrderShippingExtension'
-        public: false
+        class: Oro\Bundle\OrderBundle\Twig\OrderShippingExtension
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_shipping.translator.shipping_method_label, key: Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator }
 
     oro_order.formatter.source_document:
         class: 'Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter'

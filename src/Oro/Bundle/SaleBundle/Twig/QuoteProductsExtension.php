@@ -19,36 +19,17 @@ use Twig\TwigFunction;
  */
 class QuoteProductsExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    protected ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    private function getLocalizationHelper(): LocalizationHelper
-    {
-        return $this->container->get(LocalizationHelper::class);
-    }
-
-    private function getEntityNameResolver(): EntityNameResolver
-    {
-        return $this->container->get(EntityNameResolver::class);
-    }
-
-    private function getProductName(?Product $product): ?string
-    {
-        return $this->getEntityNameResolver()->getName(
-            $product,
-            EntityNameProviderInterface::FULL,
-            $this->getLocalizationHelper()->getCurrentLocalization()
-        );
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
     public function getFunctions()
     {
-        return [new TwigFunction('quote_products', [$this, 'getQuoteProducts'])];
+        return [
+            new TwigFunction('quote_products', [$this, 'getQuoteProducts'])
+        ];
     }
 
     /**
@@ -85,7 +66,7 @@ class QuoteProductsExtension extends AbstractExtension implements ServiceSubscri
         return $result;
     }
 
-    protected function getKitItemLineItemsData(QuoteProduct $quoteProduct): array
+    private function getKitItemLineItemsData(QuoteProduct $quoteProduct): array
     {
         $kitItemLineItemsData = [];
         foreach ($quoteProduct->getKitItemLineItems() as $kitItemLineItem) {
@@ -103,12 +84,31 @@ class QuoteProductsExtension extends AbstractExtension implements ServiceSubscri
         return $kitItemLineItemsData;
     }
 
+    private function getProductName(?Product $product): ?string
+    {
+        return $this->getEntityNameResolver()->getName(
+            $product,
+            EntityNameProviderInterface::FULL,
+            $this->getLocalizationHelper()->getCurrentLocalization()
+        );
+    }
+
     #[\Override]
     public static function getSubscribedServices(): array
     {
         return [
-            LocalizationHelper::class,
             EntityNameResolver::class,
+            LocalizationHelper::class
         ];
+    }
+
+    private function getEntityNameResolver(): EntityNameResolver
+    {
+        return $this->container->get(EntityNameResolver::class);
+    }
+
+    private function getLocalizationHelper(): LocalizationHelper
+    {
+        return $this->container->get(LocalizationHelper::class);
     }
 }

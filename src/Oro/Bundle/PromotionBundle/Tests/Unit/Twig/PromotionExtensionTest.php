@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Twig;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -19,8 +18,10 @@ use Oro\Bundle\PromotionBundle\Layout\DataProvider\DTO\ObjectStorage;
 use Oro\Bundle\PromotionBundle\Twig\PromotionExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class PromotionExtensionTest extends \PHPUnit\Framework\TestCase
+class PromotionExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
     use EntityTrait;
@@ -35,29 +36,22 @@ class PromotionExtensionTest extends \PHPUnit\Framework\TestCase
     private const CURRENCY = 'USD';
     private const TYPE = 'order';
 
-    /** @var DiscountsInformationDataProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $discountsInformationDataProvider;
-
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
-
-    /** @var CodeGenerator|\PHPUnit\Framework\MockObject\MockObject */
-    private $couponCodeGenerator;
-
-    /** @var PromotionExtension */
-    private $extension;
+    private CodeGenerator&MockObject $couponCodeGenerator;
+    private DiscountsInformationDataProvider&MockObject $discountsInformationDataProvider;
+    private ManagerRegistry&MockObject $doctrine;
+    private PromotionExtension $extension;
 
     #[\Override]
     protected function setUp(): void
     {
+        $this->couponCodeGenerator = $this->createMock(CodeGenerator::class);
         $this->discountsInformationDataProvider = $this->createMock(DiscountsInformationDataProvider::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
-        $this->couponCodeGenerator = $this->createMock(CodeGenerator::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_promotion.layout.discount_information_data_provider', $this->discountsInformationDataProvider)
-            ->add(ManagerRegistry::class, $this->doctrine)
             ->add('oro_promotion.coupon_generation.code_generator', $this->couponCodeGenerator)
+            ->add(DiscountsInformationDataProvider::class, $this->discountsInformationDataProvider)
+            ->add(ManagerRegistry::class, $this->doctrine)
             ->getContainer($this);
 
         $this->extension = new PromotionExtension($container);
@@ -347,16 +341,10 @@ class PromotionExtensionTest extends \PHPUnit\Framework\TestCase
             ->with($order)
             ->willReturn($info);
 
-        $entityManager = $this->createMock(EntityManager::class);
-        $entityManager->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->with(AppliedPromotion::class)
             ->willReturn($entityRepository);
-
-        $this->doctrine->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(AppliedPromotion::class)
-            ->willReturn($entityManager);
 
         $this->assertEquals(
             $info,

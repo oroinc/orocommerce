@@ -17,20 +17,9 @@ use Twig\TwigFunction;
  */
 class ProductUnitFieldsSettingsExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * @return ProductUnitFieldsSettingsInterface
-     */
-    protected function getProductUnitFieldsSettings()
-    {
-        return $this->container->get('oro_product.visibility.product_unit_fields_settings');
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -52,32 +41,17 @@ class ProductUnitFieldsSettingsExtension extends AbstractExtension implements Se
         ];
     }
 
-    /**
-     * @param Product $product
-     *
-     * @return bool
-     */
-    public function isProductUnitSelectionVisible(Product $product)
+    public function isProductUnitSelectionVisible(Product $product): bool
     {
         return $this->getProductUnitFieldsSettings()->isProductUnitSelectionVisible($product);
     }
 
-    /**
-     * @param Product|null $product
-     *
-     * @return bool
-     */
-    public function isProductPrimaryUnitVisible(?Product $product = null)
+    public function isProductPrimaryUnitVisible(?Product $product = null): bool
     {
         return $this->getProductUnitFieldsSettings()->isProductPrimaryUnitVisible($product);
     }
 
-    /**
-     * @param Product|null $product
-     *
-     * @return bool
-     */
-    public function isAddingAdditionalUnitsToProductAvailable(?Product $product = null)
+    public function isAddingAdditionalUnitsToProductAvailable(?Product $product = null): bool
     {
         return $this->getProductUnitFieldsSettings()->isAddingAdditionalUnitsToProductAvailable($product);
     }
@@ -86,7 +60,12 @@ class ProductUnitFieldsSettingsExtension extends AbstractExtension implements Se
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_product.visibility.product_unit_fields_settings' => ProductUnitFieldsSettingsInterface::class,
+            'oro_product.visibility.product_unit_fields_settings' => ProductUnitFieldsSettingsInterface::class
         ];
+    }
+
+    private function getProductUnitFieldsSettings(): ProductUnitFieldsSettingsInterface
+    {
+        return $this->container->get('oro_product.visibility.product_unit_fields_settings');
     }
 }

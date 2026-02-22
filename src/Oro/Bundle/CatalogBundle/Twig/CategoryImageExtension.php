@@ -4,7 +4,6 @@ namespace Oro\Bundle\CatalogBundle\Twig;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
-use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProvider;
 use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProviderInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
@@ -18,17 +17,9 @@ use Twig\TwigFunction;
  */
 class CategoryImageExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-
-    private ?AttachmentManager $attachmentManager = null;
-
-    private ?PictureSourcesProviderInterface $pictureSourcesProvider = null;
-
-    private ?ImagePlaceholderProviderInterface $imagePlaceholderProvider = null;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -109,36 +100,24 @@ class CategoryImageExtension extends AbstractExtension implements ServiceSubscri
     public static function getSubscribedServices(): array
     {
         return [
-            AttachmentManager::class,
-            PictureSourcesProvider::class,
             'oro_catalog.provider.category_image_placeholder' => ImagePlaceholderProviderInterface::class,
+            'oro_attachment.provider.picture_sources' => PictureSourcesProviderInterface::class,
+            AttachmentManager::class
         ];
-    }
-
-    private function getAttachmentManager(): AttachmentManager
-    {
-        if (null === $this->attachmentManager) {
-            $this->attachmentManager = $this->container->get(AttachmentManager::class);
-        }
-
-        return $this->attachmentManager;
-    }
-
-    private function getPictureSourcesProvider(): PictureSourcesProviderInterface
-    {
-        if (null === $this->pictureSourcesProvider) {
-            $this->pictureSourcesProvider = $this->container->get(PictureSourcesProvider::class);
-        }
-
-        return $this->pictureSourcesProvider;
     }
 
     private function getImagePlaceholderProvider(): ImagePlaceholderProviderInterface
     {
-        if (null === $this->imagePlaceholderProvider) {
-            $this->imagePlaceholderProvider = $this->container->get('oro_catalog.provider.category_image_placeholder');
-        }
+        return $this->container->get('oro_catalog.provider.category_image_placeholder');
+    }
 
-        return $this->imagePlaceholderProvider;
+    private function getPictureSourcesProvider(): PictureSourcesProviderInterface
+    {
+        return $this->container->get('oro_attachment.provider.picture_sources');
+    }
+
+    private function getAttachmentManager(): AttachmentManager
+    {
+        return $this->container->get(AttachmentManager::class);
     }
 }

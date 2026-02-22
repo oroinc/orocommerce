@@ -26,15 +26,9 @@ use Twig\TwigFunction;
  */
 class ProductUnitExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-    private ?UnitLabelFormatterInterface $unitLabelFormatter = null;
-    private ?UnitValueFormatterInterface $unitValueFormatter = null;
-    private ?UnitVisibilityInterface $unitVisibility = null;
-    private ?UnitPrecisionLabelFormatter $unitPrecisionLabelFormatter = null;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -140,43 +134,27 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
             'oro_product.formatter.product_unit_label' => UnitLabelFormatterInterface::class,
             'oro_product.formatter.product_unit_precision' => UnitLabelFormatterInterface::class,
             'oro_product.visibility.unit' => UnitVisibilityInterface::class,
-            'oro_product.formatter.unit_precision_label' => UnitPrecisionLabelFormatter::class,
+            UnitPrecisionLabelFormatter::class
         ];
     }
 
     private function getLabelFormatter(): UnitLabelFormatterInterface
     {
-        if (null === $this->unitLabelFormatter) {
-            $this->unitLabelFormatter = $this->container->get('oro_product.formatter.product_unit_label');
-        }
-
-        return $this->unitLabelFormatter;
+        return $this->container->get('oro_product.formatter.product_unit_label');
     }
 
     private function getValueFormatter(): UnitValueFormatterInterface
     {
-        if (null === $this->unitValueFormatter) {
-            $this->unitValueFormatter = $this->container->get('oro_product.formatter.product_unit_value');
-        }
-
-        return $this->unitValueFormatter;
+        return $this->container->get('oro_product.formatter.product_unit_value');
     }
 
     private function getUnitVisibility(): UnitVisibilityInterface
     {
-        if (null === $this->unitVisibility) {
-            $this->unitVisibility = $this->container->get('oro_product.visibility.unit');
-        }
-
-        return $this->unitVisibility;
+        return $this->container->get('oro_product.visibility.unit');
     }
 
     private function getUnitPrecisionLabelFormatter(): UnitPrecisionLabelFormatter
     {
-        if (null === $this->unitPrecisionLabelFormatter) {
-            $this->unitPrecisionLabelFormatter = $this->container->get('oro_product.formatter.unit_precision_label');
-        }
-
-        return $this->unitPrecisionLabelFormatter;
+        return $this->container->get(UnitPrecisionLabelFormatter::class);
     }
 }

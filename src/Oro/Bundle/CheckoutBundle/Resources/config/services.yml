@@ -228,11 +228,12 @@ services:
             - { name: oro_action.condition, alias: check_request }
 
     oro_checkout.twig.line_items:
-        class: 'Oro\Bundle\CheckoutBundle\Twig\LineItemsExtension'
+        class: Oro\Bundle\CheckoutBundle\Twig\LineItemsExtension
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_product.layout.data_provider.configurable_products, key: Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider }
 
     oro_checkout.event_listener.resolve_payment_term:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\ResolvePaymentTermListener'

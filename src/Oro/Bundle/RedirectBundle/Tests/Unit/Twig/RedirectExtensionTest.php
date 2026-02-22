@@ -7,24 +7,17 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
-use Oro\Bundle\RedirectBundle\Twig\TwigExtension;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\RedirectBundle\Twig\RedirectExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class TwigExtensionTest extends \PHPUnit\Framework\TestCase
+class RedirectExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
-    use EntityTrait;
 
-    /**
-     * @var SlugEntityGenerator|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $generator;
-
-    /**
-     * @var TwigExtension
-     */
-    private $extension;
+    private SlugEntityGenerator&MockObject $generator;
+    private RedirectExtension $extension;
 
     #[\Override]
     protected function setUp(): void
@@ -35,24 +28,26 @@ class TwigExtensionTest extends \PHPUnit\Framework\TestCase
             ->add(SlugEntityGenerator::class, $this->generator)
             ->getContainer($this);
 
-        $this->extension = new TwigExtension($container);
+        $this->extension = new RedirectExtension($container);
     }
 
     public function testGetSlugsByEntitySlugPrototypes()
     {
-        /** @var LocalizedFallbackValue $slugPrototype */
-        $slugPrototype = $this->getEntity(LocalizedFallbackValue::class, ['string' => 'something']);
-        $entity = (new SluggableEntityStub())->addSlugPrototype($slugPrototype);
+        $slugPrototype = new LocalizedFallbackValue();
+        $slugPrototype->setString('something');
+
+        $entity = new SluggableEntityStub();
+        $entity->addSlugPrototype($slugPrototype);
 
         $slug = new Slug();
         $slugs = new ArrayCollection([$slug]);
 
-        $this->generator->expects($this->once())
+        $this->generator->expects(self::once())
             ->method('getSlugsByEntitySlugPrototypes')
             ->with($entity)
             ->willReturn($slugs);
 
-        $this->assertEquals(
+        self::assertEquals(
             $slugs,
             self::callTwigFilter($this->extension, 'get_slug_urls_for_prototypes', [$entity])
         );

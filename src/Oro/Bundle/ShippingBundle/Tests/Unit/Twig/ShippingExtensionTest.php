@@ -13,68 +13,51 @@ use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 use Oro\Bundle\ShippingBundle\Twig\ShippingExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
+class ShippingExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $dispatcher;
-
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
-
-    /** @var ShippingMethodLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingMethodLabelFormatter;
-
-    /** @var ShippingMethodEnabledByIdentifierCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingMethodChecker;
-
-    /** @var UnitValueFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $dimensionsUnitValueFormatter;
-
-    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $weightUnitLabelFormatter;
-
-    /** @var UnitValueFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $weightUnitValueFormatter;
-
-    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $lengthUnitLabelFormatter;
-
-    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $freightClassLabelFormatter;
-
-    /** @var ShippingExtension */
-    private $extension;
+    private ShippingMethodEnabledByIdentifierCheckerInterface&MockObject $shippingMethodChecker;
+    private UnitValueFormatterInterface&MockObject $dimensionsUnitValueFormatter;
+    private UnitLabelFormatterInterface&MockObject $weightUnitLabelFormatter;
+    private UnitValueFormatterInterface&MockObject $weightUnitValueFormatter;
+    private UnitLabelFormatterInterface&MockObject $lengthUnitLabelFormatter;
+    private UnitLabelFormatterInterface&MockObject $freightClassLabelFormatter;
+    private ShippingMethodLabelFormatter&MockObject $shippingMethodLabelFormatter;
+    private EventDispatcherInterface&MockObject $dispatcher;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private ShippingExtension $extension;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $this->shippingMethodLabelFormatter = $this->createMock(ShippingMethodLabelFormatter::class);
         $this->shippingMethodChecker = $this->createMock(ShippingMethodEnabledByIdentifierCheckerInterface::class);
         $this->dimensionsUnitValueFormatter = $this->createMock(UnitValueFormatterInterface::class);
         $this->weightUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
         $this->weightUnitValueFormatter = $this->createMock(UnitValueFormatterInterface::class);
         $this->lengthUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
         $this->freightClassLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
+        $this->shippingMethodLabelFormatter = $this->createMock(ShippingMethodLabelFormatter::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $container = self::getContainerBuilder()
-            ->add(EventDispatcherInterface::class, $this->dispatcher)
-            ->add(DoctrineHelper::class, $this->doctrineHelper)
-            ->add('oro_shipping.formatter.shipping_method_label', $this->shippingMethodLabelFormatter)
             ->add('oro_shipping.checker.shipping_method_enabled', $this->shippingMethodChecker)
             ->add('oro_shipping.formatter.dimensions_unit_value', $this->dimensionsUnitValueFormatter)
             ->add('oro_shipping.formatter.weight_unit_label', $this->weightUnitLabelFormatter)
             ->add('oro_shipping.formatter.weight_unit_value', $this->weightUnitValueFormatter)
             ->add('oro_shipping.formatter.length_unit_label', $this->lengthUnitLabelFormatter)
             ->add('oro_shipping.formatter.freight_class_label', $this->freightClassLabelFormatter)
+            ->add(ShippingMethodLabelFormatter::class, $this->shippingMethodLabelFormatter)
+            ->add(EventDispatcherInterface::class, $this->dispatcher)
+            ->add(DoctrineHelper::class, $this->doctrineHelper)
             ->getContainer($this);
 
         $this->extension = new ShippingExtension($container);

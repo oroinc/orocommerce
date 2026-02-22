@@ -4,7 +4,6 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
-use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProvider;
 use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProviderInterface;
 use Oro\Bundle\CatalogBundle\Twig\CategoryImageExtension;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
@@ -17,21 +16,21 @@ class CategoryImageExtensionTest extends \PHPUnit\Framework\TestCase
 
     private const PLACEHOLDER = 'placeholder/image.png';
 
-    private AttachmentManager|MockObject $attachmentManager;
     private PictureSourcesProviderInterface|MockObject $pictureSourcesProvider;
+    private AttachmentManager|MockObject $attachmentManager;
     private CategoryImageExtension $extension;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->attachmentManager = $this->createMock(AttachmentManager::class);
-        $this->pictureSourcesProvider = $this->createMock(PictureSourcesProviderInterface::class);
         $imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
+        $this->pictureSourcesProvider = $this->createMock(PictureSourcesProviderInterface::class);
+        $this->attachmentManager = $this->createMock(AttachmentManager::class);
 
         $container = self::getContainerBuilder()
-            ->add(AttachmentManager::class, $this->attachmentManager)
-            ->add(PictureSourcesProvider::class, $this->pictureSourcesProvider)
             ->add('oro_catalog.provider.category_image_placeholder', $imagePlaceholderProvider)
+            ->add('oro_attachment.provider.picture_sources', $this->pictureSourcesProvider)
+            ->add(AttachmentManager::class, $this->attachmentManager)
             ->getContainer($this);
 
         $this->extension = new CategoryImageExtension($container);

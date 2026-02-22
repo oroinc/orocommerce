@@ -9,7 +9,6 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGeneratorInterface;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
-use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository;
 use Oro\Bundle\PromotionBundle\Layout\DataProvider\DiscountsInformationDataProvider;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
@@ -29,11 +28,9 @@ use Twig\TwigFunction;
  */
 class PromotionExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -47,12 +44,7 @@ class PromotionExtension extends AbstractExtension implements ServiceSubscriberI
         ];
     }
 
-    /**
-     * @param object $sourceEntity
-     *
-     * @return array
-     */
-    public function getLineItemsDiscounts($sourceEntity)
+    public function getLineItemsDiscounts(object $sourceEntity): array
     {
         $lineItemsDiscounts = $this->getDiscountsInformationDataProvider()
             ->getDiscountLineItemDiscounts($sourceEntity);
@@ -130,14 +122,10 @@ class PromotionExtension extends AbstractExtension implements ServiceSubscriberI
 
     public function getAppliedPromotionsInfo(Order $order): array
     {
-        return $this->getAppliedPromotionRepository()->getAppliedPromotionsInfo($order);
+        return $this->getDoctrine()->getRepository(AppliedPromotion::class)->getAppliedPromotionsInfo($order);
     }
 
-    /**
-     * @param CodeGenerationOptions $codeGenerationOptions
-     * @return string
-     */
-    public function generateCouponCode(CodeGenerationOptions $codeGenerationOptions)
+    public function generateCouponCode(CodeGenerationOptions $codeGenerationOptions): string
     {
         return $this->getCouponCodeGenerator()->generateOne($codeGenerationOptions);
     }
@@ -146,26 +134,24 @@ class PromotionExtension extends AbstractExtension implements ServiceSubscriberI
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_promotion.layout.discount_information_data_provider' => DiscountsInformationDataProvider::class,
             'oro_promotion.coupon_generation.code_generator' => CodeGeneratorInterface::class,
+            DiscountsInformationDataProvider::class,
             ManagerRegistry::class
         ];
-    }
-
-    private function getDiscountsInformationDataProvider(): DiscountsInformationDataProvider
-    {
-        return $this->container->get('oro_promotion.layout.discount_information_data_provider');
-    }
-
-    private function getAppliedPromotionRepository(): AppliedPromotionRepository
-    {
-        return $this->container->get(ManagerRegistry::class)
-            ->getManagerForClass(AppliedPromotion::class)
-            ->getRepository(AppliedPromotion::class);
     }
 
     private function getCouponCodeGenerator(): CodeGeneratorInterface
     {
         return $this->container->get('oro_promotion.coupon_generation.code_generator');
+    }
+
+    private function getDiscountsInformationDataProvider(): DiscountsInformationDataProvider
+    {
+        return $this->container->get(DiscountsInformationDataProvider::class);
+    }
+
+    private function getDoctrine(): ManagerRegistry
+    {
+        return $this->container->get(ManagerRegistry::class);
     }
 }

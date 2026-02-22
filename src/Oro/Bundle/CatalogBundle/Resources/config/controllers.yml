@@ -14,6 +14,7 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_catalog.category_tree_handler, key: Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler }
 
     Oro\Bundle\CatalogBundle\Controller\ProductController:
         calls:
@@ -26,6 +27,7 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_catalog.category_tree_handler, key: Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler }
 
     Oro\Bundle\CatalogBundle\Controller\CategoryProductsController:
         calls:

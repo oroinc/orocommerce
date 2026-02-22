@@ -32,11 +32,9 @@ class QuoteExtension extends AbstractExtension implements ServiceSubscriberInter
 {
     private const FRONTEND_SYSTEM_CONFIG_PATH = 'oro_rfp.frontend_product_visibility';
 
-    private ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -115,30 +113,30 @@ class QuoteExtension extends AbstractExtension implements ServiceSubscriberInter
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_sale.formatter.quote_product' => QuoteProductFormatter::class,
-            'oro_config.manager' => ConfigManager::class,
-            FeatureChecker::class,
+            QuoteProductFormatter::class,
             WebsiteUrlResolver::class,
+            ConfigManager::class,
+            FeatureChecker::class
         ];
     }
 
     private function getQuoteProductFormatter(): QuoteProductFormatter
     {
-        return $this->container->get('oro_sale.formatter.quote_product');
-    }
-
-    private function getConfigManager(): ConfigManager
-    {
-        return $this->container->get('oro_config.manager');
-    }
-
-    private function getFeatureChecker(): FeatureChecker
-    {
-        return $this->container->get(FeatureChecker::class);
+        return $this->container->get(QuoteProductFormatter::class);
     }
 
     private function getWebsiteUrlResolver(): WebsiteUrlResolver
     {
         return $this->container->get(WebsiteUrlResolver::class);
+    }
+
+    private function getConfigManager(): ConfigManager
+    {
+        return $this->container->get(ConfigManager::class);
+    }
+
+    private function getFeatureChecker(): FeatureChecker
+    {
+        return $this->container->get(FeatureChecker::class);
     }
 }

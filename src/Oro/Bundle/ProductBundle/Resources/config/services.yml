@@ -58,35 +58,35 @@ services:
             - '@translator'
 
     oro_product.twig.product_unit_extension:
-        class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitExtension'
-        public: false
+        class: Oro\Bundle\ProductBundle\Twig\ProductUnitExtension
         arguments:
-            - "@oro_platform.twig.service_locator"
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_product.formatter.unit_precision_label, key: Oro\Bundle\ProductBundle\Formatter\UnitPrecisionLabelFormatter }
 
     oro_product.twig.product_form_unit_fields_settings:
-        class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitFieldsSettingsExtension'
-        public: false
+        class: Oro\Bundle\ProductBundle\Twig\ProductUnitFieldsSettingsExtension
         arguments:
-            - "@oro_platform.twig.service_locator"
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
     oro_product.twig.product_extension:
         class: Oro\Bundle\ProductBundle\Twig\ProductExtension
-        public: false
-        arguments:
-            - "@oro_platform.twig.service_locator"
-        tags:
-            - { name: twig.extension }
-
-    oro_product.twig.product_kit_item_extension:
-        class: 'Oro\Bundle\ProductBundle\Twig\ProductKitItemExtension'
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_product.related_item.helper.config_helper, key: Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper }
+
+    oro_product.twig.product_kit_item_extension:
+        class: Oro\Bundle\ProductBundle\Twig\ProductKitItemExtension
+        arguments:
+            - '@oro_platform.twig.service_locator'
+        tags:
+            - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_product.provider.product_kit_item_unit_precision, key: Oro\Bundle\ProductBundle\Provider\ProductKitItemUnitPrecisionProvider }
 
     oro_product.form.autocomplete.product.search_handler:
         parent: oro_form.autocomplete.search_handler
@@ -1283,11 +1283,11 @@ services:
 
     oro_product.twig.product_image_extension:
         class: Oro\Bundle\ProductBundle\Twig\ProductImageExtension
-        public: false
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_product.helper.product_image_helper, key: Oro\Bundle\ProductBundle\Helper\ProductImageHelper }
 
     oro_product.security.acl.voter.product_collection_segment:
         class: Oro\Bundle\ProductBundle\Acl\Voter\ProductCollectionSegmentVoter

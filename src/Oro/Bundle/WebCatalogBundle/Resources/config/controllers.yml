@@ -7,9 +7,11 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_web_catalog.content_node_tree_handler, key: Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler }
 
     Oro\Bundle\WebCatalogBundle\Controller\ContentNodeController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_web_catalog.content_node_tree_handler, key: Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler }

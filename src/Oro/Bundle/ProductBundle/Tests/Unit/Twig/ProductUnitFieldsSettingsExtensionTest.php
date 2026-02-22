@@ -6,16 +6,15 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Twig\ProductUnitFieldsSettingsExtension;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ProductUnitFieldsSettingsExtensionTest extends \PHPUnit\Framework\TestCase
+class ProductUnitFieldsSettingsExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $productUnitFieldsSettings;
-
-    /** @var ProductUnitFieldsSettingsExtension */
-    protected $extension;
+    private ProductUnitFieldsSettingsInterface&MockObject $productUnitFieldsSettings;
+    private ProductUnitFieldsSettingsExtension $extension;
 
     #[\Override]
     protected function setUp(): void

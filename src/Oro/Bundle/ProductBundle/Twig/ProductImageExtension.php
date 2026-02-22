@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\Twig;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
-use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProvider;
 use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProviderInterface;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -21,23 +20,13 @@ use Twig\TwigFunction;
  */
 class ProductImageExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-
-    private ?AttachmentManager $attachmentManager = null;
-
-    private ?PictureSourcesProviderInterface $pictureSourcesProvider = null;
-
-    private ?ImagePlaceholderProviderInterface $imagePlaceholderProvider = null;
-
-    private ?ProductImageHelper $productImageHelper = null;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
-    public function getFunctions(): array
+    public function getFunctions()
     {
         return [
             new TwigFunction('collect_product_images_by_types', [$this, 'collectProductImagesByTypes']),
@@ -148,46 +137,30 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
     public static function getSubscribedServices(): array
     {
         return [
-            AttachmentManager::class,
-            PictureSourcesProvider::class,
             'oro_product.provider.product_image_placeholder' => ImagePlaceholderProviderInterface::class,
-            'oro_product.helper.product_image_helper' => ProductImageHelper::class,
+            'oro_attachment.provider.picture_sources' => PictureSourcesProviderInterface::class,
+            ProductImageHelper::class,
+            AttachmentManager::class
         ];
-    }
-
-    private function getAttachmentManager(): AttachmentManager
-    {
-        if (null === $this->attachmentManager) {
-            $this->attachmentManager = $this->container->get(AttachmentManager::class);
-        }
-
-        return $this->attachmentManager;
-    }
-
-    private function getPictureSourcesProvider(): PictureSourcesProviderInterface
-    {
-        if (null === $this->pictureSourcesProvider) {
-            $this->pictureSourcesProvider = $this->container->get(PictureSourcesProvider::class);
-        }
-
-        return $this->pictureSourcesProvider;
     }
 
     private function getImagePlaceholderProvider(): ImagePlaceholderProviderInterface
     {
-        if (null === $this->imagePlaceholderProvider) {
-            $this->imagePlaceholderProvider = $this->container->get('oro_product.provider.product_image_placeholder');
-        }
+        return $this->container->get('oro_product.provider.product_image_placeholder');
+    }
 
-        return $this->imagePlaceholderProvider;
+    private function getPictureSourcesProvider(): PictureSourcesProviderInterface
+    {
+        return $this->container->get('oro_attachment.provider.picture_sources');
     }
 
     private function getProductImageHelper(): ProductImageHelper
     {
-        if (null === $this->productImageHelper) {
-            $this->productImageHelper = $this->container->get('oro_product.helper.product_image_helper');
-        }
+        return $this->container->get(ProductImageHelper::class);
+    }
 
-        return $this->productImageHelper;
+    private function getAttachmentManager(): AttachmentManager
+    {
+        return $this->container->get(AttachmentManager::class);
     }
 }

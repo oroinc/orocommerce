@@ -44,9 +44,6 @@ services:
         arguments:
             - !tagged_iterator oro_web_catalog.content_variant_type
 
-    Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry:
-        alias: 'oro_web_catalog.content_variant_type.registry'
-
     oro_web_catalog.content_variant_type.system_page:
         class: Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType
         public: false
@@ -69,16 +66,14 @@ services:
             - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
             - '@oro_web_catalog.unique_content_node_slug_prototype_resolver'
 
-    Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler:
-        alias: 'oro_web_catalog.content_node_tree_handler'
-
     oro_web_catalog.twig.extension:
         class: Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension
-        public: false
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_web_catalog.content_node_tree_handler, key: Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler }
+            - { name: container.service_subscriber, id: oro_web_catalog.content_variant_type.registry, key: Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry }
 
     oro_web_catalog.event_listener.orm.content_node_entity_listener:
         class: 'Oro\Bundle\WebCatalogBundle\EventListener\ContentNodeListener'

@@ -15,25 +15,26 @@ use Twig\TwigFunction;
  */
 class ContentTemplateImageExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-
-    private ?ImagePlaceholderProviderInterface $imagePlaceholderProvider = null;
-    private ?ApiUrlResolver $apiUrlResolver = null;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
     public function getFunctions()
     {
         return [
-            new TwigFunction(
-                'content_template_preview_image_placeholder',
-                [$this, 'getPreviewImagePlaceholder']
-            ),
+            new TwigFunction('content_template_preview_image_placeholder', [$this, 'getPreviewImagePlaceholder']),
         ];
+    }
+
+    public function getPreviewImagePlaceholder(string $filter, string $format = ''): string
+    {
+        return $this->getImagePlaceholderProvider()->getPath(
+            $filter,
+            $format,
+            $this->getApiUrlResolver()->getEffectiveReferenceType()
+        );
     }
 
     #[\Override]
@@ -41,33 +42,17 @@ class ContentTemplateImageExtension extends AbstractExtension implements Service
     {
         return [
             'oro_cms.provider.content_template_preview_image_placeholder' => ImagePlaceholderProviderInterface::class,
-            'oro_api.api_url_resolver' => ApiUrlResolver::class,
+            ApiUrlResolver::class
         ];
-    }
-
-    public function getPreviewImagePlaceholder(string $filter, string $format = ''): string
-    {
-        $referenceType = $this->getApiUrlResolver()->getEffectiveReferenceType();
-
-        return $this->getImagePlaceholderProvider()->getPath($filter, $format, $referenceType);
     }
 
     private function getImagePlaceholderProvider(): ImagePlaceholderProviderInterface
     {
-        if (null === $this->imagePlaceholderProvider) {
-            $this->imagePlaceholderProvider = $this->container
-                ->get('oro_cms.provider.content_template_preview_image_placeholder');
-        }
-
-        return $this->imagePlaceholderProvider;
+        return $this->container->get('oro_cms.provider.content_template_preview_image_placeholder');
     }
 
     private function getApiUrlResolver(): ApiUrlResolver
     {
-        if (null === $this->apiUrlResolver) {
-            $this->apiUrlResolver = $this->container->get('oro_api.api_url_resolver');
-        }
-
-        return $this->apiUrlResolver;
+        return $this->container->get(ApiUrlResolver::class);
     }
 }

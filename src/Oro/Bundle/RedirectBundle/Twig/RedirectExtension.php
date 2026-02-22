@@ -15,13 +15,11 @@ use Twig\TwigFilter;
  * Provides a Twig filters:
  *   - get_slug_urls_for_prototypes - return collection of slugs generated based on slug prototypes of the entity
  */
-class TwigExtension extends AbstractExtension implements ServiceSubscriberInterface
+class RedirectExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]

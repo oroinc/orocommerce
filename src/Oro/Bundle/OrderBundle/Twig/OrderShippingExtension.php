@@ -16,21 +16,16 @@ use Twig\TwigFunction;
  */
 class OrderShippingExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
     public function getFunctions(): array
     {
         return [
-            new TwigFunction(
-                'oro_order_shipping_method_label',
-                [$this, 'getShippingMethodLabel']
-            ),
+            new TwigFunction('oro_order_shipping_method_label', [$this, 'getShippingMethodLabel']),
         ];
     }
 
@@ -50,14 +45,14 @@ class OrderShippingExtension extends AbstractExtension implements ServiceSubscri
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_shipping.translator.shipping_method_label' => ShippingMethodLabelTranslator::class,
+            ShippingMethodLabelTranslator::class,
             DoctrineHelper::class
         ];
     }
 
     private function getShippingMethodLabelTranslator(): ShippingMethodLabelTranslator
     {
-        return $this->container->get('oro_shipping.translator.shipping_method_label');
+        return $this->container->get(ShippingMethodLabelTranslator::class);
     }
 
     private function getDoctrineHelper(): DoctrineHelper

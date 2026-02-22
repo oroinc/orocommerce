@@ -24,28 +24,9 @@ use Twig\TwigFunction;
  */
 class OrderExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * @return SourceDocumentFormatter
-     */
-    protected function getSourceDocumentFormatter()
-    {
-        return $this->container->get('oro_order.formatter.source_document');
-    }
-
-    /**
-     * @return ShippingTrackingFormatter
-     */
-    protected function getShippingTrackingFormatter()
-    {
-        return $this->container->get('oro_order.formatter.shipping_tracking');
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -91,9 +72,7 @@ class OrderExtension extends AbstractExtension implements ServiceSubscriberInter
      */
     public function getTemplateContent(Environment $environment, $templateName, array $context)
     {
-        $template = $environment->resolveTemplate($templateName);
-
-        return $template->render($context);
+        return $environment->resolveTemplate($templateName)->render($context);
     }
 
     /**
@@ -153,8 +132,18 @@ class OrderExtension extends AbstractExtension implements ServiceSubscriberInter
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_order.formatter.source_document' => SourceDocumentFormatter::class,
-            'oro_order.formatter.shipping_tracking' => ShippingTrackingFormatter::class,
+            SourceDocumentFormatter::class,
+            ShippingTrackingFormatter::class
         ];
+    }
+
+    private function getSourceDocumentFormatter(): SourceDocumentFormatter
+    {
+        return $this->container->get(SourceDocumentFormatter::class);
+    }
+
+    private function getShippingTrackingFormatter(): ShippingTrackingFormatter
+    {
+        return $this->container->get(ShippingTrackingFormatter::class);
     }
 }

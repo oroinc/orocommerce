@@ -13,8 +13,7 @@ class ProductKitItemExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    private ProductKitItemUnitPrecisionProvider|MockObject $kitItemUnitPrecisionProvider;
-
+    private ProductKitItemUnitPrecisionProvider&MockObject $kitItemUnitPrecisionProvider;
     private ProductKitItemExtension $extension;
 
     #[\Override]
@@ -23,7 +22,7 @@ class ProductKitItemExtensionTest extends TestCase
         $this->kitItemUnitPrecisionProvider = $this->createMock(ProductKitItemUnitPrecisionProvider::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_product.provider.product_kit_item_unit_precision', $this->kitItemUnitPrecisionProvider)
+            ->add(ProductKitItemUnitPrecisionProvider::class, $this->kitItemUnitPrecisionProvider)
             ->getContainer($this);
 
         $this->extension = new ProductKitItemExtension($container);
@@ -34,8 +33,7 @@ class ProductKitItemExtensionTest extends TestCase
         $kitItem = new ProductKitItem();
         $expectedResult = 3;
 
-        $this->kitItemUnitPrecisionProvider
-            ->expects(self::once())
+        $this->kitItemUnitPrecisionProvider->expects(self::once())
             ->method('getUnitPrecisionByKitItem')
             ->with($kitItem)
             ->willReturn($expectedResult);

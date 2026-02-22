@@ -9,19 +9,16 @@ use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 use Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class WebCatalogExtensionTest extends \PHPUnit\Framework\TestCase
+class WebCatalogExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var ContentNodeTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
-    private $treeHandler;
-
-    /** @var ContentVariantTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $contentVariantTypeRegistry;
-
-    /** @var WebCatalogExtension */
-    private $extension;
+    private ContentNodeTreeHandler&MockObject $treeHandler;
+    private ContentVariantTypeRegistry&MockObject $contentVariantTypeRegistry;
+    private WebCatalogExtension $extension;
 
     #[\Override]
     protected function setUp(): void
@@ -44,15 +41,15 @@ class WebCatalogExtensionTest extends \PHPUnit\Framework\TestCase
         $nodes = [$root, $node];
         $webCatalog = new WebCatalog();
 
-        $this->treeHandler->expects($this->once())
+        $this->treeHandler->expects(self::once())
             ->method('getTreeRootByWebCatalog')
             ->willReturn($root);
-        $this->treeHandler->expects($this->once())
+        $this->treeHandler->expects(self::once())
             ->method('createTree')
             ->with($root, true)
             ->willReturn($nodes);
 
-        $this->assertEquals(
+        self::assertEquals(
             $nodes,
             self::callTwigFunction($this->extension, 'oro_web_catalog_tree', [$webCatalog])
         );
@@ -64,16 +61,16 @@ class WebCatalogExtensionTest extends \PHPUnit\Framework\TestCase
         $title = 'Title';
 
         $type = $this->createMock(ContentVariantTypeInterface::class);
-        $type->expects($this->once())
+        $type->expects(self::once())
             ->method('getTitle')
             ->willReturn($title);
 
-        $this->contentVariantTypeRegistry->expects($this->once())
+        $this->contentVariantTypeRegistry->expects(self::once())
             ->method('getContentVariantType')
             ->with($typeName)
             ->willReturn($type);
 
-        $this->assertEquals(
+        self::assertEquals(
             $title,
             self::callTwigFunction($this->extension, 'oro_web_catalog_content_variant_title', [$typeName])
         );

@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
-use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProvider;
 use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProviderInterface;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -13,46 +12,45 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Twig\ProductImageExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
+class ProductImageExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
     private const PLACEHOLDER = 'placeholder/image.png';
 
-    private AttachmentManager|MockObject $attachmentManager;
-    private PictureSourcesProviderInterface|MockObject $pictureSourcesProvider;
+    private PictureSourcesProviderInterface&MockObject $pictureSourcesProvider;
+    private AttachmentManager&MockObject $attachmentManager;
     private ProductImageExtension $extension;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->pictureSourcesProvider = $this->createMock(PictureSourcesProviderInterface::class);
+        $this->attachmentManager = $this->createMock(AttachmentManager::class);
+
         $imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
+        $imagePlaceholderProvider->expects(self::any())
+            ->method('getPath')
+            ->willReturnCallback(static function (string $filter, string $format) {
+                return '/' . $filter . '/' . self::PLACEHOLDER . ($format ? '.' . $format : '');
+            });
 
-        $container = self::getContainerBuilder()
-            ->add(AttachmentManager::class, $this->attachmentManager)
-            ->add(PictureSourcesProvider::class, $this->pictureSourcesProvider)
-            ->add('oro_product.provider.product_image_placeholder', $imagePlaceholderProvider)
-            ->add('oro_product.helper.product_image_helper', new ProductImageHelper())
-            ->getContainer($this);
-
-        $this->extension = new ProductImageExtension($container);
-
-        $this->attachmentManager
-            ->expects(self::any())
+        $this->attachmentManager->expects(self::any())
             ->method('getFilteredImageUrl')
             ->willReturnCallback(static function (File $file, string $filter, string $format) {
                 return '/' . $filter . '/' . $file->getFilename() . ($format ? '.' . $format : '');
             });
 
-        $imagePlaceholderProvider
-            ->expects(self::any())
-            ->method('getPath')
-            ->willReturnCallback(static function (string $filter, string $format) {
-                return '/' . $filter . '/' . self::PLACEHOLDER . ($format ? '.' . $format : '');
-            });
+        $container = self::getContainerBuilder()
+            ->add('oro_product.provider.product_image_placeholder', $imagePlaceholderProvider)
+            ->add('oro_attachment.provider.picture_sources', $this->pictureSourcesProvider)
+            ->add(ProductImageHelper::class, new ProductImageHelper())
+            ->add(AttachmentManager::class, $this->attachmentManager)
+            ->getContainer($this);
+
+        $this->extension = new ProductImageExtension($container);
     }
 
     /**
@@ -168,8 +166,7 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         bool $isWebpEnabledIfSupported,
         array $expected
     ): void {
-        $this->attachmentManager
-            ->expects(self::any())
+        $this->attachmentManager->expects(self::any())
             ->method('isWebpEnabledIfSupported')
             ->willReturn($isWebpEnabledIfSupported);
 
@@ -187,17 +184,17 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         return [
             'returns regular source when webp is not enabled is supported' => [
                 'isWebpEnabledIfSupported' => false,
-                'expected' => ['src' => '/original/placeholder/image.png', 'sources' => []],
+                'expected' => ['src' => '/original/placeholder/image.png', 'sources' => []]
             ],
             'returns regular and webp source when webp is enabled is supported' => [
                 'isWebpEnabledIfSupported' => true,
                 'expected' => [
                     'src' => '/original/placeholder/image.png',
                     'sources' => [
-                        ['srcset' => '/original/placeholder/image.png.webp', 'type' => 'image/webp'],
-                    ],
-                ],
-            ],
+                        ['srcset' => '/original/placeholder/image.png.webp', 'type' => 'image/webp']
+                    ]
+                ]
+            ]
         ];
     }
 
@@ -234,10 +231,10 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
                         [
                             'srcset' => '/original/image.mime.webp',
                             'type' => 'image/webp',
-                            'sample_key' => 'sample_value',
-                        ],
-                    ],
-                ],
+                            'sample_key' => 'sample_value'
+                        ]
+                    ]
+                ]
             ],
             'attrs take precedence over srcset and type' => [
                 'attrs' => ['srcset' => 'sample_value', 'type' => 'sample/type'],
@@ -246,11 +243,11 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
                     'sources' => [
                         [
                             'srcset' => 'sample_value',
-                            'type' => 'sample/type',
-                        ],
-                    ],
-                ],
-            ],
+                            'type' => 'sample/type'
+                        ]
+                    ]
+                ]
+            ]
         ];
     }
 

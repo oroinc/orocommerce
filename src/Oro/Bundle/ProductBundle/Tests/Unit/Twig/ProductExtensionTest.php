@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
 use Oro\Bundle\ProductBundle\Twig\ProductExtension;
@@ -15,29 +14,22 @@ class ProductExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    private MockObject|AutocompleteFieldsProvider $autocompleteFieldsProvider;
-
-    private FinderStrategyInterface|MockObject $relatedProductFinderStrategy;
-
-    private FinderStrategyInterface|MockObject $upsellProductFinderStrategy;
-
-    private RelatedItemConfigHelper|MockObject $relatedItemConfigHelper;
-
+    private FinderStrategyInterface&MockObject $relatedProductFinderStrategy;
+    private FinderStrategyInterface&MockObject $upsellProductFinderStrategy;
+    private RelatedItemConfigHelper&MockObject $relatedItemConfigHelper;
     private ProductExtension $extension;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->autocompleteFieldsProvider = $this->createMock(AutocompleteFieldsProvider::class);
         $this->relatedProductFinderStrategy = $this->createMock(FinderStrategyInterface::class);
         $this->upsellProductFinderStrategy = $this->createMock(FinderStrategyInterface::class);
         $this->relatedItemConfigHelper = $this->createMock(RelatedItemConfigHelper::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_product.autocomplete_fields_provider', $this->autocompleteFieldsProvider)
             ->add('oro_product.related_item.related_product.finder_strategy', $this->relatedProductFinderStrategy)
             ->add('oro_product.related_item.upsell_product.finder_strategy', $this->upsellProductFinderStrategy)
-            ->add('oro_product.related_item.helper.config_helper', $this->relatedItemConfigHelper)
+            ->add(RelatedItemConfigHelper::class, $this->relatedItemConfigHelper)
             ->getContainer($this);
 
         $this->extension = new ProductExtension($container);

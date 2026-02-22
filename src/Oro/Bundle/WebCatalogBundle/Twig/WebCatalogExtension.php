@@ -17,28 +17,9 @@ use Twig\TwigFunction;
  */
 class WebCatalogExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * @return ContentNodeTreeHandler
-     */
-    protected function getTreeHandler()
-    {
-        return $this->container->get(ContentNodeTreeHandler::class);
-    }
-
-    /**
-     * @return ContentVariantTypeRegistry
-     */
-    protected function getContentVariantTypeRegistry()
-    {
-        return $this->container->get(ContentVariantTypeRegistry::class);
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -50,16 +31,11 @@ class WebCatalogExtension extends AbstractExtension implements ServiceSubscriber
         ];
     }
 
-    /**
-     * @param WebCatalog $webCatalog
-     * @return array
-     */
-    public function getNodesTree(WebCatalog $webCatalog)
+    public function getNodesTree(WebCatalog $webCatalog): array
     {
         $treeHandler = $this->getTreeHandler();
-        $root = $treeHandler->getTreeRootByWebCatalog($webCatalog);
 
-        return $treeHandler->createTree($root, true);
+        return $treeHandler->createTree($treeHandler->getTreeRootByWebCatalog($webCatalog));
     }
 
     /**
@@ -68,9 +44,7 @@ class WebCatalogExtension extends AbstractExtension implements ServiceSubscriber
      */
     public function getContentVariantTitle($typeName)
     {
-        $type = $this->getContentVariantTypeRegistry()->getContentVariantType($typeName);
-
-        return $type->getTitle();
+        return $this->getContentVariantTypeRegistry()->getContentVariantType($typeName)->getTitle();
     }
 
     #[\Override]
@@ -80,5 +54,15 @@ class WebCatalogExtension extends AbstractExtension implements ServiceSubscriber
             ContentNodeTreeHandler::class,
             ContentVariantTypeRegistry::class
         ];
+    }
+
+    private function getTreeHandler(): ContentNodeTreeHandler
+    {
+        return $this->container->get(ContentNodeTreeHandler::class);
+    }
+
+    private function getContentVariantTypeRegistry(): ContentVariantTypeRegistry
+    {
+        return $this->container->get(ContentVariantTypeRegistry::class);
     }
 }

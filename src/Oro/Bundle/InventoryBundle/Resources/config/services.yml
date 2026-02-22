@@ -111,6 +111,9 @@ services:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_inventory.provider.upcoming_product_provider, key: Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider }
+            - { name: container.service_subscriber, id: oro_inventory.inventory.low_inventory_provider, key: Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider }
+            - { name: container.service_subscriber, id: oro_inventory.provider.inventory_status, key: Oro\Bundle\InventoryBundle\Provider\InventoryStatusProvider }
 
     oro_inventory.event_listener.frontend_website_search_index:
         class: Oro\Bundle\InventoryBundle\EventListener\Frontend\WebsiteSearchProductIndexerListener

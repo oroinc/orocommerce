@@ -27,7 +27,7 @@ class DigitalAssetExtensionTest extends TestCase
 
         $container = self::getContainerBuilder()
             ->add(FileUrlByUuidProvider::class, $this->fileUrlByUuidProvider)
-            ->add('oro_api.api_url_resolver', $this->apiUrlResolver)
+            ->add(ApiUrlResolver::class, $this->apiUrlResolver)
             ->getContainer($this);
 
         $this->extension = new DigitalAssetExtension($container);

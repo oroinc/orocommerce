@@ -18,6 +18,7 @@ services:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_api.api_url_resolver, key: Oro\Bundle\ApiBundle\Provider\ApiUrlResolver }
 
     oro_cms.event_listener.content_widget_form:
         class: Oro\Bundle\CMSBundle\EventListener\ContentWidgetFormEventListener

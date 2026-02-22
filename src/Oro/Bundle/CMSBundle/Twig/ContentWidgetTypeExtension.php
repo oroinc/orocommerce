@@ -17,11 +17,9 @@ use Twig\TwigFilter;
  */
 class ContentWidgetTypeExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -57,20 +55,20 @@ class ContentWidgetTypeExtension extends AbstractExtension implements ServiceSub
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_cms.content_widget.type_registry' => ContentWidgetTypeRegistry::class,
-            'oro_cms.provider.content_widget_layout' => ContentWidgetLayoutProvider::class,
-            TranslatorInterface::class,
+            ContentWidgetTypeRegistry::class,
+            ContentWidgetLayoutProvider::class,
+            TranslatorInterface::class
         ];
     }
 
     private function getContentWidgetTypeRegistry(): ContentWidgetTypeRegistry
     {
-        return $this->container->get('oro_cms.content_widget.type_registry');
+        return $this->container->get(ContentWidgetTypeRegistry::class);
     }
 
     private function getContentWidgetLayoutProvider(): ContentWidgetLayoutProvider
     {
-        return $this->container->get('oro_cms.provider.content_widget_layout');
+        return $this->container->get(ContentWidgetLayoutProvider::class);
     }
 
     private function getTranslator(): TranslatorInterface

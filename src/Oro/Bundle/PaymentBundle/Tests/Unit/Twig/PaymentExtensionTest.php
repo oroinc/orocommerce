@@ -25,17 +25,11 @@ final class PaymentExtensionTest extends TestCase
     use TwigExtensionTestCaseTrait;
 
     private PaymentTransactionProvider&MockObject $paymentTransactionProvider;
-
     private PaymentMethodLabelFormatter&MockObject $paymentMethodLabelFormatter;
-
     private PaymentMethodOptionsFormatter&MockObject $paymentMethodOptionsFormatter;
-
-    private EventDispatcherInterface&MockObject $dispatcher;
-
     private PaymentStatusLabelFormatter&MockObject $paymentStatusLabelFormatter;
-
     private PaymentStatusManager&MockObject $paymentStatusManager;
-
+    private EventDispatcherInterface&MockObject $dispatcher;
     private PaymentExtension $extension;
 
     #[\Override]
@@ -44,17 +38,17 @@ final class PaymentExtensionTest extends TestCase
         $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
         $this->paymentMethodLabelFormatter = $this->createMock(PaymentMethodLabelFormatter::class);
         $this->paymentMethodOptionsFormatter = $this->createMock(PaymentMethodOptionsFormatter::class);
-        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->paymentStatusLabelFormatter = $this->createMock(PaymentStatusLabelFormatter::class);
         $this->paymentStatusManager = $this->createMock(PaymentStatusManager::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_payment.provider.payment_transaction', $this->paymentTransactionProvider)
-            ->add('oro_payment.formatter.payment_method_label', $this->paymentMethodLabelFormatter)
-            ->add('oro_payment.formatter.payment_method_options', $this->paymentMethodOptionsFormatter)
+            ->add(PaymentTransactionProvider::class, $this->paymentTransactionProvider)
+            ->add(PaymentMethodLabelFormatter::class, $this->paymentMethodLabelFormatter)
+            ->add(PaymentMethodOptionsFormatter::class, $this->paymentMethodOptionsFormatter)
+            ->add(PaymentStatusLabelFormatter::class, $this->paymentStatusLabelFormatter)
+            ->add(PaymentStatusManager::class, $this->paymentStatusManager)
             ->add(EventDispatcherInterface::class, $this->dispatcher)
-            ->add('oro_payment.formatter.payment_status_label', $this->paymentStatusLabelFormatter)
-            ->add('oro_payment.manager.payment_status', $this->paymentStatusManager)
             ->getContainer($this);
 
         $this->extension = new PaymentExtension($container);
@@ -107,7 +101,7 @@ final class PaymentExtensionTest extends TestCase
             self::callTwigFunction($this->extension, 'oro_payment_method_config_template', [$methodName])
         );
 
-        //test cache
+        // test cache
         self::assertEquals(
             '@OroPayment/PaymentMethodsConfigsRule/paymentMethodWithOptions.html.twig',
             self::callTwigFunction($this->extension, 'oro_payment_method_config_template', [$methodName])

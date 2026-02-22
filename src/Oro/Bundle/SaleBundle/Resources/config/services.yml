@@ -12,34 +12,33 @@ services:
             - { name: validator.constraint_validator, alias: oro_sale.validator.quote_product }
 
     oro_sale.twig.quote:
-        class: 'Oro\Bundle\SaleBundle\Twig\QuoteExtension'
-        public: false
+        class: Oro\Bundle\SaleBundle\Twig\QuoteExtension
         arguments:
-            - "@oro_platform.twig.service_locator"
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_sale.formatter.quote_product, key: Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter }
 
     oro_sale.twig.quote_products:
-        class: 'Oro\Bundle\SaleBundle\Twig\QuoteProductsExtension'
-        public: false
+        class: Oro\Bundle\SaleBundle\Twig\QuoteProductsExtension
         arguments:
-            - "@oro_platform.twig.service_locator"
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
     oro_sale.formatter.quote_product:
         class: 'Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter'
         arguments:
-            - "@translator"
-            - "@oro_locale.formatter.number"
-            - "@oro_product.formatter.product_unit_value"
-            - "@oro_product.formatter.product_unit_label"
+            - '@translator'
+            - '@oro_locale.formatter.number'
+            - '@oro_product.formatter.product_unit_value'
+            - '@oro_product.formatter.product_unit_label'
 
     oro_sale.formatter.quote_product_offer:
         class: 'Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter'
         public: false
         arguments:
-            - "@translator"
+            - '@translator'
 
     Oro\Bundle\SaleBundle\Model\QuoteProductOfferMatcher:
         alias: oro_sale.service.quote_product_offer_matcher

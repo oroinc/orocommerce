@@ -16,10 +16,8 @@ class SearchTermExtensionTest extends TestCase
     #[\Override]
     protected function setUp(): void
     {
-        $formatter = new SearchTermPhrasesFormatter(',');
-
         $container = self::getContainerBuilder()
-            ->add('oro_website_search_term.formatter.search_term_phrases_formatter', $formatter)
+            ->add(SearchTermPhrasesFormatter::class, new SearchTermPhrasesFormatter(','))
             ->getContainer($this);
 
         $this->extension = new SearchTermExtension($container);
@@ -41,16 +39,16 @@ class SearchTermExtensionTest extends TestCase
         return [
             [
                 'phrases' => '',
-                'expectedResult' => [],
+                'expectedResult' => []
             ],
             [
                 'phrases' => 'foo',
-                'expectedResult' => ['foo'],
+                'expectedResult' => ['foo']
             ],
             [
                 'phrases' => 'foo,bar',
-                'expectedResult' => ['foo', 'bar'],
-            ],
+                'expectedResult' => ['foo', 'bar']
+            ]
         ];
     }
 
@@ -71,18 +69,18 @@ class SearchTermExtensionTest extends TestCase
             [
                 'phrases' => '',
                 'joinWith' => '',
-                'expectedResult' => '',
+                'expectedResult' => ''
             ],
             [
                 'phrases' => 'foo',
                 'joinWith' => ', ',
-                'expectedResult' => 'foo',
+                'expectedResult' => 'foo'
             ],
             [
                 'phrases' => 'foo,bar',
                 'joinWith' => ', ',
-                'expectedResult' => 'foo, bar',
-            ],
+                'expectedResult' => 'foo, bar'
+            ]
         ];
     }
 }

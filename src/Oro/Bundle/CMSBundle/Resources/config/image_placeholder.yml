@@ -15,6 +15,7 @@ services:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_api.api_url_resolver, key: Oro\Bundle\ApiBundle\Provider\ApiUrlResolver }
 
     oro_cms.provider.image_slider_image_placeholder.default:
         parent: oro_layout.provider.image_placeholder.default.abstract

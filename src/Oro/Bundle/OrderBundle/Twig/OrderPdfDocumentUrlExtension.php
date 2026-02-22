@@ -17,17 +17,9 @@ use Twig\TwigFilter;
  */
 final class OrderPdfDocumentUrlExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    public function __construct(private readonly ContainerInterface $container)
-    {
-    }
-
-    #[\Override]
-    public static function getSubscribedServices(): array
-    {
-        return [
-            'oro_order.pdf_document.url_generator.back_office' => OrderPdfDocumentUrlGeneratorInterface::class,
-            'oro_order.pdf_document.url_generator.storefront' => OrderPdfDocumentUrlGeneratorInterface::class,
-        ];
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -61,14 +53,9 @@ final class OrderPdfDocumentUrlExtension extends AbstractExtension implements Se
      *
      * @return string|null The generated URL or null if the PDF document does not exist.
      */
-    public function getPdfDocumentBackOfficeUrl(
-        Order $order,
-        string $pdfDocumentType
-    ): ?string {
-        /** @var OrderPdfDocumentUrlGeneratorInterface $orderPdfDocumentUrlGenerator */
-        $orderPdfDocumentUrlGenerator = $this->container->get('oro_order.pdf_document.url_generator.back_office');
-
-        return $orderPdfDocumentUrlGenerator->generateUrl($order, $pdfDocumentType);
+    public function getPdfDocumentBackOfficeUrl(Order $order, string $pdfDocumentType): ?string
+    {
+        return $this->getBackendOrderPdfDocumentUrlGenerator()->generateUrl($order, $pdfDocumentType);
     }
 
     /**
@@ -91,14 +78,9 @@ final class OrderPdfDocumentUrlExtension extends AbstractExtension implements Se
      *
      * @return string|null The generated URL or null if the PDF document does not exist.
      */
-    public function getPdfDocumentStorefrontUrl(
-        Order $order,
-        string $pdfDocumentType
-    ): ?string {
-        /** @var OrderPdfDocumentUrlGeneratorInterface $orderPdfDocumentUrlGenerator */
-        $orderPdfDocumentUrlGenerator = $this->container->get('oro_order.pdf_document.url_generator.storefront');
-
-        return $orderPdfDocumentUrlGenerator->generateUrl($order, $pdfDocumentType);
+    public function getPdfDocumentStorefrontUrl(Order $order, string $pdfDocumentType): ?string
+    {
+        return $this->getFrontendOrderPdfDocumentUrlGenerator()->generateUrl($order, $pdfDocumentType);
     }
 
     /**
@@ -111,5 +93,24 @@ final class OrderPdfDocumentUrlExtension extends AbstractExtension implements Se
     public function getOrderDefaultPdfDocumentStorefrontUrl(Order $order): ?string
     {
         return $this->getPdfDocumentStorefrontUrl($order, OrderPdfDocumentType::DEFAULT);
+    }
+
+    #[\Override]
+    public static function getSubscribedServices(): array
+    {
+        return [
+            'oro_order.pdf_document.url_generator.back_office' => OrderPdfDocumentUrlGeneratorInterface::class,
+            'oro_order.pdf_document.url_generator.storefront' => OrderPdfDocumentUrlGeneratorInterface::class,
+        ];
+    }
+
+    private function getBackendOrderPdfDocumentUrlGenerator(): OrderPdfDocumentUrlGeneratorInterface
+    {
+        return $this->container->get('oro_order.pdf_document.url_generator.back_office');
+    }
+
+    private function getFrontendOrderPdfDocumentUrlGenerator(): OrderPdfDocumentUrlGeneratorInterface
+    {
+        return $this->container->get('oro_order.pdf_document.url_generator.storefront');
     }
 }

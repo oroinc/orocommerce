@@ -15,11 +15,9 @@ use Twig\TwigFunction;
  */
 class PaymentTermExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -44,7 +42,7 @@ class PaymentTermExtension extends AbstractExtension implements ServiceSubscribe
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_payment_term.provider.payment_term' => PaymentTermProviderInterface::class,
+            'oro_payment_term.provider.payment_term' => PaymentTermProviderInterface::class
         ];
     }
 

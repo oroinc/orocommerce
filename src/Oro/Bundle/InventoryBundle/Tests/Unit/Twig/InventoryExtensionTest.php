@@ -29,9 +29,9 @@ class InventoryExtensionTest extends TestCase
         $this->inventoryStatusProvider = $this->createMock(InventoryStatusProvider::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_inventory.provider.upcoming_product_provider', $this->upcomingProductProvider)
-            ->add('oro_inventory.inventory.low_inventory_provider', $this->lowInventoryProvider)
-            ->add('oro_inventory.provider.inventory_status', $this->inventoryStatusProvider)
+            ->add(UpcomingProductProvider::class, $this->upcomingProductProvider)
+            ->add(LowInventoryProvider::class, $this->lowInventoryProvider)
+            ->add(InventoryStatusProvider::class, $this->inventoryStatusProvider)
             ->getContainer($this);
 
         $this->extension = new InventoryExtension($container);
@@ -43,9 +43,9 @@ class InventoryExtensionTest extends TestCase
     public function testIsUpcomingProduct(bool $expected, bool $isUpcoming): void
     {
         $product = new Product();
-        $this->upcomingProductProvider->expects($this->once())
+        $this->upcomingProductProvider->expects(self::once())
             ->method('isUpcoming')
-            ->with($this->identicalTo($product))
+            ->with(self::identicalTo($product))
             ->willReturn($isUpcoming);
 
         self::assertEquals(
@@ -64,7 +64,7 @@ class InventoryExtensionTest extends TestCase
             'product is not upcoming' => [
                 'expected' => false,
                 'isUpcoming' => false
-            ],
+            ]
         ];
     }
 
@@ -74,9 +74,9 @@ class InventoryExtensionTest extends TestCase
     public function testGetUpcomingAvailabilityDate(?\DateTime $expected, ?\DateTime $availabilityDate): void
     {
         $product = new Product();
-        $this->upcomingProductProvider->expects($this->once())
+        $this->upcomingProductProvider->expects(self::once())
             ->method('getAvailabilityDate')
-            ->with($this->identicalTo($product))
+            ->with(self::identicalTo($product))
             ->willReturn($availabilityDate);
 
         self::assertEquals(
@@ -107,12 +107,12 @@ class InventoryExtensionTest extends TestCase
     public function testIsLowInventory(bool $lowInventory)
     {
         $product = new Product();
-        $this->lowInventoryProvider->expects($this->once())
+        $this->lowInventoryProvider->expects(self::once())
             ->method('isLowInventoryProduct')
-            ->with($this->identicalTo($product))
+            ->with(self::identicalTo($product))
             ->willReturn($lowInventory);
 
-        $this->assertSame(
+        self::assertSame(
             $lowInventory,
             self::callTwigFunction($this->extension, 'oro_is_low_inventory_product', [$product])
         );
@@ -131,38 +131,38 @@ class InventoryExtensionTest extends TestCase
      */
     public function testGetInventoryStatusCodeAndLabel(Product|ProductView|array $data)
     {
-        $this->inventoryStatusProvider
-            ->expects(self::once())
+        $this->inventoryStatusProvider->expects(self::once())
             ->method('getCode')
             ->with($data)
             ->willReturn('code');
 
-        $this->inventoryStatusProvider
-            ->expects(self::once())
+        $this->inventoryStatusProvider->expects(self::once())
             ->method('getLabel')
             ->with($data)
             ->willReturn('label');
 
-        $this->assertSame(
+        self::assertSame(
             'code',
             self::callTwigFunction($this->extension, 'oro_inventory_status_code', [$data])
         );
-        $this->assertSame(
+        self::assertSame(
             'label',
             self::callTwigFunction($this->extension, 'oro_inventory_status_label', [$data])
         );
     }
 
-    public function invStatusDataProvider(): \Generator
+    public function invStatusDataProvider(): array
     {
-        yield [
-            'data' => new Product(),
-        ];
-        yield [
-            'data' => new ProductView(),
-        ];
-        yield [
-            'data' => ['id' => 1], // Search result item
+        return [
+            'product' => [
+                'data' => new Product()
+            ],
+            'product view' => [
+                'data' => new ProductView()
+            ],
+            'search result item' => [
+                'data' => ['id' => 1]
+            ]
         ];
     }
 }

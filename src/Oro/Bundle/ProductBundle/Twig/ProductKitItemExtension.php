@@ -14,13 +14,9 @@ use Twig\TwigFilter;
  */
 class ProductKitItemExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-
-    private ?ProductKitItemUnitPrecisionProvider $kitItemUnitPrecisionProvider = null;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -40,18 +36,12 @@ class ProductKitItemExtension extends AbstractExtension implements ServiceSubscr
     public static function getSubscribedServices(): array
     {
         return [
-            'oro_product.provider.product_kit_item_unit_precision' => ProductKitItemUnitPrecisionProvider::class,
+            ProductKitItemUnitPrecisionProvider::class
         ];
     }
 
     private function getProductKitItemUnitPrecisionProvider(): ProductKitItemUnitPrecisionProvider
     {
-        if (null === $this->kitItemUnitPrecisionProvider) {
-            $this->kitItemUnitPrecisionProvider = $this->container->get(
-                'oro_product.provider.product_kit_item_unit_precision'
-            );
-        }
-
-        return $this->kitItemUnitPrecisionProvider;
+        return $this->container->get(ProductKitItemUnitPrecisionProvider::class);
     }
 }

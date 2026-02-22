@@ -29,11 +29,8 @@ class LineItemsExtensionTest extends TestCase
     use TwigExtensionTestCaseTrait;
 
     private TotalProcessorProvider|MockObject $totalsProvider;
-
     private LineItemSubtotalProvider|MockObject $lineItemSubtotalProvider;
-
     private LocalizationHelper|MockObject $localizedHelper;
-
     private LineItemsExtension $extension;
 
     #[\Override]
@@ -42,24 +39,24 @@ class LineItemsExtensionTest extends TestCase
         $this->totalsProvider = $this->createMock(TotalProcessorProvider::class);
         $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
         $this->localizedHelper = $this->createMock(LocalizationHelper::class);
-        $entityNameResolver = $this->createMock(EntityNameResolver::class);
         $configurableProductProvider = $this->createMock(ConfigurableProductProvider::class);
+        $entityNameResolver = $this->createMock(EntityNameResolver::class);
         $entityNameResolver->expects(self::any())
             ->method('getName')
             ->willReturnCallback(function (?Product $entity) {
                 if ($entity) {
                     return $entity->getDefaultName() ?? 'Item Sku';
-                } else {
-                    return 'Item Name';
                 }
+
+                return 'Item Name';
             });
 
         $container = self::getContainerBuilder()
+            ->add(ConfigurableProductProvider::class, $configurableProductProvider)
             ->add(TotalProcessorProvider::class, $this->totalsProvider)
             ->add(LineItemSubtotalProvider::class, $this->lineItemSubtotalProvider)
             ->add(LocalizationHelper::class, $this->localizedHelper)
             ->add(EntityNameResolver::class, $entityNameResolver)
-            ->add('oro_product.layout.data_provider.configurable_products', $configurableProductProvider)
             ->getContainer($this);
 
         $this->extension = new LineItemsExtension($container);

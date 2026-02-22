@@ -49,6 +49,7 @@ services:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_website_search_term.formatter.search_term_phrases_formatter, key: Oro\Bundle\WebsiteSearchTermBundle\Formatter\SearchTermPhrasesFormatter }
 
     oro_website_search_term.redirect_action_type.basic_handler:
         class: Oro\Bundle\WebsiteSearchTermBundle\RedirectActionType\BasicRedirectActionHandler

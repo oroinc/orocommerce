@@ -4,6 +4,8 @@ namespace Oro\Bundle\CMSBundle\Twig;
 
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetRenderer;
 use Oro\Bundle\CMSBundle\ContentWidget\WysiwygWidgetIconRenderer;
+use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -12,25 +14,48 @@ use Twig\TwigFunction;
  *   - widget
  *   - widget_icon
  */
-class WidgetExtension extends AbstractExtension
+class WidgetExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContentWidgetRenderer $contentWidgetRenderer;
-    private WysiwygWidgetIconRenderer $widgetIconRenderer;
-
     public function __construct(
-        ContentWidgetRenderer $contentWidgetRenderer,
-        WysiwygWidgetIconRenderer $widgetIconRenderer
+        private readonly ContainerInterface $container
     ) {
-        $this->contentWidgetRenderer = $contentWidgetRenderer;
-        $this->widgetIconRenderer = $widgetIconRenderer;
     }
 
     #[\Override]
     public function getFunctions()
     {
         return [
-            new TwigFunction('widget', [$this->contentWidgetRenderer, 'render'], ['is_safe' => ['html']]),
-            new TwigFunction('widget_icon', [$this->widgetIconRenderer, 'render'], ['is_safe' => ['html']]),
+            new TwigFunction('widget', [$this, 'renderContentWidget'], ['is_safe' => ['html']]),
+            new TwigFunction('widget_icon', [$this, 'renderWysiwygWidgetIcon'], ['is_safe' => ['html']]),
         ];
+    }
+
+    public function renderContentWidget(string $widgetName): string
+    {
+        return $this->getContentWidgetRenderer()->render($widgetName);
+    }
+
+    public function renderWysiwygWidgetIcon(string $widgetName, array $options = []): string
+    {
+        return $this->getWysiwygWidgetIconRenderer()->render($widgetName, $options);
+    }
+
+    #[\Override]
+    public static function getSubscribedServices(): array
+    {
+        return [
+            ContentWidgetRenderer::class,
+            WysiwygWidgetIconRenderer::class
+        ];
+    }
+
+    private function getContentWidgetRenderer(): ContentWidgetRenderer
+    {
+        return $this->container->get(ContentWidgetRenderer::class);
+    }
+
+    private function getWysiwygWidgetIconRenderer(): WysiwygWidgetIconRenderer
+    {
+        return $this->container->get(WysiwygWidgetIconRenderer::class);
     }
 }

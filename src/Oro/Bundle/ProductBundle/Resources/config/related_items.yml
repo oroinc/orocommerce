@@ -5,9 +5,6 @@ services:
             - [addConfigProvider, ['related_products', '@oro_product.related_item.related_product.config_provider']]
             - [addConfigProvider, ['upsell_products', '@oro_product.related_item.upsell_product.config_provider']]
 
-    Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper:
-        alias: oro_product.related_item.helper.config_helper
-
     # RELATED PRODUCTS
     oro_product.related_item.related_product.config_provider:
         class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider

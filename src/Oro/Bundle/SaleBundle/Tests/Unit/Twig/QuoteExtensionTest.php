@@ -16,42 +16,35 @@ use Oro\Bundle\SaleBundle\Twig\QuoteExtension;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.NPathComplexity)
  */
-class QuoteExtensionTest extends \PHPUnit\Framework\TestCase
+class QuoteExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
-
-    /** @var WebsiteUrlResolver|\PHPUnit\Framework\MockObject\MockObject */
-    private $websiteUrlResolver;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteProductFormatter */
-    private $quoteProductFormatter;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
-    private $configManager;
-
-    /** @var QuoteExtension */
-    private $extension;
+    private QuoteProductFormatter&MockObject $quoteProductFormatter;
+    private WebsiteUrlResolver&MockObject $websiteUrlResolver;
+    private ConfigManager&MockObject $configManager;
+    private FeatureChecker&MockObject $featureChecker;
+    private QuoteExtension $extension;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->featureChecker = $this->createMock(FeatureChecker::class);
-        $this->websiteUrlResolver = $this->createMock(WebsiteUrlResolver::class);
         $this->quoteProductFormatter = $this->createMock(QuoteProductFormatter::class);
+        $this->websiteUrlResolver = $this->createMock(WebsiteUrlResolver::class);
         $this->configManager = $this->createMock(ConfigManager::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $container = self::getContainerBuilder()
-            ->add(FeatureChecker::class, $this->featureChecker)
+            ->add(QuoteProductFormatter::class, $this->quoteProductFormatter)
             ->add(WebsiteUrlResolver::class, $this->websiteUrlResolver)
-            ->add('oro_sale.formatter.quote_product', $this->quoteProductFormatter)
-            ->add('oro_config.manager', $this->configManager)
+            ->add(ConfigManager::class, $this->configManager)
+            ->add(FeatureChecker::class, $this->featureChecker)
             ->getContainer($this);
 
         $this->extension = new QuoteExtension($container);
@@ -62,7 +55,7 @@ class QuoteExtensionTest extends \PHPUnit\Framework\TestCase
         $type = 123;
         $expected = 'result';
 
-        $this->quoteProductFormatter->expects($this->once())
+        $this->quoteProductFormatter->expects(self::once())
             ->method('formatType')
             ->with($type)
             ->willReturn($expected);
@@ -78,7 +71,7 @@ class QuoteExtensionTest extends \PHPUnit\Framework\TestCase
         $item = new QuoteProductOffer();
         $expected = 'result';
 
-        $this->quoteProductFormatter->expects($this->once())
+        $this->quoteProductFormatter->expects(self::once())
             ->method('formatOffer')
             ->with(self::identicalTo($item))
             ->willReturn($expected);
@@ -94,7 +87,7 @@ class QuoteExtensionTest extends \PHPUnit\Framework\TestCase
         $item = new QuoteProductRequest();
         $expected = 'result';
 
-        $this->quoteProductFormatter->expects($this->once())
+        $this->quoteProductFormatter->expects(self::once())
             ->method('formatRequest')
             ->with(self::identicalTo($item))
             ->willReturn($expected);
@@ -110,7 +103,7 @@ class QuoteExtensionTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsQuoteVisible(string $productInventoryStatus, bool $expectedResult)
     {
-        $this->configManager->expects($this->any())
+        $this->configManager->expects(self::any())
             ->method('get')
             ->with('oro_rfp.frontend_product_visibility')
             ->willReturn([
@@ -163,12 +156,12 @@ class QuoteExtensionTest extends \PHPUnit\Framework\TestCase
             $quote->setWebsite($website);
         }
 
-        $this->featureChecker->expects($this->any())
+        $this->featureChecker->expects(self::any())
             ->method('isFeatureEnabled')
             ->with('guest_quote')
             ->willReturn($isEnabled);
 
-        $this->websiteUrlResolver->expects($this->any())
+        $this->websiteUrlResolver->expects(self::any())
             ->method('getWebsitePath')
             ->with(
                 'oro_sale_quote_frontend_view_guest',

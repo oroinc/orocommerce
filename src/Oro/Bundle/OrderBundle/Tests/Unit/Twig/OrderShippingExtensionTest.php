@@ -7,19 +7,16 @@ use Oro\Bundle\OrderBundle\Twig\OrderShippingExtension;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class OrderShippingExtensionTest extends \PHPUnit\Framework\TestCase
+class OrderShippingExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var ShippingMethodLabelTranslator|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingMethodLabelTranslator;
-
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
-
-    /** @var OrderShippingExtension */
-    private $extension;
+    private ShippingMethodLabelTranslator&MockObject $shippingMethodLabelTranslator;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private OrderShippingExtension $extension;
 
     #[\Override]
     protected function setUp(): void
@@ -28,7 +25,7 @@ class OrderShippingExtensionTest extends \PHPUnit\Framework\TestCase
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_shipping.translator.shipping_method_label', $this->shippingMethodLabelTranslator)
+            ->add(ShippingMethodLabelTranslator::class, $this->shippingMethodLabelTranslator)
             ->add(DoctrineHelper::class, $this->doctrineHelper)
             ->getContainer($this);
 

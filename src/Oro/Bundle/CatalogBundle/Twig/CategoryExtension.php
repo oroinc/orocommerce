@@ -17,12 +17,9 @@ use Twig\TwigFunction;
  */
 class CategoryExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -43,7 +40,7 @@ class CategoryExtension extends AbstractExtension implements ServiceSubscriberIn
      */
     public function getCategoryList($rootLabel = null, $root = null)
     {
-        $tree = $this->container->get(CategoryTreeHandler::class)->createTree($root);
+        $tree = $this->getCategoryTreeHandler()->createTree($root);
         if ($rootLabel && array_key_exists(0, $tree)) {
             $tree[0]['text'] = $rootLabel;
         }
@@ -64,7 +61,7 @@ class CategoryExtension extends AbstractExtension implements ServiceSubscriberIn
             : reset($categoriesTitles) . ' /.../ ' . end($categoriesTitles);
     }
 
-    protected function getCategoriesTitles(Category $category): array
+    private function getCategoriesTitles(Category $category): array
     {
         $title = $category->getDefaultTitle();
         if (!$title) {
@@ -84,7 +81,12 @@ class CategoryExtension extends AbstractExtension implements ServiceSubscriberIn
     public static function getSubscribedServices(): array
     {
         return [
-            CategoryTreeHandler::class,
+            CategoryTreeHandler::class
         ];
+    }
+
+    private function getCategoryTreeHandler(): CategoryTreeHandler
+    {
+        return $this->container->get(CategoryTreeHandler::class);
     }
 }

@@ -26,7 +26,6 @@ class ImageSliderExtensionTest extends TestCase
 
     private AttachmentManager&MockObject $attachmentManager;
     private ManagerRegistry&MockObject $doctrine;
-    private ApiUrlResolver&MockObject $apiUrlResolver;
     private ImageSliderExtension $extension;
 
     #[\Override]
@@ -34,18 +33,11 @@ class ImageSliderExtensionTest extends TestCase
     {
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
-        $this->apiUrlResolver = $this->createMock(ApiUrlResolver::class);
 
         $this->attachmentManager->expects(self::any())
             ->method('getFilteredImageUrl')
             ->willReturnCallback(static function (File $file, string $filter, string $format) {
                 return '/' . $filter . '/' . $file->getFilename() . ($format ? '.' . $format : '');
-            });
-
-        $this->apiUrlResolver->expects(self::any())
-            ->method('getEffectiveReferenceType')
-            ->willReturnCallback(static function (int $defaultReferenceType) {
-                return $defaultReferenceType;
             });
 
         $imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
@@ -54,14 +46,17 @@ class ImageSliderExtensionTest extends TestCase
             ->with('original', self::anything())
             ->willReturn(self::PLACEHOLDER);
 
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $apiUrlResolver = $this->createMock(ApiUrlResolver::class);
+        $apiUrlResolver->expects(self::any())
+            ->method('getEffectiveReferenceType')
+            ->willReturnArgument(0);
 
         $container = self::getContainerBuilder()
-            ->add(AttachmentManager::class, $this->attachmentManager)
             ->add('oro_cms.provider.image_slider_image_placeholder.default', $imagePlaceholderProvider)
-            ->add(PropertyAccessorInterface::class, $propertyAccessor)
+            ->add(AttachmentManager::class, $this->attachmentManager)
+            ->add(PropertyAccessorInterface::class, PropertyAccess::createPropertyAccessor())
             ->add(ManagerRegistry::class, $this->doctrine)
-            ->add('oro_api.api_url_resolver', $this->apiUrlResolver)
+            ->add(ApiUrlResolver::class, $apiUrlResolver)
             ->getContainer($this);
 
         $this->extension = new ImageSliderExtension($container);

@@ -22,10 +22,13 @@ class WidgetExtensionTest extends TestCase
     {
         $this->contentWidgetRenderer = $this->createMock(ContentWidgetRenderer::class);
         $this->wysiwygWidgetIconRenderer = $this->createMock(WysiwygWidgetIconRenderer::class);
-        $this->extension = new WidgetExtension(
-            $this->contentWidgetRenderer,
-            $this->wysiwygWidgetIconRenderer
-        );
+
+        $container = self::getContainerBuilder()
+            ->add(ContentWidgetRenderer::class, $this->contentWidgetRenderer)
+            ->add(WysiwygWidgetIconRenderer::class, $this->wysiwygWidgetIconRenderer)
+            ->getContainer($this);
+
+        $this->extension = new WidgetExtension($container);
     }
 
     public function testWidgetFunction(): void

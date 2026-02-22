@@ -14,8 +14,7 @@ class VisibilityExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    private ResolvedProductVisibilityProvider|MockObject $resolvedProductVisibilityProvider;
-
+    private ResolvedProductVisibilityProvider&MockObject $resolvedProductVisibilityProvider;
     private VisibilityExtension $extension;
 
     #[\Override]
@@ -24,10 +23,7 @@ class VisibilityExtensionTest extends TestCase
         $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);
 
         $container = self::getContainerBuilder()
-            ->add(
-                'oro_visibility.provider.resolved_product_visibility_provider',
-                $this->resolvedProductVisibilityProvider
-            )
+            ->add(ResolvedProductVisibilityProvider::class, $this->resolvedProductVisibilityProvider)
             ->getContainer($this);
 
         $this->extension = new VisibilityExtension($container);
@@ -35,8 +31,7 @@ class VisibilityExtensionTest extends TestCase
 
     public function testIsVisibleProductWhenArgumentIsNull(): void
     {
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::never())
+        $this->resolvedProductVisibilityProvider->expects(self::never())
             ->method('isVisible')
             ->willReturn(false);
 
@@ -45,8 +40,7 @@ class VisibilityExtensionTest extends TestCase
 
     public function testIsVisibleProductWhenArgumentIsNewProduct(): void
     {
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::never())
+        $this->resolvedProductVisibilityProvider->expects(self::never())
             ->method('isVisible')
             ->willReturn(false);
 
@@ -57,8 +51,7 @@ class VisibilityExtensionTest extends TestCase
     {
         $product = (new ProductStub())->setId(42);
 
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::once())
+        $this->resolvedProductVisibilityProvider->expects(self::once())
             ->method('isVisible')
             ->with($product->getId())
             ->willReturn(true);
@@ -69,8 +62,7 @@ class VisibilityExtensionTest extends TestCase
     public function testIsVisibleProductWhenArgumentIsInt(): void
     {
         $productId = 42;
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::once())
+        $this->resolvedProductVisibilityProvider->expects(self::once())
             ->method('isVisible')
             ->with($productId)
             ->willReturn(true);

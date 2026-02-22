@@ -16,14 +16,10 @@ class ProductUnitExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    private UnitLabelFormatterInterface|MockObject $labelFormatter;
-
-    private UnitValueFormatterInterface|MockObject $valueFormatter;
-
-    private UnitVisibilityInterface|MockObject $unitVisibility;
-
-    private UnitPrecisionLabelFormatter|MockObject $unitPrecisionLabelFormatter;
-
+    private UnitLabelFormatterInterface&MockObject $labelFormatter;
+    private UnitValueFormatterInterface&MockObject $valueFormatter;
+    private UnitVisibilityInterface&MockObject $unitVisibility;
+    private UnitPrecisionLabelFormatter&MockObject $unitPrecisionLabelFormatter;
     private ProductUnitExtension $extension;
 
     #[\Override]
@@ -38,7 +34,7 @@ class ProductUnitExtensionTest extends TestCase
             ->add('oro_product.formatter.product_unit_label', $this->labelFormatter)
             ->add('oro_product.formatter.product_unit_value', $this->valueFormatter)
             ->add('oro_product.visibility.unit', $this->unitVisibility)
-            ->add('oro_product.formatter.unit_precision_label', $this->unitPrecisionLabelFormatter)
+            ->add(UnitPrecisionLabelFormatter::class, $this->unitPrecisionLabelFormatter)
             ->getContainer($this);
 
         $this->extension = new ProductUnitExtension($container);
@@ -71,14 +67,14 @@ class ProductUnitExtensionTest extends TestCase
                 'unitCode' => 'kg',
                 'isShort' => false,
                 'isPlural' => false,
-                'expected' => 'kilogram',
+                'expected' => 'kilogram'
             ],
             'format short plural' => [
                 'unitCode' => 'kg',
                 'isShort' => true,
                 'isPlural' => true,
-                'expected' => 'kgs',
-            ],
+                'expected' => 'kgs'
+            ]
         ];
     }
 
@@ -108,13 +104,13 @@ class ProductUnitExtensionTest extends TestCase
             'format single' => [
                 'unitCode' => 'kg',
                 'isPlural' => false,
-                'expected' => 'kilogram',
+                'expected' => 'kilogram'
             ],
             'format plural' => [
                 'unitCode' => 'kg',
                 'isPlural' => true,
-                'expected' => 'kgs',
-            ],
+                'expected' => 'kgs'
+            ]
         ];
     }
 
@@ -189,15 +185,18 @@ class ProductUnitExtensionTest extends TestCase
         $precision = 2;
         $expectedResult = 'item (fractional, 2 decimal digits)';
 
-        $this->unitPrecisionLabelFormatter
-            ->expects(self::once())
+        $this->unitPrecisionLabelFormatter->expects(self::once())
             ->method('formatUnitPrecisionLabel')
             ->with($unitCode, $precision)
             ->willReturn($expectedResult);
 
         self::assertEquals(
             $expectedResult,
-            self::callTwigFunction($this->extension, 'oro_format_product_unit_precision_label', [$unitCode, $precision])
+            self::callTwigFunction(
+                $this->extension,
+                'oro_format_product_unit_precision_label',
+                [$unitCode, $precision]
+            )
         );
     }
 }

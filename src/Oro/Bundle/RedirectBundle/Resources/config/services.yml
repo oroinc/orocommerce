@@ -129,7 +129,7 @@ services:
         alias: oro_redirect.generator.slug_entity
 
     oro_redirect.twig_extension:
-        class: Oro\Bundle\RedirectBundle\Twig\TwigExtension
+        class: Oro\Bundle\RedirectBundle\Twig\RedirectExtension
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:

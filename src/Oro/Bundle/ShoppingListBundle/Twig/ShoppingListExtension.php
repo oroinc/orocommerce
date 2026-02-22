@@ -26,12 +26,9 @@ use Twig\TwigFunction;
  */
 class ShoppingListExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-    private ?ShoppingListLimitManager $shoppingListLimitManager = null;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -74,16 +71,6 @@ class ShoppingListExtension extends AbstractExtension implements ServiceSubscrib
         ];
     }
 
-    #[\Override]
-    public static function getSubscribedServices(): array
-    {
-        return [
-            'oro_shopping_list.manager.shopping_list_limit' => ShoppingListLimitManager::class,
-            ShoppingListUrlProvider::class,
-            'oro_action.layout.data_provider.button_provider' => LayoutButtonProvider::class,
-        ];
-    }
-
     public function getVisibleProduct(LineItem $lineItem): Product
     {
         $featureChecker = $this->getFeatureChecker();
@@ -98,13 +85,20 @@ class ShoppingListExtension extends AbstractExtension implements ServiceSubscrib
         return $product;
     }
 
+    #[\Override]
+    public static function getSubscribedServices(): array
+    {
+        return [
+            ShoppingListLimitManager::class,
+            ShoppingListUrlProvider::class,
+            LayoutButtonProvider::class,
+            FeatureChecker::class
+        ];
+    }
+
     private function getShoppingListLimitManager(): ShoppingListLimitManager
     {
-        if (null === $this->shoppingListLimitManager) {
-            $this->shoppingListLimitManager = $this->container->get('oro_shopping_list.manager.shopping_list_limit');
-        }
-
-        return $this->shoppingListLimitManager;
+        return $this->container->get(ShoppingListLimitManager::class);
     }
 
     private function getShoppingListUrlProvider(): ShoppingListUrlProvider
@@ -114,7 +108,7 @@ class ShoppingListExtension extends AbstractExtension implements ServiceSubscrib
 
     private function getLayoutButtonProvider(): LayoutButtonProvider
     {
-        return $this->container->get('oro_action.layout.data_provider.button_provider');
+        return $this->container->get(LayoutButtonProvider::class);
     }
 
     private function getFeatureChecker(): FeatureChecker

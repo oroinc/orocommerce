@@ -25,8 +25,7 @@ class QuoteProductsExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    private LocalizationHelper|MockObject $localizedHelper;
-
+    private LocalizationHelper&MockObject $localizedHelper;
     private QuoteProductsExtension $extension;
 
     protected function setUp(): void
@@ -39,14 +38,14 @@ class QuoteProductsExtensionTest extends TestCase
             ->willReturnCallback(function (?ProductStub $entity) {
                 if ($entity) {
                     return $entity->getDefaultName() ?? 'Item Sku';
-                } else {
-                    return null;
                 }
+
+                return null;
             });
 
         $container = self::getContainerBuilder()
-            ->add(LocalizationHelper::class, $this->localizedHelper)
             ->add(EntityNameResolver::class, $entityNameResolver)
+            ->add(LocalizationHelper::class, $this->localizedHelper)
             ->getContainer($this);
 
         $this->extension = new QuoteProductsExtension($container);

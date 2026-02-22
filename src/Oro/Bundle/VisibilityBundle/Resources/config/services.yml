@@ -555,9 +555,6 @@ services:
             - '@doctrine'
             - '@oro_visibility.model.product_visibility_query_builder_modifier'
 
-    Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider:
-        alias: oro_visibility.provider.resolved_product_visibility_provider
-
     oro_visibility.entity_listener.category_default_visibility:
         class: 'Oro\Bundle\VisibilityBundle\Entity\EntityListener\CategoryDefaultVisibilityListener'
         public: false
@@ -616,6 +613,7 @@ services:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_visibility.provider.resolved_product_visibility_provider, key: Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider }
 
     oro_visibility.strategy_processor.product_visibility_audit_strategy:
         class: 'Oro\Bundle\DataAuditBundle\Strategy\Processor\DefaultUnidirectionalFieldAuditStrategyProcessor'

@@ -6,16 +6,15 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\PaymentTermBundle\Twig\PaymentTermExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
+class PaymentTermExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var PaymentTermExtension */
-    protected $extension;
-
-    /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $dataProvider;
+    private PaymentTermProvider&MockObject $dataProvider;
+    private PaymentTermExtension $extension;
 
     #[\Override]
     protected function setUp(): void
@@ -29,17 +28,17 @@ class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new PaymentTermExtension($container);
     }
 
-    public function testGetPaymentTerm()
+    public function testGetPaymentTerm(): void
     {
         $object = new \stdClass();
         $paymentTerm = new PaymentTerm();
 
-        $this->dataProvider->expects($this->once())
+        $this->dataProvider->expects(self::once())
             ->method('getObjectPaymentTerm')
             ->with($object)
             ->willReturn($paymentTerm);
 
-        $this->assertEquals(
+        self::assertEquals(
             $paymentTerm,
             self::callTwigFunction($this->extension, 'get_payment_term', [$object])
         );
