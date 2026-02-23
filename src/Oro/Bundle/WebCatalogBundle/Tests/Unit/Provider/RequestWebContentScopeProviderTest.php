@@ -274,7 +274,7 @@ class RequestWebContentScopeProviderTest extends TestCase
         self::assertSame($criteria, $request->attributes->get('_web_content_criteria'));
     }
 
-    public function testGetScopeCriteriaForStorefrontApiUrl(): void
+    public function testGetScopeCriteriaForFrontendApiUrl(): void
     {
         $request = Request::create('/api/menus');
         $criteria = $this->createMock(ScopeCriteria::class);
@@ -302,7 +302,7 @@ class RequestWebContentScopeProviderTest extends TestCase
         self::assertSame($criteria, $request->attributes->get('_web_content_criteria'));
     }
 
-    public function testGetScopeForStorefrontApiUrl(): void
+    public function testGetScopeForFrontendApiUrl(): void
     {
         $request = Request::create('/api/menus?filter[depth]=1&filter[menu]=frontend_menu');
         $scope = $this->createMock(Scope::class);
@@ -333,7 +333,7 @@ class RequestWebContentScopeProviderTest extends TestCase
         self::assertSame($scope, $request->attributes->get('_web_content_scope'));
     }
 
-    public function testGetScopeCriteriaForStorefrontApiUrlWhenNotApiPrefix(): void
+    public function testGetScopeCriteriaForFrontendApiUrlWhenNotApiPrefix(): void
     {
         $request = Request::create('/frontend-page');
 

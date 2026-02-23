@@ -23,6 +23,10 @@ data:
                 data:
                     type: products
                     id: '<toString(@product1->id)>'
+            webCatalog:
+                data:
+                    type: webcatalogs
+                    id: '<toString(@catalog1->id)>'
     -
         type: webcatalogtree
         id: '<toString(@catalog1_node1->id)>'
@@ -52,6 +56,10 @@ data:
                 data:
                     type: productcollection
                     id: '<toString(@catalog1_node1_variant->id)>'
+            webCatalog:
+                data:
+                    type: webcatalogs
+                    id: '<toString(@catalog1->id)>'
     -
         type: webcatalogtree
         id: '<toString(@catalog1_node11->id)>'
@@ -84,6 +92,10 @@ data:
                 data:
                     type: mastercatalogcategories
                     id: '<toString(@category1->id)>'
+            webCatalog:
+                data:
+                    type: webcatalogs
+                    id: '<toString(@catalog1->id)>'
     -
         type: webcatalogtree
         id: '<toString(@catalog1_node111->id)>'
@@ -119,6 +131,10 @@ data:
                 data:
                     type: systempages
                     id: 'oro_product_frontend_product_index'
+            webCatalog:
+                data:
+                    type: webcatalogs
+                    id: '<toString(@catalog1->id)>'
     -
         type: webcatalogtree
         id: '<toString(@catalog1_node12->id)>'
@@ -151,6 +167,10 @@ data:
                 data:
                     type: productcollection
                     id: '<toString(@catalog1_node12->contentVariants->first()->id)>'
+            webCatalog:
+                data:
+                    type: webcatalogs
+                    id: '<toString(@catalog1->id)>'
     -
         type: webcatalogtree
         id: '<toString(@catalog1_node2->id)>'
@@ -180,3 +200,7 @@ data:
                 data:
                     type: mastercatalogcategories
                     id: '<toString(@category111->id)>'
+            webCatalog:
+                data:
+                    type: webcatalogs
+                    id: '<toString(@catalog1->id)>'

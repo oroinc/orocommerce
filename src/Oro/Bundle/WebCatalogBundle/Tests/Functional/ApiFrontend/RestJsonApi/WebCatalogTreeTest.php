@@ -156,6 +156,24 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         );
     }
 
+    public function testTryToGetListFilteredByWebCatalog(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'webcatalogtree'],
+            ['filter[webCatalog]' => '<toString(@catalog1->id)>'],
+            [],
+            false
+        );
+        $this->assertResponseValidationError(
+            [
+                'title' => 'filter constraint',
+                'detail' => 'The filter is not supported.',
+                'source' => ['parameter' => 'filter[webCatalog]']
+            ],
+            $response
+        );
+    }
+
     public function testGet(): void
     {
         $response = $this->get(

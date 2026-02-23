@@ -1,0 +1,8 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+
+Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
+    catalog1:
+        name: 'Web Catalog 1'
+        description: 'Web Catalog 1 Description'
+        organization: '@organization'
