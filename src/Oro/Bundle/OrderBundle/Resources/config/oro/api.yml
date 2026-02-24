@@ -43,6 +43,8 @@ api:
                     property_path: internal_status
                     form_options:
                         mapped: false
+                lineItems:
+                    max_results: -1
                 orderSubtotals:
                     exclude: false
                     target_class: Oro\Bundle\OrderBundle\Api\Model\OrderSubtotal

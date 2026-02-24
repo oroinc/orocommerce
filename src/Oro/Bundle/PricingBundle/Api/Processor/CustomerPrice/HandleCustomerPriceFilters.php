@@ -22,11 +22,11 @@ class HandleCustomerPriceFilters implements ProcessorInterface
         if (!$filterValues->getOne('customer')) {
             $context->addError(Error::createValidationError(Constraint::FILTER, 'The "customer" filter is required.'));
         }
-        if (!$filterValues->getOne('website')) {
-            $context->addError(Error::createValidationError(Constraint::FILTER, 'The "website" filter is required.'));
-        }
         if (!$filterValues->getOne('product')) {
             $context->addError(Error::createValidationError(Constraint::FILTER, 'The "product" filter is required.'));
+        }
+        if (!$filterValues->getOne('website')) {
+            $context->addError(Error::createValidationError(Constraint::FILTER, 'The "website" filter is required.'));
         }
     }
 }

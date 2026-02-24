@@ -26,6 +26,8 @@ api:
                 pricesChanged:
                     form_options:
                         mapped: false
+                quoteProducts:
+                    max_results: -1
                 shippingMethod:
                     exclude: true
                 shippingMethodType:

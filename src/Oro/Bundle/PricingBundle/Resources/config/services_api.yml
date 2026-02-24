@@ -10,6 +10,17 @@ services:
             - '@oro_api.query_acl_helper'
             - '@oro_customer.provider.customer_user_relations_provider'
 
+    oro_pricing.api.product_kit_price_repository:
+        class: Oro\Bundle\PricingBundle\Api\Repository\ProductKitPriceRepository
+        arguments:
+            - '@oro_pricing.user_currency_manager'
+            - '@security.authorization_checker'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_pricing.product_price_criteria_factory'
+            - '@oro_pricing.provider.product_price'
+            - '@oro_api.doctrine_helper'
+
     oro_pricing.api.compute_price_list_currencies:
         class: Oro\Bundle\PricingBundle\Api\Processor\ComputePriceListCurrencies
         tags:
@@ -344,17 +355,6 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', collection: true, class: Oro\Bundle\PricingBundle\Api\Model\CustomerPrice, priority: 100 }
             - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', collection: true, class: Oro\Bundle\PricingBundle\Api\Model\ProductKitPrice, priority: 100 }
-
-    oro_pricing.api.product_kit_price_repository:
-        class: Oro\Bundle\PricingBundle\Api\Repository\ProductKitPriceRepository
-        arguments:
-            - '@oro_pricing.user_currency_manager'
-            - '@security.authorization_checker'
-            - '@oro_pricing.model.product_price_scope_criteria_factory'
-            - '@oro_customer.provider.customer_user_relations_provider'
-            - '@oro_pricing.product_price_criteria_factory'
-            - '@oro_pricing.provider.product_price'
-            - '@oro_api.doctrine_helper'
 
     oro_pricing.api.add_kit_item_filters:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductKitPrice\AddKitItemFilters

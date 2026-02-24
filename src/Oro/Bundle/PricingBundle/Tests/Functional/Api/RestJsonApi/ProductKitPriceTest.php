@@ -48,19 +48,19 @@ class ProductKitPriceTest extends RestJsonApiTestCase
                 ],
                 [
                     'title' => 'filter constraint',
-                    'detail' => 'The "website" filter is required.'
-                ],
-                [
-                    'title' => 'filter constraint',
                     'detail' => 'The "product" filter is required.'
                 ],
                 [
                     'title' => 'filter constraint',
-                    'detail' => 'The "quantity" filter is required.'
+                    'detail' => 'The "website" filter is required.'
                 ],
                 [
                     'title' => 'filter constraint',
                     'detail' => 'The "unit" filter is required.'
+                ],
+                [
+                    'title' => 'filter constraint',
+                    'detail' => 'The "quantity" filter is required.'
                 ]
             ],
             $response
