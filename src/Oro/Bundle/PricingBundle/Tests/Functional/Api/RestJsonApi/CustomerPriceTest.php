@@ -31,15 +31,15 @@ class CustomerPriceTest extends RestJsonApiTestCase
             [
                 [
                     'title' => 'filter constraint',
-                    'detail' => 'The "customer" filter is required.',
+                    'detail' => 'The "customer" filter is required.'
                 ],
                 [
                     'title' => 'filter constraint',
-                    'detail' => 'The "website" filter is required.',
+                    'detail' => 'The "product" filter is required.'
                 ],
                 [
                     'title' => 'filter constraint',
-                    'detail' => 'The "product" filter is required.',
+                    'detail' => 'The "website" filter is required.'
                 ]
             ],
             $response

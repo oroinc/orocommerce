@@ -29,7 +29,7 @@ The product.
 
 ### customer
 
-The customer. To get prices for an unauthorized user, use a **0** value.
+The customer.
 
 ### website
 
@@ -38,3 +38,9 @@ The website.
 ### unit
 
 The unit of quantity.
+
+## FILTERS
+
+### customer
+
+{@inheritdoc} To get prices for an unauthorized user, use a **0** value.

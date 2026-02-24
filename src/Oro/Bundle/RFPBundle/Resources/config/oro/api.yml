@@ -32,6 +32,8 @@ api:
                 requestAdditionalNotes:
                     form_options:
                         mapped: false
+                requestProducts:
+                    max_results: -1
 
         Oro\Bundle\RFPBundle\Entity\RequestProduct:
             documentation_resource: '@OroRFPBundle/Resources/doc/api/request_product.md'
