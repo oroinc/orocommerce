@@ -33,6 +33,8 @@ api:
                     property_path: internal_status
                     form_options:
                         mapped: false
+                lineItems:
+                    max_results: -1
             filters:
                 fields:
                     identifier:

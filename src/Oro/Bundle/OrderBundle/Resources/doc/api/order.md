@@ -179,6 +179,22 @@ Delete a collection of order records.
 
 **The read-only field. A passed value will be ignored.**
 
+### billingAddress
+
+#### create
+
+{@inheritdoc}
+
+**Only new order address can be passed.**
+
+### shippingAddress
+
+#### create
+
+{@inheritdoc}
+
+**Only new order address can be passed.**
+
 ### lineItems
 
 #### create
