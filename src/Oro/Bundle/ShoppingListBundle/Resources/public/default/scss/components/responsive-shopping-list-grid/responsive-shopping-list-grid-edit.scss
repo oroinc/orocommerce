@@ -198,16 +198,6 @@
     }
 }
 
-@include breakpoint('desktop-small') {
-    .responsive-shopping-list-grid-edit {
-        .sub-row {
-            .grid-body-cell-quantity {
-                padding-top: $responsive-shopping-sub-row-cell-inner-offset;
-            }
-        }
-    }
-}
-
 @include breakpoint('tablet') {
     .responsive-shopping-list-grid-edit {
         .grid-main-container {
