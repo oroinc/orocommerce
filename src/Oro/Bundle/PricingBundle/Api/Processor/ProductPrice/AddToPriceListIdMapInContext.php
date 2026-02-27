@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\PricingBundle\Api\Processor\ProductPrice;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
@@ -8,13 +10,10 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Adds a clone of the product price from the "result" context attribute
- * to the "product_price" context attribute.
+ * Saves a price list IDs of submitted product prices to the context for later use.
  */
-class RememberProductPrice implements ProcessorInterface
+class AddToPriceListIdMapInContext implements ProcessorInterface
 {
-    public const PRODUCT_PRICE_ATTRIBUTE = 'product_price';
-
     #[\Override]
     public function process(ContextInterface $context): void
     {
@@ -26,8 +25,12 @@ class RememberProductPrice implements ProcessorInterface
             return;
         }
 
-        if (!$context->has(self::PRODUCT_PRICE_ATTRIBUTE)) {
-            $context->set(self::PRODUCT_PRICE_ATTRIBUTE, clone $productPrice);
+        $productPriceId = $productPrice->getId();
+        if (null !== $productPriceId) {
+            $priceListId = $productPrice->getPriceList()?->getId();
+            if (null !== $priceListId) {
+                PriceListIdContextUtil::addToPriceListIdMap($context, $productPriceId, $priceListId);
+            }
         }
     }
 }

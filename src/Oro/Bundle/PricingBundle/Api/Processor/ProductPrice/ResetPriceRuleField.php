@@ -18,12 +18,13 @@ class ResetPriceRuleField implements ProcessorInterface
     {
         /** @var CustomizeFormDataContext $context */
 
-        /** @var ProductPrice|null $entity */
+        /** @var ProductPrice|null $productPrice */
         $productPrice = $context->getData();
         if (null === $productPrice) {
             return;
         }
 
+        /** @var ProductPrice|null $oldProductPrice */
         $oldProductPrice = $context->get(RememberProductPrice::PRODUCT_PRICE_ATTRIBUTE);
         if (null === $oldProductPrice) {
             return;

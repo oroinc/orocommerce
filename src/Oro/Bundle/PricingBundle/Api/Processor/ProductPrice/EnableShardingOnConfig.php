@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Api\Processor\ProductPrice;
 
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Processor\Context;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -28,19 +29,34 @@ class EnableShardingOnConfig implements ProcessorInterface
 
         $queryBuilder = $context->getQuery();
         if (!$queryBuilder instanceof QueryBuilder) {
+            // unsupported query
             return;
         }
 
-        $config = $context->getConfig();
-        if (!$config) {
+        $priceListId = $this->getPriceListId($context);
+        if (null === $priceListId) {
+            // no price list or product prices belong to several price lists
             return;
         }
-
-        $priceListId = PriceListIdContextUtil::getPriceListId($context);
 
         $queryBuilder->andWhere('e.priceList = :price_list_id')->setParameter('price_list_id', $priceListId);
-
+        /** @var EntityDefinitionConfig $config */
+        $config = $context->getConfig();
         $config->addHint('priceList', $priceListId);
         $config->addHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
+    }
+
+    private function getPriceListId(Context $context): ?int
+    {
+        if (PriceListIdContextUtil::hasPriceListId($context)) {
+            return PriceListIdContextUtil::getPriceListId($context);
+        }
+
+        $priceListIdMap = PriceListIdContextUtil::getPriceListIdMap($context);
+        if ($priceListIdMap && \count($priceListIdMap) === 1) {
+            return array_key_first($priceListIdMap);
+        }
+
+        return null;
     }
 }
