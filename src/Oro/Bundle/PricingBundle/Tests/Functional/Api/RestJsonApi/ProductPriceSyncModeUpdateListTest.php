@@ -11,7 +11,7 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesWith
 /**
  * @dbIsolationPerTest
  */
-class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
+class ProductPriceSyncModeUpdateListTest extends RestJsonApiUpdateListTestCase
 {
     use ProductPriceTestTrait;
 
@@ -88,9 +88,8 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
                 ]
             ]
         ];
-        $this->processUpdateList(ProductPrice::class, $data);
+        $response = $this->sendUpdateListRequestWithoutMessageQueueAndWithSynchronousMode(ProductPrice::class, $data);
 
-        $response = $this->cget(['entity' => 'productprices'], ['filter[priceList]' => $priceList5Id]);
         $responseContent = self::jsonToArray($response->getContent());
         $expectedData = $this->arrangeExpectedData($data, $responseContent, 250);
         $expectedData['data'][0]['id'] = $responseContent['data'][0]['id'];
@@ -145,9 +144,8 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
                 ]
             ]
         ];
-        $this->processUpdateList(ProductPrice::class, $data);
+        $response = $this->sendUpdateListRequestWithoutMessageQueueAndWithSynchronousMode(ProductPrice::class, $data);
 
-        $response = $this->cget(['entity' => 'productprices'], ['filter[priceList]' => (string)$priceList1Id]);
         $responseContent = self::jsonToArray($response->getContent());
         $expectedData = $this->arrangeExpectedData($data, $responseContent, 250);
         unset($expectedData['data'][0]['meta'], $expectedData['data'][1]['meta']);
@@ -212,17 +210,13 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
                 ]
             ]
         ];
-        $this->processUpdateList(ProductPrice::class, $data);
+        $response = $this->sendUpdateListRequestWithoutMessageQueueAndWithSynchronousMode(ProductPrice::class, $data);
 
         $priceListId = $this->getEntityManager(PriceList::class)
             ->getRepository(PriceList::class)
             ->findOneBy(['name' => 'New Price List 1'])
             ->getId();
 
-        $response = $this->cget(
-            ['entity' => 'productprices'],
-            ['filter[priceList]' => $priceListId, 'include' => 'priceList']
-        );
         $responseContent = self::jsonToArray($response->getContent());
         $expectedData = $this->arrangeExpectedData($data, $responseContent, 250);
         $expectedData['data'][0]['id'] = $responseContent['data'][0]['id'];
@@ -250,7 +244,7 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
                 ]
             ]
         ];
-        $this->processUpdateList(ProductPrice::class, $data);
+        $this->sendUpdateListRequestWithoutMessageQueueAndWithSynchronousMode(ProductPrice::class, $data);
 
         $productPrice = $this->findProductPriceByUniqueKey(
             5,
@@ -309,13 +303,13 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
                 ]
             ]
         ];
-        $this->processUpdateList(ProductPrice::class, $data);
+        $response = $this->sendUpdateListRequestWithoutMessageQueueAndWithSynchronousMode(ProductPrice::class, $data);
 
-        $response = $this->cget(['entity' => 'productprices'], ['filter[priceList]' => $priceList1Id]);
-        $this->assertResponseContains(['data' => [$data['data'][0]]], $response);
-
-        $response = $this->cget(['entity' => 'productprices'], ['filter[priceList]' => $priceList5Id]);
-        $this->assertResponseContains(['data' => [$data['data'][1]]], $response);
+        $responseContent = self::jsonToArray($response->getContent());
+        $expectedData = $this->arrangeExpectedData($data, $responseContent, 250);
+        $expectedData['data'][0]['id'] = $responseContent['data'][0]['id'];
+        $expectedData['data'][1]['id'] = $responseContent['data'][1]['id'];
+        $this->assertResponseContains($expectedData, $response);
     }
 
     public function testUpdateEntitiesForSeveralPriceLists(): void
@@ -366,34 +360,11 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
                 ]
             ]
         ];
-        $this->processUpdateList(ProductPrice::class, $data);
+        $response = $this->sendUpdateListRequestWithoutMessageQueueAndWithSynchronousMode(ProductPrice::class, $data);
 
-        $response = $this->cget(['entity' => 'productprices'], ['filter[priceList]' => $priceList1Id]);
-        $expectedData = ['data' => [$data['data'][0]]];
-        unset($expectedData['data'][0]['meta']);
         $responseContent = self::jsonToArray($response->getContent());
-        if (isset($responseContent['data'])) {
-            foreach ($responseContent['data'] as $item) {
-                if ($item['id'] !== $productPrice1ApiId) {
-                    $expectedData['data'][] = $item;
-                }
-            }
-        }
-        $expectedData = $this->arrangeExpectedData($expectedData, $responseContent, 250);
-        $this->assertResponseContains($expectedData, $response);
-
-        $response = $this->cget(['entity' => 'productprices'], ['filter[priceList]' => $priceList2Id]);
-        $expectedData = ['data' => [$data['data'][1]]];
-        unset($expectedData['data'][0]['meta']);
-        $responseContent = self::jsonToArray($response->getContent());
-        if (isset($responseContent['data'])) {
-            foreach ($responseContent['data'] as $item) {
-                if ($item['id'] !== $productPrice2ApiId) {
-                    $expectedData['data'][] = $item;
-                }
-            }
-        }
-        $expectedData = $this->arrangeExpectedData($expectedData, $responseContent, 10);
+        $expectedData = $this->arrangeExpectedData($data, $responseContent, 250);
+        unset($expectedData['data'][0]['meta'], $expectedData['data'][1]['meta']);
         $this->assertResponseContains($expectedData, $response);
     }
 }

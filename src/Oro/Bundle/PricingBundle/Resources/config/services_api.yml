@@ -21,6 +21,15 @@ services:
             - '@oro_pricing.provider.product_price'
             - '@oro_api.doctrine_helper'
 
+    oro_pricing.api.batch.job_event_listener:
+        class: Oro\Bundle\PricingBundle\EventListener\AfterSaveMqJobListener
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.shard_manager'
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: kernel.event_listener, event: oro_message_queue.after_save_job, method: onAfterSave }
+
     oro_pricing.api.compute_price_list_currencies:
         class: Oro\Bundle\PricingBundle\Api\Processor\ComputePriceListCurrencies
         tags:
@@ -214,20 +223,6 @@ services:
             - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -20 }
             - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -20 }
 
-    oro_pricing.api.disable_process_persist_entity_for_product_price:
-        class: Oro\Bundle\PricingBundle\Api\Processor\Create\DisableProcessForPreventPersistEntity
-        arguments:
-            - '%enable_price_sharding%'
-        tags:
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -7 }
-
-    oro_pricing.api.enable_process_product_price:
-        class: Oro\Bundle\PricingBundle\Api\Processor\Create\EnableProcess
-        arguments:
-            - '%enable_price_sharding%'
-        tags:
-            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -9 }
-
     oro_pricing.api.handle_price_list_filter:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\HandlePriceListFilter
         tags:
@@ -251,22 +246,31 @@ services:
             - { name: oro.api.processor, action: update, group: load_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
             - { name: oro.api.processor, action: delete, group: load_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
 
-    oro_pricing.api.enabled_price_sharding_on_query:
-        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\EnableShardingOnQuery
+    oro_pricing.api.disable_product_price_persist:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\DisableProductPricePersist
         arguments:
             - '@oro_pricing.shard_manager'
         tags:
-            - { name: oro.api.processor, action: update, group: load_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: 5 }
-            - { name: oro.api.processor, action: delete, group: load_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: 5 }
-            - { name: oro.api.processor, action: delete_list, group: build_query, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -255 }
+            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -7 }
 
-    oro_pricing.api.enable_price_sharding_on_config:
-        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\EnableShardingOnConfig
+    oro_pricing.api.add_price_list_id_to_product_price_query:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\AddPriceListIdToProductPriceQuery
         arguments:
             - '@oro_pricing.shard_manager'
         tags:
             - { name: oro.api.processor, action: get_list, group: build_query, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -255 }
             - { name: oro.api.processor, action: get, group: build_query, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -255 }
+            - { name: oro.api.processor, action: delete_list, group: build_query, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -255 }
+            - { name: oro.api.processor, action: update, group: load_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: 5 }
+            - { name: oro.api.processor, action: delete, group: load_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: 5 }
+
+    oro_pricing.api.load_product_prices_from_several_price_lists:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\LoadProductPricesFromSeveralPriceLists
+        arguments:
+            - '@oro_api.entity_serializer'
+            - '@oro_pricing.shard_manager'
+        tags:
+            - { name: oro.api.processor, action: get_list, group: load_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
 
     oro_pricing.api.persist_product_price:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\PersistProductPrice
@@ -290,21 +294,17 @@ services:
         arguments:
             - '@oro_pricing.shard_manager'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: post_validate, class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
-
-    oro_pricing.api.batch.job_event_listener:
-        class: Oro\Bundle\PricingBundle\EventListener\AfterSaveMqJobListener
-        arguments:
-            - '@doctrine'
-            - '@oro_pricing.shard_manager'
-            - '@oro_message_queue.client.message_producer'
-        tags:
-            - { name: kernel.event_listener, event: oro_message_queue.after_save_job, method: onAfterSave }
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: 'batch&!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
 
     oro_pricing.api.reset_price_rule_field:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\ResetPriceRuleField
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_flush_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
+
+    oro_pricing.api.add_to_price_list_id_map_in_context:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\AddToPriceListIdMapInContext
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_flush_data, parentAction: create|update, requestType: 'batch&!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -200 }
 
     oro_pricing.api.compute_product_prices:
         class: Oro\Bundle\PricingBundle\Api\Processor\ComputeProductPrices

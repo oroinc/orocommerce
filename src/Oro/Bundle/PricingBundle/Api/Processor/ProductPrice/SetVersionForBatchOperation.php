@@ -14,9 +14,7 @@ class SetVersionForBatchOperation implements ProcessorInterface
     #[\Override]
     public function process(ContextInterface $context): void
     {
-        if (!$context instanceof BatchUpdateContext) {
-            return;
-        }
+        /** @var BatchUpdateContext $context */
 
         $context->getSharedData()->set('batchOperationId', $context->getOperationId());
     }

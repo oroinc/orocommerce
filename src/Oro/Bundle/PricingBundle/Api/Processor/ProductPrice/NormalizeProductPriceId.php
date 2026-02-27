@@ -29,18 +29,20 @@ class NormalizeProductPriceId implements ProcessorInterface
         /** @var SingleItemContext $context */
 
         $id = $context->getId();
-        if (!\is_string($id) || (PriceListIdContextUtil::hasPriceListId($context) && substr_count($id, '-') === 4)) {
-            // an entity identifier does not exist or it is already normalized
+        if (!\is_string($id)) {
+            // an entity identifier does not exist
+            return;
+        }
+        if (PriceListIdContextUtil::hasPriceListId($context) && PriceListIdContextUtil::isProductPriceId($id)) {
+            // an entity identifier is already normalized
             return;
         }
 
-        $productPriceId = null;
-        $priceListId = null;
-        $lastDelimiterPos = strrpos($id, '-');
-        if (false !== $lastDelimiterPos) {
+        [$productPriceId, $priceListId] = PriceListIdContextUtil::parseProductPriceId($id);
+        if (null !== $priceListId) {
             $requestType = $context->getRequestType();
-            $productPriceId = $this->normalizeProductPriceId(substr($id, 0, $lastDelimiterPos), $requestType);
-            $priceListId = $this->normalizePriceListId(substr($id, $lastDelimiterPos + 1), $requestType);
+            $productPriceId = $this->normalizeProductPriceId($productPriceId, $requestType);
+            $priceListId = $this->normalizePriceListId($priceListId, $requestType);
         }
         if (null === $productPriceId || null === $priceListId) {
             throw new NotFoundHttpException('An entity with the requested identifier does not exist.');

@@ -21,7 +21,7 @@ class HandlePriceListFilter implements ProcessorInterface
         $priceListFilterValue = $context->getFilterValues()->getOne('priceList');
         if (null !== $priceListFilterValue) {
             PriceListIdContextUtil::storePriceListId($context, $priceListFilterValue->getValue());
-        } else {
+        } elseif ($context->isMainRequest()) {
             $context->addError(
                 Error::createValidationError(Constraint::FILTER, 'The "priceList" filter is required.')
             );
