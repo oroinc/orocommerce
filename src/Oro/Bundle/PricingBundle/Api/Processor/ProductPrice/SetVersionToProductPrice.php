@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Api\Processor\ProductPrice;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -10,21 +11,19 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 /**
  * Sets the version to the product price based on batch operation ID.
  * Do not set version and trigger mass prices processing if sharding is enabled,
- * because Batch API may update prices for different price lists
+ * because Batch API may update prices for different price lists.
  */
 class SetVersionToProductPrice implements ProcessorInterface
 {
     public function __construct(
-        private ShardManager $shardManager
+        private readonly ShardManager $shardManager
     ) {
     }
 
     #[\Override]
     public function process(ContextInterface $context): void
     {
-        if (!$context instanceof CustomizeFormDataContext) {
-            return;
-        }
+        /** @var CustomizeFormDataContext $context */
 
         if ($this->shardManager->isShardingEnabled()) {
             return;
@@ -35,6 +34,7 @@ class SetVersionToProductPrice implements ProcessorInterface
             return;
         }
 
+        /** @var ProductPrice $productPrice */
         $productPrice = $context->getData();
         $productPrice->setVersion($version);
     }

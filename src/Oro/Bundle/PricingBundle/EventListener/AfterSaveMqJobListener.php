@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ApiBundle\Entity\AsyncOperation;
 use Oro\Bundle\PricingBundle\Async\Topic\GenerateDependentPriceListPricesTopic;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Event\AfterSaveJobEvent;
@@ -19,9 +20,9 @@ final class AfterSaveMqJobListener
     private const OPERATION_ID = 'api_operation_id';
 
     public function __construct(
-        private ManagerRegistry $doctrine,
-        private ShardManager $shardManager,
-        private MessageProducerInterface $producer
+        private readonly ManagerRegistry $doctrine,
+        private readonly ShardManager $shardManager,
+        private readonly MessageProducerInterface $producer
     ) {
     }
 
@@ -57,6 +58,7 @@ final class AfterSaveMqJobListener
             return;
         }
 
+        /** @var ProductPriceRepository $repo */
         $repo = $this->doctrine->getRepository(ProductPrice::class);
         foreach ($repo->getPriceListIdsAffectedByVersion($operationId) as $priceListId) {
             $this->producer->send(

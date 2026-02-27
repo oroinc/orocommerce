@@ -17,11 +17,8 @@ trait ProductPriceTestTrait
         Product $product,
         ProductUnit $unit
     ): ?ProductPrice {
-        $queryBuilder = $this->getEntityManager()
-            ->getRepository(ProductPrice::class)
-            ->createQueryBuilder('price');
-
-        $queryBuilder
+        $query = $this->getDoctrineHelper()
+            ->createQueryBuilder(ProductPrice::class, 'price')
             ->andWhere('price.quantity = :quantity')
             ->andWhere('price.currency = :currency')
             ->andWhere('price.priceList = :priceList')
@@ -31,11 +28,11 @@ trait ProductPriceTestTrait
             ->setParameter('currency', $currency)
             ->setParameter('priceList', $priceList)
             ->setParameter('product', $product)
-            ->setParameter('unit', $unit);
+            ->setParameter('unit', $unit)
+            ->getQuery();
 
-        $query = $queryBuilder->getQuery();
         $query->useQueryCache(false);
-        $query->setHint('priceList', $this->getReference('price_list_3')->getId());
+        $query->setHint('priceList', $priceList->getId());
         $query->setHint(
             PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER,
             self::getContainer()->get('oro_pricing.shard_manager')
