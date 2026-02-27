@@ -19,6 +19,7 @@ class OrderLimitCollectionType extends AbstractType
                 'entry_type' => OrderLimitType::class,
                 'allow_add' => false,
                 'allow_delete' => false,
+                'handle_primary' => false,
             ]
         );
     }
