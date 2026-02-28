@@ -265,7 +265,7 @@ The entity from which this order was created.
 
 ### orderSubtotals
 
-Calculated order subtotal records for a specific order.
+Calculated order subtotals.
 
 #### create, update
 
@@ -275,7 +275,7 @@ Calculated order subtotal records for a specific order.
 
 ### invoices
 
-Collection of invoice records assigned to a specific order.
+The invoices associated with an order.
 
 ## SUBRESOURCES
 
@@ -441,15 +441,15 @@ Example:
 
 #### get_subresource
 
-Retrieve the invoices collection assigned to a specific order record.
+Retrieve the invoices collection associated with a specific order record.
 
 #### get_relationship
 
-Retrieve the IDs of the invoices assigned to a specific order record.
+Retrieve the IDs of the invoices associated with a specific order record.
 
 #### update_relationship
 
-Replace the list of invoices assigned to a specific order record.
+Replace the list of invoices associated with a specific order record.
 
 {@request:json_api}
 Example:
