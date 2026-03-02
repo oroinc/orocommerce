@@ -106,7 +106,7 @@ class RequestWebContentScopeProvider
         $criteria = null;
 
         if ($this->matchedUrlDecisionMaker->matches($request->getPathInfo()) ||
-            $this->isStorefrontApiUrl($request->getPathInfo()) ||
+            $this->isFrontendApiUrl($request->getPathInfo()) ||
             $request->attributes->get('exception')?->getStatusCode() === Response::HTTP_NOT_FOUND
         ) {
             $criteria = $this->scopeManager->getCriteria('web_content');
@@ -116,7 +116,7 @@ class RequestWebContentScopeProvider
         return $criteria;
     }
 
-    private function isStorefrontApiUrl(string $pathInfo): bool
+    private function isFrontendApiUrl(string $pathInfo): bool
     {
         if (!isset($this->frontendHelper) || !isset($this->apiPrefix)) {
             return false;

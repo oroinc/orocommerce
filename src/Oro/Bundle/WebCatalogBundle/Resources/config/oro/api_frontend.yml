@@ -3,9 +3,6 @@ api:
         Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
             alias:        webcatalogtree
             plural_alias: webcatalogtree
-        Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
-            alias:        webcatalog
-            plural_alias: webcatalogs
         Oro\Bundle\WebCatalogBundle\Api\Model\SystemPage:
             alias:        systempage
             plural_alias: systempages
@@ -54,17 +51,6 @@ api:
                     target_class: Oro\Bundle\ApiBundle\Model\EntityIdentifier
                     target_type: to-one
                     property_path: _
-                webCatalog:
-                    target_class: Oro\Bundle\WebCatalogBundle\Entity\WebCatalog
-                    target_type: to-one
-                    exclusion_policy: all
-                    fields:
-                        id:
-                            data_type: integer
-                        name:
-                            data_type: string
-                        description:
-                            data_type: string
             filters:
                 fields:
                     level:
@@ -74,6 +60,8 @@ api:
                     root:
                         data_type: integer
                         type: nestedTree
+                    webCatalog:
+                        exclude: true
             actions:
                 get:
                     description: Get Web Catalog Tree Node
@@ -99,17 +87,8 @@ api:
                             disable_sorting: true
 
         Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
-            documentation_resource: '@OroWebCatalogBundle/Resources/doc/api_frontend/webcatalog.md'
-            fields:
-                id:
-                    data_type: integer
-                name:
-                    data_type: string
-                description:
-                    data_type: string
+            documentation_resource: '@OroWebCatalogBundle/Resources/doc/api_frontend/web_catalog.md'
             actions:
-                get:
-                    description: Get Web Catalog
                 get_list: false
                 create: false
                 update: false

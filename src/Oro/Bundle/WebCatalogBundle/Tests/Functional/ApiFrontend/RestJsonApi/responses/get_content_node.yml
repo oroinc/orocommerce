@@ -30,3 +30,7 @@ data:
             data:
                 type: mastercatalogcategories
                 id: '<toString(@category1->id)>'
+        webCatalog:
+            data:
+                type: webcatalogs
+                id: '<toString(@catalog1->id)>'

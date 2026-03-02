@@ -10,3 +10,4 @@ oro_customer:
         non_authenticated_visitors_api_resources:
             - Oro\Bundle\WebCatalogBundle\Api\Model\SystemPage
             - Oro\Bundle\WebCatalogBundle\Entity\ContentNode
+            - Oro\Bundle\WebCatalogBundle\Entity\WebCatalog
