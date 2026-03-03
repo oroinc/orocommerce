@@ -61,6 +61,8 @@ Feature: Product collection sort order with drag n' drop
 
   Scenario: Sort order product with drag n' drop and Drop Zone Move
     When I click "Manage sort order"
+    And I should see "UiDialog" with elements:
+      | Title | Sort products in Some Custom Segment Name product collection |
     And I drag and drop "Draggable Product1 Row" on "Drop Zone Move to Top"
     And I drag and drop "Draggable Product4 Row" on "Drop Zone Move to Bottom"
     And I drag and drop "Draggable Product5 Row" on "Drop Zone Remove from Sorted"
