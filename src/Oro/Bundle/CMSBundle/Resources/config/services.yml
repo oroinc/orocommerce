@@ -570,6 +570,39 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_options_set, method: onFormOptions }
 
+    oro_cms.event_listener.system_config.accessibility_page:
+        class: Oro\Bundle\ConfigBundle\EventListener\EntitySystemConfigListener
+        arguments:
+            - '@doctrine'
+            - 'Oro\Bundle\CMSBundle\Entity\Page'
+            - 'oro_cms.accessibility_page'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
+
+    oro_cms.event_listener.accessibility_page_system_config_form_options:
+        class: Oro\Bundle\CMSBundle\EventListener\AccessibilityPageSystemConfigFormOptionsListener
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_options_set, method: onFormOptions }
+
+    oro_cms.provider.accessibility_page:
+        class: Oro\Bundle\CMSBundle\Provider\AccessibilityPageProvider
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_cms.provider.routing_information_provider'
+            - '@router'
+            - '@oro_locale.helper.localization'
+            - '@oro_web_catalog.content_node_tree_resolver'
+            - '@oro_web_catalog.request_web_content_scope_provider'
+
+    oro_cms.twig.accessibility_page_extension:
+        class: Oro\Bundle\CMSBundle\Twig\AccessibilityPageExtension
+        arguments:
+            - '@oro_cms.provider.accessibility_page'
+        tags:
+            - { name: twig.extension }
+
     oro_cms.provider.home_page:
         class: Oro\Bundle\CMSBundle\Provider\HomePageProvider
         decorates: oro_frontend.home_page_provider

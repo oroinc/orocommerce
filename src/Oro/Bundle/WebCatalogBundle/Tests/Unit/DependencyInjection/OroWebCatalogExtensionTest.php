@@ -24,6 +24,7 @@ class OroWebCatalogExtensionTest extends TestCase
                         'resolved' => true,
                         'web_catalog' => ['value' => null, 'scope' => 'app'],
                         'navigation_root' => ['value' => null, 'scope' => 'app'],
+                        'accessibility_page' => ['value' => null, 'scope' => 'app'],
                         'enable_web_catalog_canonical_url' => ['value' => true, 'scope' => 'app'],
                         'empty_search_result_page' => ['value' => null, 'scope' => 'app'],
                     ]

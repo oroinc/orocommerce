@@ -144,6 +144,16 @@ services:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
 
+    oro_web_catalog.event_listener.system_config.accessibility_page:
+        class: Oro\Bundle\ConfigBundle\EventListener\EntitySystemConfigListener
+        arguments:
+            - '@doctrine'
+            - 'Oro\Bundle\WebCatalogBundle\Entity\ContentNode'
+            - 'oro_web_catalog.accessibility_page'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
+
     oro_web_catalog.event_listener.webcatalog_config:
         class: Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener
         arguments:

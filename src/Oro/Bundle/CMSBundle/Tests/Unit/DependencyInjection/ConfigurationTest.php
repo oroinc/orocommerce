@@ -44,7 +44,11 @@ class ConfigurationTest extends TestCase
                         Configuration::GUEST_ACCESS_ALLOWED_CMS_PAGES => [
                             'value' => [],
                             'scope' => 'app'
-                        ]
+                        ],
+                        Configuration::ACCESSIBILITY_PAGE => [
+                            'value' => null,
+                            'scope' => 'app'
+                        ],
                     ],
                     Configuration::DIRECT_EDITING => [
                         Configuration::LOGIN_PAGE_CSS_FIELD_OPTION => false,
@@ -68,6 +72,10 @@ class ConfigurationTest extends TestCase
                         ],
                         Configuration::GUEST_ACCESS_ALLOWED_CMS_PAGES => [
                             'value' => [],
+                            'scope' => 'app'
+                        ],
+                        Configuration::ACCESSIBILITY_PAGE => [
+                            'value' => null,
                             'scope' => 'app'
                         ]
                     ],
@@ -94,6 +102,10 @@ class ConfigurationTest extends TestCase
                         Configuration::GUEST_ACCESS_ALLOWED_CMS_PAGES => [
                             'value' => [],
                             'scope' => 'app'
+                        ],
+                        Configuration::ACCESSIBILITY_PAGE => [
+                            'value' => null,
+                            'scope' => 'app'
                         ]
                     ],
                     Configuration::DIRECT_EDITING => [Configuration::LOGIN_PAGE_CSS_FIELD_OPTION => false]
@@ -113,7 +125,8 @@ class ConfigurationTest extends TestCase
                         'settings' => [
                             Configuration::DIRECT_URL_PREFIX => ['value' => 'prefix'],
                             Configuration::HOME_PAGE => ['value' => 1],
-                            Configuration::GUEST_ACCESS_ALLOWED_CMS_PAGES => ['value' => [1, 2]]
+                            Configuration::GUEST_ACCESS_ALLOWED_CMS_PAGES => ['value' => [1, 2]],
+                            Configuration::ACCESSIBILITY_PAGE => ['value' => 5],
                         ]
                     ],
                 ],
@@ -130,6 +143,10 @@ class ConfigurationTest extends TestCase
                         ],
                         Configuration::GUEST_ACCESS_ALLOWED_CMS_PAGES => [
                             'value' => [1, 2],
+                            'scope' => 'app'
+                        ],
+                        Configuration::ACCESSIBILITY_PAGE => [
+                            'value' => 5,
                             'scope' => 'app'
                         ]
                     ],

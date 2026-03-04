@@ -6,6 +6,7 @@ features:
         configuration:
             - oro_web_catalog.enable_web_catalog_canonical_url
             - oro_web_catalog.navigation_root
+            - oro_web_catalog.accessibility_page
 
     navigation_root_system_configuration:
         label: oro.webcatalog.feature.navigation_root_system_configuration.label
