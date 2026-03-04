@@ -339,3 +339,292 @@ page.international_shipping:
     slug: 'international-shipping'
     title: 'International Shipping'
     content: '<p>We offer international shipping to bring our products to customers worldwide. No matter where you are, we ensure a smooth and reliable delivery process.</p> <h3>Countries We Ship To</h3> <p>We ship to many countries across the world. During checkout, you will see the available shipping options for your location. If your country is not listed, please contact our support team for assistance.</p> <h3>International Shipping Methods</h3> <p>We provide several shipping options to meet your needs:</p> <ul> <li>Standard International Shipping – Estimated delivery time: 10-20 business days.</li> <li>Express International Shipping – Estimated delivery time: 5-10 business days.</li> <li>Courier Services (DHL, FedEx, UPS) – Fast and trackable delivery.</li> </ul> <p>Shipping times vary based on destination, customs processing, and selected shipping method.</p> <h3>Shipping Costs</h3> <p>Shipping costs depend on the destination, package weight, and shipping method chosen. You can see the exact shipping cost during checkout before completing your order.</p> <h3>Customs, Duties & Taxes</h3> <p>International shipments may be subject to customs duties, taxes, or import fees based on your country’s regulations. These charges are the responsibility of the buyer and are not included in the product price or shipping cost.</p> <p>We recommend checking with your local customs office for more details about possible fees before placing an order.</p> <h3>Tracking Your International Order</h3> <p>Once your order is shipped, you will receive a tracking number via email. You can use this number to track your shipment on the carrier’s website.</p> <p>Tracking updates may take some time, especially if your package is in transit between countries.</p> <h3>Delivery Delays</h3> <p>While we strive for timely delivery, international orders may experience delays due to customs processing, weather conditions, or local postal services. If your order is delayed, please be patient, and feel free to reach out to us for updates.</p> <h3>Restricted Items</h3> <p>Some products may have shipping restrictions based on international laws and regulations. If an item cannot be shipped to your location, you will be notified during checkout.</p> <h3>Returns for International Orders</h3> <p>If you need to return an item, please check our <a href="/orders-and-returns">Orders & Returns</a> page for eligibility and instructions. Return shipping costs for international orders are the responsibility of the customer.</p> <h3>Need Help?</h3> <p>If you have any questions about international shipping, feel free to contact our support team.</p> <p>Email: <a href="mailto:support@example.com">support@example.com</a></p> <p>Phone: +1 (800) 123-4567</p> <p>We appreciate your business and look forward to shipping your order anywhere in the world!</p>'
+accessibility:
+    slug: accessibility
+    title: 'Accessibility'
+    contentStyle: >
+        .accessibility-cms-grid .table-styled th:first-child,
+        .accessibility-cms-grid .table-styled td:first-child {
+            width: 180px;
+            max-width: 180px;
+            vertical-align: top;
+        }
+        .accessibility-cms-grid .table-styled td {
+            white-space: initial;
+        }
+        .accessibility-cms-grid .options-list {
+            margin-bottom: 0;
+        }
+    content: >
+        <div class="grid grid-row-gap-32 accessibility-cms-grid">
+            <div class="grid-col-12">
+                <h2>Navigation Through Interactive Elements</h2>
+                <p>Keyboard navigation allows users who cannot use a mouse to interact with the interface. When a user presses the <b>Tab</b> key, the focus shifts to <b>the next focusable element</b> on the page. Typically, focusable elements include links, buttons, form inputs (such as text fields, checkboxes, and radio buttons), dropdown menus, and any focusable ARIA components.</p>
+                <p>To enhance keyboard navigation on a page, <b>the roving tabindex</b> technique is used. This method ensures that when a user presses the <b>Tab</b> key, the focus lands on a single "entry point" within complex components, such as menus or filters, rather than cycling through every individual item. Therefore, <b>the next Tab</b> action will move the focus out of the component to the next focusable element on the page. The navigation within these complex components is then managed using the <b>Arrow keys</b>.</p>
+                <h2>Navigate Using Full Keyboard Access On MacOS</h2>
+                <p>When Full Keyboard Access is turned on, do any of the following using the default commands:</p>
+                <ul class="options-list">
+                    <li>Move to the next UI element: Press the Tab key.</li>
+                    <li>Move to the previous UI element: Press Shift-Tab.</li>
+                    <li>Select an item: Press the Space bar.</li>
+                </ul>
+                <h3>Turn Full Keyboard Access On or Off</h3>
+                <ul class="options-list">
+                    <li>On your Mac, choose Apple menu > System Settings, then click Accessibility in the sidebar. (You may need to scroll down.)</li>
+                    <li>Under Motor, click Keyboard, then turn Full Keyboard Access on or off</li>
+                </ul>
+            </div>
+            <div class="grid-col-12">
+                <h2>Dropdowns Navigation</h2>
+                <table class="table-styled">
+                    <thead>
+                    <tr>
+                        <th scope="col">Key</th>
+                        <th scope="col">Function</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><b>Arrow Down</b></td>
+                        <td>Opens a dropdown and moves the focus to the first blank field.<br>Enables cyclical navigation within the dropdown.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Arrow Up</b></td>
+                        <td>Opens a dropdown and moves the focus to the last blank field.<br>Enables cyclical navigation within the drop-down.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Space</b> or <b>Enter</b></td>
+                        <td>Opens a dropdown.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Esc</b></td>
+                        <td>Closes a filter dropdown.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="grid-col-12">
+                <h2>Menu Navigation</h2>
+                <h3>Menu</h3>
+                <div class="grid grid-columns-1 grid-row-gap-8">
+                    <table class="table-styled">
+                        <thead>
+                        <tr>
+                            <th scope="col">Key</th>
+                            <th scope="col">Function</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><b>Space</b></td>
+                            <td>Opens the submenu and shifts the focus to the initial item within that submenu.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Right Arrow</b></td>
+                            <td>Moves the focus to the next item in the menu bar.<br>If the focus is on the last item, the arrow key moves the focus to the first item</td>
+                        </tr>
+                        <tr>
+                            <td><b>Left Arrow</b></td>
+                            <td>Moves the focus to the previous item in the menu bar.<br>If the focus is on the first item, the arrow key moves the focus to the last item.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Down Arrow</b></td>
+                            <td>Opens the submenu and moves the focus to the first item within that submenu.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Up Arrow</b></td>
+                            <td>Opens the submenu and moves the focus to the last item within that submenu.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Home</b></td>
+                            <td>Moves the focus to the first item in the menu bar.</td>
+                        </tr>
+                        <tr>
+                            <td><b>End</b></td>
+                            <td>Moves the focus to the last item in the menu bar.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Character [a-z]</b></td>
+                            <td>Moves the focus to the next item in the menu bar whose name starts with the typed character.<br>The focus will not move if no menu item's name starts with the typed character.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <p><b>Notes:</b> In a menu that has no <b>submenus</b>, the <b>up</b> and <b>down</b> arrow keys function identically to the <b>left</b> and <b>right</b> arrow keys.</p>
+                </div>
+                <h3>Submenu</h3>
+                <table class="table-styled">
+                    <thead>
+                    <tr>
+                        <th scope="col">Key</th>
+                        <th scope="col">Function</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><b>Escape</b></td>
+                        <td>Closes the submenu.<br>Moves the focus to the parent menu bar item</td>
+                    </tr>
+                    <tr>
+                        <td><b>Right Arrow</b></td>
+                        <td>If the focus is on an item with a submenu, the arrow key opens the submenu and places the focus on the first item within it.<br>
+                            If the focus is on an item without a submenu:
+                            <ul class="options-list">
+                                <li>Closes the submenu</li>
+                                <li>Moves the focus to the next item in the menu bar</li>
+                                <li>Opens the submenu of the newly focused menubar item, while keeping focus on the parent menubar item</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Left Arrow</b></td>
+                        <td>Closes the submenu and moves the focus to the parent menu item.<br>
+                            if the parent menu item is in the menubar, then also:
+                            <ul class="options-list">
+                                <li>Moves the focus to the previous item in the menu bar.</li>
+                                <li>Opens the submenu of the newly focused menubar item, while keeping focus on the parent menubar item.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Down Arrow</b></td>
+                        <td>Moves the focus to the next item in the submenu.<br>If the focus is on the last item, the arrow key moves the focus to the first item.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Up Arrow</b></td>
+                        <td>Moves the focus to the previous item in the submenu.<br>If the focus is on the first item, the arrow key moves the focus to the last item.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Home</b></td>
+                        <td>Moves the focus to the first item in the submenu.</td>
+                    </tr>
+                    <tr>
+                        <td><b>End</b></td>
+                        <td>Moves the focus to the last item in the submenu.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Character [a-z]</b></td>
+                        <td>Moves the focus to the next item in the menu bar whose name starts with the typed character.<br>The focus will not move if no menu item's name starts with the typed character.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="grid-col-12">
+                <h2>Filters Navigation</h2>
+                <table class="table-styled">
+                    <thead>
+                    <tr>
+                        <th scope="col">Key</th>
+                        <th scope="col">Function</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><b>Arrow Right</b></td>
+                        <td>Moves the focus to the next/first filter item. The focus will cycle through the filter items.<br>If the current item is the last one, the focus moves to the first item.<br>If it is the first, the focus moves to the following item.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Arrow Left</b></td>
+                        <td>Moves the focus to the previous/last filter item. The focus will cycle through the filter items.<br>If the current item is the first one, the focus moves to the last item.<br>If it is the last, the focus moves to the previous item.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Arrow Down</b></td>
+                        <td>Opens a dropdown and moves the focus to the first blank field.<br>Enables cyclical navigation within the dropdown.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Arrow Up</b></td>
+                        <td>Opens a dropdown and moves the focus to the last blank field.<br>Enables cyclical navigation within the dropdown.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Space</b> or <b>Enter</b></td>
+                        <td>Opens a filter dropdown.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Esc</b></td>
+                        <td>Closes a filter dropdown.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="grid-col-12">
+                <h2>Datagrids Navigation</h2>
+                <p>Datagrids navigation is based on <a href="https://www.w3.org/WAI/ARIA/apg/patterns/grid/examples/data-grids">w3.org/WAI/ARIA/apg/patterns/data-grids</a></p>
+                <div class="grid grid-columns-1 grid-row-gap-8">
+                    <table class="table-styled">
+                        <thead>
+                        <tr>
+                            <th scope="col">Key</th>
+                            <th scope="col">Function</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><b>Right Arrow</b></td>
+                            <td>Moves the focus to the next cell on the right within the current row.<br>If the focus is already on the right-most cell, it remains in its current position.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Left Arrow</b></td>
+                            <td>Moves the focus to the previous cell on the left within the current row.<br>If the focus is already on the left-most cell, it remains in its current position.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Down Arrow</b></td>
+                            <td>Moves the focus one cell lower.<br>If the focus is already on the last cell in that column, the focus remains in its current position.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Up Arrow</b></td>
+                            <td>Moves the focus one cell up.<br>If the focus is already on the top cell in that column, the focus remains in its current position.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Home</b></td>
+                            <td>Move the focus to the initial cell of the current row.</td>
+                        </tr>
+                        <tr>
+                            <td><b>End</b></td>
+                            <td>Move the focus to the last cell of the current row.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Control + Home</b></td>
+                            <td>Moves the focus to the first cell in the first row.</td>
+                        </tr>
+                        <tr>
+                            <td><b>Control + End</b></td>
+                            <td>Move the focus to the last cell in the last row.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div>
+                        <b>Notes:</b><br>
+                    </div>
+                    <ol class="options-list">
+                        <li><b>Empty Cells</b>: Cells that contain no content or no focusable elements are excluded from the keyboard navigation flow.</li>
+                        <li><b>Cells with a Single Inner Focusable Element</b>: When a cell contains only one focusable element (such as a checkbox, a dropdown button for actions, etc.), navigation keys will pass the focus directly to that inner element. These navigation keys include <b>Arrow keys</b>, <b>Home</b>, <b>End</b>, <b>Page Up</b>, and <b>Page Down</b>.</li>
+                        <li><b>Cells with Several Inner Focusable Elements</b>: When a cell contains multiple focusable elements (such as an image and product title within an item cell of a shopping list, quantity/unit selectors, or a list of actions), the cell itself is treated as a single navigation element. To enter the cell and access inner focusable elements, press <b>Enter</b> or <b>Space</b> when the cell is highlighted by standard navigation keys (<b>Arrow keys</b>, <b>Home</b>, <b>End</b>, <b>PageUp</b>, <b>PageDown</b>). The first focusable element inside the cell will receive focus. <b>Tab navigation</b> within the cell will loop through the focusable elements (similar to dropdowns). Press <b>Escape</b> to return the focus to the parent cell.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="grid-col-12">
+                <h2>Navigation inside of Dialogs and Modals</h2>
+                <table class="table-styled">
+                    <thead>
+                    <tr>
+                        <th scope="col">Key</th>
+                        <th scope="col">Function</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><b>Tab</b></td>
+                        <td>Moves the focus to the next focusable element inside the dialog.<br>When the focus is on the last focusable element in the dialog, moves focus to the first focusable element in the dialog.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Shift + Tab</b></td>
+                        <td>Moves the focus to the previous focusable element inside the dialog.<br>When the focus is on the first focusable element in the dialog, moves focus to the last focusable element in the dialog.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Escape</b></td>
+                        <td>Closes the dialog.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>

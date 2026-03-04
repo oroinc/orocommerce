@@ -100,6 +100,21 @@ oro_behat_extension:
         LandingPageTitlesField:
             selector: "input[name='oro_cms_page[titles][values][default]']"
 
+        Landing Page Form Titles Fallbacks:
+            selector:
+                type: xpath
+                locator: '//label[text()="Titles"]/../..//button[contains(@class, "fallback-status")]'
+
+        Landing Page Form Url Slug Fallbacks:
+            selector:
+                type: xpath
+                locator: '//label[text()="URL Slug"]/../..//button[contains(@class, "fallback-status")]'
+
+        Accessibility Landing Page Link:
+            selector:
+                type: xpath
+                locator: "//div[contains(@class,'skip-to-content__elements')]//a[@href]"
+
         PageTitle:
             selector: "title"
 
@@ -109,6 +124,12 @@ oro_behat_extension:
             options:
                 mapping:
                     Titles: 'oro_cms_page[titles][values][default]'
+                    Title English (United States) value:
+                        type: 'xpath'
+                        locator: '//label[text() = "Titles"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+                    Title English (United States) use fallback:
+                        type: 'xpath'
+                        locator: '//label[text() = "Titles"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[@type="checkbox"]'
                     Content:
                         type: 'xpath'
                         locator: '//*[@name="oro_cms_page[content]"]'
@@ -117,6 +138,12 @@ oro_behat_extension:
                     Meta Description: 'oro_cms_page[metaDescriptions][values][default]'
                     Do Not Render Title: 'oro_cms_page[doNotRenderTitle]'
                     Create a URL slug: 'oro_cms_page[createUrlSlug]'
+                    URL Slugs English (United States) value:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+                    URL Slugs English (United States) use fallback:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[@type="checkbox"]'
 
         Content Block Form:
             selector: 'form[name="oro_cms_content_block"]'

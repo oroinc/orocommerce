@@ -1,0 +1,11 @@
+'Accessibility':
+    defaultTitle: 'Accessibility'
+    defaultSlugPrototype: 'accessibility'
+    parentScopeUsed: true
+    contentVariants:
+        -
+            type: cms_page
+            params:
+                title: 'Accessibility'
+                doNotRenderTitle: true
+            isDefault: true

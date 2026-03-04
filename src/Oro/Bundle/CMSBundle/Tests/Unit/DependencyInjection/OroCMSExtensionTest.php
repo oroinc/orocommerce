@@ -32,6 +32,10 @@ class OroCMSExtensionTest extends TestCase
                             'value' => null,
                             'scope' => 'app'
                         ],
+                        Configuration::ACCESSIBILITY_PAGE => [
+                            'value' => null,
+                            'scope' => 'app'
+                        ],
                         Configuration::GUEST_ACCESS_ALLOWED_CMS_PAGES => [
                             'value' => [],
                             'scope' => 'app'

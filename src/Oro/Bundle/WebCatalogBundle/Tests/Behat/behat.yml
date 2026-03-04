@@ -35,6 +35,11 @@ oro_behat_extension:
                 type: xpath
                 locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]'
 
+        Accessibility node:
+            selector:
+                type: xpath
+                locator: "//div[contains(@id, 'routing_oro_web_catalog___accessibility_page_value')]//li[contains(@class, 'jstree-node')]/a[contains(., 'Accessibility node')]"
+
         Additional Web Catalog:
             selector:
                 type: xpath
@@ -276,5 +281,6 @@ oro_behat_extension:
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
                 - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
                 - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
+                - Oro\Bundle\CMSBundle\Tests\Behat\Context\FeatureContext
             paths:
                 - '@OroWebCatalogBundle/Tests/Behat/Features'

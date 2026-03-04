@@ -965,6 +965,24 @@ EOF;
         $this->checkIsComponentExists($blockName, true);
     }
 
+    /**
+     * Follows the accessibility link inside the skip-to-content widget.
+     *
+     * Example: And I follow the skip to content accessibility link
+     * @When /^(?:|I )follow the skip to content accessibility link$/
+     */
+    public function iFollowTheSkipToContentAccessibilityLink(): void
+    {
+        $this->getSession()->getDriver()->executeScript(
+            "var btn = document.querySelector('.skip-to-content__btn');"
+            . " if (btn) { btn.focus(); }"
+            . " var link = document.querySelector('.skip-to-content__elements a[href]');"
+            . " if (!link) { throw new Error('skip-to-content accessibility link not found'); }"
+            . " link.focus();"
+            . " link.click();"
+        );
+    }
+
     private function checkIsComponentExists(string $blockName, bool $isShouldSee): void
     {
         $blockPanel = $this->createElement('BlocksPanel');

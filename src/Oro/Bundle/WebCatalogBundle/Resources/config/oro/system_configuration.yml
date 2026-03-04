@@ -27,6 +27,14 @@ system_configuration:
                 tooltip: oro.webcatalog.system_configuration.fields.navigation_root.tooltip
                 required: false
                 data_transformer: oro_web_catalog.form.data_transformer.navigation_root_option
+        oro_web_catalog.accessibility_page:
+            data_type: integer
+            type: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeSelectSystemConfigType
+            priority: 95
+            options:
+                label: oro.webcatalog.system_configuration.fields.accessibility_page.label
+                tooltip: oro.webcatalog.system_configuration.fields.accessibility_page.tooltip
+                required: false
         oro_web_catalog.enable_web_catalog_canonical_url:
             data_type: boolean
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
@@ -59,6 +67,7 @@ system_configuration:
                                         children:
                                             - oro_web_catalog.web_catalog
                                             - oro_web_catalog.navigation_root
+                                            - oro_web_catalog.accessibility_page
                                     oro_redirect_canonical_urls:
                                         children:
                                             - oro_web_catalog.enable_web_catalog_canonical_url

@@ -26,6 +26,20 @@ system_configuration:
                 attr:
                     class: control-subgroup
 
+        oro_cms.accessibility_page:
+            data_type: integer
+            type: Oro\Bundle\CMSBundle\Form\Type\PageSelectType
+            options:
+                label: oro.cms.system_configuration.fields.accessibility_page.label
+                tooltip: oro.cms.system_configuration.fields.accessibility_page.tooltip
+                required: false
+                resettable: false
+                create_enabled: false
+                configs:
+                    allowClear: false
+                attr:
+                    class: control-subgroup
+
         oro_cms.guest_access_allowed_cms_pages:
             data_type: array
             type: Oro\Bundle\CMSBundle\Form\Type\PageSelectionType
@@ -56,6 +70,7 @@ system_configuration:
                                     websites_routing_general:
                                         children:
                                             - oro_cms.home_page
+                                            - oro_cms.accessibility_page
             commerce:
                 children:
                     guests:
