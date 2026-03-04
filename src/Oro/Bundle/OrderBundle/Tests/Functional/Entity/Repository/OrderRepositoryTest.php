@@ -26,6 +26,7 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\WebsiteTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class OrderRepositoryTest extends WebTestCase
 {
@@ -827,6 +828,86 @@ class OrderRepositoryTest extends WebTestCase
                 OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
             ]
         );
+    }
+
+    public function testHasSubOrdersReturnsTrueWhenSubOrdersExist(): void
+    {
+        $parentOrder = $this->getReference(LoadOrders::ORDER_1);
+
+        $result = $this->repository->hasSubOrders($parentOrder->getId());
+
+        self::assertTrue($result);
+    }
+
+    public function testHasSubOrdersReturnsFalseWhenNoSubOrdersExist(): void
+    {
+        $orderWithoutSubOrders = $this->getReference(LoadOrders::MY_ORDER);
+
+        $result = $this->repository->hasSubOrders($orderWithoutSubOrders->getId());
+
+        self::assertFalse($result);
+    }
+
+    public function testHasSubOrdersReturnsFalseForSubOrder(): void
+    {
+        $subOrder = $this->getReference(LoadSubOrders::SUB_ORDER_1_OF_ORDER_1);
+
+        $result = $this->repository->hasSubOrders($subOrder->getId());
+
+        self::assertFalse($result);
+    }
+
+    public function testHasSubOrdersReturnsFalseForNonExistentOrder(): void
+    {
+        $nonExistentOrderId = 0;
+
+        $result = $this->repository->hasSubOrders($nonExistentOrderId);
+
+        self::assertFalse($result);
+    }
+
+    public function testFindSubOrdersReturnsSubOrders(): void
+    {
+        $parentOrder = $this->getReference(LoadOrders::ORDER_1);
+        $expectedSubOrder = $this->getReference(LoadSubOrders::SUB_ORDER_1_OF_ORDER_1);
+
+        $subOrders = $this->repository->findSubOrders($parentOrder->getId());
+
+        self::assertIsArray($subOrders);
+        self::assertCount(1, $subOrders);
+        self::assertInstanceOf(Order::class, $subOrders[0]);
+        self::assertEquals($expectedSubOrder->getId(), $subOrders[0]->getId());
+        self::assertEquals($parentOrder->getId(), $subOrders[0]->getParent()->getId());
+    }
+
+    public function testFindSubOrdersReturnsEmptyArrayWhenNoSubOrdersExist(): void
+    {
+        $orderWithoutSubOrders = $this->getReference(LoadOrders::MY_ORDER);
+
+        $subOrders = $this->repository->findSubOrders($orderWithoutSubOrders->getId());
+
+        self::assertIsArray($subOrders);
+        self::assertEmpty($subOrders);
+    }
+
+    public function testFindSubOrdersReturnsEmptyArrayForSubOrder(): void
+    {
+        $subOrder = $this->getReference(LoadSubOrders::SUB_ORDER_1_OF_ORDER_1);
+
+        $subOrders = $this->repository->findSubOrders($subOrder->getId());
+
+        self::assertIsArray($subOrders);
+        self::assertEmpty($subOrders);
+    }
+
+    public function testFindSubOrdersReturnsEmptyArrayForNonExistentOrder(): void
+    {
+        $nonExistentOrderId = 0;
+
+        $subOrders = $this->repository->findSubOrders($nonExistentOrderId);
+
+        self::assertIsArray($subOrders);
+        self::assertEmpty($subOrders);
     }
 
     public function testFindParentOrder(): void

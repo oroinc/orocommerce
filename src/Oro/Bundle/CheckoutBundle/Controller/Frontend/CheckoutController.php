@@ -26,7 +26,7 @@ class CheckoutController extends AbstractController
      * Creates a checkout form.
      */
     #[Route(path: '/{id}', name: 'oro_checkout_frontend_checkout', requirements: ['id' => '\d+'])]
-    #[Layout(vars: ['workflowStepName', 'workflowName'])]
+    #[Layout(vars: ['workflowStepName', 'workflowName', 'isSinglePageCheckout'])]
     #[Acl(
         id: 'oro_checkout_frontend_checkout',
         type: 'entity',
@@ -45,6 +45,7 @@ class CheckoutController extends AbstractController
             $workflowItem->getData()->set('order', $checkout->getOrder());
 
             return [
+                'isSinglePageCheckout' => CheckoutWorkflowHelper::isSinglePageCheckoutWorkflow($workflowItem),
                 'workflowStepName' => 'order_created',
                 'workflowName' => '',
                 'data' => [
@@ -83,6 +84,7 @@ class CheckoutController extends AbstractController
         }
 
         return [
+            'isSinglePageCheckout' => CheckoutWorkflowHelper::isSinglePageCheckoutWorkflow($workflowItem),
             'workflowStepName' => $currentStep->getName(),
             'workflowName' => $workflowItem->getWorkflowName(),
             'data' => [

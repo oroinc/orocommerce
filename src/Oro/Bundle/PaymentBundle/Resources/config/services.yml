@@ -566,3 +566,24 @@ services:
             - '@oro_filter.filter_utility'
         tags:
             - { name: 'oro_filter.extension.orm_filter.filter', type: !php/const 'Oro\Bundle\PaymentBundle\Filter\PaymentStatusFilter::NAME' }
+
+    oro_payment.provider.payment_transaction_amount_available_to_refund:
+        class: 'Oro\Bundle\PaymentBundle\Provider\PaymentTransactionAmountAvailableToRefundProvider'
+        public: true
+        arguments:
+            - '@oro_payment.repository.payment_transaction'
+            - '@oro_payment.payment_status.helper'
+            - '@oro_currency.rounding.price_rounding_service'
+
+    oro_payment.action.payment_transaction_partial_refund:
+        class: 'Oro\Bundle\PaymentBundle\Action\PaymentTransactionPartialRefundAction'
+        parent: 'oro_payment.action.payment_method_action.abstract'
+        tags:
+            - { name: 'oro_action.action', alias: 'payment_transaction_partial_refund' }
+
+    oro_payment.condition.payment_transaction_fully_refunded:
+        class: 'Oro\Bundle\PaymentBundle\Condition\PaymentTransactionFullyRefunded'
+        arguments:
+            - '@oro_payment.provider.payment_transaction_amount_available_to_refund'
+        tags:
+            - { name: 'oro_action.condition', alias: 'payment_transaction_fully_refunded' }

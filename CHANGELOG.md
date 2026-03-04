@@ -92,6 +92,9 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses` class with constants for each payment status available out-of-the-box.
 * Added `\Oro\Bundle\PaymentBundle\PaymentStatus\Calculator\PaymentStatusCalculator` and implementations for each payment status.
 * Added `\Oro\Bundle\PaymentBundle\Event\PaymentStatusUpdatedEvent` dispatched in `\Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager` after payment status is changed.
+* Added `\Oro\Bundle\PaymentBundle\Condition\PaymentTransactionFullyRefunded` condition to check if the payment transaction is fully refunded.
+* Added `\Oro\Bundle\PaymentBundle\Action\PaymentTransactionPartialRefundAction` to perform a partial refund for a payment transaction.
+* Added `\Oro\Bundle\PaymentBundle\Provider\PaymentTransactionAmountAvailableToRefundProvider` to calculate the amount available to refund for a payment transaction.
 
 #### PricingBundle
 * Added `\Oro\Bundle\PricingBundle\Layout\DataProvider\TotalsProvider` layout data provider.

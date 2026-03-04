@@ -456,4 +456,31 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
 
         return $result ? $result->getParent() : null;
     }
+
+    public function hasSubOrders(int $orderId): bool
+    {
+        $qb = $this->createQueryBuilder('orderEntity');
+        $qb
+            ->select('orderEntity.id')
+            ->where($qb->expr()->eq('orderEntity.parent', ':orderId'))
+            ->setParameter('orderId', $orderId, Types::INTEGER)
+            ->setMaxResults(1);
+
+        return (bool)$qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @param int $orderId
+     *
+     * @return array<Order>
+     */
+    public function findSubOrders(int $orderId): array
+    {
+        $qb = $this->createQueryBuilder('orderEntity');
+        $qb
+            ->where($qb->expr()->eq('orderEntity.parent', ':orderId'))
+            ->setParameter('orderId', $orderId, Types::INTEGER);
+
+        return $qb->getQuery()->getResult();
+    }
 }
