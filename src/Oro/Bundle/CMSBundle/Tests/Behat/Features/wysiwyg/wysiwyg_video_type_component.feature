@@ -30,21 +30,21 @@ Feature: WYSIWYG video type component
       | Video ID       | https://youtu.be/dQw4w9WgXcQ |
       | Modestbranding | true                         |
     Then I check wysiwyg content in "CMS Page Content":
-      | 1 | <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?&autoplay=1&loop=1&playlist=dQw4w9WgXcQ&modestbranding=1&mute=1" allowfullscreen="allowfullscreen"></iframe> |
+      | 1 | <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?&amp;autoplay=1&amp;loop=1&amp;playlist=dQw4w9WgXcQ&amp;modestbranding=1&amp;mute=1" allowfullscreen="allowfullscreen"></iframe> |
     And I select component in canvas by tree:
       | video | 1 |
     And I update selected component settings:
       | Provider | Youtube (no cookie) |
       | Video ID | dQw4w9WgXcQ         |
     Then I check wysiwyg content in "CMS Page Content":
-      | 1 | <iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?&autoplay=1&loop=1&playlist=dQw4w9WgXcQ&modestbranding=1&mute=1" allowfullscreen="allowfullscreen"></iframe> |
+      | 1 | <iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?&amp;autoplay=1&amp;loop=1&amp;playlist=dQw4w9WgXcQ&amp;modestbranding=1&amp;mute=1" allowfullscreen="allowfullscreen"></iframe> |
     And I select component in canvas by tree:
       | video | 1 |
     And I update selected component settings:
       | Provider | Vimeo    |
       | Video ID | 38195013 |
     Then I check wysiwyg content in "CMS Page Content":
-      | 1 | <iframe src="https://player.vimeo.com/video/38195013?&autoplay=1&loop=1&muted=1" allowfullscreen="allowfullscreen"></iframe> |
+      | 1 | <iframe src="https://player.vimeo.com/video/38195013?&amp;autoplay=1&amp;loop=1&amp;muted=1" allowfullscreen="allowfullscreen"></iframe> |
     And I add new component "2 Columns" from panel to editor area
     And I select component in canvas by tree:
       | video | 1 |
@@ -54,7 +54,7 @@ Feature: WYSIWYG video type component
     And I move "SelectedComponent" to "FirstColumnInGrid" in editor canvas
     Then I check wysiwyg content in "CMS Page Content":
       | 3 | <div class="grid-cell">                                                                                                      |
-      | 4 | <iframe src="https://player.vimeo.com/video/38195013?&autoplay=1&muted=1&loop=1" allowfullscreen="allowfullscreen"></iframe> |
+      | 4 | <iframe src="https://player.vimeo.com/video/38195013?&amp;autoplay=1&amp;muted=1&amp;loop=1" allowfullscreen="allowfullscreen"></iframe> |
       | 5 | </div>                                                                                                                       |
     And I select component in canvas by tree:
       | grid-row    | 1 |
