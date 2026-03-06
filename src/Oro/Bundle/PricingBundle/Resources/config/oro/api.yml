@@ -214,6 +214,8 @@ api:
                     exclude: true
             filters:
                 fields:
+                    id:
+                        allow_array: true
                     priceList:
                         operators: ['=']
                         allow_array: false
