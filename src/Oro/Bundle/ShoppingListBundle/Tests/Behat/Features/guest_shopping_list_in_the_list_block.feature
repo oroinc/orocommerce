@@ -24,7 +24,10 @@ Feature: Guest shopping list in the list block
     Then I should see "Shopping list"
     And I should not see "In Shopping List"
     When type "PSKU1" in "search"
-    And I click "Add to Shopping List" for "PSKU1" product
+    And I click "Search Button"
+    And I should see "Product 1"
+    And I should see "Add to Shopping List"
+    And I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
     When I am on homepage
