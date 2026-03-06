@@ -1,0 +1,68 @@
+yellow-pine:
+    productCode: YELLOW-PINE-SKU
+    inventoryStatus: in_stock
+    status: enabled
+    type: simple
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: yellow-pine.names.default, string: Yellow Pine }
+    slugPrototypes:
+        - { reference: yellow-pine.slugPrototypes.default, string: yellow-pine }
+    descriptions:
+        - { reference: yellow-pine.descriptions.default, wysiwyg: Yellow Pine Description }
+    shortDescriptions:
+        - { reference: yellow-pine.shortDescriptions.default, text: Yellow Pine Short Description }
+    featured: false
+    manageInventory:
+        reference: yellow-pine.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
+
+red-oak:
+    productCode: RED-OAK-SKU
+    inventoryStatus: in_stock
+    status: enabled
+    type: simple
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: red-oak.names.default, string: Red Oak }
+    slugPrototypes:
+        - { reference: red-oak.slugPrototypes.default, string: red-oak }
+    descriptions:
+        - { reference: red-oak.descriptions.default, wysiwyg: Red Oak Description }
+    shortDescriptions:
+        - { reference: red-oak.shortDescriptions.default, text: Red Oak Short Description }
+    featured: false
+    manageInventory:
+        reference: red-oak.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
+
+blue-spruce:
+    productCode: BLUE-SPRUCE-SKU
+    inventoryStatus: in_stock
+    status: enabled
+    type: simple
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: blue-spruce.names.default, string: Blue Spruce }
+    slugPrototypes:
+        - { reference: blue-spruce.slugPrototypes.default, string: blue-spruce }
+    descriptions:
+        - { reference: blue-spruce.descriptions.default, wysiwyg: Blue Spruce Description }
+    shortDescriptions:
+        - { reference: blue-spruce.shortDescriptions.default, text: Blue Spruce Short Description }
+    featured: false
+    manageInventory:
+        reference: blue-spruce.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
