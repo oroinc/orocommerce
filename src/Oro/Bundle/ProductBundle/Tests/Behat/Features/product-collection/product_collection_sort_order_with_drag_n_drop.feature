@@ -60,7 +60,12 @@ Feature: Product collection sort order with drag n' drop
       | 32         | PSKU3 | Product 3 |
 
   Scenario: Sort order product with drag n' drop and Drop Zone Move
-    When I click "Manage sort order"
+    When I fill "Product Collection Grid Form" with:
+      | PSKU4 | 0.5 |
+    And I click "Manage sort order"
+    Then should see "Save all changes?" in confirmation dialogue
+    When I click "Submit and continue" in confirmation dialogue
+    Then I should see "Content Node has been saved" flash message
     And I should see "UiDialog" with elements:
       | Title | Sort products in Some Custom Segment Name product collection |
     And I drag and drop "Draggable Product1 Row" on "Drop Zone Move to Top"
@@ -71,7 +76,7 @@ Feature: Product collection sort order with drag n' drop
     And I click "Content Variants" in scrollspy
     Then I should see following grid:
       | SORT ORDER | SKU   | NAME      |
-      | 0.4        | PSKU1 | Product 1 |
+      | 0.5        | PSKU1 | Product 1 |
       | 22         | PSKU3 | Product 3 |
       | 32         | PSKU4 | Product 4 |
       |            | PSKU5 | Product 5 |
