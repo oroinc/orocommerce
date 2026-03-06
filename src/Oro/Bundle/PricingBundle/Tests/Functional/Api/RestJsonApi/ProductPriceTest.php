@@ -139,11 +139,216 @@ class ProductPriceTest extends RestJsonApiTestCase
         self::assertEquals(2, $response->headers->get('X-Include-Total-Count'));
     }
 
+    public function testGetListFilteredById(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'productprices'],
+            [
+                'filter' => [
+                    'priceList' => '@price_list_1->id',
+                    'id' => '<(implode("-", [@product_price_with_rule_1->id, @price_list_1->id]))>'
+                ]
+            ]
+        );
+
+        $responseData = $this->getResponseData('product_price/get_list.yml');
+        unset($responseData['data'][1]);
+        $this->assertResponseContains($responseData, $response);
+    }
+
+    public function testGetListFilteredBySeveralIds(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'productprices'],
+            [
+                'filter' => [
+                    'priceList' => '@price_list_1->id',
+                    'id' => [
+                        '<(implode("-", [@product_price_with_rule_1->id, @price_list_1->id]))>',
+                        '<(implode("-", [@product_price_with_rule_2->id, @price_list_1->id]))>'
+                    ]
+                ],
+                'sort' => 'product'
+            ]
+        );
+
+        $this->assertResponseContains('product_price/get_list.yml', $response);
+    }
+
+    public function testGetListFilteredByIdFromAnotherPriceList(): void
+    {
+        $id = $this->getProductPriceApiId(
+            $this->getProductPrice('product_price_with_rule_1'),
+            $this->getPriceList('price_list_2')
+        );
+        $response = $this->cget(
+            ['entity' => 'productprices'],
+            ['filter' => ['priceList' => '@price_list_1->id', 'id' => $id]],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'filter constraint',
+                'detail' => \sprintf('Expected a product price ID. Given "%s".', $id),
+                'source' => ['parameter' => 'filter[id]']
+            ],
+            $response
+        );
+    }
+
+    public function testGetListFilteredByIdWhenItsPriceListIdIsInvalidValue(): void
+    {
+        $id = $this->getProductPrice('product_price_with_rule_1')->getId() . '-invalid';
+        $response = $this->cget(
+            ['entity' => 'productprices'],
+            ['filter' => ['priceList' => '@price_list_1->id', 'id' => $id]],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'filter constraint',
+                'detail' => \sprintf('Expected a product price ID. Given "%s".', $id),
+                'source' => ['parameter' => 'filter[id]']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToGetListFilteredByInvalidId(): void
+    {
+        $id = 'invalid';
+        $response = $this->cget(
+            ['entity' => 'productprices'],
+            ['filter' => ['priceList' => '@price_list_1->id', 'id' => $id]],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'filter constraint',
+                'detail' => \sprintf('Expected a product price ID. Given "%s".', $id),
+                'source' => ['parameter' => 'filter[id]']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToGetListFilteredByIdWithoutPriceList(): void
+    {
+        $id = $this->getProductPrice('product_price_with_rule_1')->getId();
+        $response = $this->cget(
+            ['entity' => 'productprices'],
+            ['filter' => ['priceList' => '@price_list_1->id', 'id' => $id]],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'filter constraint',
+                'detail' => \sprintf('Expected a product price ID. Given "%s".', $id),
+                'source' => ['parameter' => 'filter[id]']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToGetListFilteredBySeveralInvalidIds(): void
+    {
+        $id = 'invalid';
+        $response = $this->cget(
+            ['entity' => 'productprices'],
+            [
+                'filter' => [
+                    'priceList' => '@price_list_1->id',
+                    'id' => ['<(implode("-", [@product_price_with_rule_1->id, @price_list_1->id]))>', $id]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'filter constraint',
+                'detail' => \sprintf('Expected a product price ID. Given "%s".', $id),
+                'source' => ['parameter' => 'filter[id]']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToGetListFilteredBySeveralIdsWithoutPriceList(): void
+    {
+        $id = $this->getProductPrice('product_price_with_rule_2')->getId();
+        $response = $this->cget(
+            ['entity' => 'productprices'],
+            [
+                'filter' => [
+                    'priceList' => '@price_list_1->id',
+                    'id' => ['<(implode("-", [@product_price_with_rule_1->id, @price_list_1->id]))>', $id]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'filter constraint',
+                'detail' => \sprintf('Expected a product price ID. Given "%s".', $id),
+                'source' => ['parameter' => 'filter[id]']
+            ],
+            $response
+        );
+    }
+
     public function testTryToGetListWithoutPriceListFilter(): void
     {
         $response = $this->cget(
             ['entity' => 'productprices'],
             [],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'filter constraint',
+                'detail' => 'The "priceList" filter is required.'
+            ],
+            $response
+        );
+    }
+
+    public function testTryToGetListWithoutPriceListFilterAndWithFilterById(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'productprices'],
+            ['filter' => ['id' => '<(implode("-", [@product_price_with_rule_1->id, @price_list_1->id]))>']],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'filter constraint',
+                'detail' => 'The "priceList" filter is required.'
+            ],
+            $response
+        );
+    }
+
+    public function testTryToGetListWithoutPriceListFilterAndWithFilterByInvalidId(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'productprices'],
+            ['filter' => ['id' => 'invalid']],
             [],
             false
         );
@@ -416,6 +621,44 @@ class ProductPriceTest extends RestJsonApiTestCase
         $productIds = $message['product'][$priceListId];
         sort($productIds);
         self::assertEquals([$product1Id, $product2Id], $productIds);
+    }
+
+    public function testDeleteListFilteredById(): void
+    {
+        $priceList = $this->getPriceList('price_list_1');
+        $product = $this->getProduct('product-1');
+        $productPriceApiId = $this->getProductPriceApiId(
+            $this->getProductPrice('product_price_with_rule_1'),
+            $priceList
+        );
+
+        $this->cdelete(
+            ['entity' => 'productprices'],
+            ['filter' => ['priceList' => (string)$priceList->getId(), 'id' => $productPriceApiId]]
+        );
+
+        self::assertSame(
+            1,
+            $this->getProductPriceRepository()->countByPriceList($this->getShardManager(), $priceList)
+        );
+
+        $productPrice = $this->findProductPriceByUniqueKey(
+            5,
+            'USD',
+            $priceList,
+            $product,
+            $this->getProductUnit('product_unit.liter')
+        );
+
+        self::assertNull($productPrice);
+        self::assertMessageSent(
+            ResolvePriceRulesTopic::getName(),
+            [
+                'product' => [
+                    $this->getPriceList('price_list_2')->getId() => [$this->getProduct('product-1')->getId()]
+                ]
+            ]
+        );
     }
 
     public function testDeleteListWhenPriceListFilterContainsIdOfNotExistingPriceList(): void
@@ -740,7 +983,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         $product = $this->getProduct('product-1');
         $productPriceApiId = $this->getProductPriceApiId(
             $this->getProductPrice('product_price_with_rule_1'),
-            $this->getPriceList('price_list_1')
+            $priceList
         );
         $this->delete(
             ['entity' => 'productprices', 'id' => $productPriceApiId]
