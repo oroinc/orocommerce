@@ -25,6 +25,11 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 class ProductRepository extends ServiceEntityRepository
 {
     /**
+     * PostgreSQL limits the number of bind parameters per query to 65535 (uint16).
+     */
+    private const MAX_QUERY_PARAMETERS = 10_000;
+
+    /**
      * @param mixed $skus
      *
      * @return QueryBuilder
@@ -512,22 +517,21 @@ class ProductRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * @param array $ids
-     * @return int[]
-     */
     public function getProductKitIdsByProductIds(array $ids): array
     {
         if (!$ids) {
             return [];
         }
 
-        $qb = $this->getProductKitsByProductIdsQueryBuilder($ids);
+        $result = [];
+        foreach (array_chunk($ids, self::MAX_QUERY_PARAMETERS) as $chunk) {
+            $qb = $this->getProductKitsByProductIdsQueryBuilder($chunk);
+            $result[] = $qb->select('pk.id')
+                ->getQuery()
+                ->getResult(AbstractQuery::HYDRATE_SCALAR_COLUMN);
+        }
 
-        return $qb
-            ->select('pk.id')
-            ->getQuery()
-            ->getResult(AbstractQuery::HYDRATE_SCALAR_COLUMN);
+        return array_unique(array_merge(...$result));
     }
 
     /**
