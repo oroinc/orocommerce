@@ -43,7 +43,7 @@ class UniqueCaseInsensitiveCouponCodeValidator extends ConstraintValidator
             return;
         }
 
-        if ($this->hasDuplicatesInInsensitiveMode($value->getCode())) {
+        if ($this->hasDuplicatesInInsensitiveMode($value)) {
             $this->context
                 ->buildViolation($constraint->message)
                 ->setParameter('{{ code }}', $value->getCode())
@@ -51,11 +51,11 @@ class UniqueCaseInsensitiveCouponCodeValidator extends ConstraintValidator
         }
     }
 
-    private function hasDuplicatesInInsensitiveMode(string $couponCode): bool
+    private function hasDuplicatesInInsensitiveMode(Coupon $coupon): bool
     {
         /** @var CouponRepository $repository */
         $repository = $this->managerRegistry->getRepository(Coupon::class);
 
-        return (bool) $repository->getCouponByCode($couponCode, true);
+        return $repository->hasDuplicateCouponCode($coupon);
     }
 }

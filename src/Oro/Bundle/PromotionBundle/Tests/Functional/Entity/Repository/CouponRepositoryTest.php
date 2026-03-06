@@ -147,4 +147,32 @@ class CouponRepositoryTest extends WebTestCase
         );
         $this->assertEquals(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL, $coupon->getCode());
     }
+
+    public function testHasDuplicateCouponCodeReturnsTrueForNewCouponWithExistingCode(): void
+    {
+        $coupon = (new Coupon())->setCode(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL);
+
+        $this->assertTrue($this->repository->hasDuplicateCouponCode($coupon));
+    }
+
+    public function testHasDuplicateCouponCodeReturnsTrueForNewCouponWithCaseVariant(): void
+    {
+        $coupon = (new Coupon())->setCode(strtoupper(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL));
+
+        $this->assertTrue($this->repository->hasDuplicateCouponCode($coupon));
+    }
+
+    public function testHasDuplicateCouponCodeReturnsFalseForNewCouponWithUniqueCode(): void
+    {
+        $coupon = (new Coupon())->setCode('truly_unique_code_xyz');
+
+        $this->assertFalse($this->repository->hasDuplicateCouponCode($coupon));
+    }
+
+    public function testHasDuplicateCouponCodeReturnsFalseForExistingCouponWithItsOwnCode(): void
+    {
+        $coupon = $this->getCoupon(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL);
+
+        $this->assertFalse($this->repository->hasDuplicateCouponCode($coupon));
+    }
 }

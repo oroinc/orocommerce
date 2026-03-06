@@ -49,6 +49,12 @@ Feature: Case insensitive handling of coupon codes
     And click "Save settings"
     Then I should see "Configuration saved" flash message
 
+  Scenario: Save existing coupon without changes after enabling case-insensitive mode
+    Given I go to Marketing/Promotions/Coupons
+    And click edit "Code1" in grid
+    When I save and close form
+    Then I should see "Coupon has been saved" flash message
+
   Scenario: Try to create duplicate coupon in different case after enabling mode
     Given I go to Marketing/Promotions/Coupons
     And click "Coupons Actions"

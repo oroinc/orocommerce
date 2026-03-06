@@ -18,6 +18,7 @@ class UniqueCaseInsensitiveCouponCodeValidatorTest extends ConstraintValidatorTe
 {
     private ManagerRegistry&MockObject $registry;
     private ConfigManager&MockObject $configManager;
+    private CouponRepository&MockObject $couponRepository;
 
     protected function setUp(): void
     {
@@ -26,21 +27,20 @@ class UniqueCaseInsensitiveCouponCodeValidatorTest extends ConstraintValidatorTe
             ->method('get')
             ->willReturn(true);
 
-        $couponRepository = self::createMock(CouponRepository::class);
-        $couponRepository->expects(self::any())
-            ->method('getCouponByCode')
-            ->willReturnCallback(function ($couponCode) {
-                return 'valid code' === $couponCode ? [] : [1];
+        $this->couponRepository = self::createMock(CouponRepository::class);
+        $this->couponRepository->expects(self::any())
+            ->method('hasDuplicateCouponCode')
+            ->willReturnCallback(function (Coupon $coupon) {
+                return 'valid code' !== $coupon->getCode();
             });
 
         $this->registry = self::createMock(ManagerRegistry::class);
         $this->registry->expects(self::any())
             ->method('getRepository')
-            ->willReturn($couponRepository);
+            ->willReturn($this->couponRepository);
 
         parent::setUp();
     }
-
 
     protected function createValidator(): UniqueCaseInsensitiveCouponCodeValidator
     {
@@ -83,6 +83,20 @@ class UniqueCaseInsensitiveCouponCodeValidatorTest extends ConstraintValidatorTe
                 'violationExpected' => true,
             ],
         ];
+    }
+
+    public function testValidateExistingCouponWithSameCodeDoesNotViolate(): void
+    {
+        $coupon = (new Coupon())->setCode('valid code')->setOrganization(new Organization());
+
+        $this->couponRepository->expects(self::once())
+            ->method('hasDuplicateCouponCode')
+            ->with($coupon)
+            ->willReturn(false);
+
+        $this->validator->validate($coupon, new UniqueCaseInsensitiveCouponCode());
+
+        $this->assertNoViolation();
     }
 
     public function testValidateWrongEntity()
