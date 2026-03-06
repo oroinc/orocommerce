@@ -82,6 +82,22 @@ class CouponRepository extends ServiceEntityRepository
         return (bool) $this->aclHelper->apply($qb)->getOneOrNullResult();
     }
 
+    public function hasDuplicateCouponCode(Coupon $coupon): bool
+    {
+        $qb = $this->createQueryBuilder('coupon')
+            ->select('1')
+            ->where('coupon.codeUppercase = :code')
+            ->setParameter('code', strtoupper($coupon->getCode()))
+            ->setMaxResults(1);
+
+        if ($coupon->getId()) {
+            $qb->andWhere('coupon.id != :excludeId')
+                ->setParameter('excludeId', $coupon->getId());
+        }
+
+        return (bool) $this->aclHelper->apply($qb)->getOneOrNullResult();
+    }
+
     public function getCouponByCode(string $couponCode, bool $caseInsensitive = false): array
     {
         /** @var Coupon[] $coupons */
