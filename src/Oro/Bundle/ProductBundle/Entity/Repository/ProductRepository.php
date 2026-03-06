@@ -20,6 +20,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
  * Contains business specific methods for retrieving product entities.
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class ProductRepository extends ServiceEntityRepository
 {
@@ -99,22 +100,32 @@ class ProductRepository extends ServiceEntityRepository
      */
     public function getSearchQueryBuilder($search, $firstResult, $maxResults)
     {
-        $productsQueryBuilder = $this
-            ->createQueryBuilder('p');
+        $qb = $this->createQueryBuilder('p');
+        $searchUpper = mb_strtoupper(trim($search));
+        // Remove empty parts after explode string with double and more spaces
+        $searchParts = array_diff(explode(' ', $searchUpper), ['']);
 
-        $productsQueryBuilder
-            ->where(
-                $productsQueryBuilder->expr()->orX(
-                    $productsQueryBuilder->expr()->like('p.skuUppercase', ':search'),
-                    $productsQueryBuilder->expr()->like('p.denormalizedDefaultNameUppercase', ':search')
-                )
-            )
-            ->setParameter('search', '%' . mb_strtoupper($search) . '%')
+        $orExpr = $qb->expr()->orX(
+            $qb->expr()->like('p.skuUppercase', ':search')
+        );
+        $qb->setParameter('search', "%{$searchUpper}%");
+
+        if ($searchParts) {
+            $andExpr = $qb->expr()->andX();
+            foreach ($searchParts as $i => $part) {
+                $paramName = "denormalizedDefaultNameUppercasePart{$i}";
+                $andExpr->add(
+                    $qb->expr()->like('p.denormalizedDefaultNameUppercase', ":{$paramName}")
+                );
+                $qb->setParameter($paramName, "%{$part}%");
+            }
+            $orExpr->add($andExpr);
+        }
+
+        return $qb->where($orExpr)
             ->addOrderBy('p.id')
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults);
-
-        return $productsQueryBuilder;
     }
 
     private function getImagesQueryBuilder(array $productIds): QueryBuilder

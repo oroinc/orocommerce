@@ -1,0 +1,20 @@
+include:
+    - '@OroCustomerBundle:CustomerAndCustomerUserWithAddressFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    yellowPineUnitPrecision:
+        unit: '@piece'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    yellowPine:
+        type: 'simple'
+        sku: 'YELLOW-PINE-SKU'
+        primaryUnitPrecision: '@yellowPineUnitPrecision'
+        __calls:
+            - setDefaultName: ['Yellow Pine']
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
