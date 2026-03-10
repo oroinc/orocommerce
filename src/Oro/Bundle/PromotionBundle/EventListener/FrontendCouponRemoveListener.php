@@ -26,8 +26,12 @@ class FrontendCouponRemoveListener
 
     public function onCheckoutRequest(CheckoutRequestEvent $event): void
     {
-        $flashBag = $event->getRequest()->getSession()->getFlashBag();
         $checkout = $event->getCheckout();
+        if ($checkout->getOrder()) {
+            return;
+        }
+
+        $flashBag = $event->getRequest()->getSession()->getFlashBag();
         $entityManager = $this->managerRegistry->getManager();
         /** @var AppliedCoupon $appliedCoupon */
         foreach ($checkout->getAppliedCoupons() as $appliedCoupon) {

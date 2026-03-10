@@ -5,6 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\EventListener;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutRequestEvent;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\EventListener\FrontendCouponRemoveListener;
@@ -224,6 +225,43 @@ class FrontendCouponRemoveListenerTest extends TestCase
             $translator,
             $frontendCouponRemoveHandler,
             [$validator]
+        );
+
+        $listener->onCheckoutRequest($event);
+    }
+
+    public function testOnCheckoutRequestSkippedWhenOrderExists(): void
+    {
+        $session = self::createMock(FlashBagAwareSessionInterface::class);
+
+        $request = new Request();
+        $request->setSession($session);
+
+        $checkout = new Checkout();
+        $checkout->setOrder(new Order());
+        $checkout->addAppliedCoupon((new AppliedCoupon())->setSourceCouponId(1));
+
+        $managerRegistry = self::createMock(ManagerRegistry::class);
+        $managerRegistry
+            ->expects(self::never())
+            ->method('getManager');
+
+        $translator = self::createMock(TranslatorInterface::class);
+        $translator
+            ->expects(self::never())
+            ->method('trans');
+
+        $frontendCouponRemoveHandler = self::createMock(FrontendCouponRemoveHandler::class);
+        $frontendCouponRemoveHandler
+            ->expects(self::never())
+            ->method('handleRemove');
+
+        $event = new CheckoutRequestEvent($request, $checkout);
+        $listener = new FrontendCouponRemoveListener(
+            $managerRegistry,
+            $translator,
+            $frontendCouponRemoveHandler,
+            []
         );
 
         $listener->onCheckoutRequest($event);
