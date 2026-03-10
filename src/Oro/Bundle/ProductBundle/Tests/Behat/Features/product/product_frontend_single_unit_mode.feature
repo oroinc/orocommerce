@@ -56,7 +56,7 @@ Feature: Product frontend single unit mode
   Scenario: Enable "Wide Template" view mode for product units
     Given I proceed as the Admin
     When I go to System / Theme Configurations
-    And I click "Edit" on row "Golden Carbon" in grid
+    And I click "Edit" on row "Intelligent Blue" in grid
     And I fill "Theme Configuration Form" with:
       | Page Template | wide |
     And I save and close form
@@ -74,7 +74,7 @@ Feature: Product frontend single unit mode
   Scenario: Enable "List page" view mode for product units
     Given I proceed as the Admin
     When I go to System / Theme Configurations
-    And I click "Edit" on row "Golden Carbon" in grid
+    And I click "Edit" on row "Intelligent Blue" in grid
     And I fill "Theme Configuration Form" with:
       | Page Template | tabs |
     And I save and close form

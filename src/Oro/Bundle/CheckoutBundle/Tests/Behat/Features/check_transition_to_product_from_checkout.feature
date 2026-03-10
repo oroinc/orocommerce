@@ -35,7 +35,8 @@ Feature: Check transition to product from checkout
     And I click "Create Order"
     And I click "Order products"
     And I click on "Checkout Line Item Product Link"
-    Then I should see "All Products 400-Watt Bulb Work Light"
+    Then I should see "All Products" in breadcrumbs in the storefront
+    And Page title equals to "400-Watt Bulb Work Light"
 
   Scenario: Check possibility to go to the product from single page checkout
     Given I proceed as the Admin
@@ -47,4 +48,5 @@ Feature: Check transition to product from checkout
     And I open page with shopping list List 1
     And I click "Create Order"
     And I click on "Checkout Line Item Product Link"
-    Then I should see "All Products 400-Watt Bulb Work Light"
+    Then I should see "All Products" in breadcrumbs in the storefront
+    And Page title equals to "400-Watt Bulb Work Light"

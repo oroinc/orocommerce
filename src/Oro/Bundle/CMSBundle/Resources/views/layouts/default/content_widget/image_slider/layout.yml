@@ -14,3 +14,6 @@ layout:
                     pageComponentName: '=data["pageComponentName"]'
                     pageComponentOptions: '=data["pageComponentOptions"]'
                     imageSlides: '=data["imageSlides"]'
+                    slideBtnIconName: 'arrow-right'
+                    slideBtnIconClass: ''
+                    slideBtnClass: 'btn btn--size-large btn--rounded'

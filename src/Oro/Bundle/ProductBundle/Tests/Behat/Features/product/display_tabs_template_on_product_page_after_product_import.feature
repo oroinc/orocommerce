@@ -9,7 +9,7 @@ Feature: Display Tabs Template On Product Page After Product Import
     Given I proceed as the Admin
     And I login as administrator
     When I go to System / Theme Configurations
-    And I click "Edit" on row "Golden Carbon" in grid
+    And I click "Edit" on row "Intelligent Blue" in grid
     And I fill "Theme Configuration Form" with:
       | Page Template | tabs |
     And I save and close form

@@ -1845,6 +1845,9 @@ oro_behat_extension:
     SchemaOrg Name:
       selector: '[itemprop="name"]'
 
+    SchemaOrg Name Page Title:
+      selector: '.page-title[itemprop="name"]'
+
     SchemaOrg Description:
       selector: '[itemprop="description"]'
 

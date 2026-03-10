@@ -224,8 +224,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "Search Button"
     And click "View Details" for "CNFB" product
     And I should see "400-Watt Bulb Work Light" in related products
-    Then I click "400-Watt Bulb Work Light"
-    And I should see "All Products 400-Watt Bulb Work Light"
+    When I click "400-Watt Bulb Work Light"
+    Then I should see "All Products" in breadcrumbs in the storefront
+    And Page title equals to "400-Watt Bulb Work Light"
 
   Scenario: Move empty configurable product to another Shopping List
     When I open shopping list widget

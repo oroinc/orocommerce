@@ -30,7 +30,6 @@ homepage:
             column-gap: 8px;
             row-gap: 0;
             border-radius: 12px;
-            background-color: #f0f3f5;
             text-decoration: none;
             color: inherit;
             overflow: hidden;
@@ -142,31 +141,6 @@ homepage:
             grid-column-end: 13;
             grid-row-start: 3;
             grid-row-end: 5;
-        }
-        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(1) {
-            background-color: #fcb614;
-        }
-        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(2) {
-            background-color: #f7941d;
-        }
-        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(3) {
-            background-color: #71a0eb;
-        }
-        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(4) {
-            background-color: #70a0eb;
-        }
-        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(5) {
-            background-color: #197b30;
-            color: #fff;
-        }
-        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(6) {
-            background-color: #70b4b1;
-        }
-        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(7) {
-            background-color: #f7941d;
-        }
-        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(8) {
-            background-color: #fbb11c;
         }
         .featured-categories-grid__link {
             text-decoration: underline;
@@ -462,7 +436,7 @@ homepage:
                     </a>
                     <a href="/medical/patient-transportation-equipment" class="featured-categories-grid__cell grid-col grid grid-columns-2">
                         <div class="featured-categories-grid__content featured-categories-content-over featured-categories-offset-top-bottom-start featured-categories-offset-top-end-start-mobile featured-categories-grid__content-flex grid-col-12 grid-col-mobile-landscape-12">
-                            <h2 class="no-offset">Patient Transportation Equipment</h2>
+                            <h2 class="no-offset">Patient Transportation</h2>
                             <p class="no-offset hide-on-mobile-landscape">Medical equipment for safe transportation of patients</p>
                             <span class="featured-categories-grid__link hide-on-mobile-landscape">Shop Now</span>
                         </div>

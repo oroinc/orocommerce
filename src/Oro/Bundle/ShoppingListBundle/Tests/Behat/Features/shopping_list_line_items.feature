@@ -103,7 +103,7 @@ Feature: Shopping List Line Items
   Scenario: Enable "Plain" view mode for product quantity
     When I proceed as the Admin
     And I go to System / Theme Configurations
-    And I click "Edit" on row "Golden Carbon" in grid
+    And I click "Edit" on row "Intelligent Blue" in grid
     And I fill "Theme Configuration Form" with:
       | Quantity Inputs in Shopping List | Plain |
     And I save and close form

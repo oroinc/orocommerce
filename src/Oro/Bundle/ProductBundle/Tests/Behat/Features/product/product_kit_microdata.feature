@@ -5,7 +5,7 @@ Feature: Product Kit microdata
 
   Scenario: Feature Background
     Given sessions active:
-      | Buyer | first_session |
+      | Buyer | first_session  |
       | Admin | second_session |
     And I enable configuration options:
       | oro_product.microdata_without_prices_disabled |
@@ -73,9 +73,9 @@ Feature: Product Kit microdata
     And "simpleproduct01" product in "Product Frontend Grid" should contains "SchemaOrg Brand Name" with attributes:
       | content | ACME Default |
     And "simpleproduct01" product in "Product Frontend Grid" should contains microdata elements with text:
-      | SchemaOrg SKU            | simpleproduct01       |
-      | SchemaOrg Price Currency | USD                   |
-      | SchemaOrg Price          | 31.00                 |
+      | SchemaOrg SKU            | simpleproduct01 |
+      | SchemaOrg Price Currency | USD             |
+      | SchemaOrg Price          | 31.00           |
 
     When click "View Details" for "simpleproduct01" product
     Then "Product Details" should contains microdata:
@@ -93,9 +93,9 @@ Feature: Product Kit microdata
     And "Product Details" should contains "SchemaOrg Description" with attributes:
       | content | Simple Product Description1 |
     And "Product Details" should contains microdata elements with text:
-      | SchemaOrg SKU            | simpleproduct01       |
-      | SchemaOrg Name           | ProductTheKit Child 1 |
-      | SchemaOrg Brand Name     | ACME Default          |
+      | SchemaOrg SKU             | simpleproduct01       |
+      | SchemaOrg Name Page Title | ProductTheKit Child 1 |
+      | SchemaOrg Brand Name      | ACME Default          |
 
     And "productkit1" product in "Related Products Block" should not contains microdata:
       | Product Type Microdata Declaration  |
@@ -211,9 +211,9 @@ Feature: Product Kit microdata
     And "Product Details" should contains "SchemaOrg Description" with attributes:
       | content | Product Kit Description |
     And "Product Details" should contains microdata elements with text:
-      | SchemaOrg SKU        | productkit1          |
-      | SchemaOrg Name       | ProductTheKit Parent |
-      | SchemaOrg Brand Name | ACME Default         |
+      | SchemaOrg SKU             | productkit1          |
+      | SchemaOrg Name Page Title | ProductTheKit Parent |
+      | SchemaOrg Brand Name      | ACME Default         |
 
     When I type "productkit1" in "search"
     And I click "Search Button"
@@ -234,4 +234,4 @@ Feature: Product Kit microdata
     And "productkit1" product in "Product Frontend Grid" should contains "SchemaOrg Brand Name" with attributes:
       | content | ACME Default |
     And "productkit1" product in "Product Frontend Grid" should contains microdata elements with text:
-      | SchemaOrg SKU        | productkit1          |
+      | SchemaOrg SKU | productkit1 |

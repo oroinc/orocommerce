@@ -164,6 +164,9 @@
     &__product-list {
         max-height: 425px;
         overflow-y: auto;
+
+        padding: 0 spacing('base');
+        margin: 0 -#{spacing('base')};
     }
 
     &__product-item {

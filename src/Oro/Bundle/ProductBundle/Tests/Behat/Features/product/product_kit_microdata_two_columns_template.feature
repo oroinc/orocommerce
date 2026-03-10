@@ -18,8 +18,8 @@ Feature: Product Kit microdata two columns template
     Given go to System / Configuration
     When I follow "Commerce/Design/Theme" on configuration sidebar
     And fill "Page Templates form" with:
-      | Use Default  | false            |
-      | Product Page | Wide Template    |
+      | Use Default  | false         |
+      | Product Page | Wide Template |
     And save form
     Then I should see "Configuration saved" flash message
 
@@ -90,7 +90,7 @@ Feature: Product Kit microdata two columns template
       | Product Type Microdata Declaration  |
       | Product Brand Microdata Declaration |
       | SchemaOrg SKU                       |
-      | SchemaOrg Name                      |
+      | SchemaOrg Name Page Title           |
       | SchemaOrg Description               |
       | SchemaOrg Image                     |
       | SchemaOrg Brand Name                |
@@ -101,9 +101,9 @@ Feature: Product Kit microdata two columns template
     And "Product Details" should contains "SchemaOrg Description" with attributes:
       | content | Simple Product Description1 |
     And "Product Details" should contains microdata elements with text:
-      | SchemaOrg SKU            | simpleproduct01       |
-      | SchemaOrg Name           | ProductTheKit Child 1 |
-      | SchemaOrg Brand Name     | ACME Default          |
+      | SchemaOrg SKU             | simpleproduct01       |
+      | SchemaOrg Name Page Title | ProductTheKit Child 1 |
+      | SchemaOrg Brand Name      | ACME Default          |
 
     And "productkit1" product in "Related Products Block" should not contains microdata:
       | Product Type Microdata Declaration  |
@@ -169,7 +169,7 @@ Feature: Product Kit microdata two columns template
       | Product Brand Microdata Declaration |
       | SchemaOrg Description               |
       | SchemaOrg SKU                       |
-      | SchemaOrg Name                      |
+      | SchemaOrg Name Page Title           |
       | SchemaOrg Image                     |
       | SchemaOrg Brand Name                |
     And "Product Details" should not contains microdata:
@@ -179,9 +179,9 @@ Feature: Product Kit microdata two columns template
     And "Product Details" should contains "SchemaOrg Description" with attributes:
       | content | Product Kit Description |
     And "Product Details" should contains microdata elements with text:
-      | SchemaOrg SKU        | productkit1          |
-      | SchemaOrg Name       | ProductTheKit Parent |
-      | SchemaOrg Brand Name | ACME Default         |
+      | SchemaOrg SKU             | productkit1          |
+      | SchemaOrg Name Page Title | ProductTheKit Parent |
+      | SchemaOrg Brand Name      | ACME Default         |
 
     When I type "productkit1" in "search"
     And I click "Search Button"

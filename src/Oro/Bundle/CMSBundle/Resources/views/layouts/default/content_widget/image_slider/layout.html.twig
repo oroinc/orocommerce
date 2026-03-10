@@ -26,6 +26,9 @@
     {% set scaling = pageComponentOptions.scaling|default('crop_images')|replace({'_': '-'}) %}
     {% set iscCropImages = scaling == 'crop-images' %}
     {% set hope_slider_holder_id = 'holder-'|uniqid %}
+    {% set slideBtnIconName = slideBtnIconName|default('arrow-right') %}
+    {% set slideBtnIconClass = slideBtnIconClass|default('') %}
+    {% set slideBtnClass = slideBtnClass|default('btn btn--size-large btn--rounded') %}
     <div class="promo-slider {{ scaling }}"
          data-page-component-name="{{ pageComponentName }}"
          data-page-component-module="orofrontend/js/app/components/list-slider-component"
@@ -102,10 +105,10 @@
                                     <h2 class="promo-slider__header">
                                         {{ imageSlide.header }}
                                         <a href="{{ imageSlide.url|strip_dangerous_protocols }}"
-                                           class="btn btn--size-large btn--rounded"
+                                           class="{{ slideBtnClass }}"
                                             aria-label="{{ 'oro.cms.content_widget_type.slider_link'|trans }}"
                                         >
-                                            {{ renderIcon.icon({name: 'arrow-right'}) }}
+                                            {{ renderIcon.icon({name: slideBtnIconName, extraClass: slideBtnIconClass}) }}
                                         </a>
                                     </h2>
                                 {% endif %}

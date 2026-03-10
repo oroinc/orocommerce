@@ -41,7 +41,7 @@ Feature: Zoom for Product image attributes
   Scenario: Check product inner zoom
     Given I proceed as the Admin
     When I go to System / Theme Configurations
-    And I click "Edit" on row "Golden Carbon" in grid
+    And I click "Edit" on row "Intelligent Blue" in grid
     And I fill "Theme Configuration Form" with:
       | Product image zoom type | Inner |
     And I save and close form
@@ -56,7 +56,7 @@ Feature: Zoom for Product image attributes
   Scenario: Check product lens zoom
     Given I proceed as the Admin
     When I go to System / Theme Configurations
-    And I click "Edit" on row "Golden Carbon" in grid
+    And I click "Edit" on row "Intelligent Blue" in grid
     And I fill "Theme Configuration Form" with:
       | Product image zoom type    | Lens |
       | Product image zoom overlay | true |
@@ -74,7 +74,7 @@ Feature: Zoom for Product image attributes
   Scenario: Check product lens zoom is disabled
     Given I proceed as the Admin
     When I go to System / Theme Configurations
-    And I click "Edit" on row "Golden Carbon" in grid
+    And I click "Edit" on row "Intelligent Blue" in grid
     And I fill "Theme Configuration Form" with:
       | Product image zoom type | Disabled |
     And I save and close form
