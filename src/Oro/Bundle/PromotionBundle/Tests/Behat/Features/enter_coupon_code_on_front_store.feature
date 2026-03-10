@@ -93,6 +93,16 @@ Feature: Enter coupon code on Front Store
     And I check "Flat Rate 2" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I should see "Order Review" in the "Checkout Step Title" element
+
+  Scenario: Apply coupon with usage limit on order review step
+    When I type "coupon-limit-1" in "Coupon Code Input"
+    And I click "Apply"
+    Then I should see "coupon-limit-1 First Promotion Label" in the "Coupons List" element
+    And I should see "Discount -$2.00" in the "Subtotals" element
+
+  Scenario: Completed checkout should not show coupon usage limit messages
     When I click "Submit Order"
+    Then I should not see "Usage limit exceeded for coupon coupon-limit-1"
+    And I should not see "Customer user coupon usage limit is exceeded"
     And I follow "click here to review"
-    Then I should see "Discount -$1.00" in the "Subtotals" element
+    And I should see "Discount -$2.00" in the "Subtotals" element

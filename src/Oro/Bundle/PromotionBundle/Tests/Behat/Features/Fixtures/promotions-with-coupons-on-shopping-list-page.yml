@@ -53,6 +53,14 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         enabled: true
         usesPerPerson: 100
         usesPerCoupon: 100
+    couponLimited:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'coupon-limit-1'
+        promotion: '@orderDiscountPromotion1'
+        enabled: true
+        usesPerPerson: 1
+        usesPerCoupon: 1
 
 Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
     orderDiscountPromotionDiscountConfiguration2:
