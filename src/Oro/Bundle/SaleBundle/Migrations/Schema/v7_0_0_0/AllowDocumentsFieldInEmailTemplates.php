@@ -13,7 +13,7 @@ class AllowDocumentsFieldInEmailTemplates implements Migration
     #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
-        if (!$schema->getTable('oro_sale_quote')->hasColumn('documents')) {
+        if (!$schema->getTable('oro_sale_quote')->hasColumn('default_documents_id')) {
             return;
         }
 
