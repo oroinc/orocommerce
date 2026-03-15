@@ -7,6 +7,12 @@ trusted_data:
         Oro\Bundle\CheckoutBundle\Api\DeletedCheckoutQueryModifier:
             applyCheckoutRestriction:
                 rootAlias: true
+            ensureEntityJoined:
+                joinAlias: true
+                join: true
+            getEntityJoin:
+                joinObjects: true
+                joinGroupAlias: true
         Oro\Bundle\CheckoutBundle\Api\CheckoutLineItemQueryModifier:
             applyCheckoutLineItemRestriction:
                 rootAlias: true
@@ -15,13 +21,40 @@ trusted_data:
         Oro\Bundle\CheckoutBundle\Api\CheckoutAddressQueryModifier:
             applyCheckoutAddressRootRestriction:
                 checkoutAlias: true
+            ensureEntityJoined:
+                joinAlias: true
+                join: true
+            getEntityJoin:
+                joinObjects: true
+                joinGroupAlias: true
         Oro\Bundle\CheckoutBundle\Api\GuestCheckoutQueryModifier:
             applyCustomerUserRestriction:
                 customerUserAlias: true
+            ensureEntityJoined:
+                joinAlias: true
+                join: true
+            getEntityJoin:
+                joinObjects: true
+                joinGroupAlias: true
         Oro\Bundle\CheckoutBundle\Api\GuestCheckoutVisitorQueryModifier:
             getCheckoutSourceRestrictions:
                 checkoutSourceAlias: true
                 visitorParamName: true
+            ensureEntityJoined:
+                joinAlias: true
+                join: true
+            getEntityJoin:
+                joinObjects: true
+                joinGroupAlias: true
     safe_methods:
         Oro\Bundle\CheckoutBundle\Api\GuestCheckoutVisitorQueryModifier:
             getCheckoutSourceRestrictions: true
+            updateJoinCondition: true
+        Oro\Bundle\CheckoutBundle\Api\CheckoutAddressQueryModifier:
+            updateJoinCondition: true
+        Oro\Bundle\CheckoutBundle\Api\DeletedCheckoutQueryModifier:
+            updateJoinCondition: true
+        Oro\Bundle\CheckoutBundle\Api\GuestCheckoutQueryModifier:
+            updateJoinCondition: true
+        Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository:
+            getWorkflowItemJoinCondition: true

@@ -11,6 +11,12 @@ trusted_data:
             getCustomerVisitorSubquery:
                 shoppingListAlias: true
                 customerVisitorParamName: true
+            ensureEntityJoined:
+                joinAlias: true
+                join: true
+            getEntityJoin:
+                joinObjects: true
+                joinGroupAlias: true
         Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository:
             invalidateByBasePriceList:
                 priceClass: true
@@ -18,5 +24,6 @@ trusted_data:
     safe_methods:
         Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListQueryModifier:
             getCustomerVisitorSubquery: true
+            updateJoinCondition: true
         Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:
             getClassName: true
