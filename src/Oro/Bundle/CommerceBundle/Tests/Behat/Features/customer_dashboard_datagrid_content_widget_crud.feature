@@ -13,7 +13,7 @@ Feature: Customer Dashboard Datagrid Content Widget CRUD
       | Description                 | Datagrid Description                                  |
       | Customer Dashboard DataGrid | My Latest Orders                                      |
       | Default Label               | My Orders                                             |
-      | View All                    | Oro Order Frontend Index (Order History - My Account) |
+      | View All                    | Oro Order Frontend Index (Order History - My Account - Home) |
     And I save and close form
     Then I should see "Content widget has been saved" flash message
     And I should see "Type: Customer Dashboard DataGrid"
@@ -30,7 +30,7 @@ Feature: Customer Dashboard Datagrid Content Widget CRUD
       | Description                 | Datagrid Description2                               |
       | Customer Dashboard DataGrid | Open Quotes                                         |
       | Default Label               | Open Quotes                                         |
-      | View All                    | Oro Sale Quote Frontend Index (Quotes - My Account) |
+      | View All                    | Oro Sale Quote Frontend Index (Quotes - My Account - Home) |
     And I save and close form
     Then I should see "Type: Customer Dashboard DataGrid"
     And I should see Content Widget with:

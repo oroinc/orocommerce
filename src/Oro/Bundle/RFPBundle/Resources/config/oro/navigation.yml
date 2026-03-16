@@ -52,10 +52,12 @@ navigation:
                 children:
                     oro_customer_menu_customer_user_index:
                         children:
-                            oro_rfp_frontend_request_index:
+                            oro_customer_frontend_customer_user_account:
                                 children:
-                                    oro_rfp_frontend_request_create: ~
-                                    oro_rfp_frontend_request_view: ~
+                                    oro_rfp_frontend_request_index:
+                                        children:
+                                            oro_rfp_frontend_request_create: ~
+                                            oro_rfp_frontend_request_view: ~
 
             # Start Requirement for "Default Theme 50/51"
             oro_customer_menu:

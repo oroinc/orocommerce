@@ -87,10 +87,12 @@ navigation:
                 children:
                     oro_customer_menu_customer_user_index:
                         children:
-                            oro_order_frontend_index:
+                            oro_customer_frontend_customer_user_account:
                                 children:
-                                    oro_order_frontend_view: ~
-                            oro_order_products_frontend_previously_purchased: ~
+                                    oro_order_frontend_index:
+                                        children:
+                                            oro_order_frontend_view: ~
+                                    oro_order_products_frontend_previously_purchased: ~
 
             # Start Requirement for "Default Theme 50/51"
             oro_customer_menu:

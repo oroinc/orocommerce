@@ -1,6 +1,10 @@
 /* @theme: default; */
 
 .consent-list {
+    display: $consent-list-display;
+    padding-block: $consent-list-padding-block;
+    gap: $consent-list-gap;
+
     &:not(:last-child) {
         margin: $consent-list-offset;
     }
@@ -8,8 +12,6 @@
     &__item {
         display: $consent-list-item-position;
         gap: $consent-list-item-gap;
-        margin: $consent-list-item-offset;
-        padding: $consent-list-item-inner-offset;
         word-break: $consent-list-item-word-break;
     }
 
@@ -20,6 +22,10 @@
 
         &--disabled {
             color: $consent-list-status-disabled-color;
+        }
+
+        .theme-icon {
+            display: block;
         }
     }
 }

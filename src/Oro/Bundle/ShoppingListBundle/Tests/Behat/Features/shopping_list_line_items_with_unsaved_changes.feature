@@ -51,7 +51,7 @@ Feature: Shopping List Line Items With Unsaved Changes
     Then should see "You have unsaved changes, are you sure you want to leave this page?" in confirmation dialogue
     And I click "Cancel" in confirmation dialogue
     And I click on "Shopping List Line Item 1 Cancel Button"
-    Then Page title equals to "List 2 - Shopping Lists - My Account"
+    Then Page title equals to "List 2 - Shopping Lists - My Account - Home"
 
   Scenario: Discard currency change with unsaved changed
     When I click on "Shopping List Line Item 1 Quantity"
@@ -63,7 +63,7 @@ Feature: Shopping List Line Items With Unsaved Changes
     And I click "Cancel" in confirmation dialogue
     And I click on "Shopping List Line Item 1 Cancel Button"
     And I should see that "$" currency is active
-    And Page title equals to "List 2 - Shopping Lists - My Account"
+    And Page title equals to "List 2 - Shopping Lists - My Account - Home"
 
   Scenario: Discard localization change with unsaved changed
     When I click on "Shopping List Line Item 1 Quantity"
@@ -74,4 +74,4 @@ Feature: Shopping List Line Items With Unsaved Changes
     And I click "Cancel" in confirmation dialogue
     And I click on "Shopping List Line Item 1 Cancel Button"
     Then I should see that "English (United States)" localization is active
-    And Page title equals to "List 2 - Shopping Lists - My Account"
+    And Page title equals to "List 2 - Shopping Lists - My Account - Home"

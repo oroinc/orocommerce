@@ -125,7 +125,7 @@ Feature: My Shopping List
     And I login as AmandaRCole@example.org buyer
     And I click "Account Dropdown"
     When I click on "Shopping Lists"
-    Then Page title equals to "Shopping Lists - My Account"
+    Then Page title equals to "Shopping Lists - My Account - Home"
     And should see following grid:
       | Name            | Subtotal  | Items |
       | Shopping List 3 | $8,818.00 | 32    |
@@ -164,7 +164,7 @@ Feature: My Shopping List
     And I open page with shopping list "Shopping List 3"
     And I click "Account Dropdown"
     When I click on "Shopping Lists"
-    Then Page title equals to "Shopping Lists - My Account"
+    Then Page title equals to "Shopping Lists - My Account - Home"
     And should see following grid:
       | Name            | Subtotal  | Items |
       | Shopping List 3 | $8,012.00 | 30    |
@@ -265,7 +265,7 @@ Feature: My Shopping List
     When I reset grid
     And I filter Name as contains "List 3"
     And I click View "Shopping List 3" in grid
-    Then Page title equals to "Shopping List 3 - Shopping Lists - My Account"
+    Then Page title equals to "Shopping List 3 - Shopping Lists - My Account - Home"
     And I should see "Shopping List 3"
     And I should see "Default"
     And I should see "Assigned To: Amanda Cole"
@@ -671,7 +671,7 @@ Feature: My Shopping List
 
   Scenario: Check owner link
     And I click "ShoppingList Owner"
-    Then Page title equals to "Amanda Cole - Users - My Account"
+    Then Page title equals to "Amanda Cole - Users - My Account - Home"
     And I should see "CUSTOMER USER - AMANDA COLE"
 
   Scenario: Check create order button
@@ -684,7 +684,7 @@ Feature: My Shopping List
     When Buyer is on "Shopping List 3" shopping list
     Then I should see "Request Quote"
     And I click "Request Quote"
-    And Page title equals to "Request A Quote - Requests For Quote - My Account"
+    And Page title equals to "Request A Quote - Requests For Quote - My Account - Home"
 
   Scenario: Inline edit quantity and unit with Group Product Variants
     When I open page with shopping list Shopping List 3

@@ -1,11 +1,12 @@
 /* @theme: default; */
 
+$consent-list-display: grid !default;
+$consent-list-padding-block: spacing('xs') !default;
+$consent-list-gap: spacing('sm') !default;
 $consent-list-offset: 0 0 (spacing('sm') * 3) !default;
 
 $consent-list-item-position: flex !default;
 $consent-list-item-gap: spacing('sm') !default;
-$consent-list-item-offset: 0 0 spacing('sm') !default;
-$consent-list-item-inner-offset: 0 0 0 20px !default;
 $consent-list-item-word-break: break-word !default;
 
 $consent-list-status-enabled-color: get-color('success', 'dark') !default;

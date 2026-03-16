@@ -45,10 +45,10 @@
         'aria-hidden': 'true'
     }) %}
 
-    <span {{ block('block_attributes') }}>
-         {% set icon = consent.accepted ? 'check' : 'minus-circle' %}
+    <div {{ block('block_attributes') }}>
+         {% set icon = consent.accepted ? 'check' : 'alert-circle' %}
         {{ renderIcon.icon({name: icon}) }}
-    </span>
+    </div>
 {% endblock %}
 
 {% block __oro_consent_list__consent_items_link_widget %}

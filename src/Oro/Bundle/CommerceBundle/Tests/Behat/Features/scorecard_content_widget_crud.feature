@@ -13,7 +13,7 @@ Feature: Scorecard Content Widget CRUD
       | Description   | Scorecard Description                                          |
       | Scorecard     | Users                                                          |
       | Default Label | My Users                                                       |
-      | Link          | Oro Shopping List Frontend Index (Shopping Lists - My Account) |
+      | Link          | Oro Shopping List Frontend Index (Shopping Lists - My Account - Home) |
     And I save and close form
     Then I should see "Content widget has been saved" flash message
     And I should see "Type: Scorecard"
@@ -30,7 +30,7 @@ Feature: Scorecard Content Widget CRUD
       | Description   | Scorecard Description2                                           |
       | Scorecard     | Open RFQs                                                        |
       | Default Label | Open RFQs                                                        |
-      | Link          | Oro Rfp Frontend Request Index (Requests For Quote - My Account) |
+      | Link          | Oro Rfp Frontend Request Index (Requests For Quote - My Account - Home) |
     And I save and close form
     Then I should see "Type: Scorecard"
     And I should see Content Widget with:

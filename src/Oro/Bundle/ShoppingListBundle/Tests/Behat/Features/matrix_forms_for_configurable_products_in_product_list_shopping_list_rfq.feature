@@ -556,7 +556,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     When I click "Shopping List Actions"
     And I click "Delete"
     And I click "Yes, delete"
-    Then Page title equals to "Shopping Lists - My Account"
+    Then Page title equals to "Shopping Lists - My Account - Home"
     And I should see "There are no shopping lists"
 
   Scenario: Disabled matrix form in Product List View

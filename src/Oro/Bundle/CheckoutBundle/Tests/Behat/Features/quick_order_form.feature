@@ -64,7 +64,7 @@ Feature: Quick order form
       | QTY3  | 1   |
       | QTY4  | 1   |
     When I click "Get Quote"
-    Then Page title equals to "Request A Quote - Requests For Quote - My Account"
+    Then Page title equals to "Request A Quote - Requests For Quote - My Account - Home"
     And should see that "Phone Number" contains "Phone Number" placeholder
     And should see that "Role" contains "Role" placeholder
     And should see that "Note" contains "Note" placeholder
@@ -130,7 +130,7 @@ Feature: Quick order form
       | SKU1 | PSKUwithlowercase |
     And I wait for products to load
     When I click "Get Quote"
-    Then Page title equals to "Request A Quote - Requests For Quote - My Account"
+    Then Page title equals to "Request A Quote - Requests For Quote - My Account - Home"
     And Request a Quote contains products
       | PSKUwithlowercase - Product4 | 1 | item |
     And I click "Submit Request"
@@ -191,7 +191,7 @@ Feature: Quick order form
       | Paste your order | PSKU1 5\nPSKU3 2 |
     And I click "Verify Order"
     And I click "Get Quote"
-    Then Page title equals to "Request A Quote - Requests For Quote - My Account"
+    Then Page title equals to "Request A Quote - Requests For Quote - My Account - Home"
     And Request a Quote contains products
       | psku1 - Product1`"'&йёщ®&reg;> | 5 | item |
       | PSKU3 - Product3               | 2 | item |
@@ -241,7 +241,7 @@ Feature: Quick order form
       | QTY1  | 3                |
       | UNIT1 | set              |
     And I click "Get Quote"
-    Then Page title equals to "Request A Quote - Requests For Quote - My Account"
+    Then Page title equals to "Request A Quote - Requests For Quote - My Account - Home"
     And Request a Quote contains products
       | PSKU2 - Product2 | 3 | set |
     And I click "Submit Request"
@@ -253,7 +253,7 @@ Feature: Quick order form
       | Paste your order | PSKUwithlowercase 2 |
     And I click "Verify Order"
     And I click "Get Quote"
-    Then Page title equals to "Request A Quote - Requests For Quote - My Account"
+    Then Page title equals to "Request A Quote - Requests For Quote - My Account - Home"
     And Request a Quote contains products
       | PSKUwithlowercase - Product4 | 2 | item |
     And I click "Submit Request"

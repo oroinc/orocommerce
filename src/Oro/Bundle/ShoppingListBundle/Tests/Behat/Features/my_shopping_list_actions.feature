@@ -17,7 +17,7 @@ Feature: My Shopping List Actions
     Given I login as AmandaRCole@example.org buyer
     And I click "Account Dropdown"
     And I click on "Shopping Lists"
-    Then Page title equals to "Shopping Lists - My Account"
+    Then Page title equals to "Shopping Lists - My Account - Home"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
       | Shopping List 3 | $8,818.00 | 32    | Yes     |
@@ -88,7 +88,7 @@ Feature: My Shopping List Actions
     And I click "Delete"
     And I click "Yes, delete"
     And click on "Flash Message Close Button"
-    Then Page title equals to "Shopping Lists - My Account"
+    Then Page title equals to "Shopping Lists - My Account - Home"
     When I open shopping list widget
     Then I should not see "Shopping List 4" on shopping list widget
     And I reload the page
@@ -96,7 +96,7 @@ Feature: My Shopping List Actions
   Scenario: Move line item to another shopping list
     And I click "Account Dropdown"
     And I click on "Shopping Lists"
-    And Page title equals to "Shopping Lists - My Account"
+    And Page title equals to "Shopping Lists - My Account - Home"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
       | Shopping List 3 | $8,818.00 | 32    | Yes     |
@@ -113,7 +113,7 @@ Feature: My Shopping List Actions
     Then I should see "One entity has been moved successfully" flash message and I close it
     And I click "Account Dropdown"
     And I click on "Shopping Lists"
-    And Page title equals to "Shopping Lists - My Account"
+    And Page title equals to "Shopping Lists - My Account - Home"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
       | Shopping List 3 | $8,785.00 | 31    | Yes     |
@@ -122,7 +122,7 @@ Feature: My Shopping List Actions
   Scenario: Delete line items from shopping list mass action
     And I click "Account Dropdown"
     And I click on "Shopping Lists"
-    And Page title equals to "Shopping Lists - My Account"
+    And Page title equals to "Shopping Lists - My Account - Home"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
       | Shopping List 3 | $8,785.00 | 31    | Yes     |
@@ -135,7 +135,7 @@ Feature: My Shopping List Actions
     Then I should see "4 item(s) have been deleted successfully" flash message and I close it
     And I click "Account Dropdown"
     And I click on "Shopping Lists"
-    And Page title equals to "Shopping Lists - My Account"
+    And Page title equals to "Shopping Lists - My Account - Home"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
       | Shopping List 3 | $8,785.00 | 31    | Yes     |
@@ -151,7 +151,7 @@ Feature: My Shopping List Actions
     And I click "Shopping List Action Submit"
     Then I should see "Nancy Sallee"
     When I click "Nancy Sallee"
-    Then Page title equals to "Nancy Sallee - Users - My Account"
+    Then Page title equals to "Nancy Sallee - Users - My Account - Home"
 
   Scenario: Check shopping list view page without actions
     And I click "Account Dropdown"
@@ -180,7 +180,7 @@ Feature: My Shopping List Actions
   Scenario: Filter by owner should be visible after clearing all filters
     And I click "Account Dropdown"
     And I click on "Shopping Lists"
-    And Page title equals to "Shopping Lists - My Account"
+    And Page title equals to "Shopping Lists - My Account - Home"
     When I click "Frontend Grid Action Filter Button"
     And I filter Owner as contains "Amanda"
     And I click "Clear All Filters"

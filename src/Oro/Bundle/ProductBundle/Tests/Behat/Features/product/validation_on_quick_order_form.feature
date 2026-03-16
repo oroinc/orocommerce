@@ -40,5 +40,5 @@ Feature: Validation On Quick Order Form
   Scenario: Perform successful Get Quote action
     When I click on "Quick Order Form > DeleteRow2"
     And I click "Get Quote"
-    Then Page title equals to "Request A Quote - Requests For Quote - My Account"
+    Then Page title equals to "Request A Quote - Requests For Quote - My Account - Home"
 

@@ -1,4 +1,5 @@
 layout:
+    conditions: 'context["route_name"] == "oro_customer_frontend_customer_user_profile_update"'
     imports:
         -
             id: oro_consent_items

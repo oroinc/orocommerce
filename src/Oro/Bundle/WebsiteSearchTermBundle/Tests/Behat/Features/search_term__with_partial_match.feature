@@ -74,7 +74,7 @@ Feature: Search Term - with Partial Match
   Scenario: Authorized user will be redirected to the Customer Profile page (partial match)
     When I type "term" in "search"
     And I click "Search Button"
-    Then Page title equals to "Profile"
+    Then Page title equals to "Profile - My Account - Home"
     And I should see "My Profile"
     And the url should match "/customer/profile"
 
