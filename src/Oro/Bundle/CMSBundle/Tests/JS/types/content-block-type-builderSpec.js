@@ -12,6 +12,7 @@ describe('orocms/js/app/grapesjs/types/content-block-type', () => {
     beforeEach(done => {
         mockElement = document.createElement('DIV');
         mockElement.classList.add('content-block');
+        mockElement.setAttribute('data-title', 'Content block title');
 
         window.setFixtures(html);
         editor = grapesJS.init({
@@ -59,7 +60,12 @@ describe('orocms/js/app/grapesjs/types/content-block-type', () => {
 
         it('check base model extend', () => {
             expect(contentBlockTypeBuilder.Model.isComponent).toBeDefined();
-            expect(contentBlockTypeBuilder.Model.isComponent(mockElement)).toBe(true);
+            expect(contentBlockTypeBuilder.Model.isComponent(mockElement)).toEqual({
+                type: 'content-block',
+                contentBlock: {
+                    title: 'Content block title'
+                }
+            });
             expect(contentBlockTypeBuilder.Model.componentType).toEqual(contentBlockTypeBuilder.componentType);
 
             expect(contentBlockTypeBuilder.Model.prototype.defaults.tagName).toEqual('div');

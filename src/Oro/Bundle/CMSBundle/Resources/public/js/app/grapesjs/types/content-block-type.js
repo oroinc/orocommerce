@@ -168,7 +168,14 @@ const ContentBlockType = BaseType.extend({
     },
 
     isComponent(el) {
-        return el.nodeType === el.ELEMENT_NODE && el.tagName === 'DIV' && el.classList.contains('content-block');
+        if (el.nodeType === el.ELEMENT_NODE && el.tagName === 'DIV' && el.classList.contains('content-block')) {
+            return {
+                type: ContentBlockType.type,
+                contentBlock: {
+                    title: el.getAttribute('data-title')
+                }
+            };
+        }
     }
 }, {
     type: 'content-block',
