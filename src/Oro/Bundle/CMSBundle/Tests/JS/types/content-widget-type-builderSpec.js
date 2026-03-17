@@ -13,6 +13,8 @@ describe('orocms/js/app/grapesjs/types/content-widget-type', () => {
     beforeEach(done => {
         mockElement = document.createElement('DIV');
         mockElement.classList.add('content-widget');
+        mockElement.setAttribute('data-title', 'Content widget title');
+        mockElement.setAttribute('data-type', 'content-widget-type');
 
         window.setFixtures(html);
         editor = grapesJS.init({
@@ -65,7 +67,13 @@ describe('orocms/js/app/grapesjs/types/content-widget-type', () => {
 
         it('check base model extend', () => {
             expect(contentWidgetTypeBuilder.Model.isComponent).toBeDefined();
-            expect(contentWidgetTypeBuilder.Model.isComponent(mockElement)).toBe(true);
+            expect(contentWidgetTypeBuilder.Model.isComponent(mockElement)).toEqual({
+                type: 'content-widget',
+                contentWidget: {
+                    name: 'Content widget title',
+                    widgetType: 'content-widget-type'
+                }
+            });
             expect(contentWidgetTypeBuilder.Model.componentType).toEqual(contentWidgetTypeBuilder.componentType);
 
             expect(contentWidgetTypeBuilder.Model.prototype.defaults.tagName).toEqual('div');

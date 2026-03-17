@@ -207,8 +207,17 @@ const ContentWidgetType = BaseType.extend({
     },
 
     isComponent(el) {
-        return el.nodeType === Node.ELEMENT_NODE &&
-            (el.classList.contains('content-widget') || el.classList.contains('content-widget-inline'));
+        if (el.nodeType === Node.ELEMENT_NODE &&
+            (el.classList.contains('content-widget') || el.classList.contains('content-widget-inline'))
+        ) {
+            return {
+                type: ContentWidgetType.type,
+                contentWidget: {
+                    name: el.getAttribute('data-title'),
+                    widgetType: el.getAttribute('data-type')
+                }
+            };
+        }
     }
 }, {
     type: 'content-widget',
