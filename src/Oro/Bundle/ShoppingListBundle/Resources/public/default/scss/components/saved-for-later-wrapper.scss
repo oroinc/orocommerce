@@ -1,0 +1,10 @@
+/* @theme: default; */
+
+.saved-for-later-wrapper:has(.no-data-visible, .view-loading.loading) {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    position: fixed;
+    inset-inline-start: 0;
+    inset-block-start: 0;
+}
