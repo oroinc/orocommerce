@@ -83,9 +83,11 @@ class OrderEmailTemplateSelectTypeTest extends WebTestCase
         self::assertTrue($form->isValid());
         self::assertTrue($form->isSynchronized());
 
-        $data = $form->getData();
-        self::assertInstanceOf(EmailTemplate::class, $data);
-        self::assertEquals('order_confirmation_email', $data->getName());
+        self::assertSame('order_confirmation_email', $form->getData());
+
+        $normData = $form->getNormData();
+        self::assertInstanceOf(EmailTemplate::class, $normData);
+        self::assertEquals('order_confirmation_email', $normData->getName());
     }
 
     public function testSubmitWithNonExistingTemplateName(): void
@@ -131,16 +133,9 @@ class OrderEmailTemplateSelectTypeTest extends WebTestCase
         }
     }
 
-    public function testModelTransformerConvertsTemplateToName(): void
+    public function testModelTransformerConvertsNameToTemplateValue(): void
     {
-        $template = self::getContainer()
-            ->get('doctrine')
-            ->getRepository(EmailTemplate::class)
-            ->findByName('order_confirmation_email');
-
-        self::assertNotNull($template, 'order_confirmation_email template should exist');
-
-        $form = self::createForm(OrderEmailTemplateSelectType::class, $template);
+        $form = self::createForm(OrderEmailTemplateSelectType::class, 'order_confirmation_email');
         $formView = $form->createView();
 
         self::assertEquals('order_confirmation_email', $formView->vars['value']);

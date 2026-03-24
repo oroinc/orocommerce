@@ -11,6 +11,8 @@ use Oro\Bundle\EmailBundle\Provider\EmailTemplateOrganizationProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TranslationBundle\Form\Type\Select2TranslatableEntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -39,6 +41,25 @@ final class OrderEmailTemplateSelectType extends AbstractType
             'choice_label' => 'name',
             'choice_value' => 'name',
         ]);
+    }
+
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder->addModelTransformer(
+            new CallbackTransformer(
+                function ($name) {
+                    return $this->doctrine->getRepository(EmailTemplate::class)
+                        ->findBy(['name' => $name, 'entityName' => Order::class]);
+                },
+                function ($emailTemplate) {
+                    if (\is_null($emailTemplate)) {
+                        return '';
+                    }
+                    return $emailTemplate->getName();
+                }
+            )
+        );
     }
 
     #[\Override]
