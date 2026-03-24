@@ -370,4 +370,118 @@ class ProductUnitTest extends RestJsonApiTestCase
         );
         $this->assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
     }
+
+    public function testUpsertViaCreateActionWhenEntityDoesNotExist(): void
+    {
+        $data = [
+            'data' => [
+                'type' => 'productunits',
+                'id' => 'new_unit',
+                'meta' => ['upsert' => ['id']],
+                'attributes' => [
+                    'defaultPrecision' => 1,
+                    'label' => 'new unit',
+                    'shortLabel' => 'unit',
+                    'pluralLabel' => 'new units',
+                    'shortPluralLabel' => 'units'
+                ]
+            ]
+        ];
+        $response = $this->post(
+            ['entity' => 'productunits'],
+            $data
+        );
+
+        $expectedData = $data;
+        unset($expectedData['data']['meta']);
+        $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testUpsertViaCreateActionWhenEntityExists(): void
+    {
+        $data = [
+            'data' => [
+                'type' => 'productunits',
+                'id' => '<toString(@day->code)>',
+                'meta' => ['upsert' => ['id']],
+                'attributes' => [
+                    'defaultPrecision' => 1,
+                    'label' => 'new unit',
+                    'shortLabel' => 'unit',
+                    'pluralLabel' => 'new units',
+                    'shortPluralLabel' => 'units'
+                ]
+            ]
+        ];
+        $response = $this->post(
+            ['entity' => 'productunits'],
+            $data,
+            [],
+            false
+        );
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_OK);
+        self::assertResponseContentTypeEquals($response, $this->getResponseContentType());
+        self::assertFalse($response->headers->has('Location'), 'The "Location" header must not be returned.');
+
+        $expectedData = $data;
+        unset($expectedData['data']['meta']);
+        $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testUpsertViaUpdateActionWhenEntityExists(): void
+    {
+        $data = [
+            'data' => [
+                'type' => 'productunits',
+                'id' => '<toString(@day->code)>',
+                'meta' => ['upsert' => ['id']],
+                'attributes' => [
+                    'defaultPrecision' => 1,
+                    'label' => 'new unit',
+                    'shortLabel' => 'unit',
+                    'pluralLabel' => 'new units',
+                    'shortPluralLabel' => 'units'
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => 'productunits', 'id' => '<toString(@day->code)>'],
+            $data
+        );
+
+        $expectedData = $data;
+        unset($expectedData['data']['meta']);
+        $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testUpsertViaUpdateActionWhenEntityDoesNotExist(): void
+    {
+        $data = [
+            'data' => [
+                'type' => 'productunits',
+                'id' => 'new_unit',
+                'meta' => ['upsert' => ['id']],
+                'attributes' => [
+                    'defaultPrecision' => 1,
+                    'label' => 'new unit',
+                    'shortLabel' => 'unit',
+                    'pluralLabel' => 'new units',
+                    'shortPluralLabel' => 'units'
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => 'productunits', 'id' => 'new_unit'],
+            $data,
+            [],
+            false
+        );
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
+        self::assertResponseContentTypeEquals($response, $this->getResponseContentType());
+        self::assertTrue($response->headers->has('Location'), 'The "Location" header must be returned.');
+
+        $expectedData = $data;
+        unset($expectedData['data']['meta']);
+        $this->assertResponseContains($expectedData, $response);
+    }
 }
