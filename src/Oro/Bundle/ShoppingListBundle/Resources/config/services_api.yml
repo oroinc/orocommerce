@@ -314,6 +314,16 @@ services:
         tags:
             - { name: oro.api.processor, action: add_subresource, group: save_data, requestType: frontend, association: checkout, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
 
+    oro_shopping_list.api.start_checkout_from_shopping_list.set_location_header:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\SetLocationHeaderForStartCheckoutFromAnotherEntity
+        arguments:
+            - '@oro_api.rest.routes_registry'
+            - '@router'
+            - '@oro_api.value_normalizer'
+            - '@oro_api.entity_id_transformer_registry'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: finalize, requestType: frontend&rest, association: checkout, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+
     oro_shopping_list.api.set_update_line_items_ids_shared_data:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\SetUpdateLineItemsIdsSharedData
         tags:

@@ -451,6 +451,16 @@ services:
         tags:
             - { name: oro.api.processor, action: add_subresource, group: save_data, requestType: frontend, association: checkout, parentClass: Oro\Bundle\OrderBundle\Entity\Order }
 
+    oro_order.api.start_checkout_from_order.set_location_header:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\SetLocationHeaderForStartCheckoutFromAnotherEntity
+        arguments:
+            - '@oro_api.rest.routes_registry'
+            - '@router'
+            - '@oro_api.value_normalizer'
+            - '@oro_api.entity_id_transformer_registry'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: finalize, requestType: frontend&rest, association: checkout, parentClass: Oro\Bundle\OrderBundle\Entity\Order }
+
     oro_order.api.validate_order_limit_amounts:
         class: Oro\Bundle\OrderBundle\Api\Processor\ValidateOrderLimitAmounts
         arguments:
