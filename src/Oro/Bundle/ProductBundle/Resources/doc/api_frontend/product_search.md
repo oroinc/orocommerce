@@ -101,7 +101,8 @@ Operators for numeric and date values:
 The list of fields that can be used in the search query:
 
 **allText**, **id**, **sku**, **skuUppercase**, **name**, **shortDescription**, **productType**, **isVariant**, **newArrival**,
-**inventoryStatus**, **minimalPrice**, **minimalPrice_{unit}**, **orderedAt**, **product**, **productFamily**, **category**.
+**inventory_status**, **minimalPrice**, **minimalPrice_{unit}**, **orderedAt**, **product**, **productFamily**, **category**,
+**productCollection**, **brand**.
 
 Also, any filterable product attribute can be used.
 
@@ -127,7 +128,8 @@ uppercased first character, e.g., the result name for `productType count` will b
 The list of fields for which the aggregated data can be requested:
 
 **id**, **sku**, **skuUppercase**, **name**, **shortDescription**, **productType**, **isVariant**, **newArrival**,
-**inventoryStatus**, **minimalPrice**, **minimalPrice_{unit}**, **orderedAt**, **product**, **productFamily**, **category**.
+**inventory_status**, **minimalPrice**, **minimalPrice_{unit}**, **orderedAt**, **product**, **productFamily**, **category**,
+**productCollection**, **brand**.
 
 Also, any filterable product attribute can be used.
 
@@ -242,6 +244,10 @@ The product related to the search record.
 ### productFamily
 
 The product attribute family which defines attributes that can be used by products of a similar type.
+
+### brand
+
+The product brand which the product belongs to.
 
 ## FILTERS
 

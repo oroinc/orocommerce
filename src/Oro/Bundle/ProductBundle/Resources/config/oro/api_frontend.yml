@@ -12,6 +12,9 @@ api:
         Oro\Bundle\ProductBundle\Api\Model\ProductCollection:
             alias:        productcollection
             plural_alias: productcollection
+        Oro\Bundle\ProductBundle\Entity\Brand:
+            alias:        brand
+            plural_alias: brands
 
     entities:
         Oro\Bundle\ProductBundle\Entity\ProductImage:
@@ -118,6 +121,27 @@ api:
                 delete: false
                 delete_list: false
 
+        Oro\Bundle\ProductBundle\Entity\Brand:
+            documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/brand.md'
+            fields:
+                defaultTitle:
+                    exclude: true
+                owner:
+                    exclude: true
+                organization:
+                    exclude: true
+                name:
+                    data_type: localizedFallbackValue:names
+                shortDescription:
+                    data_type: localizedFallbackValue:shortDescriptions
+                description:
+                    data_type: localizedFallbackValue:descriptions
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+
         Oro\Bundle\ProductBundle\Entity\Product:
             documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product.md'
             fields:
@@ -198,6 +222,10 @@ api:
                 delete: false
                 delete_list: false
             subresources:
+                brand:
+                    actions:
+                        get_subresource: false
+                        get_relationship: false
                 variantProducts:
                     actions:
                         get_subresource:
@@ -272,6 +300,11 @@ api:
                     property_path: integer.attribute_family_id
                     target_class: Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily
                     target_type: to-one
+                brand:
+                    data_type: integer
+                    property_path: integer.brand_id
+                    target_class: Oro\Bundle\ProductBundle\Entity\Brand
+                    target_type: to-one
             filters:
                 fields:
                     searchQuery:
@@ -293,6 +326,8 @@ api:
                                 product: system_entity_id
                                 productFamily: attribute_family_id
                                 category: category_id
+                                productCollection: product_collection
+                                brand: brand_id
                     aggregations:
                         data_type: string
                         type: websiteSearchAggregation
@@ -311,6 +346,8 @@ api:
                                 product: system_entity_id
                                 productFamily: attribute_family_id
                                 category: category_id
+                                productCollection: product_collection
+                                brand: brand_id
             sorters:
                 fields:
                     relevance: ~ # see Oro\Bundle\ProductBundle\Api\Processor\BuildProductSearchQuery::resolveOrderings

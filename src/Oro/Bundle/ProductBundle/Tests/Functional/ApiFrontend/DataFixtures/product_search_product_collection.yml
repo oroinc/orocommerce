@@ -1,0 +1,87 @@
+dependencies:
+    - Oro\Bundle\SegmentBundle\Tests\Functional\DataFixtures\LoadSegmentTypes
+
+initial: true
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    catalog1_rootNode_title:
+        string: 'Web Catalog 1 Root Node'
+    catalog1_rootNode_url:
+        text: /catalog1_rootNode
+    catalog1_node1_title:
+        string: 'Web Catalog 1 Node 1'
+    catalog1_node1_url:
+        text: /catalog1_node1
+    catalog1_node11_title:
+        string: 'Web Catalog 1 Node 1.1'
+    catalog1_node11_url:
+        text: /catalog1_node11
+
+Oro\Bundle\ScopeBundle\Entity\Scope:
+    scope_catalog1:
+        webCatalog: '@catalog1'
+    scope_catalog1_es:
+        webCatalog: '@catalog1'
+        localization: '@es'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    segment_product_collection1:
+        name: 'Product Collection #1'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"CPSKU3","type":"1"}}}]], "columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+    segment_product_collection2:
+        name: 'Product Collection #2'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"PKSKU1","type":"1"}}}]], "columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+    segment_product_collection3:
+        name: 'Product Collection #3'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"PSKU3","type":"1"}}}]], "columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
+    catalog1_node1_variant1_product_collection:
+        type: 'product_collection'
+        default: true
+        scopes: ['@scope_catalog1']
+        productCollectionSegment: '@segment_product_collection1'
+    catalog1_node11_variant1:
+        type: 'product_collection'
+        default: true
+        scopes: ['@scope_catalog1']
+        productCollectionSegment: '@segment_product_collection2'
+    catalog1_node11_variant2_es:
+        type: 'product_collection'
+        scopes: ['@scope_catalog1_es']
+        productCollectionSegment: '@segment_product_collection3'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+    catalog1_rootNode:
+        __calls:
+            - addTitle: ['@catalog1_rootNode_title']
+        webCatalog: '@catalog1'
+        scopes: ['@scope_catalog1']
+        localizedUrls: ['@catalog1_rootNode_url']
+    catalog1_node1:
+        __calls:
+            - addTitle: ['@catalog1_node1_title']
+            - addContentVariant: ['@catalog1_node1_variant1_product_collection']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node1_url']
+        parentNode: '@catalog1_rootNode'
+    catalog1_node11:
+        __calls:
+            - addTitle: ['@catalog1_node11_title']
+            - addContentVariant: ['@catalog1_node11_variant1']
+            - addContentVariant: ['@catalog1_node11_variant2_es']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node11_url']
+        parentNode: '@catalog1_node1'

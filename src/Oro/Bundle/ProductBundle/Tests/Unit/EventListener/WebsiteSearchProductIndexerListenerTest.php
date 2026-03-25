@@ -11,6 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -133,9 +134,13 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
 
         $attributeFamilyId = 42;
         $productId = 1;
+        $brandId = 10;
         $attributeFamily = $this->getAttributeFamily($attributeFamilyId);
+        $brand = new Brand();
+        ReflectionUtil::setId($brand, $brandId);
 
         $product = $this->getProduct($productId, $attributeFamily);
+        $product->setBrand($brand);
 
         $event = new IndexEntityEvent(Product::class, [$product], $context);
 
@@ -295,6 +300,12 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             'attribute_family_id' => [
                 [
                     'value' => $attributeFamilyId,
+                    'all_text' => false
+                ]
+            ],
+            'brand_id' => [
+                [
+                    'value' => $brandId,
                     'all_text' => false
                 ]
             ],

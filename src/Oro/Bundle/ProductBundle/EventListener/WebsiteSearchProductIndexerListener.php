@@ -102,6 +102,10 @@ class WebsiteSearchProductIndexerListener implements WebsiteSearchProductIndexer
                 );
             }
 
+            if ($product->getBrand() !== null) {
+                $event->addField($product->getId(), 'brand_id', $product->getBrand()->getId());
+            }
+
             if (isset($primaryUnits[$product->getId()])) {
                 $event->addField(
                     $product->getId(),

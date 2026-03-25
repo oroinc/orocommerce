@@ -80,6 +80,7 @@ class ContentNodeRepositoryTest extends WebTestCase
                 [
                     'nodeId' => $node->getId(),
                     'variantId' => $variant->getId(),
+                    'variantType' => 'system_page',
                 ],
             ],
             $queryBuilder->getQuery()->getArrayResult()

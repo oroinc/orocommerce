@@ -4,9 +4,9 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
 use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
-use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\SearchBundle\Engine\Orm;
+use Oro\Bundle\WebCatalogBundle\Tests\Functional\ApiFrontend\RestJsonApi\WebCatalogTreeTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class ProductSearchTest extends FrontendRestJsonApiTestCase
+final class ProductSearchTest extends WebCatalogTreeTestCase
 {
     use WebsiteSearchExtensionTrait;
 
@@ -27,11 +27,14 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
             '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product.yml',
-            '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product_prices.yml'
+            '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product_search_product_collection.yml',
+            '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product_prices.yml',
         ]);
+        self::switchToWebCatalog();
 
         $configManager = self::getConfigManager();
         $this->initialEnabledLocalizations = $configManager->get('oro_locale.enabled_localizations');
@@ -138,6 +141,40 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                     [
                         'type' => 'productfamilies',
                         'id' => '<toString(@default_product_family->id)>'
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testIncludeBrand(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            ['include' => 'brand', 'page[size]' => 1, 'sort' => 'id']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type' => 'productsearch',
+                        'id' => '<toString(@product1->id)>',
+                        'relationships' => [
+                            'brand' => [
+                                'data' => [
+                                    'type' => 'brands',
+                                    'id' => '<toString(@brand1->id)>'
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'included' => [
+                    [
+                        'type' => 'brands',
+                        'id' => '<toString(@brand1->id)>'
                     ]
                 ]
             ],
@@ -1466,5 +1503,73 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             ],
             $response
         );
+    }
+
+    public function testFilterByProductCollection(): void
+    {
+        $variantId = $this->getReference('catalog1_node11_variant1')->getId();
+
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            ['filter' => ['searchQuery' => sprintf('productCollection = %d', $variantId)], 'sort' => 'id']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'productsearch', 'id' => '<toString(@product_kit1->id)>']
+                ]
+            ],
+            $response,
+            true
+        );
+        self::assertResponseCount(1, $response);
+    }
+
+    public function testFilterByProductCollectionWithInOperator(): void
+    {
+        $variant1Id = $this->getReference('catalog1_node1_variant1_product_collection')->getId();
+        $variant2Id = $this->getReference('catalog1_node11_variant2_es')->getId();
+
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            ['filter' => [
+                'searchQuery' => sprintf('productCollection in (%d, %d)', $variant1Id, $variant2Id)], 'sort' => 'id'
+            ]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'productsearch', 'id' => '<toString(@configurable_product3->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@product3->id)>']
+                ]
+            ],
+            $response,
+            true
+        );
+        self::assertResponseCount(2, $response);
+    }
+
+    public function testFilterByBrand(): void
+    {
+        $brandId = $this->getReference('brand1')->getId();
+
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            ['filter' => ['searchQuery' => sprintf('brand = %d', $brandId)], 'sort' => 'id']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'productsearch', 'id' => '<toString(@product1->id)>'],
+                    ['type' => 'productsearch', 'id' => '<toString(@product_kit1->id)>']
+                ]
+            ],
+            $response,
+            true
+        );
+        self::assertResponseCount(2, $response);
     }
 }
