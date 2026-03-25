@@ -104,14 +104,19 @@ The list of fields that can be used in the search query:
 **inventory_status**, **minimalPrice**, **minimalPrice_{unit}**, **orderedAt**, **product**, **productFamily**, **category**,
 **productCollection**, **brand**.
 
-Also, any filterable product attribute can be used.
-
 The **allText** is a particular field that can be used to do an overall full-text search. The value of this field usually
 contains values of all text fields.
 
 The **minimalPrice_{unit}** means that **{unit}** can be replaced with any
 [product unit](https://doc.oroinc.com/user/back-office/products/products/product-units/).
 E.g., to specify the minimal price for the `set` product unit, the field name will be **minimalPrice_set**.
+
+<br />
+Filtering by Custom Product Attributes
+
+Any filterable product attribute can be used in the search query. To filter by a custom attribute:
+
+* Use the **attribute field name** - the immutable name (e.g. ``color``, ``isOnSale``) that is auto-generated from the attribute label when creating the attribute. The attribute must be marked as **Filterable** in [the attribute's Storefront options](https://doc.oroinc.com/user/back-office/products/product-attributes/) (Products > Product Attributes).
 
 #### **aggregations** filter
 
