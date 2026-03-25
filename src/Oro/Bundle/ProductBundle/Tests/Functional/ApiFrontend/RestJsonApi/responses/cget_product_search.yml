@@ -55,6 +55,10 @@ data:
                 data:
                     type: productfamilies
                     id: '<toString(@default_product_family->id)>'
+            brand:
+                data:
+                    type: brands
+                    id: '<toString(@brand1->id)>'
     -
         type: productsearch
         id: '<toString(@product3->id)>'

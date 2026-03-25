@@ -89,6 +89,16 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Product 3 Meta Description'
     product3_meta_keywords:
         string: 'Product 3 Meta Keywords'
+    brand1_name:
+        string: 'Brand 1'
+
+Oro\Bundle\ProductBundle\Entity\Brand:
+    brand1:
+        status: 'enabled'
+        owner: '@business_unit'
+        organization: '@organization'
+        __calls:
+            - addName: ['@brand1_name']
 
 Oro\Bundle\ProductBundle\Entity\ProductName:
     product1_name:
@@ -354,6 +364,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         wysiwygAttr: 'Product 1 WYSIWYG Attr Text. Twig Expr: "{{ " test "|trim }}".'
         wysiwygAttr_style: '.test {color: {{ " red "|trim }}}'
         wysiwygAttr_properties: { param: value }
+        brand: '@brand1'
     product2:
         sku: 'PSKU2'
         primaryUnitPrecision: '@product2_precision'
@@ -619,6 +630,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         testAttrInteger: 141
         testAttrEnum: '@productAttrEnum_option6'
         testAttrManyToOne: '@customer6'
+        brand: '@brand1'
 
 Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
     configurable_product1_variant1_link:

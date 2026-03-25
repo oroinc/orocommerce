@@ -62,7 +62,7 @@ class ContentNodeRepository extends NestedTreeRepository
     {
         return $this->getEntityManager()
             ->createQueryBuilder()
-            ->select('node.id as nodeId', 'variant.id as variantId')
+            ->select('node.id as nodeId', 'variant.id as variantId', 'variant.type as variantType')
             ->from(ContentVariant::class, 'variant')
             ->innerJoin(ContentNode::class, 'node', Join::WITH, 'variant.node = node')
             ->andWhere('node.webCatalog = :webCatalog')

@@ -101,9 +101,8 @@ Operators for numeric and date values:
 The list of fields that can be used in the search query:
 
 **allText**, **id**, **sku**, **skuUppercase**, **name**, **shortDescription**, **productType**, **isVariant**, **newArrival**,
-**inventoryStatus**, **minimalPrice**, **minimalPrice_{unit}**, **orderedAt**, **product**, **productFamily**, **category**.
-
-Also, any filterable product attribute can be used.
+**inventory_status**, **minimalPrice**, **minimalPrice_{unit}**, **orderedAt**, **product**, **productFamily**, **category**,
+**productCollection**, **brand**.
 
 The **allText** is a particular field that can be used to do an overall full-text search. The value of this field usually
 contains values of all text fields.
@@ -111,6 +110,13 @@ contains values of all text fields.
 The **minimalPrice_{unit}** means that **{unit}** can be replaced with any
 [product unit](https://doc.oroinc.com/user/back-office/products/products/product-units/).
 E.g., to specify the minimal price for the `set` product unit, the field name will be **minimalPrice_set**.
+
+<br />
+Filtering by Custom Product Attributes
+
+Any filterable product attribute can be used in the search query. To filter by a custom attribute:
+
+* Use the **attribute field name** - the immutable name (e.g. ``color``, ``isOnSale``) that is auto-generated from the attribute label when creating the attribute. The attribute must be marked as **Filterable** in [the attribute's Storefront options](https://doc.oroinc.com/user/back-office/products/product-attributes/) (Products > Product Attributes).
 
 #### **aggregations** filter
 
@@ -127,7 +133,8 @@ uppercased first character, e.g., the result name for `productType count` will b
 The list of fields for which the aggregated data can be requested:
 
 **id**, **sku**, **skuUppercase**, **name**, **shortDescription**, **productType**, **isVariant**, **newArrival**,
-**inventoryStatus**, **minimalPrice**, **minimalPrice_{unit}**, **orderedAt**, **product**, **productFamily**, **category**.
+**inventory_status**, **minimalPrice**, **minimalPrice_{unit}**, **orderedAt**, **product**, **productFamily**, **category**,
+**productCollection**, **brand**.
 
 Also, any filterable product attribute can be used.
 
@@ -242,6 +249,10 @@ The product related to the search record.
 ### productFamily
 
 The product attribute family which defines attributes that can be used by products of a similar type.
+
+### brand
+
+The product brand which the product belongs to.
 
 ## FILTERS
 

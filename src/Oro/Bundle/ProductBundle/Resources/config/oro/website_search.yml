@@ -24,6 +24,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: assigned_to.ASSIGN_TYPE_ASSIGN_ID
             type: integer
         -
+            name: product_collection
+            type: integer
+        -
             name: assigned_to_sort_order.ASSIGN_TYPE_ASSIGN_ID
             type: decimal
             group: collection_sort_order
@@ -52,6 +55,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
             fulltext: false
         -
             name: attribute_family_id
+            type: integer
+        -
+            name: brand_id
             type: integer
         -
             name: manually_added_to.ASSIGN_TYPE_ASSIGN_ID

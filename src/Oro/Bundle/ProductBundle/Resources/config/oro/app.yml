@@ -40,3 +40,4 @@ oro_customer:
             - Oro\Bundle\ProductBundle\Entity\ProductUnit
             - Extend\Entity\EV_Prod_Inventory_Status
             - Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily
+            - Oro\Bundle\ProductBundle\Entity\Brand

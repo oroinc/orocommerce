@@ -1,0 +1,21 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    brand1_name:
+        string: 'Brand 1'
+    brand1_short_description:
+        text: 'Brand 1 Short Description'
+    brand1_description:
+        text: 'Brand 1 Description'
+
+Oro\Bundle\ProductBundle\Entity\Brand:
+    brand1:
+        status: 'enabled'
+        owner: '@business_unit'
+        organization: '@organization'
+        __calls:
+            - addName: ['@brand1_name']
+            - addShortDescription: ['@brand1_short_description']
+            - addDescription: ['@brand1_description']

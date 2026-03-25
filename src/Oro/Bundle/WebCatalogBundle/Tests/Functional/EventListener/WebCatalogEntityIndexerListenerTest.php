@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\EventListener;
 
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
@@ -48,7 +47,6 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
 
     public function testOnWebsiteSearchIndex(): void
     {
-        /** @var LocalizedFallbackValue $metaDescription */
         /** @var ContentVariant $contentVariant1 */
         $contentVariant1 = $this->getReference(LoadWebCatalogWithContentNodes::CONTENT_VARIANT_1);
         $product1 = $contentVariant1->getProductPageProduct();
@@ -84,7 +82,8 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
                 'decimal.assigned_to_sort_order.%s_%s as sortOrder',
                 WebCatalogEntityIndexerListener::ASSIGN_TYPE_CONTENT_VARIANT,
                 $collectionContentVariant->getId()
-            ));
+            ))
+            ->addSelect('integer.product_collection as productCollection');
 
         $results1 = $query1->getResult();
 
@@ -94,6 +93,9 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
         $this->assertEmpty($results1[0]->getSelectedData()['assignedProductVariant2']);
         $this->assertEquals(1, $results1[0]->getSelectedData()['assignedCollectionVariant']);
         $this->assertEquals(1, $results1[0]->getSelectedData()['sortOrder']);
+
+        $productCollection = $results1[0]->getSelectedData()['productCollection'] ?? null;
+        $this->assertEquals($collectionContentVariant->getId(), $productCollection);
 
         $query2 = self::getContainer()->get('oro_product.website_search.repository.product')
             ->getSearchQueryBySkuOrName(LoadProductData::PRODUCT_2, 0, 1)
@@ -116,7 +118,8 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
                 'decimal.assigned_to_sort_order.%s_%s as sortOrder',
                 WebCatalogEntityIndexerListener::ASSIGN_TYPE_CONTENT_VARIANT,
                 $collectionContentVariant->getId()
-            ));
+            ))
+            ->addSelect('integer.product_collection as productCollection');
 
         $results2 = $query2->getResult();
 
@@ -126,5 +129,8 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
         $this->assertEquals(1, $results2[0]->getSelectedData()['assignedProductVariant2']);
         $this->assertEquals(1, $results2[0]->getSelectedData()['assignedCollectionVariant']);
         $this->assertEquals(0.2, $results2[0]->getSelectedData()['sortOrder']);
+
+        $productCollection = $results2[0]->getSelectedData()['productCollection'] ?? null;
+        $this->assertEquals($collectionContentVariant->getId(), $productCollection);
     }
 }

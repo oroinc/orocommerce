@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\SearchBundle\Formatter\ValueFormatterInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -105,7 +106,12 @@ class WebCatalogEntityIndexerListener
         $website = $this->registry->getManagerForClass(Website::class)
             ->getRepository(Website::class)
             ->find($websiteId);
-        $webCatalogId = $this->configManager->get('oro_web_catalog.web_catalog', false, false, $website);
+        $webCatalogId = $this->configManager->get(
+            'oro_web_catalog.web_catalog',
+            false,
+            false,
+            $website
+        );
         if (!$webCatalogId) {
             return;
         }
@@ -203,6 +209,7 @@ class WebCatalogEntityIndexerListener
         array $nodes,
         bool $addSortOrder = false
     ): void {
+        $productCollectionVariantIdsByRecordId = [];
         foreach ($relations as $relation) {
             if (empty($relation['nodeId'])) {
                 continue;
@@ -217,52 +224,108 @@ class WebCatalogEntityIndexerListener
                 continue;
             }
 
-            $plainValues = $this->contentVariantProvider->getValues($node);
-            $localizedValues = $this->contentVariantProvider->getLocalizedValues($node);
-
-            $event->addPlaceholderField(
-                $recordId,
-                'assigned_to.ASSIGN_TYPE_ASSIGN_ID',
-                1,
-                [
-                    AssignTypePlaceholder::NAME => self::ASSIGN_TYPE_CONTENT_VARIANT,
-                    AssignIdPlaceholder::NAME => $variantId,
-                ]
-            );
-
-            if ($addSortOrder && !is_null($relation['sortOrderValue'])) {
-                $this->addCollectionSortOrderInformation($event, $relation);
+            if (($relation['variantType'] ?? '') === ProductCollectionContentVariantType::TYPE) {
+                $productCollectionVariantIdsByRecordId[$recordId][] = $variantId;
             }
 
-            foreach ($localizations as $localization) {
-                $placeholders = [LocalizationIdPlaceholder::NAME => $localization->getId()];
-                $event->addPlaceholderField(
-                    $recordId,
-                    IndexDataProvider::ALL_TEXT_L10N_FIELD,
-                    (string)$this->localizationHelper->getLocalizedValue($node->getTitles(), $localization),
-                    $placeholders,
-                    true
-                );
+            $this->addRelationFieldsToIndex(
+                $event,
+                $relation,
+                $recordId,
+                $variantId,
+                $node,
+                $localizations,
+                $addSortOrder
+            );
+        }
 
-                foreach ($plainValues as $value) {
-                    $event->addPlaceholderField(
-                        $recordId,
-                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
-                        (string)$value,
-                        $placeholders,
-                        true
-                    );
-                }
+        $this->addProductCollectionFieldsToIndex($event, $productCollectionVariantIdsByRecordId);
+    }
 
-                foreach ($localizedValues as $value) {
-                    $event->addPlaceholderField(
-                        $recordId,
-                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
-                        (string)$this->localizationHelper->getLocalizedValue($value, $localization),
-                        $placeholders,
-                        true
-                    );
-                }
+    private function addRelationFieldsToIndex(
+        IndexEntityEvent $event,
+        array $relation,
+        int|string $recordId,
+        int $variantId,
+        ContentNode $node,
+        array $localizations,
+        bool $addSortOrder
+    ): void {
+        $event->addPlaceholderField(
+            $recordId,
+            'assigned_to.ASSIGN_TYPE_ASSIGN_ID',
+            1,
+            [
+                AssignTypePlaceholder::NAME => self::ASSIGN_TYPE_CONTENT_VARIANT,
+                AssignIdPlaceholder::NAME => $variantId,
+            ]
+        );
+
+        if ($addSortOrder && $relation['sortOrderValue'] !== null) {
+            $this->addCollectionSortOrderInformation($event, $relation);
+        }
+
+        $plainValues = $this->contentVariantProvider->getValues($node);
+        $localizedValues = $this->contentVariantProvider->getLocalizedValues($node);
+
+        foreach ($localizations as $localization) {
+            $this->addLocalizedFieldsForRelation(
+                $event,
+                $recordId,
+                $node,
+                $localization,
+                $plainValues,
+                $localizedValues
+            );
+        }
+    }
+
+    private function addLocalizedFieldsForRelation(
+        IndexEntityEvent $event,
+        int|string $recordId,
+        ContentNode $node,
+        Localization $localization,
+        array $plainValues,
+        array $localizedValues
+    ): void {
+        $placeholders = [LocalizationIdPlaceholder::NAME => $localization->getId()];
+        $event->addPlaceholderField(
+            $recordId,
+            IndexDataProvider::ALL_TEXT_L10N_FIELD,
+            (string)$this->localizationHelper->getLocalizedValue($node->getTitles(), $localization),
+            $placeholders,
+            true
+        );
+
+        foreach ($plainValues as $value) {
+            $event->addPlaceholderField(
+                $recordId,
+                IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                (string)$value,
+                $placeholders,
+                true
+            );
+        }
+
+        foreach ($localizedValues as $value) {
+            $event->addPlaceholderField(
+                $recordId,
+                IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                (string)$this->localizationHelper->getLocalizedValue($value, $localization),
+                $placeholders,
+                true
+            );
+        }
+    }
+
+    private function addProductCollectionFieldsToIndex(
+        IndexEntityEvent $event,
+        array $productCollectionVariantIdsByRecordId
+    ): void {
+        foreach ($productCollectionVariantIdsByRecordId as $recordId => $variantIds) {
+            $variantIds = array_values(array_unique($variantIds));
+            if (!empty($variantIds)) {
+                $event->addField($recordId, 'product_collection', $variantIds);
             }
         }
     }
