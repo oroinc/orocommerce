@@ -111,6 +111,7 @@ services:
                 -
                     -
                         alwaysShow: ~
+                        collapseOnDropdownShow: {default: true}
                         open: {default: false}
                         tooltip: {default: ''}
                         enableCollapse: {default: true}

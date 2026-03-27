@@ -181,6 +181,7 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
       | SKU3 | iPhone X                            | 10  | $2.00 | $20.00   |
       | SKU4 | Round Meeting Table, 30 in. x 30in. | 10  | $0.00 | $0.00    |
     And records in "Second Checkout Shipping Grid" should be 3
+    And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
       | Subtotal | $52.00 |
       | Shipping | $9.00  |

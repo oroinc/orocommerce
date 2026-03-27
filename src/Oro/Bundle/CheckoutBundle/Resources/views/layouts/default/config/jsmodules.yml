@@ -23,6 +23,7 @@ dynamic-imports:
         - orocheckout/js/app/views/checkout-single-page-new-address-validated-at-view
         - orocheckout/js/app/views/add-address-button-view
         - orocheckout/js/app/views/checkout-overlay-popup-view
+        - orocheckout/js/app/views/checkout-summary-block-view
         - orocheckout/js/datagrid/builder/grouped-line-items-subtotal-builder
         - tpl-loader!orocheckout/templates/datagrid/cell/inventory_status.html
         - tpl-loader!orocheckout/templates/datagrid/cell/item-message.html

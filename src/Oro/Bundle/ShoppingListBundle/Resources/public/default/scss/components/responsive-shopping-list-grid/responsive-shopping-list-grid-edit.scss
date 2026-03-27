@@ -3,6 +3,7 @@
 .responsive-shopping-list-grid-edit {
     .select-row-cell {
         position: relative;
+        isolation: isolate;
 
         padding-right: 0;
 

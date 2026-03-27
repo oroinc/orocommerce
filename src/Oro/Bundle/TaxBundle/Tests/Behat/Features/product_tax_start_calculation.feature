@@ -38,6 +38,7 @@ Feature: Product tax start calculation
     And click "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And I click "Expand Checkout Footer"
     Then I should see Checkout Totals with data:
       | Subtotal | $281.42 |
       | Shipping | $3.00   |
@@ -66,6 +67,7 @@ Feature: Product tax start calculation
     And click "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And I click "Expand Checkout Footer"
     Then I should see Checkout Totals with data:
       | Subtotal | $281.42 |
       | Shipping | $3.00   |

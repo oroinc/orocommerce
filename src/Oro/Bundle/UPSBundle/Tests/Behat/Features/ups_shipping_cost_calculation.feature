@@ -42,6 +42,7 @@ Feature: UPS shipping cost calculation
       | Subtotal | Amount    |
       | Shipping | $1,199.75 |
     When I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And I click "Expand Checkout Footer"
     Then I see next subtotals for "Checkout Step":
       | Subtotal | Amount    |
       | Shipping | $1,199.75 |

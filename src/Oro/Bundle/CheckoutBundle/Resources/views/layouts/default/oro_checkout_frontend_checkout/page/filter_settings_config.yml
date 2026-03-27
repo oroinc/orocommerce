@@ -1,0 +1,8 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/filter_settings_config.html.twig'
+        - '@add':
+            id: checkout_filter_settings_config
+            parentId: layout_js_modules_config
+            blockType: block

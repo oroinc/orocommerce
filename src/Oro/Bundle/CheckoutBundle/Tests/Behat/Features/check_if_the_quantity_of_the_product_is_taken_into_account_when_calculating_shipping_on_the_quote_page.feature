@@ -123,6 +123,7 @@ Feature: Check if the quantity of the product is taken into account when calcula
     And click "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And I click "Expand Checkout Footer"
     Then I should see Checkout Totals with data:
       | Subtotal | $100.00 |
       | Shipping | $10.00  |

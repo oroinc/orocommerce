@@ -656,6 +656,7 @@ Feature: Consent management via Management Console UI
       | State           | Berlin          |
       | Zip/Postal Code | 10115           |
     And I scroll to bottom
+    And I click "Expand Checkout Footer"
     And I click "Ship to This Address"
     And I click "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
@@ -883,6 +884,7 @@ Feature: Consent management via Management Console UI
     And I click "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And on the "Payment" checkout step I press Continue
+    And I click "Expand Checkout Footer"
     And I type "Tester2@test.com" in "Email Address"
     And I type "Tester2@test.com" in "Password"
     And I type "Tester2@test.com" in "Confirm Password"
