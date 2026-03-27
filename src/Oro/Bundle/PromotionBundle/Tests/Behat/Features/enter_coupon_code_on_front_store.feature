@@ -95,8 +95,10 @@ Feature: Enter coupon code on Front Store
     And I should see "Order Review" in the "Checkout Step Title" element
 
   Scenario: Apply coupon with usage limit on order review step
-    When I type "coupon-limit-1" in "Coupon Code Input"
+    When I click "Expand Checkout Footer"
+    And I type "coupon-limit-1" in "Coupon Code Input"
     And I click "Apply"
+    And I click "Expand Checkout Footer"
     Then I should see "coupon-limit-1 First Promotion Label" in the "Coupons List" element
     And I should see "Discount -$2.00" in the "Subtotals" element
 

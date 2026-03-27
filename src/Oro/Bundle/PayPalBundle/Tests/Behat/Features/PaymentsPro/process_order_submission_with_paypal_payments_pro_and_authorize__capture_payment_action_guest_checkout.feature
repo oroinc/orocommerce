@@ -86,6 +86,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
       | Year             | 2027             |
       | CVV              | 123              |
     And I click "Continue"
+    And I click "Expand Checkout Footer"
     And I uncheck "Save my data and create an account" on the checkout page
     And I click "Submit Order"
     Then I should see "We were unable to process your payment. Please verify your payment information and try again." flash message
@@ -96,6 +97,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
       | Year             | 2027             |
       | CVV              | 123              |
     And I click "Continue"
+    And I click "Expand Checkout Footer"
     And I uncheck "Save my data and create an account" on the checkout page
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title

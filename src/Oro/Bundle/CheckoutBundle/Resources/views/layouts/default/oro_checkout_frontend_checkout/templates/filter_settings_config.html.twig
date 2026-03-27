@@ -1,0 +1,8 @@
+{% block _checkout_filter_settings_config_widget %}
+    {% import '@OroAsset/Asset.html.twig' as Asset %}
+    {{ Asset.js_modules_config({
+        'orofrontend/default/js/app/views/filter-settings': {
+            minHeightBreakpoint: 720
+        }
+    }) }}
+{% endblock %}

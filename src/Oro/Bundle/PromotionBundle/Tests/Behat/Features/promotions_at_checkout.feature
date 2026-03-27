@@ -66,6 +66,7 @@ Feature: Promotions at Checkout
 
   Scenario: Check line item and order discount at Order Review Checkout's step
     Given Page title equals to "Order Review - Checkout"
+    And I click "Expand Checkout Footer"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |

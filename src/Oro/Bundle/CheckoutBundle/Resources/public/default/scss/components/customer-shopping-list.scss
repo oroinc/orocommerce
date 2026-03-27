@@ -10,7 +10,7 @@
         margin: 0 -28px;
         bottom: 0;
         // For sticky panel on mobile devices
-        z-index: z('fixed');
+        z-index: z('dropdown') + 1;
     }
 }
 
