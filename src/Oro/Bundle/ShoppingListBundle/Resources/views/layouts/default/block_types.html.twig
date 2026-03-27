@@ -32,7 +32,11 @@
             {% endif %}
                 {{ renderIcon.icon({name: 'chevron-up'}) }}
             </button>
-            <div id="{{ collapseId }}" class="{{ "#{class_prefix ?: 'summary-collapse'}-content" }} {{ open ? 'show' : '' }}">
+            <div id="{{ collapseId }}" class="{{ "#{class_prefix ?: 'summary-collapse'}-content" }} {{ open ? 'show' : '' }}"
+                {% if collapseOnDropdownShow is defined and collapseOnDropdownShow == true %}
+                    data-page-component-view="orocheckout/js/app/views/checkout-summary-block-view"
+                {% endif %}
+            >
                 {{ block_widget(block) }}
             </div>
         {% else %}

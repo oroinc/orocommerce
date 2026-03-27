@@ -159,6 +159,7 @@ Feature: Product view page for configurable product
       | Refurbished | No    |
     When I open page with shopping list "Shopping List"
     And I click "Create Order"
+    And I click "Expand Checkout Footer"
     When I uncheck "Delete this shopping list after ordering" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
     When I click "click here to review"

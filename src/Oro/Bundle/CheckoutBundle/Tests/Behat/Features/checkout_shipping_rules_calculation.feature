@@ -63,6 +63,7 @@ Feature: Checkout shipping rules calculation
     And I should see "Flat Rate $200"
     And on the "Shipping Method" checkout step I press Continue
     And I click "Continue"
+    And I click "Expand Checkout Footer"
     Then I should see Checkout Totals with data:
       | Subtotal | $6.00   |
       | Shipping | $200.00 |

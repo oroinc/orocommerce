@@ -59,6 +59,7 @@ Feature: Guest checkout from quote with shipping address
     And click "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And I click "Expand Checkout Footer"
     And I uncheck "Save my data and create an account" on the checkout page
     And I click "Submit Order"
     Then I should see "Thank You For Your Purchase!"

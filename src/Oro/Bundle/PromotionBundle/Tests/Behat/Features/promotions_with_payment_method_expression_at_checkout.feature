@@ -22,6 +22,7 @@ Feature: Promotions with payment method expression at Checkout
     Then Page title equals to "Payment - Checkout"
     When I click "Continue"
     Then Page title equals to "Order Review - Checkout"
+    And I click "Expand Checkout Footer"
     And I see next subtotals for "Checkout Step":
       | Subtotal          | Amount  |
       | Discount          | -$10.00 |

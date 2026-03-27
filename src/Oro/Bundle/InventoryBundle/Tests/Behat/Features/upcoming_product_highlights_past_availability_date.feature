@@ -102,6 +102,7 @@ Feature: Upcoming product highlights past availability date
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     Then I should see notification "This product will be available on 1/1/2030" for "SKU1" line item "ProductLineItem"
     And I should see notification "This product will be available on 12/1/2040" for "SKU2" line item "ProductLineItem"
+    And I click "Expand Checkout Footer"
     When I click on "Do not ship later than Datepicker"
     Then I should see "12/1/2040"
     When I fill "Checkout Order Review Form" with:
@@ -137,6 +138,7 @@ Feature: Upcoming product highlights past availability date
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And I click "Expand Checkout Footer"
     When I click on "Do not ship later than Datepicker"
     And I fill "Checkout Order Review Form" with:
       | Do not ship later than | today |

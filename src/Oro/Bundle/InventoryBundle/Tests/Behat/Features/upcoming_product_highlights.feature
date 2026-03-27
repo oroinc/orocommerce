@@ -106,6 +106,7 @@ Feature: Upcoming product highlights
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I should see "Coming Soon" for "SKU1" line item "Checkout Line Item"
     And I should see "Coming Soon" for "SKU2" line item "Checkout Line Item"
+    And I click "Expand Checkout Footer"
     When I click on "Do not ship later than Datepicker"
     Then I should see "12/1/2040"
     When I fill "Checkout Order Review Form" with:
@@ -128,6 +129,7 @@ Feature: Upcoming product highlights
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I should see "Coming Soon" for "SKU1" line item "Checkout Line Item"
     And I should see "Coming Soon" for "SKU3" line item "Checkout Line Item"
+    And I click "Expand Checkout Footer"
     And I should see "This order contains upcoming products without availability date"
     When I click "Submit Order"
     Then I should see "Thank You For Your Purchase"

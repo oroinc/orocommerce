@@ -134,6 +134,7 @@ Feature: Pricing rounding
     Then should see "Subtotal $7"
     And should see "Total: $10"
     When I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And I click "Expand Checkout Footer"
     Then should see "Subtotal $7"
     And should see "Total: $10"
     And fill "Order Review Form" with:
@@ -162,6 +163,7 @@ Feature: Pricing rounding
     Then should see "Subtotal $5"
     And should see "Total: $8"
     When I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And I click "Expand Checkout Footer"
     Then should see "Subtotal $5"
     And should see "Total: $8"
     And fill "Order Review Form" with:
@@ -280,6 +282,7 @@ Feature: Pricing rounding
     Then should see "Subtotal $7.5"
     And should see "Total: $10.5"
     When I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And I click "Expand Checkout Footer"
     Then should see "Subtotal $7.5"
     And should see "Total: $10.5"
     And fill "Order Review Form" with:
@@ -317,6 +320,7 @@ Feature: Pricing rounding
     Then should see "Subtotal $4.5"
     And should see "Total: $7.5"
     When I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And I click "Expand Checkout Footer"
     Then should see "Subtotal $4.5"
     And should see "Total: $7.5"
     And fill "Order Review Form" with:

@@ -50,6 +50,7 @@ Feature: Shopping list duplication for non authenticated visitor
     And click "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And I click "Expand Checkout Footer"
     And I uncheck "Save my data and create an account" on the checkout page
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
@@ -86,6 +87,7 @@ Feature: Shopping list duplication for non authenticated visitor
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I check "Save my data and create an account" on the checkout page
+    And I click "Expand Checkout Footer"
     And I type "Andy002@example.com" in "Email Address"
     And I type "Andy002@example.com" in "Password"
     And I type "Andy002@example.com" in "Confirm Password"

@@ -134,6 +134,7 @@ Feature: Guest quick order form
       | Product1`"'&йёщ®&reg;> | 2 | items |
       | Product2               | 4 | sets  |
       | Product3               | 2 | items |
+    And I click "Expand Checkout Footer"  
     And I uncheck "Save my data and create an account" on the checkout page
     When I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title

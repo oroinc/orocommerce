@@ -71,6 +71,7 @@ Feature: Default Checkout From Shopping List
     When I check "Payment Terms" on the "Payment" checkout step and press Continue
     Then Checkout "Order Summary Products Grid" should contain products:
       | Product1`"'&йёщ®&reg;> | 10 | items |
+    And I click "Expand Checkout Footer"
     And I should see following header in "Do not ship later than Datepicker":
       | S | M | T | W | T | F | S |
     And I select "German Localization" localization
