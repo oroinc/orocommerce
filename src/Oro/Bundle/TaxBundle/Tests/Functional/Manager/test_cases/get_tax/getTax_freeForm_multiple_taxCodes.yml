@@ -1,0 +1,87 @@
+method: getTax
+reference: free_form_multiple_tax_codes
+configuration: { use_as_base_by_default: destination }
+databaseBefore:
+    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
+        us_al_billing_address:
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        free_form_multiple_tax_codes:
+            poNumber: free_form_order_004
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
+            currency: USD
+            billingAddress: '@us_al_billing_address'
+            shippingAddress: '@us_al_billing_address'
+            __calls:
+                - addLineItem: ['@free_form_line_item_tax1']
+                - addLineItem: ['@free_form_line_item_tax2']
+    'Oro\Bundle\CurrencyBundle\Entity\Price':
+        usd_price_15.00:
+            value: 15.00
+            currency: USD
+        usd_price_25.00:
+            value: 25.00
+            currency: USD
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
+        free_form_line_item_tax1:
+            freeFormProduct: 'Free Form Product Tax1'
+            productSku: 'FF-TAX1-SKU'
+            quantity: 4
+            price: '@usd_price_15.00'
+            productUnit: { class: 'Oro\Bundle\ProductBundle\Entity\ProductUnit', query: { code: 'liter' } }
+            freeFormTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
+            __calls:
+                - addOrder: ['@free_form_multiple_tax_codes']
+        free_form_line_item_tax2:
+            freeFormProduct: 'Free Form Product Tax2'
+            productSku: 'FF-TAX2-SKU'
+            quantity: 3
+            price: '@usd_price_25.00'
+            productUnit: { class: 'Oro\Bundle\ProductBundle\Entity\ProductUnit', query: { code: 'liter' } }
+            freeFormTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX2' } }
+            __calls:
+                - addOrder: ['@free_form_multiple_tax_codes']
+databaseBeforeSecondPart: []
+disableTaxCalculation: false
+expectedResult:
+    total:
+        includingTax: '141.24'    # 66.24 + 75
+        excludingTax: '135'       # 60 + 75
+        taxAmount: '6.24'         # 6.24 + 0
+        adjustment: '0'
+        currency: 'USD'
+    items:
+        -
+            row:
+                includingTax: '66.24'   # 16.56 * 4
+                excludingTax: '60'      # 15 * 4
+                taxAmount: '6.24'       # 1.56 * 4
+                adjustment: '0'
+                currency: 'USD'
+            unit:
+                includingTax: '16.56'   # 15 + 1.56
+                excludingTax: '15'
+                taxAmount: '1.56'       # 15 * 0.104
+                adjustment: '0'
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '60', taxAmount: '6.24', currency: 'USD' }
+        -
+            row:
+                includingTax: '75'      # 25 * 3 (TAX2 has 0% rate in test data)
+                excludingTax: '75'      # 25 * 3
+                taxAmount: '0'
+                adjustment: '0'
+                currency: 'USD'
+            unit:
+                includingTax: '25'
+                excludingTax: '25'
+                taxAmount: '0'
+                adjustment: '0'
+                currency: 'USD'
+            taxes: []
+    taxes:
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '60', taxAmount: '6.24', currency: 'USD' }
+databaseAfter: []
+

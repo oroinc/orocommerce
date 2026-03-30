@@ -1,0 +1,87 @@
+method: getTax
+reference: mixed_order_regular_and_free_form
+configuration: { use_as_base_by_default: destination }
+databaseBefore:
+    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
+        us_al_billing_address:
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        mixed_order_regular_and_free_form:
+            poNumber: mixed_order_003
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
+            currency: USD
+            billingAddress: '@us_al_billing_address'
+            shippingAddress: '@us_al_billing_address'
+            __calls:
+                - addLineItem: ['@regular_line_item']
+                - addLineItem: ['@free_form_line_item_mixed']
+    'Oro\Bundle\CurrencyBundle\Entity\Price':
+        usd_price_10.00:
+            value: 10.00
+            currency: USD
+        usd_price_20.00:
+            value: 20.00
+            currency: USD
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
+        regular_line_item:
+            productSku: regular-sku-001
+            quantity: 3
+            price: '@usd_price_10.00'
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
+            productUnit: { class: 'Oro\Bundle\ProductBundle\Entity\ProductUnit', query: { code: 'liter' } }
+            __calls:
+                - addOrder: ['@mixed_order_regular_and_free_form']
+        free_form_line_item_mixed:
+            freeFormProduct: 'Free Form Product Mixed'
+            productSku: 'FREE-FORM-MIXED'
+            quantity: 2
+            price: '@usd_price_20.00'
+            productUnit: { class: 'Oro\Bundle\ProductBundle\Entity\ProductUnit', query: { code: 'liter' } }
+            freeFormTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
+            __calls:
+                - addOrder: ['@mixed_order_regular_and_free_form']
+databaseBeforeSecondPart: []
+disableTaxCalculation: false
+expectedResult:
+    total:
+        includingTax: '77.28'     # 33.12 + 44.16
+        excludingTax: '70'        # 30 + 40
+        taxAmount: '7.28'         # 3.12 + 4.16
+        adjustment: '0'
+        currency: 'USD'
+    items:
+        -
+            row:
+                includingTax: '33.12'   # 11.04 * 3
+                excludingTax: '30'      # 10 * 3
+                taxAmount: '3.12'       # 1.04 * 3
+                adjustment: '0'
+                currency: 'USD'
+            unit:
+                includingTax: '11.04'   # 10 + 1.04
+                excludingTax: '10'
+                taxAmount: '1.04'       # 10 * 0.104
+                adjustment: '0'
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '30', taxAmount: '3.12', currency: 'USD' }
+        -
+            row:
+                includingTax: '44.16'   # 22.08 * 2
+                excludingTax: '40'      # 20 * 2
+                taxAmount: '4.16'       # 2.08 * 2
+                adjustment: '0'
+                currency: 'USD'
+            unit:
+                includingTax: '22.08'   # 20 + 2.08
+                excludingTax: '20'
+                taxAmount: '2.08'       # 20 * 0.104
+                adjustment: '0'
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '40', taxAmount: '4.16', currency: 'USD' }
+    taxes:
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '70', taxAmount: '7.28', currency: 'USD' }
+databaseAfter: []
+

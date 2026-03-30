@@ -12,9 +12,12 @@ Feature: Disable promotions in backoffice
     Given I login as administrator
     When I go to Sales/Orders
     And click edit SimpleOrder in grid
+    When I click "Line Items"
+    And I click Edit "AA1" in grid
     And fill "Order Form" with:
       | Product | Second Product |
       | Price   | 7              |
+    And I click on "Order Edit Save Changes"
     And I save form
     And click "Save" in modal window
     Then I should see next rows in "Promotions" table
@@ -23,7 +26,6 @@ Feature: Disable promotions in backoffice
     And I should see following buttons:
       | Add Coupon Code |
     When I save and close form
-    And click "Save" in modal window
     Then I should see next rows in "Promotions" table
       | Promotion       | Type        | Status | Discount |
       | Order Promotion | Order Total | Active | -$7.00   |
@@ -34,7 +36,6 @@ Feature: Disable promotions in backoffice
     When I go to Sales/Orders
     And click edit Disabled Promotions Order in grid
     And I save form
-    And click "Save" in modal window
     Then I should see no records in "Promotions" table
     And I should not see following buttons:
       | Add Coupon Code |

@@ -161,7 +161,7 @@ class OrderProductKitItemLineItem implements
         return $this;
     }
 
-    public function setKitItemLabel(string $kitItemLabel): self
+    public function setKitItemLabel(?string $kitItemLabel): self
     {
         $this->kitItemLabel = $kitItemLabel;
 

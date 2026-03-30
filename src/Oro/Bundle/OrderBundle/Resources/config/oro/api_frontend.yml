@@ -112,6 +112,12 @@ api:
                 status: ~
                 shippingStatus: ~
                 documents: ~
+                draftSessionUuid:
+                    exclude: true
+                draftSource:
+                    exclude: true
+                drafts:
+                    exclude: true
             filters:
                 fields:
                     identifier:
@@ -198,6 +204,12 @@ api:
                 checksum:
                     form_options:
                         mapped: false
+                draftSessionUuid:
+                    exclude: true
+                draftSource:
+                    exclude: true
+                drafts:
+                    exclude: true
             filters:
                 fields:
                     createdAt: ~

@@ -4,3 +4,6 @@ trusted_data:
         Oro\Bundle\OrderBundle\Api\OrderAddressQueryModifier:
             addOrderSubquery:
                 addressAlias: true
+        Oro\Bundle\OrderBundle\Datagrid\DraftSession\OrderLineItemDraftValidationDatagridListener:
+            prependOrderByIsValid:
+                orderByDqlPart: true

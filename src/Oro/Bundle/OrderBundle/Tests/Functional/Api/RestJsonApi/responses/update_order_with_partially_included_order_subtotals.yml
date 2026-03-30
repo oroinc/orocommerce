@@ -69,6 +69,13 @@ included:
             amount: '0.0000'
             currency: ''
             data:
+                total:
+                    includingTax: '0'
+                    excludingTax: '0'
+                    taxAmount: '0'
+                    adjustment: '0'
+                    currency: 'USD'
+                taxes: []
                 items:
                     -
                         unit:
@@ -106,6 +113,13 @@ included:
             amount: '0.0000'
             currency: null
             data:
+                total:
+                    includingTax: '0'
+                    excludingTax: '0'
+                    taxAmount: '0'
+                    adjustment: '0'
+                    currency: 'USD'
+                taxes: []
                 items:
                     -
                         unit:
@@ -141,8 +155,15 @@ included:
         attributes:
             label: 'Tax'
             amount: '0.0000'
-            currency: null
+            currency: 'USD'
             data:
+                total:
+                    includingTax: '0'
+                    excludingTax: '0'
+                    taxAmount: '0'
+                    adjustment: '0'
+                    currency: 'USD'
+                taxes: []
                 items:
                     -
                         unit:

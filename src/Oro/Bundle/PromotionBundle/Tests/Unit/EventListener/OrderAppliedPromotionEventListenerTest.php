@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
@@ -8,6 +10,7 @@ use Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\FormStub;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -19,25 +22,13 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var Environment|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $twig;
+    private Environment&MockObject $twig;
 
-    /**
-     * @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $formFactory;
+    private FormFactoryInterface&MockObject $formFactory;
 
-    /**
-     * @var AppliedPromotionManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $appliedPromotionManager;
+    private AppliedPromotionManager&MockObject $appliedPromotionManager;
 
-    /**
-     * @var OrderAppliedPromotionEventListener
-     */
-    private $listener;
+    private OrderAppliedPromotionEventListener $listener;
 
     #[\Override]
     protected function setUp(): void
@@ -54,7 +45,6 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnOrderEventWhenNoAppliedDiscounts(): void
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects(self::once())
             ->method('has')
@@ -73,7 +63,6 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnOrderEventWhenNoSubmittedData(): void
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects(self::once())
             ->method('has')
@@ -92,7 +81,6 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnOrderEvent(): void
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects(self::once())
             ->method('has')
@@ -122,11 +110,15 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit\Framework\TestCase
             ->method('create')
             ->with(FormStub::class, $order)
             ->willReturn($newForm);
-        $view = 'Some html view';
-        $this->twig->expects(self::once())
+
+        $appliedPromotionsView = 'Applied promotions html view';
+        $appliedCouponsView = 'Applied coupons html view';
+        $this->twig->expects(self::exactly(2))
             ->method('render')
-            ->with('@OroPromotion/Order/applied_promotions.html.twig', ['form' => $formView])
-            ->willReturn($view);
+            ->willReturnMap([
+                ['@OroPromotion/Order/applied_promotions.html.twig', ['form' => $formView], $appliedPromotionsView],
+                ['@OroPromotion/Order/applied_coupons.html.twig', ['form' => $formView], $appliedCouponsView],
+            ]);
 
         $this->appliedPromotionManager->expects(self::once())
             ->method('createAppliedPromotions')
@@ -134,7 +126,10 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = new OrderEvent($form, $order, ['some submitted data']);
         $this->listener->onOrderEvent($event);
+
         self::assertTrue($event->getData()->offsetExists('appliedPromotions'));
-        self::assertEquals($view, $event->getData()->offsetGet('appliedPromotions'));
+        self::assertEquals($appliedPromotionsView, $event->getData()->offsetGet('appliedPromotions'));
+        self::assertTrue($event->getData()->offsetExists('appliedCoupons'));
+        self::assertEquals($appliedCouponsView, $event->getData()->offsetGet('appliedCoupons'));
     }
 }

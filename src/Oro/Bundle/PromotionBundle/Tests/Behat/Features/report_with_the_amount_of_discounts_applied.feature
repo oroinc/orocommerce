@@ -11,11 +11,7 @@ Feature: Report with the amount of discounts applied
     Given I login as administrator
     And go to Sales/Orders
     And click edit Order in grid
-    When I fill "Order Form" with:
-      | Customer      | first customer |
-      | Customer User | Amanda Cole    |
-      | Product       | SKU            |
-    And click "Add Coupon Code"
+    When click "Add Coupon Code"
     # Add first coupon
     And type "coupon-1" in "Coupon Code"
     And click on "Highlighted Suggestion"

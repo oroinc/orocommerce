@@ -1,0 +1,273 @@
+/* @theme: admin.oro; */
+
+.order-line-items-edit-grid {
+    .grid-header-row {
+        > .action-column {
+            min-width: 90px;
+        }
+    }
+
+    .grid-header-cell-productSku,
+    .grid-body-cell-productSku {
+        width: 92px;
+        max-width: 92px;
+
+        input[type='text'] {
+            width: inherit;
+            max-width: 100%;
+        }
+    }
+
+    .grid-header-cell-product,
+    .grid-body-cell-product {
+        width: 440px;
+        min-width: 440px;
+
+        .order-line-items {
+            max-width: 440px;
+
+            --input-field-width: 100%;
+        }
+
+        .input-append .select2-container {
+            max-width: 100%;
+            flex-grow: 1;
+        }
+    }
+
+    .grid-header-cell-quantity,
+    .grid-body-cell-quantity {
+        width: 170px;
+        max-width: 170px;
+
+        input[type='text'] {
+            width: 74px;
+        }
+
+        .selector {
+            width: 88px;
+        }
+    }
+
+    .grid-header-cell-price,
+    .grid-body-cell-price {
+        width: 140px;
+        max-width: 140px;
+
+        .input-append .select2-container,
+        input[type='text'] {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
+
+    .grid-header-cell-shipBy,
+    .grid-body-cell-shipBy {
+        width: 140px;
+        max-width: 140px;
+
+        input[type='text'] {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
+
+    .grid-header-cell-warehouse,
+    .grid-body-cell-warehouse {
+        width: 270px;
+        max-width: 270px;
+
+        .input-append .select2-container {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
+
+    .quantity-unit-row {
+        display: flex;
+        column-gap: 8px;
+    }
+
+    .grid-row-update {
+        .grid-body-cell {
+            vertical-align: middle;
+        }
+        .action-cell {
+            padding-bottom: $oro-datagrid-body-cell-inner-bottom;
+        }
+    }
+
+    .grid-row-update,
+    .grid-row-update-form,
+    .grid-row-update-form-validation {
+        background-color: var(--row-form-background-color, #{$oro-datagrid-cell-background-hover});
+
+        &:hover {
+            background-color: var(--row-form-background-color-hover, #{$oro-datagrid-cell-background-hover});
+        }
+
+        .grid-body-cell {
+            padding-top: $oro-datagrid-body-cell-inner-top;
+        }
+
+        .grid-body-cell-update {
+            padding-bottom: 6px;
+            border-bottom-width: 0;
+        }
+
+        .grid-body-cell-update-form {
+            padding-top: 6px;
+        }
+    }
+
+    .grid-row {
+        scroll-margin-top: 200px;
+    }
+
+    .grid-row.grid-row-line-item-view:has(.order-line-items) {
+        > .grid-body-cell {
+            padding-top: 22px;
+        }
+
+        > .grid-body-cell-product {
+            padding-top: $oro-datagrid-body-cell-inner-top;
+        }
+
+        > .action-cell {
+            padding-top: 12px;
+        }
+    }
+
+    .action-cell.grid-body-cell-update {
+        min-width: 90px;
+    }
+
+    .grid-row-update-form-validation {
+        .grid-body-cell-update {
+            padding-block: 0;
+        }
+    }
+
+    .order-draft-form-container {
+        height: var(--placeholder-size, 70px);
+    }
+
+    .multicurrency-fields-wrapper {
+        position: relative;
+    }
+
+    .overridden-price {
+        padding-left: 28px;
+    }
+
+    .alert {
+        width: max-content;
+    }
+
+    .product-price-overridden {
+        z-index: 1;
+    }
+}
+
+.order-line-item-draft-update-calculations {
+    display: grid;
+
+    &__discounts-and-taxes {
+        display: flex;
+        width: 100%;
+        gap: 16px;
+        flex: 1 1 auto;
+        overflow-x: auto;
+
+        margin-top: 16px;
+
+        .table {
+            min-width: 440px;
+        }
+    }
+
+    &__actions {
+        margin-top: 16px;
+        display: flex;
+        gap: 16px;
+    }
+
+    &__discounts-and-taxes.collapse.show + &__actions {
+        display: none;
+    }
+
+    &__taxes,
+    &__discounts {
+        flex-shrink: 0;
+
+        &:empty {
+            display: none;
+        }
+    }
+
+    &__trigger {
+        font-weight: 500;
+    }
+}
+
+.grid-row-update-form-validation {
+    span.validation-failed + span.validation-failed[id] {
+        display: block;
+    }
+}
+
+.grid-row-update-form-extra-fields {
+    max-width: 440px;
+    --form-horizontal-control-label-width: 140px;
+    --form-horizontal-control-label-text-align: left;
+    --form-horizontal-control-min-width: auto;
+    --form-horizontal-control-margin-start: 8px;
+    --input-field-width: 100%;
+
+    &:not(:has(.control-group)) {
+        display: none;
+    }
+}
+
+.order-draft-line-item-kit-item-collection {
+    width: auto;
+
+    .line-item-quantity {
+        --input-field-width: 61px;
+    }
+
+    .order-line-kit-item {
+        td {
+            vertical-align: top;
+
+            label {
+                padding-top: 6px;
+                padding-right: 8px;
+                line-height: 20px;
+            }
+
+            .tooltip-icon {
+                margin-right: 8px;
+            }
+        }
+
+        td:first-child {
+            padding-left: 0;
+        }
+
+        td:last-child {
+            padding-right: 0;
+        }
+    }
+
+    .line-item-label {
+        width: 140px;
+    }
+
+    .line-item-product {
+        width: 430px;
+
+        --select2-container-horizontal-width: 430px;
+        --select2-container-horizontal-max-width: 430px;
+    }
+}

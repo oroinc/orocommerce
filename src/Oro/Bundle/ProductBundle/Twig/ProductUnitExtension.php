@@ -3,9 +3,11 @@
 namespace Oro\Bundle\ProductBundle\Twig;
 
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitPrecisionLabelFormatter;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
@@ -20,6 +22,7 @@ use Twig\TwigFunction;
  *   - oro_format_product_unit_value
  *   - oro_format_short_product_unit_value
  *   - oro_format_product_unit_code
+ *   - oro_get_product_units_with_precision
  *
  * Provides a Twig function to check if product units are visible:
  *   - oro_is_unit_code_visible
@@ -37,6 +40,10 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
         return [
             new TwigFunction('oro_is_unit_code_visible', [$this, 'isUnitCodeVisible']),
             new TwigFunction('oro_format_product_unit_precision_label', [$this, 'formatUnitPrecisionLabel']),
+            new TwigFunction(
+                'oro_get_product_units_with_precision',
+                [$this, 'getProductUnitsWithPrecision']
+            ),
         ];
     }
 
@@ -126,6 +133,23 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
         return $this->getUnitPrecisionLabelFormatter()->formatUnitPrecisionLabel($unitCode, $precision);
     }
 
+    /**
+     * @param Product|null $product
+     *
+     * @return array<string,int> Array of product unit codes with their default precision, e.g. ['kg' => 3, 'item' => 0]
+     */
+    public function getProductUnitsWithPrecision(?Product $product = null): array
+    {
+        if ($product !== null) {
+            return $product->getAvailableUnitsPrecision();
+        }
+
+        /** @var ProductUnitsProvider $productUnitsProvider */
+        $productUnitsProvider = $this->container->get('oro_product.provider.product_units_provider');
+
+        return $productUnitsProvider->getAvailableProductUnitsWithPrecision();
+    }
+
     #[\Override]
     public static function getSubscribedServices(): array
     {
@@ -134,7 +158,8 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
             'oro_product.formatter.product_unit_label' => UnitLabelFormatterInterface::class,
             'oro_product.formatter.product_unit_precision' => UnitLabelFormatterInterface::class,
             'oro_product.visibility.unit' => UnitVisibilityInterface::class,
-            UnitPrecisionLabelFormatter::class
+            UnitPrecisionLabelFormatter::class,
+            'oro_product.provider.product_units_provider' => ProductUnitsProvider::class,
         ];
     }
 

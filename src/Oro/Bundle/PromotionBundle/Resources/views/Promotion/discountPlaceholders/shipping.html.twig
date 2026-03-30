@@ -10,7 +10,7 @@
             oro_shipping_method_with_type_label(
                 options['shipping_options']['shipping_method'],
                 options['shipping_options']['shipping_method_type'],
-                entity.organization
+                entity.organization|default(null)
             )
         )
     ] %}

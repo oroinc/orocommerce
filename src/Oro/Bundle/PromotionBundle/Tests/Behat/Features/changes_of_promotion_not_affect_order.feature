@@ -32,10 +32,17 @@ Feature: Changes of Promotion not affect Order
     # at back-office
     When I go to Sales / Orders
     And I click "edit" on first row in grid
-    Then I see next line item discounts for backoffice order:
-      | SKU  | Row Total Incl Tax | Row Total Excl Tax | Discount |
-      | SKU2 | $5.00              | $5.00              | $5.00    |
-      | SKU1 | $10.00             | $10.00             | $0.00    |
+    And I click edit SKU1 in grid
+    And I click "View taxes & discounts"
+    Then I see next line item discounts for backoffice order edit for "SKU1":
+      |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
+      | Row Total | $10.00                | $10.00                | $0.00        |
+
+    When I click edit SKU2 in grid
+    And I click "View taxes & discounts"
+    Then I see next line item discounts for backoffice order edit for "SKU2":
+      |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
+      | Row Total | $5.00                 | $5.00                 | $5.00        |
 
     # at front-office
     When I proceed as the Buyer

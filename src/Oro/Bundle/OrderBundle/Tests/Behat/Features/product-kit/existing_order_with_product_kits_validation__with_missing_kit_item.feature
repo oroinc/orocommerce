@@ -11,7 +11,9 @@ Feature: Existing Order with Product Kits Validation - with Missing Kit Item
     And click edit "order1" in grid
 
   Scenario: Check the line item with a missing mandatory kit item
-    Given "Order Form" must contains values:
+    Given I click "Line Items"
+    And I click on the first "Edit Line Item Button"
+    And "Order Form" must contains values:
       | Quantity                | 1                                     |
       | Price                   | 12.3400                               |
       | ProductKitItem1Product  | simple-product-03 - Simple Product 03 |
@@ -48,6 +50,7 @@ Feature: Existing Order with Product Kits Validation - with Missing Kit Item
       | ProductKitItem2Product  | simple-product-02 - Simple Product 02 |
       | ProductKitItem2Quantity | 3                                     |
       | ProductKitItem2Price    | 2.47                                  |
+    And I click on the first "Order Edit Save Changes"
     When I save form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message

@@ -40,6 +40,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
 
 /**
  * Order entity
@@ -107,6 +108,7 @@ class Order implements
     ProductLineItemsHolderInterface,
     PreConfiguredShippingMethodConfigurationInterface,
     PdfDocumentContainerInterface,
+    EntityDraftAwareInterface,
     ExtendEntityInterface
 {
     use AuditableUserAwareTrait;
@@ -383,6 +385,25 @@ class Order implements
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected Collection $pdfDocuments;
 
+    /**
+     * The UUID of the draft session the order belongs to.
+     */
+    #[ORM\Column(name: 'draft_session_uuid', type: Types::GUID, nullable: true)]
+    protected ?string $draftSessionUuid = null;
+
+    /**
+     * The source order to which the draft order belongs.
+     */
+    #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'drafts')]
+    #[ORM\JoinColumn(name: 'draft_source_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?self $draftSource = null;
+
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\OneToMany(mappedBy: 'draftSource', targetEntity: Order::class, fetch: 'EXTRA_LAZY')]
+    protected ?Collection $drafts = null;
+
     public function __construct()
     {
         $this->lineItems = new ArrayCollection();
@@ -390,6 +411,7 @@ class Order implements
         $this->shippingTrackings = new ArrayCollection();
         $this->subOrders = new ArrayCollection();
         $this->pdfDocuments = new ArrayCollection();
+        $this->drafts = new ArrayCollection();
         $this->loadMultiCurrencyFields();
     }
 
@@ -1149,7 +1171,7 @@ class Order implements
      */
     public function setShippingMethod($shippingMethod)
     {
-        $this->shippingMethod = (string) $shippingMethod;
+        $this->shippingMethod = $shippingMethod;
 
         return $this;
     }
@@ -1166,7 +1188,7 @@ class Order implements
      */
     public function setShippingMethodType($shippingMethodType)
     {
-        $this->shippingMethodType = (string) $shippingMethodType;
+        $this->shippingMethodType = $shippingMethodType;
 
         return $this;
     }
@@ -1402,5 +1424,57 @@ class Order implements
     public function getPdfDocuments(): Collection
     {
         return $this->pdfDocuments;
+    }
+
+    public function getDraftSessionUuid(): ?string
+    {
+        return $this->draftSessionUuid;
+    }
+
+    public function setDraftSessionUuid(?string $draftSessionUuid): self
+    {
+        $this->draftSessionUuid = $draftSessionUuid;
+
+        return $this;
+    }
+
+    public function getDraftSource(): ?EntityDraftAwareInterface
+    {
+        return $this->draftSource;
+    }
+
+    public function setDraftSource(?EntityDraftAwareInterface $draftSource): self
+    {
+        $this->draftSource = $draftSource;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<Order>
+     */
+    public function getDrafts(): Collection
+    {
+        return $this->drafts;
+    }
+
+    public function addDraft(EntityDraftAwareInterface $draft): self
+    {
+        if (!$this->drafts->contains($draft)) {
+            $this->drafts->add($draft);
+            $draft->setDraftSource($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDraft(EntityDraftAwareInterface $draft): self
+    {
+        if ($this->drafts->contains($draft)) {
+            $this->drafts->removeElement($draft);
+            $draft->setDraftSource(null);
+        }
+
+        return $this;
     }
 }

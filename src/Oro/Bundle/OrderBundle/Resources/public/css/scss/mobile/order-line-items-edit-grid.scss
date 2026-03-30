@@ -1,0 +1,26 @@
+/* @theme: admin.oro; */
+
+.order-line-items-edit-grid {
+    .order-line-items__product-row {
+        flex-wrap: nowrap;
+    }
+
+    .grid-header-cell-product,
+    .grid-body-cell-product {
+        .order-line-items {
+            width: 440px;
+        }
+    }
+
+    .grid-body-cell-quantity {
+        .selector {
+            min-width: auto;
+        }
+    }
+
+    .grid-body-cell-price {
+        input[type=text] {
+            width: 80px;
+        }
+    }
+}

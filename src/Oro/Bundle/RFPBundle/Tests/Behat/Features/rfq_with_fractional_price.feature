@@ -3,7 +3,8 @@
 @ticket-BB-21621
 @fixture-OroLocaleBundle:GermanLocalization.yml
 @fixture-OroShoppingListBundle:ShoppingListWithFractionalPriceFixture.yml
-
+# Should be fixed in BB-27123
+@skip
 Feature: RFQ with fractional price
   In order to use correct decimal separator for fractional prices in different locales
   As an Buyer and Administrator

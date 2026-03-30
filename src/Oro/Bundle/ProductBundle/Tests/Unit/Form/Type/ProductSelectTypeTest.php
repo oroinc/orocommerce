@@ -114,6 +114,12 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
                 ],
                 'withParent' => true,
             ],
+            'with parent form with productHolder without product and empty sku' => [
+                'inputData' => [
+                    'productHolder' => $this->createProductHolder(1, ''),
+                ],
+                'withParent' => true,
+            ],
         ];
     }
 

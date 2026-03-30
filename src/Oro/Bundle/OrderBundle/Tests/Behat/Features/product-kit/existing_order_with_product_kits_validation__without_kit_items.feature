@@ -11,7 +11,9 @@ Feature: Existing Order with Product Kits Validation - without Kit Items
     And click edit "order1" in grid
 
   Scenario: Check the line item without kit items
-    Given "Order Form" must contains values:
+    Given I click "Line Items"
+    And I click on the first "Edit Line Item Button"
+    And "Order Form" must contains values:
       | Quantity                | 1       |
       | Price                   | 12.3400 |
       | ProductKitItem1Product  | None    |
@@ -28,11 +30,13 @@ Feature: Existing Order with Product Kits Validation - without Kit Items
     And I should see "Optional Item" in the "Order Form Line Item 1 Kit Item 1 Label" element
     And I should see "Mandatory Item" in the "Order Form Line Item 1 Kit Item 2 Label" element
     And I should not see "Mandatory Item *" in the "Order Form Line Item 1 Kit Item 2 Label" element
+    And I click on the first "Order Edit Discard Changes"
 
   Scenario: Check that order can be saved and is not changed
     When I save form
-    And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
+    And I click "Line Items"
+    And I click on the first "Edit Line Item Button"
     And "Order Form" must contains values:
       | Quantity                | 1       |
       | Price                   | 12.3400 |
@@ -55,9 +59,13 @@ Feature: Existing Order with Product Kits Validation - without Kit Items
     When fill "Order Form" with:
       | Quantity                | 2                                     |
       | ProductKitItem1Product  | simple-product-03 - Simple Product 03 |
+    And fill "Order Form" with:
       | ProductKitItem1Quantity | 2                                     |
+    And fill "Order Form" with:
       | ProductKitItem1Price    | 36.56                                 |
+    And fill "Order Form" with:
       | ProductKitItem2Product  | simple-product-02 - Simple Product 02 |
+    And fill "Order Form" with:
       | ProductKitItem2Quantity | 3                                     |
     And I click "Order Form Line Item 1 Price Overridden"
     And I click "Reset price"
@@ -71,6 +79,7 @@ Feature: Existing Order with Product Kits Validation - without Kit Items
       | ProductKitItem2Product  | simple-product-02 - Simple Product 02 |
       | ProductKitItem2Quantity | 3                                     |
       | ProductKitItem2Price    | 2.47                                  |
+    And I click on the first "Order Edit Save Changes"
     When I save form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message

@@ -1,3 +1,11 @@
+aliases:
+    oro/datagrid/action/order-line-item-draft-update-action$: oroorder/js/app/datagrid/action/order-line-item-draft-update-action
+    oro/datagrid/action/order-line-item-draft-delete-action$: oroorder/js/app/datagrid/action/order-line-item-draft-delete-action
+    oro/order-line-item-draft-create-widget$: oroorder/js/app/widget/order-line-item-draft-create-widget
+    oro/order-line-item-draft-update-widget$: oroorder/js/app/widget/order-line-item-draft-update-widget
+    oroorder/js/app/views/order-line-item-draft-create-view$: oroorder/js/app/views/order-line-item-draft-form-view
+    oroorder/js/app/views/order-line-item-draft-update-view$: oroorder/js/app/views/order-line-item-draft-form-update-view
+
 dynamic-imports:
     orosale:
         - oroorder/js/app/components/data-load-component
@@ -19,3 +27,11 @@ dynamic-imports:
         - oroorder/js/app/views/shipping-cost-view
         - oroorder/js/app/views/shipping-tracking-collection-view
         - oroorder/js/app/views/order-address-validated-at-view
+        - oro/datagrid/action/order-line-item-draft-update-action
+        - oro/datagrid/action/order-line-item-draft-delete-action
+        - oro/order-line-item-draft-create-widget
+        - oro/order-line-item-draft-update-widget
+        - oroorder/js/app/views/order-line-item-draft-create-view
+        - oroorder/js/app/views/order-line-item-draft-update-view
+        - oroorder/js/app/datagrid/order-line-items-grid-options-builder
+        - oroorder/js/app/views/order-line-item-draft-discounts-taxes-view

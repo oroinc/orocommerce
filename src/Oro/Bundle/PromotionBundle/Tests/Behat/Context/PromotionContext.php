@@ -18,6 +18,7 @@ use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionShoppingList;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionShoppingListLineItem;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\LineItemsAwareInterface;
+use Oro\Bundle\TaxBundle\Tests\Behat\Element\TaxBackendOrderDraftEditLineItem;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
@@ -109,6 +110,41 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
         array_shift($rows);
 
         static::assertEquals($rows, $discounts);
+    }
+
+    /**
+     * Example: And I see next line item discounts for backoffice order edit for "SKU1":
+     *      |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
+     *      | Row Total | €40.00                | €40.00                | €0.00        |
+     *
+     * @Then /^(?:|I )see next line item discounts for backoffice order edit for "([^"]+)":$/
+     */
+    public function checkLineItemDiscountsInOrderEditForSku(string $sku, TableNode $table): void
+    {
+        $rows = $table->getRows();
+        array_shift($rows);
+
+        $actualDiscounts = $this->spin(function () use ($sku) {
+            return $this->findDraftEditLineItemBySku($sku)->getDiscounts();
+        });
+
+        self::assertNotNull(
+            $actualDiscounts,
+            sprintf('Unable to get discounts for line item with SKU "%s"', $sku)
+        );
+        self::assertEquals($rows, $actualDiscounts);
+    }
+
+    private function findDraftEditLineItemBySku(string $sku): TaxBackendOrderDraftEditLineItem
+    {
+        /** @var TaxBackendOrderDraftEditLineItem $lineItem */
+        foreach ($this->findAllElements('TaxBackendOrderDraftEditLineItem') as $lineItem) {
+            if ($lineItem->getProductSKU() === $sku) {
+                return $lineItem;
+            }
+        }
+
+        self::fail(sprintf('Line item with SKU "%s" not found in edit grid', $sku));
     }
 
     /**

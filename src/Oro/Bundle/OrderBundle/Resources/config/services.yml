@@ -702,6 +702,13 @@ services:
         tags:
             - { name: doctrine.repository_service }
 
+    Oro\Bundle\OrderBundle\Entity\Repository\OrderLineItemRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            $entityClass: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
+        tags:
+            - { name: doctrine.repository_service }
+
     oro_order.product_kit.factory.order_product_kit_item_line_item:
         class: Oro\Bundle\OrderBundle\ProductKit\Factory\OrderProductKitItemLineItemFactory
         arguments:
@@ -806,6 +813,7 @@ services:
         class: Oro\Bundle\OrderBundle\Provider\OrderDuplicator
         arguments:
             - '@oro_action.factory.duplicator_factory'
+            - '@event_dispatcher'
 
     oro_order.event_listener.recalculate_totals:
         class: Oro\Bundle\OrderBundle\EventListener\Order\RecalculateOrdersOnSave
@@ -907,3 +915,16 @@ services:
                 - !php/const Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses::PENDING
                 - !php/const Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses::DECLINED
                 - !php/const Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses::CANCELED
+
+    oro_order.provider.order_line_item_tier_prices:
+        class: Oro\Bundle\OrderBundle\Provider\OrderLineItemTierPricesProvider
+        arguments:
+            - '@oro_pricing.provider.product_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_pricing.provider.product_line_item_product_price'
+
+    oro_order.form.handler.order:
+        class: Oro\Bundle\OrderBundle\Form\Handler\OrderFormHandler
+        arguments:
+            - '@doctrine'
+            - '@oro_form.event.event_dispatcher'

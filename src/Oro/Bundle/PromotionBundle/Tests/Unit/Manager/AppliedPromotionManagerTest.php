@@ -128,9 +128,8 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
                 [$this->isInstanceOf(AppliedDiscount::class)]
             );
 
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityManagerForClass')
-            ->with(AppliedPromotion::class)
             ->willReturn($entityManager);
 
         $entityManager->expects($this->never())
@@ -287,6 +286,83 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
             ->with($order);
 
         $this->manager->createAppliedPromotions($order);
+    }
+
+    public function testCreateAppliedPromotionsExplicitlyRemovesAppliedDiscount(): void
+    {
+        $order = (new Order())->setCurrency(self::CURRENCY);
+        $promotion = $this->getPromotion(1);
+
+        // Create existing applied promotion with old discount
+        $oldDiscount1 = new AppliedDiscount();
+        $oldDiscount1->setAmount(50);
+        $oldDiscount1->setCurrency(self::CURRENCY);
+
+        $oldDiscount2 = new AppliedDiscount();
+        $oldDiscount2->setAmount(25);
+        $oldDiscount2->setCurrency(self::CURRENCY);
+
+        $existingAppliedPromotion = new AppliedPromotion();
+        $existingAppliedPromotion->setSourcePromotionId(1);
+        $existingAppliedPromotion->addAppliedDiscount($oldDiscount1);
+        $existingAppliedPromotion->addAppliedDiscount($oldDiscount2);
+        $order->addAppliedPromotion($existingAppliedPromotion);
+
+        // New discount context
+        $discountContext = new DiscountContext();
+        $discountContext->addSubtotalDiscountInformation(new DiscountInformation(
+            $this->getDiscount($promotion),
+            150
+        ));
+
+        $this->promotionExecutor->expects(self::once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
+
+        $this->promotionExecutor->expects(self::once())
+            ->method('execute')
+            ->with($order)
+            ->willReturn($discountContext);
+
+        $this->promotionMapper->expects(self::once())
+            ->method('mapPromotionDataToAppliedPromotion');
+
+        $entityManagerForPromotions = $this->createMock(EntityManagerInterface::class);
+        $entityManagerForCoupons = $this->createMock(EntityManagerInterface::class);
+
+        // The key assertion: old discounts should be explicitly removed
+        $entityManagerForCoupons->expects(self::exactly(2))
+            ->method('remove')
+            ->withConsecutive(
+                [self::identicalTo($oldDiscount1)],
+                [self::identicalTo($oldDiscount2)]
+            );
+
+        $entityManagerForPromotions->expects(self::exactly(2))
+            ->method('persist')
+            ->withConsecutive(
+                [self::identicalTo($existingAppliedPromotion)],
+                [self::isInstanceOf(AppliedDiscount::class)]
+            );
+
+        $this->doctrineHelper->expects(self::any())
+            ->method('getEntityManagerForClass')
+            ->willReturnMap([
+                [AppliedPromotion::class, true, $entityManagerForPromotions],
+                [AppliedCoupon::class, true, $entityManagerForCoupons]
+            ]);
+
+        self::assertCount(2, $existingAppliedPromotion->getAppliedDiscounts());
+        self::assertTrue($existingAppliedPromotion->getAppliedDiscounts()->contains($oldDiscount1));
+        self::assertTrue($existingAppliedPromotion->getAppliedDiscounts()->contains($oldDiscount2));
+
+        $this->manager->createAppliedPromotions($order);
+
+        // Old discounts should be removed from collection
+        self::assertCount(1, $existingAppliedPromotion->getAppliedDiscounts());
+        self::assertFalse($existingAppliedPromotion->getAppliedDiscounts()->contains($oldDiscount1));
+        self::assertFalse($existingAppliedPromotion->getAppliedDiscounts()->contains($oldDiscount2));
     }
 
     private function getPromotion(int $id): Promotion

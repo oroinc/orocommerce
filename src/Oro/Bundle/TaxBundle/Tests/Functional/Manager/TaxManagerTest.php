@@ -62,6 +62,16 @@ class TaxManagerTest extends WebTestCase
     protected function tearDown(): void
     {
         $this->clearCache();
+
+        $this->configManager->reset('oro_tax.use_as_base_by_default');
+        $this->configManager->reset('oro_tax.destination');
+        $this->configManager->reset('oro_tax.start_calculation_on');
+        $this->configManager->reset('oro_tax.start_calculation_with');
+        $this->configManager->reset('oro_tax.product_prices_include_tax');
+
+        $this->configManager->flush();
+        $this->configManager->reload();
+
         parent::tearDown();
     }
 
@@ -89,6 +99,8 @@ class TaxManagerTest extends WebTestCase
         foreach ($configuration as $key => $value) {
             $this->configManager->set(sprintf('oro_tax.%s', $key), $value);
         }
+        $this->configManager->flush();
+        $this->configManager->reload();
 
         // $databaseBeforeSecondPart is used to avoid problems with relation identifiers during single fixture load
         $this->prepareDatabase($databaseBefore, $databaseBeforeSecondPart, $disableTaxCalculation);
@@ -563,6 +575,8 @@ class TaxManagerTest extends WebTestCase
         $this->configManager->set('oro_tax.start_calculation_on', 'item');
         $this->configManager->set('oro_tax.start_calculation_with', 'row_total');
         $this->configManager->set('oro_tax.product_prices_include_tax', false);
+        $this->configManager->flush();
+        $this->configManager->reload();
     }
 
     /**

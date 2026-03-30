@@ -8,6 +8,7 @@ services:
         tags:
             - { name: container.service_subscriber }
             - { name: container.service_subscriber, id: oro_order.duplicator.order_duplicator }
+            - { name: container.service_subscriber, id: oro_order.form.handler.order, key: Oro\Bundle\OrderBundle\Form\Handler\OrderFormHandler }
 
     Oro\Bundle\OrderBundle\Controller\AjaxOrderController:
         calls:
@@ -68,3 +69,33 @@ services:
             - { name: container.service_subscriber, id: oro_order.pdf_document.manager.instant, key: Oro\Bundle\OrderBundle\PdfDocument\Manager\OrderPdfDocumentManagerInterface }
             - { name: container.service_subscriber, id: oro_order.pdf_document.url_generator.storefront, key: Oro\Bundle\OrderBundle\PdfDocument\UrlGenerator\OrderPdfDocumentUrlGeneratorInterface }
             - { name: container.service_subscriber, id: oro_config.manager, key: Oro\Bundle\ConfigBundle\Config\ConfigManager }
+
+    Oro\Bundle\OrderBundle\Controller\DraftSession\OrderLineItemDraftUpdateController:
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\OrderBundle\Controller\DraftSession\OrderLineItemDraftMassUpdateController:
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\OrderBundle\Controller\DraftSession\OrderLineItemDraftCreateController:
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\OrderBundle\Controller\DraftSession\OrderLineItemDraftDeleteController:
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\OrderBundle\Controller\DraftSession\OrderLineItemDraftCalculateTaxesAndDiscountsController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

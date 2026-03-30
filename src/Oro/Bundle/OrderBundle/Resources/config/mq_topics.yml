@@ -4,3 +4,4 @@ services:
             - { name: oro_message_queue.topic }
 
     Oro\Bundle\OrderBundle\Async\Topic\PrecalculateOrderTotalTopic: ~
+    Oro\Bundle\OrderBundle\Async\Topic\OrderDraftsCleanupTopic: ~

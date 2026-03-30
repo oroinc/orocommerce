@@ -196,6 +196,15 @@ oro:
         pdf_documents:
             label: PDF Documents
             description: PDF documents associated with the order.
+        draft_session_uuid:
+            label: Draft Session UUID
+            description: The UUID of the draft session the order belongs to.
+        draft_source:
+            label: Draft Source
+            description: The source order to which the draft belongs.
+        drafts:
+            label: Drafts
+            description: The collection of order drafts created from this order.
 
         shipping_tracking:
             entity_label: Shipping Tracking
@@ -426,6 +435,58 @@ oro:
             checksum:
                 label: Checksum
                 description: Differentiates the unique constraint allowing to add the same product with the same unit code multiple times.
+            draft_session_uuid:
+                label: Draft Session UUID
+                description: The UUID of the draft session the line item belongs to.
+            draft_source:
+                label: Draft Source
+                description: The source line item to which the draft line item belongs.
+            draft_delete:
+                label: Draft mark for deletion
+                description: Indicates whether the draft line item is marked for deletion.
+            drafts:
+                label: Drafts
+                description: The collection of draft line items created from this line item.
+            draft_form:
+                kit_item:
+                    quantity.label: Qty
+                    price.label: 'Price, <span class="line-item-price-symbol">%currency%</span>'
+                success_message: 'Product %sku% has been added to the list.'
+                view_line_item_in_grid: 'Show only this product'
+                comment:
+                    placeholder: Add a note
+            draft_update_form:
+                save.label: Save
+                cancel.label: Discard
+            draft_create_form:
+                save:
+                    label: Add Product
+            draft_add_product: 'Add Product'
+            tax_discount_btn_view: 'View taxes & discounts'
+            tax_discount_btn_hide: 'Hide taxes & discounts'
+
+        table_taxes:
+            title: Taxes
+            incl_tax: Incl. Tax
+            excl_tax: Excl. Tax
+            tax_amount: Tax Amount
+            unit_price: Unit Price
+            row_total: Row Total
+            tax: Tax
+            rate: Rate
+            taxable_amount: Taxable Amount
+            no_taxes_applied: No taxes applied
+
+        table_discounts:
+            title: Discounts
+            after_disc_incl_tax: After Disc. Incl. Tax
+            after_disc_excl_tax: After Disc. Excl. Tax
+            disc_amount: Disc. Amount
+            row_total: Row Total
+            after_discount: After Discount
+            description: Description
+            applied_discounts: Applied Discounts
+            no_discounts_applied: No discounts applied
 
         orderproductkititemlineitem:
             entity_label: Order Kit Item Line Item
@@ -463,6 +524,7 @@ oro:
                 description: The default name of the ordered product. Automatically filled from the related product. Contains data even if the related product is deleted
             quantity:
                 label: Quantity
+                short_label: Qty
                 description: The quantity of product kit item units to be purchased
                 form:
                     tooltip: 'The quantity of product kit item units to be purchased: {{ unit_precision_info }}'

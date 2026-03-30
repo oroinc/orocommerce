@@ -168,11 +168,18 @@ class AppliedPromotionManager
      */
     private function findOrCreateAppliedPromotion(Order $order, PromotionDataInterface $promotion)
     {
+        $manager = $this->getAppliedCouponsManager();
+
         /** @var Collection|AppliedPromotion[] $appliedPromotionsCollection */
         $appliedPromotionsCollection = $order->getAppliedPromotions();
         foreach ($appliedPromotionsCollection as $appliedPromotion) {
             if ($appliedPromotion->getSourcePromotionId() === $promotion->getId()) {
-                $appliedPromotion->getAppliedDiscounts()->clear();
+                foreach ($appliedPromotion->getAppliedDiscounts() as $appliedDiscount) {
+                    $appliedPromotion->removeAppliedDiscount($appliedDiscount);
+                    // AppliedDiscount should be explicitly removed because orphan removal does not work for
+                    // the case when AppliedDiscount is a new entity that is already scheduled for insertion.
+                    $manager->remove($appliedDiscount);
+                }
 
                 return $appliedPromotion;
             }

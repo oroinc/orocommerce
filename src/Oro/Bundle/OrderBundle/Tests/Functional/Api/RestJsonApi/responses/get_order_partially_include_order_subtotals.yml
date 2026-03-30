@@ -69,6 +69,13 @@ included:
             amount: '0.0000'
             currency: ''
             data:
+                total:
+                    includingTax: '0'
+                    excludingTax: '0'
+                    taxAmount: '0'
+                    adjustment: '0'
+                    currency: 'USD'
+                taxes: []
                 items:
                     -
                         unit:
@@ -105,12 +112,26 @@ included:
             label: 'Shipping Tax'
             amount: '0.0000'
             currency: null
-            data: []
+            data:
+                total:
+                    includingTax: '0'
+                    excludingTax: '0'
+                    taxAmount: '0'
+                    adjustment: '0'
+                    currency: 'USD'
+                taxes: []
     -
         type: ordersubtotals
         id: '<(implode("-", [@simple_order->id, "tax-6"]))>'
         attributes:
             label: 'Tax'
             amount: '0.0000'
-            currency: null
-            data: []
+            currency: 'USD'
+            data:
+                total:
+                    includingTax: '0'
+                    excludingTax: '0'
+                    taxAmount: '0'
+                    adjustment: '0'
+                    currency: 'USD'
+                taxes: []

@@ -70,3 +70,6 @@ api:
                 organization:
                     actions:
                         update_relationship: false
+
+        Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+            documentation_resource: '@OroTaxBundle/Resources/doc/api/order_line_item.md'

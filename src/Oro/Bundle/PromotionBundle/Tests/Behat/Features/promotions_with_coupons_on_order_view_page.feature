@@ -10,10 +10,10 @@ Feature: Promotions with coupons on Order view page
     When go to Sales / Orders
     And click edit SimpleOrder in grid
     # Triggered to re-calculate discounts
+    And fill "Order Edit Add Line Item Form" with:
+      | Product | Second Product |
+      | Price   | 5              |
     And click "Add Product"
-    And fill "Order Form" with:
-      | Product2 | Second Product |
-      | Price2   | 5              |
     # As promotion was created after order, so we are not applied it automatically
     # We can activate it manually by admin only during order update (add new products, change quantity etc)
     # It's inactive by default for already existed orders

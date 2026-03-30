@@ -1,0 +1,270 @@
+{% form_theme form '@OroOrder/Form/orderLineItemDraftForm.html.twig' %}
+{% import '@OroOrder/Order/macros.html.twig' as orderMacros %}
+
+{% if form.productSku is defined %}
+    {% set productSkuWidget = form_widget(form.productSku) %}
+    {% set productSkuErrors = form_errors(form.productSku) %}
+{% endif %}
+
+{% if form.freeFormProduct is defined %}
+    {% set freeFormProductWidget = form_widget(form.freeFormProduct) %}
+    {% set freeFormProductErrors = form_errors(form.freeFormProduct) %}
+{% endif %}
+
+{% set productWidget = form_widget(form.product, {
+    'attr': {
+        'data-draft-update-field': '',
+        'data-delay': 0
+    }
+}) %}
+{% set productErrors = form_errors(form.product) %}
+
+{% if form.kitItemLineItems is defined %}
+    {% set kitItemLineItemsWidget = form_widget(form.kitItemLineItems) %}
+    {% set kitItemLineItemsErrors = form_errors(form.kitItemLineItems) %}
+{% endif %}
+
+{% set quantityWidget = form_widget(form.quantity) %}
+{% set quantityErrors = form_errors(form.quantity) %}
+{% set productUnitWidget = form_widget(form.productUnit) %}
+{% set productUnitErrors = form_errors(form.productUnit) %}
+{% set priceWidget = form_widget(form.price) %}
+{% set priceErrors = form_errors(form.price) %}
+{% set priceTypeWidget = form_widget(form.priceType) %}
+{% set priceTypeErrors = form_errors(form.priceType) %}
+{% set shipByWidget = form_widget(form.shipBy, { 'required': false }) %}
+{% set shipByErrors = form_errors(form.shipBy) %}
+{% set commentWidget = form_widget(form.comment, { 'attr': { 'placeholder': 'oro.order.orderlineitem.draft_form.comment.placeholder'|trans, 'class': 'order-comment-field' } }) %}
+{% set commentErrors = form_errors(form.comment) %}
+{% set extraColumnsPlaceholder = placeholder('oro_order_line_item_draft_update_extra_column', { 'entity': orderLineItem, 'form': form }) %}
+{% set isFreeFormField = form_widget(form.isFreeForm, {
+    'attr': {
+        'data-draft-update-field': ''
+    }
+}) %}
+{% set extraFields = form_rest(form) %}
+{% set relatedDraftRow = 'related-draft-row-'|uniqid %}
+{% set isDrySubmit = isDrySubmit|default(false) %}
+
+<div class="widget-content">
+    <div
+        data-layout="separate"
+        data-page-component-view="oroorder/js/app/views/order-line-item-draft-update-view"
+        data-page-component-options="{{ {
+            'freeFormUnits': oro_get_product_units_with_precision(),
+            'tierPrices': form.vars.tierPrices,
+            'relatedDraftRow': relatedDraftRow,
+            'modelAttr': {
+                'product_units': oro_get_product_units_with_precision(orderLineItem.product)
+            }
+        }|json_encode|e('html_attr') }}"
+        >
+
+        {{ form_start(form, {
+            'action': path('oro_order_line_item_draft_update', {
+                orderId: orderId,
+                orderLineItemId: orderLineItemId,
+                orderDraftSessionUuid: oro_order_draft_session_uuid(),
+            }),
+            'attr': {
+                'id': form.vars.id,
+                class: 'draft-form'
+            }
+        }) }}
+
+        <table class="grid grid-main-container">
+            <tbody class="grid-body fields-row">
+                <tr id="{{ relatedDraftRow }}" class="grid-row grid-row-update">
+                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-productSku grid-body-cell-update">
+                        {%- if orderLineItem.isFreeForm -%}
+                            {{ productSkuWidget|raw }}
+                        {%- else -%}
+                            {{ orderLineItem.product.sku ?? orderLineItem.productSku }}
+                        {%- endif -%}
+                    </td>
+                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-product grid-body-cell-update">
+                        <div class="order-line-items">
+                            <div class="order-line-items__product-row">
+                                {% if orderLineItem.product %}
+                                    {% include '@OroAttachment/Twig/picture.html.twig' with {
+                                        sources: product_filtered_picture_sources(oro_product_get_main_image(orderLineItem.product), 'product_small'),
+                                        img_attrs: { class: 'thumbnail cover-img', alt: orderLineItem.product.defaultName, width: 44, height: 44 },
+                                        picture_attrs: { class: 'product-image' }
+                                    } %}
+                                {% endif %}
+                                <div class="product-select-container">
+                                    {%- if orderLineItem.isFreeForm -%}
+                                        {{ freeFormProductWidget|raw }}
+                                    {%- else -%}
+                                        {{ productWidget|raw }}
+                                    {%- endif -%}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-quantity grid-body-cell-update">
+                        <div class="quantity-unit-row">
+                            {{ quantityWidget|raw }}
+                            {{ productUnitWidget|raw }}
+                        </div>
+                    </td>
+                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-price grid-body-cell-update" data-page-component-view="oropricing/js/app/views/line-item-product-prices-view">
+                        {{ priceWidget|raw }}
+
+                        {{ priceTypeWidget|raw }}
+                    </td>
+                    <td class="date-cell grid-cell grid-body-cell grid-body-cell-shipBy grid-body-cell-update">
+                        {{ shipByWidget|raw }}
+                    </td>
+                    {{ extraColumnsPlaceholder|raw }}
+                    <td class="action-cell grid-cell grid-body-cell grid-body-cell-update">
+                        {% set deleteUrl = path('oro_order_line_item_draft_delete', {
+                            'orderId': orderId,
+                            'orderLineItemId': orderLineItemId,
+                            'orderDraftSessionUuid': oro_order_draft_session_uuid(),
+                        }) %}
+                        <button type="button"
+                                class="action btn btn-icon btn-light mode-icon-only"
+                                data-role="delete-line-item"
+                                data-delete-url="{{ deleteUrl }}"
+                                title="{{ 'oro.grid.action.delete'|trans }}">
+                            <span class="icon fa-trash hide-text" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                </tr>
+                <tr class="grid-row grid-row-update-form-validation">
+                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-productSku grid-body-cell-update"></td>
+                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-product grid-body-cell-update fields-row-error" colspan="6">
+                        {%- if orderLineItem.isFreeForm -%}
+                            {{ productSkuErrors|raw }}
+                        {%- endif -%}
+
+                        {%- if orderLineItem.isFreeForm -%}
+                            {{ freeFormProductErrors|raw }}
+                        {%- else -%}
+                            {{ productErrors|raw }}
+                        {%- endif -%}
+
+                        {{ quantityErrors|raw }}
+                        {{ productUnitErrors|raw }}
+                        {{ priceErrors|raw }}
+                        {{ priceTypeErrors|raw }}
+                        {{ shipByErrors|raw }}
+                    </td>
+                </tr>
+                <tr class="grid-row grid-row-update-form">
+                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-productSku grid-body--cell-update-form"></td>
+                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-update-form" colspan="5">
+                        <div class="grid"
+                            data-role="order-line-item-draft-update-form-container"
+                        >
+                            <div class="grid-col-12">
+                                {% set freeFromValue = orderLineItem.isFreeForm ? '1' : '0' %}
+                                <a data-role="select-order-line-item-draft"
+                                data-draft-free-form="{{ freeFromValue }}"
+                                href="#">{{
+                                    orderLineItem.isFreeForm
+                                    ? 'oro.order.orderlineitem.select.product'|trans
+                                    : 'oro.order.orderlineitem.select.free_form'|trans
+                                      }}</a>
+                            </div>
+
+                            <div class="grid grid-col-12">
+                                {% if form.vars.errors|length > 0 %}
+                                    <div class="grid-col-12 alert alert-error" role="alert">
+                                        {{ form_errors(form) }}
+                                    </div>
+                                {% endif %}
+
+                                {% if kitItemLineItemsWidget is defined %}
+                                    <div class="grid-col-12 order-line-item-kit-item-line-items">
+                                        {{ kitItemLineItemsWidget|raw }}
+                                        {{ kitItemLineItemsErrors|raw }}
+                                    </div>
+                                {% endif %}
+
+                                {{ isFreeFormField|raw }}
+
+                                <div class="grid-row-update-form-extra-fields grid-col-12">
+                                    {{ extraFields|raw }}
+                                </div>
+
+                                <div class="grid-col-12 order-line-item-draft-update-calculations">
+                                    <div class="order-line-item-draft-update-calculations__comments">
+                                        {{ commentWidget|raw }}
+                                        {{ commentErrors|raw }}
+                                    </div>
+
+                                    {% set listenFieldsIds = [
+                                        form.quantity.vars.id,
+                                        form.productUnit.vars.id,
+                                        form.price.value.vars.id
+                                    ] %}
+
+                                    {% if form.freeFormTaxCode is defined %}
+                                        {% set listenFieldsIds = listenFieldsIds|merge([form.freeFormTaxCode.vars.id]) %}
+                                    {% endif %}
+
+                                    <div class="order-line-item-draft-update-calculations__discounts-and-taxes collapse"
+                                        id="{{'line-item-' ~ orderLineItemId ~ '-collapse'}}"
+                                        data-page-component-view="oroorder/js/app/views/order-line-item-draft-discounts-taxes-view"
+                                        data-page-component-options="{{ {
+                                            'listenFieldsIds': listenFieldsIds,
+                                            'refreshOnOpen': isDrySubmit|default(false),
+                                            'updateRouteName': 'oro_order_line_item_draft_calculate_taxes_and_discounts',
+                                            'updateRouteParams': {
+                                                orderId: orderId,
+                                                orderLineItemId: orderLineItemId,
+                                                orderDraftSessionUuid: oro_order_draft_session_uuid(),
+                                            }
+                                        }|json_encode }}"
+                                    >
+                                        <div class="order-line-item-draft-update-calculations__taxes" data-html-response="lineItemTaxesHtml">
+                                            {{ orderMacros.renderTaxes(lineItemTaxes|default({})) }}
+                                        </div>
+                                        <div class="order-line-item-draft-update-calculations__discounts" data-html-response="lineItemDiscountsHtml">
+                                            {{ orderMacros.renderDiscounts(lineItemDiscounts|default({})) }}
+                                        </div>
+                                    </div>
+                                    <div class="order-line-item-draft-update-calculations__actions">
+                                        <button
+                                            type="button"
+                                            class="btn btn-link btn--no-x-offset order-line-item-draft-update-calculations__trigger collapsed"
+                                            data-toggle="collapse"
+                                            data-target="{{ '#line-item-' ~ orderLineItemId ~ '-collapse' }}"
+                                            data-collapsed-text="{{ 'oro.order.orderlineitem.tax_discount_btn_view'|trans }}"
+                                            data-expanded-text="{{ 'oro.order.orderlineitem.tax_discount_btn_hide'|trans }}"
+                                            >
+                                            <span data-text>{{ 'oro.order.orderlineitem.tax_discount_btn_view'|trans }}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="draft-form__actions grid-col-12">
+                                    <div class="draft-form__form-actions widget-actions">
+                                        <button type="submit"
+                                                class="btn btn-primary"
+                                                data-role="submit"
+                                        >{{ 'oro.order.orderlineitem.draft_update_form.save.label'|trans }}</button>
+                                        <button type="reset"
+                                                class="btn action-button"
+                                                data-role="discard"
+                                        >
+                                            <span class="fa-close hide-text" aria-hidden="true"></span>
+                                            {{ 'oro.order.orderlineitem.draft_update_form.cancel.label'|trans }}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {{ oro_form_js_validation(form) }}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="action-cell grid-cell grid-body-cell grid-body-cell-update-form"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        {{ form_end(form) }}
+
+    </div>
+</div>

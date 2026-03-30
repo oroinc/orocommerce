@@ -1,4 +1,7 @@
 services:
+    oro_promotion.form.data_transformer.applied_coupon_collection:
+        class: Oro\Bundle\PromotionBundle\Form\DataTransformer\AppliedCouponCollectionTransformer
+
     oro_promotion.form.type.coupon:
         class: 'Oro\Bundle\PromotionBundle\Form\Type\CouponType'
         tags:
@@ -23,6 +26,8 @@ services:
 
     oro_promotion.form.type.applied_coupon_collection:
         class: Oro\Bundle\PromotionBundle\Form\Type\AppliedCouponCollectionType
+        arguments:
+            - '@oro_promotion.form.data_transformer.applied_coupon_collection'
         tags:
             - { name: form.type, alias: oro_promotion_applied_coupon_collection }
 

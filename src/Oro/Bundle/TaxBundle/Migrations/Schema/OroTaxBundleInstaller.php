@@ -22,7 +22,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_10';
+        return 'v7_0_0_1';
     }
 
     #[\Override]
@@ -47,6 +47,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
         $this->addOroProductTaxCodeForeignKeys($schema);
 
         $this->addCustomerExtendFields($schema);
+        $this->addOrderLineItemExtendFields($schema);
     }
 
     /**
@@ -374,6 +375,37 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                     'is_visible' => DatagridScope::IS_VISIBLE_FALSE
                 ],
                 'form' => [
+                    'is_enabled' => false
+                ],
+                'view' => ['is_displayable' => false],
+                'merge' => ['display' => true],
+                'dataaudit' => ['auditable' => true],
+                'importexport' => ['excluded' => true],
+            ]
+        );
+    }
+
+    private function addOrderLineItemExtendFields(Schema $schema): void
+    {
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            'oro_order_line_item',
+            'freeFormTaxCode',
+            'oro_tax_product_tax_code',
+            'id',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'entity' => ['label' => 'oro.order.orderlineitem.free_form_tax_code.label'],
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'nullable' => true,
+                ],
+                'datagrid' => [
+                    'is_visible' => DatagridScope::IS_VISIBLE_FALSE
+                ],
+                'form' => [
+                    // The field is added to the form via OrderLineItemDraftTypeTaxExtension.
                     'is_enabled' => false
                 ],
                 'view' => ['is_displayable' => false],

@@ -11,7 +11,9 @@ Feature: Existing Order with Product Kits Validation - with Different Min Max Qu
     And click edit "order1" in grid
 
   Scenario: Check the kit item line items with different min/max quantity
-    Given "Order Form" must contains values:
+    Given I click "Line Items"
+    And I click on the first "Edit Line Item Button"
+    And "Order Form" must contains values:
       | Quantity                | 1                                     |
       | Price                   | 12.3400                               |
       | ProductKitItem1Product  | simple-product-03 - Simple Product 03 |
@@ -25,11 +27,10 @@ Feature: Existing Order with Product Kits Validation - with Different Min Max Qu
     When fill "Order Form" with:
       | ProductKitItem1Quantity | 5  |
       | ProductKitItem2Quantity | 16 |
-    And I save form
-    And I click "Save" in modal window
+    And I click on the first "Order Edit Save Changes"
     Then I should see "Order Form" validation errors:
-      | ProductKitItem1Quantity | The quantity should be between 6 and 9   |
-      | ProductKitItem2Quantity | The quantity should be between 11 and 15 |
+      | ProductKitItem1Quantity | The kit item quantity should be between 6 and 9.   |
+      | ProductKitItem2Quantity | The kit item quantity should be between 11 and 15. |
 
   Scenario: Change the kit item line items with different min/max quantity
     When fill "Order Form" with:
@@ -50,6 +51,7 @@ Feature: Existing Order with Product Kits Validation - with Different Min Max Qu
       | ProductKitItem2Product  | simple-product-02 - Simple Product 02 |
       | ProductKitItem2Quantity | 12                                    |
       | ProductKitItem2Price    | 2.47                                  |
+    And I click on the first "Order Edit Save Changes"
     When I save form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message

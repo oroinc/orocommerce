@@ -1,0 +1,57 @@
+method: getTax
+reference: free_form_order_without_tax_code
+configuration: { use_as_base_by_default: destination }
+databaseBefore:
+    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
+        us_al_billing_address:
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        free_form_order_without_tax_code:
+            poNumber: free_form_order_002
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
+            currency: USD
+            billingAddress: '@us_al_billing_address'
+            shippingAddress: '@us_al_billing_address'
+            __calls:
+                - addLineItem: ['@free_form_line_item_no_tax']
+    'Oro\Bundle\CurrencyBundle\Entity\Price':
+        usd_price_30.00:
+            value: 30.00
+            currency: USD
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
+        free_form_line_item_no_tax:
+            freeFormProduct: 'Product Without Tax Code'
+            productSku: 'NO-TAX-SKU'
+            quantity: 5
+            price: '@usd_price_30.00'
+            productUnit: { class: 'Oro\Bundle\ProductBundle\Entity\ProductUnit', query: { code: 'liter' } }
+            __calls:
+                - addOrder: ['@free_form_order_without_tax_code']
+databaseBeforeSecondPart: []
+disableTaxCalculation: false
+expectedResult:
+    total:
+        includingTax: '150'     # No tax applied
+        excludingTax: '150'     # 30 * 5
+        taxAmount: '0'
+        adjustment: '0'
+        currency: 'USD'
+    items:
+        -
+            row:
+                includingTax: '150'
+                excludingTax: '150'
+                taxAmount: '0'
+                adjustment: '0'
+                currency: 'USD'
+            unit:
+                includingTax: '30'
+                excludingTax: '30'
+                taxAmount: '0'
+                adjustment: '0'
+                currency: 'USD'
+            taxes: []
+    taxes: []
+databaseAfter: []
+

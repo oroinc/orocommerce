@@ -45,7 +45,7 @@ class OroOrderBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v7_0_0_1';
+        return 'v7_0_0_2';
     }
 
     #[\Override]
@@ -173,6 +173,8 @@ class OroOrderBundleInstaller implements
         $table->addColumn('source_entity_id', 'integer', ['notnull' => false]);
         $table->addColumn('source_entity_identifier', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('is_external', 'boolean', ['default' => false]);
+        $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
+        $table->addColumn('draft_source_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'oro_order_created_at_index');
         $table->addUniqueIndex(['identifier'], 'uniq_oro_order_identifier');
@@ -294,6 +296,9 @@ class OroOrderBundleInstaller implements
             'comment' => '(DC2Type:money)'
         ]);
         $table->addColumn('checksum', 'string', ['length' => 40, 'notnull' => true, 'default' => '']);
+        $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
+        $table->addColumn('draft_source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('draft_delete', 'boolean', ['notnull' => true, 'default' => false]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
@@ -400,6 +405,12 @@ class OroOrderBundleInstaller implements
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+        $table->addForeignKeyConstraint(
+            $table,
+            ['draft_source_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
     }
 
     /**
@@ -457,6 +468,12 @@ class OroOrderBundleInstaller implements
             ['parent_product_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $table,
+            ['draft_source_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 

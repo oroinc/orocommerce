@@ -16,13 +16,12 @@ Feature: Allowed inventory statuses configuration
   Scenario: Check product availability for the Order/Quote in the select dropdown and on hamburger grid
     Given I go to Sales/Orders
     And click "Create Order"
-    And click "Add Product"
-    Then I should see the following options for "Product" select in form "Order Form":
+    Then I should see the following options for "Product" select in form "Order Edit Add Line Item Form":
       | SKU1 - Product1 |
       | SKU2 - Product2 |
       | SKU3 - Product3 |
-    When I open select entity popup for field "Product" in form "Order Form"
-    Then I should see following grid:
+    When I open select entity popup for field "Product" in form "Order Edit Add Line Item Form"
+    Then I should see following "SelectProductsGrid" grid:
       | SKU  | Name     | Inventory Status |
       | SKU3 | Product3 | In Stock         |
       | SKU2 | Product2 | In Stock         |
@@ -89,19 +88,18 @@ Feature: Allowed inventory statuses configuration
     Then I should see "Record has been successfully updated" flash message
     And I go to Sales/Orders
     When click "Create Order"
-    And click "Add Product"
-    Then I should see the following options for "Product" select in form "Order Form":
+    Then I should see the following options for "Product" select in form "Order Edit Add Line Item Form":
       | SKU2 - Product2 |
       | SKU3 - Product3 |
-    And I should not see the following options for "Product" select in form "Order Form":
+    And I should not see the following options for "Product" select in form "Order Edit Add Line Item Form":
       | SKU1 - Product1 |
-    When I open select entity popup for field "Product" in form "Order Form"
-    Then I should see following grid:
+    When I open select entity popup for field "Product" in form "Order Edit Add Line Item Form"
+    Then I should see following "SelectProductsGrid" grid:
       | SKU  | Name     | Inventory Status |
       | SKU3 | Product3 | In Stock         |
       | SKU2 | Product2 | In Stock         |
-    And there are 2 records in grid
-    And click on SKU2 in grid
+    And number of records in "SelectProductsGrid" should be 2
+    And click on SKU2 in grid "SelectProductsGrid"
     And click "Cancel"
 
     And go to Sales/Quotes
@@ -288,8 +286,8 @@ Feature: Allowed inventory statuses configuration
     And I go to System/Configuration
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     And I fill "Shopping List Configuration Form" with:
-      | Enable Save For Later Use default                            | false |
-      | Enable Save For Later                                        | false |
+      | Enable Save For Later Use default | false |
+      | Enable Save For Later             | false |
     And I save setting
     Then I should see "Configuration saved" flash message
 

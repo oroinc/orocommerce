@@ -11,7 +11,9 @@ Feature: Existing Order with Product Kits Validation - with Extra Kit Item
     And click edit "order1" in grid
 
   Scenario: Check the line item with an extra mandatory kit item
-    Given "Order Form" must contains values:
+    Given I click "Line Items"
+    And I click on the first "Edit Line Item Button"
+    And "Order Form" must contains values:
       | Quantity                | 1                                     |
       | Price                   | 12.3400                               |
       | ProductKitItem1Product  | simple-product-03 - Simple Product 03 |
@@ -37,19 +39,23 @@ Feature: Existing Order with Product Kits Validation - with Extra Kit Item
   Scenario: Check the min/max quantity validation error for an extra mandatory kit item
     When fill "Order Form" with:
       | ProductKitItem3Quantity | 4 |
-    And I save form
-    And I click "Save" in modal window
+    And I click on the first "Order Edit Save Changes"
     Then I should see "Order Form" validation errors:
-      | ProductKitItem3Quantity | The quantity should be between 1 and 3 |
+      | ProductKitItem3Quantity | The kit item quantity should be between 1 and 3. |
 
   Scenario: Change the line item with an extra mandatory kit item
     When fill "Order Form" with:
       | Quantity                | 2                                     |
       | ProductKitItem1Quantity | 2                                     |
+    And fill "Order Form" with:
       | ProductKitItem1Price    | 37.56                                 |
+    And fill "Order Form" with:
       | ProductKitItem2Product  | simple-product-02 - Simple Product 02 |
+    And fill "Order Form" with:
       | ProductKitItem2Quantity | 3                                     |
+    And fill "Order Form" with:
       | ProductKitItem3Quantity | 3                                     |
+    And fill "Order Form" with:
       | ProductKitItem3Price    | 46.67                                 |
     And I click "Order Form Line Item 1 Price Overridden"
     And I click "Reset price"
@@ -65,18 +71,23 @@ Feature: Existing Order with Product Kits Validation - with Extra Kit Item
       | ProductKitItem2Price    | 2.47                                  |
       | ProductKitItem3Quantity | 3                                     |
       | ProductKitItem3Price    | 46.67                                 |
+    And I click on the first "Order Edit Save Changes"
     When I save form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
 
   Scenario: Remove line item
-    When I click on "Order Form Line Item 1 Remove"
+    Given I click "Line Items"
+    When I click delete "product-kit-01" in grid
+    And I click "Yes, Delete" in confirmation dialogue
     And I save form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
 
   Scenario: Check the line item with an extra optional kit item
-    Given "Order Form" must contains values:
+    Given I click "Line Items"
+    And I click on the first "Edit Line Item Button"
+    And "Order Form" must contains values:
       | Quantity                | 1                                     |
       | Price                   | 12.3400                               |
       | ProductKitItem1Product  | simple-product-03 - Simple Product 03 |
@@ -102,19 +113,23 @@ Feature: Existing Order with Product Kits Validation - with Extra Kit Item
   Scenario: Check the min/max quantity validation error for an extra optional kit item
     When fill "Order Form" with:
       | ProductKitItem3Quantity | 4 |
-    And I save form
-    And I click "Save" in modal window
+    And I click on the first "Order Edit Save Changes"
     Then I should see "Order Form" validation errors:
-      | ProductKitItem3Quantity | The quantity should be between 1 and 3 |
+      | ProductKitItem3Quantity | The kit item quantity should be between 1 and 3. |
 
   Scenario: Change the line item with an extra optional kit item
     When fill "Order Form" with:
       | Quantity                | 2                                     |
       | ProductKitItem1Quantity | 2                                     |
+    And fill "Order Form" with:
       | ProductKitItem1Price    | 37.56                                 |
+    And fill "Order Form" with:
       | ProductKitItem2Product  | simple-product-02 - Simple Product 02 |
+    And fill "Order Form" with:
       | ProductKitItem2Quantity | 3                                     |
+    And fill "Order Form" with:
       | ProductKitItem3Quantity | 3                                     |
+    And fill "Order Form" with:
       | ProductKitItem3Price    | 46.67                                 |
     And I click "Order Form Line Item 1 Price Overridden"
     And I click "Reset price"
@@ -130,15 +145,21 @@ Feature: Existing Order with Product Kits Validation - with Extra Kit Item
       | ProductKitItem2Price    | 2.47                                  |
       | ProductKitItem3Quantity | 3                                     |
       | ProductKitItem3Price    | 46.67                                 |
+    And I click on the first "Order Edit Save Changes"
     When I save form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
 
   Scenario: Remove the extra optional kit item
+    Given I click "Line Items"
+    And I click on the first "Edit Line Item Button"
     When I clear "ProductKitItem3Product" field in form "Order Form"
+    And I click on the first "Order Edit Save Changes"
     And I save form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
+    And I click "Line Items"
+    And I click on the first "Edit Line Item Button"
     And I should see "Optional Item" in the "Order Form Line Item 1 Kit Item 1 Label" element
     And I should see "Mandatory Item *" in the "Order Form Line Item 1 Kit Item 2 Label" element
     And I should not see a "Order Form Line Item 1 Kit Item 3 Label" element

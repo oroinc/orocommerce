@@ -1,0 +1,36 @@
+{%- set isFreeFormProduct = record.getValue('productName') is empty and record.getValue('freeFormProduct') is not empty %}
+{%- if isFreeFormProduct %}
+    {{ record.getValue('freeFormProduct') }}
+{%- else %}
+    {%- set entity = record.getRootEntity() %}
+    {%- set kitItemLineItems = entity.kitItemLineItems %}
+    {%- set notes = record.getValue('comment')|trim %}
+
+    <div class="order-line-items">
+        <div class="order-line-items__product-row">
+            {%- set productImageMain = record.getValue('productImageMain')|default(record.getValue('productImageListing')) %}
+            {%- set productImageListing = record.getValue('productImageListing')|default(productImageMain) %}
+            {%- set pictureSources = product_filtered_picture_sources(productImageMain, 'product_original') %}
+            {%- include '@OroAttachment/Twig/picture.html.twig' with {
+                sources: product_filtered_picture_sources(productImageListing, 'product_small'),
+                img_attrs: { class: 'thumbnail cover-img', alt: record.getValue('productName'), width: 44, height: 44 },
+                picture_attrs: { class: 'product-image' }
+            } %}
+            <span>
+                {{ record.getValue('productName') }}
+            </span>
+        </div>
+        {%- if kitItemLineItems|length or notes -%}
+        <div class="order-line-items__row">
+            {% if kitItemLineItems|length %}
+                {%- include '@OroOrder/Order/Datagrid/kitConfiguration.html.twig' -%}
+            {%- endif -%}
+            {%- if notes -%}
+                <div class="notes">
+                    {{ notes }}
+                </div>
+            {%- endif -%}
+        </div>
+        {%- endif -%}
+    </div>
+{%- endif %}

@@ -20,7 +20,7 @@ Feature: Promotions with coupons on Order page
     When click "Apply" in modal window
     Then I should see next rows in "Promotions" table
       | Code   | Promotion                    | Type            | Status | Discount |
-      | test-1 | Line Item Discount Promotion | Order Line Item | Active |  -$10.00 |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$10.00  |
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount  |
       | Subtotal | $50.00  |
@@ -52,9 +52,9 @@ Feature: Promotions with coupons on Order page
     When I save form
     And agree that shipping cost may have changed
     Then I see next subtotals for "Backend Order":
-      | Subtotal | Amount  |
-      | Subtotal | $50.00  |
-      | Total    | $50.00  |
+      | Subtotal | Amount |
+      | Subtotal | $50.00 |
+      | Total    | $50.00 |
 
   Scenario: Coupon applying on order view page
     When go to Sales / Orders
@@ -71,7 +71,7 @@ Feature: Promotions with coupons on Order page
     When click "Apply" in modal window
     Then I should see next rows in "Promotions" table
       | Code   | Promotion                    | Type            | Status | Discount |
-      | test-1 | Line Item Discount Promotion | Order Line Item | Active |  -$10.00 |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$10.00  |
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount  |
       | Subtotal | $50.00  |
@@ -123,7 +123,9 @@ Feature: Promotions with coupons on Order page
       | Total    | $40.00  |
 
   Scenario: If Line item was deleted from order, applied Line Item promotion should be deleted from order as well
-    When I click "Remove" on row "AA1" in "Backend Order Line Items"
+    When I click "Line Items"
+    And I click delete "Product1" in grid
+    And I click "Yes, Delete" in confirmation dialogue
     Then I should see no records in "Promotions" table
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount |
@@ -140,8 +142,11 @@ Feature: Promotions with coupons on Order page
       | Subtotal | $50.00  |
       | Discount | -$10.00 |
       | Total    | $40.00  |
-    When I fill "Order Form" with:
+    When I click Edit "AA1" in grid
+    And fill "Order Form" with:
       | Product | XX1 |
+      | Price   | 0   |
+    And I click on "Order Edit Save Changes"
     Then I should see no records in "Promotions" table
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount |
@@ -150,12 +155,14 @@ Feature: Promotions with coupons on Order page
 
   Scenario: Promotion is applied, Order was saved. Promotion was deleted, order promotions should not be changed
     Given I go to Marketing / Promotions / Promotions
-    And click delete Line Item Discount Promotion in grid
-    And I confirm deletion
-    And go to Sales / Orders
+    When click delete Line Item Discount Promotion in grid
+    Then I confirm deletion
+    When go to Sales / Orders
     And click edit SimpleOrder in grid
+    And I click Edit "AA1" in grid
     And fill "Order Form" with:
       | Quantity | 2 |
+    And I click on "Order Edit Save Changes"
     Then I should see next rows in "Promotions" table
       | Code   | Promotion                    | Type            | Status | Discount |
       | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$2.00   |

@@ -18,6 +18,7 @@ class AjaxOrderControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
+        $this->client->followRedirects();
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
@@ -30,7 +31,7 @@ class AjaxOrderControllerTest extends WebTestCase
     private function assertTotal(Crawler $crawler, ?int $id = null): void
     {
         $form = $crawler->selectButton('Save and Close')->form();
-        $form->getFormNode()->setAttribute('action', $this->getUrl('oro_order_entry_point', ['id' => $id]));
+        $form->getFormNode()->setAttribute('action', $this->getUrl('oro_order_entry_point', ['id' => (int)$id]));
 
         $this->client->submit($form);
 

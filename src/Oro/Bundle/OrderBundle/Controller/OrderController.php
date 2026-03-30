@@ -12,6 +12,7 @@ use Oro\Bundle\FormBundle\Provider\FormTemplateDataProviderInterface;
 use Oro\Bundle\FormBundle\Provider\SaveAndReturnActionFormTemplateDataProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\OrderBundle\Form\Handler\OrderFormHandler;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\OrderBundle\Form\Type\SubOrderType;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
@@ -72,7 +73,7 @@ class OrderController extends AbstractController
     }
 
     #[Route(path: '/info/{id}', name: 'oro_order_info', requirements: ['id' => '\d+'])]
-    #[Template('@OroOrder/Order/info.html.twig')]
+    #[Template('@OroOrder/Order/widget/info.html.twig')]
     #[AclAncestor('oro_order_view')]
     public function infoAction(Order $order): array
     {
@@ -101,7 +102,13 @@ class OrderController extends AbstractController
     /**
      * Create order form
      */
-    #[Route(path: '/create', name: 'oro_order_create')]
+    #[Route(
+        path: '/create/{orderDraftSessionUuid?}',
+        name: 'oro_order_create',
+        requirements: [
+            'orderDraftSessionUuid' => '%oro_order.draft_session.uuid_regex%',
+        ]
+    )]
     #[Template('@OroOrder/Order/update.html.twig')]
     #[Acl(id: 'oro_order_create', type: 'entity', class: Order::class, permission: 'CREATE')]
     public function createAction(Request $request): array|RedirectResponse
@@ -115,9 +122,12 @@ class OrderController extends AbstractController
      * Create order form for customer
      */
     #[Route(
-        path: '/create/customer/{customer}',
+        path: '/create/customer/{customer}/{orderDraftSessionUuid?}',
         name: 'oro_order_create_for_customer',
-        requirements: ['customer' => '\d+']
+        requirements: [
+            'customer' => '\d+',
+            'orderDraftSessionUuid' => '%oro_order.draft_session.uuid_regex%',
+        ]
     )]
     #[Template('@OroOrder/Order/update.html.twig')]
     #[AclAncestor('oro_order_create')]
@@ -156,9 +166,12 @@ class OrderController extends AbstractController
      * Create order form with defined customer user
      */
     #[Route(
-        path: '/create/customer-user/{customerUser}',
+        path: '/create/customer-user/{customerUser}/{orderDraftSessionUuid?}',
         name: 'oro_order_create_for_customer_user',
-        requirements: ['customerUser' => '\d+']
+        requirements: [
+            'customerUser' => '\d+',
+            'orderDraftSessionUuid' => '%oro_order.draft_session.uuid_regex%',
+        ]
     )]
     #[Template('@OroOrder/Order/update.html.twig')]
     #[AclAncestor('oro_order_create')]
@@ -197,7 +210,14 @@ class OrderController extends AbstractController
     /**
      * Edit order form
      */
-    #[Route(path: '/update/{id}', name: 'oro_order_update', requirements: ['id' => '\d+'])]
+    #[Route(
+        path: '/update/{id}/{orderDraftSessionUuid?}',
+        name: 'oro_order_update',
+        requirements: [
+            'id' => '\d+',
+            'orderDraftSessionUuid' => '%oro_order.draft_session.uuid_regex%'
+        ]
+    )]
     #[Template('@OroOrder/Order/update.html.twig')]
     #[Acl(id: 'oro_order_update', type: 'entity', class: Order::class, permission: 'EDIT')]
     public function updateAction(
@@ -216,7 +236,14 @@ class OrderController extends AbstractController
         return $this->update($order, $request);
     }
 
-    #[Route(path: '/update-suborder/{id}', name: 'oro_order_suborder_update', requirements: ['id' => '\d+'])]
+    #[Route(
+        path: '/update-suborder/{id}/{orderDraftSessionUuid?}',
+        name: 'oro_order_suborder_update',
+        requirements: [
+            'id' => '\d+',
+            'orderDraftSessionUuid' => '%oro_order.draft_session.uuid_regex%',
+        ]
+    )]
     #[Template('@OroOrder/Order/updateSubOrder.html.twig')]
     #[Acl(id: 'oro_order_update', type: 'entity', class: Order::class, permission: 'EDIT')]
     public function updateSubOrderAction(
@@ -231,7 +258,14 @@ class OrderController extends AbstractController
         return $this->update($order, $request, null, SubOrderType::class);
     }
 
-    #[Route(path: '/reorder/{id}', name: 'oro_order_reorder', requirements: ['id' => '\d+'])]
+    #[Route(
+        path: '/reorder/{id}/{orderDraftSessionUuid?}',
+        name: 'oro_order_reorder',
+        requirements: [
+            'id' => '\d+',
+            'orderDraftSessionUuid' => '%oro_order.draft_session.uuid_regex%',
+        ]
+    )]
     #[Template('@OroOrder/Order/reorder.html.twig')]
     #[AclAncestor('oro_order_view')]
     public function reorderAction(
@@ -287,7 +321,7 @@ class OrderController extends AbstractController
         $form = $this->createForm(
             $formType,
             $order,
-            ['validation_groups' => $this->getValidationGroups($order)]
+            ['validation_groups' => $this->getValidationGroups($order), 'draft_session_sync' => true]
         );
 
         $formTemplateDataProviderComposite = $this->container->get(FormTemplateDataProviderComposite::class)
@@ -318,7 +352,7 @@ class OrderController extends AbstractController
             $form,
             $this->container->get(TranslatorInterface::class)->trans('oro.order.controller.order.saved.message'),
             $request,
-            null,
+            $this->container->get(OrderFormHandler::class),
             $formTemplateDataProviderComposite
         );
     }
@@ -345,6 +379,7 @@ class OrderController extends AbstractController
             FormTemplateDataProviderComposite::class,
             'doctrine' => ManagerRegistry::class,
             'oro_order.duplicator.order_duplicator' => OrderDuplicator::class,
+            OrderFormHandler::class,
         ]);
     }
 }

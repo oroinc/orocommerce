@@ -21,19 +21,18 @@ Feature: Order Country and region selectors should contain translated values
   Scenario: Create Order - Country/region selector should contain translated values
     Given I go to Sales / Orders
     When I click "Create Order"
-    And click "Add Product"
     And fill "Order Form" with:
-      | Customer                      | first customer      |
-      | Customer User                 | Amanda Cole         |
-      | Billing Address               | Enter other address |
-      | Billing Address Country       | GermanyZulu         |
-      | Billing Address State         | BerlinZulu          |
-      | Billing Address Street        | someStreet          |
-      | Billing Address City          | someCity            |
-      | Billing Address Postal Code   | somePostalCode      |
-      | Billing Address First name    | someFirstName       |
-      | Billing Address Last name     | someLastName        |
-      | Billing Address Organization  | someOrganization    |
+      | Customer                     | first customer      |
+      | Customer User                | Amanda Cole         |
+      | Billing Address              | Enter other address |
+      | Billing Address Country      | GermanyZulu         |
+      | Billing Address State        | BerlinZulu          |
+      | Billing Address Street       | someStreet          |
+      | Billing Address City         | someCity            |
+      | Billing Address Postal Code  | somePostalCode      |
+      | Billing Address First name   | someFirstName       |
+      | Billing Address Last name    | someLastName        |
+      | Billing Address Organization | someOrganization    |
     And fill "Order Form" with:
       | Shipping Address              | Enter other address |
       | Shipping Address Country      | GermanyZulu         |
@@ -44,9 +43,11 @@ Feature: Order Country and region selectors should contain translated values
       | Shipping Address First name   | someFirstName       |
       | Shipping Address Last name    | someLastName        |
       | Shipping Address Organization | someOrganization    |
-      | Product                       | AA1                 |
-      | Quantity                      | 1                   |
-      | Price                         | 10                  |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | AA1 |
+      | Quantity | 1   |
+      | Price    | 10  |
+    And click "Add Product"
     And I click "Save and Close"
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
@@ -58,15 +59,15 @@ Feature: Order Country and region selectors should contain translated values
     Given I go to Sales / Orders
     When I click Edit SimpleOrder in grid
     And fill "Order Form" with:
-      | Billing Address               | Enter other address |
-      | Billing Address Country       | GermanyZulu         |
-      | Billing Address State         | BerlinZulu          |
-      | Billing Address Street        | someStreet          |
-      | Billing Address City          | someCity            |
-      | Billing Address Postal Code   | somePostalCode      |
-      | Billing Address First name    | someFirstName       |
-      | Billing Address Last name     | someLastName        |
-      | Billing Address Organization  | someOrganization    |
+      | Billing Address              | Enter other address |
+      | Billing Address Country      | GermanyZulu         |
+      | Billing Address State        | BerlinZulu          |
+      | Billing Address Street       | someStreet          |
+      | Billing Address City         | someCity            |
+      | Billing Address Postal Code  | somePostalCode      |
+      | Billing Address First name   | someFirstName       |
+      | Billing Address Last name    | someLastName        |
+      | Billing Address Organization | someOrganization    |
     And fill "Order Form" with:
       | Shipping Address              | Enter other address |
       | Shipping Address Country      | GermanyZulu         |

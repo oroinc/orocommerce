@@ -9,4 +9,12 @@ databaseBefore:
             currency: USD
 databaseBeforeSecondPart: []
 disableTaxCalculation: false
-expectedResult: []
+expectedResult:
+    items: []
+    total:
+        includingTax: '0'
+        excludingTax: '0'
+        taxAmount: '0'
+        adjustment: '0'
+        currency: 'USD'
+    taxes: []

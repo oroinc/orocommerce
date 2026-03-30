@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitPrecisionLabelFormatter;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Twig\ProductUnitExtension;
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
@@ -20,6 +23,7 @@ class ProductUnitExtensionTest extends TestCase
     private UnitValueFormatterInterface&MockObject $valueFormatter;
     private UnitVisibilityInterface&MockObject $unitVisibility;
     private UnitPrecisionLabelFormatter&MockObject $unitPrecisionLabelFormatter;
+    private ProductUnitsProvider&MockObject $productUnitsProvider;
     private ProductUnitExtension $extension;
 
     #[\Override]
@@ -29,12 +33,14 @@ class ProductUnitExtensionTest extends TestCase
         $this->valueFormatter = $this->createMock(UnitValueFormatterInterface::class);
         $this->unitVisibility = $this->createMock(UnitVisibilityInterface::class);
         $this->unitPrecisionLabelFormatter = $this->createMock(UnitPrecisionLabelFormatter::class);
+        $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
 
         $container = self::getContainerBuilder()
             ->add('oro_product.formatter.product_unit_label', $this->labelFormatter)
             ->add('oro_product.formatter.product_unit_value', $this->valueFormatter)
             ->add('oro_product.visibility.unit', $this->unitVisibility)
             ->add(UnitPrecisionLabelFormatter::class, $this->unitPrecisionLabelFormatter)
+            ->add('oro_product.provider.product_units_provider', $this->productUnitsProvider)
             ->getContainer($this);
 
         $this->extension = new ProductUnitExtension($container);
@@ -185,7 +191,8 @@ class ProductUnitExtensionTest extends TestCase
         $precision = 2;
         $expectedResult = 'item (fractional, 2 decimal digits)';
 
-        $this->unitPrecisionLabelFormatter->expects(self::once())
+        $this->unitPrecisionLabelFormatter
+            ->expects(self::once())
             ->method('formatUnitPrecisionLabel')
             ->with($unitCode, $precision)
             ->willReturn($expectedResult);
@@ -198,5 +205,86 @@ class ProductUnitExtensionTest extends TestCase
                 [$unitCode, $precision]
             )
         );
+    }
+
+    public function testFormatUnitPrecisionLabelWithNullUnitCode(): void
+    {
+        $this->unitPrecisionLabelFormatter
+            ->expects(self::never())
+            ->method('formatUnitPrecisionLabel');
+
+        self::assertEquals(
+            '',
+            self::callTwigFunction(
+                $this->extension,
+                'oro_format_product_unit_precision_label',
+                [null, 2]
+            )
+        );
+    }
+
+    public function testGetProductUnitsWithPrecision(): void
+    {
+        $expectedUnits = [
+            'kg' => 3,
+            'item' => 0,
+            'set' => 0,
+            'piece' => 1,
+        ];
+
+        $this->productUnitsProvider
+            ->expects(self::once())
+            ->method('getAvailableProductUnitsWithPrecision')
+            ->willReturn($expectedUnits);
+
+        $result = self::callTwigFunction($this->extension, 'oro_get_product_units_with_precision', []);
+
+        self::assertEquals($expectedUnits, $result);
+    }
+
+    public function testGetProductUnitsWithPrecisionReturnsEmptyArrayWhenNoUnits(): void
+    {
+        $this->productUnitsProvider
+            ->expects(self::once())
+            ->method('getAvailableProductUnitsWithPrecision')
+            ->willReturn([]);
+
+        $result = self::callTwigFunction($this->extension, 'oro_get_product_units_with_precision', []);
+
+        self::assertEquals([], $result);
+    }
+
+    public function testGetProductUnitsWithPrecisionForProduct(): void
+    {
+        $kgUnit = new ProductUnit();
+        $kgUnit->setCode('kg');
+        $kgUnit->setDefaultPrecision(3);
+
+        $itemUnit = new ProductUnit();
+        $itemUnit->setCode('item');
+        $itemUnit->setDefaultPrecision(0);
+
+        $kgPrecision = new ProductUnitPrecision();
+        $kgPrecision
+            ->setUnit($kgUnit)
+            ->setPrecision(2);
+
+        $itemPrecision = new ProductUnitPrecision();
+        $itemPrecision
+            ->setUnit($itemUnit)
+            ->setPrecision(0);
+
+        $product = new Product();
+        $product
+            ->setPrimaryUnitPrecision($kgPrecision)
+            ->addUnitPrecision($itemPrecision);
+
+        $this->productUnitsProvider
+            ->expects(self::never())
+            ->method('getAvailableProductUnitsWithPrecision');
+
+        $result = self::callTwigFunction($this->extension, 'oro_get_product_units_with_precision', [$product]);
+
+        self::assertEquals(['kg' => 2, 'item' => 0], $result);
     }
 }

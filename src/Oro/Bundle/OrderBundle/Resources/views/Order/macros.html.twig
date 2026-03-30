@@ -32,7 +32,7 @@
             >{{ 'oro.order.btn.calculate_shipping'|trans }}</span>
         </div>
         <div class="possible_shipping_methods_form" data-content="possible_shipping_methods_form"></div>
-        {{ form_row(form.calculateShipping) }}
+        {{ form_row(form.calculateShipping, { 'attr': { 'data-skip-entry-point-trigger': 1 } }) }}
         {{ form_row(form.shippingMethod) }}
         {{ form_row(form.shippingMethodType) }}
         {{ form_row(form.estimatedShippingCostAmount) }}
@@ -51,4 +51,117 @@
             {% endfor %}
         {% endif %}
     </div>
+{% endmacro %}
+
+{% macro renderDiscounts(lineItemDiscounts) %}
+    {%- if lineItemDiscounts is not empty and lineItemDiscounts.currency is defined -%}
+        <h6>{{ 'oro.order.table_discounts.title'|trans }}</h6>
+
+        {%- if lineItemDiscounts.rowTotalAfterDiscountIncludingTax is defined -%}
+            <table class="grid grid-main-container table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>{{ 'oro.order.table_discounts.after_disc_incl_tax'|trans }}</th>
+                        <th>{{ 'oro.order.table_discounts.after_disc_excl_tax'|trans }}</th>
+                        <th>{{ 'oro.order.table_discounts.disc_amount'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ 'oro.order.table_discounts.row_total'|trans }}</td>
+                        <td><strong class="font-medium">{{ lineItemDiscounts.rowTotalAfterDiscountIncludingTax|oro_format_currency({'currency': lineItemDiscounts.currency}) }}</strong></td>
+                        <td><strong class="font-medium">{{ lineItemDiscounts.rowTotalAfterDiscountExcludingTax|oro_format_currency({'currency': lineItemDiscounts.currency}) }}</strong></td>
+                        <td><strong class="font-medium">{{ lineItemDiscounts.appliedDiscountsAmount|oro_format_currency({'currency': lineItemDiscounts.currency}) }}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        {%- elseif lineItemDiscounts.rowTotalAfterDiscount is defined -%}
+            <table class="grid grid-main-container table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>{{ 'oro.order.table_discounts.after_discount'|trans }}</th>
+                        <th>{{ 'oro.order.table_discounts.disc_amount'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ 'oro.order.table_discounts.row_total'|trans }}</td>
+                        <td><strong class="font-medium">{{ lineItemDiscounts.rowTotalAfterDiscount|oro_format_currency({'currency': lineItemDiscounts.currency}) }}</strong></td>
+                        <td><strong class="font-medium">{{ lineItemDiscounts.appliedDiscountsAmount|oro_format_currency({'currency': lineItemDiscounts.currency}) }}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        {%- else -%}
+            <table class="grid grid-main-container table">
+                <thead>
+                    <tr>
+                        <th>{{ 'oro.order.table_discounts.description'|trans }}</th>
+                        <th>{{ 'oro.order.table_discounts.applied_discounts'|trans }} ({{ lineItemDiscounts.currency }})</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ 'oro.order.table_discounts.applied_discounts'|trans }}</td>
+                        <td><strong class="font-medium">{{ (lineItemDiscounts.appliedDiscountsAmount|default(0))|oro_format_currency({'currency': lineItemDiscounts.currency}) }}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        {%- endif -%}
+    {%- endif -%}
+{% endmacro %}
+
+{% macro renderTaxes(lineItemTaxes) %}
+    {%- if lineItemTaxes is not empty and lineItemTaxes.unit is not empty and lineItemTaxes.row is not empty -%}
+        <h6>{{ 'oro.order.table_taxes.title'|trans }}</h6>
+
+        <table class="grid grid-main-container table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>{{ 'oro.order.table_taxes.incl_tax'|trans }}</th>
+                    <th>{{ 'oro.order.table_taxes.excl_tax'|trans }}</th>
+                    <th>{{ 'oro.order.table_taxes.tax_amount'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ 'oro.order.table_taxes.unit_price'|trans }}</td>
+                    <td><strong class="font-medium">{{ lineItemTaxes.unit.includingTax|oro_format_currency({'currency': lineItemTaxes.unit.currency|default('')}) }}</strong></td>
+                    <td><strong class="font-medium">{{ lineItemTaxes.unit.excludingTax|oro_format_currency({'currency': lineItemTaxes.unit.currency|default('')}) }}</strong></td>
+                    <td><strong class="font-medium">{{ lineItemTaxes.unit.taxAmount|oro_format_currency({'currency': lineItemTaxes.unit.currency|default('')}) }}</strong></td>
+                </tr>
+                <tr>
+                    <td>{{ 'oro.order.table_taxes.row_total'|trans }}</td>
+                    <td><strong class="font-medium">{{ lineItemTaxes.row.includingTax|oro_format_currency({'currency': lineItemTaxes.row.currency|default('')}) }}</strong></td>
+                    <td><strong class="font-medium">{{ lineItemTaxes.row.excludingTax|oro_format_currency({'currency': lineItemTaxes.row.currency|default('')}) }}</strong></td>
+                    <td><strong class="font-medium">{{ lineItemTaxes.row.taxAmount|oro_format_currency({'currency': lineItemTaxes.row.currency|default('')}) }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        {%- if lineItemTaxes.taxes is defined and lineItemTaxes.taxes|length > 0 -%}
+            <table class="grid grid-main-container table" style="margin-top: 15px;">
+                <thead>
+                    <tr>
+                        <th>{{ 'oro.order.table_taxes.tax'|trans }}</th>
+                        <th>{{ 'oro.order.table_taxes.rate'|trans }}</th>
+                        <th>{{ 'oro.order.table_taxes.taxable_amount'|trans }}</th>
+                        <th>{{ 'oro.order.table_taxes.tax_amount'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {%- for tax in lineItemTaxes.taxes -%}
+                        <tr>
+                            <td>{{ tax.tax|default('') }}</td>
+                            <td>{{ tax.rate|oro_format_percent }}</td>
+                            <td>{{ tax.taxableAmount|oro_format_currency({'currency': tax.currency|default('')}) }}</td>
+                            <td><strong class="font-medium">{{ tax.taxAmount|oro_format_currency({'currency': tax.currency|default('')}) }}</strong></td>
+                        </tr>
+                    {%- endfor -%}
+                </tbody>
+            </table>
+        {%- endif -%}
+    {%- endif -%}
 {% endmacro %}

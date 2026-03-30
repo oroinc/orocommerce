@@ -21,6 +21,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\OrdersCreatedAt\LoadOrd
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\WebsiteTrait;
 
@@ -927,5 +928,151 @@ class OrderRepositoryTest extends WebTestCase
 
         $noParent = $this->repository->findParentOrder($parentOrder->getId());
         self::assertNull($noParent);
+    }
+
+    public function testGetOrderDraftWithRelationsWhenNullDraftSessionUuid(): void
+    {
+        $result = $this->repository->getOrderDraftWithRelations(null);
+
+        self::assertNull($result);
+    }
+
+    public function testGetOrderDraftWithRelationsWhenEmptyDraftSessionUuid(): void
+    {
+        $result = $this->repository->getOrderDraftWithRelations('');
+
+        self::assertNull($result);
+    }
+
+    public function testGetOrderDraftWithRelationsWhenDraftExists(): void
+    {
+        $em = $this->getContainer()->get('doctrine')->getManager();
+
+        // Create an order
+        /** @var Order $sourceOrder */
+        $sourceOrder = $this->getReference(LoadOrders::ORDER_1);
+        $draftSessionUuid = '123e4567-e89b-12d3-a456-426614174000';
+
+        // Create an order draft
+        $orderDraft = new Order();
+        $orderDraft->setDraftSessionUuid($draftSessionUuid);
+        $orderDraft->setDraftSource($sourceOrder);
+        $orderDraft->setOrganization($sourceOrder->getOrganization());
+        $orderDraft->setCurrency('USD');
+        $orderDraft->setPoNumber('DRAFT-PO-001');
+        $orderDraft->setCustomerNotes('Draft notes');
+
+        $em->persist($orderDraft);
+        $em->flush();
+
+        try {
+            // Disable the order_draft filter to find drafts
+            $filterManager = $this->getContainer()
+                ->get('oro_order.draft_session.manager.draft_session_orm_filter_manager');
+            $filterManager->disable();
+
+            $result = $this->repository->getOrderDraftWithRelations($draftSessionUuid);
+
+            self::assertNotNull($result);
+            self::assertInstanceOf(Order::class, $result);
+            self::assertEquals($draftSessionUuid, $result->getDraftSessionUuid());
+            self::assertEquals($sourceOrder->getId(), $result->getDraftSource()->getId());
+            self::assertEquals('DRAFT-PO-001', $result->getPoNumber());
+            self::assertEquals('Draft notes', $result->getCustomerNotes());
+        } finally {
+            // Clean up
+            $filterManager->enable();
+            $em->remove($orderDraft);
+            $em->flush();
+        }
+    }
+
+    public function testGetOrderDraftWithRelationsWhenDraftForNewOrder(): void
+    {
+        $em = $this->getContainer()->get('doctrine')->getManager();
+
+        $draftSessionUuid = '423e4567-e89b-12d3-a456-426614174003';
+
+        // Create a draft for a new order (no draft source)
+        $orderDraft = new Order();
+        $orderDraft->setDraftSessionUuid($draftSessionUuid);
+        $orderDraft->setDraftSource($orderDraft); // Set draft source to itself to indicate it's a draft for a new order
+        $orderDraft->setOrganization($this->getReference(LoadOrganization::ORGANIZATION));
+        $orderDraft->setCurrency('USD');
+        $orderDraft->setPoNumber('NEW-ORDER-DRAFT');
+
+        $em->persist($orderDraft);
+        $em->flush();
+
+        try {
+            $filterManager = $this->getContainer()
+                ->get('oro_order.draft_session.manager.draft_session_orm_filter_manager');
+            $filterManager->disable();
+
+            $result = $this->repository->getOrderDraftWithRelations($draftSessionUuid);
+
+            self::assertNotNull($result);
+            self::assertEquals($draftSessionUuid, $result->getDraftSessionUuid());
+            self::assertEquals('NEW-ORDER-DRAFT', $result->getPoNumber());
+        } finally {
+            $filterManager->enable();
+            $em->remove($orderDraft);
+            $em->flush();
+        }
+    }
+
+    public function testGetOrderDraftWithRelationsWhenDraftDoesNotExist(): void
+    {
+        $nonExistentUuid = '623e4567-e89b-12d3-a456-426614174005';
+
+        $filterManager = $this->getContainer()
+            ->get('oro_order.draft_session.manager.draft_session_orm_filter_manager');
+        $filterManager->disable();
+
+        try {
+            $result = $this->repository->getOrderDraftWithRelations($nonExistentUuid);
+
+            self::assertNull($result);
+        } finally {
+            $filterManager->enable();
+        }
+    }
+
+    public function testGetOrderDraftWithRelationsWhenFilterEnabled(): void
+    {
+        $em = $this->getContainer()->get('doctrine')->getManager();
+
+        /** @var Order $sourceOrder */
+        $sourceOrder = $this->getReference(LoadOrders::ORDER_1);
+        $draftSessionUuid = '723e4567-e89b-12d3-a456-426614174006';
+
+        // Create an order draft
+        $orderDraft = new Order();
+        $orderDraft->setDraftSessionUuid($draftSessionUuid);
+        $orderDraft->setDraftSource($sourceOrder);
+        $orderDraft->setOrganization($sourceOrder->getOrganization());
+        $orderDraft->setCurrency('USD');
+
+        $filterManager = $this->getContainer()
+            ->get('oro_order.draft_session.manager.draft_session_orm_filter_manager');
+        $filterManager->disable();
+
+        $em->persist($orderDraft);
+        $em->flush();
+
+        try {
+            // Enable the filter - drafts should be filtered out
+            $filterManager->enable();
+
+            $result = $this->repository->getOrderDraftWithRelations($draftSessionUuid);
+
+            // With filter enabled, draft should not be found
+            self::assertNull($result);
+        } finally {
+            $filterManager->disable();
+            $em->remove($orderDraft);
+            $em->flush();
+            $filterManager->enable();
+        }
     }
 }

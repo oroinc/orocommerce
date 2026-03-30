@@ -5,8 +5,8 @@
 Feature: Order product with fractional price in different locales
   In order to use correct decimal separator for fractional prices in different locales
   As an Administrator
-    I want to have ability to use fractional prices with appropriate decimal separator for create and edit Order in different locales.
-    All fractional prices should be displayed according selected locale.
+  I want to have ability to use fractional prices with appropriate decimal separator for create and edit Order in different locales.
+  All fractional prices should be displayed according selected locale.
 
   Scenario: Feature Background
     Given I login as administrator
@@ -21,20 +21,23 @@ Feature: Order product with fractional price in different locales
   Scenario: Create order
     When I go to Sales/Orders
     And click "Create Order"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer      | first customer |
       | Customer User | Amanda Cole    |
-      | Product       | PSKU1          |
-      | Quantity      | 500            |
-      | Price         | 12,99          |
-    Then I see next line item taxes for backoffice order:
-      | SKU   | Unit Price Incl Tax | Unit Price Excl Tax | Unit Price Tax Amount | Row Total Incl Tax | Row Total Excl Tax | Row Total Tax Amount |
-      | PSKU1 | 12,99 $             | 12,99 $             | 0,00 $                | 6.495,00 $         | 6.495,00 $         | 0,00 $               |
-    And I see next line item discounts for backoffice order:
-      | SKU   | Row Total Incl Tax | Row Total Excl Tax | Discount |
-      | PSKU1 | 6.495,00 $         | 6.495,00 $         | 0,00 $   |
-
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | PSKU1 |
+      | Quantity | 500   |
+      | Price    | 12,99 |
+    And click "Add Product"
+    And I click edit PSKU1 in grid
+    And I click "View taxes & discounts"
+    Then I see the next line item taxes for backoffice order edit for "PSKU1":
+      |            | Incl Tax   | Excl Tax   | Tax Amount |
+      | Unit Price | 12,99 $    | 12,99 $    | 0,00 $     |
+      | Row Total  | 6.495,00 $ | 6.495,00 $ | 0,00 $     |
+    And I see next line item discounts for backoffice order edit for "PSKU1":
+      |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
+      | Row Total | 6.495,00 $            | 6.495,00 $            | 0,00 $       |
     When I click "Save and Close"
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
@@ -53,16 +56,20 @@ Feature: Order product with fractional price in different locales
 
   Scenario: Edit order
     When I click "Edit"
-    Then "Order Form" must contains values:
-      | Price | 12,9900 |
+    Then I should see following grid:
+      | SKU   | Product   | Quantity | Price   |
+      | PSKU1 | Product 1 | 500 each | 12,99 $ |
 
     When I click "Line Items"
-    Then I see next line item taxes for backoffice order:
-      | SKU   | Unit Price Incl Tax | Unit Price Excl Tax | Unit Price Tax Amount | Row Total Incl Tax | Row Total Excl Tax | Row Total Tax Amount |
-      | PSKU1 | 12,99 $             | 12,99 $             | 0,00 $                | 6.495,00 $         | 6.495,00 $         | 0,00 $               |
-    And I see next line item discounts for backoffice order:
-      | SKU   | Row Total Incl Tax | Row Total Excl Tax | Discount |
-      | PSKU1 | 6.495,00 $         | 6.495,00 $         | 0,00 $   |
+    And I click edit PSKU1 in grid
+    And I click "View taxes & discounts"
+    Then I see the next line item taxes for backoffice order edit for "PSKU1":
+      |            | Incl. Tax  | Excl. Tax  | Tax Amount |
+      | Unit Price | 12,99 $    | 12,99 $    | 0,00 $     |
+      | Row Total  | 6.495,00 $ | 6.495,00 $ | 0,00 $     |
+    And I see next line item discounts for backoffice order edit for "PSKU1":
+      |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
+      | Row Total | 6.495,00 $            | 6.495,00 $            | 0,00 $       |
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount     |
       | Subtotal | 6.495,00 $ |

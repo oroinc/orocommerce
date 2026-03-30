@@ -10,13 +10,12 @@ Feature: Product search in back office select field
     Given I login as administrator
     And I go to Sales / Orders
     And I click "Create Order"
-    And I click "Add Product"
 
   Scenario Outline: Check autocomplete
     When I fill "Order Form" with:
       | Customer      | Customer1   |
       | Customer User | Amanda Cole |
-    Then I should see the following options for "Product" select in form "Order Form" pre-filled with "<Pre-filled Phrase>":
+    Then I should see the following options for "Product" select in form "Order Edit Add Line Item Form" pre-filled with "<Pre-filled Phrase>":
       | <Expected Option> |
 
   Examples:

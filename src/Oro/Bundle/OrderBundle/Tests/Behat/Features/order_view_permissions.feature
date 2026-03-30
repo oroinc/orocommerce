@@ -9,11 +9,12 @@ Feature: Order View Permissions
     Given I login as administrator
     And I go to Sales/Orders
     And I click "Create Order"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer | first customer |
-      | Product  | PSKU1          |
-      | Price    | 50             |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product | PSKU1 |
+      | Price   | 50    |
+    And click "Add Product"
     When I click "Save and Close"
     And agree that shipping cost may have changed
     Then I should see "Order has been saved" flash message
@@ -31,4 +32,4 @@ Feature: Order View Permissions
     And I click "Account Dropdown"
     And I click "Order History"
     And I click "view" on first row in "Past Orders Grid"
-    Then I should see "Order #1"
+    Then I should see "Order #2"

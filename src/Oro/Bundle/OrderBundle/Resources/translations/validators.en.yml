@@ -22,14 +22,31 @@ oro:
             order:
                 changed: 'The discount cannot be moved to another order.'
         orderlineitem:
+            product_sku:
+                max_length: 'The product SKU is too long. It should have {{ limit }} character or less.|The product SKU is too long. It should have {{ limit }} characters or less.'
+            quantity:
+                blank: 'The quantity should not be blank.'
+                invalid_decimal: 'The quantity should be a valid number.'
+                greater_than_zero: 'The quantity should be greater than {{ compared_value }}.'
+            price_type:
+                blank: 'The price type should not be blank.'
+            currency:
+                blank: 'The currency should not be blank.'
+                invalid: 'The currency is not a valid currency.'
+                not_match: 'The specified currency must be equal to "{{ expected_value }}".'
+            free_form_product:
+                max_length: 'The free-form product value is too long. It should have {{ limit }} character or less.|The free-form product value is too long. It should have {{ limit }} characters or less.'
+            shipping_estimate_amount:
+                invalid_decimal: 'The shipping estimate amount should be a valid number.'
+            draft_session_uuid:
+                max_length: 'The draft session UUID is too long. It should have {{ limit }} characters or less.'
+                invalid: 'The draft session UUID is not a valid UUID format.'
             count: 'Please add at least one Line Item'
             product:
                 blank: 'Please choose Product.'
             product_price:
                 blank: 'No matching price found.'
                 not_match: 'The specified price must be equal to {{ expected_value }}.'
-            currency:
-                not_match: 'The specified currency must be equal to "{{ expected_value }}".'
             order:
                 changed: 'Line Item order cannot be changed once set.'
         orderaddress:
@@ -42,6 +59,7 @@ oro:
         orderproductkititemlineitem:
             line_item:
                 changed: 'Line Item of the Product Kit Item Line Item cannot be changed once set.'
+                blank: 'Line Item of the Product Kit Item Line Item should not be blank.'
             product_price:
                 blank: 'No matching price found.'
                 not_match: 'The specified price must be equal to {{ expected_value }}.'
@@ -56,13 +74,20 @@ oro:
                     message: 'Please choose a product'
                 not_enabled:
                     message: 'The selected product is not enabled'
+            product_unit:
+                blank: 'The kit item product unit should not be blank.'
+            product_unit_code:
+                blank: 'The kit item product unit code should not be blank.'
             quantity:
+                invalid_decimal: 'The kit item quantity should be a valid number.'
                 greater_than_zero:
-                    message: 'The quantity should be greater than 0'
+                    message: 'The kit item quantity should be greater than 0.'
                 range:
-                    min_message: 'The quantity should be {{ limit }} or more'
-                    max_message: 'The quantity should be {{ limit }} or less'
-                    not_in_range_message: 'The quantity should be between {{ min }} and {{ max }}'
+                    not_in_range_message: 'The kit item quantity should be between {{ min }} and {{ max }}.'
+            sort_order:
+                blank: 'The kit item sort order should not be blank.'
+                invalid_type: 'The kit item sort order should be of type {{ type }}.'
+                not_in_range: 'The kit item sort order should be between {{ min }} and {{ max }}.'
         inventory_status:
             not_supported: 'The specified inventory status is not supported.'
         status:
@@ -71,6 +96,8 @@ oro:
         order_limits:
             minimum_order_amount: 'A minimum order subtotal of %amount% is required to check out. Please add %difference% more to proceed.'
             maximum_order_amount: 'The order subtotal cannot exceed %amount%. Please remove at least %difference% to proceed.'
+        line_items_general_error:
+            message: 'One or more line items have errors. Please review the line items and correct errors to proceed.'
     shoppinglist:
         lineitem:
             inventory_status:

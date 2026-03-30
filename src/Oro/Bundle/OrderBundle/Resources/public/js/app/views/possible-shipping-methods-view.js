@@ -41,7 +41,8 @@ const PossibleShippingMethodsView = BaseView.extend(_.extend({}, ElementsHelper,
         shippingMethod: '[data-name="field__shipping-method"]',
         shippingMethodType: '[data-name="field__shipping-method-type"]',
         estimatedShippingCostAmount: '[data-name="field__estimated-shipping-cost-amount"]',
-        overriddenShippingCostAmount: ['$document', '[name*="[overriddenShippingCostAmount]"]']
+        overriddenShippingCostAmount: ['$document', '[name*="[overriddenShippingCostAmount][value]"]'],
+        recalculationRequired: ['$document', '[name*="[recalculationRequired]"]']
     },
 
     elementsEvents: {
@@ -53,6 +54,11 @@ const PossibleShippingMethodsView = BaseView.extend(_.extend({}, ElementsHelper,
         shippingAddress: ['change', 'keepRenderPreviousSelectedShippingMethod'],
         billingAddress: ['change', 'keepRenderPreviousSelectedShippingMethod']
     },
+
+    /**
+     * @property {Boolean}
+     */
+    recalculationIsNotRequired: false,
 
     /**
      * @inheritdoc
@@ -125,7 +131,13 @@ const PossibleShippingMethodsView = BaseView.extend(_.extend({}, ElementsHelper,
     },
 
     showLoadingMask: function() {
-        if (!this.orderHasChanged) {
+        if (this.getElement('recalculationRequired').length) {
+            if (this.getElement('recalculationRequired').val() === '1') {
+                this._startListeningToSubmit();
+
+                this.orderHasChanged = true;
+            }
+        } else if (!this.orderHasChanged) {
             this._startListeningToSubmit();
 
             this.orderHasChanged = true;
@@ -162,7 +174,7 @@ const PossibleShippingMethodsView = BaseView.extend(_.extend({}, ElementsHelper,
 
             this.orderHasChanged = false;
             this.recalculationIsNotRequired = false;
-        } else {
+        } else if (this.orderHasChanged === true) {
             this.getElement('possibleShippingMethodForm').hide();
             this.getElement('toggleBtn').parent('div').show();
             if (!this.renderPossibleShippingMethodOnOrderChange) {
@@ -170,20 +182,17 @@ const PossibleShippingMethodsView = BaseView.extend(_.extend({}, ElementsHelper,
             }
             this.renderPossibleShippingMethodOnOrderChange = false;
 
-            if (!this.orderHasChanged) {
-                this._startListeningToSubmit();
-
-                this.orderHasChanged = true;
-            }
+            this._startListeningToSubmit();
         }
     },
 
     _startListeningToSubmit: function() {
+        this.stopListening(this.getElement('$form'), 'submit');
         this.listenTo(this.getElement('$form'), {submit: this.onSaveForm.bind(this)});
     },
 
     _stopListeningToSubmit: function() {
-        this.stopListening(this.getElement('$form'), 'submit', this.onSaveForm.bind(this));
+        this.stopListening(this.getElement('$form'), 'submit');
     },
 
     onOverriddenShippingCostChange: function() {
@@ -283,6 +292,7 @@ const PossibleShippingMethodsView = BaseView.extend(_.extend({}, ElementsHelper,
 
         this.setElementsValue(method);
         this.removeSelectedShippingMethod();
+        this.recalculationIsNotRequired = true;
         this.options.renderPossibleShippingMethodOnOrderChange = false;
         this.updateTotals();
     },

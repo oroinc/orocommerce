@@ -51,8 +51,10 @@ Feature: Minimum and maximum order amounts on the shopping list
     Given I proceed as the Admin
     When I go to Sales/Orders
     And I click Edit "$15.00" in grid
+    And I click Edit "SKU123" in grid
     And fill "Order Form" with:
       | Quantity | 5 |
+    And I click on "Order Edit Save Changes"
     And I save and close form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message

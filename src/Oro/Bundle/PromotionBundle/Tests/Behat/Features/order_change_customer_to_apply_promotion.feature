@@ -31,11 +31,12 @@ Feature: Order change customer to apply promotion
 
   Scenario: Try to fill order form and switch customer then check added discount
     Given I click "Create Order"
-    And click "Add Product"
     When I fill "Order Form" with:
       | Customer | NoCustomerUser |
-      | Product  | Product1       |
-      | Price    | 50             |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product | Product1 |
+      | Price   | 50       |
+    And click "Add Product"
     And I click "Totals"
     Then I see next subtotals for "Backend Order":
       | Subtotal | $50.00 |

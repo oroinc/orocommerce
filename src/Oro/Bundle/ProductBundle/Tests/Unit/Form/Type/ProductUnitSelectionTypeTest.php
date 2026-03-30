@@ -39,11 +39,13 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);
-        $translator->expects(self::any())
+        $translator
+            ->expects(self::any())
             ->method('trans')
             ->willReturnCallback(function ($id, array $params) {
                 return isset($params['{title}']) ? $id . ':' . $params['{title}'] : $id;
             });
+
         $productUnitLabelFormatter = new UnitLabelFormatter($translator);
         $productUnitLabelFormatter->setTranslationPrefix('oro.product_unit');
 
@@ -68,10 +70,12 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testConfigureOptions()
+    public function testConfigureOptions(): void
     {
         $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects($this->exactly(2))
+
+        $resolver
+            ->expects(self::exactly(2))
             ->method('setDefaults')
             ->withConsecutive(
                 [
@@ -79,7 +83,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                         'product' => null,
                         'product_holder' => null,
                         'product_field' => 'product',
-                    ]
+                    ],
                 ],
                 [
                     [
@@ -90,9 +94,32 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                         'required' => true,
                         'empty_label' => 'oro.product.productunit.removed',
                         'sell' => null,
-                    ]
+                        'init_choices' => false,
+                    ],
                 ]
             );
+
+        $resolver
+            ->expects(self::exactly(4))
+            ->method('setAllowedTypes')
+            ->withConsecutive(
+                ['product', [Product::class, 'null']],
+                ['product_holder', [ProductHolderInterface::class, 'null']],
+                ['product_field', 'string'],
+                ['init_choices', 'boolean'],
+            );
+
+        $resolver
+            ->expects(self::once())
+            ->method('setInfo')
+            ->with('init_choices', 'Initialize "choices" option based on the "product" option.')
+            ->willReturn($resolver);
+
+        $resolver
+            ->expects(self::once())
+            ->method('setDefault')
+            ->with('choices', self::isInstanceOf(\Closure::class))
+            ->willReturn($resolver);
 
         $this->formType->configureOptions($resolver);
     }
@@ -105,30 +132,36 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         ProductUnitPrecision $primaryUnitPrecision,
         ArrayCollection $additionalUnitPrecisions,
         array $expectedData
-    ) {
+    ): void {
         $config = $this->createMock(FormConfigInterface::class);
-        $config->expects($this->any())
+        $config
+            ->expects(self::any())
             ->method('getOptions')
             ->willReturn($option);
 
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->any())
+        $form
+            ->expects(self::any())
             ->method('getConfig')
             ->willReturn($config);
 
         $product = $this->createMock(Product::class);
-        $product->expects($this->any())
+        $product
+            ->expects(self::any())
             ->method('getPrimaryUnitPrecision')
             ->willReturn($primaryUnitPrecision);
 
-        $product->expects($this->any())
+        $product
+            ->expects(self::any())
             ->method('getAdditionalUnitPrecisions')
             ->willReturn($additionalUnitPrecisions);
 
-        $this->assertEquals(
-            $expectedData,
-            ReflectionUtil::callMethod($this->formType, 'getProductUnits', [$form, $product])
-        );
+        $result = ReflectionUtil::callMethod($this->formType, 'getProductUnits', [$form, $product]);
+
+        self::assertCount(count($expectedData), $result);
+        foreach ($result as $index => $unit) {
+            self::assertEquals($expectedData[$index], $unit->getCode());
+        }
     }
 
     private function makePrecision(string $code, bool $sell): ProductUnitPrecision
@@ -156,20 +189,20 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ['sell' => true],
                 $primaryUnitPrecision,
                 $additionalUnitPrecisions,
-                ['box', 'set']
+                ['box', 'set'],
             ],
             'with_sell_null' => [
                 ['sell' => null],
                 $primaryUnitPrecision,
                 $additionalUnitPrecisions,
-                ['box', 'set', 'each']
+                ['box', 'set', 'each'],
             ],
             'without_additional' => [
                 ['sell' => null],
                 $primaryUnitPrecision,
                 new ArrayCollection(),
-                ['box']
-            ]
+                ['box'],
+            ],
         ];
     }
 
@@ -181,7 +214,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         array $expectedOptions,
         array $expectedLabels,
         string $submittedData
-    ) {
+    ): void {
         $form = $this->factory->create(ProductUnitSelectionType::class, null, $inputOptions);
 
         $precision1 = new ProductUnitPrecision();
@@ -199,7 +232,9 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             $unit1,
             $this->createProductHolder(
                 'sku',
-                (new Product())->addUnitPrecision($precision1)->addUnitPrecision($precision2)
+                (new Product())
+                    ->addUnitPrecision($precision1)
+                    ->addUnitPrecision($precision2)
             )
         );
 
@@ -207,8 +242,8 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $form->setParent($formParent);
         $formConfig = $form->getConfig();
         foreach ($expectedOptions as $key => $value) {
-            $this->assertTrue($formConfig->hasOption($key));
-            $this->assertEquals($value, $formConfig->getOption($key));
+            self::assertTrue($formConfig->hasOption($key));
+            self::assertEquals($value, $formConfig->getOption($key));
         }
 
         $view = $form->createView();
@@ -217,14 +252,14 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 
         foreach ($choices as $choice) {
             $label = array_shift($expectedLabels);
-            $this->assertEquals($label, $choice->label);
+            self::assertEquals($label, $choice->label);
         }
 
-        $this->assertNull($form->getData());
+        self::assertNull($form->getData());
         $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
-        $this->assertTrue($form->isSynchronized());
-        $this->assertEquals($submittedData, $form->getData());
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($submittedData, $form->getData());
     }
 
     public function submitDataProvider(): array
@@ -257,9 +292,67 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetParent()
+    public function testSubmitWithProductOption(): void
     {
-        $this->assertEquals(EntityType::class, $this->formType->getParent());
+        $expectedChoices = $this->units;
+        $expectedLabels = [
+            'oro.product_unit.' . $this->units[0] . '.label.full',
+            'oro.product_unit.' . $this->units[1] . '.label.full',
+        ];
+        $unit1 = new ProductUnit();
+        $unit1->setCode($this->units[0]);
+        $precision1 = new ProductUnitPrecision();
+        $precision1->setUnit($unit1);
+        $precision1->setPrecision(0);
+
+        $unit2 = new ProductUnit();
+        $unit2->setCode($this->units[1]);
+        $precision2 = new ProductUnitPrecision();
+        $precision2->setUnit($unit2);
+        $precision2->setPrecision(2);
+
+        $product = new Product();
+        $product->setPrimaryUnitPrecision($precision1);
+        $product->addAdditionalUnitPrecision($precision2);
+
+        $form = $this->factory->create(ProductUnitSelectionType::class, null, [
+            'product' => $product,
+        ]);
+
+        $formConfig = $form->getConfig();
+        self::assertTrue($formConfig->hasOption('product'));
+        self::assertSame($product, $formConfig->getOption('product'));
+
+        $view = $form->createView();
+        $productUnitHolder = $this->createProductUnitHolder(
+            1,
+            'item',
+            new ProductUnit(),
+            $this->createProductHolder('sku', null)
+        );
+        $formParent = $this->factory->create(ProductUnitHolderTypeStub::class, $productUnitHolder);
+        $form->setParent($formParent);
+
+        $this->formType->finishView($view, $form, $form->getConfig()->getOptions());
+        $choices = $view->vars['choices'];
+
+        self::assertCount(count($expectedChoices), $choices);
+
+        foreach ($choices as $index => $choice) {
+            self::assertEquals($expectedChoices[$index], $choice->value);
+            self::assertEquals($expectedLabels[$index], $choice->label);
+        }
+
+        self::assertNull($form->getData());
+        $form->submit($this->units[0]);
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals((new ProductUnit())->setCode($this->units[0]), $form->getData());
+    }
+
+    public function testGetParent(): void
+    {
+        self::assertEquals(EntityType::class, $this->formType->getParent());
     }
 
     private function prepareChoices(): array
@@ -277,12 +370,18 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider finishViewProvider
      */
-    public function testFinishView(array $inputData = [], array $expectedData = [], bool $withParent = true)
-    {
+    public function testFinishView(
+        array $inputData = [],
+        array $expectedData = [],
+        bool $withParent = true
+    ): void {
         $form = $this->factory->create(ProductUnitSelectionType::class, null, $inputData['options']);
 
         if ($withParent) {
-            $formParent = $this->factory->create(ProductUnitHolderTypeStub::class, $inputData['productUnitHolder']);
+            $formParent = $this->factory->create(
+                ProductUnitHolderTypeStub::class,
+                $inputData['productUnitHolder']
+            );
         } else {
             $formParent = null;
         }
@@ -316,7 +415,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     {
         $precision = new ProductUnitPrecision();
         $unit = new ProductUnit();
-        $unit->setCode('code');
+        $unit->setCode('each');
         $precision->setUnit($unit);
 
         return [
@@ -325,7 +424,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'options' => [],
                     'productHolder' => $this->createProductUnitHolder(
                         1,
-                        'sku',
+                        'item',
                         new ProductUnit(),
                         $this->createProductHolder('sku', null)
                     ),
@@ -354,7 +453,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'options' => [],
                     'productUnitHolder' => $this->createProductUnitHolder(
                         1,
-                        'sku',
+                        'item',
                         new ProductUnit(),
                         $this->createProductHolder('sku', null)
                     ),
@@ -372,14 +471,14 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'options' => [],
                     'productUnitHolder' => $this->createProductUnitHolder(
                         1,
-                        'code',
+                        'each',
                         $unit,
-                        $this->createProductHolder('code', (new Product())->addUnitPrecision($precision))
+                        $this->createProductHolder('each', (new Product())->addUnitPrecision($precision))
                     ),
                 ],
                 'expectedData' => [
                     'choices' => [
-                        'code' => 'oro.product_unit.code.label.full',
+                        'each' => 'oro.product_unit.each.label.full',
                     ],
                 ],
             ],
@@ -390,14 +489,14 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     ],
                     'productUnitHolder' => $this->createProductUnitHolder(
                         1,
-                        'code',
+                        'each',
                         $unit,
-                        $this->createProductHolder('code', (new Product())->addUnitPrecision($precision))
+                        $this->createProductHolder('each', (new Product())->addUnitPrecision($precision))
                     ),
                 ],
                 'expectedData' => [
                     'choices' => [
-                        'code' => 'oro.product_unit.code.label.short',
+                        'each' => 'oro.product_unit.each.label.short',
                     ],
                 ],
             ],
@@ -413,7 +512,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'choices' => [
-                        'code' => 'oro.product_unit.code.label.full',
+                        'each' => 'oro.product_unit.each.label.full',
                     ],
                 ],
             ],
@@ -422,9 +521,9 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'options' => [],
                     'productUnitHolder' => $this->createProductUnitHolder(
                         1,
-                        'code',
+                        'item',
                         null,
-                        $this->createProductHolder('code', null)
+                        $this->createProductHolder('item', null)
                     ),
                 ],
                 'expectedData' => [
@@ -439,15 +538,31 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'options' => [],
                     'productUnitHolder' => $this->createProductUnitHolder(
                         1,
-                        'sku',
-                        (new ProductUnit())->setCode('sku'),
+                        'item',
+                        (new ProductUnit())->setCode('item'),
+                        $this->createProductHolder('item', (new Product())->addUnitPrecision($precision))
+                    ),
+                ],
+                'expectedData' => [
+                    'choices' => [
+                        'item' => 'oro.product.productunit.removed:item',
+                        'each' => 'oro.product_unit.each.label.full',
+                    ],
+                ],
+            ],
+            'missing product unit and product unit code with entity identifier' => [
+                'inputData' => [
+                    'options' => [],
+                    'productUnitHolder' => $this->createProductUnitHolder(
+                        1,
+                        '',
+                        null,
                         $this->createProductHolder('sku', (new Product())->addUnitPrecision($precision))
                     ),
                 ],
                 'expectedData' => [
                     'choices' => [
-                        'sku' => 'oro.product.productunit.removed:sku',
-                        'code' => 'oro.product_unit.code.label.full',
+                        'each' => 'oro.product_unit.each.label.full',
                     ],
                 ],
             ],
@@ -461,29 +576,41 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         ?ProductHolderInterface $productHolder = null
     ): ProductUnitHolderInterface {
         $productUnitHolder = $this->createMock(ProductUnitHolderInterface::class);
-        $productUnitHolder->expects(self::any())
+        $productUnitHolder
+            ->expects(self::any())
             ->method('getEntityIdentifier')
             ->willReturn($id);
-        $productUnitHolder->expects(self::any())
+
+        $productUnitHolder
+            ->expects(self::any())
             ->method('getProductUnit')
             ->willReturn($productUnit);
-        $productUnitHolder->expects(self::any())
+
+        $productUnitHolder
+            ->expects(self::any())
             ->method('getProductUnitCode')
             ->willReturn($productUnitCode);
-        $productUnitHolder->expects(self::any())
+
+        $productUnitHolder
+            ->expects(self::any())
             ->method('getProductHolder')
             ->willReturn($productHolder);
 
         return $productUnitHolder;
     }
 
-    private function createProductHolder(string $productSku, ?Product $product = null): ProductHolderInterface
-    {
+    private function createProductHolder(
+        string $productSku,
+        ?Product $product = null
+    ): ProductHolderInterface {
         $productHolder = $this->createMock(ProductHolderInterface::class);
-        $productHolder->expects(self::any())
+        $productHolder
+            ->expects(self::any())
             ->method('getProduct')
             ->willReturn($product);
-        $productHolder->expects(self::any())
+
+        $productHolder
+            ->expects(self::any())
             ->method('getProductSku')
             ->willReturn($productSku);
 
@@ -499,44 +626,50 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         mixed $productUnit,
         array $options = [],
         bool $expectedFieldOverride = false
-    ) {
+    ): void {
         $form = $this->factory->create(ProductUnitSelectionType::class, $productUnitHolder, $options);
 
         $parentForm = $this->createMock(FormInterface::class);
-        $parentForm->expects($this->any())
+        $parentForm
+            ->expects(self::any())
             ->method('has')
+            ->with('product')
             ->willReturn($expectedFieldOverride);
 
         $productForm = $this->createMock(FormInterface::class);
         $form->setParent($parentForm);
 
         if ($expectedFieldOverride) {
-            $productForm->expects($this->once())
+            $productForm
+                ->expects(self::once())
                 ->method('getData')
                 ->willReturn($productHolder);
-            $parentForm->expects($this->once())
+
+            $parentForm
+                ->expects(self::once())
                 ->method('get')
+                ->with('product')
                 ->willReturn($productForm);
-            $parentForm->expects($this->once())
+
+            $parentForm
+                ->expects(self::once())
                 ->method('add')
                 ->with(
-                    $this->isType('string'),
-                    $this->isType('string'),
-                    $this->logicalAnd(
-                        $this->isType('array'),
-                        $this->callback(function (array $options) use ($productUnit) {
-                            $this->assertArrayHasKey('choices_updated', $options);
-                            $this->assertTrue($options['choices_updated']);
+                    self::isType('string'),
+                    self::isType('string'),
+                    self::callback(function (array $options) use ($productUnit) {
+                        self::assertArrayHasKey('choices_updated', $options);
+                        self::assertTrue($options['choices_updated']);
 
-                            $this->assertArrayHasKey('choices', $options);
-                            $this->assertEquals([$productUnit->getCode() => 0], $options['choices']);
+                        self::assertArrayHasKey('choices', $options);
+                        self::assertEquals([$productUnit->getCode() => 0], $options['choices']);
 
-                            return true;
-                        })
-                    )
+                        return true;
+                    })
                 );
         } else {
-            $parentForm->expects($this->never())
+            $parentForm
+                ->expects(self::never())
                 ->method('add');
         }
 
@@ -589,14 +722,14 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider preSubmitDataProvider
      */
-    public function testPreSubmit(mixed $product, mixed $data, string $expectedError = '')
+    public function testPreSubmit(mixed $product, mixed $data, string $expectedError = ''): void
     {
         $form = $this->factory->create(ProductUnitSelectionType::class, null, ['product' => $product]);
 
         $event = new FormEvent($form, $data);
         $this->formType->validateUnits($event);
 
-        $this->assertEquals($expectedError, (string)$form->getErrors(true, true));
+        self::assertEquals($expectedError, (string)$form->getErrors(true, true));
     }
 
     public function preSubmitDataProvider(): array
@@ -614,10 +747,22 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 
         return [
             'product not found' => [null, 'valid'],
-            'product without units' => [$productNoUnits, 'valid', 'ERROR: oro.product.productunit.invalid' . "\n"],
-            'submit invalid' => [$product, 'not_valid', 'ERROR: oro.product.productunit.invalid' . "\n"],
+            'product without units' => [
+                $productNoUnits,
+                'valid',
+                'ERROR: oro.product.productunit.invalid' . "\n",
+            ],
+            'submit invalid' => [
+                $product,
+                'not_valid',
+                'ERROR: oro.product.productunit.invalid' . "\n",
+            ],
             'submit valid' => [$product, 'valid'],
-            'empty data' => [$product, null, 'ERROR: oro.product.productunit.invalid' . "\n"],
+            'empty data' => [
+                $product,
+                null,
+                'ERROR: oro.product.productunit.invalid' . "\n",
+            ],
             'new product' => [new Product(), null],
         ];
     }

@@ -1,0 +1,387 @@
+parameters:
+
+    oro_order.draft_session.uuid_param: 'orderDraftSessionUuid'
+    oro_order.draft_session.uuid_regex: '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}'
+    oro_order.draft_session.begin_on_routes:
+        - 'oro_order_create'
+        - 'oro_order_create_for_customer'
+        - 'oro_order_create_for_customer_user'
+        - 'oro_order_update'
+        - 'oro_order_suborder_update'
+        - 'oro_order_reorder'
+    oro_order.draft_session.applicable_on_routes:
+        - 'oro_order_create'
+        - 'oro_order_create_for_customer'
+        - 'oro_order_create_for_customer_user'
+        - 'oro_order_update'
+        - 'oro_order_suborder_update'
+        - 'oro_order_reorder'
+        - 'oro_order_entry_point'
+        - 'oro_suborder_entry_point'
+        - 'oro_order_line_item_draft_update'
+        - 'oro_order_line_item_draft_mass_update'
+        - 'oro_order_line_item_draft_create'
+        - 'oro_order_line_item_draft_delete'
+        - 'oro_order_line_item_draft_calculate_taxes_and_discounts'
+        - 'oro_promotion_validate_coupon_applicability'
+
+services:
+
+    oro_order.draft_session.datagrid.order_line_items_draft_filter_extension:
+        class: Oro\Bundle\OrderBundle\Datagrid\DraftSession\OrderLineItemsDraftFilterExtension
+        arguments:
+            - '@oro_order.draft_session.manager.draft_session_orm_filter_manager'
+        tags:
+            - { name: oro_datagrid.extension }
+
+    oro_order.form.type.order_line_item_draft:
+        class: Oro\Bundle\OrderBundle\Form\Type\OrderLineItemDraftType
+        arguments:
+            - '@oro_order.provider.order_line_item_tier_prices'
+            - '@oro_order.form.type.event_listener.order_line_item_draft_dry_submit'
+            - '@oro_order.form.type.event_listener.order_line_item_draft_checksum'
+        tags:
+            - { name: form.type }
+
+    oro_order.form.extension.validate_order_line_item_draft:
+        class: Oro\Bundle\OrderBundle\Form\Extension\ValidateOrderLineItemDraftExtension
+        arguments:
+            - '@oro_entity.tools.entity_state_checker'
+            - '@validator'
+            - '@twig.form.renderer'
+            - '@translator'
+        tags:
+            - { name: form.type_extension }
+
+    oro_order.form.type.event_listener.order_line_item_draft_dry_submit:
+        class: Oro\Bundle\OrderBundle\Form\Type\EventListener\OrderLineItemDraftDrySubmitListener
+
+    oro_order.form.type.event_listener.order_line_item_draft_checksum:
+        class: Oro\Bundle\OrderBundle\Form\Type\EventListener\OrderLineItemDraftChecksumListener
+        arguments:
+            - '@oro_product.line_item_checksum_generator'
+
+    oro_order.draft_session.event_listener.begin_draft_session_on_request:
+        class: Oro\Component\DraftSession\EventListener\BeginDraftSessionOnRequestListener
+        arguments:
+            - '@router'
+            - '%oro_order.draft_session.uuid_param%'
+            - '%oro_order.draft_session.begin_on_routes%'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+    oro_order.draft_session.event_listener.set_draft_session_uuid_to_request_context:
+        class: Oro\Component\DraftSession\EventListener\SetDraftSessionUuidToRequestContextListener
+        arguments:
+            - '@oro_distribution.handler.application_status'
+            - '@router'
+            - '%oro_order.draft_session.uuid_param%'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+    oro_order.draft_session.event_listener.keep_draft_session_uuid_on_route_generate:
+        class: Oro\Component\DraftSession\EventListener\KeepDraftSessionUuidOnRouteGenerateListener
+        arguments:
+            - '@router'
+            - '%oro_order.draft_session.uuid_param%'
+            - '%oro_order.draft_session.applicable_on_routes%'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\DistributionBundle\Event\RouterGenerateEvent, method: onRouterGenerate }
+
+    oro_order.datagrid.draft_session.add_order_draft_session_parameters_listener:
+        class: Oro\Bundle\OrderBundle\Datagrid\DraftSession\AddOrderDraftSessionParametersDatagridListener
+        arguments:
+            - '@oro_order.draft_session.manager.order_draft'
+        tags:
+            -   name: kernel.event_listener
+                event: oro_datagrid.datagrid.build.before.order-line-items-edit-grid
+                method: onBuildBefore
+                priority: 200 # Must be executed before other listeners to add necessary parameters to datagrid configuration.
+
+    oro_order.datagrid.order_line_item_draft_images_datagrid_listener:
+        class: 'Oro\Bundle\OrderBundle\Datagrid\DraftSession\OrderLineItemDraftImagesDatagridListener'
+        arguments:
+            - '@doctrine'
+            - '@oro_datagrid.provider.selected_fields'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.order-line-items-edit-grid, method: onResultAfter }
+
+    oro_order.draft_session.datagrid.order_line_item_draft_update_listener:
+        class: 'Oro\Bundle\OrderBundle\Datagrid\DraftSession\OrderLineItemDraftUpdateDatagridListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-edit-grid, method: onBuildBefore }
+
+    oro_order.draft_session.datagrid.order_line_item_draft_delete_listener:
+        class: 'Oro\Bundle\OrderBundle\Datagrid\DraftSession\OrderLineItemDraftDeleteDatagridListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-edit-grid, method: onBuildBefore }
+
+    oro_order.draft_session.datagrid.order_line_item_draft_validation_listener:
+        class: 'Oro\Bundle\OrderBundle\Datagrid\DraftSession\OrderLineItemDraftValidationDatagridListener'
+        arguments:
+            - '@doctrine'
+            - '@oro_order.draft_session.manager.order_draft'
+            - '@validator'
+            - '@oro_order.draft_session.manager.draft_session_orm_filter_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before_query.order-line-items-edit-grid, method: onResultBeforeQuery }
+
+    oro_order.draft_session.manager.draft_session_orm_filter_manager:
+        class: 'Oro\Component\DraftSession\Manager\DraftSessionOrmFilterManager'
+        arguments:
+            - '@doctrine'
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+            - 'order_draft'
+
+    oro_order.draft_session.event_listener.enable_entity_drafts_on_request_listener:
+        class: 'Oro\Component\DraftSession\EventListener\EnableEntityDraftsOnRequestListener'
+        arguments:
+            - '@oro_order.draft_session.manager.draft_session_orm_filter_manager'
+            - '%oro_order.draft_session.applicable_on_routes%'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+            - { name: kernel.event_listener, event: kernel.terminate, method: onKernelTerminate }
+
+    oro_order.draft_session.event_listener.load_order_draft_on_request_listener:
+        class: 'Oro\Bundle\OrderBundle\EventListener\DraftSession\LoadOrderDraftOnRequestListener'
+        arguments:
+            - '@oro_order.draft_session.manager.order_draft'
+            - '@oro_security.authorization_checker'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+    oro_order.draft_session.datagrid.order_line_items_draft_session_filter_listener:
+        class: 'Oro\Bundle\OrderBundle\Datagrid\DraftSession\OrderLineItemsDraftSessionFilterListener'
+        arguments:
+            - '@oro_order.draft_session.manager.draft_session_orm_filter_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.order-line-items-edit-grid, method: onResultBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.order-line-items-edit-grid, method: onResultAfter }
+
+    oro_order.draft_session.datagrid.action.type.order_line_item_draft_update:
+        class: 'Oro\Bundle\OrderBundle\Datagrid\DraftSession\Action\OrderLineItemDraftUpdateAction'
+        shared: false
+        tags:
+            - { name: oro_datagrid.extension.action.type, type: order-line-item-draft-update }
+
+    oro_order.draft_session.datagrid.action.type.order_line_item_draft_delete:
+        class: 'Oro\Bundle\OrderBundle\Datagrid\DraftSession\Action\OrderLineItemDraftDeleteAction'
+        shared: false
+        tags:
+            - { name: oro_datagrid.extension.action.type, type: order-line-item-draft-delete }
+
+    oro_order.draft_session.factory.order:
+        class: Oro\Bundle\OrderBundle\DraftSession\Factory\OrderDraftFactory
+        arguments:
+            - '@oro_order.draft_session.synchronizer'
+            - '@oro_order.draft_session.factory'
+        tags:
+            - { name: oro_order.draft_session.factory }
+
+    oro_order.draft_session.factory.order_line_item:
+        class: Oro\Bundle\OrderBundle\DraftSession\Factory\OrderLineItemDraftFactory
+        arguments:
+            - '@oro_order.draft_session.synchronizer'
+        tags:
+            - { name: oro_order.draft_session.factory }
+
+    oro_order.draft_session.factory:
+        class: Oro\Component\DraftSession\Factory\EntityDraftFactoryChain
+        arguments:
+            - !tagged_iterator { tag: oro_order.draft_session.factory }
+            - '@event_dispatcher'
+
+    oro_order.form.extension.remove_line_items_from_order_type:
+        class: Oro\Bundle\OrderBundle\Form\Extension\RemoveLineItemsFromOrderTypeExtension
+        arguments:
+            - '@oro_order.draft_session.manager.order_draft'
+            - '@translator'
+        tags:
+            - { name: form.type_extension }
+
+    oro_order.form.extension.order_type_draft_edit_mode:
+        class: Oro\Bundle\OrderBundle\Form\Extension\OrderDraftSyncExtension
+        arguments:
+            - '@oro_order.draft_session.manager.order_draft'
+            - '@doctrine'
+        tags:
+            - { name: form.type_extension }
+
+    oro_order.draft_session.synchronizer.order:
+        class: Oro\Bundle\OrderBundle\DraftSession\OrderDraftSynchronizer
+        arguments:
+            - '@oro_order.draft_session.reference_resolver'
+            - '@oro_order.draft_session.synchronizer'
+        tags:
+            - { name: oro_order.draft_session.synchronizer }
+
+    oro_order.draft_session.synchronizer.order_line_item:
+        class: Oro\Bundle\OrderBundle\DraftSession\OrderLineItemDraftSynchronizer
+        arguments:
+            - '@oro_order.draft_session.reference_resolver'
+            - '@oro_order.draft_session.extended_fields_provider'
+            - '@oro_order.draft_session.extended_field_value_synchronizer'
+        tags:
+            - { name: oro_order.draft_session.synchronizer }
+
+    oro_order.draft_session.synchronizer.order_address_aware:
+        class: Oro\Bundle\OrderBundle\DraftSession\OrderAddressAwareOrderDraftSynchronizer
+        arguments:
+            - '@oro_order.draft_session.reference_resolver'
+        tags:
+            - { name: oro_order.draft_session.synchronizer }
+
+    oro_order.draft_session.synchronizer.payment_term_aware:
+        class: Oro\Bundle\OrderBundle\DraftSession\PaymentTermAwareOrderDraftSynchronizer
+        arguments:
+            - '@oro_order.draft_session.reference_resolver'
+            - '@oro_payment_term.provider.payment_term_association'
+            - '@property_accessor'
+        tags:
+            - { name: oro_order.draft_session.synchronizer }
+
+    oro_order.draft_session.synchronizer.order_discount_aware:
+        class: Oro\Bundle\OrderBundle\DraftSession\OrderDiscountAwareOrderDraftSynchronizer
+        tags:
+            - { name: oro_order.draft_session.synchronizer }
+
+    oro_order.draft_session.synchronizer.extended_fields_aware_order:
+        class: Oro\Component\DraftSession\Synchronizer\ExtendedFieldsAwareEntityDraftSynchronizer
+        arguments:
+            - '@oro_order.draft_session.extended_fields_provider'
+            - '@oro_order.draft_session.extended_field_value_synchronizer'
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+        tags:
+            - { name: oro_order.draft_session.synchronizer }
+
+    oro_order.draft_session.synchronizer.extended_fields_aware_order_line_item:
+        class: Oro\Component\DraftSession\Synchronizer\ExtendedFieldsAwareEntityDraftSynchronizer
+        arguments:
+            - '@oro_order.draft_session.extended_fields_provider'
+            - '@oro_order.draft_session.extended_field_value_synchronizer'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
+        tags:
+            - { name: oro_order.draft_session.synchronizer }
+
+    oro_order.draft_session.synchronizer.recalculate_totals:
+        class: Oro\Bundle\OrderBundle\DraftSession\RecalculateTotalsOrderDraftSynchronizer
+        arguments:
+            - '@oro_order.order.total.total_helper'
+        tags:
+            - { name: oro_order.draft_session.synchronizer, priority: -255 }
+
+    oro_order.draft_session.synchronizer:
+        class: Oro\Component\DraftSession\Synchronizer\EntityDraftSynchronizerChain
+        arguments:
+            - !tagged_iterator { tag: oro_order.draft_session.synchronizer }
+            - '@event_dispatcher'
+
+    oro_order.draft_session.reference_resolver:
+        class: Oro\Component\DraftSession\Doctrine\EntityDraftSyncReferenceResolver
+        arguments:
+            - '@doctrine'
+
+    oro_order.draft_session.event_listener.sync_order_draft_before_entity_flush:
+        class: Oro\Bundle\OrderBundle\EventListener\DraftSession\OrderDraftBeforeEntityFlushListener
+        arguments:
+            - '@doctrine'
+            - '@oro_order.draft_session.manager.order_draft'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_order_type, method: onBeforeEntityFlush }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_suborder_type, method: onBeforeEntityFlush }
+
+    oro_order.draft_session.event_listener.sync_order_to_order_draft_on_order_event:
+        class: Oro\Bundle\OrderBundle\EventListener\DraftSession\SyncOrderToOrderDraftOnOrderEventListener
+        arguments:
+            - '@doctrine'
+            - '@oro_order.draft_session.manager.order_draft'
+        tags:
+            -   name: kernel.event_listener
+                event: oro_order.order
+                method: onOrderEvent
+                priority: -255 # Must be executed after other listeners to save order changes to order draft as late as possible.
+
+    oro_order.draft_session.cleanup.order_line_item_strategy:
+        class: Oro\Component\DraftSession\Cleanup\GenericEntityDraftsCleanupStrategy
+        arguments:
+            - '@doctrine'
+            - '@oro_order.draft_session.manager.draft_session_orm_filter_manager'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: oro_order }
+
+    oro_order.draft_session.cleanup.order_strategy:
+        class: Oro\Component\DraftSession\Cleanup\GenericEntityDraftsCleanupStrategy
+        arguments:
+            - '@doctrine'
+            - '@oro_order.draft_session.manager.draft_session_orm_filter_manager'
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: oro_order }
+
+    oro_order.draft_session.cleanup.strategy:
+        class: Oro\Component\DraftSession\Cleanup\CompositeEntityDraftsCleanupStrategy
+        arguments:
+            # Line items must be deleted before orders because of FK constraints (order_line_item.order_id -> order.id).
+            - [
+                '@oro_order.draft_session.cleanup.order_line_item_strategy',
+                '@oro_order.draft_session.cleanup.order_strategy'
+            ]
+
+    oro_order.draft_session.event_listener.order_draft_aware_total_calculate:
+        class: Oro\Bundle\OrderBundle\EventListener\DraftSession\OrderDraftAwareTotalCalculateListener
+        arguments:
+            - '@oro_order.draft_session.manager.order_draft'
+            - '@oro_frontend.request.frontend_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }
+
+    oro_order.draft_session.extended_fields_provider:
+        class: Oro\Component\DraftSession\ExtendedFields\EntityDraftExtendedFieldsProvider
+        arguments:
+            - '@oro_entity_config.config_manager'
+
+    oro_order.draft_session.extended_field_value_synchronizer:
+        class: Oro\Component\DraftSession\ExtendedFields\EntityDraftExtendedFieldSynchronizer
+        arguments:
+            - '@oro_order.draft_session.reference_resolver'
+            - '@oro_entity.helper.field_helper'
+
+    oro_order.draft_session.provider.order_draft_session_uuid:
+        class: Oro\Bundle\OrderBundle\DraftSession\Provider\OrderDraftSessionUuidProvider
+        arguments:
+            - '@router'
+            - '%oro_order.draft_session.uuid_param%'
+
+    oro_order.twig.order_draft:
+        class: Oro\Bundle\OrderBundle\Twig\OrderDraftExtension
+        arguments:
+            - '@oro_platform.twig.service_locator'
+        tags:
+            - { name: twig.extension }
+
+    oro_order.draft_session.manager.order_draft:
+        class: Oro\Bundle\OrderBundle\DraftSession\Manager\OrderDraftManager
+        arguments:
+            - '@doctrine'
+            - '@request_stack'
+            - '@oro_order.draft_session.provider.order_draft_session_uuid'
+            - '@oro_order.draft_session.factory'
+            - '@oro_order.draft_session.synchronizer'
+
+    Oro\Bundle\OrderBundle\DraftSession\Manager\OrderDraftManager:
+        alias: oro_order.draft_session.manager.order_draft
+
+    oro_order.draft_session.provider.order_line_item_taxes_and_discounts:
+        class: Oro\Bundle\OrderBundle\DraftSession\Provider\OrderLineItemTaxesAndDiscountsProvider
+        arguments:
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_tax.provider.tax_provider_registry'
+            - '@oro_promotion.provider.order_line_item_discount'
+
+    Oro\Bundle\OrderBundle\DraftSession\Provider\OrderLineItemTaxesAndDiscountsProvider:
+        alias: oro_order.draft_session.provider.order_line_item_taxes_and_discounts

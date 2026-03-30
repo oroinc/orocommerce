@@ -27,11 +27,12 @@ Feature: Order Address extended field
     When I go to Sales/Orders
     And click "Create Order"
     Then I should see "test_field"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer | first customer |
-      | Product  | PSKU1          |
-      | Price    | 50             |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product | PSKU1 |
+      | Price   | 50    |
+    And click "Add Product"
     When I click "Save and Close"
     And agree that shipping cost may have changed
     Then I should see "Order has been saved" flash message

@@ -1,0 +1,3 @@
+{%- import '@OroOrder/Order/macros.html.twig' as orderMacros -%}
+
+{{- orderMacros.renderDiscounts(lineItemDiscounts|default({})) -}}

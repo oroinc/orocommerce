@@ -1,24 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\PromotionBundle\Form\DataTransformer\AppliedCouponCollectionTransformer;
 use Oro\Bundle\PromotionBundle\Form\Type\AppliedCouponCollectionType;
 use Oro\Bundle\PromotionBundle\Form\Type\AppliedCouponType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class AppliedCouponCollectionTypeTest extends FormIntegrationTestCase
 {
+    private AppliedCouponCollectionTransformer $transformer;
+
     private AppliedCouponCollectionType $formType;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->formType = new AppliedCouponCollectionType();
+        $this->transformer = $this->createMock(AppliedCouponCollectionTransformer::class);
+        $this->formType = new AppliedCouponCollectionType($this->transformer);
         parent::setUp();
     }
 
@@ -31,6 +38,16 @@ class AppliedCouponCollectionTypeTest extends FormIntegrationTestCase
                 new AppliedCouponType()
             ], [])
         ];
+    }
+
+    public function testBuildForm(): void
+    {
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects($this->once())
+            ->method('addViewTransformer')
+            ->with($this->transformer);
+
+        $this->formType->buildForm($builder, []);
     }
 
     public function testFinishView()

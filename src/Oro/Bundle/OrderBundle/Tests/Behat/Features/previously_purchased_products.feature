@@ -10,10 +10,10 @@ Feature: Previously purchased products
   Commerce > Orders > Purchase history (new page in the config)
   Option label: Display products purchased within (days)
 
- Scenario: Create different window session
-   Given sessions active:
-     | Admin  |first_session |
-     | Buyer  |second_session|
+  Scenario: Create different window session
+    Given sessions active:
+      | Admin | first_session  |
+      | Buyer | second_session |
 
   Scenario: Time restrictions option is present in the Management console and it is 90 days by default
     Given I operate as the Admin
@@ -41,12 +41,12 @@ Feature: Previously purchased products
   Scenario: Check all sorting options available and Relevance option (Please select) is not visible
     Then I should not see "Relevance" in the "Frontend Product Grid Sorter" element
     Then I should see next options in "Frontend Product Grid Sorter"
-      |Recency (Oldest first)|
-      |Recency (Newest first)|
-      |Name (Low to High)    |
-      |Name (High to Low)    |
-      |Price (Low to High)   |
-      |Price (High to Low)   |
+      | Recency (Oldest first) |
+      | Recency (Newest first) |
+      | Name (Low to High)     |
+      | Name (High to Low)     |
+      | Price (Low to High)    |
+      | Price (High to Low)    |
 
   Scenario: Product from page can be added to shopping list
     Given I operate as the Buyer
@@ -75,18 +75,20 @@ Feature: Previously purchased products
     Given I proceed as the Admin
     When go to Sales / Orders
     And click "Create Order"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer         | first customer                               |
       | Customer User    | Amanda Cole                                  |
       | Billing Address  | ORO, 801 Scenic Hwy, HAINES CITY FL US 33844 |
       | Shipping Address | ORO, 801 Scenic Hwy, HAINES CITY FL US 33844 |
-      | Product          | PSKU4                                        |
-      | Quantity         | 5                                            |
-      | Price            | 10                                           |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | PSKU4 |
+      | Quantity | 5     |
+      | Price    | 10    |
+    And click "Add Product"
     And click "Calculate Shipping Button"
     And I save and close form
-    And I proceed as the Buyer
+
+    When I proceed as the Buyer
     And I click "Account Dropdown"
     And I click "Previously Purchased"
     Then I should see "Product 4"
@@ -95,11 +97,11 @@ Feature: Previously purchased products
     Given I proceed as the Admin
     And go to Sales / Orders
     And click Edit "SimpleOrder" in grid
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | PSKU3 |
+      | Quantity | 5     |
+      | Price    | 10    |
     And click "Add Product"
-    And fill "Order Form" with:
-      | Product2  | PSKU3 |
-      | Quantity2 | 5     |
-      | Price2    | 10    |
     And click "Calculate Shipping Button"
     And I save and close form
     And I proceed as the Buyer
@@ -112,7 +114,7 @@ Feature: Previously purchased products
     And go to Products / Products
     And click Edit "PSKU3" in grid
     And fill "ProductForm" with:
-    | Status | Disabled |
+      | Status | Disabled |
     And I save and close form
     And I proceed as the Buyer
     And I click "Account Dropdown"

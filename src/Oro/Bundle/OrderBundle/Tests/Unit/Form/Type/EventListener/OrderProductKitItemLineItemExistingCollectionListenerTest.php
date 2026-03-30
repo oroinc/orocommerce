@@ -9,14 +9,19 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\FormTypeStub;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\OrderProductKitItemLineItemExistingCollectionListener;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\Forms;
 
-class OrderProductKitItemLineItemExistingCollectionListenerTest extends TestCase
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+final class OrderProductKitItemLineItemExistingCollectionListenerTest extends TestCase
 {
     private OrderProductKitItemLineItemExistingCollectionListener $listener;
 
@@ -45,10 +50,9 @@ class OrderProductKitItemLineItemExistingCollectionListenerTest extends TestCase
 
         self::assertCount(1, $form);
         self::assertTrue($form->get('1')->isRequired());
-        self::assertEquals('USD', $form->get('1')->getConfig()->getOption('currency'));
     }
 
-    public function testOnPreSetDataWhenHasKitItemLineItemAndNotOptional(): void
+    public function testOnPreSetDataWhenHasKitItemLineItemPresentAndNotOptional(): void
     {
         $kitItemLineItem1 = (new OrderProductKitItemLineItem())->setOptional(false);
         $collection = new PersistentCollection(
@@ -62,11 +66,11 @@ class OrderProductKitItemLineItemExistingCollectionListenerTest extends TestCase
 
         $form = $formBuilder->getForm();
 
+        self::assertCount(1, $form);
         self::assertTrue($form->get('1')->isRequired());
-        self::assertEquals('USD', $form->get('1')->getConfig()->getOption('currency'));
     }
 
-    public function testOnPreSetDataWhenHasKitItemLineItemAndOptional(): void
+    public function testOnPreSetDataWhenKitItemLineItemPresentAndOptional(): void
     {
         $kitItemLineItem1 = (new OrderProductKitItemLineItem())->setOptional(true);
         $collection = new PersistentCollection(
@@ -80,11 +84,11 @@ class OrderProductKitItemLineItemExistingCollectionListenerTest extends TestCase
 
         $form = $formBuilder->getForm();
 
+        self::assertCount(1, $form);
         self::assertFalse($form->get('1')->isRequired());
-        self::assertEquals('USD', $form->get('1')->getConfig()->getOption('currency'));
     }
 
-    public function testOnPreSetDataWhenNoCorrespondingKitItemLineItem(): void
+    public function testOnPreSetDataWhenKitItemLineItemNotPresent(): void
     {
         $kitItemLineItem2 = (new OrderProductKitItemLineItem())->setOptional(false);
         $collection = new PersistentCollection(
@@ -99,16 +103,11 @@ class OrderProductKitItemLineItemExistingCollectionListenerTest extends TestCase
         $form = $formBuilder->getForm();
 
         self::assertCount(2, $form);
-
         self::assertFalse($form->get('1')->isRequired());
-        self::assertEquals('USD', $form->get('1')->getConfig()->getOption('currency'));
-
         self::assertTrue($form->get('2')->isRequired());
-        self::assertEquals('[2]', $form->get('2')->getConfig()->getOption('property_path'));
-        self::assertEquals('USD', $form->get('2')->getConfig()->getOption('currency'));
     }
 
-    public function testOnPreSetDataWhenNotPersistentCollectionAndHasKitItemLineItemAndNotOptional(): void
+    public function testOnPreSetDataWhenNotPersistentCollectionAndKitItemLineItemPresentAndNotOptional(): void
     {
         $kitItemLineItem1 = (new OrderProductKitItemLineItem())->setOptional(false);
         $arrayCollection = new ArrayCollection(['1' => $kitItemLineItem1]);
@@ -119,10 +118,9 @@ class OrderProductKitItemLineItemExistingCollectionListenerTest extends TestCase
         $form = $formBuilder->getForm();
 
         self::assertTrue($form->get('1')->isRequired());
-        self::assertEquals('USD', $form->get('1')->getConfig()->getOption('currency'));
     }
 
-    public function testOnPreSetDataWhenNotPersistentCollectionAndHasKitItemLineItemAndOptional(): void
+    public function testOnPreSetDataWhenNotPersistentCollectionAndKitItemLineItemPresentAndOptional(): void
     {
         $kitItemLineItem1 = (new OrderProductKitItemLineItem())->setOptional(true);
         $arrayCollection = new ArrayCollection(['1' => $kitItemLineItem1]);
@@ -133,10 +131,9 @@ class OrderProductKitItemLineItemExistingCollectionListenerTest extends TestCase
         $form = $formBuilder->getForm();
 
         self::assertFalse($form->get('1')->isRequired());
-        self::assertEquals('USD', $form->get('1')->getConfig()->getOption('currency'));
     }
 
-    public function testOnPreSetDataWhenNotPersistentCollectionAndNoCorrespondingKitItemLineItem(): void
+    public function testOnPreSetDataWhenNotPersistentCollectionAndKitItemLineItemNotPresent(): void
     {
         $kitItemLineItem2 = (new OrderProductKitItemLineItem())->setOptional(false);
         $arrayCollection = new ArrayCollection(['2' => $kitItemLineItem2]);
@@ -147,12 +144,35 @@ class OrderProductKitItemLineItemExistingCollectionListenerTest extends TestCase
         $form = $formBuilder->getForm();
 
         self::assertCount(2, $form);
-
         self::assertTrue($form->get('1')->isRequired());
-        self::assertEquals('USD', $form->get('1')->getConfig()->getOption('currency'));
-
         self::assertTrue($form->get('2')->isRequired());
-        self::assertEquals('[2]', $form->get('2')->getConfig()->getOption('property_path'));
-        self::assertEquals('USD', $form->get('2')->getConfig()->getOption('currency'));
+    }
+
+    public function testOnPreSetDataShouldNotOverrideRequiredWhenLineItemDraftNew(): void
+    {
+        $orderLineItem = new OrderLineItem();
+        $orderLineItem->setDraftSessionUuid(UUIDGenerator::v4());
+        $orderLineItem->setDraftSource($orderLineItem);
+
+        $formBuilder = $this->formFactory
+            ->createBuilder(FormType::class, $orderLineItem, ['data_class' => OrderLineItem::class]);
+
+        $formBuilder
+            ->add(
+                $formBuilder
+                    ->create('kitItemLineItems', FormType::class)
+                    ->add(
+                        '1',
+                        FormTypeStub::class,
+                        ['required' => true, 'currency' => 'USD', 'property_path' => '[1]']
+                    )
+                    ->addEventSubscriber($this->listener)
+            );
+
+        $form = $formBuilder->getForm();
+
+        $kitItemLineItemsForm = $form->get('kitItemLineItems');
+        self::assertCount(1, $kitItemLineItemsForm);
+        self::assertTrue($kitItemLineItemsForm->get('1')->isRequired());
     }
 }

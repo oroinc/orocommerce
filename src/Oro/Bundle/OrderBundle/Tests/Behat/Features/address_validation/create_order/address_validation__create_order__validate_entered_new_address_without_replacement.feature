@@ -22,13 +22,14 @@ Feature: Address Validation - Create Order - Validate Entered New Address Withou
   Scenario: Validate order address
     Given I go to Sales/ Orders
     When click "Create Order"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer      | first customer |
       | Customer User | Amanda Cole    |
-      | Product       | Product        |
-      | Quantity      | 10             |
-      | Price         | 5              |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | Product |
+      | Quantity | 10      |
+      | Price    | 5       |
+    And click "Add Product"
     And I click "Shipping Address"
     And I fill "Order Form" with:
       | Shipping Address             | Enter other address |

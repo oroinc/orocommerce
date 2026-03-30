@@ -29,8 +29,13 @@
         .product-tier-prices {
             opacity: 1;
 
-            &.disabled > * {
-                opacity: .25;
+            &.disabled,
+            &:disabled {
+                opacity: .5;
+
+                > * {
+                    opacity: .25;
+                }
             }
         }
     }

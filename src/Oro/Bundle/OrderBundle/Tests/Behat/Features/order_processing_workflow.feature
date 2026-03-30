@@ -15,11 +15,12 @@ Feature: Order Processing Workflow
   Scenario: Decline order
     When I go to Sales/Orders
     And click "Create Order"
-    And click "Add Product"
     And I fill "Order Form" with:
       | Customer | first customer |
-      | Product  | AA1            |
-      | Price    | 50             |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product | AA1 |
+      | Price   | 50  |
+    And click "Add Product"
     And I click "Save and Close"
     And I should see "Review Shipping Cost"
     And I click "Save" in modal window
@@ -47,11 +48,12 @@ Feature: Order Processing Workflow
   Scenario: Complete order
     When I go to Sales/Orders
     And click "Create Order"
-    And click "Add Product"
     And I fill "Order Form" with:
       | Customer | first customer |
-      | Product  | AA1            |
-      | Price    | 50             |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product | AA1 |
+      | Price   | 50  |
+    And click "Add Product"
     And I click "Save and Close"
     And I should see "Review Shipping Cost"
     And I click "Save" in modal window

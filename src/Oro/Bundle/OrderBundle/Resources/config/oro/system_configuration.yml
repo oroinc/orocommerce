@@ -141,7 +141,6 @@ system_configuration:
             options:
                 label: oro.order.system_configuration.fields.generate_order_pdf_on_checkout_finish.title
                 tooltip: oro.order.system_configuration.fields.generate_order_pdf_on_checkout_finish.tooltip
-
     tree:
         system_configuration:
             commerce:

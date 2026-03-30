@@ -39,19 +39,20 @@ Feature: Calculate taxes after promotions
   Scenario: Create order
     When I go to Sales/Orders
     And I click "Create Order"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
       | PO Number     | PONumber1   |
-      | Product       | SKU1        |
-      | Price         | 2           |
-      | Quantity      | 5           |
-    And I wait for products to load
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | SKU1 |
+      | Price    | 2    |
+      | Quantity | 5    |
     And click "Add Product"
-    And fill "Order Form" with:
-      | Product2      | SKU2        |
-      | Price2        | 2           |
-      | Quantity2     | 5           |
+
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | SKU2 |
+      | Price    | 2    |
+      | Quantity | 5    |
+    And click "Add Product"
     And I click "Calculate Shipping"
     And I click "Shipping Method Flat Rate Radio Button"
     Then I should see "Subtotal $20.00"
@@ -116,19 +117,20 @@ Feature: Calculate taxes after promotions
   Scenario: Create order
     When I go to Sales/Orders
     And I click "Create Order"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
       | PO Number     | PONumber3   |
-      | Product       | SKU1        |
-      | Price         | 2           |
-      | Quantity      | 5           |
-    And I wait for products to load
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | SKU1 |
+      | Price    | 2    |
+      | Quantity | 5    |
     And click "Add Product"
-    And fill "Order Form" with:
-      | Product2      | SKU2        |
-      | Price2        | 2           |
-      | Quantity2     | 5           |
+
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | SKU2 |
+      | Price    | 2    |
+      | Quantity | 5    |
+    And click "Add Product"
     And I click "Calculate Shipping"
     And I click "Shipping Method Flat Rate Radio Button"
     Then I should see "Subtotal $20.00"
@@ -185,11 +187,11 @@ Feature: Calculate taxes after promotions
     When I go to Sales/Orders
     And I show column PO Number in grid
     Then I should see following grid:
-      | Order Number | PO Number | Total |
-      | 4            | PONumber4 | $5.50 |
-      | 3            | PONumber3 | $5.50 |
-      | 2            | PONumber2 | $5.74 |
-      | 1            | PONumber1 | $5.74 |
+      | PO Number | Total |
+      | PONumber4 | $5.50 |
+      | PONumber3 | $5.50 |
+      | PONumber2 | $5.74 |
+      | PONumber1 | $5.74 |
 
   Scenario Outline: Taxes correctly displayed on Backoffice Order view page
     Given I go to Sales/Orders
@@ -218,7 +220,8 @@ Feature: Calculate taxes after promotions
 
   Scenario: Taxes recalculated after using coupons
     Given I go to Sales/Orders
-    When click view "1" in grid
+    And I show column PO Number in grid
+    When click view "PONumber1" in grid
     And I click "More actions"
     And click "Add Coupon Code"
     And type "coupon50p" in "Coupon Code"

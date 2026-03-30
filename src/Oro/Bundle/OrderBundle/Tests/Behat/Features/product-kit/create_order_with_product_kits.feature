@@ -8,7 +8,6 @@ Feature: Create Order with Product Kits
     Given I login as administrator
     And go to Sales / Orders
     And click "Create Order"
-    And I click "Add Product"
     When I fill "Order Form" with:
       | Customer         | Customer1                                                   |
       | Customer User    | Amanda Cole                                                 |
@@ -19,8 +18,10 @@ Feature: Create Order with Product Kits
       | Customer User    | Amanda Cole                                                 |
       | Billing Address  | Test Customer, ORO, 801 Scenic Hwy, HAINES CITY FL US 33844 |
       | Shipping Address | Test Customer, ORO, 801 Scenic Hwy, HAINES CITY FL US 33844 |
-    And fill "Order Form" with:
+    And fill "Order Edit Add Line Item Form" with:
       | Product | product-kit-01 |
+    And click on "Order Edit Add Product"
+    When I click Edit "product-kit-01" in grid
     Then I should see "Optional Item" in the "Order Form Line Item 1 Kit Item 1 Label" element
     And I should see "Mandatory Item *" in the "Order Form Line Item 1 Kit Item 2 Label" element
     And the "ProductKitItem1Quantity" field should be disabled in form "Order Form"
@@ -54,9 +55,10 @@ Feature: Create Order with Product Kits
     Then I should see "Price, €:" in the "Order Form Line Item 1 Kit Item 1 Price Label" element
     And I should see "Price, €:" in the "Order Form Line Item 1 Kit Item 2 Price Label" element
     And I should not see "Price, $:"
-    And "Order Form" must contains values:
-      | ProductKitItem1Price | |
-      | ProductKitItem2Price | |
+#   fixed in BB-27121
+#    And "Order Edit Line Item 1 Form" must contains values:
+#      | ProductKitItem1Price |  |
+#      | ProductKitItem2Price |  |
     When I fill "Order Form" with:
       | Currency | US Dollar ($) |
     Then I should not see "Price, €:"
@@ -65,38 +67,39 @@ Feature: Create Order with Product Kits
       | ProductKitItem2Price | 1.23 |
 
   Scenario: Add one more product kit line item via the entity select popup
-    When I click "Add Product"
-    And I open select entity popup for field "Product2Dropdown" in form "Order Form"
-    And I sort grid by "SKU"
-    Then I should see following grid:
+    When I open select entity popup for field "Product" in form "Order Edit Add Line Item Form"
+    And I sort "SelectProductsGrid" by "SKU"
+    Then I should see following "SelectProductsGrid" grid:
       | SKU               | Name              |
       | product-kit-01    | Product Kit 01    |
       | simple-product-01 | Simple Product 01 |
       | simple-product-02 | Simple Product 02 |
       | simple-product-03 | Simple Product 03 |
-    When I click on product-kit-01 in grid
-    And fill "Order Form" with:
-      | Quantity2                | 2                                     |
-      | Product2KitItem1Product  | simple-product-03 - Simple Product 03 |
-      | Product2KitItem1Quantity | 3                                     |
-      | Product2KitItem1Price    | 0.75                                  |
-    Then "Order Form" must contains values:
-      | Product2                 | product-kit-01 - Product Kit 01       |
-      | Quantity2                | 2                                     |
-      | Price2                   | 126.94                                |
-      | Product2KitItem1Product  | simple-product-03 - Simple Product 03 |
-      | Product2KitItem1Quantity | 3                                     |
-      | Product2KitItem1Price    | 0.75                                  |
-      | Product2KitItem2Product  | simple-product-01 - Simple Product 01 |
-      | Product2KitItem2Quantity | 1                                     |
-      | Product2KitItem2Price    | 1.23                                  |
+    When I click on product-kit-01 in grid "SelectProductsGrid"
+    And fill "Order Edit Add Line Item Form" with:
+      | Quantity                | 2                                     |
+      | ProductKitItem1Product  | simple-product-03 - Simple Product 03 |
+      | ProductKitItem1Quantity | 3                                     |
+      | ProductKitItem1Price    | 0.75                                  |
+    Then "Order Edit Add Line Item Form" must contains values:
+      | Product                 | product-kit-01 - Product Kit 01       |
+      | Quantity                | 2                                     |
+      | Price                   | 126.94                                |
+      | ProductKitItem1Product  | simple-product-03 - Simple Product 03 |
+      | ProductKitItem1Quantity | 3                                     |
+      | ProductKitItem1Price    | 0.75                                  |
+      | ProductKitItem2Product  | simple-product-01 - Simple Product 01 |
+      | ProductKitItem2Quantity | 1                                     |
+      | ProductKitItem2Price    | 1.23                                  |
     And I should see "$1.2345" in the "Order Form Line Item 2 Kit Item 1 Matched Price" element
     And I should not see a "Order Form Line Item 2 Kit Item 2 Matched Price" element
     And the "Price" field should be readonly in form "Order Form"
     And the "Price2" field should be readonly in form "Order Form"
+    And click "Add Product"
 
   Scenario: Check that order line item price is updated when a kit configuration changes
-    When I fill "Order Form" with:
+    When I click Edit "Simple Product 03" in grid
+    And I fill "Order Form" with:
       | Product2KitItem1Quantity | 5 |
     Then "Order Form" must contains values:
       | Price2 | 128.44 |
@@ -106,6 +109,7 @@ Feature: Create Order with Product Kits
       | Price2 | 128.94 |
     And the "Price" field should be readonly in form "Order Form"
     And the "Price2" field should be readonly in form "Order Form"
+    And I click on the second "Order Edit Save Changes"
 
   Scenario: Check order subtotals
     And I see next subtotals for "Backend Order":

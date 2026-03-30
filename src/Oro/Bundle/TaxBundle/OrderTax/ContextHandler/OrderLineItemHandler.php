@@ -3,6 +3,8 @@
 namespace Oro\Bundle\TaxBundle\OrderTax\ContextHandler;
 
 use Oro\Bundle\OrderBundle\Entity\OrderHolderInterface;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface;
 use Oro\Bundle\TaxBundle\Event\ContextEvent;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
@@ -73,6 +75,8 @@ class OrderLineItemHandler
 
         if ($product) {
             $this->taxCodes[$cacheKey] = $this->getTaxCode(TaxCodeInterface::TYPE_PRODUCT, $product);
+        } elseif ($lineItem instanceof OrderLineItem && $lineItem->isFreeForm()) {
+            $this->taxCodes[$cacheKey] = $lineItem->getFreeFormTaxCode()?->getCode();
         }
 
         return $this->taxCodes[$cacheKey];
@@ -112,6 +116,9 @@ class OrderLineItemHandler
     protected function getCacheTaxCodeKey(string $type, OrderHolderInterface $orderLineItem): string
     {
         $id = $orderLineItem->getId() ?: spl_object_hash($orderLineItem);
+        if ($orderLineItem instanceof ProductLineItemChecksumAwareInterface) {
+            $id .= ':' . $orderLineItem->getChecksum();
+        }
 
         return implode(':', [$type, $id]);
     }

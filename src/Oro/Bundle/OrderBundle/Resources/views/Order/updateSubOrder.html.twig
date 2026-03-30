@@ -2,6 +2,8 @@
 {% import '@OroUI/macros.html.twig' as UI %}
 {% import '@OroOrder/Order/macros.html.twig' as SM %}
 
+{% set draftSessionUuid = oro_order_draft_session_uuid() %}
+
 {% oro_title_set({params : {
     '%identifier%': entity.identifier|default('N/A'|trans),
     '%entityName%': 'oro.order.entity_label'|trans
@@ -63,9 +65,19 @@
     {% endif %}
 {% endblock breadcrumbs %}
 
+{% set entryPointRouteParams = {id: entity.id|default(0)} %}
+{% set pageComponentOptions = {} %}
+{% if draftSessionUuid %}
+    {% set entryPointRouteParams = entryPointRouteParams|merge({ 'orderDraftSessionUuid': draftSessionUuid }) %}
+    {% set pageComponentOptions = pageComponentOptions|merge({triggerSelector: 'input:not([data-line-items-content] input),select:not([data-line-items-content] select),textarea:not([data-line-items-content] textarea)'}) %}
+{% endif %}
+
 {% set pageComponent = {
     module: 'oroorder/js/app/components/entry-point-component',
-    options: { route: 'oro_suborder_entry_point', routeParams: {id: entity.id|default(0)} },
+    options: {
+        route: 'oro_suborder_entry_point',
+        routeParams: entryPointRouteParams
+    }|merge(pageComponentOptions),
 } %}
 
 {% block content_data %}
@@ -90,26 +102,28 @@
                  }
              }|json_encode }}">
             <div data-page-component-module="orocustomer/js/app/components/customer-selection-component">
-                {{ form_row(form.customer) }}
-                {{ form_row(form.customerUser) }}
+                {{ form_row(form.customer, { 'attr': { 'data-entry-point-trigger': 1 } }) }}
+                {{ form_row(form.customerUser, { 'attr': { 'data-entry-point-trigger': 1 } }) }}
             </div>
         </div>
     {% endset %}
 
     {% set lineItems %}
-        {% set subtotalType = constant('Oro\\Bundle\\PricingBundle\\SubtotalProcessor\\Provider\\LineItemSubtotalProvider::TYPE') %}
-        <div class="order-line-items"
-             data-page-component-module="oroui/js/app/components/view-component"
-             data-page-component-options="{{ {
-                 view: 'oroorder/js/app/views/line-items-view',
-                 tierPrices: orderData.tierPrices|default({}),
-                 currency: entity.currency,
-                 customer: entity.customer is null ? null : entity.customer.id,
-                 subtotalType: subtotalType
-             }|json_encode }}"
-             data-layout="separate">
-            {{ form_widget(form.lineItems) }}
-            {{ form_errors(form.lineItems) }}
+        {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+        <div class="grid grid-row-gap-24">
+            <div class="grid-col-12">
+                {{ dataGrid.renderGrid('order-line-items-edit-grid', { order_id: entity.id|default(0), draft_session_uuid: draftSessionUuid}, { cssClass: 'order-line-items-edit-grid' }) }}
+            </div>
+            <div class="grid-col-12">
+                <div class="order-line-item-draft-form-container">
+                    {{ oro_widget_render({
+                        'widgetType': 'order-line-item-draft-create',
+                        'url': path('oro_order_line_item_draft_create', { orderId: entity.id|default(0), orderDraftSessionUuid: draftSessionUuid }),
+                        'alias': 'order-line-item-draft-create',
+                        'elementFirst': false
+                    }) }}
+                </div>
+            </div>
         </div>
 
         {% set entityDataOptions = {entityData: orderData} %}

@@ -56,6 +56,13 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onEdit }
 
+    oro_tax.draft_session.tax_code_aware_order_line_item_draft_synchronizer:
+        class: Oro\Bundle\TaxBundle\DraftSession\TaxCodeAwareOrderLineItemDraftSynchronizer
+        arguments:
+            - '@oro_order.draft_session.reference_resolver'
+        tags:
+            - { name: oro_order.draft_session.synchronizer }
+
     oro_tax.form.autocomplete.tax.search_handler:
         parent: oro_form.autocomplete.search_handler
         arguments:
@@ -167,6 +174,9 @@ services:
             - ~ # service locator
             - '@oro_config.manager'
 
+    Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry:
+        alias: oro_tax.provider.tax_provider_registry
+
     oro_tax.provider.built_in_tax_provider:
         class: 'Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider'
         public: false
@@ -276,6 +286,9 @@ services:
             - '@oro_tax.factory.address_model_factory'
             - '@oro_tax.taxation_provider.cache'
 
+    Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider:
+        alias: oro_tax.provider.taxation_settings_provider
+
     oro_tax.provider.taxation_address_provider:
         class: 'Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider'
         public: false
@@ -355,6 +368,12 @@ services:
 
     oro_tax.event_listener.order_tax.order_line_item_taxable_listener:
         class: 'Oro\Bundle\TaxBundle\EventListener\OrderTax\OrderLineItemTaxableListener'
+        parent: oro_tax.event_listener.order_tax.abstract_taxable_listener
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\TaxBundle\Event\SkipOrderTaxRecalculationEvent, method: onSkipOrderTaxRecalculation }
+
+    oro_tax.event_listener.draft_session.skip_order_tax_recalculation_entity_draft_aware_listener:
+        class: 'Oro\Bundle\TaxBundle\EventListener\DraftSession\SkipOrderTaxRecalculationEntityDraftAwareEventListener'
         parent: oro_tax.event_listener.order_tax.abstract_taxable_listener
         tags:
             - { name: kernel.event_listener, event: Oro\Bundle\TaxBundle\Event\SkipOrderTaxRecalculationEvent, method: onSkipOrderTaxRecalculation }

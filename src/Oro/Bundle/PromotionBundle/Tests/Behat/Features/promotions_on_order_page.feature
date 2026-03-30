@@ -28,10 +28,16 @@ Feature: Promotions on Order page
       | shipping Discount Promotion  | -$1.00   |
       | order Discount Promotion     | -$7.50   |
     When I click "Line Items"
-    Then I see next line item discounts for backoffice order:
-      | SKU  | Row Total Incl Tax | Row Total Excl Tax | Discount |
-      | SKU2 | $5.00              | $5.00              | $5.00    |
-      | SKU1 | $10.00             | $10.00             | $0.00    |
+    And I click edit SKU2 in grid
+    And I click "View taxes & discounts"
+    Then I see next line item discounts for backoffice order edit for "SKU2":
+      |           | Incl Tax | Excl Tax | Discount |
+      | Row Total | $5.00    | $5.00    | $5.00    |
+    When I click edit SKU1 in grid
+    And I click "View taxes & discounts"
+    Then I see next line item discounts for backoffice order edit for "SKU1":
+      |           | Incl Tax | Excl Tax | Discount |
+      | Row Total | $10.00   | $10.00   | $0.00    |
     And I click "Totals"
     And I see next subtotals for "Backend Order":
       | Subtotal          | Amount  |
@@ -64,13 +70,17 @@ Feature: Promotions on Order page
 
   Scenario: Change product's quantity and check that discount amount changed accordingly, instantly and after save
     Given I operate as the Admin
-    And I click "Line Items"
-    When I fill "Promotion Order Form" with:
-      | SKU2ProductQuantity | 3 |
-    Then I see next line item discounts for backoffice order:
-      | SKU  | Row Total Incl Tax | Row Total Excl Tax | Discount |
-      | SKU2 | $3.00              | $3.00              | $3.00    |
-      | SKU1 | $10.00             | $10.00             | $0.00    |
+    When I click "Line Items"
+    And fill "Order Form" with:
+      | Quantity | 3 |
+    Then I see next line item discounts for backoffice order edit for "SKU2":
+      |           | Incl Tax | Excl Tax | Discount |
+      | Row Total | $3.00    | $3.00    | $3.00    |
+    And I see next line item discounts for backoffice order edit for "SKU1":
+      |           | Incl Tax | Excl Tax | Discount |
+      | Row Total | $10.00   | $10.00   | $0.00    |
+    And I click on the second "Order Edit Save Changes"
+    And I click on the first "Order Edit Save Changes"
     And I should see next rows in "Promotions" table
       | Promotion                    | Discount |
       | line Item Discount Promotion | -$3.00   |
@@ -92,10 +102,18 @@ Feature: Promotions on Order page
       | line Item Discount Promotion | -$3.00   |
       | shipping Discount Promotion  | -$1.00   |
       | order Discount Promotion     | -$6.50   |
-    And I see next line item discounts for backoffice order:
-      | SKU  | Row Total Incl Tax | Row Total Excl Tax | Discount |
-      | SKU2 | $3.00              | $3.00              | $3.00    |
-      | SKU1 | $10.00             | $10.00             | $0.00    |
+
+    When I click edit SKU2 in grid
+    And I click "View taxes & discounts"
+    Then I see next line item discounts for backoffice order edit for "SKU2":
+      |           | Incl Tax | Excl Tax | Discount |
+      | Row Total | $3.00    | $3.00    | $3.00    |
+    When I click edit SKU1 in grid
+    And I click "View taxes & discounts"
+    Then I see next line item discounts for backoffice order edit for "SKU1":
+      |           | Incl Tax | Excl Tax | Discount |
+      | Row Total | $10.00   | $10.00   | $0.00    |
+
     And I click "Totals"
     And I see next subtotals for "Backend Order":
       | Subtotal          | Amount |

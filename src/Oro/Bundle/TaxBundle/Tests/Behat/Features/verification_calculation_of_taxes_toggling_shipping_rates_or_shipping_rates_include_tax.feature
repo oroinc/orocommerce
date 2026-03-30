@@ -34,18 +34,19 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     When I follow "Commerce/Taxation/Shipping" on configuration sidebar
     And uncheck "Use default" for "Tax Code" field
     And I fill "Tax Shipping Form" with:
-      | Tax Code                   | taxable |
+      | Tax Code | taxable |
     And I save form
     Then I should see "Configuration saved" flash message
 
   Scenario: Create order to verify calculation of taxes
     And I go to Sales/Orders
     When I click "Create Order"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
-      | Product       | SKU123      |
-      | Quantity      | 5           |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | SKU123 |
+      | Quantity | 5      |
+    And click "Add Product"
     And I click "Calculate Shipping"
     And I click "Shipping Method Flat Rate Radio Button"
     Then I should see "Subtotal $10.00"
@@ -59,8 +60,8 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     And I should see "Tax $1.17"
     And I should see "Total $14.17"
     When I go to Sales/Orders
-    And I should see "1" in grid with following data:
-      | Order Number | 1      |
+    And I should see "2" in grid with following data:
+      | Order Number | 2      |
       | Total        | $14.17 |
 
   Scenario: Create order with shipping rates include tax on
@@ -72,11 +73,12 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     Then I should see "Configuration saved" flash message
     And I go to Sales/Orders
     When I click "Create Order"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
-      | Product       | SKU123      |
-      | Quantity      | 5           |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | SKU123 |
+      | Quantity | 5      |
+    And click "Add Product"
     And I click "Calculate Shipping"
     And I click "Shipping Method Flat Rate Radio Button"
     Then I should see "Subtotal $10.00"
@@ -99,17 +101,18 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     Then there are 2 records in grid
     And I should see following grid containing rows:
       | Order Number | Total  |
-      | 1            | $14.17 |
-      | 2            | $10.90 |
+      | 2            | $14.17 |
+      | 4            | $10.90 |
 
   Scenario: Create order without shipping method and edit order again
     Given I go to Sales/Orders
     When I click "Create Order"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
-      | Product       | SKU123      |
-      | Quantity      | 5           |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | SKU123 |
+      | Quantity | 5      |
+    And click "Add Product"
     When I save and close form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
@@ -136,9 +139,9 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     Then there are 3 records in grid
     And I should see following grid containing rows:
       | Order Number | Total  |
-      | 1            | $14.17 |
-      | 2            | $10.90 |
-      | 3            | $10.90 |
+      | 2            | $14.17 |
+      | 4            | $10.90 |
+      | 6            | $10.90 |
 
   Scenario: Create Order With Product Prices Include Tax On
     Given I go to System/Configuration
@@ -153,11 +156,12 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     Then I should see "Configuration saved" flash message
     And I go to Sales/Orders
     When I click "Create Order"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
-      | Product       | SKU123      |
-      | Quantity      | 5           |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | SKU123 |
+      | Quantity | 5      |
+    And click "Add Product"
     And I click "Calculate Shipping"
     And I click "Shipping Method Flat Rate Radio Button"
     Then I should see "Subtotal $10.00"
@@ -174,10 +178,10 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     Then there are 4 records in grid
     And I should see following grid containing rows:
       | Order Number | Total  |
-      | 1            | $14.17 |
-      | 2            | $10.90 |
-      | 3            | $10.90 |
-      | 4            | $13.27 |
+      | 2            | $14.17 |
+      | 4            | $10.90 |
+      | 6            | $10.90 |
+      | 9            | $13.27 |
 
   Scenario: Create Order With Both Shipping Rates and Product Prices Include Tax On
     Given I go to System/Configuration
@@ -188,11 +192,12 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     Then I should see "Configuration saved" flash message
     And I go to Sales/Orders
     When I click "Create Order"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
-      | Product       | SKU123      |
-      | Quantity      | 5           |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | SKU123 |
+      | Quantity | 5      |
+    And click "Add Product"
     And I click "Calculate Shipping"
     And I click "Shipping Method Flat Rate Radio Button"
     Then I should see "Subtotal $10.00"
@@ -209,11 +214,11 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     Then there are 5 records in grid
     And I should see following grid containing rows:
       | Order Number | Total  |
-      | 1            | $14.17 |
-      | 2            | $10.90 |
-      | 3            | $10.90 |
-      | 4            | $13.27 |
-      | 5            | $13.00 |
+      | 2            | $14.17 |
+      | 4            | $10.90 |
+      | 6            | $10.90 |
+      | 9            | $13.27 |
+      | 11           | $13.00 |
 
   Scenario: Turn on tax calculation after promotion and create order
     Given I go to System/Configuration
@@ -224,11 +229,12 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     Then I should see "Configuration saved" flash message
     When I go to Sales/Orders
     When I click "Create Order"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
-      | Product       | SKU123      |
-      | Quantity      | 5           |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | SKU123 |
+      | Quantity | 5      |
+    And click "Add Product"
     When I save and close form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
@@ -249,9 +255,9 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     Then there are 6 records in grid
     And I should see following grid containing rows:
       | Order Number | Total  |
-      | 1            | $14.17 |
-      | 2            | $10.90 |
-      | 3            | $10.90 |
-      | 4            | $13.27 |
-      | 5            | $13.00 |
-      | 6            | $13.00 |
+      | 2            | $14.17 |
+      | 4            | $10.90 |
+      | 6            | $10.90 |
+      | 9            | $13.27 |
+      | 11           | $13.00 |
+      | 13           | $13.00 |

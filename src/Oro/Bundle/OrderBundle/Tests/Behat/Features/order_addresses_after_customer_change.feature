@@ -62,17 +62,18 @@ Feature: Order addresses after customer change
   Scenario: Create Order
     Given I go to Sales/Orders
     When I click "Create Order"
-    And click "Add Product"
-    And click on "Free Form Entry 0"
     And fill "Order Form" with:
       | Customer         | ACME Customer       |
       | Customer User    | ACME Customer User  |
-      | FreeProductSku   | ORO_PRODUCT_SKU     |
-      | FreeProduct0     | ORO_PRODUCT_0       |
-      | Quantity0        | 1                   |
-      | Price0           | 100                 |
       | Shipping Address | Enter other address |
       | Billing Address  | Enter other address |
+    And click on "Free-form entry"
+    And fill "Order Edit Add Line Item Form" with:
+      | FreeProductSku | ORO_PRODUCT_SKU |
+      | FreeProduct    | ORO_PRODUCT_0   |
+      | Quantity       | 1               |
+      | Price          | 100             |
+    And click "Add Product"
     And save and close form
     Then I should see "Review Shipping Cost"
     When I click "Save" in modal window

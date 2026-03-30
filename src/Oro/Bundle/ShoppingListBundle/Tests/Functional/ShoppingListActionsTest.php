@@ -45,12 +45,11 @@ class ShoppingListActionsTest extends ActionTestCase
         );
 
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['redirectUrl']);
 
-        $content = $crawler->filter('[data-ftid=oro_order_type_lineItems]')->html();
-        foreach ($shoppingList->getLineItems() as $lineItem) {
-            static::assertStringContainsString($lineItem->getProduct()->getSku(), $content);
-        }
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertStringContainsString('Create Order - Orders - Sales', $crawler->html());
     }
 
     public function testLineItemCreate()

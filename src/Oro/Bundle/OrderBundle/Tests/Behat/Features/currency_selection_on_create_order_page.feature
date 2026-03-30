@@ -32,15 +32,18 @@ Feature: Currency selection on create order page
   Scenario: Create order selecting currency in back office
     Given I go to Sales/Orders
     And click "Create Order"
-    And click "Add Product"
     When I fill "Order Form" with:
       | Customer         | Company A                              |
       | Customer User    | Amanda Cole                            |
       | Billing Address  | ORO, Fifth avenue, ORLANDO FL US 90001 |
       | Shipping Address | ORO, Fifth avenue, ORLANDO FL US 90001 |
-      | Product          | SKU                                    |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product | SKU |
+    And click "Add Product"
 
-    Then I should see next rows in "Backend Order First Line Item Taxes Items Table" table
+    When I click edit SKU in grid
+    And I click "View taxes & discounts"
+    Then I see the next line item taxes for backoffice order edit for "SKU":
       |            | Incl. Tax | Excl. Tax | Tax Amount |
       | Unit Price | $13.20    | $12.00    | $1.20      |
       | Row Total  | $13.20    | $12.00    | $1.20      |

@@ -173,6 +173,6 @@ class OrderProductKitItemLineItemType extends AbstractType
     #[\Override]
     public function getBlockPrefix(): string
     {
-        return 'oro_order_line_item';
+        return 'oro_order_product_kit_item_line_item';
     }
 }

@@ -11,7 +11,6 @@ Feature: Order promotions
     And click "edit" on first row in grid
     # Need to re-calculate discounts
     When I save form
-    And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
     When click "Totals"
     Then I see next subtotals for "Backend Order":
@@ -19,9 +18,12 @@ Feature: Order promotions
       | Total    | $10.00 |
 
   Scenario: Recalculate discounts if line items changed(automatically added promotions)
-    Given I fill "Order Form" with:
+    When I click "Line Items"
+    And I click Edit "Product1" in grid
+    And fill "Order Form" with:
       | Product | Product2 |
       | Price   | 20       |
+    And I click on "Order Edit Save Changes"
     Then I should see next rows in "Promotions" table
       | Promotion                 | Type            | Status | Discount |
       | Order Line Item Promotion | Order Line Item | Active | -$2.00   |
@@ -54,9 +56,11 @@ Feature: Order promotions
       | Total    | $14.00 |
 
   Scenario: Add coupon if line items changed
-    Given I fill "Order Form" with:
-      | Product | Product2 |
-      | Price   | 30       |
+    When I click "Line Items"
+    And I click Edit "Product2" in grid
+    And fill "Order Form" with:
+      | Price | 30 |
+    And I click on "Order Edit Save Changes"
     Given I click "Add Coupon Code"
     And type "orderLineItemCoupon" in "Coupon Code"
     And should see a "Highlighted Suggestion" element
@@ -111,9 +115,12 @@ Feature: Order promotions
       | Total    | $23.00 |
 
   Scenario: Remove coupon if line items changed
-    Given I fill "Order Form" with:
-      | Product | Product2 |
-      | Price   | 40       |
+    When I click "Line Items"
+    And I click Edit "Product2" in grid
+    And fill "Order Form" with:
+      | Price | 40 |
+    And I click on "Order Edit Save Changes"
+
     Given I click "Remove" on row "Order Line Item Coupon Promotion" in "Promotions"
     Then should see next rows in "Promotions" table
       | Promotion                 | Type            | Status | Discount |

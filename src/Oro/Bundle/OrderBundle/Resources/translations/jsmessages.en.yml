@@ -22,3 +22,17 @@ oro:
                 cancel_confirm_message: Are you sure you want to cancel this order? Please note that once your order is canceled, it cannot be changed.
                 close_confirm_title: Close order
                 close_confirm_message: Are you sure you want to close this order? Please note that once your order is closed, it cannot be changed.
+
+        draft_line_items_datagrid:
+            batch_update_content_load_error: 'Draft line item not found.'
+
+        line_items_datagrid_presentation:
+            showing_product: 'Showing only product <b>{{ skus }}</b>.'
+            reset_btn:
+                label: Restore previous view
+
+        leave_page_with_unsaved_data_confirm: 'You have unsaved changes, are you sure you want to reload this page?'
+
+        orderlineitem:
+            discounts_taxes:
+                update_error: Unable to update taxes and discounts.

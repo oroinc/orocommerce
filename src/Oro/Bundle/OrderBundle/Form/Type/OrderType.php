@@ -10,6 +10,7 @@ use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumIdChoiceType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener;
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
@@ -49,6 +50,7 @@ class OrderType extends AbstractType
         $this->orderCurrencyHandler->setOrderCurrency($order);
 
         $builder
+            ->add('recalculationRequired', HiddenType::class, ['mapped' => false])
             ->add('customer', CustomerSelectType::class, ['label' => 'oro.order.customer.label', 'required' => true])
             ->add(
                 'customerUser',
@@ -80,11 +82,7 @@ class OrderType extends AbstractType
             ->add('sourceEntityId', HiddenType::class)
             ->add('sourceEntityIdentifier', HiddenType::class);
 
-        $this->addAddresses($builder, $order);
-        $this->addBillingAddress($builder, $order, $options);
-
-        $this->addPreSubmitEventListener($builder, $order);
-        $builder->addEventSubscriber($this->subtotalSubscriber);
+        $this->addBillingAddress($builder, $order);
 
         if (!$order->getSubOrders()->count()) {
             $builder
@@ -118,8 +116,11 @@ class OrderType extends AbstractType
                     ]
                 );
             $this->addShippingFields($builder, $order);
-            $this->addShippingAddress($builder, $order, $options);
+            $this->addShippingAddress($builder, $order);
         }
+
+        $this->addPreSubmitEventListener($builder, $order);
+        $builder->addEventSubscriber($this->subtotalSubscriber);
     }
 
     #[\Override]
@@ -137,26 +138,7 @@ class OrderType extends AbstractType
         return self::NAME;
     }
 
-    private function addAddresses(FormBuilderInterface $builder, Order $order): void
-    {
-        $addressTypes = [AddressType::TYPE_BILLING];
-        if (!$order->getSubOrders()->count()) {
-            $addressTypes[] = AddressType::TYPE_SHIPPING;
-        }
-        foreach ($addressTypes as $type) {
-            if ($this->orderAddressSecurityProvider->isAddressGranted($order, $type)) {
-                $options = [
-                    'label' => sprintf('oro.order.%s_address.label', $type),
-                    'order' => $order,
-                    'required' => false,
-                    'address_type' => $type,
-                ];
-                $builder->add(sprintf('%sAddress', $type), OrderAddressType::class, $options);
-            }
-        }
-    }
-
-    private function addBillingAddress(FormBuilderInterface $builder, Order $order, array $options): void
+    private function addBillingAddress(FormBuilderInterface $builder, Order $order): void
     {
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
             $builder
@@ -165,15 +147,23 @@ class OrderType extends AbstractType
                     OrderAddressType::class,
                     [
                         'label' => 'oro.order.billing_address.label',
-                        'order' => $options['data'],
+                        'order' => $order,
                         'required' => false,
                         'address_type' => AddressType::TYPE_BILLING,
                     ]
                 );
+
+            $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                $form = $event->getForm();
+
+                FormUtils::replaceField($form, 'billingAddress', [
+                    'order' => $event->getData(),
+                ]);
+            });
         }
     }
 
-    private function addShippingAddress(FormBuilderInterface $builder, Order $order, array $options): void
+    private function addShippingAddress(FormBuilderInterface $builder, Order $order): void
     {
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_SHIPPING)) {
             $builder
@@ -182,11 +172,19 @@ class OrderType extends AbstractType
                     OrderAddressType::class,
                     [
                         'label' => 'oro.order.shipping_address.label',
-                        'order' => $options['data'],
+                        'order' => $order,
                         'required' => false,
                         'address_type' => AddressType::TYPE_SHIPPING,
                     ]
                 );
+
+            $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                $form = $event->getForm();
+
+                FormUtils::replaceField($form, 'shippingAddress', [
+                    'order' => $event->getData(),
+                ]);
+            });
         }
     }
 

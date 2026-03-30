@@ -40,5 +40,4 @@ Feature: Address Validation - Create Order - Dialog Not Displayed When Original 
       | Shipping Address Postal Code | 33844               |
     And I save form
     Then I should see "This value should not be blank."
-    And I should see "Please add at least one Line Item"
     And I should not see "Confirm Your Address"

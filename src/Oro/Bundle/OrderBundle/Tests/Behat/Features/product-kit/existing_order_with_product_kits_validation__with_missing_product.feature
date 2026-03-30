@@ -11,7 +11,9 @@ Feature: Existing Order with Product Kits Validation - with Missing Product
     And click edit "order1" in grid
 
   Scenario: Check the kit item line items with a missing product
-    Given "Order Form" must contains values:
+    Given I click "Line Items"
+    And I click on the first "Edit Line Item Button"
+    And "Order Form" must contains values:
       | Quantity                | 1                     |
       | Price                   | 12.3400               |
       | ProductKitItem1Product  | MP1 - Missing Product |
@@ -30,12 +32,16 @@ Feature: Existing Order with Product Kits Validation - with Missing Product
 
   Scenario: Change the kit item line items with a missing product
     When fill "Order Form" with:
-      | Quantity                | 2                                     |
-      | ProductKitItem1Product  | MP1 - Missing Product                 |
-      | ProductKitItem1Quantity | 3                                     |
-      | ProductKitItem1Price    | 35.56                                 |
-      | ProductKitItem2Product  | simple-product-02 - Simple Product 02 |
-      | ProductKitItem2Quantity | 4                                     |
+      | Quantity               | 2                     |
+      | ProductKitItem1Product | MP1 - Missing Product |
+    And fill "Order Form" with:
+      | ProductKitItem1Quantity | 3 |
+    And fill "Order Form" with:
+      | ProductKitItem1Price | 35.56 |
+    And fill "Order Form" with:
+      | ProductKitItem2Product | simple-product-02 - Simple Product 02 |
+    And fill "Order Form" with:
+      | ProductKitItem2Quantity | 4 |
     And I click "Order Form Line Item 1 Price Overridden"
     And I click "Reset price"
     And I click on empty space
@@ -48,18 +54,23 @@ Feature: Existing Order with Product Kits Validation - with Missing Product
       | ProductKitItem2Product  | simple-product-02 - Simple Product 02 |
       | ProductKitItem2Quantity | 4                                     |
       | ProductKitItem2Price    | 2.47                                  |
+    And I click on the first "Order Edit Save Changes"
     When I save form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
 
   Scenario: Remove line item
-    When I click on "Order Form Line Item 1 Remove"
+    Given I click "Line Items"
+    When I click delete "product-kit-01" in grid
+    And I click "Yes, Delete" in confirmation dialogue
     And I save form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
 
   Scenario: Check the kit item line items with disabled product
-    Given "Order Form" must contains values:
+    Given I click "Line Items"
+    And I click on the first "Edit Line Item Button"
+    And "Order Form" must contains values:
       | Quantity                | 1                                                |
       | Price                   | 12.3400                                          |
       | ProductKitItem1Product  | simple-product-04 - Simple Product 04 - Disabled |
@@ -80,11 +91,14 @@ Feature: Existing Order with Product Kits Validation - with Missing Product
 
   Scenario: Change the kit item line items with disabled product
     When fill "Order Form" with:
-      | Quantity                | 2                                     |
-      | ProductKitItem1Quantity | 2                                     |
-      | ProductKitItem1Price    | 37.56                                 |
-      | ProductKitItem2Product  | simple-product-02 - Simple Product 02 |
-      | ProductKitItem2Quantity | 3                                     |
+      | Quantity                | 2 |
+      | ProductKitItem1Quantity | 2 |
+    And fill "Order Form" with:
+      | ProductKitItem1Price | 37.56 |
+    And fill "Order Form" with:
+      | ProductKitItem2Product | simple-product-02 - Simple Product 02 |
+    And fill "Order Form" with:
+      | ProductKitItem2Quantity | 3 |
     And I click "Order Form Line Item 1 Price Overridden"
     And I click "Reset price"
     And I click on empty space
@@ -97,6 +111,7 @@ Feature: Existing Order with Product Kits Validation - with Missing Product
       | ProductKitItem2Product  | simple-product-02 - Simple Product 02            |
       | ProductKitItem2Quantity | 3                                                |
       | ProductKitItem2Price    | 2.47                                             |
+    And I click on the first "Order Edit Save Changes"
     When I save form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message

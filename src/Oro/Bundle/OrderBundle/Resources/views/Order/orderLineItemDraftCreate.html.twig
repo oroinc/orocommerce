@@ -1,0 +1,193 @@
+{% form_theme form '@OroOrder/Form/orderLineItemDraftForm.html.twig' %}
+
+{% if form.productSku is defined %}
+    {% set productSkuWidget = form_widget(form.productSku) %}
+    {% set productSkuErrors = form_errors(form.productSku) %}
+{% endif %}
+
+{% if form.freeFormProduct is defined %}
+    {% set freeFormProductWidget = form_widget(form.freeFormProduct) %}
+    {% set freeFormProductErrors = form_errors(form.freeFormProduct) %}
+{% endif %}
+
+{% set productWidget = form_widget(form.product, {
+    'attr': {
+        'data-draft-update-field': '',
+        'data-delay': 0
+    }
+}) %}
+{% set productErrors = form_errors(form.product) %}
+
+{% if form.kitItemLineItems is defined %}
+    {% set kitItemLineItemsWidget = form_widget(form.kitItemLineItems) %}
+    {% set kitItemLineItemsErrors = form_errors(form.kitItemLineItems) %}
+{% endif %}
+
+{% set quantityWidget = form_widget(form.quantity) %}
+{% set quantityErrors = form_errors(form.quantity) %}
+{% set productUnitWidget = form_widget(form.productUnit) %}
+{% set productUnitErrors = form_errors(form.productUnit) %}
+{% set priceWidget = form_widget(form.price) %}
+{% set priceErrors = form_errors(form.price) %}
+{% set priceTypeWidget = form_widget(form.priceType) %}
+{% set priceTypeErrors = form_errors(form.priceType) %}
+{% set shipByWidget = form_widget(form.shipBy, { 'required': false }) %}
+{% set shipByErrors = form_errors(form.shipBy) %}
+{% set commentWidget = form_widget(form.comment, { 'attr': { 'placeholder': 'oro.order.orderlineitem.draft_form.comment.placeholder'|trans, 'class': 'order-comment-field' } }) %}
+{% set commentErrors = form_errors(form.comment) %}
+{% set extraColumnsPlaceholder = placeholder('oro_order_line_item_draft_create_extra_column', { 'entity': entity, 'form': form }) %}
+{% set isFreeFormField = form_widget(form.isFreeForm, {
+    'attr': {
+        'data-draft-update-field': ''
+    }
+}) %}
+{% set extraFields = form_rest(form) %}
+
+<div class="widget-content">
+    <div class="create-draft-container oro-datagrid order-line-items-edit-grid"
+         data-role="order-line-item-draft-create-form-container"
+         data-layout="separate"
+         data-page-component-view="oroorder/js/app/views/order-line-item-draft-create-view"
+         data-page-component-options="{{ {
+             'freeFormUnits': oro_get_product_units_with_precision(),
+             'tierPrices': form.vars.tierPrices,
+             'modelAttr': {
+                 'product_units': oro_get_product_units_with_precision(entity.product)
+             }
+         }|json_encode|e('html_attr') }}"
+    >
+        {{ form_start(form, { 'action': app.request.uri, 'attr': { 'id': form.vars.id, 'class': 'draft-form' } }) }}
+        <p class="create-draft-container__title">{{ 'oro.order.orderlineitem.draft_add_product'|trans }}</p>
+        <table class="grid grid-main-container">
+            <tbody class="grid-body fields-row">
+            <tr class="grid-row grid-row-update" data-edit-row="">
+                <td class="string-cell direction-ltr grid-cell grid-body-cell grid-body-cell-productSku grid-body-cell-update">
+                    {%- if entity.isFreeForm -%}
+                        {{ productSkuWidget|raw }}
+                    {%- else -%}
+                        {{ entity.product.sku ?? entity.productSku }}
+                    {%- endif -%}
+                </td>
+                <td class="string-cell grid-cell grid-body-cell grid-body-cell-product grid-body-cell-update">
+                    <div class="order-line-items">
+                        <div class="order-line-items__product-row">
+                            {% if entity.product %}
+                                {% include '@OroAttachment/Twig/picture.html.twig' with {
+                                    sources: product_filtered_picture_sources(oro_product_get_main_image(entity.product), 'product_small'),
+                                    img_attrs: { class: 'thumbnail cover-img', alt: entity.product.defaultName, width: 44, height: 44 },
+                                    picture_attrs: { class: 'product-image' }
+                                } %}
+                            {% endif %}
+                            <div class="product-select-container">
+                                {%- if entity.isFreeForm -%}
+                                    {{ freeFormProductWidget|raw }}
+                                {%- else -%}
+                                    {{ productWidget|raw }}
+                                {%- endif -%}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td class="string-cell grid-cell grid-body-cell grid-body-cell-quantity grid-body-cell-update">
+                    <div class="quantity-unit-row">
+                        {{ quantityWidget|raw }}
+                        {{ productUnitWidget|raw }}
+                    </div>
+                </td>
+                <td class="string-cell grid-cell grid-body-cell grid-body-cell-price grid-body-cell-update"
+                    data-page-component-view="oropricing/js/app/views/line-item-product-prices-view"
+                >
+                    {{ priceWidget|raw }}
+
+                    {{ priceTypeWidget|raw }}
+                </td>
+                <td class="date-cell grid-cell grid-body-cell grid-body-cell-shipBy grid-body-cell-update">
+                    {{ shipByWidget|raw }}
+                </td>
+                {{ extraColumnsPlaceholder|raw }}
+                <td class="action-cell grid-cell grid-body-cell grid-body-cell-update"></td>
+            </tr>
+            <tr class="grid-row grid-row-update-form-validation">
+                <td class="string-cell grid-cell grid-body-cell grid-body-cell-productSku grid-body-cell-update"></td>
+                <td class="string-cell grid-cell grid-body-cell grid-body-cell-product grid-body-cell-update fields-row-error" colspan="6">
+                    {%- if entity.isFreeForm -%}
+                        {{ productSkuErrors|raw }}
+                    {%- endif -%}
+
+                    {%- if entity.isFreeForm -%}
+                        {{ freeFormProductErrors|raw }}
+                    {%- else -%}
+                        {{ productErrors|raw }}
+                    {%- endif -%}
+
+                    {{ quantityErrors|raw }}
+                        {{ productUnitErrors|raw }}
+
+                        {{ priceErrors|raw }}
+                    {{ priceTypeErrors|raw }}
+
+                    {{ shipByErrors|raw }}
+                </td>
+            </tr>
+            <tr class="grid-row grid-row-update-form" data-edit-form-row="">
+                <td class="string-cell direction-ltr grid-cell grid-body-cell grid-body-cell-productSku grid-body-cell-update-form"></td>
+                <td class="string-cell grid-cell grid-body-cell grid-body-cell-update-form" colspan="6">
+                    <div class="grid">
+                        <div class="grid-col-12">
+                            {% set freeFromValue = entity.isFreeForm ? '1' : '0' %}
+                            <a data-role="select-order-line-item-draft"
+                               data-draft-free-form="{{ freeFromValue }}"
+                               href="#">{{
+                                    entity.isFreeForm
+                                    ? 'oro.order.orderlineitem.select.product'|trans
+                                    : 'oro.order.orderlineitem.select.free_form'|trans
+                                }}</a>
+                        </div>
+                        <div class="grid grid-row-gap-24 grid-col-12 {% if entity.product == null and not entity.isFreeForm %} hide{% endif %}">
+                            {% if form.vars.errors|length > 0 %}
+                                <div class="alert alert-error" role="alert">
+                                    {{ form_errors(form) }}
+                                </div>
+                            {% endif %}
+
+                            {% if kitItemLineItemsWidget is defined %}
+                                <div class="grid-col-12 order-line-item-kit-item-line-items">
+                                    {{ kitItemLineItemsWidget|raw }}
+                                    {{ kitItemLineItemsErrors|raw }}
+                                </div>
+                            {% endif %}
+
+                            {{ isFreeFormField|raw }}
+
+                            <div class="grid-row-update-form-extra-fields grid-col-12">
+                            {{ extraFields|raw }}
+                            </div>
+
+                            <div class="grid-col-12 {% if entity.product == null and entity.isFreeForm == '0' %} hide{% endif %}">
+                                {{ commentWidget|raw }}
+                                {{ commentErrors|raw }}
+                            </div>
+
+                            <div class="draft-form__actions grid-col-12 widget-actions {% if entity.product == null and entity.isFreeForm == '0' %} hide{% endif %}">
+                                <button type="submit" class="btn btn-primary">{{ 'oro.order.orderlineitem.draft_create_form.save.label'|trans }}</button>
+                            </div>
+                        </div>
+
+                        {% if createdEntity.id|default(0) %}
+                        <div class="grid-col-6" data-role="created-entity-item-presentation">
+                            <div class="alert alert-success alert-icon" role="alert">
+                                {{ 'oro.order.orderlineitem.draft_form.success_message'|trans({
+                                    '%sku%': createdEntity.productSku
+                                }) }} <a href="#"  data-line-items-presentation="{{createdEntity.id}}">{{ 'oro.order.orderlineitem.draft_form.view_line_item_in_grid'|trans }}</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        {{ form_end(form) }}
+        {{ oro_form_js_validation(form) }}
+    </div>
+</div>

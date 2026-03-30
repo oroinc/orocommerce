@@ -865,3 +865,133 @@ datagrids:
                         - payment_transaction.entityIdentifier = :order_id
             bind_parameters:
                 - order_id
+
+    order-line-items-edit-grid:
+        options:
+            entityHint: oro.order.orderlineitem.entity_plural_label
+            jsmodules:
+                - oroorder/js/app/datagrid/order-line-items-grid-options-builder
+        source:
+            type: orm
+            query:
+                select:
+                    - orderLineItem
+                    - COALESCE(orderLineItem.id, orderLineItemDraft.id) as orderLineItemId
+                    - COALESCE(orderLineItemDraft.productSku, orderLineItem.productSku) as productSku
+                    - COALESCE(orderLineItemDraft.productName, orderLineItem.productName) as productName
+                    - COALESCE(orderLineItemDraft.freeFormProduct, orderLineItem.freeFormProduct) as freeFormProduct
+                    - COALESCE(orderLineItemDraft.quantity, orderLineItem.quantity) as quantity
+                    - COALESCE(orderLineItemDraft.productUnitCode, orderLineItem.productUnitCode) as productUnitCode
+                    - COALESCE(orderLineItemDraft.value, orderLineItem.value) as priceValue
+                    - COALESCE(orderLineItemDraft.currency, orderLineItem.currency) as priceCurrency
+                    - COALESCE(orderLineItemDraft.shipBy, orderLineItem.shipBy) as shipBy
+                from:
+                    - { table: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem', alias: orderLineItem }
+                join:
+                    left:
+                        - {
+                            join: Oro\Bundle\OrderBundle\Entity\OrderLineItem,
+                            alias: orderLineItemDraft,
+                            conditionType: WITH,
+                            condition: 'orderLineItemDraft.draftSessionUuid = :draft_session_uuid AND (orderLineItemDraft.draftSource = orderLineItem.id OR orderLineItemDraft.id = orderLineItem.id)'
+                        }
+                where:
+                    and:
+                        - :order_id MEMBER OF orderLineItem.orders OR :order_draft_id MEMBER OF orderLineItemDraft.orders
+                        - orderLineItemDraft.id IS NULL OR orderLineItemDraft.draftDelete = false
+                        - orderLineItemDraft.draftSource = orderLineItem.id OR orderLineItemDraft.draftSource IS NULL
+            bind_parameters:
+                -
+                    name: order_id
+                    default: null
+                    type: integer
+                -   name: order_draft_id
+                    default: null
+                    type: integer
+                -   name: draft_session_uuid
+                    default: null
+                    type: string
+        columns:
+            productSku:
+                label: oro.product.sku.label
+                cellClassName: 'direction-ltr'
+                order: 100
+            product:
+                label: oro.product.entity_label
+                type: twig
+                frontend_type: html
+                template: '@OroOrder/Order/Datagrid/orderLineItemProduct.html.twig'
+                order: 200
+            quantity:
+                label: oro.order.orderlineitem.quantity.label
+                type: twig
+                template: '@OroOrder/Order/Datagrid/orderLineItemQuantity.html.twig'
+                frontend_type: html
+                order: 300
+            price:
+                label: oro.order.orderlineitem.price.label
+                type: twig
+                frontend_type: html
+                template: '@OroOrder/Order/Datagrid/price.html.twig'
+                order: 400
+            shipBy:
+                label: oro.order.orderlineitem.ship_by.label
+                frontend_type: date
+                order: 500
+        sorters:
+            columns:
+                productSku:
+                    data_name: productSku
+                product:
+                    data_name: productName
+                quantity:
+                    data_name: quantity
+                price:
+                    data_name: priceValue
+                shipBy:
+                    data_name: shipBy
+        filters:
+            columns:
+                orderLineItemId:
+                    type: number
+                    data_name: orderLineItemId
+                    renderable: false
+                    label: oro.order.orderlineitem.id.label
+                productSku:
+                    type: string
+                    data_name: productSku
+                product:
+                    type: string
+                    data_name: productName
+                quantity:
+                    type: number
+                    data_name: quantity
+                    options:
+                        data_type: Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType::DATA_DECIMAL
+                price:
+                    data_name: priceValue
+                    type: currency
+                shipBy:
+                    type: date
+                    data_name: shipBy
+        properties:
+            orderLineItemId:
+                data_name: orderLineItemId
+            # Filled in OrderLineItemDraftValidationDatagridListener
+            isValid: ~
+            # Added in OrderLineItemDraftUpdateDatagridListener
+            # oro_order_line_item_draft_update: ~
+            # Added in OrderLineItemDraftDeleteDatagridListener
+            # oro_order_line_item_draft_delete: ~
+        actions:
+            update:
+                type: order-line-item-draft-update
+                label: oro.grid.action.update
+                icon: edit
+                link: oro_order_line_item_draft_update
+            delete:
+                type: order-line-item-draft-delete
+                label: oro.grid.action.delete
+                icon: trash
+                link: oro_order_line_item_draft_delete
+                acl_resource: oro_order_line_item_delete

@@ -42,7 +42,37 @@ class SubtotalSubscriber implements EventSubscriberInterface
     #[\Override]
     public static function getSubscribedEvents(): array
     {
-        return [FormEvents::SUBMIT => 'onSubmitEventListener'];
+        return [
+            FormEvents::PRE_SET_DATA => 'onPreSetDataEventListener',
+            FormEvents::SUBMIT => 'onSubmitEventListener',
+        ];
+    }
+
+    public function onPreSetDataEventListener(FormEvent $event): void
+    {
+        $form = $event->getForm();
+        $data = $event->getData();
+        if ($data instanceof Order) {
+            $this->fillTotals($form, $data);
+        }
+    }
+
+    private function fillTotals(FormInterface $form, Order $order): void
+    {
+        $serializedData = $order->getSerializedData();
+        // As the order currency may change, need to reset all prices and recalculate it.
+        $this->resetLineItems($form, $order);
+        $this->priceMatcher->addMatchingPrices($order);
+        $originalTotal = $order->getTotalObject();
+
+        $this->totalHelper->fill($order);
+
+        if (
+            isset($serializedData['precalculatedTotal'])
+            && $order->getTotalObject()->getValue() === (float)$serializedData['precalculatedTotal']
+        ) {
+            $order->setTotalObject($originalTotal);
+        }
     }
 
     public function onSubmitEventListener(FormEvent $event)
@@ -75,11 +105,9 @@ class SubtotalSubscriber implements EventSubscriberInterface
                     [
                         'mapped' => false,
                         'constraints' => [new Range(
-                            [
-                                'min' => PHP_INT_MAX * (-1), //use some big negative number
-                                'max' => $data->getSubtotal(),
-                                'notInRangeMessage' => 'oro.order.discounts.sum.error.not_in_range.label'
-                            ]
+                            notInRangeMessage: 'oro.order.discounts.sum.error.not_in_range.label',
+                            min: PHP_INT_MAX * (-1),
+                            max: $data->getSubtotal()
                         )]
                     ]
                 );

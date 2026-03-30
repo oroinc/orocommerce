@@ -15,7 +15,7 @@ Feature: Check website shipping tax for orders
 
   Scenario: Feature Background
     Given sessions active:
-      | Admin | first_session |
+      | Admin | first_session  |
       | Buyer | second_session |
     And I proceed as the Admin
     And login as administrator
@@ -66,24 +66,24 @@ Feature: Check website shipping tax for orders
       | Shipping | $3.00     | $2.75     | $0.25      |
       | Total    | $13.90    | $12.75    | $1.15      |
     And I should see next rows in "Backend Order Taxes Results Table" table
-      | Tax               | Rate | Taxable Amount  | Tax Amount |
-      | berlin_sales      | 9%   | $10.00          | $0.90     |
+      | Tax          | Rate | Taxable Amount | Tax Amount |
+      | berlin_sales | 9%   | $10.00         | $0.90      |
     And I see next subtotals for "Backend Order":
-      | Subtotal        | $10.00  |
-      | Total           | $13.90  |
+      | Subtotal | $10.00 |
+      | Total    | $13.90 |
 
   Scenario: Order product with included shipping as admin
     Given I go to Sales/Orders
     And click "Create Order"
-    And click "Add Product"
     When I fill "Order Form" with:
-      | Customer         | Company A                                   |
-      | Customer User    | Amanda Cole                                 |
-      | Billing Address  | ORO, Fifth avenue, 10115 Berlin, Germany    |
-      | Shipping Address | ORO, Fifth avenue, 10115 Berlin, Germany    |
-      | Product          | SKU123                                      |
-      | Quantity         | 5                                           |
-
+      | Customer         | Company A                                |
+      | Customer User    | Amanda Cole                              |
+      | Billing Address  | ORO, Fifth avenue, 10115 Berlin, Germany |
+      | Shipping Address | ORO, Fifth avenue, 10115 Berlin, Germany |
+    And fill "Order Edit Add Line Item Form" with:
+      | Product  | SKU123 |
+      | Quantity | 5      |
+    And click "Add Product"
     And I click on "Calculate Shipping"
     And I click "Shipping Method Flat Rate Radio Button"
     And I save form
