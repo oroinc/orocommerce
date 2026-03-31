@@ -98,7 +98,7 @@ describe('orocms/js/app/grapesjs/types/grid-type', () => {
             it('check "toHTML"', () => {
                 expect(mapComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<iframe frameborder="0" src="https://maps.google.com/maps?&z=1&t=q&output=embed"></iframe>'
+                    '<iframe frameborder="0" src="https://maps.google.com/maps?&amp;z=1&amp;t=q&amp;output=embed"></iframe>'
                 );
             });
         });

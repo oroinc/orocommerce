@@ -148,7 +148,7 @@ describe('orocms/js/app/grapesjs/types/video', () => {
 
                 expect(videoComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<iframe src="https://www.youtube.com/embed/MLpWrANjFbI?&autoplay=1&mute=1&loop=1&playlist=MLpWrANjFbI" allowfullscreen="allowfullscreen"></iframe>'
+                    '<iframe src="https://www.youtube.com/embed/MLpWrANjFbI?&amp;autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=MLpWrANjFbI" allowfullscreen="allowfullscreen"></iframe>'
                 );
             });
 
@@ -164,7 +164,7 @@ describe('orocms/js/app/grapesjs/types/video', () => {
 
                 expect(videoComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<iframe src="https://www.youtube-nocookie.com/embed/MLpWrANjFbI?&autoplay=1&mute=1&loop=1&playlist=MLpWrANjFbI" allowfullscreen="allowfullscreen"></iframe>'
+                    '<iframe src="https://www.youtube-nocookie.com/embed/MLpWrANjFbI?&amp;autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=MLpWrANjFbI" allowfullscreen="allowfullscreen"></iframe>'
                 );
             });
 
@@ -180,7 +180,7 @@ describe('orocms/js/app/grapesjs/types/video', () => {
 
                 expect(videoComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<iframe src="https://player.vimeo.com/video/163721649?&autoplay=1&muted=1&loop=1" allowfullscreen="allowfullscreen"></iframe>'
+                    '<iframe src="https://player.vimeo.com/video/163721649?&amp;autoplay=1&amp;muted=1&amp;loop=1" allowfullscreen="allowfullscreen"></iframe>'
                 );
             });
         });
