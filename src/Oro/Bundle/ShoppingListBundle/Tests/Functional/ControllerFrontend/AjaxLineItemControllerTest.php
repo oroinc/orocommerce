@@ -83,6 +83,7 @@ class AjaxLineItemControllerTest extends WebTestCase
 
         $this->assertSubtotals($expectedSubtotals, $shoppingList);
         $this->assertArrayHasKey('shoppingList', $result);
+        $this->assertArrayHasKey('shoppingListCreateEnabled', $result);
         $this->assertArrayHasKey('id', $result['shoppingList']);
         $this->assertEquals($shoppingList->getId(), $result['shoppingList']['id']);
         $this->assertArrayHasKey('label', $result['shoppingList']);
