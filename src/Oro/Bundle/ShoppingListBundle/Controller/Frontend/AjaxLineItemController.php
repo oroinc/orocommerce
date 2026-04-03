@@ -20,6 +20,7 @@ use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Model\LineItemModel;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -88,9 +89,13 @@ class AjaxLineItemController extends AbstractLineItemController
             return new JsonResponse(['successful' => false, 'message' => (string)$form->getErrors(true, false)]);
         }
 
-        return new JsonResponse(
-            $this->getSuccessResponse($shoppingList, $product, 'oro.shoppinglist.product.added.label')
-        );
+        $shoppingListLimitManager = $this->container->get(ShoppingListLimitManager::class);
+        $shoppingListLimitManager->resetState();
+
+        $responseData = $this->getSuccessResponse($shoppingList, $product, 'oro.shoppinglist.product.added.label');
+        $responseData['shoppingListCreateEnabled'] = $shoppingListLimitManager->isCreateEnabled();
+
+        return new JsonResponse($responseData);
     }
 
     #[Route(
@@ -318,6 +323,7 @@ class AjaxLineItemController extends AbstractLineItemController
                 ValidatorInterface::class,
                 AuthorizationCheckerInterface::class,
                 UpdateHandlerFacade::class,
+                ShoppingListLimitManager::class,
                 ShoppingListLineItemBatchUpdateHandler::class,
                 ManagerRegistry::class,
             ]

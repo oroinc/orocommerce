@@ -19,6 +19,7 @@ services:
 
     Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController:
         tags:
+            - { name: container.service_subscriber, id: oro_shopping_list.manager.shopping_list_limit, key: Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager }
             - { name: container.service_subscriber, id: oro_shopping_list.handler.shopping_list_line_item, key: Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler }
 
     Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController:
