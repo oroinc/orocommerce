@@ -15,14 +15,21 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 abstract class AbstractLineItemController extends AbstractController
 {
-    protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, string $message): array
-    {
-        return [
-            'successful' => true,
-            'message' => $this->getSuccessMessage($shoppingList, $message),
-            'product' => $this->getProductResponseData($product),
-            'shoppingList' => $this->getShoppingListResponseData($shoppingList),
-        ];
+    protected function getSuccessResponse(
+        ShoppingList $shoppingList,
+        Product $product,
+        string $message,
+        array $extraResponseData = []
+    ): array {
+        return array_merge(
+            [
+                'successful' => true,
+                'message' => $this->getSuccessMessage($shoppingList, $message),
+                'product' => $this->getProductResponseData($product),
+                'shoppingList' => $this->getShoppingListResponseData($shoppingList),
+            ],
+            $extraResponseData
+        );
     }
 
     protected function getProductResponseData(Product $product): array

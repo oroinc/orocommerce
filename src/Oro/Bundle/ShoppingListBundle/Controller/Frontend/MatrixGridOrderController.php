@@ -121,23 +121,30 @@ class MatrixGridOrderController extends AbstractLineItemController
      * @see AjaxLineItemController::getSuccessResponse
      */
     #[\Override]
-    protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, string $message): array
-    {
+    protected function getSuccessResponse(
+        ShoppingList $shoppingList,
+        Product $product,
+        string $message,
+        array $extraResponseData = []
+    ): array {
         $productShoppingLists = $this->container->get(ProductShoppingListsDataProvider::class)
             ->getProductUnitsQuantity($product->getId());
 
-        return [
-            'successful' => true,
-            'message' => $this->getSuccessMessage($shoppingList, $message),
-            'product' => [
-                'id' => $product->getId(),
-                'shopping_lists' => $productShoppingLists
+        return array_merge(
+            [
+                'successful' => true,
+                'message' => $this->getSuccessMessage($shoppingList, $message),
+                'product' => [
+                    'id' => $product->getId(),
+                    'shopping_lists' => $productShoppingLists
+                ],
+                'shoppingList' => [
+                    'id' => $shoppingList->getId(),
+                    'label' => $shoppingList->getLabel()
+                ]
             ],
-            'shoppingList' => [
-                'id' => $shoppingList->getId(),
-                'label' => $shoppingList->getLabel()
-            ]
-        ];
+            $extraResponseData
+        );
     }
 
     #[\Override]

@@ -84,9 +84,11 @@ const ShoppingListCollectionComponent = BaseComponent.extend({
 
         updateShoppingListCollection(response.shoppingList);
 
-        this.collection.trigger('change', {
-            refresh: true
-        });
+        const changeOptions = {refresh: true};
+        if (response.shoppingListCreateEnabled !== undefined) {
+            changeOptions.shoppingListCreateEnabled = response.shoppingListCreateEnabled;
+        }
+        this.collection.trigger('change', changeOptions);
     }
 });
 

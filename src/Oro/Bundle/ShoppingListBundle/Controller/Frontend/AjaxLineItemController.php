@@ -20,6 +20,7 @@ use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Model\LineItemModel;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -90,8 +91,13 @@ class AjaxLineItemController extends AbstractLineItemController
             return new JsonResponse(['successful' => false, 'message' => (string)$form->getErrors(true, false)]);
         }
 
+        $shoppingListLimitManager = $this->container->get(ShoppingListLimitManager::class);
+        $shoppingListLimitManager->resetState();
+
         return new JsonResponse(
-            $this->getSuccessResponse($shoppingList, $product, 'oro.shoppinglist.product.added.label')
+            $this->getSuccessResponse($shoppingList, $product, 'oro.shoppinglist.product.added.label', [
+                'shoppingListCreateEnabled' => $shoppingListLimitManager->isCreateEnabled(),
+            ])
         );
     }
 
@@ -323,6 +329,7 @@ class AjaxLineItemController extends AbstractLineItemController
                 ValidatorInterface::class,
                 AuthorizationCheckerInterface::class,
                 UpdateHandlerFacade::class,
+                ShoppingListLimitManager::class,
                 ShoppingListLineItemBatchUpdateHandler::class,
                 ManagerRegistry::class,
             ]

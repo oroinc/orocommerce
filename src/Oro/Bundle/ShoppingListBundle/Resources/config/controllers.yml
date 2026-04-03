@@ -32,6 +32,7 @@ services:
             - { name: container.service_subscriber }
             - { name: container.service_subscriber, id: oro_shopping_list.provider.shopping_list_url, key: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider }
             - { name: container.service_subscriber, id: oro_shopping_list.data_provider.product_shopping_lists, key: Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider }
+            - { name: container.service_subscriber, id: oro_shopping_list.manager.shopping_list_limit, key: Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager }
             - { name: container.service_subscriber, id: oro_shopping_list.handler.shopping_list_line_item, key: Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler }
             - { name: container.service_subscriber, id: oro_shopping_list.handler.shopping_list_line_item_batch_update, key: Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler }
 
