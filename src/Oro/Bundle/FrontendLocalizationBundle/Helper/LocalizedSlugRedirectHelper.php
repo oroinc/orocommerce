@@ -11,6 +11,7 @@ use Oro\Bundle\RedirectBundle\Routing\Router;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Routing\UrlUtil;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
 /**
  * This class help to return a URL with appropriate localized slug if given URL is using a slug.
@@ -44,7 +45,14 @@ class LocalizedSlugRedirectHelper
     public function getLocalizedUrl(string $url, Localization $localization): string
     {
         $pathInfo = parse_url($url, PHP_URL_PATH);
-        $attributes = $this->router->match($pathInfo);
+        try {
+            $attributes = $this->router->match($pathInfo);
+        } catch (MethodNotAllowedException) {
+            // The route exists but doesn't allow the current HTTP method.
+            // This can happen when redirecting from a POST request (e.g., currency switcher)
+            // to a route that only allows GET. In this case, we return the original URL unchanged.
+            return $url;
+        }
         if (isset($attributes['_used_slug'])) {
             $usedSlug = $attributes['_used_slug'];
             $usedUrlParts = $this->getContextParts($attributes);
