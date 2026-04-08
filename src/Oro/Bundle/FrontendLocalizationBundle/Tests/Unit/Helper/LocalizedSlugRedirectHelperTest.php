@@ -17,6 +17,7 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -65,6 +66,26 @@ class LocalizedSlugRedirectHelperTest extends TestCase
             ->method('match')
             ->with(parse_url($urlString, PHP_URL_PATH))
             ->willReturn([]);
+        $this->slugSourceEntityProvider->expects($this->never())
+            ->method('getSourceEntityBySlug');
+        $this->registry->expects($this->never())
+            ->method('getManagerForClass');
+        $this->canonicalUrlGenerator->expects($this->never())
+            ->method('getAbsoluteUrl');
+        $this->websiteManager->expects($this->never())
+            ->method('getCurrentWebsite');
+
+        $this->assertEquals($urlString, $this->helper->getLocalizedUrl($urlString, $localization));
+    }
+
+    public function testGetLocalizedUrlWhenMethodNotAllowed(): void
+    {
+        $localization = new Localization();
+        $urlString = 'http://example.com/customer/invoice/';
+        $this->router->expects($this->once())
+            ->method('match')
+            ->with(parse_url($urlString, PHP_URL_PATH))
+            ->willThrowException(new MethodNotAllowedException(['GET']));
         $this->slugSourceEntityProvider->expects($this->never())
             ->method('getSourceEntityBySlug');
         $this->registry->expects($this->never())

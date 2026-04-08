@@ -1,6 +1,7 @@
 @regression
 @ticket-BAP-14671
 @ticket-BB-14857
+@ticket-BB-24756
 @fixture-OroFrontendLocalizationBundle:frontstore-customer.yml
 
 Feature: FrontStore language switcher
@@ -58,6 +59,19 @@ Feature: FrontStore language switcher
       | Enabled Localizations | [English (United States), Dutch, Japanese] |
     And I save form
     Then Enabled Localizations field should has [English (United States), Dutch, Japanese] value
+
+  Scenario: Verify Switcher on GET-only page does not cause 500 error
+    Given I proceed as the User
+    And I am on "/customer/user/reset-request"
+    When I fill "Customer Password Request Form" with:
+      | Email | AmandaRCole@example.org |
+    And I click "Reset Password"
+    Then I should see "Please check AmandaRCole@example.org for a reset link and follow it to set a new password."
+    When I select "Dutch" localization
+    Then I should not see "500 Internal Server Error"
+    And I should see that "Dutch" localization is active
+    When I select "English (United States)" localization
+    Then I should see that "English (United States)" localization is active
 
   Scenario: Verify Switcher for anonymous front-end user
     Given I proceed as the User
