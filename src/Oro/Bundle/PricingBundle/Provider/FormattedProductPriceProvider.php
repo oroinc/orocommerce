@@ -8,6 +8,7 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Provider\FrontendProductUnitsProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
@@ -15,27 +16,15 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
  */
 class FormattedProductPriceProvider
 {
-    private ManagerRegistry $doctrine;
-    private AclHelper $aclHelper;
-    private ProductPriceProviderInterface $productPriceProvider;
-    private ProductPriceFormatter $productPriceFormatter;
-    private ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler;
-    private UserCurrencyManager $userCurrencyManager;
-
     public function __construct(
-        ManagerRegistry $doctrine,
-        AclHelper $aclHelper,
-        ProductPriceProviderInterface $productPriceProvider,
-        ProductPriceFormatter $productPriceFormatter,
-        ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler,
-        UserCurrencyManager $userCurrencyManager
+        private ManagerRegistry $doctrine,
+        private AclHelper $aclHelper,
+        private ProductPriceProviderInterface $productPriceProvider,
+        private ProductPriceFormatter $productPriceFormatter,
+        private ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler,
+        private UserCurrencyManager $userCurrencyManager,
+        private FrontendProductUnitsProvider $frontendProductUnitsProvider
     ) {
-        $this->doctrine = $doctrine;
-        $this->aclHelper = $aclHelper;
-        $this->productPriceProvider = $productPriceProvider;
-        $this->productPriceFormatter = $productPriceFormatter;
-        $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
-        $this->userCurrencyManager = $userCurrencyManager;
     }
 
     /**
@@ -70,7 +59,7 @@ class FormattedProductPriceProvider
             $productId = $product->getId();
             $result[$productId] = [
                 'prices' => $this->buildFormattedProductPrices($productId, $prices),
-                'units'  => $product->getSellUnitsPrecision()
+                'units'  => $this->frontendProductUnitsProvider->getUnitsForProduct($product),
             ];
         }
 

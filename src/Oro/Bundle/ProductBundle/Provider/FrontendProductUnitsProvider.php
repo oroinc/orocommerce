@@ -3,22 +3,23 @@
 namespace Oro\Bundle\ProductBundle\Provider;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 
 /**
  * Provides a method to load product units for a specified products.
  */
 class FrontendProductUnitsProvider
 {
-    private ManagerRegistry $doctrine;
-
     /** @var array [product id => [unit code, ...], ...] */
     private array $productUnits = [];
 
-    public function __construct(ManagerRegistry $doctrine)
-    {
-        $this->doctrine = $doctrine;
+    public function __construct(
+        private ManagerRegistry $doctrine,
+        private SingleUnitModeServiceInterface $singleUnitModeService
+    ) {
     }
 
     /**
@@ -52,6 +53,21 @@ class FrontendProductUnitsProvider
         }
 
         return $productUnits;
+    }
+
+    public function getUnitsForProduct(Product $product): array
+    {
+        $units = $product->getSellUnitsPrecision();
+        if ($this->singleUnitModeService->isSingleUnitMode() && \count($units) > 1) {
+            $primaryPrecision = $product->getPrimaryUnitPrecision();
+            if ($primaryPrecision && $primaryPrecision->isSell()) {
+                return [$primaryPrecision->getUnit()->getCode() => $primaryPrecision->getPrecision()];
+            }
+
+            return \array_slice($units, 0, 1, true);
+        }
+
+        return $units;
     }
 
     private function getProductUnitRepository(): ProductUnitRepository

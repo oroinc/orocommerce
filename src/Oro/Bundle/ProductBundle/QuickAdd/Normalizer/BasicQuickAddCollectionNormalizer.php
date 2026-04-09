@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use Oro\Bundle\ProductBundle\Provider\FrontendProductUnitsProvider;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -16,18 +17,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class BasicQuickAddCollectionNormalizer implements QuickAddCollectionNormalizerInterface
 {
-    private LocalizationHelper $localizationHelper;
-    private UnitLabelFormatterInterface $unitLabelFormatter;
-    private TranslatorInterface $translator;
-
     public function __construct(
-        LocalizationHelper $localizationHelper,
-        UnitLabelFormatterInterface $unitLabelFormatter,
-        TranslatorInterface $translator
+        private LocalizationHelper $localizationHelper,
+        private UnitLabelFormatterInterface $unitLabelFormatter,
+        private TranslatorInterface $translator,
+        private FrontendProductUnitsProvider $frontendProductUnitsProvider
     ) {
-        $this->localizationHelper = $localizationHelper;
-        $this->unitLabelFormatter = $unitLabelFormatter;
-        $this->translator = $translator;
     }
 
     #[\Override]
@@ -78,8 +73,7 @@ class BasicQuickAddCollectionNormalizer implements QuickAddCollectionNormalizerI
             if (is_a($product, Product::class)) {
                 $results['items'][$index]['product_name'] = (string)$this->localizationHelper
                     ->getLocalizedValue($product->getNames());
-
-                $results['items'][$index]['units'] = $product->getSellUnitsPrecision();
+                $results['items'][$index]['units'] = $this->frontendProductUnitsProvider->getUnitsForProduct($product);
                 $results['items'][$index]['type'] = $product->getType();
             }
 

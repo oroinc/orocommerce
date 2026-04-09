@@ -2082,6 +2082,10 @@ oro_behat_extension:
         locator: '//div[@data-content="oro_product_quick_add[products][0]"]//button[@data-role="price-hint-trigger"]'
         type: xpath
 
+    Quick Order Form Line Item 1 Unit:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductUnitSelector
+      selector: 'select[name="oro_product_quick_add[products][0][unit]"]'
+
     Quick Order Form Buttons:
       selector: '.quick-order-add__buttons'
 

@@ -136,6 +136,7 @@ services:
             - '@oro_pricing.formatter.product_price_formatter'
             - '@oro_pricing.model.product_price_scope_criteria_request_handler'
             - '@oro_pricing.user_currency_manager'
+            - '@oro_product.provider.frontend_product_units_provider'
 
     oro_pricing.provider.combined_price_list:
         class: 'Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider'
