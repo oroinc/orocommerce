@@ -765,6 +765,8 @@ services:
         class: Oro\Bundle\ProductBundle\Provider\FrontendProductUnitsProvider
         arguments:
             - '@doctrine'
+        calls:
+            - [ 'setSingleUnitModeService', [ '@oro_product.service.single_unit_mode' ] ]
 
     oro_product.provider.product_matrix_availability_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider'
@@ -2104,6 +2106,8 @@ services:
             - '@oro_locale.helper.localization'
             - '@oro_product.formatter.product_unit_label'
             - '@translator'
+        calls:
+            - [ 'setFrontendProductUnitsProvider', [ '@oro_product.provider.frontend_product_units_provider' ]]
         tags:
             - { name: oro_product.quick_add.normalizer }
 

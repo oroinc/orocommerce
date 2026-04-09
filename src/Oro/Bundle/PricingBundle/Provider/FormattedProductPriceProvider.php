@@ -8,6 +8,7 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Provider\FrontendProductUnitsProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
@@ -21,6 +22,7 @@ class FormattedProductPriceProvider
     private ProductPriceFormatter $productPriceFormatter;
     private ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler;
     private UserCurrencyManager $userCurrencyManager;
+    private FrontendProductUnitsProvider $frontendProductUnitsProvider;
 
     public function __construct(
         ManagerRegistry $doctrine,
@@ -70,7 +72,7 @@ class FormattedProductPriceProvider
             $productId = $product->getId();
             $result[$productId] = [
                 'prices' => $this->buildFormattedProductPrices($productId, $prices),
-                'units'  => $product->getSellUnitsPrecision()
+                'units'  => $this->frontendProductUnitsProvider->getUnitsForProduct($product),
             ];
         }
 
@@ -87,5 +89,10 @@ class FormattedProductPriceProvider
         }
 
         return $result;
+    }
+
+    public function setFrontendProductUnitsProvider(FrontendProductUnitsProvider $frontendProductUnitsProvider): void
+    {
+        $this->frontendProductUnitsProvider = $frontendProductUnitsProvider;
     }
 }
