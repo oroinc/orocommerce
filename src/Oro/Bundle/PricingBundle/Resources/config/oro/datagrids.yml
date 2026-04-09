@@ -576,7 +576,7 @@ datagrids:
                 quantity:
                     data_name: productPrice.quantity
                 unitCode:
-                    data_name: unit.code
+                    data_name: unitCode
                 value:
                     data_name: productPrice.value
                 currency:
