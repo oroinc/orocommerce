@@ -652,6 +652,7 @@ oro_behat_extension:
         - Oro\Bundle\OrderBundle\Tests\Behat\Context\OrderContext
         - Oro\Bundle\ReportBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
         - Oro\Bundle\ShippingBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
