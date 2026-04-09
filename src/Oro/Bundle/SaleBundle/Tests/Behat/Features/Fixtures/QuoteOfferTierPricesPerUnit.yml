@@ -1,0 +1,49 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precisionItem:
+        unit: '@item'
+        precision: '1'
+        sell: true
+    precisionSet:
+        unit: '@set'
+        precision: '1'
+        sell: true
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    productName1:
+        string: 'Product1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'AA1'
+        primaryUnitPrecision: '@precisionItem'
+        additionalUnitPrecisions: ['@precisionSet']
+        __calls:
+            - addName: ['@productName1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        attributeFamily: '@defaultProductFamily'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPriceItem:
+        pricelist: '@defaultPriceList'
+        product: '@product1'
+        productSku: 'AA1'
+        quantity: 1
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+    productPriceSet:
+        pricelist: '@defaultPriceList'
+        product: '@product1'
+        productSku: 'AA1'
+        quantity: 1
+        unit: '@set'
+        value: 10
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation1:
+        product: '@product1'
+        priceList: '@defaultPriceList'

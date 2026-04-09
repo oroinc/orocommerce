@@ -193,6 +193,9 @@ oro_behat_extension:
     Tier prices button:
       selector: '.product-tier-prices'
 
+    Tier prices button of Secondary Offer:
+      selector: 'tr[data-content*="quoteProductOffers][1]"] .product-tier-prices'
+
     Disabled price overridden button:
       selector: '.product-tier-prices.disabled'
 
