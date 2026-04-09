@@ -1,0 +1,46 @@
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locvalue1:
+        string: 'Product 1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+    precision2:
+        unit: '@piece'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@precision1'
+        unitPrecisions: [ '@precision1', '@precision2' ]
+        __calls:
+            - addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice1:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 5
+        unit: '@item'
+        value: 15
+    productPrice2:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 10
+        unit: '@piece'
+        value: 30
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation1:
+        product: '@product1'
+        priceList: '@defaultPriceList'
