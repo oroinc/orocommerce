@@ -252,13 +252,11 @@ define(function(require) {
          * @param {boolean} [isInit]
          */
         updateDependentFields: function(e, isInit) {
-            if (this.evaluateCondition()) {
-                this.$el.closest(this.options.selectors.rowContainer).show();
-                this.setDisableState(false);
-            } else {
-                this.$el.closest(this.options.selectors.rowContainer).hide();
-                this.setDisableState(true);
-            }
+            const condition = this.evaluateCondition();
+            this.$el
+                .closest(this.options.selectors.rowContainer)
+                .toggleClass('hide', !condition);
+            this.setDisableState(!condition);
 
             if (!isInit) {
                 this.clearOrRestoreElement(this.evaluateClearCondition());
