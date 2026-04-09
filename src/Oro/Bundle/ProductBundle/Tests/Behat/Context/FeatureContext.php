@@ -708,6 +708,26 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
+     * Example: I should see that the "Product Kit Line Item Totals Form Unit" element has available units:
+     *  |   item    |
+     *  |   set     |
+     * @Then /^(?:|I )should see that the "(?P<elementName>[^"]*)" element has available units:$/
+     */
+    public function shouldSeeThatElementContainsProductUnits($elementName, TableNode $table)
+    {
+        $productUnit = $this->createElement($elementName);
+        $actualOptions = $productUnit->getValues();
+
+        $expectedOptions = array_map(function (array $row) {
+            list($value) = $row;
+
+            return $value;
+        }, $table->getRows());
+
+        self::assertEqualsCanonicalizing($expectedOptions, $actualOptions);
+    }
+
+    /**
      * Example: I should see "This product will be available later" for "SKU123" product on shopping list
      * @Then /^(?:|I )should see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product on shopping list$/
      */
