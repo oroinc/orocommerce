@@ -1,0 +1,219 @@
+include:
+    - '@OroWebCatalogBundle:web_catalog.yml'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
+        name: 'Main Menu Test Customer'
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: <userPassword(@amanda->username)>
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer1'
+        organization: '@organization'
+        userRoles: ['@buyer']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision_product1:
+        unit: '@item'
+        precision: '1'
+        sell: true
+    precision_product2:
+        unit: '@item'
+        precision: '1'
+        sell: true
+    precision_product3:
+        unit: '@item'
+        precision: '1'
+        sell: true
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    name_product1:
+        string: 'Product Alpha'
+    name_product2:
+        string: 'Product Beta'
+    name_product3:
+        string: 'Product Gamma'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        sku: 'AA-MENU-1'
+        primaryUnitPrecision: '@precision_product1'
+        __calls:
+            - addName: ['@name_product1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+    product2:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        sku: 'AA-MENU-2'
+        primaryUnitPrecision: '@precision_product2'
+        __calls:
+            - addName: ['@name_product2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+    product3:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        sku: 'AA-MENU-3'
+        primaryUnitPrecision: '@precision_product3'
+        __calls:
+            - addName: ['@name_product3']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite:
+        pricelist: '@defaultPriceList'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer:
+        customer: '@customer1'
+        pricelist: '@defaultPriceList'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    product1Price:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 500
+    product2Price:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 350
+    product3Price:
+        product: '@product3'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 250
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation{1..3}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppingList1:
+        label: 'Main Menu Test List'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        owner: '@admin'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineItem1:
+        product: '@product1'
+        quantity: 1
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppingList1'
+        owner: '@admin'
+        organization: '@organization'
+    lineItem2:
+        product: '@product2'
+        quantity: 1
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppingList1'
+        owner: '@admin'
+        organization: '@organization'
+    lineItem3:
+        product: '@product3'
+        quantity: 1
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppingList1'
+        owner: '@admin'
+        organization: '@organization'
+
+Oro\Bundle\CurrencyBundle\Entity\MultiCurrency:
+    subtotal1:
+        value: 1100.00
+        baseCurrencyValue: 1100.00
+        currency: 'USD'
+    total1:
+        value: 1100.00
+        baseCurrencyValue: 1100.00
+        currency: 'USD'
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price1:
+        value: 500.00
+        currency: USD
+    price2:
+        value: 350.00
+        currency: USD
+    price3:
+        value: 250.00
+        currency: USD
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order1:
+        identifier: 'TestOrder'
+        currency: USD
+        subtotalObject: '@subtotal1'
+        totalObject: '@total1'
+        website: '@website1'
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        lineItems: ['@orderLineItem1', '@orderLineItem2', '@orderLineItem3']
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    orderLineItem1:
+        product: '@product1'
+        productSku: 'AA-1'
+        quantity: 1
+        productUnit: '@item'
+        price: '@price1'
+        productUnitCode: item
+        __calls:
+            - addOrder: ['@order1']
+    orderLineItem2:
+        product: '@product2'
+        productSku: 'AA-2'
+        quantity: 1
+        productUnit: '@item'
+        price: '@price2'
+        productUnitCode: item
+        __calls:
+            - addOrder: ['@order1']
+    orderLineItem3:
+        product: '@product3'
+        productSku: 'AA-3'
+        quantity: 1
+        productUnit: '@item'
+        price: '@price3'
+        productUnitCode: item
+        __calls:
+            - addOrder: ['@order1']
