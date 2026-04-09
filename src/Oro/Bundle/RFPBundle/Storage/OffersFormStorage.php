@@ -12,6 +12,8 @@ use Oro\Bundle\ProductBundle\Storage\AbstractDataStorage;
  * process from an RFP request. It handles serialization of offer arrays for storage and deserialization
  * for form population. Developers implementing custom data storage mechanisms for RFP-to-quote
  * or RFP-to-order workflows should extend this class to modify serialization behavior or add validation logic.
+ *
+ * Uses json_encoded data because it is exposed to the user in the form.
  */
 class OffersFormStorage extends AbstractDataStorage
 {
@@ -37,5 +39,19 @@ class OffersFormStorage extends AbstractDataStorage
     public function getRawData(array $data)
     {
         return $this->prepareData($data);
+    }
+
+    #[\Override]
+    protected function prepareData(array $data)
+    {
+        return \json_encode($data, JSON_THROW_ON_ERROR);
+    }
+
+    #[\Override]
+    protected function parseData($rowData)
+    {
+        $data = \json_decode($rowData, true);
+
+        return $data !== null && is_array($data) ? $data : [];
     }
 }
