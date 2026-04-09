@@ -193,7 +193,7 @@ const ProductPricesEditableView = BaseProductPricesView.extend({
 
         return this.templates.pricesHintContent({
             model: this.model.toJSON(),
-            prices: pricesHelper.sortUnitPricesByLowQuantity(this.prices),
+            prices: pricesHelper.sortUnitPricesByLowQuantity(this.prices, this.model.get('unit')),
             matchedPrice: this.findPrice(),
             clickable: this.options.editable,
             formatter: NumberFormatter,
