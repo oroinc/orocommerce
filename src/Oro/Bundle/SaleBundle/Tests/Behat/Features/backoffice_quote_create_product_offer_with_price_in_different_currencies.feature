@@ -1,6 +1,6 @@
 @regression
 @ticket-BB-20557
-@fixture-OroPricingBundle:ProductPricesWithMultipleCurrencies.yml
+@fixture-OroSaleBundle:QuoteProductPricesWithMultipleCurrencies.yml
 
 Feature: Backoffice Quote Create Product offer with price in different currencies
   In order to create a quote
