@@ -24,19 +24,17 @@ Feature: WYSIWYG map type component
     And I select component in canvas by tree:
       | map | 1 |
     And I click on "Clone" action for selected component
+    Then WYSIWYG "CMS Page Content" contains "https://maps.google.com/maps" 2 times
     And I select component in canvas by tree:
       | map | 2 |
     And I move "SelectedComponent" to "FirstColumnInGrid" in editor canvas
     Then I check wysiwyg content in "CMS Page Content":
-      | 3 | <div class="grid-cell">                                                                              |
+      | 3 | <div class="grid-cell">                                                                                              |
       | 4 | <iframe frameborder="0" src="https://maps.google.com/maps?&amp;q=London&amp;z=10&amp;t=w&amp;output=embed"></iframe> |
-      | 5 | </div>                                                                                               |
+      | 5 | </div>                                                                                                               |
     And I select component in canvas by tree:
       | grid-row    | 1 |
       | grid-column | 1 |
       | map         | 1 |
     And I click on "Delete" action for selected component
-    Then I check wysiwyg content in "CMS Page Content":
-      | 2 | <div class="grid-row">  |
-      | 3 | <div class="grid-cell"> |
-      | 4 | </div>                  |
+    Then WYSIWYG "CMS Page Content" contains "https://maps.google.com/maps" 1 time

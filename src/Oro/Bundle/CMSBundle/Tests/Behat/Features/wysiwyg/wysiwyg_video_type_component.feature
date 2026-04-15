@@ -20,9 +20,9 @@ Feature: WYSIWYG video type component
     And I save form
     Then I check wysiwyg content in "CMS Page Content":
       | 1 | <video src="http://test-url.com/video" poster="http://test-url.com/poster" loop="loop" autoplay="autoplay" controls="controls"> |
-      | 2 | </video>                                                                                                                                                          |
-      | 4 | height:400px;                                                                                                                                                     |
-      | 5 | width:100%;                                                                                                                                                       |
+      | 2 | </video>                                                                                                                        |
+      | 4 | height:400px;                                                                                                                   |
+      | 5 | width:100%;                                                                                                                     |
     And I select component in canvas by tree:
       | video | 1 |
     And I update selected component settings:
@@ -49,19 +49,17 @@ Feature: WYSIWYG video type component
     And I select component in canvas by tree:
       | video | 1 |
     And I click on "Clone" action for selected component
+    Then WYSIWYG "CMS Page Content" contains "https://player.vimeo.com/video/38195013" 2 times
     And I select component in canvas by tree:
       | video | 2 |
     And I move "SelectedComponent" to "FirstColumnInGrid" in editor canvas
     Then I check wysiwyg content in "CMS Page Content":
-      | 3 | <div class="grid-cell">                                                                                                      |
+      | 3 | <div class="grid-cell">                                                                                                                  |
       | 4 | <iframe src="https://player.vimeo.com/video/38195013?&amp;autoplay=1&amp;muted=1&amp;loop=1" allowfullscreen="allowfullscreen"></iframe> |
-      | 5 | </div>                                                                                                                       |
+      | 5 | </div>                                                                                                                                   |
     And I select component in canvas by tree:
       | grid-row    | 1 |
       | grid-column | 1 |
       | video       | 1 |
     And I click on "Delete" action for selected component
-    Then I check wysiwyg content in "CMS Page Content":
-      | 2 | <div class="grid-row">  |
-      | 3 | <div class="grid-cell"> |
-      | 4 | </div>                  |
+    Then WYSIWYG "CMS Page Content" contains "https://player.vimeo.com/video/38195013" 1 time
