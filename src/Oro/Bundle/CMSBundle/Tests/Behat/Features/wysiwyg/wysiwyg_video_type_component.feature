@@ -49,6 +49,7 @@ Feature: WYSIWYG video type component
     And I select component in canvas by tree:
       | video | 1 |
     And I click on "Clone" action for selected component
+    Then WYSIWYG "CMS Page Content" contains "https://player.vimeo.com/video/38195013" 2 times
     And I select component in canvas by tree:
       | video | 2 |
     And I move "SelectedComponent" to "FirstColumnInGrid" in editor canvas
@@ -61,7 +62,4 @@ Feature: WYSIWYG video type component
       | grid-column | 1 |
       | video       | 1 |
     And I click on "Delete" action for selected component
-    Then I check wysiwyg content in "CMS Page Content":
-      | 2 | <div class="grid-row">  |
-      | 3 | <div class="grid-cell"> |
-      | 4 | </div>                  |
+    Then WYSIWYG "CMS Page Content" contains "https://player.vimeo.com/video/38195013" 1 time

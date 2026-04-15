@@ -24,6 +24,7 @@ Feature: WYSIWYG map type component
     And I select component in canvas by tree:
       | map | 1 |
     And I click on "Clone" action for selected component
+    Then WYSIWYG "CMS Page Content" contains "https://maps.google.com/maps" 2 times
     And I select component in canvas by tree:
       | map | 2 |
     And I move "SelectedComponent" to "FirstColumnInGrid" in editor canvas
@@ -36,7 +37,4 @@ Feature: WYSIWYG map type component
       | grid-column | 1 |
       | map         | 1 |
     And I click on "Delete" action for selected component
-    Then I check wysiwyg content in "CMS Page Content":
-      | 2 | <div class="grid-row">  |
-      | 3 | <div class="grid-cell"> |
-      | 4 | </div>                  |
+    Then WYSIWYG "CMS Page Content" contains "https://maps.google.com/maps" 1 time
