@@ -12,9 +12,6 @@ class ShoppingListStub extends ShoppingList
     /** @var ArrayCollection|CustomerVisitor[] */
     private $visitors;
 
-    /**
-     * ShoppingListStub constructor.
-     */
     public function __construct()
     {
         parent::__construct();

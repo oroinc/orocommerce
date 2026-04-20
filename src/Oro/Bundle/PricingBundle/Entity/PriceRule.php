@@ -62,9 +62,6 @@ class PriceRule
     #[ORM\Column(name: 'priority', type: Types::INTEGER)]
     protected ?int $priority = null;
 
-    /**
-     * PriceRule constructor
-     */
     public function __construct()
     {
         $this->lexemes = new ArrayCollection();

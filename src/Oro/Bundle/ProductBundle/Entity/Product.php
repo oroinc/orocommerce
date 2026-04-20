@@ -1206,9 +1206,6 @@ class Product implements
         return $this;
     }
 
-    /**
-     * Pre persist event handler.
-     */
     #[ORM\PrePersist]
     public function prePersist()
     {
@@ -1222,9 +1219,6 @@ class Product implements
         $this->updateDenormalizedProperties();
     }
 
-    /**
-     * Pre update event handler.
-     */
     #[ORM\PreUpdate]
     public function preUpdate()
     {

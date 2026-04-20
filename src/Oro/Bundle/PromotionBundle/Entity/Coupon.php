@@ -260,18 +260,12 @@ class Coupon implements
         return $this;
     }
 
-    /**
-     * Pre persist event handler.
-     */
     #[ORM\PrePersist]
     public function prePersist()
     {
         $this->updateCodeUppercase();
     }
 
-    /**
-     * Pre update event handler.
-     */
     #[ORM\PreUpdate]
     public function preUpdate()
     {

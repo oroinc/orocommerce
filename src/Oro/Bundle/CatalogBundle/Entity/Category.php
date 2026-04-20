@@ -285,9 +285,6 @@ class Category implements
      */
     public $sibling;
 
-    /**
-     * Constructor
-     */
     public function __construct()
     {
         $this->titles = new ArrayCollection();
@@ -412,9 +409,6 @@ class Category implements
         return $this;
     }
 
-    /**
-     * Pre persist event handler
-     */
     #[ORM\PrePersist]
     public function prePersist()
     {

@@ -11,9 +11,6 @@ class CustomerVisitorStub extends CustomerVisitor
     /** @var ArrayCollection */
     private $shoppingLists;
 
-    /**
-     * CustomerVisitorStub constructor.
-     */
     public function __construct()
     {
         $this->shoppingLists = new ArrayCollection();

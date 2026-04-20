@@ -414,9 +414,6 @@ class Order implements
         );
     }
 
-    /**
-     * @return void
-     */
     #[ORM\PreFlush]
     #[\Override]
     public function updateMultiCurrencyFields()

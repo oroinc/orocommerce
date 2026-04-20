@@ -180,9 +180,6 @@ class ContentNode implements
     #[ORM\OneToMany(mappedBy: 'contentNode', targetEntity: Consent::class)]
     private ?Collection $referencedConsents = null;
 
-    /**
-     * ContentNode Constructor
-     */
     public function __construct()
     {
         $this->titles = new ArrayCollection();

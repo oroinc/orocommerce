@@ -113,8 +113,6 @@ class SearchTermRepository extends ServiceEntityRepository
     /**
      * @param QueryBuilder $qb
      * @param Scope[] $scopes
-     *
-     * @return void
      */
     private function restrictByScopes(QueryBuilder $qb, array $scopes): void
     {

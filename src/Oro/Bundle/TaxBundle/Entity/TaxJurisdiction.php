@@ -60,9 +60,6 @@ class TaxJurisdiction implements DatesAwareInterface
     #[ORM\OneToMany(mappedBy: 'taxJurisdiction', targetEntity: ZipCode::class, cascade: ['all'], orphanRemoval: true)]
     protected ?Collection $zipCodes = null;
 
-    /**
-     * Constructor
-     */
     public function __construct()
     {
         $this->zipCodes = new ArrayCollection();

@@ -72,9 +72,6 @@ class RequestProduct implements ProductHolderInterface, ProductKitItemLineItemsA
     #[OrderBy(['sortOrder' => 'ASC'])]
     protected $kitItemLineItems;
 
-    /**
-     * Constructor
-     */
     public function __construct()
     {
         $this->requestProductItems = new ArrayCollection();

@@ -199,9 +199,6 @@ class PayPalSettings extends Transport
         return $this->settings;
     }
 
-    /**
-     * Constructor
-     */
     public function __construct()
     {
         $this->creditCardLabels = new ArrayCollection();

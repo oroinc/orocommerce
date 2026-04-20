@@ -112,9 +112,6 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
     #[OrderBy(['sortOrder' => 'ASC'])]
     protected $kitItemLineItems;
 
-    /**
-     * Constructor
-     */
     public function __construct()
     {
         $this->quoteProductOffers = new ArrayCollection();
