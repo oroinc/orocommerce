@@ -236,8 +236,12 @@ class CurrentShoppingListManager
             return true;
         }
 
-        if (!$shoppingList->getCustomerUser() || !$this->getCustomerUser()) {
+        if (!$this->getCustomerUser()) {
             return true;
+        }
+
+        if (!$shoppingList->getCustomerUser()) {
+            return false;
         }
 
         return $shoppingList->getCustomerUser()->getId() === $this->getCustomerUser()->getId();
