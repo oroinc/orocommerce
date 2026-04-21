@@ -706,6 +706,80 @@ class CurrentShoppingListManagerTest extends TestCase
         self::assertNull($this->currentShoppingListManager->getForCurrentUser());
     }
 
+    public function testGetForCurrentUserOrphanedShoppingListWithCreate(): void
+    {
+        $shoppingListId = 123;
+        $shoppingList = $this->getShoppingList($shoppingListId);
+        $newShoppingListId = 1234;
+        $newShoppingList = $this->getShoppingList($newShoppingListId);
+
+        $customerUserId = 234;
+        $this->setCustomerUserForTokenAccessor($customerUserId);
+
+        $this->expectNoGuestShoppingList();
+        $this->cache->expects(self::exactly(3))
+            ->method('getItem')
+            ->with($customerUserId)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(false);
+        $this->cacheItem->expects(self::exactly(2))
+            ->method('set')
+            ->willReturn($this->cacheItem);
+        $this->shoppingListRepository->expects(self::never())
+            ->method('findByUserAndId');
+        $this->shoppingListRepository->expects(self::once())
+            ->method('findAvailableForCustomerUser')
+            ->with($this->aclHelper, false)
+            ->willReturn($shoppingList);
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_shopping_list.show_all_in_shopping_list_widget')
+            ->willReturn(false);
+        $this->shoppingListManager->expects(self::once())
+            ->method('create')
+            ->with(true, '')
+            ->willReturn($newShoppingList);
+
+        self::assertSame($newShoppingList, $this->currentShoppingListManager->getForCurrentUser(null, true));
+    }
+
+    public function testGetForCurrentUserOrphanedShoppingListWithoutCreate(): void
+    {
+        $shoppingListId = 123;
+        $shoppingList = $this->getShoppingList($shoppingListId);
+
+        $customerUserId = 234;
+        $this->setCustomerUserForTokenAccessor($customerUserId);
+
+        $this->expectNoGuestShoppingList();
+        $this->cache->expects(self::exactly(2))
+            ->method('getItem')
+            ->with($customerUserId)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(false);
+        $this->cacheItem->expects(self::once())
+            ->method('set')
+            ->willReturn($this->cacheItem);
+        $this->shoppingListRepository->expects(self::never())
+            ->method('findByUserAndId');
+        $this->shoppingListRepository->expects(self::once())
+            ->method('findAvailableForCustomerUser')
+            ->with($this->aclHelper, false)
+            ->willReturn($shoppingList);
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_shopping_list.show_all_in_shopping_list_widget')
+            ->willReturn(false);
+        $this->shoppingListManager->expects(self::never())
+            ->method('create');
+
+        self::assertNull($this->currentShoppingListManager->getForCurrentUser());
+    }
+
     public function testGetForCurrentUserShareShoppingListExistedAndShowAllShoppingListOptionOn(): void
     {
         $shoppingListId = 123;
