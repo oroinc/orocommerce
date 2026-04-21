@@ -1,14 +1,5 @@
 api:
     entity_aliases:
-        Extend\Entity\EV_Order_Status:
-            alias: orderstatus
-            plural_alias: orderstatuses
-        Extend\Entity\EV_Order_Internal_Status:
-            alias: orderinternalstatus
-            plural_alias: orderinternalstatuses
-        Extend\Entity\EV_Order_Shipping_Status:
-            alias: ordershippingstatus
-            plural_alias: ordershippingstatuses
         Oro\Bundle\OrderBundle\Api\Model\OrderSubtotal:
             alias: ordersubtotal
             plural_alias: ordersubtotals

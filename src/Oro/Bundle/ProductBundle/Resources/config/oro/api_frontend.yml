@@ -12,9 +12,6 @@ api:
         Oro\Bundle\ProductBundle\Api\Model\ProductCollection:
             alias:        productcollection
             plural_alias: productcollection
-        Oro\Bundle\ProductBundle\Entity\Brand:
-            alias:        brand
-            plural_alias: brands
 
     entities:
         Oro\Bundle\ProductBundle\Entity\ProductImage:
