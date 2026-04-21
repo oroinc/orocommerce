@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Exception\ElementNotFoundException;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\Page;
@@ -76,7 +77,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         /** @var WysiwygCodeTypeBlockEditor $editor */
         $editor = $this->createElement('WysiwygCodeTypeBlockEditor');
-        self::assertNotNull($editor, 'Wysiwyg `code` type block editor not found!');
+        self::assertTrue(
+            $editor->isIsset(),
+            'Wysiwyg `code` type block editor not found!'
+        );
 
         $editor->setValue(stripslashes($text));
         $this->waitForAjax();
@@ -108,7 +112,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         /** @var WysiwygCodeTypeBlockEditor $editor */
         $editor = $this->createElement('WysiwygCodeTypeBlockEditor');
-        self::assertNotNull($editor, 'Wysiwyg `code` type block editor not found!');
+        self::assertTrue(
+            $editor->isIsset(),
+            'Wysiwyg `code` type block editor not found!'
+        );
 
         $importedContent = str_replace("\n", "", $editor->getValue());
         self::assertEquals(stripslashes($text), $importedContent);
@@ -143,7 +150,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         /** @var WysiwygCodeTypeBlockEditor $editor */
         $editor = $this->createElement('WysiwygCodeTypeBlockEditor');
-        self::assertNotNull($editor, 'Wysiwyg `code` type block editor not found!');
+        self::assertTrue(
+            $editor->isIsset(),
+            'Wysiwyg `code` type block editor not found!'
+        );
 
         $editor->setValue($newValue);
         $editor->findButton('Save')->click();
@@ -289,7 +299,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     public function addContentToDialogCodeEditor(string $text, string $save = ''): void
     {
         $editor = $this->createElement('WysiwygCodeTypeBlockEditor');
-        self::assertNotNull($editor, 'Wysiwyg `code` type block editor not found!');
+        self::assertTrue(
+            $editor->isIsset(),
+            'Wysiwyg `code` type block editor not found!'
+        );
 
         $editor->setValue(stripslashes($text));
 
@@ -601,10 +614,14 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         $importDialog = $this->createElement("Import Button");
         $importDialog->click();
+        $this->waitForAjax();
 
         /** @var WysiwygCodeTypeBlockEditor $editor */
         $editor = $this->createElement('WysiwygCodeTypeBlockEditor');
-        self::assertNotNull($editor, 'Wysiwyg `code` type block editor not found!');
+        self::assertTrue(
+            $editor->isIsset(),
+            'Wysiwyg `code` type block editor not found!'
+        );
 
         $importedContent = explode("\n", $editor->getValue());
 
@@ -618,8 +635,57 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             );
             $value = str_replace(' ', ' ', trim($value));
 
-            static::assertEquals($value, $line);
+            self::assertEquals($value, $line);
         }
+
+        $this->spin(function () {
+            $this->oroMainContext->pressKeyboardKey('Esc', 'WysiwygCodeTypeBlockEditor');
+        }, .2);
+    }
+
+    /**
+     * Example: Then WYSIWYG "CMS Page Content" contains "https://player.vimeo.com/video/38195013" 2 times
+     * Example: Then WYSIWYG "CMS Page Content" contains "https://player.vimeo.com/video/38195013" 1 time
+     *
+     * @Then /^(?:|I )WYSIWYG "(?P<el>[^"]+)" contains "(?P<needle>(?:[^"]|\\")*)" (?P<count>\d+) time(?:s)?$/
+     */
+    public function assertWysiwygContainsTextCount(string $wysiwygElementName, string $needle, int $count): void
+    {
+        $wysiwygContentElement = $this->createElement($wysiwygElementName);
+        self::assertTrue($wysiwygContentElement->isIsset(), sprintf(
+            'WYSIWYG element "%s" not found on page',
+            $wysiwygElementName
+        ));
+
+        $importDialog = $this->createElement('Import Button');
+        $importDialog->click();
+        $this->waitForAjax();
+
+        /** @var WysiwygCodeTypeBlockEditor $editor */
+        $editor = $this->createElement('WysiwygCodeTypeBlockEditor');
+        self::assertTrue(
+            $editor->isIsset(),
+            'Wysiwyg `code` type block editor not found!'
+        );
+
+        $expectedNeedle = stripslashes($needle);
+        $actualCount = 0;
+        $isCountMatched = $this->spin(function () use ($editor, $expectedNeedle, $count, &$actualCount) {
+            $actualCount = substr_count($editor->getValue(), $expectedNeedle);
+
+            return $actualCount === $count;
+        }, 5);
+
+        self::assertTrue(
+            $isCountMatched,
+            sprintf(
+                'Expected WYSIWYG "%s" to contain "%s" %d time(s), but found %d.',
+                $wysiwygElementName,
+                $expectedNeedle,
+                $count,
+                $actualCount
+            )
+        );
 
         $this->spin(function () {
             $this->oroMainContext->pressKeyboardKey('Esc', 'WysiwygCodeTypeBlockEditor');

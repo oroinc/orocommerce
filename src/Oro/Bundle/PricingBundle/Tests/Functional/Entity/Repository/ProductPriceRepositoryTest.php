@@ -460,7 +460,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $repository->deleteGeneratedPrices($this->shardManager, $priceList, [$productPrice->getProduct()->getId()]);
 
         $actual = $repository->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList]);
-        $this->assertEquals($manualPrices, $actual);
+        $this->assertEqualsCanonicalizing($manualPrices, $actual);
     }
 
     public function testDeleteInvalidPricesByProducts()

@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Model\QuickAddField;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use Oro\Bundle\ProductBundle\Provider\FrontendProductUnitsProvider;
 use Oro\Bundle\ProductBundle\QuickAdd\Normalizer\BasicQuickAddCollectionNormalizer;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use PHPUnit\Framework\TestCase;
@@ -22,6 +23,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class BasicQuickAddCollectionNormalizerTest extends TestCase
 {
     private BasicQuickAddCollectionNormalizer $normalizer;
+    private FrontendProductUnitsProvider $frontendProductUnitsProvider;
 
     #[\Override]
     protected function setUp(): void
@@ -33,12 +35,18 @@ class BasicQuickAddCollectionNormalizerTest extends TestCase
             ->method('format')
             ->willReturnCallback(static fn (string $code) => $code . ' [label]');
 
+        $this->frontendProductUnitsProvider = $this->createMock(FrontendProductUnitsProvider::class);
+        $this->frontendProductUnitsProvider->expects(self::any())
+            ->method('getUnitsForProduct')
+            ->willReturnCallback(static fn (Product $product) => $product->getSellUnitsPrecision());
+
         $this->normalizer = new BasicQuickAddCollectionNormalizer(
             $localizationHelper,
             $unitLabelFormatter,
-            $translator
+            $translator,
         );
 
+        $this->normalizer->setFrontendProductUnitsProvider($this->frontendProductUnitsProvider);
         $translator->expects(self::any())
             ->method('trans')
             ->willReturnCallback(static function (string $key, array $parameters, string $domain) {
@@ -52,6 +60,36 @@ class BasicQuickAddCollectionNormalizerTest extends TestCase
             ->willReturnCallback(static function (Collection $collection) {
                 return $collection[0]->getString();
             });
+    }
+
+    public function testNormalizerUsesUnitsFromProvider(): void
+    {
+        $productName = new ProductName();
+        $productName->setString('Sample Name');
+
+        $each = new ProductUnit();
+        $each->setCode('each');
+        $primaryPrecision = new ProductUnitPrecision();
+        $primaryPrecision->setUnit($each);
+        $primaryPrecision->setPrecision(0);
+
+        $product = new ProductStub();
+        $product->setSku('SKU1');
+        $product->addName($productName);
+        $product->addUnitPrecision($primaryPrecision);
+
+        $filteredUnits = ['each' => 0];
+        $this->frontendProductUnitsProvider->expects(self::once())
+            ->method('getUnitsForProduct')
+            ->with($product)
+            ->willReturn($filteredUnits);
+
+        $quickAddRow = new QuickAddRow(1, $product->getSku(), 5, $each->getCode());
+        $quickAddRow->setProduct($product);
+
+        $result = $this->normalizer->normalize(new QuickAddRowCollection([$quickAddRow]));
+
+        self::assertSame($filteredUnits, $result['items'][1]['units']);
     }
 
     public function testGetResultsWhenEmpty(): void
