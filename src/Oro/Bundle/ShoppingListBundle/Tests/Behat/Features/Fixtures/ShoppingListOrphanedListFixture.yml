@@ -1,0 +1,81 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    unit_precision_1:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product_name_1:
+        string: 'Simple product 1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product_simple_1:
+        type: 'simple'
+        sku: 'product_simple_1'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        featured: true
+        __calls:
+            - addName: ['@product_name_1']
+            - addUnitPrecision: ['@unit_precision_1']
+            - setPrimaryUnitPrecision: ['@unit_precision_1']
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer_shared:
+        name: 'SharedCustomer'
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    cu1:
+        email: 'cu1@example.org'
+        username: 'cu1@example.org'
+        password: <userPassword(@cu1->username)>
+        firstName: 'Customer'
+        lastName: 'UserOne'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer_shared'
+        organization: '@organization'
+        userRoles: ['@front_admin']
+        owner: '@admin'
+        website: '@website1'
+    cu2:
+        email: 'cu2@example.org'
+        username: 'cu2@example.org'
+        password: <userPassword(@cu2->username)>
+        firstName: 'Customer'
+        lastName: 'UserTwo'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer_shared'
+        organization: '@organization'
+        userRoles: ['@front_admin']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    price_list_shared:
+        name: 'SharedPriceList'
+        __calls:
+            - setCurrencies: [['USD']]
+        active: true
+        organization: '@organization'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    price_list_to_customer_shared:
+        customer: '@customer_shared'
+        pricelist: '@price_list_shared'
+        website: '@website1'
+        sortOrder: 10
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    product_price_1:
+        product: '@product_simple_1'
+        priceList: '@price_list_shared'
+        quantity: 1
+        unit: '@item'
+        value: 100
+        currency: 'USD'
