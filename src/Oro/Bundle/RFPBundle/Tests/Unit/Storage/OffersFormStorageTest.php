@@ -3,8 +3,9 @@
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Storage;
 
 use Oro\Bundle\RFPBundle\Storage\OffersFormStorage;
+use PHPUnit\Framework\TestCase;
 
-class OffersFormStorageTest extends \PHPUnit\Framework\TestCase
+class OffersFormStorageTest extends TestCase
 {
     /** @var OffersFormStorage */
     protected $storage;
@@ -33,13 +34,14 @@ class OffersFormStorageTest extends \PHPUnit\Framework\TestCase
             [['offers_data' => 'test'], []],
             [['offers_data' => 10], []],
             [
-                ['offers_data' => 'a:1:{i:0;a:2:{s:9:"productId";i:42;s:3:"qty";i:100;}}'],
+                ['offers_data' => json_encode([['productId' => 42, 'qty' => 100]])],
                 [['productId' => 42, 'qty' => 100]],
             ],
             [
                 [
-                    'offers_data' => 'a:2:{i:0;a:2:{s:9:"productId";i:42;s:3:"qty";i:100;}' .
-                        'i:1;a:2:{s:9:"productId";i:43;s:3:"qty";i:101;}}',
+                    'offers_data' => json_encode(
+                        [['productId' => 42, 'qty' => 100], ['productId' => 43, 'qty' => 101]]
+                    ),
                 ],
                 [['productId' => 42, 'qty' => 100], ['productId' => 43, 'qty' => 101]],
             ],
@@ -56,9 +58,9 @@ class OffersFormStorageTest extends \PHPUnit\Framework\TestCase
      * @param array $storageData
      * @param string $expectedData
      */
-    public function testGetRawData(array $storageData, $expectedData)
+    public function testGetRawData(array $storageData)
     {
-        $this->assertEquals($expectedData, $this->storage->getRawData($storageData));
+        $this->assertEquals(json_encode($storageData), $this->storage->getRawData($storageData));
     }
 
     /**
@@ -67,15 +69,12 @@ class OffersFormStorageTest extends \PHPUnit\Framework\TestCase
     public function rawDataDataProvider()
     {
         return [
-            [[null], 'a:1:{i:0;N;}'],
-            [['test'], 'a:1:{i:0;s:4:"test";}'],
-            [[10], 'a:1:{i:0;i:10;}'],
-            [[['productId' => 42, 'qty' => 100]], 'a:1:{i:0;a:2:{s:9:"productId";i:42;s:3:"qty";i:100;}}'],
-            [
-                [['productId' => 42, 'qty' => 100], ['productId' => 43, 'qty' => 101]],
-                'a:2:{i:0;a:2:{s:9:"productId";i:42;s:3:"qty";i:100;}i:1;a:2:{s:9:"productId";i:43;s:3:"qty";i:101;}}',
-            ],
-            [[], 'a:0:{}'],
+            [[null]],
+            [['test']],
+            [[10]],
+            [[['productId' => 42, 'qty' => 100]]],
+            [[['productId' => 42, 'qty' => 100], ['productId' => 43, 'qty' => 101]]],
+            [[]],
         ];
     }
 }
