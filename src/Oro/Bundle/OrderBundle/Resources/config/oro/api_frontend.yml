@@ -1,12 +1,4 @@
 api:
-    entity_aliases:
-        Extend\Entity\EV_Order_Status:
-            alias: orderstatus
-            plural_alias: orderstatuses
-        Extend\Entity\EV_Order_Shipping_Status:
-            alias: ordershippingstatus
-            plural_alias: ordershippingstatuses
-
     entities:
         Oro\Bundle\OrderBundle\Entity\Order:
             documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order.md'
