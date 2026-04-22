@@ -135,22 +135,34 @@ oro_behat_extension:
       selector: 'div.input-qty, .form-quantity-row'
 
     Shopping List Line Item 1:
-      selector: '.grid-body .grid-row:first-child'
+      selector:
+        type: 'xpath'
+        locator: "//tbody[@class='grid-body']//tr[contains(@class, 'grid-row') and not(contains(@class, 'notification-row'))][1]"
 
     Shopping List Line Item 1 Quantity:
-      selector: '.grid-body .grid-row:first-child div.input-qty, .grid-body .grid-row:first-child .form-quantity-row'
+      selector:
+        type: 'xpath'
+        locator: "//tbody[@class='grid-body']//tr[contains(@class, 'grid-row') and not(contains(@class, 'notification-row'))][1]//div[contains(@class, 'input-qty')] | //tbody[@class='grid-body']//tr[contains(@class, 'grid-row') and not(contains(@class, 'notification-row'))][1]//*[contains(@class, 'form-quantity-row')]"
 
     Shopping List Line Item 1 Quantity Input:
-      selector: '.grid-body .grid-row:first-child form input[name="quantity"]'
+      selector:
+        type: 'xpath'
+        locator: "//tbody[@class='grid-body']//tr[contains(@class, 'grid-row') and not(contains(@class, 'notification-row'))][1]//form//input[@name='quantity']"
 
     Shopping List Line Item 1 Unit Select:
-      selector: '.grid-body .grid-row:first-child form select'
+      selector:
+        type: 'xpath'
+        locator: "//tbody[@class='grid-body']//tr[contains(@class, 'grid-row') and not(contains(@class, 'notification-row'))][1]//form//select"
 
     Shopping List Line Item 1 Save Changes Button:
-      selector: '.grid-body .grid-row:first-child form button[type="submit"]'
+      selector:
+        type: 'xpath'
+        locator: "//tbody[@class='grid-body']//tr[contains(@class, 'grid-row') and not(contains(@class, 'notification-row'))][1]//form//button[@type='submit']"
 
     Shopping List Line Item 1 Cancel Button:
-      selector: '.grid-body .grid-row:first-child form button[data-action="cancel"]'
+      selector:
+        type: 'xpath'
+        locator: "//tbody[@class='grid-body']//tr[contains(@class, 'grid-row') and not(contains(@class, 'notification-row'))][1]//form//button[@data-action='cancel']"
 
     Shopping List Line Item 2 Quantity:
       selector:
