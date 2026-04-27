@@ -132,10 +132,11 @@ define(function(require) {
                 case 'quantity':
                     const $element = this.getElement(elementKey);
                     if ($element.attr('type').toLowerCase() === 'number') {
-                        return parseFloat(elementViewValue);
+                        const value = parseFloat(elementViewValue);
+                        return isNaN(value) ? null : value;
                     }
 
-                    return QuantityHelper.getQuantityNumberOrDefaultValue(elementViewValue, NaN);
+                    return QuantityHelper.getQuantityNumberOrDefaultValue(elementViewValue, null);
                 default:
                     return elementViewValue;
             }
