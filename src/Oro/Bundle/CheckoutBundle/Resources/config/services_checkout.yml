@@ -136,6 +136,8 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_checkout.workflow.transition.unblock_and_recalculate'
+        calls:
+            - [setPaymentProviderManager, ['@oro_payment.provider.payment_status']]
         tags:
             - { name: 'oro_workflow.transition_service' }
 
