@@ -205,7 +205,7 @@ class CallbackControllerTest extends WebTestCase
                 . 'CheckCallbackRelevanceListener must stop propagation of handling event');
         }
 
-        $this->assertRedirectToFailureUrl($this->client->getResponse());
+        $this->assertRedirectToSuccessUrl($this->client->getResponse());
     }
 
     public function testReturnCallbackForPendingTransactionExpressCheckout()
@@ -275,9 +275,7 @@ class CallbackControllerTest extends WebTestCase
                 . 'CheckCallbackRelevanceListener must stop propagation of handling event');
         }
 
-        // Redirect to failure url is expected here
-        // because PayflowExpressCheckoutListener::onReturn doesn't handle this test transaction
-        $this->assertRedirectToFailureUrl($this->client->getResponse());
+        $this->assertRedirectToSuccessUrl($this->client->getResponse());
     }
 
     /**
@@ -290,5 +288,14 @@ class CallbackControllerTest extends WebTestCase
         $this->assertInstanceOf(RedirectResponse::class, $response);
 
         $this->assertEquals('https://example.com/failure-url', $response->getTargetUrl());
+    }
+
+    private function assertRedirectToSuccessUrl(?Response $response): void
+    {
+        $this->assertNotNull($response);
+        $this->assertResponseStatusCodeEquals($response, 302);
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+
+        $this->assertEquals('https://example.com/success-url', $response->getTargetUrl());
     }
 }

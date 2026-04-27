@@ -87,12 +87,43 @@ class CheckCallbackRelevanceListener
             return;
         }
 
+        if ($this->isPaymentStatusSuccessful($orderPaymentStatus)) {
+            $this->redirectToSuccessUrl($paymentTransaction, $event);
+
+            return;
+        }
+
         $this->redirectToFailureUrl($paymentTransaction, $event);
     }
 
     protected function isPaymentStatusAllowed(string $orderPaymentStatus): bool
     {
         return $orderPaymentStatus === PaymentStatusProvider::PENDING;
+    }
+
+    /**
+     * Checks if the payment status indicates that the payment has already been successfully processed.
+     */
+    protected function isPaymentStatusSuccessful(string $orderPaymentStatus): bool
+    {
+        return in_array($orderPaymentStatus, [
+            PaymentStatusProvider::FULL,
+            PaymentStatusProvider::PARTIALLY,
+            PaymentStatusProvider::AUTHORIZED,
+            PaymentStatusProvider::AUTHORIZED_PARTIALLY,
+        ], true);
+    }
+
+    private function redirectToSuccessUrl(PaymentTransaction $paymentTransaction, AbstractCallbackEvent $event): void
+    {
+        $event->stopPropagation();
+
+        $transactionOptions = $paymentTransaction->getTransactionOptions();
+        if (!empty($transactionOptions['successUrl'])) {
+            $event->setResponse(new RedirectResponse($transactionOptions['successUrl']));
+        } else {
+            $event->markSuccessful();
+        }
     }
 
     private function redirectToFailureUrl(PaymentTransaction $paymentTransaction, AbstractCallbackEvent $event): void
