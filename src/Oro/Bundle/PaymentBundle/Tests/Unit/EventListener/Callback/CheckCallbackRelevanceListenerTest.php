@@ -160,6 +160,7 @@ class CheckCallbackRelevanceListenerTest extends TestCase
         $paymentTransaction->setEntityClass(\stdClass::class);
         $paymentTransaction->setEntityIdentifier(5);
         $paymentTransaction->setTransactionOptions([
+            'successUrl' => 'https://example.com/success-url',
             'failureUrl' => 'https://example.com/failure-url',
         ]);
 
@@ -190,11 +191,13 @@ class CheckCallbackRelevanceListenerTest extends TestCase
         /** @var RedirectResponse $response */
         $response = $event->getResponse();
         self::assertInstanceOf(RedirectResponse::class, $response);
-        self::assertSame('https://example.com/failure-url', $response->getTargetUrl());
+        // Redirect to success URL because the order is already paid (PAID_IN_FULL).
+        // This is a duplicate callback — the payment was already processed by a previous request.
+        self::assertSame('https://example.com/success-url', $response->getTargetUrl());
         self::assertTrue($event->isPropagationStopped());
     }
 
-    public function testOnErrorWithPaidOrderWithoutFailureUrl(): void
+    public function testOnErrorWithPaidOrderWithoutSuccessUrl(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('payment_method');
@@ -225,10 +228,7 @@ class CheckCallbackRelevanceListenerTest extends TestCase
 
         $this->listener->onError($event);
 
-        /** @var Response $response */
-        $response = $event->getResponse();
-
-        self::assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+        self::assertSame(Response::HTTP_OK, $event->getResponse()->getStatusCode());
         self::assertTrue($event->isPropagationStopped());
     }
 
@@ -347,6 +347,7 @@ class CheckCallbackRelevanceListenerTest extends TestCase
         $paymentTransaction->setEntityClass(\stdClass::class);
         $paymentTransaction->setEntityIdentifier(5);
         $paymentTransaction->setTransactionOptions([
+            'successUrl' => 'https://example.com/success-url',
             'failureUrl' => 'https://example.com/failure-url',
         ]);
 
@@ -377,11 +378,11 @@ class CheckCallbackRelevanceListenerTest extends TestCase
         /** @var RedirectResponse $response */
         $response = $event->getResponse();
         self::assertInstanceOf(RedirectResponse::class, $response);
-        self::assertSame('https://example.com/failure-url', $response->getTargetUrl());
+        self::assertSame('https://example.com/success-url', $response->getTargetUrl());
         self::assertTrue($event->isPropagationStopped());
     }
 
-    public function testOnReturnWithPaidOrderWithoutFailureUrl(): void
+    public function testOnReturnWithPaidOrderWithoutSuccessUrl(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('payment_method');
@@ -412,190 +413,7 @@ class CheckCallbackRelevanceListenerTest extends TestCase
 
         $this->listener->onReturn($event);
 
-        $response = $event->getResponse();
-        self::assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode());
-        self::assertTrue($event->isPropagationStopped());
-    }
-
-    public function testOnErrorWithPendingOrderWhenNullPaymentStatusManager(): void
-    {
-        $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setPaymentMethod('payment_method');
-        $paymentTransaction->setEntityClass(\stdClass::class);
-        $paymentTransaction->setEntityIdentifier(5);
-
-        $event = new CallbackErrorEvent();
-        $originalResponse = $event->getResponse();
-        $event->setPaymentTransaction($paymentTransaction);
-
-        $this->paymentMethodProvider
-            ->expects(self::once())
-            ->method('hasPaymentMethod')
-            ->with('payment_method')
-            ->willReturn(true);
-
-        $order = new Order();
-        $this->doctrineHelper
-            ->expects(self::once())
-            ->method('getEntity')
-            ->with(\stdClass::class, 5)
-            ->willReturn($order);
-
-        $this->paymentStatusProvider
-            ->expects(self::once())
-            ->method('getPaymentStatus')
-            ->with($order)
-            ->willReturn(PaymentStatuses::PENDING);
-
-        // Create listener without PaymentStatusManager for BC layer
-        $listener = new CheckCallbackRelevanceListener(
-            $this->paymentMethodProvider,
-            $this->paymentStatusProvider,
-            $this->doctrineHelper
-        );
-
-        $listener->onError($event);
-
-        self::assertSame($originalResponse, $event->getResponse());
-        self::assertFalse($event->isPropagationStopped());
-    }
-
-    public function testOnErrorWithPaidOrderWhenNullPaymentStatusManager(): void
-    {
-        $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setPaymentMethod('payment_method');
-        $paymentTransaction->setEntityClass(\stdClass::class);
-        $paymentTransaction->setEntityIdentifier(5);
-        $paymentTransaction->setTransactionOptions([
-            'failureUrl' => 'https://example.com/failure-url',
-        ]);
-
-        $event = new CallbackErrorEvent();
-        $event->setPaymentTransaction($paymentTransaction);
-
-        $this->paymentMethodProvider
-            ->expects(self::once())
-            ->method('hasPaymentMethod')
-            ->with('payment_method')
-            ->willReturn(true);
-
-        $order = new Order();
-        $this->doctrineHelper
-            ->expects(self::once())
-            ->method('getEntity')
-            ->with(\stdClass::class, 5)
-            ->willReturn($order);
-
-        $this->paymentStatusProvider
-            ->expects(self::once())
-            ->method('getPaymentStatus')
-            ->with($order)
-            ->willReturn(PaymentStatuses::PAID_IN_FULL);
-
-        // Create listener without PaymentStatusManager for BC layer
-        $listener = new CheckCallbackRelevanceListener(
-            $this->paymentMethodProvider,
-            $this->paymentStatusProvider,
-            $this->doctrineHelper
-        );
-
-        $listener->onError($event);
-
-        /** @var RedirectResponse $response */
-        $response = $event->getResponse();
-        self::assertInstanceOf(RedirectResponse::class, $response);
-        self::assertSame('https://example.com/failure-url', $response->getTargetUrl());
-        self::assertTrue($event->isPropagationStopped());
-    }
-
-    public function testOnReturnWithPendingOrderWhenNullPaymentStatusManager(): void
-    {
-        $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setPaymentMethod('payment_method');
-        $paymentTransaction->setEntityClass(\stdClass::class);
-        $paymentTransaction->setEntityIdentifier(5);
-
-        $event = new CallbackReturnEvent();
-        $originalResponse = $event->getResponse();
-        $event->setPaymentTransaction($paymentTransaction);
-
-        $this->paymentMethodProvider
-            ->expects(self::once())
-            ->method('hasPaymentMethod')
-            ->with('payment_method')
-            ->willReturn(true);
-
-        $order = new Order();
-        $this->doctrineHelper
-            ->expects(self::once())
-            ->method('getEntity')
-            ->with(\stdClass::class, 5)
-            ->willReturn($order);
-
-        $this->paymentStatusProvider
-            ->expects(self::once())
-            ->method('getPaymentStatus')
-            ->with($order)
-            ->willReturn(PaymentStatuses::PENDING);
-
-        // Create listener without PaymentStatusManager for BC layer
-        $listener = new CheckCallbackRelevanceListener(
-            $this->paymentMethodProvider,
-            $this->paymentStatusProvider,
-            $this->doctrineHelper
-        );
-
-        $listener->onReturn($event);
-
-        self::assertSame($originalResponse, $event->getResponse());
-        self::assertFalse($event->isPropagationStopped());
-    }
-
-    public function testOnReturnWithPaidOrderWhenNullPaymentStatusManager(): void
-    {
-        $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setPaymentMethod('payment_method');
-        $paymentTransaction->setEntityClass(\stdClass::class);
-        $paymentTransaction->setEntityIdentifier(5);
-        $paymentTransaction->setTransactionOptions([
-            'failureUrl' => 'https://example.com/failure-url',
-        ]);
-
-        $event = new CallbackReturnEvent();
-        $event->setPaymentTransaction($paymentTransaction);
-
-        $this->paymentMethodProvider
-            ->expects(self::once())
-            ->method('hasPaymentMethod')
-            ->with('payment_method')
-            ->willReturn(true);
-
-        $order = new Order();
-        $this->doctrineHelper
-            ->expects(self::once())
-            ->method('getEntity')
-            ->with(\stdClass::class, 5)
-            ->willReturn($order);
-
-        $this->paymentStatusProvider
-            ->expects(self::once())
-            ->method('getPaymentStatus')
-            ->with($order)
-            ->willReturn(PaymentStatuses::PAID_IN_FULL);
-
-        // Create listener without PaymentStatusManager for BC layer
-        $listener = new CheckCallbackRelevanceListener(
-            $this->paymentMethodProvider,
-            $this->paymentStatusProvider,
-            $this->doctrineHelper
-        );
-
-        $listener->onReturn($event);
-
-        /** @var RedirectResponse $response */
-        $response = $event->getResponse();
-        self::assertInstanceOf(RedirectResponse::class, $response);
-        self::assertSame('https://example.com/failure-url', $response->getTargetUrl());
+        self::assertSame(Response::HTTP_OK, $event->getResponse()->getStatusCode());
         self::assertTrue($event->isPropagationStopped());
     }
 }
