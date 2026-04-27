@@ -156,6 +156,7 @@ class CheckCallbackRelevanceListenerTest extends TestCase
         $paymentTransaction->setEntityClass(\stdClass::class);
         $paymentTransaction->setEntityIdentifier(5);
         $paymentTransaction->setTransactionOptions([
+            'successUrl' => 'https://example.com/success-url',
             'failureUrl' => 'https://example.com/failure-url',
         ]);
 
@@ -186,11 +187,13 @@ class CheckCallbackRelevanceListenerTest extends TestCase
         /** @var RedirectResponse $response */
         $response = $event->getResponse();
         self::assertInstanceOf(RedirectResponse::class, $response);
-        self::assertSame('https://example.com/failure-url', $response->getTargetUrl());
+        // Redirect to success URL because the order is already paid (PAID_IN_FULL).
+        // This is a duplicate callback — the payment was already processed by a previous request.
+        self::assertSame('https://example.com/success-url', $response->getTargetUrl());
         self::assertTrue($event->isPropagationStopped());
     }
 
-    public function testOnErrorWithPaidOrderWithoutFailureUrl(): void
+    public function testOnErrorWithPaidOrderWithoutSuccessUrl(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('payment_method');
@@ -221,10 +224,7 @@ class CheckCallbackRelevanceListenerTest extends TestCase
 
         $this->listener->onError($event);
 
-        /** @var Response $response */
-        $response = $event->getResponse();
-
-        self::assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+        self::assertSame(Response::HTTP_OK, $event->getResponse()->getStatusCode());
         self::assertTrue($event->isPropagationStopped());
     }
 
@@ -343,6 +343,7 @@ class CheckCallbackRelevanceListenerTest extends TestCase
         $paymentTransaction->setEntityClass(\stdClass::class);
         $paymentTransaction->setEntityIdentifier(5);
         $paymentTransaction->setTransactionOptions([
+            'successUrl' => 'https://example.com/success-url',
             'failureUrl' => 'https://example.com/failure-url',
         ]);
 
@@ -373,11 +374,11 @@ class CheckCallbackRelevanceListenerTest extends TestCase
         /** @var RedirectResponse $response */
         $response = $event->getResponse();
         self::assertInstanceOf(RedirectResponse::class, $response);
-        self::assertSame('https://example.com/failure-url', $response->getTargetUrl());
+        self::assertSame('https://example.com/success-url', $response->getTargetUrl());
         self::assertTrue($event->isPropagationStopped());
     }
 
-    public function testOnReturnWithPaidOrderWithoutFailureUrl(): void
+    public function testOnReturnWithPaidOrderWithoutSuccessUrl(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('payment_method');
@@ -408,8 +409,7 @@ class CheckCallbackRelevanceListenerTest extends TestCase
 
         $this->listener->onReturn($event);
 
-        $response = $event->getResponse();
-        self::assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+        self::assertSame(Response::HTTP_OK, $event->getResponse()->getStatusCode());
         self::assertTrue($event->isPropagationStopped());
     }
 }
