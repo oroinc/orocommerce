@@ -16,7 +16,7 @@ export default {
      */
     formatQuantity: function(quantity, precision, skipGrouping, enforceAddFractionDigits) {
         if (!quantity) {
-            return quantity;
+            return quantity === 0 ? quantity : '';
         }
 
         const options = {grouping_used: !skipGrouping};
