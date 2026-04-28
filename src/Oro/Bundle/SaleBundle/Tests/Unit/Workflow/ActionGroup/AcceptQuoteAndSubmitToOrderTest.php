@@ -143,6 +143,77 @@ class AcceptQuoteAndSubmitToOrderTest extends TestCase
         ];
     }
 
+    public function testExecuteQuoteWithoutCustomerUserButAuthenticatedDemandUser()
+    {
+        $quoteShippingAddress = $this->getQuoteAddress();
+        $quote = $this->getEntity(Quote::class, ['id' => 1]);
+        $quote->setCurrency('USD');
+        $quote->setEstimatedShippingCostAmount(10.0);
+        $quote->setShippingAddress($quoteShippingAddress);
+        $quote->setShippingMethod('UPS');
+        $quote->setShippingMethodType('Next Day Air');
+        $quote->setShipUntil(new \DateTime('2024-12-31'));
+        $quote->setPoNumber('PO123456');
+        // Quote has no customerUser (created by admin without selecting one)
+
+        $customerUser = new CustomerUser();
+        $customerUser->setIsGuest(false);
+
+        $quoteDemand = $this->getEntity(QuoteDemand::class, ['id' => 123]);
+        $quoteDemand->setQuote($quote);
+        $quoteDemand->setCustomerUser($customerUser);
+        $quoteDemand->addDemandProduct($this->createMock(QuoteProductDemand::class));
+
+        $checkout = new Checkout();
+        $checkout->addLineItem(new CheckoutLineItem());
+
+        $this->urlGenerator->expects($this->once())
+            ->method('generate')
+            ->with('oro_sale_quote_frontend_choice', ['id' => 123])
+            ->willReturn('edit_link');
+
+        $this->quoteDemandSubtotalsCalculator->expects($this->once())
+            ->method('calculateSubtotals')
+            ->with($quoteDemand);
+
+        $this->checkoutLineItemsProvider->expects($this->once())
+            ->method('getProductSkusWithDifferences')
+            ->with($checkout->getLineItems(), $quoteDemand->getDemandProducts())
+            ->willReturn([]);
+
+        $this->actionExecutor->expects($this->never())
+            ->method('executeAction');
+
+        $this->startCheckout->expects($this->once())
+            ->method('execute')
+            ->with(
+                ['quoteDemand' => $quoteDemand],
+                true,
+                [
+                    'shippingCost' => Price::create(10.0, 'USD'),
+                    'shippingMethod' => 'UPS',
+                    'shippingMethodType' => 'Next Day Air',
+                    'shipUntil' => $quote->getShipUntil(),
+                    'poNumber' => 'PO123456',
+                    'shippingAddress' => $this->createOrderAddressByQuoteAddress($quoteShippingAddress)
+                ],
+                [
+                    'allow_manual_source_remove' => false,
+                    'auto_remove_source' => false,
+                    'edit_order_link' => 'edit_link',
+                    'disallow_shipping_address_edit' => true,
+                    'disallow_shipping_method_edit' => true
+                ],
+                true,
+                false,
+                'start_from_quote'
+            )
+            ->willReturn(['checkout' => $checkout]);
+
+        $result = $this->service->execute($quoteDemand);
+        $this->assertArrayHasKey('checkout', $result);
+    }
+
     public function testExecuteWithoutShippingAddressAndDiffProducts()
     {
         $quote = $this->getEntity(Quote::class, ['id' => 1]);
