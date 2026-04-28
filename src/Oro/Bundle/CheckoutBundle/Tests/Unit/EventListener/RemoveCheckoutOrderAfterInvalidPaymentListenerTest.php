@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutTransitionBeforeEvent;
 use Oro\Bundle\CheckoutBundle\EventListener\RemoveCheckoutOrderAfterInvalidPaymentListener;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
+use Oro\Bundle\PromotionBundle\Manager\CouponUsageManager;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
@@ -16,16 +20,20 @@ use PHPUnit\Framework\TestCase;
 
 class RemoveCheckoutOrderAfterInvalidPaymentListenerTest extends TestCase
 {
-    /** @var RemoveCheckoutOrderAfterInvalidPaymentListener */
-    private $afterInvalidPaymentListener;
+    private RemoveCheckoutOrderAfterInvalidPaymentListener $afterInvalidPaymentListener;
 
-    /** @var ManagerRegistry|MockObject */
-    private $managerRegsitry;
+    private ManagerRegistry|MockObject $managerRegsitry;
+
+    private CouponUsageManager|MockObject $couponUsageManager;
 
     protected function setUp(): void
     {
         $this->managerRegsitry = self::createMock(ManagerRegistry::class);
+        $this->couponUsageManager = self::createMock(CouponUsageManager::class);
+
         $this->afterInvalidPaymentListener = new RemoveCheckoutOrderAfterInvalidPaymentListener($this->managerRegsitry);
+        $this->afterInvalidPaymentListener->setCouponUsageManager($this->couponUsageManager);
+
         $this->afterInvalidPaymentListener
             ->addTransitionName('place_order')
             ->addTransitionName('create_order');
@@ -33,10 +41,27 @@ class RemoveCheckoutOrderAfterInvalidPaymentListenerTest extends TestCase
 
     public function testOnBeforeOrderCreate(): void
     {
-        $order = new Order();
+        $customerUser = self::createMock(CustomerUser::class);
+        $appliedCoupons = new ArrayCollection([(new AppliedCoupon())->setSourceCouponId(1)]);
+
+        $order = $this->getMockBuilder(Order::class)
+            ->addMethods(['getAppliedCoupons'])
+            ->onlyMethods(['getCustomerUser'])
+            ->getMock();
+        $order->expects(self::once())
+            ->method('getAppliedCoupons')
+            ->willReturn($appliedCoupons);
+        $order->expects(self::once())
+            ->method('getCustomerUser')
+            ->willReturn($customerUser);
+
         $checkout = (new Checkout())->setOrder($order);
         $definition = (new WorkflowDefinition())->setMetadata(['is_checkout_workflow' => true]);
         $event = self::assertCheckoutTransitionBeforeEvent($checkout, $definition, 'create_order');
+
+        $this->couponUsageManager->expects(self::once())
+            ->method('revertCouponUsages')
+            ->with($appliedCoupons, $customerUser);
 
         $objectManager = self::createMock(ObjectManager::class);
         $objectManager->expects(self::once())
@@ -81,6 +106,8 @@ class RemoveCheckoutOrderAfterInvalidPaymentListenerTest extends TestCase
         $definition = (new WorkflowDefinition())->setMetadata(['is_checkout_workflow' => true]);
         $event = self::assertCheckoutTransitionBeforeEvent($checkout, $definition, 'place_order');
 
+        $this->couponUsageManager->expects(self::never())
+            ->method('revertCouponUsages');
         $this->managerRegsitry->expects(self::once())
             ->method('getManagerForClass');
 

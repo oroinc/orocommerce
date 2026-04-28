@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\PromotionBundle\Manager;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\CouponUsage;
 
@@ -70,6 +72,23 @@ class CouponUsageManager
         return $this->getCouponUsageEntityManager()
             ->getRepository(CouponUsage::class)
             ->getCouponUsageCount($coupon, $customerUser);
+    }
+
+    public function revertCouponUsages(?Collection $appliedCoupons, ?CustomerUser $customerUser): void
+    {
+        if (!$appliedCoupons) {
+            return;
+        }
+
+        $repository = $this->getCouponUsageEntityManager()->getRepository(CouponUsage::class);
+
+        $appliedCouponIds = $appliedCoupons->map(
+            fn (AppliedCoupon $appliedCoupon): ?int => $appliedCoupon->getSourceCouponId()
+        )->filter(
+            fn (?int $appliedCouponId): bool => $appliedCouponId !== null
+        )->toArray();
+
+        $repository->deleteCouponUsage($appliedCouponIds, $customerUser);
     }
 
     /**
