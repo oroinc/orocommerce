@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
+use Oro\Bundle\PromotionBundle\Manager\CouponUsageManager;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
@@ -17,6 +18,8 @@ use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 class PaymentError extends TransitionServiceAbstract
 {
     private ?PaymentStatusManager $paymentStatusManager = null;
+
+    private ?CouponUsageManager $couponUsageManager = null;
 
     public function __construct(
         private readonly TransitionServiceInterface $baseTransition,
@@ -39,6 +42,7 @@ class PaymentError extends TransitionServiceAbstract
         $checkout->setPaymentInProgress(false);
         $order = $checkout->getOrder();
         if (null !== $order && !$this->isOrderPaid($order)) {
+            $this->couponUsageManager->revertCouponUsages($order->getAppliedCoupons(), $order->getCustomerUser());
             $checkout->setOrder(null);
             $this->doctrine->getManagerForClass(Order::class)->remove($order);
         }
@@ -54,5 +58,10 @@ class PaymentError extends TransitionServiceAbstract
             PaymentStatuses::AUTHORIZED,
             PaymentStatuses::AUTHORIZED_PARTIALLY,
         ], true);
+    }
+
+    public function setCouponUsageManager(CouponUsageManager $couponUsageManager): void
+    {
+        $this->couponUsageManager = $couponUsageManager;
     }
 }
