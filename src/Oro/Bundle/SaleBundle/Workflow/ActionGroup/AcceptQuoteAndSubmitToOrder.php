@@ -63,7 +63,7 @@ class AcceptQuoteAndSubmitToOrder implements AcceptQuoteAndSubmitToOrderInterfac
                 'disallow_shipping_method_edit' => $disallowShippingMethodEdit
             ],
             showErrors: true,
-            startTransition: $this->getStartTransitionName($quote),
+            startTransition: $this->getStartTransitionName($quote, $data),
         );
         $this->notifyAboutChangedSkus($checkoutStartResult['checkout'], $data);
 
@@ -93,9 +93,10 @@ class AcceptQuoteAndSubmitToOrder implements AcceptQuoteAndSubmitToOrderInterfac
         return $checkoutData;
     }
 
-    protected function getStartTransitionName(Quote $quote): string
+    protected function getStartTransitionName(Quote $quote, QuoteDemand $quoteDemand): string
     {
-        if (!$quote->getCustomerUser() || $quote->getCustomerUser()->isGuest()) {
+        $customerUser = $quote->getCustomerUser() ?? $quoteDemand->getCustomerUser();
+        if (!$customerUser || $customerUser->isGuest()) {
             return 'start_from_quote_as_guest';
         }
 
