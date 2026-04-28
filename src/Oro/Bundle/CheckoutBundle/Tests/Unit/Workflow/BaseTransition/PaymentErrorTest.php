@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\BaseTransition;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\PaymentError;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
+use Oro\Bundle\PromotionBundle\Manager\CouponUsageManager;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
@@ -19,6 +23,7 @@ class PaymentErrorTest extends TestCase
     private TransitionServiceInterface|MockObject $baseTransition;
     private ManagerRegistry|MockObject $doctrine;
     private PaymentStatusProviderInterface|MockObject $paymentStatusProvider;
+    private CouponUsageManager|MockObject $couponUsageManager;
     private PaymentError $paymentError;
 
     protected function setUp(): void
@@ -26,20 +31,38 @@ class PaymentErrorTest extends TestCase
         $this->baseTransition = $this->createMock(TransitionServiceInterface::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->paymentStatusProvider = $this->createMock(PaymentStatusProviderInterface::class);
+        $this->couponUsageManager = $this->createMock(CouponUsageManager::class);
 
         $this->paymentError = new PaymentError(
             $this->doctrine,
             $this->baseTransition
         );
         $this->paymentError->setPaymentProviderManager($this->paymentStatusProvider);
+        $this->paymentError->setCouponUsageManager($this->couponUsageManager);
     }
 
     public function testExecuteRemovesOrder(): void
     {
-        $workflowItem = $this->createMock(WorkflowItem::class);
-        $order = $this->createMock(Order::class);
+        $customerUser = $this->createMock(CustomerUser::class);
+        $appliedCoupons = new ArrayCollection([(new AppliedCoupon())->setSourceCouponId(1)]);
+
+        $order = $this->getMockBuilder(Order::class)
+            ->addMethods(['getAppliedCoupons'])
+            ->onlyMethods(['getCustomerUser'])
+            ->getMock();
+        $order->expects(self::once())
+            ->method('getAppliedCoupons')
+            ->willReturn($appliedCoupons);
+        $order->expects(self::once())
+            ->method('getCustomerUser')
+            ->willReturn($customerUser);
+        $order->expects(self::once())
+            ->method('getAppliedCoupons')
+            ->willReturn(null);
+
         $data = new WorkflowData(['order' => $order]);
 
+        $workflowItem = $this->createMock(WorkflowItem::class);
         $workflowItem->expects($this->any())
             ->method('getData')
             ->willReturn($data);
@@ -53,6 +76,10 @@ class PaymentErrorTest extends TestCase
             ->method('getPaymentStatus')
             ->with($order)
             ->willReturn(PaymentStatusProvider::PENDING);
+
+        $this->couponUsageManager->expects(self::once())
+            ->method('revertCouponUsages')
+            ->with($appliedCoupons, $customerUser);
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $this->doctrine->expects($this->once())
@@ -82,6 +109,8 @@ class PaymentErrorTest extends TestCase
             ->method('execute')
             ->with($workflowItem);
 
+        $this->couponUsageManager->expects(self::never())
+            ->method('revertCouponUsages');
         $this->paymentStatusProvider
             ->expects($this->never())
             ->method('getPaymentStatus');

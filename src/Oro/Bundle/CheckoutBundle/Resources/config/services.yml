@@ -1015,8 +1015,10 @@ services:
         calls:
             - ['addTransitionName', ['create_order']]
             - ['addTransitionName', ['place_order']]
+            - ['setCouponUsageManager', ['@oro_promotion.coupon_usage_manager']]
         tags:
             - { name: kernel.event_subscriber }
+            - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest, priority: -100 }
 
     oro_checkout.listener.checkout_transition_purchase:
         class: Oro\Bundle\CheckoutBundle\EventListener\CheckoutTransitionPurchase

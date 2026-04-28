@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
+use Oro\Bundle\PromotionBundle\Manager\CouponUsageManager;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
@@ -15,6 +16,8 @@ use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
  */
 class PaymentError extends TransitionServiceAbstract
 {
+    private ?CouponUsageManager $couponUsageManager = null;
+
     private ?PaymentStatusProviderInterface $paymentStatusProvider = null;
 
     public function __construct(
@@ -35,9 +38,15 @@ class PaymentError extends TransitionServiceAbstract
         $data = $workflowItem->getData();
         $order = $data->offsetGet('order');
         if (null !== $order && !$this->isOrderPaid($order)) {
+            $this->couponUsageManager->revertCouponUsages($order->getAppliedCoupons(), $order->getCustomerUser());
             $this->registry->getManagerForClass(Order::class)?->remove($order);
             $data->offsetUnset('order');
         }
+    }
+
+    public function setCouponUsageManager(CouponUsageManager $couponUsageManager): void
+    {
+        $this->couponUsageManager = $couponUsageManager;
     }
 
     private function isOrderPaid(Order $order): bool

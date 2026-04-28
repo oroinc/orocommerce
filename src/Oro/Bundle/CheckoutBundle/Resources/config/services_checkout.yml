@@ -138,6 +138,7 @@ services:
             - '@oro_checkout.workflow.transition.unblock_and_recalculate'
         calls:
             - [setPaymentProviderManager, ['@oro_payment.provider.payment_status']]
+            - [setCouponUsageManager, ['@oro_promotion.coupon_usage_manager']]
         tags:
             - { name: 'oro_workflow.transition_service' }
 
