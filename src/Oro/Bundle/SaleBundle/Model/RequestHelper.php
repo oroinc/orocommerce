@@ -57,6 +57,7 @@ class RequestHelper
                 ),
                 'r.createdAt < :date'
             )
+            ->orderBy('r.createdAt', 'DESC')
             ->setParameter('date', $date, Types::DATETIME_MUTABLE)
             ->getQuery()
             ->getResult();
