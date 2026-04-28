@@ -140,6 +140,7 @@ services:
             - '@oro_checkout.workflow.transition.unblock_and_recalculate'
             - '@doctrine'
             - '@oro_payment.manager.payment_status'
+            - '@oro_promotion.coupon_usage_manager'
         tags:
             - { name: 'oro_workflow.transition_service' }
 

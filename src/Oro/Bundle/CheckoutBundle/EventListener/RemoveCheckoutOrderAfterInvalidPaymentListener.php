@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutTransitionBeforeEvent;
 use Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PromotionBundle\Manager\CouponUsageManager;
 
 /**
  * Remove the order before payment, given that the previous payment was unsuccessful
@@ -21,8 +22,10 @@ class RemoveCheckoutOrderAfterInvalidPaymentListener
 {
     private array $transitionNames = [];
 
-    public function __construct(private ManagerRegistry $managerRegistry)
-    {
+    public function __construct(
+        private ManagerRegistry $managerRegistry,
+        private CouponUsageManager $couponUsageManager
+    ) {
     }
 
     public function addTransitionName(string $transitionName): self
@@ -57,6 +60,7 @@ class RemoveCheckoutOrderAfterInvalidPaymentListener
         $entityManager = $this->managerRegistry->getManagerForClass(Order::class);
         $order = $checkout->getOrder();
         if ($order) {
+            $this->couponUsageManager->revertCouponUsages($order->getAppliedCoupons(), $order->getCustomerUser());
             // Update the checkout after remove, this is necessary to avoid the situation that afterward there
             // will be a non-manageable order in the checkout entity.
             $checkout->setOrder(null);

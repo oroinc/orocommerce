@@ -1031,6 +1031,7 @@ services:
         class: Oro\Bundle\CheckoutBundle\EventListener\RemoveCheckoutOrderAfterInvalidPaymentListener
         arguments:
             - '@doctrine'
+            - '@oro_promotion.coupon_usage_manager'
         calls:
             - ['addTransitionName', ['create_order']]
             - ['addTransitionName', ['place_order']]
