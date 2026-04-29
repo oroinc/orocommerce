@@ -6,7 +6,6 @@ use Brick\Math\BigDecimal;
 use Brick\Math\Exception\MathException;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\FixedProductShippingBundle\Migrations\Data\ORM\LoadPriceAttributePriceListData;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
@@ -80,6 +79,8 @@ class ShippingCostProvider
     }
 
     /**
+     * @deprecated since 7.0.0. Use getCalculatedProductShippingCostForEntity() instead.
+     *
      * @param object $checkout
      * @param Collection<ShippingLineItem|ShippingKitItemLineItem> $lineItems
      * @param string $currency
@@ -91,24 +92,39 @@ class ShippingCostProvider
         Collection $lineItems,
         string $currency
     ): array {
-        $this->ensurePriceListShippingCostAttributeLoaded();
-
-        if (!$this->priceList || !$checkout instanceof Checkout) {
-            return [BigDecimal::of(self::DEFAULT_COST), BigDecimal::of(self::DEFAULT_COST)];
-        }
-
-        return $this->calculateCost($checkout, $lineItems, $currency);
+        return $this->getCalculatedProductShippingCostForEntity($checkout, $lineItems, $currency);
     }
 
     /**
-     * @param Checkout $checkout
+     * @param object $sourceEntity
+     * @param Collection<ShippingLineItem|ShippingKitItemLineItem> $lineItems
+     * @param string $currency
+     * @return BigDecimal[]
+     * @throws MathException
+     */
+    public function getCalculatedProductShippingCostForEntity(
+        object $sourceEntity,
+        Collection $lineItems,
+        string $currency
+    ): array {
+        $this->ensurePriceListShippingCostAttributeLoaded();
+
+        if (!$this->priceList) {
+            return [BigDecimal::of(self::DEFAULT_COST), BigDecimal::of(self::DEFAULT_COST)];
+        }
+
+        return $this->calculateCost($sourceEntity, $lineItems, $currency);
+    }
+
+    /**
+     * @param object $sourceEntity
      * @param Collection<ShippingLineItem|ShippingKitItemLineItem> $lineItems
      * @param string $currency
      * @return BigDecimal[]
      * @throws MathException
      */
     private function calculateCost(
-        Checkout $checkout,
+        object $sourceEntity,
         Collection $lineItems,
         string $currency
     ): array {
@@ -123,7 +139,7 @@ class ShippingCostProvider
                 continue;
             }
 
-            [$subtotal, $shipping] = $this->getItemPrice($checkout, $lineItem, $currency);
+            [$subtotal, $shipping] = $this->getItemPrice($sourceEntity, $lineItem, $currency);
             $sumSubtotal = $sumSubtotal->plus($subtotal);
             $sumShipping = $sumShipping->plus($shipping);
 
@@ -159,14 +175,14 @@ class ShippingCostProvider
     }
 
     /**
-     * @param Checkout $checkout
+     * @param object $sourceEntity
      * @param ShippingLineItem|ShippingKitItemLineItem $lineItem
      * @param string $currency
      * @return BigDecimal[]
      * @throws MathException
      */
     private function getItemPrice(
-        Checkout $checkout,
+        object $sourceEntity,
         ShippingLineItem|ShippingKitItemLineItem $lineItem,
         string $currency
     ): array {
@@ -174,13 +190,11 @@ class ShippingCostProvider
 
         if ($product->isKit()) {
             $subtotalWithShipping = match ($product->getKitShippingCalculationMethod()) {
-                Product::KIT_SHIPPING_ALL =>
-                $this->getKitAndItemsPriceWithShipping($checkout, $lineItem, $currency),
                 Product::KIT_SHIPPING_ONLY_ITEMS =>
-                $this->getKitItemsPriceWithShipping($lineItem, $currency),
+                    $this->getKitItemsPriceWithShipping($lineItem, $currency),
                 Product::KIT_SHIPPING_ONLY_PRODUCT =>
-                $this->getKitRealPriceWithShipping($checkout, $lineItem, $currency),
-                default => $this->getKitAndItemsPriceWithShipping($checkout, $lineItem, $currency),
+                    $this->getKitRealPriceWithShipping($sourceEntity, $lineItem, $currency),
+                default => $this->getKitAndItemsPriceWithShipping($sourceEntity, $lineItem, $currency),
             };
         } else {
             $subtotalWithShipping = $this->getLineItemProductPrice($lineItem, $currency);
@@ -208,20 +222,20 @@ class ShippingCostProvider
     }
 
     /**
-     * @param Checkout $checkout
+     * @param object $sourceEntity
      * @param ShippingLineItem $lineItem
      * @param string $currency
      * @return BigDecimal[]
      * @throws MathException
      */
     private function getKitAndItemsPriceWithShipping(
-        Checkout $checkout,
+        object $sourceEntity,
         ShippingLineItem $lineItem,
         string $currency
     ): array {
         $subtotal = BigDecimal::of(self::DEFAULT_COST);
         $shipping = BigDecimal::of(self::DEFAULT_COST);
-        [$kitSubtotal, $kitShipping] = $this->getKitRealPriceWithShipping($checkout, $lineItem, $currency);
+        [$kitSubtotal, $kitShipping] = $this->getKitRealPriceWithShipping($sourceEntity, $lineItem, $currency);
         [$kitLineItemsSubtotal, $kitLineItemsShipping] = $this->getKitItemsPriceWithShipping($lineItem, $currency);
         $subtotal = $subtotal->plus($kitSubtotal)->plus($kitLineItemsSubtotal);
         $shipping = $shipping->plus($kitShipping)->plus($kitLineItemsShipping);
@@ -230,14 +244,14 @@ class ShippingCostProvider
     }
 
     /**
-     * @param Checkout $checkout
+     * @param object $sourceEntity
      * @param ShippingLineItem $lineItem
      * @param string $currency
      * @return BigDecimal[]
      * @throws MathException
      */
     private function getKitRealPriceWithShipping(
-        Checkout $checkout,
+        object $sourceEntity,
         ShippingLineItem $lineItem,
         string $currency
     ): array {
@@ -245,7 +259,7 @@ class ShippingCostProvider
 
         $priceScopeCriteria = $this
             ->priceScopeCriteriaFactory
-            ->createByContext($checkout);
+            ->createByContext($sourceEntity);
         $matchedKitPrices = $this
             ->productPriceProvider
             ->getPricesByScopeCriteriaAndProducts($priceScopeCriteria, [$product], [$currency]);

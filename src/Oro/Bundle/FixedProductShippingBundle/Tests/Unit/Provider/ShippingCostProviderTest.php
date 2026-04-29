@@ -84,7 +84,7 @@ class ShippingCostProviderTest extends TestCase
 
         $this->initShippingCostProvider();
 
-        [$subtotal, $shipping] = $this->provider->getCalculatedProductShippingCostWithSubtotal(
+        [$subtotal, $shipping] = $this->provider->getCalculatedProductShippingCostForEntity(
             new Checkout(),
             new ArrayCollection([]),
             'USD'
@@ -105,7 +105,7 @@ class ShippingCostProviderTest extends TestCase
 
         $lineItems = new ArrayCollection([$lineItem]);
 
-        [$subtotal, $shipping] = $this->provider->getCalculatedProductShippingCostWithSubtotal(
+        [$subtotal, $shipping] = $this->provider->getCalculatedProductShippingCostForEntity(
             new Checkout(),
             $lineItems,
             'USD'
@@ -128,7 +128,7 @@ class ShippingCostProviderTest extends TestCase
             ->setProduct(new Product());
         $lineItems = new ArrayCollection([$lineItem]);
 
-        [$subtotal, $shipping] = $this->provider->getCalculatedProductShippingCostWithSubtotal(
+        [$subtotal, $shipping] = $this->provider->getCalculatedProductShippingCostForEntity(
             new Checkout(),
             $lineItems,
             'USD'
@@ -151,7 +151,7 @@ class ShippingCostProviderTest extends TestCase
             ->setProduct(new Product());
         $lineItems = new ArrayCollection([$lineItem]);
 
-        [$subtotal, $shipping] = $this->provider->getCalculatedProductShippingCostWithSubtotal(
+        [$subtotal, $shipping] = $this->provider->getCalculatedProductShippingCostForEntity(
             new Checkout(),
             $lineItems,
             'USD'
@@ -159,6 +159,35 @@ class ShippingCostProviderTest extends TestCase
 
         self::assertEquals(0.0, $subtotal->toFloat());
         self::assertEquals(0.0, $shipping->toFloat());
+    }
+
+    public function testCalculatesForNonCheckoutSourceEntity(): void
+    {
+        $product = new Product();
+        $this->priceAttribute->setCurrencies(['USD']);
+        $this->priceProvider->expects(self::once())
+            ->method('getPricesWithUnitAndCurrencies')
+            ->with($this->priceAttribute, $product)
+            ->willReturn([
+                'piece' => [
+                    'USD' => (new PriceAttributeProductPrice())->setPrice(Price::create(3.0, 'USD')),
+                ],
+            ]);
+
+        $this->initShippingCostProvider();
+
+        $lineItem = $this->getShippingLineItem(quantity: 2, unitCode: 'piece')
+            ->setPrice(Price::create(10.0, 'USD'))
+            ->setProduct($product);
+
+        [$subtotal, $shipping] = $this->provider->getCalculatedProductShippingCostForEntity(
+            new \stdClass(),
+            new ArrayCollection([$lineItem]),
+            'USD'
+        );
+
+        self::assertEquals(20.0, $subtotal->toFloat());
+        self::assertEquals(6.0, $shipping->toFloat());
     }
 
     /**
@@ -208,7 +237,7 @@ class ShippingCostProviderTest extends TestCase
                 return $data;
             });
 
-        $result = $this->provider->getCalculatedProductShippingCostWithSubtotal(
+        $result = $this->provider->getCalculatedProductShippingCostForEntity(
             $checkout,
             $lineItems,
             $currency
@@ -346,7 +375,7 @@ class ShippingCostProviderTest extends TestCase
                 return $data;
             });
 
-        $result = $this->provider->getCalculatedProductShippingCostWithSubtotal(
+        $result = $this->provider->getCalculatedProductShippingCostForEntity(
             $checkout,
             $lineItems,
             $currency
@@ -589,7 +618,7 @@ class ShippingCostProviderTest extends TestCase
                 return $data;
             });
 
-        $result = $this->provider->getCalculatedProductShippingCostWithSubtotal(
+        $result = $this->provider->getCalculatedProductShippingCostForEntity(
             $checkout,
             $lineItems,
             $currency
