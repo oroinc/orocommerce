@@ -71,7 +71,7 @@ class FixedProductMethodType implements ShippingMethodTypeInterface
     ): ?Price {
         $currency = $context->getCurrency();
         $subtotalWithShipping = $this->shippingCostProvider
-            ->getCalculatedProductShippingCostWithSubtotal(
+            ->getCalculatedProductShippingCostForEntity(
                 $context->getSourceEntity(),
                 $context->getLineItems(),
                 $currency
