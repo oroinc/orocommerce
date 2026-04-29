@@ -87,7 +87,7 @@ class FixedProductMethodTypeTest extends TestCase
             ->willReturn($expectedResult);
 
         $this->shippingCostProvider->expects(self::once())
-            ->method('getCalculatedProductShippingCost')
+            ->method('getCalculatedProductShippingCostForEntity')
             ->with($context->getSourceEntity(), $context->getLineItems(), $context->getCurrency())
             ->willReturn([BigDecimal::of($price), BigDecimal::of($shippingPrice)]);
 
