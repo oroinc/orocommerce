@@ -326,6 +326,65 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         ];
     }
 
+    public function testBuildFormWithNullProductId(): void
+    {
+        $sku = 'DELETED_SKU';
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_ID_KEY => null,
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                ]
+            ]
+        ];
+
+        $this->expectsGetStorageFromRequest();
+        $this->expectsGetDataFromStorage($data);
+
+        $this->entityManager->expects(self::never())
+            ->method('find');
+
+        $this->extension->buildForm($this->getFormBuilder(), []);
+
+        self::assertCount(1, $this->entity->getLineItems());
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $this->entity->getLineItems()->first();
+
+        self::assertNull($lineItem->getProduct());
+        self::assertEquals($sku, $lineItem->getFreeFormProduct());
+        self::assertEquals($sku, $lineItem->getProductSku());
+        self::assertEquals(1, $lineItem->getQuantity());
+    }
+
+    public function testBuildFormWithDeletedProduct(): void
+    {
+        $productId = 999;
+        $sku = 'DELETED_SKU';
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                ]
+            ]
+        ];
+
+        $this->expectsGetStorageFromRequest();
+        $this->expectsGetDataFromStorage($data);
+        $this->expectsProductNotFound($productId);
+
+        $this->extension->buildForm($this->getFormBuilder(), []);
+
+        self::assertCount(1, $this->entity->getLineItems());
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $this->entity->getLineItems()->first();
+
+        self::assertNull($lineItem->getProduct());
+        self::assertEquals($sku, $lineItem->getFreeFormProduct());
+        self::assertEquals($sku, $lineItem->getProductSku());
+        self::assertEquals(1, $lineItem->getQuantity());
+    }
+
     public function testGetExtendedTypes(): void
     {
         self::assertEquals([OrderType::class], OrderDataStorageExtension::getExtendedTypes());

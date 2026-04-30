@@ -105,6 +105,12 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
         }
     }
 
+    #[\Override]
+    protected function addFreeFormItem(object $entity, array $itemData): void
+    {
+        # RFQ requires an existing product to request a quote for, so deleted products are intentionally skipped.
+    }
+
     private function addKitItemLineItems(RequestProduct $requestProduct, array $itemData): void
     {
         $kitItemLineItemsData = $itemData[ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEMS_DATA_KEY] ?? [];

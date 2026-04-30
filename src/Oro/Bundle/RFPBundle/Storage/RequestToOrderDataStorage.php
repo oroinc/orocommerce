@@ -27,7 +27,7 @@ class RequestToOrderDataStorage
         foreach ($request->getRequestProducts() as $lineItem) {
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
                 ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProductSku(),
-                ProductDataStorage::PRODUCT_ID_KEY => $lineItem->getProduct()->getId(),
+                ProductDataStorage::PRODUCT_ID_KEY => $lineItem->getProduct()?->getId(),
                 'comment' => $lineItem->getComment(),
                 ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEMS_DATA_KEY => $this->getKitItemLineItemsData($lineItem),
             ];

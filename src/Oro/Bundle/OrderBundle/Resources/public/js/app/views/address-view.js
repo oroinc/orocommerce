@@ -304,7 +304,7 @@ define(function(require) {
         },
 
         _onEntryPointOrderLoadBefore: function() {
-            if (this.$address.val() && this.$address.val() !== this.options.enterManuallyValue) {
+            if (this.$address && this.$address.val() && this.$address.val() !== this.options.enterManuallyValue) {
                 this.loadingStart();
             }
         },
