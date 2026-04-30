@@ -217,6 +217,29 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             ->with('warning', $warningRenderedMessage);
     }
 
+    public function testBuildFormWithDeletedProduct(): void
+    {
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_ID_KEY => null,
+                    ProductDataStorage::PRODUCT_SKU_KEY => 'DELETED_SKU',
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => 3,
+                ],
+            ],
+        ];
+
+        $this->expectsGetStorageFromRequest();
+        $this->expectsGetDataFromStorage($data);
+
+        $this->entityManager->expects(self::never())
+            ->method('find');
+
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
+
+        self::assertEmpty($this->entity->getRequestProducts());
+    }
+
     public function testGetExtendedTypes(): void
     {
         self::assertEquals([RequestType::class], RequestDataStorageExtension::getExtendedTypes());

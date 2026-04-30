@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Extension;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
+use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 /**
@@ -15,6 +17,15 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
  */
 class OrderDataStorageExtension extends AbstractProductDataStorageExtension
 {
+    private ?DefaultProductUnitProviderInterface $defaultProductUnitProvider = null;
+
+    public function setDefaultProductUnitProvider(DefaultProductUnitProviderInterface $provider): self
+    {
+        $this->defaultProductUnitProvider = $provider;
+
+        return $this;
+    }
+
     #[\Override]
     protected function addItem(Product $product, object $entity, array $itemData): void
     {
@@ -39,6 +50,41 @@ class OrderDataStorageExtension extends AbstractProductDataStorageExtension
         if ($lineItem->getProduct()) {
             $entity->addLineItem($lineItem);
         }
+    }
+
+    #[\Override]
+    protected function addFreeFormItem(object $entity, array $itemData): void
+    {
+        /** @var Order $entity */
+        $sku = $itemData[ProductDataStorage::PRODUCT_SKU_KEY] ?? null;
+        if (!$sku) {
+            return;
+        }
+
+        $lineItem = new OrderLineItem();
+        $lineItem->setFreeFormProduct($sku);
+        $lineItem->setProductSku($sku);
+        $lineItem->setQuantity(1);
+
+        // Free-form line items have no product, so we can't derive a unit from the product's unit precisions
+        // so fall back to the system default unit.
+        $defaultUnit = $this->defaultProductUnitProvider?->getDefaultProductUnitPrecision()?->getUnit();
+        if ($defaultUnit) {
+            $lineItem->setProductUnit($defaultUnit);
+            $lineItem->setProductUnitCode($defaultUnit->getCode());
+        }
+
+        // Without a product there is no tier price to resolve automatically,  and the RFQ's multiple offers cannot
+        // be reduced to a single price without admin input. The 0 placeholder is overwritten by the admin
+        // before the order is saved.
+        $currency = $entity->getCurrency();
+        if ($currency) {
+            $lineItem->setPrice(Price::create(0, $currency));
+        }
+
+        $this->fillEntityData($lineItem, $itemData);
+
+        $entity->addLineItem($lineItem);
     }
 
     #[\Override]

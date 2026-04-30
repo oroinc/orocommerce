@@ -451,6 +451,111 @@ final class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExte
             ->willReturn($tierPrices);
     }
 
+    public function testBuildFormWithNullProductId(): void
+    {
+        $sku = 'DELETED_SKU';
+        $productUnitCode = 'item';
+        $quantity = 6;
+        $price = Price::create(5, 'USD');
+
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_ID_KEY => null,
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
+                    'commentCustomer' => 'test comment',
+                    'requestProductItems' => [
+                        [
+                            'price' => $price,
+                            'quantity' => $quantity,
+                            'productUnit' => $productUnitCode,
+                            'productUnitCode' => $productUnitCode,
+                            'requestProductItem' => 1,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->expectsGetStorageFromRequest();
+        $this->expectsGetDataFromStorage($data);
+
+        $this->entityManager->expects(self::never())
+            ->method('find');
+
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
+
+        self::assertCount(1, $this->entity->getQuoteProducts());
+
+        /** @var QuoteProduct $quoteProduct */
+        $quoteProduct = $this->entity->getQuoteProducts()->first();
+
+        self::assertNull($quoteProduct->getProduct());
+        self::assertTrue($quoteProduct->isProductFreeForm());
+        self::assertEquals($sku, $quoteProduct->getFreeFormProduct());
+        self::assertEquals($sku, $quoteProduct->getProductSku());
+        self::assertEquals('test comment', $quoteProduct->getCommentCustomer());
+
+        self::assertCount(1, $quoteProduct->getQuoteProductRequests());
+        self::assertCount(1, $quoteProduct->getQuoteProductOffers());
+
+        /** @var QuoteProductRequest $quoteProductRequest */
+        $quoteProductRequest = $quoteProduct->getQuoteProductRequests()->first();
+        self::assertEquals($quantity, $quoteProductRequest->getQuantity());
+        self::assertEquals($price, $quoteProductRequest->getPrice());
+
+        /** @var QuoteProductOffer $quoteProductOffer */
+        $quoteProductOffer = $quoteProduct->getQuoteProductOffers()->first();
+        self::assertEquals($quantity, $quoteProductOffer->getQuantity());
+        self::assertEquals($price, $quoteProductOffer->getPrice());
+    }
+
+    public function testBuildFormWithDeletedProduct(): void
+    {
+        $productId = 999;
+        $sku = 'DELETED_SKU';
+        $productUnitCode = 'item';
+        $quantity = 6;
+        $price = Price::create(5, 'USD');
+
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
+                    'commentCustomer' => 'test comment',
+                    'requestProductItems' => [
+                        [
+                            'price' => $price,
+                            'quantity' => $quantity,
+                            'productUnit' => $productUnitCode,
+                            'productUnitCode' => $productUnitCode,
+                            'requestProductItem' => 1,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->expectsGetStorageFromRequest();
+        $this->expectsGetDataFromStorage($data);
+        $this->expectsProductNotFound($productId);
+
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
+
+        self::assertCount(1, $this->entity->getQuoteProducts());
+
+        /** @var QuoteProduct $quoteProduct */
+        $quoteProduct = $this->entity->getQuoteProducts()->first();
+
+        self::assertNull($quoteProduct->getProduct());
+        self::assertTrue($quoteProduct->isProductFreeForm());
+        self::assertEquals($sku, $quoteProduct->getFreeFormProduct());
+        self::assertEquals($sku, $quoteProduct->getProductSku());
+    }
+
     public function testGetExtendedTypes(): void
     {
         self::assertEquals([QuoteType::class], QuoteDataStorageExtension::getExtendedTypes());
