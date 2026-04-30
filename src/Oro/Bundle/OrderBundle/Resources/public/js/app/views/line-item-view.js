@@ -157,9 +157,12 @@ define(function(require) {
             const $product = this.$el.find('div' + this.options.selectors.productType);
             const $freeForm = this.$el.find('div' + this.options.selectors.freeFormType);
 
-            const showFreeFormType = function() {
+            const showFreeFormType = () => {
                 $product.hide();
                 $freeForm.show();
+                // Free-form line items have no product — drop the matched-price marker
+                // so quantity/unit changes do not wipe a manually entered (or RFQ-offer) price.
+                this.fieldsByName.priceValue?.removeClass('matched-price');
             };
 
             const showProductType = function() {
@@ -228,7 +231,12 @@ define(function(require) {
             this.model.set('quantity', 1);
 
             if (this.fieldsByName.hasOwnProperty('priceValue')) {
-                this.fieldsByName.priceValue.val(null).addClass('matched-price');
+                const $priceValue = this.fieldsByName.priceValue.val(null);
+                if (this.getElement('product')?.val()) {
+                    $priceValue.addClass('matched-price');
+                } else {
+                    $priceValue.removeClass('matched-price');
+                }
             }
         },
 

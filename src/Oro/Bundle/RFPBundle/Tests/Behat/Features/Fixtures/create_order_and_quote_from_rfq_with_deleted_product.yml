@@ -1,0 +1,171 @@
+include:
+    - '@OroCustomerBundle:CustomerAndCustomerUserWithAddressFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product_to_delete:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'PRODUCT_TO_DELETE'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@product_to_delete_precision'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            - setDefaultName: ['Product To Delete']
+    kit_simple_product:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'KIT_SIMPLE_PRODUCT'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@kit_simple_product_precision'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            - setDefaultName: ['Kit Simple Product']
+    kit_to_delete:
+        sku: 'KIT_TO_DELETE'
+        type: 'kit'
+        attributeFamily: '@defaultProductFamily'
+        organization: '@organization'
+        owner: '@business_unit'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        primaryUnitPrecision: '@kit_to_delete_precision'
+        unitPrecisions: ['@kit_to_delete_precision']
+        __calls:
+            - setDefaultName: ['Kit To Delete']
+            - addKitItem: ['@kit_to_delete_item']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product_to_delete_precision:
+        unit: '@piece'
+        precision: '0'
+    kit_simple_product_precision:
+        unit: '@piece'
+        precision: '0'
+    kit_to_delete_precision:
+        unit: '@piece'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    kit_to_delete_item:
+        optional: false
+        sortOrder: 1
+        minimumQuantity: 1
+        maximumQuantity: 10
+        productUnit: '@piece'
+        __calls:
+            - setDefaultLabel: ['Mandatory Item']
+            - addKitItemProduct: ['@kit_to_delete_item_product']
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    kit_to_delete_item_product:
+        kitItem: '@kit_to_delete_item'
+        product: '@kit_simple_product'
+        sortOrder: 1
+        productUnitPrecision: '@kit_simple_product_precision'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price_product_to_delete:
+        product: '@product_to_delete'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 10
+    price_kit_simple_product:
+        product: '@kit_simple_product'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 5
+    price_kit_to_delete:
+        product: '@kit_to_delete'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 50
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    price_relation_product_to_delete:
+        product: '@product_to_delete'
+        priceList: '@defaultPriceList'
+    price_relation_kit_simple_product:
+        product: '@kit_simple_product'
+        priceList: '@defaultPriceList'
+    price_relation_kit_to_delete:
+        product: '@kit_to_delete'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\RFPBundle\Entity\Request:
+    rfq_for_order:
+        po_number: 'PO-ORDER'
+        first_name: 'Amanda'
+        last_name: 'Cole'
+        email: 'AmandaRCole@example.org'
+        company: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        customer_user: '@amanda'
+    rfq_for_quote:
+        po_number: 'PO-QUOTE'
+        first_name: 'Amanda'
+        last_name: 'Cole'
+        email: 'AmandaRCole@example.org'
+        company: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        customer_user: '@amanda'
+    rfq_kit_for_order:
+        po_number: 'PO-KIT-ORDER'
+        first_name: 'Amanda'
+        last_name: 'Cole'
+        email: 'AmandaRCole@example.org'
+        company: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        customer_user: '@amanda'
+
+Oro\Bundle\RFPBundle\Entity\RequestProduct:
+    rfq_order_product:
+        request: '@rfq_for_order'
+        product: '@product_to_delete'
+        product_sku: 'PRODUCT_TO_DELETE'
+        requestProductItems: ['@rfq_order_product_item']
+    rfq_quote_product:
+        request: '@rfq_for_quote'
+        product: '@product_to_delete'
+        product_sku: 'PRODUCT_TO_DELETE'
+        requestProductItems: ['@rfq_quote_product_item']
+    rfq_kit_order_product:
+        request: '@rfq_kit_for_order'
+        product: '@kit_to_delete'
+        product_sku: 'KIT_TO_DELETE'
+        requestProductItems: ['@rfq_kit_order_product_item']
+
+Oro\Bundle\RFPBundle\Entity\RequestProductItem:
+    rfq_order_product_item:
+        request_product: '@rfq_order_product'
+        quantity: 5
+        productUnit: '@piece'
+        product_unit_code: 'piece'
+        value: 10
+        currency: 'USD'
+    rfq_quote_product_item:
+        request_product: '@rfq_quote_product'
+        quantity: 3
+        productUnit: '@piece'
+        product_unit_code: 'piece'
+        value: 10
+        currency: 'USD'
+    rfq_kit_order_product_item:
+        request_product: '@rfq_kit_order_product'
+        quantity: 1
+        productUnit: '@piece'
+        product_unit_code: 'piece'
+        value: 50
+        currency: 'USD'

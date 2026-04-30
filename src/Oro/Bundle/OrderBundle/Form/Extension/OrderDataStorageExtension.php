@@ -46,6 +46,27 @@ class OrderDataStorageExtension extends AbstractProductDataStorageExtension
     /**
      * {@inheritDoc}
      */
+    protected function addFreeFormItem(object $entity, array $itemData): void
+    {
+        /** @var Order $entity */
+        $sku = $itemData[ProductDataStorage::PRODUCT_SKU_KEY] ?? null;
+        if (!$sku) {
+            return;
+        }
+
+        $lineItem = new OrderLineItem();
+        $lineItem->setFreeFormProduct($sku);
+        $lineItem->setProductSku($sku);
+        $lineItem->setQuantity(1);
+
+        $this->fillEntityData($lineItem, $itemData);
+
+        $entity->addLineItem($lineItem);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected function getEntityClass(): string
     {
         return Order::class;

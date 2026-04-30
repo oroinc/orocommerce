@@ -62,6 +62,28 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
         $entity->addQuoteProduct($quoteProduct);
     }
 
+    #[\Override]
+    protected function addFreeFormItem(object $entity, array $itemData): void
+    {
+        /** @var Quote $entity */
+        $sku = $itemData[ProductDataStorage::PRODUCT_SKU_KEY] ?? null;
+        if (!$sku) {
+            return;
+        }
+
+        $quoteProduct = new QuoteProduct();
+        $quoteProduct->setFreeFormProduct($sku);
+        $quoteProduct->setProductSku($sku);
+
+        $this->fillEntityData($quoteProduct, $itemData);
+
+        if (!empty($itemData['requestProductItems'])) {
+            $this->addItems(null, $quoteProduct, $itemData['requestProductItems']);
+        }
+
+        $entity->addQuoteProduct($quoteProduct);
+    }
+
     /**
      * @param object|Quote $entity
      * @param array $itemsData
@@ -128,9 +150,9 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
         return null;
     }
 
-    private function addItems(Product $product, QuoteProduct $quoteProduct, array $itemsData): void
+    private function addItems(?Product $product, QuoteProduct $quoteProduct, array $itemsData): void
     {
-        $defaultUnit = $this->getDefaultProductUnit($product);
+        $defaultUnit = $product ? $this->getDefaultProductUnit($product) : null;
 
         foreach ($itemsData as $subItemData) {
             $quoteProductRequest = new QuoteProductRequest();

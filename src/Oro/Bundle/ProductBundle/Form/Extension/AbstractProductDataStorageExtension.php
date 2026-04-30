@@ -115,15 +115,13 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
         $em = $this->doctrine->getManagerForClass($this->getEntityClass());
         foreach ($itemsData as $dataRow) {
             $productId = $dataRow[ProductDataStorage::PRODUCT_ID_KEY] ?? null;
-            if (null === $productId) {
-                continue;
-            }
-            $product = $em->find(Product::class, $productId);
-            if (null === $product) {
-                continue;
-            }
+            $product = $productId ? $em->find(Product::class, $productId) : null;
 
-            $this->addItem($product, $entity, $dataRow);
+            if ($product) {
+                $this->addItem($product, $entity, $dataRow);
+            } else {
+                $this->addFreeFormItem($entity, $dataRow);
+            }
         }
     }
 
@@ -164,6 +162,8 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     }
 
     abstract protected function addItem(Product $product, object $entity, array $itemData): void;
+
+    abstract protected function addFreeFormItem(object $entity, array $itemData): void;
 
     protected function getDefaultProductUnit(Product $product): ?ProductUnit
     {
