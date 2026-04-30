@@ -41,7 +41,7 @@ class RequestToQuoteDataStorage
 
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
                 ProductDataStorage::PRODUCT_SKU_KEY =>  $requestProduct->getProductSku(),
-                ProductDataStorage::PRODUCT_ID_KEY =>  $requestProduct->getProduct()->getId(),
+                ProductDataStorage::PRODUCT_ID_KEY =>  $requestProduct->getProduct()?->getId(),
                 ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
                 'commentCustomer' => $requestProduct->getComment(),
                 'requestProductItems' => $items,

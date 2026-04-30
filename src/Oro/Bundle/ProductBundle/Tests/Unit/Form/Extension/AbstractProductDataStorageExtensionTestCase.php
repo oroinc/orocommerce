@@ -153,6 +153,14 @@ abstract class AbstractProductDataStorageExtensionTestCase extends TestCase
             ->willReturn($product);
     }
 
+    protected function expectsProductNotFound(int $productId): void
+    {
+        $this->entityManager->expects(self::once())
+            ->method('find')
+            ->with(Product::class, $productId)
+            ->willReturn(null);
+    }
+
     protected function initEntityMetadata(array $mappings): void
     {
         $this->entityManager->expects(self::any())
