@@ -18,10 +18,16 @@ Oro\Bundle\UPSBundle\Entity\UPSTransport:
                   max: 255
         upsClientSecret:
             - NotBlank: ~
+            - Length:
+                  max: 255
         upsShippingAccountName:
             - NotBlank: ~
+            - Length:
+                  max: 255
         upsShippingAccountNumber:
             - NotBlank: ~
+            - Length:
+                  max: 100
         upsPickupType:
             - NotBlank: ~
         upsUnitOfWeight:

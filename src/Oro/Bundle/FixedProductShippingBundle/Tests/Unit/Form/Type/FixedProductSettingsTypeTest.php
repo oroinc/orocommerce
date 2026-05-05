@@ -21,9 +21,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Validation;
 
 class FixedProductSettingsTypeTest extends FormIntegrationTestCase
 {
@@ -75,7 +73,7 @@ class FixedProductSettingsTypeTest extends FormIntegrationTestCase
                     ],
                 ]
             ),
-            new ValidatorExtension(Validation::createValidator()),
+            $this->getValidatorExtension(true),
         ];
     }
 
@@ -120,6 +118,21 @@ class FixedProductSettingsTypeTest extends FormIntegrationTestCase
             ->setLocalization($localization);
 
         return $value;
+    }
+
+    public function testSubmitWithTooLongLabel(): void
+    {
+        $submitData = [
+            'labels' => [
+                'values' => ['default' => str_repeat('a', 256)],
+            ],
+        ];
+
+        $form = $this->factory->create(FixedProductSettingsType::class);
+        $form->submit($submitData);
+
+        self::assertTrue($form->isSynchronized());
+        self::assertFalse($form->isValid());
     }
 
     public function testGetBlockPrefixReturnsString(): void

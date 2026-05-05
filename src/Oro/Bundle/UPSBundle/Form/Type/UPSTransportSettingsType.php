@@ -19,6 +19,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
@@ -49,7 +50,7 @@ class UPSTransportSettingsType extends AbstractType
             [
                 'label' => 'oro.ups.transport.labels.label',
                 'required' => true,
-                'entry_options' => ['constraints' => [new NotBlank()]],
+                'entry_options' => ['constraints' => [new NotBlank(), new Length(max: 255)]],
             ]
         );
         $builder->add(
