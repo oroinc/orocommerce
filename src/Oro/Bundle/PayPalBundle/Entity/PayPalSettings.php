@@ -108,25 +108,25 @@ class PayPalSettings extends Transport
     /**
      * @var string
      */
-    #[ORM\Column(name: 'pp_partner', type: 'crypted_string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'pp_partner', type: 'crypted_text', nullable: false)]
     protected $partner;
 
     /**
      * @var string
      */
-    #[ORM\Column(name: 'pp_vendor', type: 'crypted_string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'pp_vendor', type: 'crypted_text', nullable: false)]
     protected $vendor;
 
     /**
      * @var string
      */
-    #[ORM\Column(name: 'pp_user', type: 'crypted_string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'pp_user', type: 'crypted_text', nullable: false)]
     protected $user;
 
     /**
      * @var string
      */
-    #[ORM\Column(name: 'pp_password', type: 'crypted_string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'pp_password', type: 'crypted_text', nullable: false)]
     protected $password;
 
     #[ORM\Column(name: 'pp_test_mode', type: Types::BOOLEAN, options: ['default' => false])]
@@ -150,13 +150,13 @@ class PayPalSettings extends Transport
     /**
      * @var string
      */
-    #[ORM\Column(name: 'pp_proxy_host', type: 'crypted_string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'pp_proxy_host', type: 'crypted_text', nullable: false)]
     protected $proxyHost;
 
     /**
      * @var string
      */
-    #[ORM\Column(name: 'pp_proxy_port', type: 'crypted_string', length: 255, nullable: false)]
+    #[ORM\Column(name: 'pp_proxy_port', type: 'crypted_text', nullable: false)]
     protected $proxyPort;
 
     #[ORM\Column(name: 'pp_enable_ssl_verification', type: Types::BOOLEAN, options: ['default' => true])]

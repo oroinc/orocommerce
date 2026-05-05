@@ -10,6 +10,8 @@ Oro\Bundle\PayPalBundle\Entity\PayPalSettings:
             - NotBlank: ~
         expressCheckoutName:
             - NotBlank: ~
+            - Length:
+                max: 255
         creditCardPaymentAction:
             - NotBlank: ~
             - Valid: ~
@@ -22,16 +24,29 @@ Oro\Bundle\PayPalBundle\Entity\PayPalSettings:
         partner:
             - NotBlank: ~
             - Valid: ~
+            - Length:
+                max: 255
         vendor:
             - NotBlank: ~
             - Valid: ~
+            - Length:
+                max: 255
         user:
             - NotBlank: ~
             - Valid: ~
+            - Length:
+                max: 255
         password:
             - NotBlank: ~
             - Length:
                 min: 7
+                max: 255
+        proxyHost:
+            - Length:
+                max: 255
+        proxyPort:
+            - Length:
+                max: 255
 
 Oro\Bundle\IntegrationBundle\Entity\Channel:
     constraints:
