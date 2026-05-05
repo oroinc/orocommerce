@@ -16,7 +16,7 @@ class OroUPSBundleInstaller implements Installation, ContainerAwareInterface
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_4';
+        return 'v1_4_1';
     }
 
     #[\Override]
@@ -41,10 +41,10 @@ class OroUPSBundleInstaller implements Installation, ContainerAwareInterface
         $table = $schema->getTable('oro_integration_transport');
         $table->addColumn('ups_test_mode', 'boolean', ['notnull' => false, 'default' => false]);
         $table->addColumn('ups_api_user', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('ups_api_password', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('ups_api_password', 'text', ['notnull' => false]);
         $table->addColumn('ups_api_key', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('ups_client_id', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('ups_client_secret', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('ups_client_secret', 'text', ['notnull' => false]);
         $table->addColumn('ups_access_token', 'text', ['notnull' => false]);
         $table->addColumn(
             'ups_access_token_expires',

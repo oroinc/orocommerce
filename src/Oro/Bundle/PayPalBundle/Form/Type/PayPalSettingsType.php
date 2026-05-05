@@ -16,6 +16,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
@@ -72,28 +73,28 @@ class PayPalSettingsType extends AbstractType
                 'tooltip' => 'oro.paypal.settings.label.tooltip',
                 'tooltip_placement' => 'right',
                 'required' => true,
-                'entry_options' => ['constraints' => [new NotBlank()]],
+                'entry_options' => ['constraints' => [new NotBlank(), new Length(max: 255)]],
             ])
             ->add('creditCardShortLabels', LocalizedFallbackValueCollectionType::class, [
                 'label' => 'oro.paypal.settings.credit_card_short_labels.label',
                 'tooltip' => 'oro.paypal.settings.short_label.tooltip',
                 'tooltip_placement' => 'right',
                 'required' => true,
-                'entry_options' => ['constraints' => [new NotBlank()]],
+                'entry_options' => ['constraints' => [new NotBlank(), new Length(max: 255)]],
             ])
             ->add('expressCheckoutLabels', LocalizedFallbackValueCollectionType::class, [
                 'label' => 'oro.paypal.settings.express_checkout_labels.label',
                 'tooltip' => 'oro.paypal.settings.label.tooltip',
                 'tooltip_placement' => 'right',
                 'required' => true,
-                'entry_options' => ['constraints' => [new NotBlank()]],
+                'entry_options' => ['constraints' => [new NotBlank(), new Length(max: 255)]],
             ])
             ->add('expressCheckoutShortLabels', LocalizedFallbackValueCollectionType::class, [
                 'label' => 'oro.paypal.settings.express_checkout_short_labels.label',
                 'tooltip' => 'oro.paypal.settings.short_label.tooltip',
                 'tooltip_placement' => 'right',
                 'required' => true,
-                'entry_options' => ['constraints' => [new NotBlank()]],
+                'entry_options' => ['constraints' => [new NotBlank(), new Length(max: 255)]],
             ])
             ->add('expressCheckoutName', TextType::class, [
                 'label' => 'oro.paypal.settings.express_checkout_name.label',

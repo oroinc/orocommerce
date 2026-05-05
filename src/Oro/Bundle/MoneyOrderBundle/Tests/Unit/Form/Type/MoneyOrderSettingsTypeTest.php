@@ -6,11 +6,9 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 use Oro\Bundle\MoneyOrderBundle\Form\Type\MoneyOrderSettingsType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Validation;
 
 class MoneyOrderSettingsTypeTest extends FormIntegrationTestCase
 {
@@ -24,7 +22,7 @@ class MoneyOrderSettingsTypeTest extends FormIntegrationTestCase
                 ],
                 []
             ),
-            new ValidatorExtension(Validation::createValidator())
+            $this->getValidatorExtension(true)
         ];
     }
 
@@ -45,6 +43,22 @@ class MoneyOrderSettingsTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->isValid());
         $this->assertTrue($form->isSynchronized());
         $this->assertEquals($settings, $form->getData());
+    }
+
+    public function testSubmitWithTooLongPayTo(): void
+    {
+        $submitData = [
+            'payTo' => str_repeat('a', 256),
+            'sendTo' => 'sendTo',
+            'labels' => [['string' => 'first label']],
+            'shortLabels' => [['string' => 'short label']],
+        ];
+
+        $form = $this->factory->create(MoneyOrderSettingsType::class, new MoneyOrderSettings());
+        $form->submit($submitData);
+
+        self::assertTrue($form->isSynchronized());
+        self::assertFalse($form->isValid());
     }
 
     public function testGetBlockPrefixReturnsCorrectString()

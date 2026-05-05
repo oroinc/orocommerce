@@ -37,7 +37,7 @@ class UPSTransport extends Transport
     #[ORM\Column(name: 'ups_client_id', type: Types::STRING, length: 255)]
     private ?string $upsClientId = null;
 
-    #[ORM\Column(name: 'ups_client_secret', type: Types::STRING, length: 255)]
+    #[ORM\Column(name: 'ups_client_secret', type: Types::TEXT)]
     private ?string $upsClientSecret = null;
 
     #[ORM\Column(name: 'ups_access_token', type: Types::TEXT)]
@@ -49,7 +49,7 @@ class UPSTransport extends Transport
     #[ORM\Column(name: 'ups_api_user', type: Types::STRING, length: 255, nullable: false)]
     protected ?string $upsApiUser = null;
 
-    #[ORM\Column(name: 'ups_api_password', type: Types::STRING, length: 255, nullable: false)]
+    #[ORM\Column(name: 'ups_api_password', type: Types::TEXT, nullable: false)]
     protected ?string $upsApiPassword = null;
 
     #[ORM\Column(name: 'ups_api_key', type: Types::STRING, length: 255, nullable: false)]

@@ -7,6 +7,7 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
@@ -25,7 +26,7 @@ class FixedProductSettingsType extends AbstractType
                 'tooltip'  => 'oro.fixed_product.settings.labels.tooltip',
                 'required' => true,
                 'entry_options'  => [
-                    'constraints' => [new NotBlank()],
+                    'constraints' => [new NotBlank(), new Length(max: 255)],
                 ]
             ]);
     }

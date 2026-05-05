@@ -11,7 +11,7 @@ class OroFedexShippingBundleInstaller implements Installation
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_2';
+        return 'v1_2_1';
     }
 
     #[\Override]
@@ -82,9 +82,9 @@ class OroFedexShippingBundleInstaller implements Installation
         $table->addColumn('fedex_test_mode', 'boolean', ['notnull' => false, 'default' => false]);
         $table->addColumn('fedex_ignore_package_dimension', 'boolean', ['notnull' => false, 'default' => false]);
         $table->addColumn('fedex_key', 'string', ['notnull' => false, 'length' => 100]);
-        $table->addColumn('fedex_password', 'string', ['notnull' => false, 'length' => 100]);
+        $table->addColumn('fedex_password', 'text', ['notnull' => false]);
         $table->addColumn('fedex_client_id', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('fedex_client_secret', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('fedex_client_secret', 'text', ['notnull' => false]);
         $table->addColumn('fedex_access_token', 'text', ['notnull' => false]);
         $table->addColumn(
             'fedex_access_token_expires',

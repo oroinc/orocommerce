@@ -8,6 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
@@ -39,7 +40,7 @@ class PaymentTermSettingsType extends AbstractType
                 [
                     'label' => 'oro.paymentterm.settings.labels.label',
                     'required' => true,
-                    'entry_options' => ['constraints' => [new NotBlank()]],
+                    'entry_options' => ['constraints' => [new NotBlank(), new Length(max: 255)]],
                 ]
             )
             ->add(
@@ -48,7 +49,7 @@ class PaymentTermSettingsType extends AbstractType
                 [
                     'label' => 'oro.paymentterm.settings.short_labels.label',
                     'required' => true,
-                    'entry_options' => ['constraints' => [new NotBlank()]],
+                    'entry_options' => ['constraints' => [new NotBlank(), new Length(max: 255)]],
                 ]
             );
     }
