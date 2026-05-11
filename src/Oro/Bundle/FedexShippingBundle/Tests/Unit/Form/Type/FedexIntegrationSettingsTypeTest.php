@@ -14,16 +14,17 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
+use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\UpdateIntegrationValidator;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Validation;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -37,6 +38,18 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
     private $shippingPriceCache;
 
     #[\Override]
+    protected function getValidators(): array
+    {
+        return [
+            'oro_fedex_shipping_remove_used_shipping_service_validator' => new UpdateIntegrationValidator(
+                $this->createMock(IntegrationShippingMethodFactoryInterface::class),
+                $this->createMock(ShippingMethodValidatorInterface::class),
+                'shippingServices'
+            ),
+        ];
+    }
+
+    #[\Override]
     protected function getExtensions(): array
     {
         $this->fedexResponseCache = $this->createMock(FedexResponseCacheInterface::class);
@@ -45,7 +58,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
         $crypter = $this->createMock(SymmetricCrypterInterface::class);
         $crypter->expects(self::any())
             ->method('encryptData')
-            ->willReturn('encrypted');
+            ->willReturnArgument(0);
 
         return [
             new PreloadedExtension(
@@ -63,7 +76,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
                     FormType::class => [new TooltipFormExtensionStub($this)]
                 ]
             ),
-            new ValidatorExtension(Validation::createValidator())
+            $this->getValidatorExtension(true)
         ];
     }
 
@@ -118,6 +131,41 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->isValid());
         $this->assertTrue($form->isSynchronized());
         $this->assertEquals($settings, $form->getData());
+    }
+
+    /**
+     * @dataProvider submitWithLongValuesProvider
+     */
+    public function testSubmitWithTooLongValues(array $override): void
+    {
+        $submitData = array_replace_recursive([
+            'fedexTestMode' => true,
+            'clientId' => 'key2',
+            'clientSecret' => 'pass2',
+            'accountNumber' => 'num2',
+            'pickupType' => FedexIntegrationSettings::PICKUP_CONTACT_FEDEX_TO_SCHEDULE,
+            'unitOfWeight' => FedexIntegrationSettings::UNIT_OF_WEIGHT_KG,
+            'labels' => [
+                'values' => ['default' => 'first label'],
+            ],
+            'shippingServices' => [1, 2],
+        ], $override);
+
+        $form = $this->factory->create(FedexIntegrationSettingsType::class, new FedexIntegrationSettings());
+        $form->submit($submitData);
+
+        self::assertTrue($form->isSynchronized());
+        self::assertFalse($form->isValid());
+    }
+
+    public function submitWithLongValuesProvider(): array
+    {
+        return [
+            'label too long' => [['labels' => ['values' => ['default' => str_repeat('a', 256)]]]],
+            'clientId too long' => [['clientId' => str_repeat('a', 256)]],
+            'clientSecret too long' => [['clientSecret' => str_repeat('a', 256)]],
+            'accountNumber too long' => [['accountNumber' => str_repeat('a', 101)]],
+        ];
     }
 
     public function testGetBlockPrefix(): void

@@ -39,13 +39,13 @@ class FedexIntegrationSettings extends Transport
     #[ORM\Column(name: 'fedex_key', type: Types::STRING, length: 100)]
     private ?string $key = null;
 
-    #[ORM\Column(name: 'fedex_password', type: Types::STRING, length: 100)]
+    #[ORM\Column(name: 'fedex_password', type: Types::TEXT)]
     private ?string $password = null;
 
     #[ORM\Column(name: 'fedex_client_id', type: Types::STRING, length: 255)]
     private ?string $clientId = null;
 
-    #[ORM\Column(name: 'fedex_client_secret', type: Types::STRING, length: 255)]
+    #[ORM\Column(name: 'fedex_client_secret', type: Types::TEXT)]
     private ?string $clientSecret = null;
 
     #[ORM\Column(name: 'fedex_access_token', type: Types::TEXT)]

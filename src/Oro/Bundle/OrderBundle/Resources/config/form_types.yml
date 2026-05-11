@@ -98,6 +98,8 @@ services:
             - '@form.property_accessor'
             - '@doctrine'
             - '@logger'
+        calls:
+            - [setDefaultProductUnitProvider, ['@oro_product.provider.default_product_unit_provider.system']]
         tags:
             - { name: form.type_extension }
 

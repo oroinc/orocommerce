@@ -27,7 +27,7 @@ class RequestToOrderDataStorage
         foreach ($request->getRequestProducts() as $lineItem) {
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
                 ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProductSku(),
-                ProductDataStorage::PRODUCT_ID_KEY => $lineItem->getProduct()->getId(),
+                ProductDataStorage::PRODUCT_ID_KEY => $lineItem->getProduct()?->getId(),
                 'comment' => $lineItem->getComment(),
                 ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEMS_DATA_KEY => $this->getKitItemLineItemsData($lineItem),
             ];
@@ -63,7 +63,28 @@ class RequestToOrderDataStorage
         $data['sourceEntityClass'] = get_class($request);
         $data['sourceEntityIdentifier'] = $request->getIdentifier();
 
+        // Carry the RFQ currency over so the order — and any free-form line items seeded from
+        // deleted products — keep the currency the customer used when submitting the request.
+        $currency = $this->getRequestCurrency($request);
+        if ($currency) {
+            $data['currency'] = $currency;
+        }
+
         return $data;
+    }
+
+    private function getRequestCurrency(Request $request): ?string
+    {
+        foreach ($request->getRequestProducts() as $requestProduct) {
+            foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
+                $currency = $requestProductItem->getPrice()?->getCurrency();
+                if ($currency) {
+                    return $currency;
+                }
+            }
+        }
+
+        return null;
     }
 
     private function getOfferData(RequestProductItem $productItem): array

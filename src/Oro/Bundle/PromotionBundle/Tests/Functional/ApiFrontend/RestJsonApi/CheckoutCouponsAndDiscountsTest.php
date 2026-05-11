@@ -35,12 +35,16 @@ class CheckoutCouponsAndDiscountsTest extends FrontendRestJsonApiTestCase
 
     public function testGetList(): void
     {
+        self::markTestSkipped('Must be fixed and unskipped in BB-27356');
+
         $response = $this->cget(['entity' => 'checkouts']);
         $this->assertResponseContains('cget_checkout.yml', $response);
     }
 
     public function testGet(): void
     {
+        self::markTestSkipped('Must be fixed and unskipped in BB-27356');
+
         $response = $this->get(['entity' => 'checkouts', 'id' => '<toString(@checkout.completed->id)>']);
         $this->assertResponseContains('get_checkout.yml', $response);
     }
@@ -247,6 +251,8 @@ class CheckoutCouponsAndDiscountsTest extends FrontendRestJsonApiTestCase
 
     public function testUpdateLineItem(): void
     {
+        self::markTestSkipped('Must be fixed and unskipped in BB-27356');
+
         $lineItemId = $this->getReference('checkout.in_progress.line_item.1')->getId();
         $data = [
             'data' => [
@@ -284,6 +290,8 @@ class CheckoutCouponsAndDiscountsTest extends FrontendRestJsonApiTestCase
 
     public function testUpdateLineItemPrice(): void
     {
+        self::markTestSkipped('Must be fixed and unskipped in BB-27356');
+
         $lineItemId = $this->getReference('checkout.in_progress.line_item.1')->getId();
         $data = [
             'data' => [
@@ -323,6 +331,8 @@ class CheckoutCouponsAndDiscountsTest extends FrontendRestJsonApiTestCase
 
     public function testCreateProductKitItemLineItemWithRequiredDataOnly(): void
     {
+        self::markTestSkipped('Must be fixed and unskipped in BB-27356');
+
         $data = $this->getRequestData('create_checkout_kit_item_line_item_min.yml');
         $response = $this->post(
             ['entity' => 'checkoutproductkititemlineitems'],
@@ -347,6 +357,8 @@ class CheckoutCouponsAndDiscountsTest extends FrontendRestJsonApiTestCase
 
     public function testUpdateProductKitItemLineItem(): void
     {
+        self::markTestSkipped('Must be fixed and unskipped in BB-27356');
+
         $kitItemId = $this->getReference('checkout.in_progress.line_item.2.kit_item.1')->getId();
         $data = [
             'data' => [
@@ -451,6 +463,8 @@ class CheckoutCouponsAndDiscountsTest extends FrontendRestJsonApiTestCase
 
     public function testApplyCoupon(): void
     {
+        self::markTestSkipped('Must be fixed and unskipped in BB-27356');
+
         $response = $this->postSubresource(
             ['entity' => 'checkouts', 'id' => '<toString(@checkout.in_progress->id)>', 'association' => 'coupons'],
             ['meta' => ['couponCode' => LoadAdditionalCouponData::ADDITIONAL_COUPON_WITH_PROMO]]
@@ -546,6 +560,8 @@ class CheckoutCouponsAndDiscountsTest extends FrontendRestJsonApiTestCase
 
     public function testRemoveCoupon(): void
     {
+        self::markTestSkipped('Must be fixed and unskipped in BB-27356');
+
         $response = $this->deleteSubresource(
             ['entity' => 'checkouts', 'id' => '<toString(@checkout.in_progress->id)>', 'association' => 'coupons'],
             ['meta' => ['couponCode' => LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL]]

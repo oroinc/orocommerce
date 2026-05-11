@@ -1,0 +1,5 @@
+Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings:
+    properties:
+        payTo:
+            - Length:
+                max: 255

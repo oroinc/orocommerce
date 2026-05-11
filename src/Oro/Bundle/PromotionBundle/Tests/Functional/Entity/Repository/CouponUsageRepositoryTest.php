@@ -54,4 +54,29 @@ class CouponUsageRepositoryTest extends WebTestCase
             ],
         ];
     }
+
+    public function testDeleteCouponUsage(): void
+    {
+        $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL);
+        $customerUser = $this->getReference(LoadCustomerUserData::EMAIL);
+
+        $repository = $this->getContainer()->get('doctrine')->getRepository(CouponUsage::class);
+
+        $count = $repository->getCouponUsageCount($coupon, $customerUser);
+        $repository->deleteCouponUsage([$coupon->getId()], $customerUser);
+
+        $this->assertEquals(--$count, $repository->getCouponUsageCount($coupon, $customerUser));
+    }
+
+    public function testDeleteCouponUsageWithNullCustomerUser(): void
+    {
+        $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL);
+
+        $repository = $this->getContainer()->get('doctrine')->getRepository(CouponUsage::class);
+
+        $count = $repository->getCouponUsageCount($coupon);
+        $repository->deleteCouponUsage([$coupon->getId()], null);
+
+        $this->assertEquals(--$count, $repository->getCouponUsageCount($coupon));
+    }
 }

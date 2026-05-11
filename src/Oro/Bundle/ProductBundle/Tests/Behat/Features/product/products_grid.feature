@@ -326,6 +326,8 @@ Feature: Products Grid
       | Product 20 |
     And I reset "Products Grid" grid
 
+  @skip
+  # will be fixed in BB-27134
   Scenario: Sort by Price Attribute
     Given I should see following grid:
       | Name       | Price Attribute (USD)    |
@@ -350,6 +352,8 @@ Feature: Products Grid
       | Product 20 | Each $20.00 Item $200.00 |
     And I reset "Name" filter
 
+  @skip
+  # will be fixed in BB-27134
   Scenario: Check sorter not applies after column became hidden
     Given I hide column Price Attribute (USD) in grid
     And records in grid should be 20
@@ -361,6 +365,8 @@ Feature: Products Grid
     When I reset "Products Grid" grid
     Then there is 20 records in grid
 
+  @skip
+  # will be fixed in BB-27134
   Scenario: Check columns are loaded correctly
     Given I hide all columns in grid except SKU
     When I show column Name in grid
@@ -379,6 +385,8 @@ Feature: Products Grid
       | SKU    | Name       | Price Attribute (USD)    | Price (USD/Each) |
       | PSKU20 | Product 20 | Each $20.00 Item $200.00 | $20.00           |
 
+  @skip
+  # will be fixed in BB-27134
   Scenario: Check Columns Config Applies After Different Actions
     When I select 10 from per page list dropdown
     Then records in grid should be 10

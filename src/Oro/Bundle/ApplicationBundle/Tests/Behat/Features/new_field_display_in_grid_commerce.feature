@@ -1,7 +1,6 @@
 @ticket-BAP-18091
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroApplicationBundle:DisplayInGridEntities.yml
-@regression
 
 Feature: New Field Display in Grid (Commerce)
   In order to make sure that main entity grids respect "Display in Grid" setting

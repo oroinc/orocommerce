@@ -173,6 +173,40 @@ class RequestToQuoteDataStorageTest extends TestCase
         ];
     }
 
+    public function testSaveToStorageWithDeletedProduct(): void
+    {
+        $rfpRequest = new RFPRequest();
+        $rfpRequest->setProjectName('Test Project');
+
+        $requestProduct = new RequestProduct();
+        $requestProduct->setComment('Test Comment');
+        $requestProduct->setProductSku('DELETED_SKU');
+
+        $requestProductItem = new RequestProductItem();
+        ReflectionUtil::setId($requestProductItem, 1);
+        $requestProductItem->setQuantity(10);
+
+        $productUnit = new ProductUnit();
+        $productUnit->setCode('kg');
+        $requestProductItem->setProductUnit($productUnit);
+        $requestProduct->addRequestProductItem($requestProductItem);
+
+        $rfpRequest->addRequestProduct($requestProduct);
+
+        $this->storage->expects(self::once())
+            ->method('set')
+            ->with(self::callback(function (array $data) {
+                $items = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] ?? [];
+                self::assertCount(1, $items);
+                self::assertNull($items[0][ProductDataStorage::PRODUCT_ID_KEY]);
+                self::assertEquals('DELETED_SKU', $items[0][ProductDataStorage::PRODUCT_SKU_KEY]);
+
+                return true;
+            }));
+
+        $this->requestDataStorage->saveToStorage($rfpRequest);
+    }
+
     private function createRFPRequest(array $rfpRequestData): RFPRequest
     {
         $customer = new Customer();

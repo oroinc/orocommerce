@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Extension;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
@@ -12,15 +13,18 @@ use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
+use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
     private Order $entity;
+    private DefaultProductUnitProviderInterface&MockObject $defaultProductUnitProvider;
 
     #[\Override]
     protected function setUp(): void
@@ -41,18 +45,23 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                 'identifier' => ['code'],
             ],
         ]);
+
+        $this->defaultProductUnitProvider = $this->createMock(DefaultProductUnitProviderInterface::class);
     }
 
     #[\Override]
     protected function getExtension(): AbstractProductDataStorageExtension
     {
-        return new OrderDataStorageExtension(
+        $extension = new OrderDataStorageExtension(
             $this->getRequestStack(),
             $this->storage,
             PropertyAccess::createPropertyAccessor(),
             $this->doctrine,
             $this->logger
         );
+        $extension->setDefaultProductUnitProvider($this->defaultProductUnitProvider);
+
+        return $extension;
     }
 
     #[\Override]
@@ -329,6 +338,105 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                 ],
             ],
         ];
+    }
+
+    public function testBuildFormWithNullProductId(): void
+    {
+        $sku = 'DELETED_SKU';
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_ID_KEY => null,
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                ]
+            ]
+        ];
+
+        $this->expectsGetStorageFromRequest();
+        $this->expectsGetDataFromStorage($data);
+
+        $this->entityManager->expects(self::never())
+            ->method('find');
+
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
+
+        self::assertCount(1, $this->entity->getLineItems());
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $this->entity->getLineItems()->first();
+
+        self::assertNull($lineItem->getProduct());
+        self::assertEquals($sku, $lineItem->getFreeFormProduct());
+        self::assertEquals($sku, $lineItem->getProductSku());
+        self::assertEquals(1, $lineItem->getQuantity());
+    }
+
+    public function testBuildFormWithDeletedProduct(): void
+    {
+        $productId = 999;
+        $sku = 'DELETED_SKU';
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                ]
+            ]
+        ];
+
+        $this->expectsGetStorageFromRequest();
+        $this->expectsGetDataFromStorage($data);
+        $this->expectsProductNotFound($productId);
+
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
+
+        self::assertCount(1, $this->entity->getLineItems());
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $this->entity->getLineItems()->first();
+
+        self::assertNull($lineItem->getProduct());
+        self::assertEquals($sku, $lineItem->getFreeFormProduct());
+        self::assertEquals($sku, $lineItem->getProductSku());
+        self::assertEquals(1, $lineItem->getQuantity());
+    }
+
+    public function testBuildFormWithDeletedProductPopulatesUnitAndPrice(): void
+    {
+        $productId = 999;
+        $sku = 'DELETED_SKU';
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                ]
+            ]
+        ];
+
+        $defaultUnit = $this->getProductUnit('each');
+        $this->defaultProductUnitProvider->expects(self::any())
+            ->method('getDefaultProductUnitPrecision')
+            ->willReturn((new ProductUnitPrecision())->setUnit($defaultUnit));
+
+        $this->entity->setCurrency('USD');
+
+        $this->expectsGetStorageFromRequest();
+        $this->expectsGetDataFromStorage($data);
+        $this->expectsProductNotFound($productId);
+
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
+
+        self::assertCount(1, $this->entity->getLineItems());
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $this->entity->getLineItems()->first();
+
+        self::assertNull($lineItem->getProduct());
+        self::assertEquals($sku, $lineItem->getFreeFormProduct());
+        self::assertEquals($sku, $lineItem->getProductSku());
+        self::assertEquals(1, $lineItem->getQuantity());
+        self::assertSame($defaultUnit, $lineItem->getProductUnit());
+        self::assertEquals('each', $lineItem->getProductUnitCode());
+        self::assertEquals(Price::create(0, 'USD'), $lineItem->getPrice());
+        self::assertEquals('USD', $lineItem->getCurrency());
     }
 
     public function testGetExtendedTypes(): void

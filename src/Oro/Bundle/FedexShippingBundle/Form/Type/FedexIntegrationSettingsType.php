@@ -18,6 +18,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
@@ -51,7 +52,7 @@ class FedexIntegrationSettingsType extends AbstractType
                 [
                     'label' => 'oro.fedex.integration.settings.labels.label',
                     'required' => true,
-                    'entry_options' => ['constraints' => [new NotBlank()]],
+                    'entry_options' => ['constraints' => [new NotBlank(), new Length(max: 255)]],
                 ]
             )
             ->add(

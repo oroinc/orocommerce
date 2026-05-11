@@ -1,0 +1,87 @@
+include:
+    -  '@OroSaleBundle:QuoteProductFixture.yml'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        payment_term_7c4f1e8e: '@paymentTerm'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    nancy:
+        email: 'NancyJSallee@example.org'
+        username: 'NancyJSallee@example.org'
+        password: <userPassword(@nancy->username)>
+        firstName: 'Nancy'
+        lastName: 'Sallee'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer1'
+        organization: '@organization'
+        userRoles: ['@front_admin']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
+    customerAddress:
+        country: '@united_states'
+        region: '@florida'
+        label: 'Primary address'
+        street: '801 Scenic Hwy'
+        city: 'HAINES CITY'
+        postalCode: '33844'
+        frontendOwner: '@customer1'
+        owner: '@admin'
+        __calls:
+            - setDefaults: ['@shippingType', '@billingType']
+        systemOrganization: '@organization'
+        primary: true
+        organization: 'ORO'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
+    customerAddressShippingDefault:
+        address: '@customerAddress'
+        type: '@shippingType'
+        default: true
+    customerAddressBillingDefault:
+        address: '@customerAddress'
+        type: '@billingType'
+        default: true
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote1:
+        currency: 'USD'
+        customer: '@customer1'
+        owner: '@admin'
+        organization: '@organization'
+        poNumber: 'Q123'
+        qid: '1'
+        website: '@website1'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quoteProduct1:
+        __calls:
+            - addQuoteProductOffer: [ '@quoteProductOffer1' ]
+        product: '@product1'
+        quote: '@quote1'
+
+Oro\Bundle\CurrencyBundle\Entity\Price :
+    quoteProductPrice1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quoteProductOffer1:
+        quote_product: '@quoteProduct1'
+        product_unit: '@item'
+        price: '@quoteProductPrice1'
+        quantity: 5
+        allow_increments: true
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    quoteProductRequest1:
+        quote_product: '@quoteProduct1'
+        product_unit: '@item'
+        price: '@quoteProductPrice1'
+        quantity: 5

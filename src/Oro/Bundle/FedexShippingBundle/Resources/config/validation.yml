@@ -2,8 +2,18 @@ Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings:
     constraints:
         - Oro\Bundle\FedexShippingBundle\Validator\Constraints\RemoveUsedShippingServiceConstraint: ~
     properties:
+        clientId:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        clientSecret:
+            - NotBlank: ~
+            - Length:
+                max: 255
         accountNumber:
             - NotBlank: ~
+            - Length:
+                max: 100
         pickupType:
             - NotBlank: ~
         unitOfWeight:

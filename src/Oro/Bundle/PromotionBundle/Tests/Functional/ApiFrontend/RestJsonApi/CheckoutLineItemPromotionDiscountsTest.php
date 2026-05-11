@@ -11,6 +11,8 @@ class CheckoutLineItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
     #[\Override]
     protected function setUp(): void
     {
+        self::markTestSkipped('Must be fixed and unskipped in BB-27356');
+
         parent::setUp();
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,

@@ -1034,6 +1034,7 @@ services:
         calls:
             - ['addTransitionName', ['create_order']]
             - ['addTransitionName', ['place_order']]
+            - ['setCouponUsageManager', ['@oro_promotion.coupon_usage_manager']]
         tags:
             - { name: kernel.event_listener, event: oro_checkout.transition_request.before, method: onBeforeOrderCreate }
 

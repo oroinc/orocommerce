@@ -2,11 +2,18 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\BaseTransition;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\PaymentError;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
+use Oro\Bundle\PromotionBundle\Manager\CouponUsageManager;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -16,6 +23,8 @@ class PaymentErrorTest extends TestCase
 {
     private TransitionServiceInterface|MockObject $baseTransition;
     private ManagerRegistry|MockObject $doctrine;
+    private PaymentStatusManager|MockObject $paymentStatusManager;
+    private CouponUsageManager|MockObject $couponUsageManager;
     private PaymentError $paymentError;
 
     #[\Override]
@@ -23,13 +32,32 @@ class PaymentErrorTest extends TestCase
     {
         $this->baseTransition = $this->createMock(TransitionServiceInterface::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->paymentStatusManager = $this->createMock(PaymentStatusManager::class);
+        $this->couponUsageManager = $this->createMock(CouponUsageManager::class);
 
-        $this->paymentError = new PaymentError($this->baseTransition, $this->doctrine);
+        $this->paymentError = new PaymentError(
+            $this->baseTransition,
+            $this->doctrine
+        );
+        $this->paymentError->setPaymentStatusManager($this->paymentStatusManager);
+        $this->paymentError->setCouponUsageManager($this->couponUsageManager);
     }
 
     public function testExecuteRemovesOrder(): void
     {
-        $order = $this->createMock(Order::class);
+        $customerUser = $this->createMock(CustomerUser::class);
+        $appliedCoupons = new ArrayCollection([(new AppliedCoupon())->setSourceCouponId(1)]);
+
+        $order = $this->getMockBuilder(Order::class)
+            ->addMethods(['getAppliedCoupons'])
+            ->onlyMethods(['getCustomerUser'])
+            ->getMock();
+        $order->expects(self::once())
+            ->method('getAppliedCoupons')
+            ->willReturn($appliedCoupons);
+        $order->expects(self::once())
+            ->method('getCustomerUser')
+            ->willReturn($customerUser);
 
         $checkout = new Checkout();
         $checkout->setPaymentInProgress(true);
@@ -43,6 +71,16 @@ class PaymentErrorTest extends TestCase
         $this->baseTransition->expects(self::once())
             ->method('execute')
             ->with($workflowItem);
+
+        $this->couponUsageManager->expects(self::once())
+            ->method('revertCouponUsages')
+            ->with($appliedCoupons, $customerUser);
+
+        $this->paymentStatusManager
+            ->expects(self::once())
+            ->method('getPaymentStatus')
+            ->with($order)
+            ->willReturn((new PaymentStatus())->setPaymentStatus(PaymentStatuses::PENDING));
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $this->doctrine->expects(self::once())
@@ -73,12 +111,50 @@ class PaymentErrorTest extends TestCase
             ->method('execute')
             ->with($workflowItem);
 
+        $this->couponUsageManager->expects(self::never())
+            ->method('revertCouponUsages');
+        $this->doctrine->expects(self::never())
+            ->method('getManagerForClass');
+
+        $this->paymentStatusManager
+            ->expects(self::never())
+            ->method('getPaymentStatus');
+
+        $this->paymentError->execute($workflowItem);
+
+        self::assertFalse($checkout->isPaymentInProgress());
+        self::assertNull($checkout->getOrder());
+    }
+
+    public function testExecuteDoesNotRemovePaidOrder(): void
+    {
+        $order = $this->createMock(Order::class);
+
+        $checkout = new Checkout();
+        $checkout->setPaymentInProgress(true);
+        $checkout->setOrder($order);
+
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $workflowItem->expects(self::once())
+            ->method('getEntity')
+            ->willReturn($checkout);
+
+        $this->baseTransition->expects(self::once())
+            ->method('execute')
+            ->with($workflowItem);
+
+        $this->paymentStatusManager
+            ->expects(self::once())
+            ->method('getPaymentStatus')
+            ->with($order)
+            ->willReturn((new PaymentStatus())->setPaymentStatus(PaymentStatuses::PAID_IN_FULL));
+
         $this->doctrine->expects(self::never())
             ->method('getManagerForClass');
 
         $this->paymentError->execute($workflowItem);
 
         self::assertFalse($checkout->isPaymentInProgress());
-        self::assertNull($checkout->getOrder());
+        self::assertSame($order, $checkout->getOrder());
     }
 }

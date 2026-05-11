@@ -13,20 +13,22 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
+use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\UpdateIntegrationValidator;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
+use Oro\Bundle\UPSBundle\Validator\Constraints\CountryShippingServicesValidator;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Validation;
 
 class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
 {
@@ -59,6 +61,19 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
     }
 
     #[\Override]
+    protected function getValidators(): array
+    {
+        return [
+            'oro_ups_remove_used_shipping_service_validator' => new UpdateIntegrationValidator(
+                $this->createMock(IntegrationShippingMethodFactoryInterface::class),
+                $this->createMock(ShippingMethodValidatorInterface::class),
+                'applicableShippingServices'
+            ),
+            CountryShippingServicesValidator::class => new CountryShippingServicesValidator(),
+        ];
+    }
+
+    #[\Override]
     protected function getExtensions(): array
     {
         $country = new Country('US');
@@ -80,7 +95,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     FormType::class => [new TooltipFormExtensionStub($this)],
                 ]
             ),
-            new ValidatorExtension(Validation::createValidator())
+            $this->getValidatorExtension(true)
         ];
     }
 
@@ -189,6 +204,58 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     )
                     ->addLabel((new LocalizedFallbackValue())->setString('first label'))
             ]
+        ];
+    }
+
+    /**
+     * @dataProvider submitWithLongValuesProvider
+     */
+    public function testSubmitWithTooLongValues(array $override): void
+    {
+        $this->crypter->expects(self::any())
+            ->method('encryptData')
+            ->willReturnArgument(0);
+
+        $this->systemShippingOriginProvider->expects(self::once())
+            ->method('getSystemShippingOrigin')
+            ->willReturn(new ShippingOrigin([
+                'country' => new Country('US'),
+                'region' => 'test',
+                'region_text' => 'test',
+                'postal_code' => 'test',
+                'city' => 'test',
+                'street' => 'test',
+                'street2' => 'test',
+            ]));
+
+        $submitData = array_replace_recursive([
+            'labels' => ['values' => ['default' => 'first label']],
+            'upsTestMode' => true,
+            'upsClientId' => 'client_id',
+            'upsClientSecret' => 'client_secret',
+            'upsShippingAccountName' => 'name',
+            'upsShippingAccountNumber' => 'number',
+            'upsPickupType' => '01',
+            'upsUnitOfWeight' => 'KGS',
+            'upsCountry' => 'US',
+            'applicableShippingServices' => [1],
+        ], $override);
+
+        $form = $this->factory->create(UPSTransportSettingsType::class, new UPSTransport());
+        $form->submit($submitData);
+
+        self::assertTrue($form->isSynchronized());
+        self::assertFalse($form->isValid());
+    }
+
+    public function submitWithLongValuesProvider(): array
+    {
+        return [
+            'label too long' => [['labels' => ['values' => ['default' => str_repeat('a', 256)]]]],
+            'upsClientId too long' => [['upsClientId' => str_repeat('a', 256)]],
+            'upsClientSecret too long' => [['upsClientSecret' => str_repeat('a', 256)]],
+            'upsShippingAccountName too long' => [['upsShippingAccountName' => str_repeat('a', 256)]],
+            'upsShippingAccountNumber too long' => [['upsShippingAccountNumber' => str_repeat('a', 101)]],
         ];
     }
 

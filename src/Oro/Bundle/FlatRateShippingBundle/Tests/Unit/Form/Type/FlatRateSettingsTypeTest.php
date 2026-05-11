@@ -16,12 +16,10 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Validation;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FlatRateSettingsTypeTest extends FormIntegrationTestCase
@@ -71,7 +69,7 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
                     FormType::class => [new TooltipFormExtensionStub($this)]
                 ]
             ),
-            new ValidatorExtension(Validation::createValidator()),
+            $this->getValidatorExtension(true),
         ];
     }
 
@@ -119,6 +117,21 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
             ->setLocalization($localization);
 
         return $value;
+    }
+
+    public function testSubmitWithTooLongLabel(): void
+    {
+        $submitData = [
+            'labels' => [
+                'values' => ['default' => str_repeat('a', 256)],
+            ],
+        ];
+
+        $form = $this->factory->create(FlatRateSettingsType::class);
+        $form->submit($submitData);
+
+        self::assertTrue($form->isSynchronized());
+        self::assertFalse($form->isValid());
     }
 
     public function testGetBlockPrefixReturnsString()

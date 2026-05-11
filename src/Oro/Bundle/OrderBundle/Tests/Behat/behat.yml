@@ -244,6 +244,12 @@ oro_behat_extension:
           FreeProductSku:
             locator: '//input[@name="oro_order_type[lineItems][0][productSku]"]'
             type: xpath
+          LineItemFreeFormProduct:
+            locator: '(//input[contains(@id,"oro_order_line_item_draft_freeFormProduct-uid")])[1]'
+            type: xpath
+          LineItemFreeFormSku:
+            locator: '(//input[@name="oro_order_line_item_draft[productSku]"])[1]'
+            type: xpath
           Quantity2:
             locator: '(//input[@name="oro_order_line_item_draft[quantity]"])[2]'
             type: xpath
