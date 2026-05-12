@@ -503,6 +503,7 @@ services:
             - '@doctrine'
             - '@security.authorization_checker'
             - '@oro_security.token_accessor'
+            - '@oro_security.acl_helper'
 
     oro_shipping.method.loader:
         class: 'Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodLoader'
