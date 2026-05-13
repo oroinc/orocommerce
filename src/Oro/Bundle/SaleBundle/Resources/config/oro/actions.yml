@@ -202,6 +202,7 @@ action_groups:
                 settings:
                     - [[setNull], [propertyName, [id]]]
                     - [[setNull], [propertyName, [qid]]]
+                    - [[setNull], [propertyName, [externalId]]]
                     - [[setNull], [propertyName, [demands]]]
                     - [[setNull], [propertyName, [internal_status]]]
                     - [[setNull], [propertyName, [customer_status]]]

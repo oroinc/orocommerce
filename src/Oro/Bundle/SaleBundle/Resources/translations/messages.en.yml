@@ -10,6 +10,9 @@ oro:
             entity_description: A quote is used to negotiate with the customer (e.g. offer better price, more convenient quantities and additional services). A quote may be created in response to a customer request for quote, or as a result of the direct communication with the customer.
             demands.label: 'Quote Demands'
             id.label: 'Numeric ID'
+            external_id:
+                label: External ID
+                description: A unique identifier from an external system.
             qid:
                 label: 'Quote #'
                 description: Unique identifier that is used as a reference for the quote.
