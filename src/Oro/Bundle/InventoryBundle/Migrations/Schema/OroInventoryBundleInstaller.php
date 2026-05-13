@@ -10,9 +10,11 @@ use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\Migration\AddFallbackRelationTrait;
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
@@ -41,7 +43,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     #[\Override]
@@ -184,11 +186,21 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     private function createOroInventoryLevelTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_inventory_level');
+        $table->addOption(OroOptions::KEY, [
+            'extend' => ['unique_key' => ['keys' => [['name' => 'external_id', 'key' => ['external_id']]]]]
+        ]);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('quantity', 'decimal', ['precision' => 20, 'scale' => 10]);
         $table->addColumn('product_id', 'integer');
         $table->addColumn('product_unit_precision_id', 'integer');
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('external_id', 'string', ['length' => 36, 'notnull' => false, OroOptions::KEY => [
+            ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+            'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
+            'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
+            'importexport' => ['excluded' => true],
+            'dataaudit' => ['auditable' => true]
+        ]]);
         $table->setPrimaryKey(['id']);
     }
 
@@ -649,17 +661,14 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                 'comment' => '(DC2Type:datetime)',
                 OroOptions::KEY => [
                     'entity' => ['label' => 'oro.inventory.availability_date.label'],
-                    'extend' => [
-                        'owner' => ExtendScope::OWNER_CUSTOM,
-                        'is_extend' => true,
-                    ],
+                    'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
                     'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
                     'form' => ['is_enabled' => false,],
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],
                     'dataaudit' => ['auditable' => true],
                     'importexport' => ['full' => true]
-                ],
+                ]
             ]
         );
     }
@@ -675,17 +684,14 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                 'comment' => '(DC2Type:datetime)',
                 OroOptions::KEY => [
                     'entity' => ['label' => 'oro.inventory.availability_date.label'],
-                    'extend' => [
-                        'owner' => ExtendScope::OWNER_CUSTOM,
-                        'is_extend' => true,
-                    ],
+                    'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
                     'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
                     'form' => ['is_enabled' => false,],
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],
                     'dataaudit' => ['auditable' => true],
                     'importexport' => ['excluded' => true]
-                ],
+                ]
             ]
         );
     }

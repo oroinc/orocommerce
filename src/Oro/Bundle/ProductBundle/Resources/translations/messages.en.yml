@@ -4,7 +4,7 @@ oro:
             views:
                 frontend_sku_rest_json_api:
                     label: SKU Based Storefront API
-                    description: JSON:API for the storefront where all product-related resources operate with SKU as a product identifier.
+                    description: JSON:API for the storefront where all product-related resources use SKU as a product identifier.
     product:
         search:
             search_title:
@@ -991,6 +991,9 @@ oro:
                 description: The descriptions for the brand
             id:
                 label:    Id
+            external_id:
+                label:    External ID
+                description: A unique identifier from an external system.
             meta_titles:
                 label:    Meta title
                 description: The meta title of the brand

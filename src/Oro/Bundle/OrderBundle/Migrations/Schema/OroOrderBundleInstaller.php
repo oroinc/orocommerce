@@ -9,9 +9,12 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtensionAwareInterface;
 use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtensionAwareTrait;
@@ -45,7 +48,7 @@ class OroOrderBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v7_0_0_1';
+        return 'v7_1_0_0';
     }
 
     #[\Override]
@@ -90,6 +93,9 @@ class OroOrderBundleInstaller implements
     private function createOroOrderTable(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->createTable('oro_order');
+        $table->addOption(OroOptions::KEY, [
+            'extend' => ['unique_key' => ['keys' => [['name' => 'external_id', 'key' => ['external_id']]]]]
+        ]);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
@@ -173,6 +179,13 @@ class OroOrderBundleInstaller implements
         $table->addColumn('source_entity_id', 'integer', ['notnull' => false]);
         $table->addColumn('source_entity_identifier', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('is_external', 'boolean', ['default' => false]);
+        $table->addColumn('external_id', 'string', ['length' => 36, 'notnull' => false, OroOptions::KEY => [
+            ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+            'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
+            'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
+            'importexport' => ['excluded' => true],
+            'dataaudit' => ['auditable' => true]
+        ]]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'oro_order_created_at_index');
         $table->addUniqueIndex(['identifier'], 'uniq_oro_order_identifier');

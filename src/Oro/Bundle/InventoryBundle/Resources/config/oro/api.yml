@@ -13,6 +13,12 @@ api:
                 organization:
                     form_options:
                         mapped: false
+                externalId:
+                    property_path: external_id
+            filters:
+                fields:
+                    externalId:
+                        allow_array: true
             actions:
                 create: false
                 delete: false

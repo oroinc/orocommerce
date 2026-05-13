@@ -8,9 +8,12 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -38,7 +41,7 @@ class OroSaleBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v7_0_0_0';
+        return 'v7_1_0_0';
     }
 
     #[\Override]
@@ -120,6 +123,9 @@ class OroSaleBundleInstaller implements
     private function createOroSaleQuoteTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_sale_quote');
+        $table->addOption(OroOptions::KEY, [
+            'extend' => ['unique_key' => ['keys' => [['name' => 'external_id', 'key' => ['external_id']]]]]
+        ]);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('guest_access_id', 'guid', ['notnull' => false]);
         $table->addColumn('visitor_id', 'integer', ['notnull' => false]);
@@ -154,6 +160,13 @@ class OroSaleBundleInstaller implements
         ]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('project_name', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('external_id', 'string', ['length' => 36, 'notnull' => false, OroOptions::KEY => [
+            ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+            'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
+            'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
+            'importexport' => ['excluded' => true],
+            'dataaudit' => ['auditable' => true]
+        ]]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['shipping_address_id'], 'UNIQ_4F66B6F64D4CFF2B');
     }
