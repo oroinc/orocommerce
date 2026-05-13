@@ -29,6 +29,9 @@ oro:
             label: Order Number
             description: Unique identifier that is used as a reference for the order.
             short_label: 'Order #'
+        external_id:
+            label: External ID
+            description: A unique identifier from an external system.
         owner.label: Owner
         created_by:
             label: Created By

@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Api\Processor;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
+use Oro\Bundle\ApiBundle\Form\FormUtil;
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
@@ -77,7 +78,7 @@ class RecalculateShoppingListTotals implements ProcessorInterface
     {
         $form = $context->findForm($entity);
 
-        return null === $form || $form->isValid();
+        return null === $form || FormUtil::isValid($form);
     }
 
     private function isLineItemsValid(

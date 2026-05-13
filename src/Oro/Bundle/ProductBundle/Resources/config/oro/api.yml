@@ -119,6 +119,12 @@ api:
             fields:
                 defaultTitle:
                     exclude: true
+                externalId:
+                    property_path: external_id
+            filters:
+                fields:
+                    externalId:
+                        allow_array: true
 
         Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_variant_links.md'

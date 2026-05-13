@@ -37,7 +37,7 @@ class ValidateGuestCheckoutCustomerUser implements ProcessorInterface
         }
 
         $customerUserForm = $context->findFormField($this->associationName);
-        if (null === $customerUserForm || !$customerUserForm->isValid()) {
+        if (null === $customerUserForm || !FormUtil::isValid($customerUserForm)) {
             return;
         }
 

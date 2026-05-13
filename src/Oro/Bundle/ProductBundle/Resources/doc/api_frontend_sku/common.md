@@ -1,3 +1,4 @@
-This API type is the same as **JSON:API**, but all product-related API resources operate with SKU as a product identifier.
-</br>
-The **X-Product-ID** request header with the **sku** value is used to switch to SKU as the identifier.
+This API extends **JSON:API** to use SKU as a product identifier.
+To use SKU instead of internal system IDs, include the following header in your request:
+
+&nbsp;&nbsp; **X-Product-ID**: **sku**

@@ -50,6 +50,8 @@ api:
                     exclude: true
                 drafts:
                     exclude: true
+                externalId:
+                    property_path: external_id
             filters:
                 fields:
                     identifier:
@@ -62,6 +64,8 @@ api:
                             case_insensitive: true
                     external: ~
                     updatedAt: ~
+                    externalId:
+                        allow_array: true
             sorters:
                 fields:
                     external: ~
