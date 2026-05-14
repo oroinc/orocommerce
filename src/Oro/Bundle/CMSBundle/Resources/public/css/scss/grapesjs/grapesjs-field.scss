@@ -44,8 +44,8 @@
 
             input[type='checkbox']:checked {
                 + .#{gjs_vars.$app-prefix}chk-icon {
-                    border-color: $secondary;
-                    background-color: $secondary;
+                    border-color: $primary-main;
+                    background-color: $primary-main;
 
                     &::before {
                         content: $fa-var-check;

@@ -156,7 +156,7 @@ table.product-price-attributes {
                         // stylelint-disable-next-line max-nesting-depth
                         &::after {
                             content: '';
-                            border-left: 1px solid $additional-ultra-light;
+                            border-left: 1px solid $neutral-grey-4;
                             position: absolute;
                             top: 0;
                             right: 0;

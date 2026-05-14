@@ -167,7 +167,7 @@
         }
 
         &.#{gjs_vars.$app-prefix}four-color {
-            color: $warning-darken;
+            color: $warning;
         }
     }
 
@@ -234,7 +234,7 @@
         }
 
         .#{gjs_vars.$sm-prefix}btn {
-            background-color: $secondary;
+            background-color: $primary-main;
             color: $primary-inverse;
 
             text-shadow: none;
@@ -269,7 +269,7 @@
     }
 
     &toolbar-item {
-        background-color: $secondary;
+        background-color: $primary-main;
     }
 
     &toolbar {

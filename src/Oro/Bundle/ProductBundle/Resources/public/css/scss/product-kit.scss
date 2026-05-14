@@ -147,10 +147,10 @@
     &.has-error {
         &:not(.show) {
             position: relative;
-            background-color: rgba($danger, .1);
+            background-color: rgba($error, .1);
 
             .content-variant-item-content__body {
-                border-top-color: $danger;
+                border-top-color: $error;
             }
         }
     }
