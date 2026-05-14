@@ -383,12 +383,6 @@ const GrapesjsEditorView = BaseView.extend({
     render() {
         this.editorRenderPromises = [];
 
-        this.subview('loadingMask').show();
-
-        this._deferredRender();
-        this.renderStart = true;
-        this.timeoutId = null;
-
         if (_.isMobile() || _.isTouchDevice()) {
             this.message = mediator.execute('showFlashMessage', 'error', __('oro.cms.wysiwyg.mobile.flash_message'), {
                 container: this.$el.parent(),
@@ -399,6 +393,12 @@ const GrapesjsEditorView = BaseView.extend({
 
             return;
         }
+
+        this.subview('loadingMask').show();
+
+        this._deferredRender();
+        this.renderStart = true;
+        this.timeoutId = null;
 
         this.initContainer();
         this.initBuilder();
