@@ -87,7 +87,7 @@ Feature: My Shopping List Actions
     And I click "Shopping List Actions"
     And I click "Delete"
     And I click "Yes, delete"
-    And click on "Flash Message Close Button"
+    And I should see "Shopping List deleted" flash message and I close it
     Then Page title equals to "Shopping Lists - My Account - Home"
     When I open shopping list widget
     Then I should not see "Shopping List 4" on shopping list widget
