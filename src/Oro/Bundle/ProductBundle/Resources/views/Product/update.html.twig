@@ -202,7 +202,7 @@
         }) %}
     {% endif %}
 
-    {% set productHasVariants = (entity.isConfigurable and form.variantFields.vars.data ?? form.vars.variantFields|length != 0) %}
+    {% set productHasVariants = (entity.isConfigurable and ((form.variantFields.vars.data ?? form.vars.variantFields|length) != 0)) %}
 
     {% if productHasVariants and form.variantLinks is defined %}
         {% set dataGridParameters = {
