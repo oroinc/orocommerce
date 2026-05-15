@@ -41,16 +41,6 @@ Oro\Bundle\PricingBundle\Entity\PriceRule:
         priceList: '@priceList1'
         priority: 1
 
-Oro\Bundle\PricingBundle\Entity\ProductPrice:
-    price1:
-        product: '@product1'
-        priceList: '@priceList1'
-        priceRule: '@price_rule_1'
-        currency: 'USD'
-        quantity: 1
-        unit: '@item'
-        value: 100
-
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelation1:
         product: '@product1'
