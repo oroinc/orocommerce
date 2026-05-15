@@ -20,7 +20,7 @@ Feature: Frontend rfq product grid filters hint is appears after reloading page
       | PO Number     | PO Test 01              |
       | Assigned To   | Amanda Cole             |
     And I click "Submit Request"
-    And click on "Flash Message Close Button"
+    And I should see "Request has been saved" flash message and I close it
 
   Scenario: Check that the selected filter appears after reloading the page
     And I click "Account Dropdown"

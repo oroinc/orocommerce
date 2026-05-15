@@ -17,4 +17,4 @@ Feature: New user registration
       | Password         | Charlie001          |
       | Confirm Password | Charlie001          |
     When I click "Create Account"
-    Then I should see "Please check your email to complete registration"
+    Then I should see "Please check your email to complete registration" flash message
