@@ -77,7 +77,7 @@ table.product-tier-prices-table {
 
 .product-price-hint {
     &.popover {
-        max-width: 156px;
+        max-width: var(--product-price-hint-popover-max-width, 300px);
 
         .popover-body {
             padding: 10px 12px;

@@ -16,10 +16,10 @@ Feature: Existing Order with Product Kits Validation - with Wittingly Invalid
 
   Scenario: Check that order cannot be saved with an updated wittingly invalid line item
     When I click Edit "product-kit-01" in grid
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | ProductKitItem1Price | 35.56 |
       | ProductKitItem2Price | 24.45 |
-    And I click on "Order Edit Save Changes"
-    Then I should see "Order Form" validation errors:
+    And I click on "Order Line Item Draft Edit Form Save Button"
+    Then I should see "Order Line Item Draft Edit Form" validation errors:
       | ProductKitItem1Quantity | Only whole numbers are allowed for unit "piece"; The kit item quantity should be between 0 and 5.  |
       | ProductKitItem2Quantity | Only whole numbers are allowed for unit "piece"; The kit item quantity should be between 1 and 10. |

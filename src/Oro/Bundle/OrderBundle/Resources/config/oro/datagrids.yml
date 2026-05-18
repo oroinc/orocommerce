@@ -931,8 +931,8 @@ datagrids:
             price:
                 label: oro.order.orderlineitem.price.label
                 type: twig
-                frontend_type: html
-                template: '@OroOrder/Order/Datagrid/price.html.twig'
+                frontend_type: draft-line-item-price
+                template: '@OroOrder/Order/Datagrid/orderLineItemEditGridPrice.html.twig'
                 order: 400
             shipBy:
                 label: oro.order.orderlineitem.ship_by.label
@@ -979,6 +979,9 @@ datagrids:
                 data_name: orderLineItemId
             # Filled in OrderLineItemDraftValidationDatagridListener
             isValid: ~
+            # Filled in OrderLineItemDraftIsPriceOverriddenDatagridListener
+            # tierPrices is set via setValue() and passed through as-is (array)
+            isPriceOverridden: ~
             # Added in OrderLineItemDraftUpdateDatagridListener
             # oro_order_line_item_draft_update: ~
             # Added in OrderLineItemDraftDeleteDatagridListener

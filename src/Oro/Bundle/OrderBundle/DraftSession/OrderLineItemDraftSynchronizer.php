@@ -39,7 +39,16 @@ class OrderLineItemDraftSynchronizer implements EntityDraftSynchronizerInterface
         assert($entity instanceof OrderLineItem);
 
         if (!$entity->getId()) {
+            $entity->getDrafts()->clear();
             $entity->addDraft($draft);
+
+            if (!$entity->getOrder()) {
+                $orderDraft = $draft->getOrder();
+                $orderEntity = $orderDraft?->getDraftSource();
+                if ($orderEntity) {
+                    $orderEntity->addLineItem($entity);
+                }
+            }
         }
 
         $this->synchronizeFields($draft, $entity);
@@ -50,6 +59,15 @@ class OrderLineItemDraftSynchronizer implements EntityDraftSynchronizerInterface
     {
         assert($entity instanceof OrderLineItem);
         assert($draft instanceof OrderLineItem);
+
+        if (!$entity->getId()) {
+            $entity->getDrafts()->clear();
+            $entity->addDraft($draft);
+        }
+
+        foreach ($draft->getOrders() as $key => $order) {
+            $draft->getOrders()->set($key, $this->getReference($order));
+        }
 
         $this->synchronizeFields($entity, $draft);
 
@@ -108,6 +126,9 @@ class OrderLineItemDraftSynchronizer implements EntityDraftSynchronizerInterface
         foreach ($sourceKitItemLineItems as $kitItemId => $sourceKitItemLineItem) {
             if (!$targetKitItemLineItems->containsKey($kitItemId)) {
                 $targetKitItemLineItem = $this->createSameInstance($sourceKitItemLineItem);
+                assert($targetKitItemLineItem instanceof OrderProductKitItemLineItem);
+
+                $targetKitItemLineItem->setDraftSessionUuid($targetLineItem->getDraftSessionUuid());
 
                 $this->synchronizeKitItemLineItemFields($sourceKitItemLineItem, $targetKitItemLineItem);
 

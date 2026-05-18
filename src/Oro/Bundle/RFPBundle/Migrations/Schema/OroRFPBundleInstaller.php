@@ -6,6 +6,10 @@ use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -35,7 +39,7 @@ class OroRFPBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_17';
+        return 'v7_0_1_0';
     }
 
     #[\Override]
@@ -61,6 +65,7 @@ class OroRFPBundleInstaller implements
 
         $this->addActivityAssociations($schema);
         $this->addOwnerToOroEmailAddress($schema);
+        $this->addRequestProductToOrderLineItem($schema);
     }
 
     /**
@@ -436,6 +441,36 @@ class OroRFPBundleInstaller implements
             ['product_unit_id'],
             ['code'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    private function addRequestProductToOrderLineItem(Schema $schema): void
+    {
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            'oro_order_line_item',
+            'requestProduct',
+            'oro_rfp_request_product',
+            'id',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'entity' => [
+                    'label' => 'oro.order.orderlineitem.request_product.label',
+                    'description' => 'oro.order.orderlineitem.request_product.description'
+                ],
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'nullable' => true,
+                    'on_delete' => 'SET NULL',
+                ],
+                'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false],
+                'merge' => ['display' => false],
+                'dataaudit' => ['auditable' => false],
+                'importexport' => ['excluded' => true],
+            ]
         );
     }
 }

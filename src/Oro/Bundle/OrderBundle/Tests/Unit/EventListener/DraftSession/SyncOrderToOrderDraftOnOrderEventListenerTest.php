@@ -4,189 +4,209 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\DraftSession;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\OrderBundle\DraftSession\Manager\OrderDraftManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\DraftSession\SyncOrderToOrderDraftOnOrderEventListener;
-use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormInterface;
 
 final class SyncOrderToOrderDraftOnOrderEventListenerTest extends TestCase
 {
-    private ManagerRegistry&MockObject $doctrine;
     private OrderDraftManager&MockObject $orderDraftManager;
-    private EntityManagerInterface&MockObject $entityManager;
+
     private SyncOrderToOrderDraftOnOrderEventListener $listener;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine = $this->createMock(ManagerRegistry::class);
         $this->orderDraftManager = $this->createMock(OrderDraftManager::class);
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
 
         $this->listener = new SyncOrderToOrderDraftOnOrderEventListener(
-            $this->doctrine,
+            $doctrine,
             $this->orderDraftManager
         );
     }
 
-    public function testOnOrderEventWhenDraftSessionUuidIsNull(): void
+    public function testOnOrderEventDoesNothingWhenDraftSessionSyncOptionIsDisabled(): void
     {
         $form = $this->createMock(FormInterface::class);
-        $order = new Order();
-        $event = new OrderEvent($form, $order);
+        $formConfig = $this->createMock(FormConfigInterface::class);
+
+        $form
+            ->expects(self::once())
+            ->method('getConfig')
+            ->willReturn($formConfig);
+
+        $formConfig
+            ->expects(self::once())
+            ->method('getOption')
+            ->with('draft_session_sync')
+            ->willReturn(false);
+
+        $form
+            ->expects(self::never())
+            ->method('isSubmitted');
+
+        $event = new OrderEvent($form, new Order());
 
         $this->orderDraftManager
-            ->expects(self::once())
-            ->method('getDraftSessionUuid')
-            ->willReturn(null);
-
-        $this->doctrine
             ->expects(self::never())
-            ->method('getManagerForClass');
+            ->method('hasEntityDraft');
+
+        $this->orderDraftManager
+            ->expects(self::never())
+            ->method('saveToEntityDraft');
 
         $this->listener->onOrderEvent($event);
     }
 
-    public function testOnOrderEventWhenDraftSessionUuidIsEmpty(): void
+    public function testOnOrderEventDoesNothingWhenFormIsNotSubmitted(): void
     {
         $form = $this->createMock(FormInterface::class);
-        $order = new Order();
-        $event = new OrderEvent($form, $order);
+        $formConfig = $this->createMock(FormConfigInterface::class);
 
-        $this->orderDraftManager
+        $form
             ->expects(self::once())
-            ->method('getDraftSessionUuid')
-            ->willReturn('');
+            ->method('getConfig')
+            ->willReturn($formConfig);
 
-        $this->doctrine
-            ->expects(self::never())
-            ->method('getManagerForClass');
+        $formConfig
+            ->expects(self::once())
+            ->method('getOption')
+            ->with('draft_session_sync')
+            ->willReturn(true);
 
-        $this->listener->onOrderEvent($event);
-    }
-
-    public function testOnOrderEventWhenFormIsNotSubmitted(): void
-    {
-        $form = $this->createMock(FormInterface::class);
         $form
             ->expects(self::once())
             ->method('isSubmitted')
             ->willReturn(false);
 
-        $order = new Order();
-        $event = new OrderEvent($form, $order);
-
-        $this->orderDraftManager
-            ->expects(self::once())
-            ->method('getDraftSessionUuid')
-            ->willReturn('test-uuid-123');
-
-        $this->doctrine
-            ->expects(self::never())
-            ->method('getManagerForClass');
+        $event = new OrderEvent($form, new Order());
 
         $this->orderDraftManager
             ->expects(self::never())
-            ->method('synchronizeEntityToDraft');
+            ->method('hasEntityDraft');
+
+        $this->orderDraftManager
+            ->expects(self::never())
+            ->method('saveToEntityDraft');
 
         $this->listener->onOrderEvent($event);
     }
 
-    public function testOnOrderEventWhenOrderDraftNotFound(): void
+    public function testOnOrderEventDoesNothingWhenEntityDraftDoesNotExist(): void
     {
         $form = $this->createMock(FormInterface::class);
+        $formConfig = $this->createMock(FormConfigInterface::class);
+
+        $form
+            ->expects(self::once())
+            ->method('getConfig')
+            ->willReturn($formConfig);
+
+        $formConfig
+            ->expects(self::once())
+            ->method('getOption')
+            ->with('draft_session_sync')
+            ->willReturn(true);
+
         $form
             ->expects(self::once())
             ->method('isSubmitted')
             ->willReturn(true);
 
-        $order = new Order();
-        ReflectionUtil::setId($order, 123);
-        $event = new OrderEvent($form, $order);
+        $event = new OrderEvent($form, new Order());
 
         $this->orderDraftManager
             ->expects(self::once())
-            ->method('getDraftSessionUuid')
-            ->willReturn('test-uuid-123');
-
-        $this->doctrine
-            ->expects(self::once())
-            ->method('getManagerForClass')
-            ->with(Order::class)
-            ->willReturn($this->entityManager);
-
-        $this->entityManager
-            ->expects(self::once())
-            ->method('clear');
+            ->method('hasEntityDraft')
+            ->with(self::isInstanceOf(Order::class))
+            ->willReturn(false);
 
         $this->orderDraftManager
+            ->expects(self::never())
+            ->method('saveToEntityDraft');
+
+        $this->listener->onOrderEvent($event);
+    }
+
+    public function testOnOrderEventDoesNothingWhenOrderIsNotOrderInstance(): void
+    {
+        $form = $this->createMock(FormInterface::class);
+        $formConfig = $this->createMock(FormConfigInterface::class);
+
+        $form
             ->expects(self::once())
-            ->method('findOrderDraft')
-            ->with('test-uuid-123')
+            ->method('getConfig')
+            ->willReturn($formConfig);
+
+        $formConfig
+            ->expects(self::once())
+            ->method('getOption')
+            ->with('draft_session_sync')
+            ->willReturn(true);
+
+        $event = $this->createMock(OrderEvent::class);
+        $event
+            ->expects(self::once())
+            ->method('getForm')
+            ->willReturn($form);
+        $event
+            ->expects(self::once())
+            ->method('getOrder')
             ->willReturn(null);
 
         $this->orderDraftManager
             ->expects(self::never())
-            ->method('synchronizeEntityToDraft');
+            ->method('hasEntityDraft');
 
-        $this->entityManager
+        $this->orderDraftManager
             ->expects(self::never())
-            ->method('flush');
+            ->method('saveToEntityDraft');
 
         $this->listener->onOrderEvent($event);
     }
 
-    public function testOnOrderEventWhenOrderDraftFound(): void
+    public function testOnOrderEventSavesEntityDraftWhenDraftExists(): void
     {
+        $order = new Order();
         $form = $this->createMock(FormInterface::class);
+        $formConfig = $this->createMock(FormConfigInterface::class);
+
+        $form
+            ->expects(self::once())
+            ->method('getConfig')
+            ->willReturn($formConfig);
+
+        $formConfig
+            ->expects(self::once())
+            ->method('getOption')
+            ->with('draft_session_sync')
+            ->willReturn(true);
+
         $form
             ->expects(self::once())
             ->method('isSubmitted')
             ->willReturn(true);
 
-        $order = new Order();
-        ReflectionUtil::setId($order, 456);
-
-        $orderDraft = new Order();
-        ReflectionUtil::setId($orderDraft, 789);
-
         $event = new OrderEvent($form, $order);
 
         $this->orderDraftManager
             ->expects(self::once())
-            ->method('getDraftSessionUuid')
-            ->willReturn('valid-draft-uuid');
-
-        $this->doctrine
-            ->expects(self::once())
-            ->method('getManagerForClass')
-            ->with(Order::class)
-            ->willReturn($this->entityManager);
-
-        $this->entityManager
-            ->expects(self::once())
-            ->method('clear');
+            ->method('hasEntityDraft')
+            ->with($order)
+            ->willReturn(true);
 
         $this->orderDraftManager
             ->expects(self::once())
-            ->method('findOrderDraft')
-            ->with('valid-draft-uuid')
-            ->willReturn($orderDraft);
-
-        $this->orderDraftManager
-            ->expects(self::once())
-            ->method('synchronizeEntityToDraft')
-            ->with($order, $orderDraft);
-
-        $this->entityManager
-            ->expects(self::once())
-            ->method('flush');
+            ->method('saveToEntityDraft')
+            ->with($order)
+            ->willReturn($order);
 
         $this->listener->onOrderEvent($event);
     }

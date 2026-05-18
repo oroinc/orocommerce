@@ -63,6 +63,10 @@ const OrderLineItemDraftDiscountsTaxesView = BaseView.extend({
     },
 
     updateContent() {
+        if (this.disposed) {
+            return;
+        }
+
         if (this.currentRequest) {
             this.currentRequest.abort();
         }

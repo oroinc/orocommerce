@@ -11,6 +11,7 @@ use Oro\Bundle\FormBundle\Event\FormHandler\Events;
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Handler\OrderFormHandler;
+use Oro\Component\DraftSession\Isolator\NonDraftEntitiesEntityManagerIsolator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -21,6 +22,7 @@ final class OrderFormHandlerTest extends TestCase
 {
     private ManagerRegistry&MockObject $doctrine;
     private EventDispatcherInterface&MockObject $eventDispatcher;
+    private NonDraftEntitiesEntityManagerIsolator&MockObject $nonDraftEntitiesEntityManagerIsolator;
     private OrderFormHandler $handler;
     private FormInterface&MockObject $form;
     private Order $order;
@@ -34,8 +36,12 @@ final class OrderFormHandlerTest extends TestCase
         $this->form = $this->createMock(FormInterface::class);
         $this->order = new Order();
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
+        $this->nonDraftEntitiesEntityManagerIsolator = $this->createMock(
+            NonDraftEntitiesEntityManagerIsolator::class
+        );
 
         $this->handler = new OrderFormHandler($this->doctrine, $this->eventDispatcher);
+        $this->handler->setNonDraftEntitiesEntityManagerIsolator($this->nonDraftEntitiesEntityManagerIsolator);
     }
 
     public function testProcessWhenNotPostOrPutRequest(): void
@@ -229,9 +235,10 @@ final class OrderFormHandlerTest extends TestCase
             ->method('persist')
             ->with(self::identicalTo($this->order));
 
-        $this->entityManager
+        $this->nonDraftEntitiesEntityManagerIsolator
             ->expects(self::once())
-            ->method('flush');
+            ->method('flushNonDraftEntities')
+            ->with(self::identicalTo($this->entityManager));
 
         $this->entityManager
             ->expects(self::once())
@@ -307,9 +314,10 @@ final class OrderFormHandlerTest extends TestCase
             ->method('persist')
             ->with(self::identicalTo($this->order));
 
-        $this->entityManager
+        $this->nonDraftEntitiesEntityManagerIsolator
             ->expects(self::once())
-            ->method('flush');
+            ->method('flushNonDraftEntities')
+            ->with(self::identicalTo($this->entityManager));
 
         $this->entityManager
             ->expects(self::once())
@@ -382,9 +390,10 @@ final class OrderFormHandlerTest extends TestCase
             ->method('persist')
             ->with(self::identicalTo($this->order));
 
-        $this->entityManager
+        $this->nonDraftEntitiesEntityManagerIsolator
             ->expects(self::once())
-            ->method('flush')
+            ->method('flushNonDraftEntities')
+            ->with(self::identicalTo($this->entityManager))
             ->willThrowException($exception);
 
         $this->entityManager

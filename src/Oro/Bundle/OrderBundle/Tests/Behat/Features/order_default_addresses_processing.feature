@@ -26,14 +26,14 @@ Feature: Order Default Addresses processing
       | Shipping Address | ORO, 801 Scenic Hwy, HAINES CITY FL US 33844    |
 
   Scenario: Check order addresses are not changed on changes to line items
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product | PSKU1 |
     And click "Add Product"
     Then "Order Form" must contains values:
       | Billing Address  | ORO, 23400 Caldwell Road, ROCHESTER NY US 14608 |
       | Shipping Address | ORO, 801 Scenic Hwy, HAINES CITY FL US 33844    |
     When I click "Line Items"
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Price | 50 |
     And click "Add Product"
     Then "Order Form" must contains values:

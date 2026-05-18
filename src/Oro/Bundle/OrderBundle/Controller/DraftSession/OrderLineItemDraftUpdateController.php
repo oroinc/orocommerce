@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\OrderBundle\Controller\DraftSession;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\OrderBundle\DraftSession\Manager\OrderDraftManager;
 use Oro\Bundle\OrderBundle\DraftSession\Provider\OrderLineItemTaxesAndDiscountsProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemDraftType;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Component\DraftSession\Util\EntityDraftUtils;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,6 +19,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Controller to update a draft order line item.
@@ -46,9 +46,13 @@ final class OrderLineItemDraftUpdateController extends AbstractController
         #[MapEntity(expr: 'repository.findOrderLineItemWithRelations(orderLineItemId)')]
         OrderLineItem $orderLineItem
     ): Response|array {
-        $orderDraft = $this->getOrderDraft();
-        $order = $this->syncFromOrderDraft($orderDraft, $order);
-        $orderLineItem = $this->getOrderLineItemDraftSource($orderLineItem);
+        $this->assertOrderDraftExists($order);
+
+        $order = $this->getOrderDraftManager()->loadFromEntityDraft($order);
+        assert($order instanceof Order);
+
+        $orderLineItem = EntityDraftUtils::getEntityFromDraft($orderLineItem);
+        assert($orderLineItem instanceof OrderLineItem);
 
         $form = $this->createForm(OrderLineItemDraftType::class, $orderLineItem);
         $form->handleRequest($request);
@@ -63,8 +67,14 @@ final class OrderLineItemDraftUpdateController extends AbstractController
                     $orderLineItem,
                     ['initial_validation' => false]
                 );
+
+                $viewVars = $this->getViewVars($form, $order, $orderLineItem, true);
             } elseif ($isValid) {
-                $this->syncToOrderLineItemDraft($orderDraft, $orderLineItem);
+                $viewVars = $this->getViewVars($form, $order, $orderLineItem, false);
+
+                $this->getOrderDraftManager()->saveToEntityDraft($orderLineItem);
+
+                $orderLineItemId = EntityDraftUtils::getEntityOrDraftId($orderLineItem);
 
                 $responseData = [
                     // Processed in _onJsonContentResponse. See in the 'oroui/js/widget/abstract-widget' for more.
@@ -74,15 +84,15 @@ final class OrderLineItemDraftUpdateController extends AbstractController
                                 'eventBroker' => 'mediator',
                                 'name' => 'datagrid:doRefresh:orderDraftGrid:order-line-items-edit-grid',
                                 'args' => [
-                                    'updatedIds' => [$this->getOrderLineItemOrDraftId($orderLineItem)],
+                                    'updatedIds' => [$orderLineItemId],
                                 ]
                             ],
                         ],
                     ],
                 ];
+            } else {
+                $viewVars = $this->getViewVars($form, $order, $orderLineItem, false);
             }
-
-            $viewVars = $this->getViewVars($form, $order, $orderLineItem, $isDrySubmit);
 
             $responseData += [
                 'success' => $isValid,
@@ -98,41 +108,14 @@ final class OrderLineItemDraftUpdateController extends AbstractController
         return $viewVars;
     }
 
-    private function syncToOrderLineItemDraft(Order $orderDraft, OrderLineItem $orderLineItem): void
-    {
-        /** @var ManagerRegistry $doctrine */
-        $doctrine = $this->container->get(ManagerRegistry::class);
-        /** @var EntityManager $entityManager */
-        $entityManager = $doctrine->getManagerForClass(OrderLineItem::class);
-
-        // Clears the entity manager to avoid unintentional changes persistence.
-        $entityManager->clear();
-
-        // Retrieves the order draft reference from DB because the entity manager is cleared.
-        /** @var Order $orderDraft */
-        $orderDraft = $entityManager->getReference(Order::class, $orderDraft->getId());
-
-        /** @var OrderDraftManager $orderDraftManager */
-        $orderDraftManager = $this->container->get(OrderDraftManager::class);
-        $orderLineItemDraft = $this->findOrCreateOrderLineItemDraft($orderDraft, $orderLineItem);
-
-        if ($orderLineItemDraft->getId()) {
-            // Synchronizes to the existing draft.
-            $orderDraftManager->synchronizeEntityToDraft($orderLineItem, $orderLineItemDraft);
-        }
-
-        $entityManager->persist($orderLineItemDraft);
-        $entityManager->flush();
-    }
-
     private function getViewVars(
         FormInterface $form,
         Order $order,
         OrderLineItem $orderLineItem,
         bool $isDrySubmit
     ): array {
-        $orderId = (int) $order->getId();
-        $orderLineItemId = $this->getOrderLineItemOrDraftId($orderLineItem);
+        $orderId = EntityDraftUtils::getEntityOrDraftId($order);
+        $orderLineItemId = EntityDraftUtils::getEntityOrDraftId($orderLineItem);
 
         return [
             'form' => $form->createView(),
@@ -157,7 +140,7 @@ final class OrderLineItemDraftUpdateController extends AbstractController
     {
         return [
             ...parent::getSubscribedServices(),
-            ManagerRegistry::class,
+            AuthorizationCheckerInterface::class,
             OrderDraftManager::class,
             OrderLineItemTaxesAndDiscountsProvider::class,
         ];

@@ -66,6 +66,7 @@ class OrderDiscountAwareOrderDraftSynchronizer implements EntityDraftSynchronize
                 $newDiscount->setDescription($sourceDiscount->getDescription());
                 $newDiscount->setPercent($sourceDiscount->getPercent());
                 $newDiscount->setAmount($sourceDiscount->getAmount());
+                $newDiscount->setDraftSessionUuid($targetOrder->getDraftSessionUuid());
 
                 $targetOrder->addDiscount($newDiscount);
             }

@@ -31,11 +31,6 @@ class OrderDraftAwareTotalCalculateListener
             return;
         }
 
-        $orderDraft = $this->orderDraftManager->getOrderDraft();
-        if (!$orderDraft) {
-            return;
-        }
-
-        $this->orderDraftManager->synchronizeEntityFromDraft($orderDraft, $entity);
+        $this->orderDraftManager->loadFromEntityDraft($entity);
     }
 }

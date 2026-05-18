@@ -102,18 +102,6 @@ oro_behat_extension:
           Valid From: 'oro_promotion_base_coupon_type[validFrom]'
           Valid Until: 'oro_promotion_base_coupon_type[validUntil]'
 
-    PromotionBackendOrder:
-      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrder
-      selector: 'div.layout-content'
-
-    PromotionBackendOrderLineItem:
-      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrderLineItem
-      selector: 'tbody > tr.order-line-item'
-
-    PromotionBackendLineItemDiscountTable:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
-      selector: 'table.applied_discounts-result-grid'
-
     PromotionCheckoutStep:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionCheckoutStep
       selector: 'div.checkout-order-summary__content'
@@ -137,14 +125,6 @@ oro_behat_extension:
     PromotionShoppingListLineItem:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionShoppingListLineItem
       selector: '.grid-row'
-
-    PromotionOrderForm:
-      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionOrderForm
-      selector: "form[name='oro_order_type']"
-      options:
-        mapping:
-          SKU1ProductQuantity: oro_order_type[lineItems][1][quantity]
-          SKU2ProductQuantity: oro_order_type[lineItems][0][quantity]
 
     CouponCodePreview:
       selector: 'div#coupon-code-preview'

@@ -22,8 +22,8 @@ class SyncOrderToOrderDraftOnOrderEventListener
 
     public function onOrderEvent(OrderEvent $event): void
     {
-        $draftSessionUuid = $this->orderDraftManager->getDraftSessionUuid();
-        if (!$draftSessionUuid) {
+        $form = $event->getForm();
+        if (!$form->getConfig()->getOption('draft_session_sync')) {
             return;
         }
 
@@ -38,19 +38,10 @@ class SyncOrderToOrderDraftOnOrderEventListener
             return;
         }
 
-        $entityManager = $this->doctrine->getManagerForClass(Order::class);
-        // Clears the entity manager to ensure that only order draft changes are flushed to the database.
-        // This is necessary because this listener is executed during OrderEvent processing and there
-        // might be other changes in the entity manager that are not expected to be flushed
-        // to the database at this moment.
-        $entityManager->clear();
-
-        // Retrieves the order draft from DB after the entity manager is cleared.
-        $orderDraft = $this->orderDraftManager->findOrderDraft($draftSessionUuid);
-
-        if ($orderDraft) {
-            $this->orderDraftManager->synchronizeEntityToDraft($order, $orderDraft);
-            $entityManager->flush();
+        if (!$this->orderDraftManager->hasEntityDraft($order)) {
+            return;
         }
+
+        $this->orderDraftManager->saveToEntityDraft($order);
     }
 }

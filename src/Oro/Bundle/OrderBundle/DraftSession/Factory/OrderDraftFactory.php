@@ -34,7 +34,7 @@ class OrderDraftFactory implements EntityDraftFactoryInterface
 
         $orderDraft = new Order();
         $orderDraft->setDraftSessionUuid($draftSessionUuid);
-        $orderDraft->setDraftSource($entity->getId() ? $entity : null);
+        $orderDraft->setDraftSource($entity);
 
         if (!$entity->getId()) {
             // Synchronizes line items to the order draft only for new orders.

@@ -6,16 +6,18 @@ namespace Oro\Bundle\OrderBundle\Provider;
 
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceCollectionDTO;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductLineItemProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * Provides tier prices for order line item.
  */
 class OrderLineItemTierPricesProvider
 {
+    private ?OrderProductPriceProvider $orderProductPriceProvider = null;
+
     public function __construct(
         private readonly ProductPriceProviderInterface $productPriceProvider,
         private readonly ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
@@ -24,9 +26,32 @@ class OrderLineItemTierPricesProvider
     }
 
     /**
+     * @bc-layer This method exists for BC reasons.
+     */
+    public function setOrderProductPriceProvider(?OrderProductPriceProvider $orderProductPriceProvider): void
+    {
+        $this->orderProductPriceProvider = $orderProductPriceProvider;
+    }
+
+    /**
+     * @bc-layer Ensures ::orderProductPriceProvider is always set.
+     */
+    private function getOrderProductPriceProvider(): ?OrderProductPriceProvider
+    {
+        $this->orderProductPriceProvider ??= new OrderProductPriceProvider(
+            $this->productPriceProvider,
+            $this->priceScopeCriteriaFactory
+        );
+
+        return $this->orderProductPriceProvider;
+    }
+
+    /**
      * @param OrderLineItem $orderLineItem
      *
-     * @return array<int, array<ProductPriceCollectionDTO>>
+     * @return array<int|string, list<ProductPriceInterface>> Array where each key is a product ID and each value
+     *  is a list of tier prices for that product. The array contains a single element if the order line item product
+     *  is simple, or multiple elements if the order line item product is a kit.
      */
     public function getTierPricesForLineItem(OrderLineItem $orderLineItem): array
     {
@@ -35,8 +60,7 @@ class OrderLineItemTierPricesProvider
             return [];
         }
 
-        $products = $this->getProductsFromLineItem($orderLineItem);
-        if (!$products) {
+        if (!$orderLineItem->getProduct()) {
             return [];
         }
 
@@ -45,14 +69,8 @@ class OrderLineItemTierPricesProvider
             return [];
         }
 
-        $scopeCriteria = $this->priceScopeCriteriaFactory->createByContext($order);
-
-        $productPricesByProduct = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
-            $scopeCriteria,
-            $products,
-            [$currency]
-        );
-
+        $productPricesByProduct = $this->getOrderProductPriceProvider()
+            ->getProductPricesForLineItems($order, [$orderLineItem]);
         $productPriceCollection = new ProductPriceCollectionDTO(array_merge(...$productPricesByProduct));
 
         $productPricesByProduct[$orderLineItem->getProduct()->getId()] = $this->productLineItemProductPriceProvider
@@ -62,39 +80,43 @@ class OrderLineItemTierPricesProvider
     }
 
     /**
-     * @param OrderLineItem $lineItem
+     * Returns tier prices for multiple order line items using a single price-storage query.
+     * The result array uses the same keys as the input $orderLineItems array.
      *
-     * @return array<Product> Line item product including all related product kit item products.
+     * @param array<int|string, OrderLineItem> $orderLineItems
+     *
+     * @return array<int|string, list<ProductPriceInterface>> Array where each key matches the corresponding
+     *  line item index from the input, and each value is a list of tier prices for that line item.
      */
-    private function getProductsFromLineItem(OrderLineItem $lineItem): array
+    public function getTierPricesForLineItems(iterable $orderLineItems): array
     {
-        $products = [];
-        $product = $lineItem->getProduct();
-        if ($product === null) {
+        if (!$orderLineItems) {
             return [];
         }
 
-        $products[$product->getId()] = $lineItem->getProduct();
-
-        if ($product->isKit() !== true) {
-            return array_values($products);
+        $order = array_values($orderLineItems)[0]->getOrder();
+        if ($order === null || $order->getCurrency() === null) {
+            return array_fill_keys(array_keys($orderLineItems), []);
         }
 
-        foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
-            $kitItemProduct = $kitItemLineItem->getProduct();
-            if ($kitItemProduct === null) {
+        $productPricesByProduct = $this->getOrderProductPriceProvider()
+            ->getProductPricesForLineItems($order, $orderLineItems);
+        $productPriceCollection = new ProductPriceCollectionDTO(array_merge(...$productPricesByProduct));
+
+        $currency = $order->getCurrency();
+
+        $lineItemsTierPrices = [];
+        foreach ($orderLineItems as $key => $lineItem) {
+            $product = $lineItem->getProduct();
+            if ($product === null) {
+                $lineItemsTierPrices[$key] = [];
                 continue;
             }
 
-            $products[$kitItemProduct->getId()] = $kitItemProduct;
+            $lineItemsTierPrices[$key] = $this->productLineItemProductPriceProvider
+                ->getProductLineItemProductPrices($lineItem, $productPriceCollection, $currency);
         }
 
-        foreach ($product->getKitItems() as $kitItem) {
-            foreach ($kitItem->getProducts() as $kitItemProduct) {
-                $products[$kitItemProduct->getId()] = $kitItemProduct;
-            }
-        }
-
-        return array_values($products);
+        return $lineItemsTierPrices;
     }
 }

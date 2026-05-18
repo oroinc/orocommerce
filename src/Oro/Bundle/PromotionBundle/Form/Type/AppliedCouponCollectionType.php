@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Oro\Bundle\PromotionBundle\Form\Type;
 
 use Oro\Bundle\PromotionBundle\Form\DataTransformer\AppliedCouponCollectionTransformer;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,15 +21,28 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class AppliedCouponCollectionType extends AbstractType
 {
+    private ?EventSubscriberInterface $sortAppliedCouponCollectionEventSubscriber = null;
+
     public function __construct(
         private readonly AppliedCouponCollectionTransformer $appliedCouponCollectionTransformer
     ) {
     }
 
+    public function setSortAppliedCouponCollectionEventSubscriber(
+        ?EventSubscriberInterface $sortAppliedCouponCollectionEventSubscriber
+    ): void {
+        $this->sortAppliedCouponCollectionEventSubscriber = $sortAppliedCouponCollectionEventSubscriber;
+    }
+
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addViewTransformer($this->appliedCouponCollectionTransformer);
+        // BC condition.
+        if ($this->sortAppliedCouponCollectionEventSubscriber) {
+            $builder->addEventSubscriber($this->sortAppliedCouponCollectionEventSubscriber);
+        } else {
+            $builder->addViewTransformer($this->appliedCouponCollectionTransformer);
+        }
     }
 
     #[\Override]

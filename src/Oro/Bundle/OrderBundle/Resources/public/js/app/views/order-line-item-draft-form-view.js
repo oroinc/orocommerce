@@ -150,6 +150,8 @@ const OrderLineItemDraftFormView = LineItemProductView.extend({
 
             if (!modelProductId) {
                 this.$('.product-image').remove();
+                this.$('.order-line-item-offers-container').remove();
+                this.$('.has-offers').removeClass('has-offers');
             }
         }
     },

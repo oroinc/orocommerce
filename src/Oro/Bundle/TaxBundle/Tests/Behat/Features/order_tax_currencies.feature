@@ -45,7 +45,7 @@ Feature: Order tax currencies
     And I click "Create Order"
     And I fill "Order Form" with:
       | Customer | Company A |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product | SKU1 |
     And click "Add Product"
     And I click edit SKU123 in grid

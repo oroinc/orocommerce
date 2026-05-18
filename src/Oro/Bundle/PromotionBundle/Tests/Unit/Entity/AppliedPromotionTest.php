@@ -7,13 +7,14 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\TestCase;
 
-class AppliedPromotionTest extends \PHPUnit\Framework\TestCase
+class AppliedPromotionTest extends TestCase
 {
     use EntityTrait;
     use EntityTestCaseTrait;
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $properties = [
             ['id', 123],
@@ -24,12 +25,13 @@ class AppliedPromotionTest extends \PHPUnit\Framework\TestCase
             ['promotionName', 'some name'],
             ['configOptions', ['some options']],
             ['promotionData', ['some promotion data']],
+            ['draftSessionUuid', '8f091a9a-c0d7-4560-975a-d3b0090bcfbd'],
         ];
 
         $this->assertPropertyAccessors(new AppliedPromotion(), $properties);
     }
 
-    public function testCollections()
+    public function testCollections(): void
     {
         $collections = [
             ['appliedDiscounts', new AppliedDiscount()],

@@ -143,10 +143,10 @@ Feature: Promotions with coupons on Order page
       | Discount | -$10.00 |
       | Total    | $40.00  |
     When I click Edit "AA1" in grid
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | Product | XX1 |
       | Price   | 0   |
-    And I click on "Order Edit Save Changes"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     Then I should see no records in "Promotions" table
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount |
@@ -160,9 +160,9 @@ Feature: Promotions with coupons on Order page
     When go to Sales / Orders
     And click edit SimpleOrder in grid
     And I click Edit "AA1" in grid
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | Quantity | 2 |
-    And I click on "Order Edit Save Changes"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     Then I should see next rows in "Promotions" table
       | Code   | Promotion                    | Type            | Status | Discount |
       | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$2.00   |

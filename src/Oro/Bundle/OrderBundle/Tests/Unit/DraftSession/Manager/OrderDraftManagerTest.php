@@ -13,6 +13,7 @@ use Oro\Bundle\OrderBundle\Entity\Repository\OrderLineItemRepository;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Oro\Bundle\OrderBundle\EventListener\DraftSession\LoadOrderDraftOnRequestListener;
 use Oro\Component\DraftSession\Factory\EntityDraftFactoryInterface;
+use Oro\Component\DraftSession\Manager\EntityDraftManager;
 use Oro\Component\DraftSession\Synchronizer\EntityDraftSynchronizerInterface;
 use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -23,12 +24,21 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class OrderDraftManagerTest extends TestCase
 {
     private ManagerRegistry&MockObject $doctrine;
+
     private RequestStack&MockObject $requestStack;
+
     private OrderDraftSessionUuidProvider&MockObject $draftSessionUuidProvider;
+
     private EntityDraftFactoryInterface&MockObject $entityDraftFactory;
+
     private EntityDraftSynchronizerInterface&MockObject $entityDraftSynchronizer;
+
     private OrderRepository&MockObject $orderRepository;
+
     private OrderLineItemRepository&MockObject $orderLineItemRepository;
+
+    private EntityDraftManager&MockObject $entityDraftManager;
+
     private OrderDraftManager $manager;
 
     #[\Override]
@@ -41,6 +51,7 @@ final class OrderDraftManagerTest extends TestCase
         $this->entityDraftSynchronizer = $this->createMock(EntityDraftSynchronizerInterface::class);
         $this->orderRepository = $this->createMock(OrderRepository::class);
         $this->orderLineItemRepository = $this->createMock(OrderLineItemRepository::class);
+        $this->entityDraftManager = $this->createMock(EntityDraftManager::class);
 
         $this->manager = new OrderDraftManager(
             $this->doctrine,
@@ -49,6 +60,7 @@ final class OrderDraftManagerTest extends TestCase
             $this->entityDraftFactory,
             $this->entityDraftSynchronizer
         );
+        $this->manager->setEntityDraftManager($this->entityDraftManager);
     }
 
     public function testGetDraftSessionUuidDelegatesToProvider(): void
@@ -75,6 +87,72 @@ final class OrderDraftManagerTest extends TestCase
         $result = $this->manager->getDraftSessionUuid();
 
         self::assertNull($result);
+    }
+
+    public function testHasEntityDraftDelegatesToEntityDraftManager(): void
+    {
+        $order = new Order();
+
+        $this->entityDraftManager
+            ->expects(self::once())
+            ->method('hasEntityDraft')
+            ->with($order, 'explicit-uuid')
+            ->willReturn(true);
+
+        self::assertTrue($this->manager->hasEntityDraft($order, 'explicit-uuid'));
+    }
+
+    public function testFindEntityDraftDelegatesToEntityDraftManager(): void
+    {
+        $order = new Order();
+        $orderDraft = new Order();
+
+        $this->entityDraftManager
+            ->expects(self::once())
+            ->method('findEntityDraft')
+            ->with($order, 'explicit-uuid')
+            ->willReturn($orderDraft);
+
+        self::assertSame($orderDraft, $this->manager->findEntityDraft($order, 'explicit-uuid'));
+    }
+
+    public function testLoadFromEntityDraftDelegatesToEntityDraftManager(): void
+    {
+        $order = new Order();
+
+        $this->entityDraftManager
+            ->expects(self::once())
+            ->method('loadFromEntityDraft')
+            ->with($order, 'explicit-uuid')
+            ->willReturn($order);
+
+        self::assertSame($order, $this->manager->loadFromEntityDraft($order, 'explicit-uuid'));
+    }
+
+    public function testSaveToEntityDraftDelegatesToEntityDraftManager(): void
+    {
+        $order = new Order();
+        $orderDraft = new Order();
+
+        $this->entityDraftManager
+            ->expects(self::once())
+            ->method('saveToEntityDraft')
+            ->with($order, 'explicit-uuid')
+            ->willReturn($orderDraft);
+
+        self::assertSame($orderDraft, $this->manager->saveToEntityDraft($order, 'explicit-uuid'));
+    }
+
+    public function testDeleteEntityDraftDelegatesToEntityDraftManager(): void
+    {
+        $order = new Order();
+
+        $this->entityDraftManager
+            ->expects(self::once())
+            ->method('deleteEntityDraft')
+            ->with($order, 'explicit-uuid');
+
+        $this->manager->deleteEntityDraft($order, 'explicit-uuid');
     }
 
     public function testGetOrderDraftReturnsOrderFromRequestAttributes(): void
@@ -426,7 +504,7 @@ final class OrderDraftManagerTest extends TestCase
 
         $result = $this->manager->getOrderLineItemOrDraftId($orderLineItem);
 
-        self::assertEquals($orderLineItemId, $result);
+        self::assertSame($orderLineItemId, $result);
     }
 
     public function testGetOrderLineItemOrDraftIdReturnsDraftIdForNewEntity(): void
@@ -440,7 +518,7 @@ final class OrderDraftManagerTest extends TestCase
 
         $result = $this->manager->getOrderLineItemOrDraftId($orderLineItem);
 
-        self::assertEquals($draftId, $result);
+        self::assertSame($draftId, $result);
     }
 
     public function testGetOrderLineItemOrDraftIdThrowsExceptionWhenNoDraftForNewEntity(): void
@@ -451,5 +529,40 @@ final class OrderDraftManagerTest extends TestCase
         $this->expectExceptionMessage('Entity draft is expected to be present for a new order line item.');
 
         $this->manager->getOrderLineItemOrDraftId($orderLineItem);
+    }
+
+    public function testGetOrderLineItemOrDraftIdThrowsExceptionWhenDraftHasNoId(): void
+    {
+        $orderLineItem = new OrderLineItem();
+        $draftWithoutId = new OrderLineItem();
+        // Draft is added but not persisted, so ID is null
+        $orderLineItem->addDraft($draftWithoutId);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Entity draft is expected to be present for a new order line item.');
+
+        $this->manager->getOrderLineItemOrDraftId($orderLineItem);
+    }
+
+    public function testCreateEntityDraftWithExplicitUuid(): void
+    {
+        $explicitUuid = 'explicit-uuid-123';
+        $entity = new Order();
+        $entityDraft = new Order();
+        ReflectionUtil::setId($entityDraft, 999);
+
+        $this->draftSessionUuidProvider
+            ->expects(self::never())
+            ->method('getDraftSessionUuid');
+
+        $this->entityDraftFactory
+            ->expects(self::once())
+            ->method('createDraft')
+            ->with($entity, $explicitUuid)
+            ->willReturn($entityDraft);
+
+        $result = $this->manager->createEntityDraft($entity, $explicitUuid);
+
+        self::assertSame($entityDraft, $result);
     }
 }

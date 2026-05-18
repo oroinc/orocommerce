@@ -33,7 +33,7 @@ Feature: Order change customer to apply promotion
     Given I click "Create Order"
     When I fill "Order Form" with:
       | Customer | NoCustomerUser |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product | Product1 |
       | Price   | 50       |
     And click "Add Product"

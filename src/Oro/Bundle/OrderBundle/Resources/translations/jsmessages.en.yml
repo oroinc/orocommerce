@@ -33,6 +33,8 @@ oro:
 
         leave_page_with_unsaved_data_confirm: 'You have unsaved changes, are you sure you want to reload this page?'
 
+        prices_may_have_changed: 'Prices for line items may have changed. Please review the prices before saving the order.'
+
         orderlineitem:
             discounts_taxes:
                 update_error: Unable to update taxes and discounts.

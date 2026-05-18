@@ -37,13 +37,14 @@ operations:
                 - '@feature_enabled': 'rfp'
         actions:
             - '@call_service_method':
-                  service: oro_rfp.service.request_to_order_data_storage
-                  method: saveToStorage
-                  method_parameters: [$.data]
+                  service: oro_rfp.operation.create_order_draft_from_rfq
+                  method: createOrderDraftFromRfq
+                  method_parameters: [ $.data ]
+                  attribute: $.orderDraft
             - '@redirect':
                   parameters:
                       route: oro_order_create
-                      route_parameters: {'storage': true}
+                      route_parameters: { 'orderDraftSessionUuid': $.orderDraft.draftSessionUuid }
 
     oro_rfp_frontend_request_a_quote:
         label: oro.rfp.btn.add_to_rfp

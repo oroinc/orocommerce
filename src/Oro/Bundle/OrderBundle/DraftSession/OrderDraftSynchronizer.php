@@ -34,6 +34,7 @@ class OrderDraftSynchronizer implements EntityDraftSynchronizerInterface
         assert($entity instanceof Order);
 
         if (!$entity->getId()) {
+            $entity->getDrafts()->clear();
             $entity->addDraft($draft);
         }
 
@@ -47,7 +48,14 @@ class OrderDraftSynchronizer implements EntityDraftSynchronizerInterface
         assert($entity instanceof Order);
         assert($draft instanceof Order);
 
+        if (!$entity->getId()) {
+            $entity->getDrafts()->clear();
+            $entity->addDraft($draft);
+        }
+
         $this->synchronizeFields($entity, $draft);
+
+        $draft->setDraftSource($this->getReference($draft->getDraftSource()));
     }
 
     private function synchronizeFields(Order $sourceOrder, Order $targetOrder): void

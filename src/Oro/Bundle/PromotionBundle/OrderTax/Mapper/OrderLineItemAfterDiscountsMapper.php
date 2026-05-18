@@ -16,8 +16,6 @@ use Oro\Component\Math\RoundingMode;
  */
 class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
 {
-    private array $discountContexts = [];
-
     public function __construct(
         private TaxMapperInterface $innerMapper,
         private TaxationSettingsProvider $taxationSettingsProvider,

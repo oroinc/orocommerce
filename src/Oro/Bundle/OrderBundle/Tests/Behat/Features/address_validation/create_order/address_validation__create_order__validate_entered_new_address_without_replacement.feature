@@ -25,7 +25,7 @@ Feature: Address Validation - Create Order - Validate Entered New Address Withou
     And fill "Order Form" with:
       | Customer      | first customer |
       | Customer User | Amanda Cole    |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | Product |
       | Quantity | 10      |
       | Price    | 5       |

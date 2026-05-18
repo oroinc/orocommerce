@@ -6,8 +6,10 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\DraftSession;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\DraftSession\OrderLineItemDraftSynchronizer;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
@@ -166,17 +168,23 @@ final class OrderLineItemDraftSynchronizerTest extends TestCase
         self::assertCount(0, $lineItem->getDrafts());
     }
 
-    public function testSynchronizeToDraftSetsDraftSource(): void
+    // phpcs:disable
+    public function testSynchronizeFromDraftAddsEntityToSourceOrderLineItemsWhenEntityHasNoOrderAndDraftHasSourceOrder(): void
     {
-        $draftSource = new OrderLineItem();
-        ReflectionUtil::setId($draftSource, 500);
+        // phpcs:enable
+        $sourceOrder = new Order();
+        ReflectionUtil::setId($sourceOrder, 10);
 
-        $lineItem = new OrderLineItem();
-        ReflectionUtil::setId($lineItem, 5100);
+        $orderDraft = new Order();
+        ReflectionUtil::setId($orderDraft, 11);
+        $orderDraft->setDraftSource($sourceOrder);
 
         $lineItemDraft = new OrderLineItem();
-        ReflectionUtil::setId($lineItemDraft, 5200);
-        $lineItemDraft->setDraftSource($draftSource);
+        ReflectionUtil::setId($lineItemDraft, 3700);
+        $orderDraft->addLineItem($lineItemDraft);
+
+        $lineItem = new OrderLineItem();
+        // No ID — new entity; no order association.
 
         $this->doctrine->expects(self::any())
             ->method('getManagerForClass')
@@ -185,10 +193,44 @@ final class OrderLineItemDraftSynchronizerTest extends TestCase
             ->method('contains')
             ->willReturn(true);
 
-        $this->synchronizer->synchronizeToDraft($lineItem, $lineItemDraft);
+        $this->synchronizer->synchronizeFromDraft($lineItemDraft, $lineItem);
 
-        self::assertSame($draftSource, $lineItemDraft->getDraftSource());
+        self::assertTrue($sourceOrder->getLineItems()->contains($lineItem));
     }
+
+    public function testSynchronizeFromDraftDoesNotAddEntityToSourceOrderLineItemsWhenEntityAlreadyHasOrder(): void
+    {
+        $sourceOrder = new Order();
+        ReflectionUtil::setId($sourceOrder, 20);
+
+        $orderDraft = new Order();
+        ReflectionUtil::setId($orderDraft, 21);
+        $orderDraft->setDraftSource($sourceOrder);
+
+        $lineItemDraft = new OrderLineItem();
+        ReflectionUtil::setId($lineItemDraft, 3800);
+        $orderDraft->addLineItem($lineItemDraft);
+
+        $entityOrder = new Order();
+        ReflectionUtil::setId($entityOrder, 30);
+
+        $lineItem = new OrderLineItem();
+        $entityOrder->addLineItem($lineItem);
+        // No ID — new entity; but already has an order.
+
+        $this->doctrine->expects(self::any())
+            ->method('getManagerForClass')
+            ->willReturn($this->entityManager);
+        $this->entityManager->expects(self::any())
+            ->method('contains')
+            ->willReturn(true);
+
+        $this->synchronizer->synchronizeFromDraft($lineItemDraft, $lineItem);
+
+        self::assertFalse($sourceOrder->getLineItems()->contains($lineItem));
+        self::assertTrue($entityOrder->getLineItems()->contains($lineItem));
+    }
+
 
     public function testSynchronizeFromDraftClearsNullPrice(): void
     {
@@ -584,6 +626,106 @@ final class OrderLineItemDraftSynchronizerTest extends TestCase
         self::assertEquals(['custom_field' => 'string', 'custom_enum' => 'enum'], $synchronizedFields);
     }
 
+    public function testSynchronizeToDraftSetsDraftSource(): void
+    {
+        $draftSource = new OrderLineItem();
+        // No ID set — new entity.
+
+        $lineItem = new OrderLineItem();
+        ReflectionUtil::setId($lineItem, 5100);
+
+        $lineItemDraft = new OrderLineItem();
+        ReflectionUtil::setId($lineItemDraft, 5200);
+        $lineItemDraft->setDraftSource($draftSource);
+
+        $classMetadata = $this->createMock(ClassMetadata::class);
+
+        $this->doctrine
+            ->expects(self::once())
+            ->method('getManagerForClass')
+            ->willReturn($this->entityManager);
+
+        $this->entityManager
+            ->expects(self::once())
+            ->method('contains')
+            ->with($draftSource)
+            ->willReturn(false);
+
+        $this->entityManager
+            ->expects(self::once())
+            ->method('getClassMetadata')
+            ->willReturn($classMetadata);
+
+        $classMetadata
+            ->expects(self::once())
+            ->method('getIdentifierValues')
+            ->with($draftSource)
+            ->willReturn([]);
+
+        $this->synchronizer->synchronizeToDraft($lineItem, $lineItemDraft);
+
+        self::assertSame($draftSource, $lineItemDraft->getDraftSource());
+    }
+
+    public function testSynchronizeToDraftReplacesRelatedOrdersWithReferences(): void
+    {
+        $lineItem = new OrderLineItem();
+        ReflectionUtil::setId($lineItem, 1000);
+
+        $lineItemDraft = new OrderLineItem();
+        ReflectionUtil::setId($lineItemDraft, 2000);
+
+        $managedOrder = new Order();
+        ReflectionUtil::setId($managedOrder, 10);
+
+        $unmanagedOrder = new Order();
+        ReflectionUtil::setId($unmanagedOrder, 20);
+
+        $referenceOrder = new Order();
+        ReflectionUtil::setId($referenceOrder, 20);
+
+        $lineItemDraft->addOrder($managedOrder);
+        $lineItemDraft->addOrder($unmanagedOrder);
+
+        $classMetadata = $this->createMock(ClassMetadata::class);
+
+        $this->doctrine
+            ->expects(self::exactly(2))
+            ->method('getManagerForClass')
+            ->with(Order::class)
+            ->willReturn($this->entityManager);
+
+        $this->entityManager
+            ->expects(self::exactly(2))
+            ->method('contains')
+            ->withConsecutive([$managedOrder], [$unmanagedOrder])
+            ->willReturnOnConsecutiveCalls(true, false);
+
+        $this->entityManager
+            ->expects(self::once())
+            ->method('getClassMetadata')
+            ->with(Order::class)
+            ->willReturn($classMetadata);
+
+        $classMetadata
+            ->expects(self::once())
+            ->method('getIdentifierValues')
+            ->with($unmanagedOrder)
+            ->willReturn(['id' => 20]);
+
+        $this->entityManager
+            ->expects(self::once())
+            ->method('getReference')
+            ->with(Order::class, 20)
+            ->willReturn($referenceOrder);
+
+        $this->synchronizer->synchronizeToDraft($lineItem, $lineItemDraft);
+
+        self::assertTrue($lineItemDraft->getOrders()->contains($managedOrder));
+        self::assertTrue($lineItemDraft->getOrders()->contains($referenceOrder));
+        self::assertFalse($lineItemDraft->getOrders()->contains($unmanagedOrder));
+    }
+
     public function testSynchronizeFromDraftClearsNullPriceOnKitItemLineItem(): void
     {
         $kitItem = new ProductKitItemStub(50);
@@ -621,5 +763,73 @@ final class OrderLineItemDraftSynchronizerTest extends TestCase
 
         $syncedKitItem = $lineItem->getKitItemLineItems()->first();
         self::assertNull($syncedKitItem->getPrice());
+    }
+
+    public function testSynchronizeFromDraftSetsDraftSessionUuidOnNewKitItemLineItem(): void
+    {
+        $kitItem = new ProductKitItemStub(50);
+
+        $sourceKitItemLineItem = new OrderProductKitItemLineItem();
+        $sourceKitItemLineItem->setKitItem($kitItem);
+        $sourceKitItemLineItem->setQuantity(2.0);
+
+        $lineItemDraft = new OrderLineItem();
+        ReflectionUtil::setId($lineItemDraft, 9300);
+        $lineItemDraft->addKitItemLineItem($sourceKitItemLineItem);
+
+        $lineItem = new OrderLineItem();
+        // When synchronizing from draft, the target line item (entity) has no draftSessionUuid.
+        // New kit item line items receive the target line item's draftSessionUuid (null for regular entities).
+
+        $this->doctrine->expects(self::any())
+            ->method('getManagerForClass')
+            ->willReturn($this->entityManager);
+        $this->entityManager->expects(self::any())
+            ->method('contains')
+            ->willReturn(true);
+        $this->extendedFieldsProvider->expects(self::once())
+            ->method('getApplicableExtendedFields')
+            ->with(OrderProductKitItemLineItem::class)
+            ->willReturn([]);
+
+        $this->synchronizer->synchronizeFromDraft($lineItemDraft, $lineItem);
+
+        $newKitItem = $lineItem->getKitItemLineItems()->first();
+        self::assertNotNull($newKitItem);
+        self::assertNull($newKitItem->getDraftSessionUuid());
+    }
+
+    public function testSynchronizeToDraftSetsDraftSessionUuidOnNewKitItemLineItem(): void
+    {
+        $kitItem = new ProductKitItemStub(50);
+
+        $sourceKitItemLineItem = new OrderProductKitItemLineItem();
+        $sourceKitItemLineItem->setKitItem($kitItem);
+        $sourceKitItemLineItem->setQuantity(3.0);
+
+        $lineItem = new OrderLineItem();
+        ReflectionUtil::setId($lineItem, 9400);
+        $lineItem->addKitItemLineItem($sourceKitItemLineItem);
+
+        $lineItemDraft = new OrderLineItem();
+        ReflectionUtil::setId($lineItemDraft, 9500);
+        $lineItemDraft->setDraftSessionUuid('draft-session-uuid');
+
+        $this->doctrine->expects(self::any())
+            ->method('getManagerForClass')
+            ->willReturn($this->entityManager);
+        $this->entityManager->expects(self::any())
+            ->method('contains')
+            ->willReturn(true);
+        $this->extendedFieldsProvider->expects(self::once())
+            ->method('getApplicableExtendedFields')
+            ->with(OrderProductKitItemLineItem::class)
+            ->willReturn([]);
+
+        $this->synchronizer->synchronizeToDraft($lineItem, $lineItemDraft);
+
+        $newKitItem = $lineItemDraft->getKitItemLineItems()->first();
+        self::assertNotNull($newKitItem);
+        self::assertSame('draft-session-uuid', $newKitItem->getDraftSessionUuid());
     }
 }

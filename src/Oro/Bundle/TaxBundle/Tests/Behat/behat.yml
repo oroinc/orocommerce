@@ -88,21 +88,9 @@ oro_behat_extension:
             type: xpath
             element: Select2Entities
 
-    TaxBackendOrder:
-      class: Oro\Bundle\TaxBundle\Tests\Behat\Element\TaxBackendOrder
-      selector: 'div.layout-content'
-
-    TaxBackendOrderLineItem:
-      class: Oro\Bundle\TaxBundle\Tests\Behat\Element\TaxBackendOrderLineItem
-      selector: 'tbody > tr.order-line-item'
-
     TaxBackendOrderDraftEditLineItem:
       class: Oro\Bundle\TaxBundle\Tests\Behat\Element\TaxBackendOrderDraftEditLineItem
       selector: 'td.order-draft-form-container'
-
-    BackendLineItemTaxTable:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
-      selector: 'table.tax-result-grid'
 
     Backend Order Taxes Totals Table:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table

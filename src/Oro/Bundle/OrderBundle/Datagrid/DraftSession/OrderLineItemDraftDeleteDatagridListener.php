@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Oro\Bundle\OrderBundle\Datagrid\DraftSession;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\DataGridBundle\Event\BuildBeforeListenerInterface;
 
 /**
  * Adds a datagrid property for deleting order line items in the order draft edit mode.
  */
-class OrderLineItemDraftDeleteDatagridListener
+class OrderLineItemDraftDeleteDatagridListener implements BuildBeforeListenerInterface
 {
     public function onBuildBefore(BuildBefore $event): void
     {

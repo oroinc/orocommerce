@@ -21,6 +21,14 @@
     .grid-body-cell-price {
         input[type=text] {
             width: 80px;
+
+            &.overridden-price {
+                padding-left: $order-line-items-edit-grid-overridden-price-padding-left;
+            }
         }
+    }
+
+    .product-price-overridden {
+        top: 13px;
     }
 }

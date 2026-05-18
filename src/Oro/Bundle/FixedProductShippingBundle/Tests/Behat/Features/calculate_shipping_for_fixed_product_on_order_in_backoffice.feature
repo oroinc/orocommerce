@@ -16,11 +16,11 @@ Feature: Calculate Shipping for Fixed Product on Order in back-office
     And I fill "Order Form" with:
       | Customer      | Company A     |
       | Customer User | AmandaMu Cole |
-    And I fill "Order Edit Add Line Item Form" with:
+    And I fill "Order Line Item Draft Create Form" with:
       | Product  | simpleproduct01 |
       | Quantity | 1               |
     And I click "Add Product"
-    When I click "Calculate Shipping Button"
+    When I click on "Calculate Shipping Button"
     Then I should see "Fixed Product 1 (Surcharge Type: Percent, Surcharge On: Product Price, Surcharge Amount: 10%) $3.00"
     And I should see "Fixed Product 2 (Surcharge Type: Percent, Surcharge On: Product Shipping Cost, Surcharge Amount: 15%) $1.15"
     And I should see "Fixed Product 3 (Surcharge Type: Fixed Amount, Surcharge Amount: $20.00) $21.00"

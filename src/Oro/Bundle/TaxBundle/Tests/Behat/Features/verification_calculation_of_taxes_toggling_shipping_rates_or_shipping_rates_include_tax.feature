@@ -43,7 +43,7 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     When I click "Create Order"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | SKU123 |
       | Quantity | 5      |
     And click "Add Product"
@@ -75,7 +75,7 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     When I click "Create Order"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | SKU123 |
       | Quantity | 5      |
     And click "Add Product"
@@ -109,7 +109,7 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     When I click "Create Order"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | SKU123 |
       | Quantity | 5      |
     And click "Add Product"
@@ -158,7 +158,7 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     When I click "Create Order"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | SKU123 |
       | Quantity | 5      |
     And click "Add Product"
@@ -194,7 +194,7 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     When I click "Create Order"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | SKU123 |
       | Quantity | 5      |
     And click "Add Product"
@@ -231,7 +231,7 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     When I click "Create Order"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | SKU123 |
       | Quantity | 5      |
     And click "Add Product"

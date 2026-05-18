@@ -1941,6 +1941,8 @@ services:
 
     oro_product.event_listener.product_preloading:
         parent: oro_entity.event_listener.default_preloading
+        calls:
+            - [ setStopPropagation, [ true ] ]
         tags:
             - { name: kernel.event_listener, event: oro_entity.preload_entity.product, method: onPreload }
             - { name: kernel.event_listener, event: oro_entity.preload_entity.productimage, method: onPreload }

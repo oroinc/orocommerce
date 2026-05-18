@@ -24,7 +24,7 @@ Feature: Order shipping status
     And I fill "Order Form" with:
       | Customer      | first customer |
       | Customer User | Amanda Cole    |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product | AA1 |
       | Price   | 50  |
     And click "Add Product"

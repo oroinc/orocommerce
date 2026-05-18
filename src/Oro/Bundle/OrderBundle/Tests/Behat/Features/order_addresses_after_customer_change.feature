@@ -67,8 +67,8 @@ Feature: Order addresses after customer change
       | Customer User    | ACME Customer User  |
       | Shipping Address | Enter other address |
       | Billing Address  | Enter other address |
-    And click on "Free-form entry"
-    And fill "Order Edit Add Line Item Form" with:
+    And click on "Order Line Item Draft Create Free-Form Switch"
+    And fill "Order Line Item Draft Create Form" with:
       | FreeProductSku | ORO_PRODUCT_SKU |
       | FreeProduct    | ORO_PRODUCT_0   |
       | Quantity       | 1               |

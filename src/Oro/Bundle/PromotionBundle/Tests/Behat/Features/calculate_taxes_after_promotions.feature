@@ -42,13 +42,13 @@ Feature: Calculate taxes after promotions
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
       | PO Number     | PONumber1   |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | SKU1 |
       | Price    | 2    |
       | Quantity | 5    |
     And click "Add Product"
 
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | SKU2 |
       | Price    | 2    |
       | Quantity | 5    |
@@ -120,13 +120,13 @@ Feature: Calculate taxes after promotions
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
       | PO Number     | PONumber3   |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | SKU1 |
       | Price    | 2    |
       | Quantity | 5    |
     And click "Add Product"
 
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | SKU2 |
       | Price    | 2    |
       | Quantity | 5    |

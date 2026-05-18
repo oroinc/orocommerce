@@ -8,7 +8,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
-use Oro\Bundle\PromotionBundle\Form\DataTransformer\AppliedCouponCollectionTransformer;
 use Oro\Bundle\PromotionBundle\Form\Type\AppliedCouponCollectionType;
 use Oro\Bundle\PromotionBundle\Form\Type\AppliedCouponType;
 use Oro\Bundle\TestFrameworkBundle\Test\Form\FormAwareTestTrait;
@@ -37,19 +36,6 @@ final class AppliedCouponCollectionTypeTest extends WebTestCase
             AppliedCouponCollectionType::class,
             $form->getConfig()->getType()->getInnerType()
         );
-    }
-
-    public function testFormTypeHasTransformer(): void
-    {
-        $form = self::createForm(
-            AppliedCouponCollectionType::class,
-            null,
-            ['entity' => new Order()]
-        );
-
-        $transformers = $form->getConfig()->getViewTransformers();
-        self::assertCount(1, $transformers);
-        self::assertInstanceOf(AppliedCouponCollectionTransformer::class, $transformers[0]);
     }
 
     public function testFormTypeTransformerSortsCoupons(): void

@@ -34,7 +34,7 @@
 {% set priceTypeErrors = form_errors(form.priceType) %}
 {% set shipByWidget = form_widget(form.shipBy, { 'required': false }) %}
 {% set shipByErrors = form_errors(form.shipBy) %}
-{% set commentWidget = form_widget(form.comment, { 'attr': { 'placeholder': 'oro.order.orderlineitem.draft_form.comment.placeholder'|trans, 'class': 'order-comment-field' } }) %}
+{% set commentWidget = form_widget(form.comment, { 'attr': { 'placeholder': 'oro.order.orderlineitem.draft_form.comment.placeholder', 'class': 'order-comment-field' } }) %}
 {% set commentErrors = form_errors(form.comment) %}
 {% set extraColumnsPlaceholder = placeholder('oro_order_line_item_draft_update_extra_column', { 'entity': orderLineItem, 'form': form }) %}
 {% set isFreeFormField = form_widget(form.isFreeForm, {
@@ -42,9 +42,34 @@
         'data-draft-update-field': ''
     }
 }) %}
+{% set isHasOffers = form.offers is defined and form.offers.vars.choices is not empty and form.product.vars.value is not empty %}
+{% set offersWidget = form.offers is defined ? form_widget(form.offers) : '' %}
+{% set offersLabel = form.offers is defined ? form.offers.vars.label|trans : '' %}
 {% set extraFields = form_rest(form) %}
 {% set relatedDraftRow = 'related-draft-row-'|uniqid %}
 {% set isDrySubmit = isDrySubmit|default(false) %}
+
+{% set commentBlock %}
+    <div class="order-line-item-draft-update-calculations__comments">
+        {{ commentWidget|raw }}
+        {{ commentErrors|oro_html_sanitize }}
+    </div>
+{% endset %}
+
+{% set taxDiscountTriggerBlock %}
+    <div class="order-line-item-draft-update-calculations__actions">
+        <button
+            type="button"
+            class="btn btn-link btn--no-x-offset order-line-item-draft-update-calculations__trigger collapsed"
+            data-toggle="collapse"
+            data-target="{{ '#line-item-' ~ orderLineItemId ~ '-collapse' }}"
+            data-collapsed-text="{{ 'oro.order.orderlineitem.tax_discount_btn_view'|trans }}"
+            data-expanded-text="{{ 'oro.order.orderlineitem.tax_discount_btn_hide'|trans }}"
+        >
+            <span data-text>{{ 'oro.order.orderlineitem.tax_discount_btn_view'|trans }}</span>
+        </button>
+    </div>
+{% endset %}
 
 <div class="widget-content">
     <div
@@ -68,7 +93,7 @@
             }),
             'attr': {
                 'id': form.vars.id,
-                class: 'draft-form'
+                'class': 'draft-form'
             }
         }) }}
 
@@ -102,13 +127,13 @@
                             </div>
                         </div>
                     </td>
-                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-quantity grid-body-cell-update">
+                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-quantity grid-body-cell-update {{ isHasOffers ? 'has-offers' : '' }}">
                         <div class="quantity-unit-row">
                             {{ quantityWidget|raw }}
                             {{ productUnitWidget|raw }}
                         </div>
                     </td>
-                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-price grid-body-cell-update" data-page-component-view="oropricing/js/app/views/line-item-product-prices-view">
+                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-price grid-body-cell-update {{ isHasOffers ? 'has-offers' : '' }}" data-page-component-view="oropricing/js/app/views/line-item-product-prices-view">
                         {{ priceWidget|raw }}
 
                         {{ priceTypeWidget|raw }}
@@ -134,67 +159,95 @@
                 </tr>
                 <tr class="grid-row grid-row-update-form-validation">
                     <td class="string-cell grid-cell grid-body-cell grid-body-cell-productSku grid-body-cell-update"></td>
-                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-product grid-body-cell-update fields-row-error" colspan="6">
-                        {%- if orderLineItem.isFreeForm -%}
-                            {{ productSkuErrors|raw }}
-                        {%- endif -%}
+                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-product grid-body-cell-update">
+                        <div class="order-line-item-draft-form-cell-inner">
+                            <div class="fields-row-error">
+                                {%- if orderLineItem.isFreeForm -%}
+                                    {{ productSkuErrors|oro_html_sanitize }}
+                                {%- endif -%}
 
-                        {%- if orderLineItem.isFreeForm -%}
-                            {{ freeFormProductErrors|raw }}
-                        {%- else -%}
-                            {{ productErrors|raw }}
-                        {%- endif -%}
+                                {%- if orderLineItem.isFreeForm -%}
+                                    {{ freeFormProductErrors|default('')|oro_html_sanitize }}
+                                {%- endif -%}
+                                {{ productErrors|oro_html_sanitize }}
 
-                        {{ quantityErrors|raw }}
-                        {{ productUnitErrors|raw }}
-                        {{ priceErrors|raw }}
-                        {{ priceTypeErrors|raw }}
-                        {{ shipByErrors|raw }}
+                                {{ quantityErrors|oro_html_sanitize }}
+                                {{ productUnitErrors|oro_html_sanitize }}
+                                {{ priceErrors|oro_html_sanitize }}
+                                {{ priceTypeErrors|oro_html_sanitize }}
+                                {{ shipByErrors|oro_html_sanitize }}
+
+                                {{ form_errors(form.price.value) }}
+                                {{ form_errors(form.price.currency) }}
+                                {{ form_errors(form.price.is_price_changed) }}
+
+                                {% if form.vars.errors|length > 0 %}
+                                    {%- for error in form.vars.errors -%}
+                                        <span class="validation-failed">
+                                            <span class="validation-failed__content">
+                                                <span class="validation-failed__icon" aria-hidden="true"></span>
+                                                <span>{{ error.message|trans }}</span>
+                                            </span>
+                                        </span>
+                                    {%- endfor -%}
+                                {% endif %}
+                            </div>
+
+                            <div class="grid-row-update-form-extra-fields-container">
+                                <div>
+                                    {% set freeFromValue = orderLineItem.isFreeForm ? '1' : '0' %}
+                                    <a data-role="select-order-line-item-draft"
+                                    data-draft-free-form="{{ freeFromValue }}"
+                                    href="#">{{
+                                        orderLineItem.isFreeForm
+                                        ? 'oro.order.orderlineitem.select.product'|trans
+                                        : 'oro.order.orderlineitem.select.free_form'|trans
+                                        }}</a>
+                                </div>
+
+                                <div class="grid-row-update-form-extra-fields">
+                                    {{ extraFields|raw }}
+                                </div>
+
+                                {% if kitItemLineItemsWidget is not defined %}
+                                    {{ commentBlock|raw }}
+                                    {{ taxDiscountTriggerBlock|raw }}
+                                {% endif %}
+                            </div>
+                        </div>
                     </td>
+                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-update grid-body-cell-offers" colspan="2">
+                        {% if form.offers is defined and isHasOffers %}
+                            <div class="order-line-item-offers-container">
+                                <div class="order-line-item-offers-label">{{ offersLabel|raw }}</div>
+                                <div class="order-line-item-offers">
+                                    {{ offersWidget|raw }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </td>
+                    <td class="string-cell grid-cell grid-body-cell grid-body-cell-update" colspan="3"></td>
                 </tr>
                 <tr class="grid-row grid-row-update-form">
                     <td class="string-cell grid-cell grid-body-cell grid-body-cell-productSku grid-body--cell-update-form"></td>
                     <td class="string-cell grid-cell grid-body-cell grid-body-cell-update-form" colspan="5">
+                        <div class="grid grid-columns-1">
+                            {% if kitItemLineItemsWidget is defined %}
+                                <div class="order-line-item-kit-item-line-items">
+                                    {{ kitItemLineItemsWidget|raw }}
+                                    {{ kitItemLineItemsErrors|oro_html_sanitize }}
+                                </div>
+
+                                {{ commentBlock|raw }}
+                            {% endif %}
+
+                            {{ isFreeFormField|raw }}
+                        </div>
                         <div class="grid"
                             data-role="order-line-item-draft-update-form-container"
                         >
-                            <div class="grid-col-12">
-                                {% set freeFromValue = orderLineItem.isFreeForm ? '1' : '0' %}
-                                <a data-role="select-order-line-item-draft"
-                                data-draft-free-form="{{ freeFromValue }}"
-                                href="#">{{
-                                    orderLineItem.isFreeForm
-                                    ? 'oro.order.orderlineitem.select.product'|trans
-                                    : 'oro.order.orderlineitem.select.free_form'|trans
-                                      }}</a>
-                            </div>
-
-                            <div class="grid grid-col-12">
-                                {% if form.vars.errors|length > 0 %}
-                                    <div class="grid-col-12 alert alert-error" role="alert">
-                                        {{ form_errors(form) }}
-                                    </div>
-                                {% endif %}
-
-                                {% if kitItemLineItemsWidget is defined %}
-                                    <div class="grid-col-12 order-line-item-kit-item-line-items">
-                                        {{ kitItemLineItemsWidget|raw }}
-                                        {{ kitItemLineItemsErrors|raw }}
-                                    </div>
-                                {% endif %}
-
-                                {{ isFreeFormField|raw }}
-
-                                <div class="grid-row-update-form-extra-fields grid-col-12">
-                                    {{ extraFields|raw }}
-                                </div>
-
+                            <div class="grid grid-col-12 order-line-item-draft-update-form-container-inner">
                                 <div class="grid-col-12 order-line-item-draft-update-calculations">
-                                    <div class="order-line-item-draft-update-calculations__comments">
-                                        {{ commentWidget|raw }}
-                                        {{ commentErrors|raw }}
-                                    </div>
-
                                     {% set listenFieldsIds = [
                                         form.quantity.vars.id,
                                         form.productUnit.vars.id,
@@ -220,24 +273,15 @@
                                         }|json_encode }}"
                                     >
                                         <div class="order-line-item-draft-update-calculations__taxes" data-html-response="lineItemTaxesHtml">
-                                            {{ orderMacros.renderTaxes(lineItemTaxes|default({})) }}
+                                            {{- orderMacros.renderTaxes(lineItemTaxes|default({})) -}}
                                         </div>
                                         <div class="order-line-item-draft-update-calculations__discounts" data-html-response="lineItemDiscountsHtml">
-                                            {{ orderMacros.renderDiscounts(lineItemDiscounts|default({})) }}
+                                            {{- orderMacros.renderDiscounts(lineItemDiscounts|default({})) -}}
                                         </div>
                                     </div>
-                                    <div class="order-line-item-draft-update-calculations__actions">
-                                        <button
-                                            type="button"
-                                            class="btn btn-link btn--no-x-offset order-line-item-draft-update-calculations__trigger collapsed"
-                                            data-toggle="collapse"
-                                            data-target="{{ '#line-item-' ~ orderLineItemId ~ '-collapse' }}"
-                                            data-collapsed-text="{{ 'oro.order.orderlineitem.tax_discount_btn_view'|trans }}"
-                                            data-expanded-text="{{ 'oro.order.orderlineitem.tax_discount_btn_hide'|trans }}"
-                                            >
-                                            <span data-text>{{ 'oro.order.orderlineitem.tax_discount_btn_view'|trans }}</span>
-                                        </button>
-                                    </div>
+                                    {% if kitItemLineItemsWidget is defined %}
+                                        {{ taxDiscountTriggerBlock|raw }}
+                                    {% endif %}
                                 </div>
                                 <div class="draft-form__actions grid-col-12">
                                     <div class="draft-form__form-actions widget-actions">

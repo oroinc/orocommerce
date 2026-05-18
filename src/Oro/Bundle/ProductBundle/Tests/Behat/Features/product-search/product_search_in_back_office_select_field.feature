@@ -15,7 +15,7 @@ Feature: Product search in back office select field
     When I fill "Order Form" with:
       | Customer      | Customer1   |
       | Customer User | Amanda Cole |
-    Then I should see the following options for "Product" select in form "Order Edit Add Line Item Form" pre-filled with "<Pre-filled Phrase>":
+    Then I should see the following options for "Product" select in form "Order Line Item Draft Create Form" pre-filled with "<Pre-filled Phrase>":
       | <Expected Option> |
 
   Examples:

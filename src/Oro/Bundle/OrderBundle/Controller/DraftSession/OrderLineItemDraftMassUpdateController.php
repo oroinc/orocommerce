@@ -11,6 +11,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemDraftType;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Component\DraftSession\Util\EntityDraftUtils;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -18,6 +19,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Controller to get update forms for multiple draft order line items.
@@ -42,14 +44,16 @@ final class OrderLineItemDraftMassUpdateController extends AbstractController
         ?Order $order,
         string $orderLineItemIds
     ): Response {
-        $orderDraft = $this->getOrderDraft();
-        $order = $this->syncFromOrderDraft($orderDraft, $order);
+        $this->assertOrderDraftExists($order);
+
+        $order = $this->getOrderDraftManager()->loadFromEntityDraft($order);
+        assert($order instanceof Order);
 
         $orderLineItemIdsArray = array_map('intval', explode(',', $orderLineItemIds));
         $responseData = ['success' => true, 'lineItems' => []];
 
         foreach ($order->getLineItems() as $orderLineItem) {
-            $orderLineItemId = $this->getOrderLineItemOrDraftId($orderLineItem);
+            $orderLineItemId = EntityDraftUtils::getEntityOrDraftId($orderLineItem);
             if (!in_array($orderLineItemId, $orderLineItemIdsArray, true)) {
                 continue;
             }
@@ -78,8 +82,8 @@ final class OrderLineItemDraftMassUpdateController extends AbstractController
 
     private function getViewVars(FormInterface $form, Order $order, OrderLineItem $orderLineItem): array
     {
-        $orderId = (int) $order->getId();
-        $orderLineItemId = $this->getOrderLineItemOrDraftId($orderLineItem);
+        $orderId = EntityDraftUtils::getEntityOrDraftId($order);
+        $orderLineItemId = EntityDraftUtils::getEntityOrDraftId($orderLineItem);
 
         return [
             'form' => $form->createView(),
@@ -103,6 +107,7 @@ final class OrderLineItemDraftMassUpdateController extends AbstractController
     {
         return [
             ...parent::getSubscribedServices(),
+            AuthorizationCheckerInterface::class,
             ManagerRegistry::class,
             OrderDraftManager::class,
             OrderLineItemTaxesAndDiscountsProvider::class,

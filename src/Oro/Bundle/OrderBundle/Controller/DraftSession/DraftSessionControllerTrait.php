@@ -6,7 +6,7 @@ namespace Oro\Bundle\OrderBundle\Controller\DraftSession;
 
 use Oro\Bundle\OrderBundle\DraftSession\Manager\OrderDraftManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Provides helper methods for controllers that work with draft sessions.
@@ -16,76 +16,58 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
  */
 trait DraftSessionControllerTrait
 {
-    /**
-     * Returns the order draft for the current request.
-     */
-    private function getOrderDraft(): Order
+    private function getOrderDraftManager(): OrderDraftManager
     {
-        /** @var OrderDraftManager $orderDraftManager */
         $orderDraftManager = $this->container->get(OrderDraftManager::class);
-        $orderDraft = $orderDraftManager->getOrderDraft();
+        assert($orderDraftManager instanceof OrderDraftManager);
 
-        if ($orderDraft === null) {
+        return $orderDraftManager;
+    }
+
+    /**
+     * Asserts that the given order has a draft and the current user has access to it.
+     */
+    private function assertOrderDraftExists(?Order $order): void
+    {
+        if ($order === null) {
             throw $this->createNotFoundException();
         }
 
-        return $orderDraft;
+        $orderDraft = $this->getOrderDraftManager()->findEntityDraft($order);
+        if ($orderDraft === null) {
+            throw $this->createNotFoundException(
+                'Draft entity of the order #' . $order->getId() . ' is not found.'
+            );
+        }
+
+        /** @var AuthorizationCheckerInterface $authorizationChecker */
+        $authorizationChecker = $this->container->get(AuthorizationCheckerInterface::class);
+
+        if (!$authorizationChecker->isGranted('oro_order_update', $orderDraft)) {
+            throw $this->createAccessDeniedException(
+                'Access denied to the draft entity of order #' . $order->getId()
+            );
+        }
     }
 
     /**
-     * Synchronizes the given order with the order draft.
-     * If the given order is null, a new order will be created and synchronized with the draft.
+     * Asserts that the current user has access to the draft of the given order if it exists.
      */
-    private function syncFromOrderDraft(Order $orderDraft, ?Order $order): Order
+    private function assertOrderDraftIsGranted(Order $order): void
     {
-        $order ??= new Order();
-
-        /** @var OrderDraftManager $orderDraftManager */
-        $orderDraftManager = $this->container->get(OrderDraftManager::class);
-        $orderDraftManager->synchronizeEntityFromDraft($orderDraft, $order);
-
-        return $order;
-    }
-
-    private function findOrCreateOrderLineItemDraft(Order $orderDraft, OrderLineItem $orderLineItem): OrderLineItem
-    {
-        /** @var OrderDraftManager $orderDraftManager */
-        $orderDraftManager = $this->container->get(OrderDraftManager::class);
-        $orderLineItemDraft = $orderDraftManager->findOrderLineItemDraft($orderLineItem);
-
-        if ($orderLineItemDraft === null) {
-            $orderLineItemDraft = $orderDraftManager->createOrderLineItemDraft($orderDraft, $orderLineItem);
+        $orderDraft = $this->getOrderDraftManager()->findEntityDraft($order);
+        if ($orderDraft === null) {
+            // Order draft does not exist.
+            return;
         }
 
-        return $orderLineItemDraft;
-    }
+        /** @var AuthorizationCheckerInterface $authorizationChecker */
+        $authorizationChecker = $this->container->get(AuthorizationCheckerInterface::class);
 
-    /**
-     * Returns the order line item ID if the given order line item is persisted, or its draft ID if it's a new entity.
-     */
-    private function getOrderLineItemOrDraftId(OrderLineItem $orderLineItem): int
-    {
-        /** @var OrderDraftManager $orderDraftManager */
-        $orderDraftManager = $this->container->get(OrderDraftManager::class);
-
-        return $orderDraftManager->getOrderLineItemOrDraftId($orderLineItem);
-    }
-
-    /**
-     * Returns the source order line item for the given order line item draft.
-     * If the given order line item is not a draft, returns it as is.
-     */
-    private function getOrderLineItemDraftSource(OrderLineItem $orderLineItem): OrderLineItem
-    {
-        if (!$orderLineItem->getDraftSessionUuid()) {
-            // Not an order line item draft, return as is.
-            return $orderLineItem;
+        if (!$authorizationChecker->isGranted('oro_order_update', $orderDraft)) {
+            throw $this->createAccessDeniedException(
+                'Access denied to the draft entity of order #' . $order->getId()
+            );
         }
-
-        if ($orderLineItem->getDraftSource() === null) {
-            throw $this->createNotFoundException('A draft source for the order line item draft is not found.');
-        }
-
-        return $orderLineItem->getDraftSource();
     }
 }

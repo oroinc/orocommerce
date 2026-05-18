@@ -33,9 +33,13 @@ final class OrderDraftFactoryTest extends TestCase
         self::assertTrue($this->factory->supports(Order::class));
     }
 
-    public function testSupportsReturnsFalse(): void
+    public function testSupportsReturnsFalseForOrderLineItemClass(): void
     {
         self::assertFalse($this->factory->supports(OrderLineItem::class));
+    }
+
+    public function testSupportsReturnsFalseForOtherClass(): void
+    {
         self::assertFalse($this->factory->supports(\stdClass::class));
     }
 
@@ -56,6 +60,8 @@ final class OrderDraftFactoryTest extends TestCase
         $orderDraft = $this->factory->createDraft($order, 'uuid-123');
 
         self::assertNotSame($order, $orderDraft);
+        self::assertSame($order, $orderDraft->getDraftSource());
+        self::assertSame('uuid-123', $orderDraft->getDraftSessionUuid());
     }
 
     public function testCreateDraftSetsDraftSessionUuid(): void
@@ -86,9 +92,19 @@ final class OrderDraftFactoryTest extends TestCase
         self::assertSame($order, $orderDraft->getDraftSource());
     }
 
-    public function testCreateDraftSetsDraftSourceToNullWhenOrderHasNoId(): void
+    public function testCreateDraftSetsDraftSourceToOrderWhenOrderHasNoId(): void
     {
         $order = new Order();
+
+        $lineItem = new OrderLineItem();
+        $lineItemDraft = new OrderLineItem();
+        $order->addLineItem($lineItem);
+
+        $this->entityDraftFactory
+            ->expects(self::once())
+            ->method('createDraft')
+            ->with($lineItem, 'uuid-abc')
+            ->willReturn($lineItemDraft);
 
         $this->entityDraftSynchronizer
             ->expects(self::once())
@@ -98,7 +114,7 @@ final class OrderDraftFactoryTest extends TestCase
 
         $orderDraft = $this->factory->createDraft($order, 'uuid-abc');
 
-        self::assertNull($orderDraft->getDraftSource());
+        self::assertSame($order, $orderDraft->getDraftSource());
     }
 
     public function testCreateDraftCallsSynchronizeToDraft(): void
@@ -133,6 +149,10 @@ final class OrderDraftFactoryTest extends TestCase
         $this->entityDraftFactory
             ->expects(self::exactly(2))
             ->method('createDraft')
+            ->withConsecutive(
+                [$lineItem1, $draftSessionUuid],
+                [$lineItem2, $draftSessionUuid]
+            )
             ->willReturnOnConsecutiveCalls($lineItemDraft1, $lineItemDraft2);
 
         $this->entityDraftSynchronizer
@@ -144,6 +164,7 @@ final class OrderDraftFactoryTest extends TestCase
         self::assertCount(2, $orderDraft->getLineItems());
         self::assertTrue($orderDraft->getLineItems()->contains($lineItemDraft1));
         self::assertTrue($orderDraft->getLineItems()->contains($lineItemDraft2));
+        self::assertSame($order, $orderDraft->getDraftSource());
     }
 
     public function testCreateDraftDoesNotSynchronizeLineItemsForExistingOrder(): void

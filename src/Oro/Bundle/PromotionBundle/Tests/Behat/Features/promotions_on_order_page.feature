@@ -71,7 +71,7 @@ Feature: Promotions on Order page
   Scenario: Change product's quantity and check that discount amount changed accordingly, instantly and after save
     Given I operate as the Admin
     When I click "Line Items"
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | Quantity | 3 |
     Then I see next line item discounts for backoffice order edit for "SKU2":
       |           | Incl Tax | Excl Tax | Discount |
@@ -79,8 +79,8 @@ Feature: Promotions on Order page
     And I see next line item discounts for backoffice order edit for "SKU1":
       |           | Incl Tax | Excl Tax | Discount |
       | Row Total | $10.00   | $10.00   | $0.00    |
-    And I click on the second "Order Edit Save Changes"
-    And I click on the first "Order Edit Save Changes"
+    And I click on the second "Order Line Item Draft Edit Form Save Button"
+    And I click on the first "Order Line Item Draft Edit Form Save Button"
     And I should see next rows in "Promotions" table
       | Promotion                    | Discount |
       | line Item Discount Promotion | -$3.00   |

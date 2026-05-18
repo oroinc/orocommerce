@@ -11,11 +11,13 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemDraftType;
 use Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Component\DraftSession\Util\EntityDraftUtils;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Controller to get taxes and discounts breakdown for given order line item draft.
@@ -42,9 +44,13 @@ final class OrderLineItemDraftCalculateTaxesAndDiscountsController extends Abstr
         #[MapEntity(expr: 'repository.findOrderLineItemWithRelations(orderLineItemId)')]
         OrderLineItem $orderLineItem
     ): JsonResponse {
-        $orderDraft = $this->getOrderDraft();
-        $order = $this->syncFromOrderDraft($orderDraft, $order);
-        $orderLineItem = $this->getOrderLineItemDraftSource($orderLineItem);
+        $this->assertOrderDraftExists($order);
+
+        $order = $this->getOrderDraftManager()->loadFromEntityDraft($order);
+        assert($order instanceof Order);
+
+        $orderLineItem = EntityDraftUtils::getEntityFromDraft($orderLineItem);
+        assert($orderLineItem instanceof OrderLineItem);
 
         $form = $this->createForm(OrderLineItemDraftType::class, $orderLineItem);
         $form->handleRequest($request);
@@ -80,6 +86,7 @@ final class OrderLineItemDraftCalculateTaxesAndDiscountsController extends Abstr
     {
         return [
             ...parent::getSubscribedServices(),
+            AuthorizationCheckerInterface::class,
             OrderDraftManager::class,
             OrderLineItemTaxesAndDiscountsProvider::class,
             AppliedPromotionManager::class
