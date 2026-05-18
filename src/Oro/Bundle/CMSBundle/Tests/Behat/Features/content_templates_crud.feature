@@ -132,7 +132,7 @@ Feature: Content Templates CRUD
     And I should see picture "ContentTemplateWithTags (Copy) Preview Small Picture" element
     And images "ContentTemplateWithTags Preview Small Image" and "ContentTemplateWithTags (Copy) Preview Small Image" have different filenames
 
-    When I click view "ContentTemplateWithTags" in grid
+    When I click view "ContentTemplateWithTags (Copy)" in grid
     Then  I should see Content Template with:
       | Name    | ContentTemplateWithTags (Copy) |
       | Enabled | No                             |
