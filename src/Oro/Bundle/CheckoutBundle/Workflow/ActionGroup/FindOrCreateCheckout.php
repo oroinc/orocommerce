@@ -77,7 +77,7 @@ class FindOrCreateCheckout implements FindOrCreateCheckoutInterface
             $checkout = $this->checkoutBySourceCriteriaManipulator->createCheckout(
                 $currentWebsite,
                 $sourceCriteria,
-                $this->isVisitor() ? null : $currentUser,
+                $this->isVisitor() ? $this->getVisitorCustomerUser() : $currentUser,
                 $currentCurrency,
                 $checkoutData
             );
@@ -105,6 +105,21 @@ class FindOrCreateCheckout implements FindOrCreateCheckoutInterface
     private function isVisitor(): bool
     {
         return $this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken;
+    }
+
+    private function getVisitorCustomerUser(): ?UserInterface
+    {
+        $token = $this->tokenStorage->getToken();
+        if (!$token instanceof AnonymousCustomerUserToken) {
+            return null;
+        }
+
+        $customerUser = $token->getVisitor()?->getCustomerUser();
+        if ($customerUser === null || !$customerUser->isGuest()) {
+            return null;
+        }
+
+        return $customerUser;
     }
 
     private function resetCheckoutWorkflowOnChanges(
