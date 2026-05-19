@@ -103,6 +103,21 @@ class FindOrCreateCheckout implements FindOrCreateCheckoutInterface
         return $token instanceof AnonymousCustomerUserToken;
     }
 
+    private function getVisitorCustomerUser(): ?UserInterface
+    {
+        $token = $this->tokenStorage->getToken();
+        if (!$token instanceof AnonymousCustomerUserToken) {
+            return null;
+        }
+
+        $customerUser = $token->getVisitor()?->getCustomerUser();
+        if ($customerUser === null || !$customerUser->isGuest()) {
+            return null;
+        }
+
+        return $customerUser;
+    }
+
     private function createCheckout(
         array $sourceCriteria,
         ?Website $currentWebsite,
@@ -121,7 +136,12 @@ class FindOrCreateCheckout implements FindOrCreateCheckoutInterface
         $checkout->setWebsite($currentWebsite);
         $checkout->setCreatedAt($now);
         $checkout->setUpdatedAt($now);
-        if (!$this->isVisitor()) {
+        if ($this->isVisitor()) {
+            $visitorCustomerUser = $this->getVisitorCustomerUser();
+            if ($visitorCustomerUser !== null) {
+                $checkout->setCustomerUser($visitorCustomerUser);
+            }
+        } else {
             $checkout->setCustomerUser($currentUser);
         }
         $this->actualizeCheckout->execute(
