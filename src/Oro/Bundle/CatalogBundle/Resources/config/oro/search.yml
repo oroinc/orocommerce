@@ -9,6 +9,10 @@ search:
         acl_permission:                 'EDIT'
         fields:
             -
+                name: id
+                target_type: integer
+                target_fields: [ id ]
+            -
                 name:                   defaultTitle
                 target_type:            text
                 target_fields:          [defaultTitle]
