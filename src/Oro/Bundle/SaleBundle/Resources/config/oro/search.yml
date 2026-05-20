@@ -10,7 +10,7 @@ search:
             -
                 name:                   id
                 target_type:            integer
-                target_fields:          [quoteId]
+                target_fields:          [quoteId, id]
             -
                 name:                   expired
                 target_type:            integer
@@ -32,9 +32,17 @@ search:
                 target_type:            text
                 target_fields:          [email]
             -
+                name:                   projectName
+                target_type:            text
+                target_fields:          [projectName]
+            -
                 name:                   createdAt
                 target_type:            datetime
                 target_fields:          [createdAt]
+            -
+                name: updatedAt
+                target_type: datetime
+                target_fields: [updatedAt]
             -
                 name: quoteProducts
                 relation_type:          one-to-many
@@ -169,3 +177,7 @@ search:
                         name:           name
                         target_type:    text
                         target_fields:  [internalStatus]
+                    -
+                        name: internal_id
+                        target_type: text
+                        target_fields: [ internalStatusCode ]

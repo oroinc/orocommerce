@@ -267,6 +267,7 @@ class ApplicationEntitiesOrmIndexerTest extends AbstractEntitiesOrmIndexerTest
             ->setShipUntil(new \DateTime('now', new \DateTimeZone('UTC')));
         $request->setCustomerStatus($requestCustomerStatus);
         $request->setInternalStatus($requestInternalStatus);
+        $request->setProjectName('Test Project');
         $this->persistTestEntity($request);
 
         $quoteAddress = (new QuoteAddress())
@@ -296,6 +297,8 @@ class ApplicationEntitiesOrmIndexerTest extends AbstractEntitiesOrmIndexerTest
             ->setRequest($request);
         $quote->setCustomerStatus($quoteCustomerStatus);
         $quote->setInternalStatus($quoteInternalStatus);
+
+        $quote->setProjectName('Test Project');
 
         $this->persistTestEntity($quote);
 
