@@ -292,7 +292,7 @@ class ProductImageListenerTest extends WebTestCase
 
         self::assertMessagesCount(ResizeProductImageTopic::getName(), 2);
         self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 2);
-        self::assertMessagesCount(IndexEntitiesByIdTopic::getName(), 2);
+        self::assertMessagesCount(IndexEntitiesByIdTopic::getName(), 4);
         self::assertMessagesCount(GenerateDirectUrlForEntitiesTopic::getName(), 2);
         self::assertMessagesCount(AuditChangedEntitiesTopic::getName(), 4);
 

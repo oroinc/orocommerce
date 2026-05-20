@@ -24,6 +24,10 @@ search:
                 target_type:            datetime
                 target_fields:          [createdAt]
             -
+                name:                   updatedAt
+                target_type:            datetime
+                target_fields:          [updatedAt]
+            -
                 name:                   subtotalValue
                 target_type:            decimal
                 target_fields:          [subtotal]
@@ -141,3 +145,7 @@ search:
                         name:           name
                         target_type:    text
                         target_fields:  [status]
+                    -
+                        name: internal_id
+                        target_type: text
+                        target_fields: [ statusCode ]
