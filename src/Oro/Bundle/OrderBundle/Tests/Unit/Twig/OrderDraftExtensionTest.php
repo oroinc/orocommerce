@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\OrderBundle\DraftSession\Provider\OrderDraftSessionUuidProvider;
+use Oro\Bundle\OrderBundle\DraftSession\Manager\OrderDraftManager;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Twig\OrderDraftExtension;
+use Oro\Component\DraftSession\Provider\DraftSessionUuidProvider;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -15,15 +18,21 @@ final class OrderDraftExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    private OrderDraftSessionUuidProvider&MockObject $provider;
+    private DraftSessionUuidProvider&MockObject $provider;
+
+    private OrderDraftManager&MockObject $orderDraftManager;
+
     private OrderDraftExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
-        $this->provider = $this->createMock(OrderDraftSessionUuidProvider::class);
+        $this->provider = $this->createMock(DraftSessionUuidProvider::class);
+        $this->orderDraftManager = $this->createMock(OrderDraftManager::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_order.draft_session.provider.order_draft_session_uuid', $this->provider)
+            ->add('oro_order.draft_session.provider.draft_session_uuid', $this->provider)
+            ->add('oro_order.draft_session.manager.order_draft', $this->orderDraftManager)
             ->getContainer($this);
 
         $this->extension = new OrderDraftExtension($container);
@@ -33,13 +42,17 @@ final class OrderDraftExtensionTest extends TestCase
     {
         $functions = $this->extension->getFunctions();
 
-        self::assertCount(1, $functions);
+        self::assertCount(3, $functions);
         self::assertContainsOnly(TwigFunction::class, $functions);
 
-        $function = $functions[0];
-        self::assertInstanceOf(TwigFunction::class, $function);
-        self::assertEquals('oro_order_draft_session_uuid', $function->getName());
-        self::assertEquals([$this->extension, 'getDraftSessionUuid'], $function->getCallable());
+        self::assertSame('oro_order_draft_session_uuid', $functions[0]->getName());
+        self::assertSame([$this->extension, 'getDraftSessionUuid'], $functions[0]->getCallable());
+
+        self::assertSame('oro_order_get_order_or_draft_id', $functions[1]->getName());
+        self::assertSame([$this->extension, 'getOrderOrDraftId'], $functions[1]->getCallable());
+
+        self::assertSame('oro_order_get_order_draft_id', $functions[2]->getName());
+        self::assertSame([$this->extension, 'getOrderDraftId'], $functions[2]->getCallable());
     }
 
     public function testGetDraftSessionUuidReturnsUuid(): void
@@ -52,7 +65,7 @@ final class OrderDraftExtensionTest extends TestCase
 
         $result = self::callTwigFunction($this->extension, 'oro_order_draft_session_uuid', []);
 
-        self::assertEquals($expectedUuid, $result);
+        self::assertSame($expectedUuid, $result);
     }
 
     public function testGetDraftSessionUuidReturnsNull(): void
@@ -66,15 +79,84 @@ final class OrderDraftExtensionTest extends TestCase
         self::assertNull($result);
     }
 
+    public function testGetOrderOrDraftIdReturnsOrderIdWhenDraftSessionUuidIsNull(): void
+    {
+        $order = new Order();
+        ReflectionUtil::setId($order, 101);
+
+        $this->provider
+            ->expects(self::once())
+            ->method('getDraftSessionUuid')
+            ->willReturn(null);
+
+        self::assertSame(101, self::callTwigFunction($this->extension, 'oro_order_get_order_or_draft_id', [$order]));
+    }
+
+    public function testGetOrderOrDraftIdReturnsDraftIdWhenDraftSessionUuidIsPresent(): void
+    {
+        $order = new Order();
+        $orderDraft = new Order();
+        ReflectionUtil::setId($orderDraft, 404);
+        $order->addDraft($orderDraft);
+
+        $this->provider
+            ->expects(self::once())
+            ->method('getDraftSessionUuid')
+            ->willReturn('session-uuid');
+
+        self::assertSame(404, self::callTwigFunction($this->extension, 'oro_order_get_order_or_draft_id', [$order]));
+    }
+
+    public function testGetOrderDraftIdReturnsNullWhenDraftSessionUuidIsNull(): void
+    {
+        $order = new Order();
+        ReflectionUtil::setId($order, 202);
+
+        $this->provider
+            ->expects(self::once())
+            ->method('getDraftSessionUuid')
+            ->willReturn(null);
+
+        $this->orderDraftManager
+            ->expects(self::never())
+            ->method('findEntityDraft');
+
+        self::assertNull(self::callTwigFunction($this->extension, 'oro_order_get_order_draft_id', [$order]));
+    }
+
+    public function testGetOrderDraftIdReturnsDraftIdWhenDraftSessionUuidIsPresent(): void
+    {
+        $order = new Order();
+        ReflectionUtil::setId($order, 303);
+
+        $orderDraft = new Order();
+        ReflectionUtil::setId($orderDraft, 505);
+
+        $this->provider
+            ->expects(self::once())
+            ->method('getDraftSessionUuid')
+            ->willReturn('session-uuid');
+
+        $this->orderDraftManager
+            ->expects(self::once())
+            ->method('findEntityDraft')
+            ->with($order)
+            ->willReturn($orderDraft);
+
+        self::assertSame(505, self::callTwigFunction($this->extension, 'oro_order_get_order_draft_id', [$order]));
+    }
+
     public function testGetSubscribedServices(): void
     {
         $services = OrderDraftExtension::getSubscribedServices();
 
         self::assertIsArray($services);
-        self::assertArrayHasKey('oro_order.draft_session.provider.order_draft_session_uuid', $services);
-        self::assertEquals(
-            OrderDraftSessionUuidProvider::class,
-            $services['oro_order.draft_session.provider.order_draft_session_uuid']
+        self::assertSame(
+            [
+                'oro_order.draft_session.provider.draft_session_uuid' => DraftSessionUuidProvider::class,
+                'oro_order.draft_session.manager.order_draft' => OrderDraftManager::class,
+            ],
+            $services
         );
     }
 }

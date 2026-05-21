@@ -6,6 +6,7 @@ import routing from 'routing';
 import pageStateChecker from 'oronavigation/js/app/services/page-state-checker';
 import BasePlugin from 'oroui/js/app/plugins/base/plugin';
 import Modal from 'oroui/js/modal';
+import FormStateTrackerView from 'oroform/js/app/views/form-state-tracker-view';
 
 const DraftOrderDatagridPlugin = BasePlugin.extend({
     /**
@@ -19,8 +20,21 @@ const DraftOrderDatagridPlugin = BasePlugin.extend({
         cancelText: __('Cancel')
     },
 
+    /**
+     * Selector of order form inputs whose change should invalidate line-item prices.
+     */
+    listenFieldSelector: '[name*="[website]"]',
+
+    /**
+     * Tracks whether a price-affecting field (customer, currency, website) has
+     * changed since the last entry-point:order:load:after event.
+     * @type {boolean}
+     */
+    needsGridRefresh: false,
+
     constructor: function DraftOrderDatagridPlugin(...args) {
         this.hasChanges = this.hasChanges.bind(this);
+        this.onPriceAffectingFieldChange = this.onPriceAffectingFieldChange.bind(this);
         DraftOrderDatagridPlugin.__super__.constructor.apply(this, args);
     },
 
@@ -41,10 +55,58 @@ const DraftOrderDatagridPlugin = BasePlugin.extend({
             'page:beforeRefresh': this.beforeRefresh,
             'before:submitPage': this.beforeRefresh,
             'datagrid:hightlightRow': this.beforeNavigation,
-            [`datagrid:doRefresh:orderDraftGrid:${this.main.collection.inputName}`]: this._onDatagridRefresh
+            [`datagrid:doRefresh:orderDraftGrid:${this.main.collection.inputName}`]: this._onDatagridRefresh,
+            'customer-customer-user:change': this.onCustomerChange,
+            'pricing:currency:changed': this.onPriceAffectingFieldChange,
+            'entry-point:order:load:after': this.onEntryPointLoadAfter
         });
 
+        // Website field lives outside the grid and is not emitted through mediator,
+        // so listen for native change events via delegated handler on document.
+        $(document).on(
+            `change${this.eventNamespace()}`,
+            this.listenFieldSelector,
+            this.onPriceAffectingFieldChange
+        );
+
         DraftOrderDatagridPlugin.__super__.enable.call(this);
+    },
+
+    disable() {
+        $(document).off(this.eventNamespace());
+        this.needsGridRefresh = false;
+
+        DraftOrderDatagridPlugin.__super__.disable.call(this);
+    },
+
+    onCustomerChange({isCustomerChanged} = {}) {
+        if (isCustomerChanged) {
+            this.onPriceAffectingFieldChange();
+        }
+    },
+
+    onPriceAffectingFieldChange() {
+        if (!this.main || this.main.disposed || this.main.collection.length === 0) {
+            return;
+        }
+
+        mediator.execute('showFlashMessage', 'warning', __('oro.order.prices_may_have_changed'), {
+            namespace: 'order-prices-may-change'
+        });
+
+        this.needsGridRefresh = true;
+    },
+
+    onEntryPointLoadAfter() {
+        if (!this.needsGridRefresh) {
+            return;
+        }
+
+        this.needsGridRefresh = false;
+        // Refresh triggered by price-affecting field changes (customer/website/currency):
+        // keep rows that were being edited open and skip re-rendering them so the user's
+        // in-progress edits are preserved.
+        this._onDatagridRefresh({closeEditMode: false});
     },
 
     fullRefreshCollection(updatedIds) {
@@ -58,7 +120,17 @@ const DraftOrderDatagridPlugin = BasePlugin.extend({
         mediator.trigger('entry-point:order:trigger');
     },
 
-    collectionSync(updatedIds) {
+    /**
+     * Syncs the grid collection with the server without re-rendering the whole grid.
+     *
+     * @param {Array} [updatedIds] Ids of rows that were just updated (for highlighting).
+     * @param {Object} [options]
+     * @param {boolean} [options.closeEditMode=true] When true (default), forces
+     *     `editMode: false` on updated models and re-renders their rows. Pass false to
+     *     keep rows that were being edited open and avoid dropping their edit state
+     *     (e.g. when the sync is triggered by customer/website/currency change).
+     */
+    collectionSync(updatedIds, {closeEditMode = true} = {}) {
         const collection = this.main.collection;
 
         const idAttr = collection.model.prototype.idAttribute || 'id';
@@ -105,10 +177,8 @@ const DraftOrderDatagridPlugin = BasePlugin.extend({
 
                     if (existingModel) {
                         if (this._isModelChanged(existingModel, newData)) {
-                            existingModel.set(
-                                {...newData, editMode: false},
-                                {silent: true}
-                            );
+                            const attrs = closeEditMode ? {...newData, editMode: false} : newData;
+                            existingModel.set(attrs, {silent: true});
                             updatedModels.push(existingModel);
                         }
                     } else {
@@ -124,8 +194,14 @@ const DraftOrderDatagridPlugin = BasePlugin.extend({
 
                 collection.trigger('sort', collection);
 
-                // Re-render only the rows whose data actually changed
+                // Re-render only the rows whose data actually changed. Rows that are
+                // currently in edit mode are skipped so we don't tear down the inline
+                // editor and lose the user's in-progress input.
                 updatedModels.forEach(model => {
+                    if (model.get('editMode') === true) {
+                        return;
+                    }
+
                     const rowView = this.main.body.rows
                         .find(row => row.model === model);
 
@@ -163,16 +239,20 @@ const DraftOrderDatagridPlugin = BasePlugin.extend({
         }
     },
 
-    _onDatagridRefresh({updatedIds} = {}) {
+    _onDatagridRefresh({updatedIds, closeEditMode = true} = {}) {
+        FormStateTrackerView.ignoreChangesInGroup('draftOrder');
+
         const collection = this.main.collection;
 
         if (collection.length === 0) {
-            return this.fullRefreshCollection(updatedIds);
+            this.fullRefreshCollection(updatedIds);
+        } else {
+            this.collectionSync(updatedIds, {closeEditMode});
         }
 
-        this.collectionSync(updatedIds);
-
         mediator.trigger('entry-point:order:trigger');
+
+        FormStateTrackerView.resetIgnoredChangesInGroup('draftOrder');
     },
 
     /**
@@ -188,7 +268,7 @@ const DraftOrderDatagridPlugin = BasePlugin.extend({
         return Object.keys(newData).some(key => !_.isEqual(attrs[key], newData[key]));
     },
 
-    confirmNavigation: function() {
+    confirmNavigation() {
         const confirmModal = new Modal(this.modalOptions);
         const deferredConfirmation = $.Deferred();
 
@@ -210,7 +290,7 @@ const DraftOrderDatagridPlugin = BasePlugin.extend({
     },
 
     hasChanges() {
-        return this.main.collection.some(model => model.get('fieldChanged') === true);
+        return FormStateTrackerView.hasChangesInGroup('draftOrder');
     },
 
     /**

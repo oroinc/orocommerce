@@ -282,8 +282,8 @@ final class OrderAddressAwareOrderDraftSynchronizerTest extends TestCase
 
         $sourceAddress = new OrderAddress();
         $sourceAddress->setFirstName('Anna');
-        $sourceAddress->setLastName('Müller');
-        $sourceAddress->setStreet('Hauptstraße 1');
+        $sourceAddress->setLastName('Mueller');
+        $sourceAddress->setStreet('Hauptstrasse 1');
         $sourceAddress->setCity('Munich');
         $sourceAddress->setCountry($country);
         $sourceAddress->setRegion($region);
@@ -299,8 +299,8 @@ final class OrderAddressAwareOrderDraftSynchronizerTest extends TestCase
         $targetAddress = $draft->getBillingAddress();
         self::assertNotNull($targetAddress);
         self::assertEquals('Anna', $targetAddress->getFirstName());
-        self::assertEquals('Müller', $targetAddress->getLastName());
-        self::assertEquals('Hauptstraße 1', $targetAddress->getStreet());
+        self::assertEquals('Mueller', $targetAddress->getLastName());
+        self::assertEquals('Hauptstrasse 1', $targetAddress->getStreet());
         self::assertEquals('Munich', $targetAddress->getCity());
         self::assertSame($country, $targetAddress->getCountry());
         self::assertSame($region, $targetAddress->getRegion());
@@ -368,7 +368,7 @@ final class OrderAddressAwareOrderDraftSynchronizerTest extends TestCase
     public function testSynchronizeToDraftSkipsNullSourceAddresses(): void
     {
         $entity = new OrderStub();
-        // No addresses set
+        // No addresses set.
 
         $draft = new OrderStub();
 
@@ -376,5 +376,57 @@ final class OrderAddressAwareOrderDraftSynchronizerTest extends TestCase
 
         self::assertNull($draft->getBillingAddress());
         self::assertNull($draft->getShippingAddress());
+    }
+
+    public function testSynchronizeToDraftSetsTargetDraftSessionUuidOnNewBillingAddress(): void
+    {
+        $this->doctrine->expects(self::any())
+            ->method('getManagerForClass')
+            ->willReturn($this->entityManager);
+
+        $this->entityManager->expects(self::any())
+            ->method('contains')
+            ->willReturn(true);
+
+        $sourceAddress = new OrderAddress();
+        $sourceAddress->setFirstName('Jane');
+
+        $entity = new OrderStub();
+        $entity->setBillingAddress($sourceAddress);
+
+        $draft = new OrderStub();
+        $draft->setDraftSessionUuid('draft-session-uuid');
+
+        $this->synchronizer->synchronizeToDraft($entity, $draft);
+
+        $newAddress = $draft->getBillingAddress();
+        self::assertNotNull($newAddress);
+        self::assertSame('draft-session-uuid', $newAddress->getDraftSessionUuid());
+    }
+
+    public function testSynchronizeToDraftSetsTargetDraftSessionUuidOnNewShippingAddress(): void
+    {
+        $this->doctrine->expects(self::any())
+            ->method('getManagerForClass')
+            ->willReturn($this->entityManager);
+
+        $this->entityManager->expects(self::any())
+            ->method('contains')
+            ->willReturn(true);
+
+        $sourceAddress = new OrderAddress();
+        $sourceAddress->setFirstName('Jane');
+
+        $entity = new OrderStub();
+        $entity->setShippingAddress($sourceAddress);
+
+        $draft = new OrderStub();
+        $draft->setDraftSessionUuid('draft-session-uuid');
+
+        $this->synchronizer->synchronizeToDraft($entity, $draft);
+
+        $newAddress = $draft->getShippingAddress();
+        self::assertNotNull($newAddress);
+        self::assertSame('draft-session-uuid', $newAddress->getDraftSessionUuid());
     }
 }

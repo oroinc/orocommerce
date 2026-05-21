@@ -43,7 +43,7 @@ Feature: Order Country and region selectors should contain translated values
       | Shipping Address First name   | someFirstName       |
       | Shipping Address Last name    | someLastName        |
       | Shipping Address Organization | someOrganization    |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | AA1 |
       | Quantity | 1   |
       | Price    | 10  |

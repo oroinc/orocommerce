@@ -37,21 +37,29 @@ class OrderProductPriceProvider
      */
     public function getProductPrices(Order $order): array
     {
-        $orderLineItems = $order->getLineItems();
-        $products = $this->getProductsFromLineItems($orderLineItems);
+        return $this->getProductPricesForLineItems($order, $order->getLineItems());
+    }
+
+    /**
+     * @param Order $order
+     * @param iterable<OrderLineItem> $lineItems
+     *
+     * @return array<int,array<ProductPriceInterface>> Array of arrays of {@see ProductPriceInterface} objects,
+     *   keyed by a line item product id, including related product kit item products.
+     */
+    public function getProductPricesForLineItems(Order $order, iterable $lineItems): array
+    {
+        $products = $this->getProductsFromLineItems($lineItems);
         if (!$products) {
             return [];
         }
 
         /** @var array<int,array<ProductPriceInterface>> $productPricesByProduct */
-        $productPricesByProduct = $this->productPriceProvider
-            ->getPricesByScopeCriteriaAndProducts(
-                $this->priceScopeCriteriaFactory->createByContext($order),
-                $products,
-                [$order->getCurrency()]
-            );
-
-        return $productPricesByProduct;
+        return $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
+            $this->priceScopeCriteriaFactory->createByContext($order),
+            $products,
+            [$order->getCurrency()]
+        );
     }
 
     /**

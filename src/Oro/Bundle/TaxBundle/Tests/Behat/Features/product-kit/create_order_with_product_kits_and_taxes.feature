@@ -23,11 +23,11 @@ Feature: Create Order with product kits and taxes
     When I fill "Order Form" with:
       | Customer      | Customer1   |
       | Customer User | Amanda Cole |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product | product-kit-01 |
     And click "Add Product"
     And I click "Line Items"
-    When I click on the first "Edit Line Item Button"
+    When I click "edit" on first row in grid
     And I click "View taxes & discounts"
     Then I see the next line item taxes for backoffice order edit for "product-kit-01":
       |            | Incl. Tax | Excl. Tax | Tax Amount |
@@ -51,10 +51,10 @@ Feature: Create Order with product kits and taxes
     And I should see next rows in "Backend Order Taxes Results Table" table
       | Tax               | Rate | Taxable Amount | Tax Amount |
       | FLORIDA_SALES_TAX | 10%  | $123.46        | $12.35     |
-    And the "Price" field should be readonly in form "Order Form"
+    And the "Price" field should be readonly in form "Order Line Item Draft Edit Form"
 
   Scenario: Change product kit line item quantity
-    When I fill "Order Form" with:
+    When I fill "Order Line Item Draft Edit Form" with:
       | Quantity | 2 |
     Then I see the next line item taxes for backoffice order edit for "product-kit-01":
       |            | Incl. Tax | Excl. Tax | Tax Amount |
@@ -66,8 +66,8 @@ Feature: Create Order with product kits and taxes
     And I see next line item discounts for backoffice order edit for "product-kit-01":
       |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
       | Row Total | $249.132              | $224.442              | $24.938      |
-    And the "Price" field should be readonly in form "Order Form"
-    And I click on the first "Order Edit Save Changes"
+    And the "Price" field should be readonly in form "Order Line Item Draft Edit Form"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     And I see next subtotals for "Backend Order":
       | Subtotal | $249.38 |
       | Discount | -$24.94 |
@@ -83,8 +83,8 @@ Feature: Create Order with product kits and taxes
 
   Scenario: Add product kit item line item product
     Given I click "Line Items"
-    When I click on the first "Edit Line Item Button"
-    And I fill "Order Form" with:
+    When I click "edit" on first row in grid
+    And I fill "Order Line Item Draft Edit Form" with:
       | ProductKitItem1Product | simple-product-03 - Simple Product 03 |
     And I click "View taxes & discounts"
     Then I see the next line item taxes for backoffice order edit for "product-kit-01":
@@ -97,8 +97,8 @@ Feature: Create Order with product kits and taxes
     And I see next line item discounts for backoffice order edit for "product-kit-01":
       |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
       | Row Total | $256.532              | $231.102              | $25.678      |
-    And the "Price" field should be readonly in form "Order Form"
-    And I click on the first "Order Edit Save Changes"
+    And the "Price" field should be readonly in form "Order Line Item Draft Edit Form"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     And I see next subtotals for "Backend Order":
       | Subtotal | $256.78 |
       | Discount | -$25.68 |
@@ -114,8 +114,8 @@ Feature: Create Order with product kits and taxes
 
   Scenario: Change product kit item line item product
     Given I click "Line Items"
-    When I click on the first "Edit Line Item Button"
-    And I fill "Order Form" with:
+    When I click "edit" on first row in grid
+    And I fill "Order Line Item Draft Edit Form" with:
       | ProductKitItem2Product | simple-product-02 - Simple Product 02 |
     And I click "View taxes & discounts"
     Then I see the next line item taxes for backoffice order edit for "product-kit-01":
@@ -128,8 +128,8 @@ Feature: Create Order with product kits and taxes
     And I see next line item discounts for backoffice order edit for "product-kit-01":
       |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
       | Row Total | $259.264              | $233.334              | $25.926      |
-    And the "Price" field should be readonly in form "Order Form"
-    And I click on the first "Order Edit Save Changes"
+    And the "Price" field should be readonly in form "Order Line Item Draft Edit Form"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     And I see next subtotals for "Backend Order":
       | Subtotal | $259.26 |
       | Discount | -$25.93 |
@@ -145,10 +145,10 @@ Feature: Create Order with product kits and taxes
 
   Scenario: Change product kit item line item quantity
     Given I click "Line Items"
-    When I click on the first "Edit Line Item Button"
-    And I fill "Order Form" with:
+    When I click "edit" on first row in grid
+    And I fill "Order Line Item Draft Edit Form" with:
       | ProductKitItem1Quantity | 2 |
-    And I fill "Order Form" with:
+    And I fill "Order Line Item Draft Edit Form" with:
       | ProductKitItem2Quantity | 3 |
     And I click "View taxes & discounts"
     Then I see the next line item taxes for backoffice order edit for "product-kit-01":
@@ -161,8 +161,8 @@ Feature: Create Order with product kits and taxes
     And I see next line item discounts for backoffice order edit for "product-kit-01":
       |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
       | Row Total | $276.536              | $248.886              | $27.654      |
-    And the "Price" field should be readonly in form "Order Form"
-    And I click on the first "Order Edit Save Changes"
+    And the "Price" field should be readonly in form "Order Line Item Draft Edit Form"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     And I see next subtotals for "Backend Order":
       | Subtotal | $276.54 |
       | Discount | -$27.65 |
@@ -178,10 +178,10 @@ Feature: Create Order with product kits and taxes
 
   Scenario: Change product kit item line item price
     Given I click "Line Items"
-    When I click on the first "Edit Line Item Button"
-    And I fill "Order Form" with:
+    When I click "edit" on first row in grid
+    And I fill "Order Line Item Draft Edit Form" with:
       | ProductKitItem1Price | 12.3456 |
-    And I fill "Order Form" with:
+    And I fill "Order Line Item Draft Edit Form" with:
       | ProductKitItem2Price | 23.4567 |
     And I click "View taxes & discounts"
     Then I see the next line item taxes for backoffice order edit for "product-kit-01":
@@ -194,8 +194,8 @@ Feature: Create Order with product kits and taxes
     And I see next line item discounts for backoffice order edit for "product-kit-01":
       |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
       | Row Total | $437.086              | $393.376              | $43.704      |
-    And the "Price" field should be readonly in form "Order Form"
-    And I click on the first "Order Edit Save Changes"
+    And the "Price" field should be readonly in form "Order Line Item Draft Edit Form"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     And I see next subtotals for "Backend Order":
       | Subtotal | $437.04 |
       | Discount | -$43.70 |
@@ -211,7 +211,7 @@ Feature: Create Order with product kits and taxes
 
 #   TODO: Should be uncommented after implementation BB-23120 feature
 #  Scenario: Change product kit line item price
-#    When I fill "Order Form" with:
+#    When I fill "Order Line Item Draft Edit Form" with:
 #      | Price | 100.00 |
 #    Then I should see next rows in "Backend Order First Line Item Taxes Items Table" table
 #      |            | Incl. Tax | Excl. Tax | Tax Amount |
@@ -237,7 +237,7 @@ Feature: Create Order with product kits and taxes
 #      | FLORIDA_SALES_TAX | 10%  | $200.00        | $20.00     |
 #
 #  Scenario: Reset product kit line item price
-#    When I click "Order Form Line Item 1 Price Overridden"
+#    When I click "Order Line Item Draft Edit Form Price Overridden"
 #    And I click "Reset price"
 #    And I click on empty space
 #    Then I should see next rows in "Backend Order First Line Item Taxes Items Table" table
@@ -264,11 +264,11 @@ Feature: Create Order with product kits and taxes
 #      | FLORIDA_SALES_TAX | 10%  | $437.04        | $43.70     |
 
   Scenario: Add one more product kit line item
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | product-kit-01 |
       | Quantity | 3              |
     And click "Add Product"
-    When I click on the second "Edit Line Item Button"
+    When I click "edit" on second row in grid
     And I click "View taxes & discounts"
     Then I see the next line item taxes for backoffice order edit for "product-kit-01":
       |            | Incl. Tax | Excl. Tax | Tax Amount |
@@ -280,8 +280,8 @@ Feature: Create Order with product kits and taxes
     And I see next line item discounts for backoffice order edit for "product-kit-01":
       |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
       | Row Total | $373.703              | $336.663              | $37.407      |
-    And the "Price" field should be readonly in form "Order Form"
-    And I click on the first "Order Edit Save Changes"
+    And the "Price" field should be readonly in form "Order Line Item Draft Edit Form"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     And I see next subtotals for "Backend Order":
       | Subtotal | $811.11 |
       | Discount | -$81.11 |
@@ -300,8 +300,8 @@ Feature: Create Order with product kits and taxes
       | oro_tax.product_prices_include_tax |
 
     When I click "Line Items"
-    And I click on the second "Edit Line Item Button"
-    And I fill "Order Form" with:
+    And I click "edit" on second row in grid
+    And I fill "Order Line Item Draft Edit Form" with:
       | Product  | product-kit-01 |
       | Quantity | 3              |
     And I click "View taxes & discounts"
@@ -315,10 +315,10 @@ Feature: Create Order with product kits and taxes
     And I see next line item discounts for backoffice order edit for "product-kit-01":
       |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
       | Row Total | $336.663              | $302.993              | $37.407      |
-    And the "Price" field should be readonly in form "Order Form"
-    And I click on the first "Order Edit Save Changes"
+    And the "Price" field should be readonly in form "Order Line Item Draft Edit Form"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     And I click "Line Items"
-    When I click on the first "Edit Line Item Button"
+    When I click "edit" on first row in grid
     And I click "View taxes & discounts"
     Then I see the next line item taxes for backoffice order edit for "product-kit-01":
       |            | Incl. Tax | Excl. Tax | Tax Amount |
@@ -330,8 +330,8 @@ Feature: Create Order with product kits and taxes
     And I see next line item discounts for backoffice order edit for "product-kit-01":
       |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
       | Row Total | $393.376              | $353.646              | $43.704      |
-    And the "Price" field should be readonly in form "Order Form"
-    And I click on the first "Order Edit Save Changes"
+    And the "Price" field should be readonly in form "Order Line Item Draft Edit Form"
+    And I click on "Order Line Item Draft Edit Form Save Button"
 
     And I see next subtotals for "Backend Order":
       | Subtotal | $811.11 |
@@ -353,8 +353,8 @@ Feature: Create Order with product kits and taxes
       | oro_tax.calculate_taxes_after_promotions |
 
     When I click "Line Items"
-    And I click on the second "Edit Line Item Button"
-    And I fill "Order Form" with:
+    And I click "edit" on second row in grid
+    And I fill "Order Line Item Draft Edit Form" with:
       | Product  | product-kit-01 |
       | Quantity | 3              |
     And I click "View taxes & discounts"
@@ -368,8 +368,8 @@ Feature: Create Order with product kits and taxes
     And I see next line item discounts for backoffice order edit for "product-kit-01":
       |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
       | Row Total | $369.99               | $336.66               | $37.407      |
-    And the "Price" field should be readonly in form "Order Form"
-    And I click on the first "Order Edit Save Changes"
+    And the "Price" field should be readonly in form "Order Line Item Draft Edit Form"
+    And I click on "Order Line Item Draft Edit Form Save Button"
 
     And I see next subtotals for "Backend Order":
       | Subtotal | $811.11 |
@@ -389,8 +389,8 @@ Feature: Create Order with product kits and taxes
       | oro_tax.product_prices_include_tax |
 
     When I click "Line Items"
-    And I click on the second "Edit Line Item Button"
-    And I fill "Order Form" with:
+    And I click "edit" on second row in grid
+    And I fill "Order Line Item Draft Edit Form" with:
       | Product  | product-kit-01 |
       | Quantity | 3              |
     And I click "View taxes & discounts"
@@ -404,10 +404,10 @@ Feature: Create Order with product kits and taxes
     And I see next line item discounts for backoffice order edit for "product-kit-01":
       |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
       | Row Total | $336.66               | $306.36               | $37.407      |
-    And the "Price" field should be readonly in form "Order Form"
-    And I click on the first "Order Edit Save Changes"
+    And the "Price" field should be readonly in form "Order Line Item Draft Edit Form"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     And I click "Line Items"
-    When I click on the first "Edit Line Item Button"
+    When I click "edit" on first row in grid
     And I click "View taxes & discounts"
     Then I see the next line item taxes for backoffice order edit for "product-kit-01":
       |            | Incl. Tax | Excl. Tax | Tax Amount |
@@ -419,8 +419,8 @@ Feature: Create Order with product kits and taxes
     And I see next line item discounts for backoffice order edit for "product-kit-01":
       |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
       | Row Total | $393.32               | $357.56               | $43.704      |
-    And the "Price" field should be readonly in form "Order Form"
-    And I click on the first "Order Edit Discard Changes"
+    And the "Price" field should be readonly in form "Order Line Item Draft Edit Form"
+    And I click on "Order Line Item Draft Edit Form Discard Button"
 
     And I see next subtotals for "Backend Order":
       | Subtotal | $811.11 |
@@ -443,7 +443,7 @@ Feature: Create Order with product kits and taxes
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
 
-    When I click on the first "Edit Line Item Button"
+    When I click "edit" on first row in grid
     And I click "View taxes & discounts"
     Then I see the next line item taxes for backoffice order edit for "product-kit-01":
       |            | Incl. Tax | Excl. Tax | Tax Amount |
@@ -455,10 +455,10 @@ Feature: Create Order with product kits and taxes
     And I see next line item discounts for backoffice order edit for "product-kit-01":
       |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
       | Row Total | $437.086              | $393.376              | $43.704      |
-    And the "Price" field should be readonly in form "Order Form"
-    And I click on the first "Order Edit Discard Changes"
+    And the "Price" field should be readonly in form "Order Line Item Draft Edit Form"
+    And I click on "Order Line Item Draft Edit Form Discard Button"
 
-    When I click on the second "Edit Line Item Button"
+    When I click "edit" on second row in grid
     And I click "View taxes & discounts"
     Then I see the next line item taxes for backoffice order edit for "product-kit-01":
       |            | Incl. Tax | Excl. Tax | Tax Amount |
@@ -470,8 +470,8 @@ Feature: Create Order with product kits and taxes
     And I see next line item discounts for backoffice order edit for "product-kit-01":
       |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
       | Row Total | $373.703              | $336.663              | $37.407      |
-    And the "Price" field should be readonly in form "Order Form"
-    And I click on the first "Order Edit Discard Changes"
+    And the "Price" field should be readonly in form "Order Line Item Draft Edit Form"
+    And I click on "Order Line Item Draft Edit Form Discard Button"
 
     And I see next subtotals for "Backend Order":
       | Subtotal | $811.11 |

@@ -14,10 +14,10 @@ Feature: Disable promotions in backoffice
     And click edit SimpleOrder in grid
     When I click "Line Items"
     And I click Edit "AA1" in grid
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | Product | Second Product |
       | Price   | 7              |
-    And I click on "Order Edit Save Changes"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     And I save form
     And click "Save" in modal window
     Then I should see next rows in "Promotions" table

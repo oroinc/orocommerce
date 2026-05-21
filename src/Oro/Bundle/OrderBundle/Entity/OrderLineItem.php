@@ -25,8 +25,9 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
-use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
+use Oro\Component\DraftSession\Entity\EntityDraftAwareTrait;
 use Oro\Component\DraftSession\Entity\EntityDraftSoftDeleteAwareInterface;
+use Oro\Component\DraftSession\Entity\EntityDraftSoftDeleteAwareTrait;
 
 /**
  * Represents ordered item.
@@ -60,6 +61,8 @@ class OrderLineItem implements
 {
     use DatesAwareTrait;
     use ExtendEntityTrait;
+    use EntityDraftAwareTrait;
+    use EntityDraftSoftDeleteAwareTrait;
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
@@ -170,9 +173,6 @@ class OrderLineItem implements
     #[ORM\Column(name: 'checksum', type: Types::STRING, length: 40, nullable: false, options: ['default' => ''])]
     protected ?string $checksum = '';
 
-    #[ORM\Column(name: 'draft_session_uuid', type: Types::GUID, nullable: true)]
-    protected ?string $draftSessionUuid = null;
-
     #[ORM\ManyToOne(targetEntity: OrderLineItem::class, inversedBy: 'drafts')]
     #[ORM\JoinColumn(name: 'draft_source_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     protected ?OrderLineItem $draftSource = null;
@@ -182,9 +182,6 @@ class OrderLineItem implements
      */
     #[ORM\OneToMany(mappedBy: 'draftSource', targetEntity: OrderLineItem::class, fetch: 'EXTRA_LAZY')]
     protected ?Collection $drafts = null;
-
-    #[ORM\Column(name: 'draft_delete', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
-    protected bool $draftDelete = false;
 
     public function __construct()
     {
@@ -754,70 +751,6 @@ class OrderLineItem implements
     public function getChecksum(): string
     {
         return $this->checksum;
-    }
-
-    public function getDraftSessionUuid(): ?string
-    {
-        return $this->draftSessionUuid;
-    }
-
-    public function setDraftSessionUuid(?string $draftSessionUuid): self
-    {
-        $this->draftSessionUuid = $draftSessionUuid;
-
-        return $this;
-    }
-
-    public function getDraftSource(): ?self
-    {
-        return $this->draftSource;
-    }
-
-    public function setDraftSource(?EntityDraftAwareInterface $draftSource): self
-    {
-        $this->draftSource = $draftSource;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<OrderLineItem>
-     */
-    public function getDrafts(): Collection
-    {
-        return $this->drafts;
-    }
-
-    public function addDraft(EntityDraftAwareInterface $draft): self
-    {
-        if (!$this->drafts->contains($draft)) {
-            $this->drafts->add($draft);
-            $draft->setDraftSource($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDraft(EntityDraftAwareInterface $draft): self
-    {
-        if ($this->drafts->contains($draft)) {
-            $this->drafts->removeElement($draft);
-            $draft->setDraftSource(null);
-        }
-
-        return $this;
-    }
-
-    public function isDraftDelete(): bool
-    {
-        return $this->draftDelete;
-    }
-
-    public function setDraftDelete(bool $draftDelete): self
-    {
-        $this->draftDelete = $draftDelete;
-
-        return $this;
     }
 
     public function isFreeForm(): bool

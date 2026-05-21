@@ -71,6 +71,7 @@ final class OrderLineItemDraftType extends AbstractType
                     'required' => true,
                     'error_bubbling' => true,
                     'hide_currency' => true,
+                    'by_reference' => false,
                 ]
             )
             ->add('priceType', HiddenType::class, ['data' => PriceTypeAwareInterface::PRICE_TYPE_UNIT])

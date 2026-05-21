@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import AbstractWidgetView from 'oroui/js/widget/abstract-widget';
+import FormStateTrackerView from 'oroform/js/app/views/form-state-tracker-view';
 
 const OrderLineItemDraftCreateWidget = AbstractWidgetView.extend({
     /**
@@ -46,7 +47,13 @@ const OrderLineItemDraftCreateWidget = AbstractWidgetView.extend({
     initialize(options) {
         this.widget = this.$el;
 
+        this.listenTo(this, 'widgetReady', this.onWidgetReady);
+
         OrderLineItemDraftCreateWidget.__super__.initialize.call(this, options);
+    },
+
+    onWidgetReady() {
+        this.ensureFormStateTracker();
     },
 
     toggleFieldsState(isDisabled) {
@@ -67,6 +74,10 @@ const OrderLineItemDraftCreateWidget = AbstractWidgetView.extend({
     _onContentLoad(content) {
         const html = this._getHtml(content);
 
+        if (this.saveForm) {
+            this.resetFormStateTracker();
+        }
+
         OrderLineItemDraftCreateWidget.__super__._onContentLoad.call(this, html);
 
         if (this.saveForm) {
@@ -78,6 +89,45 @@ const OrderLineItemDraftCreateWidget = AbstractWidgetView.extend({
         const json = this._getJson(content);
         if (json) {
             this._onJsonContentResponse(json);
+        }
+    },
+
+    ensureFormStateTracker() {
+        const $form = this.$('form');
+
+        if (!$form.length) {
+            return;
+        }
+
+        const oldTracker = this.subview('formStateTracker');
+        const preservedState = oldTracker && !oldTracker.disposed
+            ? oldTracker.initialState
+            : null;
+
+        if (oldTracker && !oldTracker.disposed) {
+            oldTracker.dispose();
+        }
+
+        const tracker = new FormStateTrackerView({
+            el: $form,
+            additionalIgnore: ':input[name$="[drySubmitTrigger]"],:input[name$="[is_price_changed]"]',
+            group: 'draftOrder'
+        });
+
+        this.subview('formStateTracker', tracker);
+
+        if (preservedState !== null) {
+            tracker.initialState = preservedState;
+        } else {
+            tracker.captureInitialState();
+        }
+    },
+
+    resetFormStateTracker() {
+        const tracker = this.subview('formStateTracker');
+
+        if (tracker && !tracker.disposed) {
+            tracker.dispose();
         }
     },
 

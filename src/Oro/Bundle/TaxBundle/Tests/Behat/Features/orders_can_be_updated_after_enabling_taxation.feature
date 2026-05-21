@@ -23,7 +23,7 @@ Feature: Orders can be updated after enabling taxation
     When I click "Create Order"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | SKU123 |
       | Quantity | 5      |
     And click "Add Product"
@@ -43,9 +43,9 @@ Feature: Orders can be updated after enabling taxation
     Given I go to Sales/Orders
     When I click edit "1" in grid
     And I click Edit "SKU123" in grid
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | Quantity | 6 |
-    And I click on "Order Edit Save Changes"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     And save and close form
     And click "Save" in modal window
     Then I should see "Order has been saved" flash message

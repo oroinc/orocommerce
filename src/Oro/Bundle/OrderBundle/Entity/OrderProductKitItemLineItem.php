@@ -15,6 +15,8 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemPriceAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitPrecisionAwareInterface;
+use Oro\Component\DraftSession\Entity\DraftSessionAwareInterface;
+use Oro\Component\DraftSession\Entity\DraftSessionAwareTrait;
 
 /**
  * Represents an order line item of a product kit item.
@@ -37,9 +39,11 @@ class OrderProductKitItemLineItem implements
     ProductHolderInterface,
     ProductKitItemLineItemPriceAwareInterface,
     ProductUnitPrecisionAwareInterface,
+    DraftSessionAwareInterface,
     ExtendEntityInterface
 {
     use ExtendEntityTrait;
+    use DraftSessionAwareTrait;
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]

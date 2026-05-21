@@ -10,117 +10,117 @@ Feature: Order with Product Kits Validation
     And click "Create Order"
     And fill "Order Form" with:
       | Customer | Customer1 |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product                 | product-kit-01                        |
       | Quantity                | 1                                     |
       | ProductKitItem1Product  | simple-product-03 - Simple Product 03 |
       | ProductKitItem1Quantity | 6                                     |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | ProductKitItem2Product  | simple-product-01 - Simple Product 01 |
       | ProductKitItem2Quantity | 11                                    |
-    And the "Price" field should be readonly in form "Order Edit Add Line Item Form"
+    And the "Price" field should be readonly in form "Order Line Item Draft Create Form"
     And I click "Add Product"
-    Then I should see "Order Edit Add Line Item Form" validation errors:
+    Then I should see "Order Line Item Draft Create Form" validation errors:
       | ProductKitItem1Quantity | The kit item quantity should be between 2 and 5.  |
       | ProductKitItem2Quantity | The kit item quantity should be between 3 and 10. |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | ProductKitItem1Quantity | 2 |
       | ProductKitItem2Quantity | 3 |
-    And the "Price" field should be readonly in form "Order Edit Add Line Item Form"
+    And the "Price" field should be readonly in form "Order Line Item Draft Create Form"
 
   Scenario: Add a product kit line item with min quantity violation
-    When fill "Order Edit Add Line Item Form" with:
+    When fill "Order Line Item Draft Create Form" with:
       | ProductKitItem1Quantity | 1 |
       | ProductKitItem2Quantity | 2 |
     And I click "Add Product"
-    Then I should see "Order Edit Add Line Item Form" validation errors:
+    Then I should see "Order Line Item Draft Create Form" validation errors:
       | ProductKitItem1Quantity | The kit item quantity should be between 2 and 5.  |
       | ProductKitItem2Quantity | The kit item quantity should be between 3 and 10. |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | ProductKitItem1Quantity | 2 |
       | ProductKitItem2Quantity | 3 |
-    And the "Price" field should be readonly in form "Order Edit Add Line Item Form"
+    And the "Price" field should be readonly in form "Order Line Item Draft Create Form"
 
   Scenario: Check unit precisions in the Quantity tooltip
-    When I click on "Order Form Line Item 1 Kit Item 1 Quantity Label Tooltip"
+    When I click on "Order Line Item Draft Edit Form Kit Item 1 Quantity Label Tooltip"
     Then I should see "The quantity of product kit item units to be purchased: piece (fractional, 1 decimal digit)" in the "Tooltip Popover Content" element
     And I click on empty space
-    When I click on "Order Form Line Item 1 Kit Item 2 Quantity Label Tooltip"
+    When I click on "Order Line Item Draft Edit Form Kit Item 2 Quantity Label Tooltip"
     Then I should see "The quantity of product kit item units to be purchased: piece (whole numbers)" in the "Tooltip Popover Content" element
     And I click on empty space
 
   Scenario: Add a product kit line item with unit precision violation
-    When fill "Order Edit Add Line Item Form" with:
+    When fill "Order Line Item Draft Create Form" with:
       | ProductKitItem1Quantity | 2.45 |
       | ProductKitItem2Quantity | 3.34 |
     And I click "Add Product"
-    Then I should see "Order Edit Add Line Item Form" validation errors:
+    Then I should see "Order Line Item Draft Create Form" validation errors:
       | ProductKitItem1Quantity | Only 1 decimal digit are allowed for unit "piece" |
       | ProductKitItem2Quantity | Only whole numbers are allowed for unit "piece"   |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | ProductKitItem1Quantity | 2 |
       | ProductKitItem2Quantity | 3 |
-    And the "Price" field should be readonly in form "Order Edit Add Line Item Form"
+    And the "Price" field should be readonly in form "Order Line Item Draft Create Form"
 
   Scenario: Add a product kit line item with non-numeric quantity violation
-    When fill "Order Edit Add Line Item Form" with:
+    When fill "Order Line Item Draft Create Form" with:
       | ProductKitItem1Quantity | invalid |
       | ProductKitItem2Quantity | invalid |
     And I click "Add Product"
-    Then I should see "Order Edit Add Line Item Form" validation errors:
+    Then I should see "Order Line Item Draft Create Form" validation errors:
       | ProductKitItem1Quantity | The kit item quantity should be a valid number. |
       | ProductKitItem2Quantity | The kit item quantity should be a valid number. |
-    And the "Price" field should be readonly in form "Order Edit Add Line Item Form"
-    And fill "Order Edit Add Line Item Form" with:
+    And the "Price" field should be readonly in form "Order Line Item Draft Create Form"
+    And fill "Order Line Item Draft Create Form" with:
       | ProductKitItem1Quantity | 2 |
       | ProductKitItem2Quantity | 3 |
-    And the "Price" field should be readonly in form "Order Edit Add Line Item Form"
+    And the "Price" field should be readonly in form "Order Line Item Draft Create Form"
 
   Scenario: Add a product kit line item with missing price violation
-    When fill "Order Edit Add Line Item Form" with:
+    When fill "Order Line Item Draft Create Form" with:
       | ProductKitItem2Product | simple-product-02 - Simple Product 02 |
-    Then "Order Edit Add Line Item Form" must contains values:
+    Then "Order Line Item Draft Create Form" must contains values:
       | ProductKitItem2Price |  |
-    And the "Price" field should be readonly in form "Order Edit Add Line Item Form"
+    And the "Price" field should be readonly in form "Order Line Item Draft Create Form"
     And I click "Add Product"
-    Then I should see "Order Edit Add Line Item Form" validation errors:
+    Then I should see "Order Line Item Draft Create Form" validation errors:
       | ProductKitItem2Price | Price value should not be blank. |
-    And the "Price" field should be readonly in form "Order Edit Add Line Item Form"
+    And the "Price" field should be readonly in form "Order Line Item Draft Create Form"
 
   Scenario: Add a product kit line item with empty price violation
-    When fill "Order Edit Add Line Item Form" with:
+    When fill "Order Line Item Draft Create Form" with:
       | ProductKitItem1Price |  |
       | ProductKitItem2Price |  |
     And I click "Add Product"
-    Then I should see "Order Edit Add Line Item Form" validation errors:
+    Then I should see "Order Line Item Draft Create Form" validation errors:
       | ProductKitItem1Price | Price value should not be blank. |
       | ProductKitItem2Price | Price value should not be blank. |
-    And the "Price" field should be readonly in form "Order Edit Add Line Item Form"
+    And the "Price" field should be readonly in form "Order Line Item Draft Create Form"
 
   Scenario: Add a product kit line item with negative price violation
-    When fill "Order Edit Add Line Item Form" with:
+    When fill "Order Line Item Draft Create Form" with:
       | ProductKitItem1Price | -1 |
       | ProductKitItem2Price | -1 |
     And I click "Add Product"
-    Then I should see "Order Edit Add Line Item Form" validation errors:
+    Then I should see "Order Line Item Draft Create Form" validation errors:
       | ProductKitItem1Price | Price value should be equal or greater than 0. |
       | ProductKitItem2Price | Price value should be equal or greater than 0. |
-    And the "Price" field should be readonly in form "Order Edit Add Line Item Form"
+    And the "Price" field should be readonly in form "Order Line Item Draft Create Form"
 
   Scenario: Add a product kit line item with non-numeric price violation
-    When fill "Order Edit Add Line Item Form" with:
+    When fill "Order Line Item Draft Create Form" with:
       | ProductKitItem1Price | invalid |
       | ProductKitItem2Price | invalid |
-    Then I should see "Order Edit Add Line Item Form" validation errors:
+    Then I should see "Order Line Item Draft Create Form" validation errors:
       | ProductKitItem1Price | Price value should be a valid number. |
       | ProductKitItem2Price | Price value should be a valid number. |
-    And the "Price" field should be readonly in form "Order Edit Add Line Item Form"
+    And the "Price" field should be readonly in form "Order Line Item Draft Create Form"
 
   Scenario: Check that zero kit item prices are still valid
-    When fill "Order Edit Add Line Item Form" with:
+    When fill "Order Line Item Draft Create Form" with:
       | ProductKitItem1Price | 0 |
       | ProductKitItem2Price | 0 |
-    And the "Price" field should be readonly in form "Order Edit Add Line Item Form"
+    And the "Price" field should be readonly in form "Order Line Item Draft Create Form"
     And I click "Add Product"
     And click "Calculate Shipping Button"
     And I save and close form

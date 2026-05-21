@@ -22,8 +22,6 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 class OrderDraftSyncExtension extends AbstractTypeExtension implements ResetInterface
 {
-    private ?Order $orderDraft = null;
-
     public function __construct(
         private readonly OrderDraftManager $orderDraftManager,
         private readonly ManagerRegistry $doctrine
@@ -41,8 +39,6 @@ class OrderDraftSyncExtension extends AbstractTypeExtension implements ResetInte
             return;
         }
 
-        $this->orderDraft = null;
-
         $builder->addEventListener(FormEvents::PRE_SET_DATA, $this->preSetData(...), 100);
         $builder->addEventListener(FormEvents::POST_SET_DATA, $this->postSetData(...), -100);
     }
@@ -52,15 +48,10 @@ class OrderDraftSyncExtension extends AbstractTypeExtension implements ResetInte
      */
     private function preSetData(FormEvent $event): void
     {
-        // Order draft may be already present because the form data can be set more than 1 time:
-        // on the form creation, then in the form handler (i.e. OrderFormHandler)
-        $this->orderDraft ??= $this->orderDraftManager->getOrderDraft();
+        /** @var Order $order */
+        $order = $event->getData();
 
-        if ($this->orderDraft !== null) {
-            /** @var Order $order */
-            $order = $event->getData();
-            $this->orderDraftManager->synchronizeEntityFromDraft($this->orderDraft, $order);
-        }
+        $this->orderDraftManager->loadFromEntityDraft($order);
     }
 
     /**
@@ -68,19 +59,13 @@ class OrderDraftSyncExtension extends AbstractTypeExtension implements ResetInte
      */
     private function postSetData(FormEvent $event): void
     {
-        if ($this->orderDraft !== null) {
+        /** @var Order $order */
+        $order = $event->getData();
+        if ($this->orderDraftManager->hasEntityDraft($order)) {
             return;
         }
 
-        /** @var Order $order */
-        $order = $event->getData();
-
-        $this->orderDraft = $this->orderDraftManager->createEntityDraft($order);
-
-        $entityManager = $this->doctrine->getManagerForClass(Order::class);
-
-        $entityManager->persist($this->orderDraft);
-        $entityManager->flush();
+        $this->orderDraftManager->saveToEntityDraft($order);
     }
 
     #[\Override]
@@ -98,9 +83,11 @@ class OrderDraftSyncExtension extends AbstractTypeExtension implements ResetInte
         return [OrderType::class, SubOrderType::class];
     }
 
+    /**
+     * @bc-layer This method is retained for BC reasons. It won't have any replacement.
+     */
     #[\Override]
     public function reset(): void
     {
-        $this->orderDraft = null;
     }
 }

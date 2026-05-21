@@ -47,6 +47,8 @@ class OrderLineItemRepository extends ServiceEntityRepository
      * @param string $draftSessionUuid UUID of the draft session.
      *
      * @return OrderLineItem|null
+     *
+     * @bc-layer This method is retained for BC reasons. Use {@see EntityDraftRepository::findEntityDraft} instead.
      */
     public function findOrderLineItemDraftWithRelations(int $orderLineItemId, string $draftSessionUuid): ?OrderLineItem
     {
@@ -83,6 +85,8 @@ class OrderLineItemRepository extends ServiceEntityRepository
      * @param string $draftSessionUuid UUID of the draft session.
      *
      * @return array<OrderLineItem>
+     *
+     * @bc-layer This method is retained for BC reasons. It won't have any replacement.
      */
     public function findAllOrderLineItemDrafts(int $orderId, string $draftSessionUuid): array
     {

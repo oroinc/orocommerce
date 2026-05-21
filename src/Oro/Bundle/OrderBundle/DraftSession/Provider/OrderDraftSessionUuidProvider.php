@@ -8,6 +8,8 @@ use Symfony\Component\Routing\RequestContextAwareInterface;
 
 /**
  * Provides the order draft session UUID from the request context.
+ *
+ * @bc-layer This class is retained for BC reasons. Use {@see DraftSessionUuidProvider} instead.
  */
 class OrderDraftSessionUuidProvider
 {

@@ -110,6 +110,7 @@ class PromotionAwareOrderDraftSynchronizer implements EntityDraftSynchronizerInt
         $targetAppliedPromotion->setPromotionName($sourceAppliedPromotion->getPromotionName());
         $targetAppliedPromotion->setConfigOptions($sourceAppliedPromotion->getConfigOptions());
         $targetAppliedPromotion->setPromotionData($sourceAppliedPromotion->getPromotionData());
+        $targetAppliedPromotion->setDraftSessionUuid($targetOrder->getDraftSessionUuid());
         $targetAppliedPromotion->setOrder($targetOrder);
 
         $this->syncAppliedDiscounts($sourceAppliedPromotion, $targetAppliedPromotion, $targetOrder);
@@ -164,6 +165,7 @@ class PromotionAwareOrderDraftSynchronizer implements EntityDraftSynchronizerInt
         $clonedDiscount = new AppliedDiscount();
         $clonedDiscount->setAmount((float)$sourceDiscount->getAmount());
         $clonedDiscount->setCurrency($sourceDiscount->getCurrency());
+        $clonedDiscount->setDraftSessionUuid($targetOrder->getDraftSessionUuid());
 
         if ($sourceDiscount->getLineItem()) {
             $targetLineItem = $this->findOrCreateTargetLineItem($sourceDiscount->getLineItem(), $targetOrder);
@@ -232,6 +234,7 @@ class PromotionAwareOrderDraftSynchronizer implements EntityDraftSynchronizerInt
         $targetCoupon->setCouponCode($sourceCoupon->getCouponCode());
         $targetCoupon->setSourcePromotionId($sourceCoupon->getSourcePromotionId());
         $targetCoupon->setSourceCouponId($sourceCoupon->getSourceCouponId());
+        $targetCoupon->setDraftSessionUuid($targetOrder->getDraftSessionUuid());
         $targetCoupon->setOrder($targetOrder);
     }
 

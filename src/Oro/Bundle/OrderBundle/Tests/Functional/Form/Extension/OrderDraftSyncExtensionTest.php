@@ -182,10 +182,6 @@ final class OrderDraftSyncExtensionTest extends WebTestCase
 
         $this->clearOrderDraftFromRequest();
 
-        $anotherDraft = $this->createOrderDraft($order, $draftSessionUuid);
-        $anotherDraft->setPoNumber('DIFFERENT_DRAFT_PO');
-        $this->entityManager->persist($anotherDraft);
-        $this->entityManager->flush();
 
         $order->setPoNumber('MODIFIED_ORDER_PO');
 
@@ -309,6 +305,30 @@ final class OrderDraftSyncExtensionTest extends WebTestCase
         $form->submit($submitData);
 
         self::assertEquals('SUBMITTED_PO', $order->getPoNumber());
+    }
+
+    public function testDraftSessionSyncEnabledWithoutSessionUuidDoesNotSynchronizeFromDraft(): void
+    {
+        $this->setDraftSessionUuid(null);
+
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        $originalPoNumber = $order->getPoNumber();
+
+        $draftSessionUuid = UUIDGenerator::v4();
+        $orderDraft = $this->createOrderDraft($order, $draftSessionUuid);
+        $orderDraft->setPoNumber('SHOULD_NOT_BE_APPLIED_WITHOUT_UUID');
+
+        $this->entityManager->persist($orderDraft);
+        $this->entityManager->flush();
+
+        $this->setOrderDraftOnRequest($orderDraft);
+
+        self::createForm(OrderType::class, $order, [
+            'draft_session_sync' => true,
+        ]);
+
+        self::assertEquals($originalPoNumber, $order->getPoNumber());
     }
 
     private function setDraftSessionUuid(?string $draftSessionUuid): void

@@ -53,7 +53,7 @@ final class RemoveLineItemsFromOrderTypeExtensionTest extends WebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
 
-        $form = self::createForm(OrderType::class, $order);
+        $form = self::createForm(OrderType::class, $order, ['draft_session_sync' => true]);
 
         self::assertFalse($form->has('lineItems'));
     }
@@ -65,7 +65,19 @@ final class RemoveLineItemsFromOrderTypeExtensionTest extends WebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
 
-        $form = self::createForm(OrderType::class, $order);
+        $form = self::createForm(OrderType::class, $order, ['draft_session_sync' => false]);
+
+        self::assertTrue($form->has('lineItems'));
+    }
+
+    public function testLineItemsFieldIsNotRemovedWhenDraftSessionSyncEnabledButSessionUuidMissing(): void
+    {
+        $this->setDraftSessionUuid(null);
+
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_1);
+
+        $form = self::createForm(OrderType::class, $order, ['draft_session_sync' => true]);
 
         self::assertTrue($form->has('lineItems'));
     }
@@ -96,7 +108,7 @@ final class RemoveLineItemsFromOrderTypeExtensionTest extends WebTestCase
         $this->entityManager->persist($order);
         $this->entityManager->flush();
 
-        $form = self::createForm(OrderType::class, $order);
+        $form = self::createForm(OrderType::class, $order, ['draft_session_sync' => true]);
         $submitData = [
             'website' => $order->getWebsite()->getId(),
             'customer' => $order->getCustomer()->getId(),

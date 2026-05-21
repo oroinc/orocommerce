@@ -80,7 +80,7 @@ Feature: Check website shipping tax for orders
       | Customer User    | Amanda Cole                              |
       | Billing Address  | ORO, Fifth avenue, 10115 Berlin, Germany |
       | Shipping Address | ORO, Fifth avenue, 10115 Berlin, Germany |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | SKU123 |
       | Quantity | 5      |
     And click "Add Product"

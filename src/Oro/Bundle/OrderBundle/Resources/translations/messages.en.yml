@@ -202,6 +202,8 @@ oro:
         draft_session_uuid:
             label: Draft Session UUID
             description: The UUID of the draft session the order belongs to.
+        draft_session:
+            informational_message: 'You are editing a draft. Your changes will still be here if you leave or reload this page. Click Save when you are done editing.'
         draft_source:
             label: Draft Source
             description: The source order to which the draft belongs.
@@ -266,6 +268,9 @@ oro:
             type:
                 label: Order Discount Type
                 description: The type of discount applied to the order.
+            draft_session_uuid:
+                label: Draft Session UUID
+                description: The UUID of the draft session the discount belongs to.
             flash.save_success: Order Discount successfully added
             add_discount.label: Add Special Discount
             value.label: Discount
@@ -349,6 +354,9 @@ oro:
             validated_at:
                 label: Validated At
                 description: The date and time when address was validated.
+            draft_session_uuid:
+                label: Draft Session UUID
+                description: The UUID of the draft session the address belongs to.
 
         orderlineitem:
             entity_label: 'Order Line Item'
@@ -559,6 +567,9 @@ oro:
             currency:
                 label: Price Currency
                 description: A currency for a product kit item line item price
+            draft_session_uuid:
+                label: Draft Session UUID
+                description: The UUID of the draft session the kit item line item belongs to.
 
         order_discount:
             add_label: Add Special Discount
@@ -742,6 +753,8 @@ oro:
                     label: Shipping Cost
                 shipping_method:
                     label: Shipping Method
+                price_is_overridden:
+                    hint_label: 'View tier prices'
 
         email_template:
             variables:

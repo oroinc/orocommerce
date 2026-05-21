@@ -9,11 +9,8 @@ use Oro\Bundle\ConfigBundle\Tests\Behat\Element\SystemConfigForm;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
-use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrder;
-use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrderLineItem;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionCheckoutStep;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionOrder;
-use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionOrderForm;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionShoppingList;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionShoppingListLineItem;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext;
@@ -87,29 +84,6 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
         $order = $this->createElement('PromotionOrder');
 
         $this->assertLineItemDiscounts($order, $table);
-    }
-
-    /**
-     * @Then /^(?:|I )see next line item discounts for backoffice order:$/
-     */
-    public function assertBackendOrderLineItemDiscount(TableNode $table)
-    {
-        // discount update request is executed after 1.5 sec timeout
-        $this->getSession()->wait(1600);
-        $this->waitForAjax();
-        /** @var PromotionBackendOrder $order */
-        $order = $this->createElement('PromotionBackendOrder');
-
-        $discounts = [];
-        /** @var PromotionBackendOrderLineItem $lineItem */
-        foreach ($order->getLineItems() as $lineItem) {
-            $discounts[] = array_merge([$lineItem->getProductSKU()], $lineItem->getDiscountWithRowTotals());
-        }
-
-        $rows = $table->getRows();
-        array_shift($rows);
-
-        static::assertEquals($rows, $discounts);
     }
 
     /**
@@ -241,17 +215,6 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
         $this->oroMainContext->clickLink('click here to review');
         $this->waitForAjax();
         $this->oroMainContext->assertPage('Order Frontend View');
-    }
-
-    /**
-     * @When /^(?:|I )save order without discounts recalculation$/
-     */
-    public function iSaveOrderWithoutDiscountsRecalculation()
-    {
-        /** @var PromotionOrderForm $orderForm */
-        $orderForm = $this->createElement('PromotionOrderForm');
-
-        $orderForm->saveWithoutDiscountsRecalculation();
     }
 
     // phpcs:disable

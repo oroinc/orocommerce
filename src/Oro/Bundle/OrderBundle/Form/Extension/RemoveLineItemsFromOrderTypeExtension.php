@@ -30,6 +30,10 @@ class RemoveLineItemsFromOrderTypeExtension extends AbstractTypeExtension
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        if (!$options['draft_session_sync']) {
+            return;
+        }
+
         if (!$this->orderDraftManager->getDraftSessionUuid()) {
             return;
         }

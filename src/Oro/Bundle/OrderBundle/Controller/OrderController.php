@@ -23,6 +23,7 @@ use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -301,6 +302,10 @@ class OrderController extends AbstractController
         callable|FormTemplateDataProviderInterface|null $resultProvider = null,
         string $formType = OrderType::class
     ): array|RedirectResponse {
+        if ($order->getId() === null && $order->getWebsite() === null) {
+            $order->setWebsite($this->container->get(WebsiteManager::class)->getDefaultWebsite());
+        }
+
         if (\in_array($request->getMethod(), ['POST', 'PUT'], true)) {
             $orderRequestHandler = $this->container->get(OrderRequestHandler::class);
             if ($orderRequestHandler->getCustomer()) {
@@ -377,6 +382,7 @@ class OrderController extends AbstractController
             UpdateHandlerFacade::class,
             SaveAndReturnActionFormTemplateDataProvider::class,
             FormTemplateDataProviderComposite::class,
+            WebsiteManager::class,
             'doctrine' => ManagerRegistry::class,
             'oro_order.duplicator.order_duplicator' => OrderDuplicator::class,
             OrderFormHandler::class,

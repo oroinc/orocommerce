@@ -922,9 +922,16 @@ services:
             - '@oro_pricing.provider.product_price'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
             - '@oro_pricing.provider.product_line_item_product_price'
+        calls:
+            - [ setOrderProductPriceProvider, [ '@oro_order.provider.order_product_price' ] ]
 
     oro_order.form.handler.order:
         class: Oro\Bundle\OrderBundle\Form\Handler\OrderFormHandler
         arguments:
             - '@doctrine'
             - '@oro_form.event.event_dispatcher'
+        calls:
+            - [ setNonDraftEntitiesEntityManagerIsolator, [ '@oro_order.draft_session.isolator.non_draft_entities_entity_manager_isolator' ] ]
+
+    Oro\Bundle\OrderBundle\Form\Handler\OrderFormHandler:
+        alias: oro_order.form.handler.order

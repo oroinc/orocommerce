@@ -7,6 +7,7 @@ namespace Oro\Bundle\OrderBundle\Datagrid\DraftSession;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfterListenerInterface;
 use Oro\Bundle\DataGridBundle\Provider\SelectedFields\SelectedFieldsProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -16,7 +17,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 /**
  * Adds product images to order line items datagrid records.
  */
-class OrderLineItemDraftImagesDatagridListener
+class OrderLineItemDraftImagesDatagridListener implements OrmResultAfterListenerInterface
 {
     public function __construct(
         private readonly ManagerRegistry $doctrine,

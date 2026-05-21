@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\OrderBundle\Controller\DraftSession;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\OrderBundle\DraftSession\Manager\OrderDraftManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -17,6 +16,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Controller to create a draft order line items.
@@ -40,13 +40,15 @@ final class OrderLineItemDraftCreateController extends AbstractController
         #[MapEntity(expr: 'repository.getOrderWithRelations(orderId)')]
         ?Order $order
     ): Response|array {
-        $orderDraft = $this->getOrderDraft();
+        $this->assertOrderDraftExists($order);
 
-        /** @var OrderDraftManager $orderDraftManager */
-        $orderDraftManager = $this->container->get(OrderDraftManager::class);
-        $orderLineItemDraft = $orderDraftManager->createOrderLineItemDraft($orderDraft);
+        $order = $this->getOrderDraftManager()->loadFromEntityDraft($order);
+        assert($order instanceof Order);
 
-        $form = $this->createForm(OrderLineItemDraftType::class, $orderLineItemDraft, ['initial_validation' => false]);
+        $orderLineItem = new OrderLineItem();
+        $order->addLineItem($orderLineItem);
+
+        $form = $this->createForm(OrderLineItemDraftType::class, $orderLineItem, ['initial_validation' => false]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
@@ -55,22 +57,19 @@ final class OrderLineItemDraftCreateController extends AbstractController
             if ($form->get('drySubmitTrigger')->getData()) {
                 $form = $this->createForm(
                     OrderLineItemDraftType::class,
-                    $orderLineItemDraft,
+                    $orderLineItem,
                     ['initial_validation' => false]
                 );
             } elseif ($form->isValid()) {
-                $doctrine = $this->container->get(ManagerRegistry::class);
-                $entityManager = $doctrine->getManagerForClass(OrderLineItem::class);
-                $entityManager->persist($orderLineItemDraft);
-                $entityManager->flush();
+                $createdOrderLineItemDraft = $this->getOrderDraftManager()->saveToEntityDraft($orderLineItem);
+                assert($createdOrderLineItemDraft instanceof OrderLineItem);
 
-                $createdOrderLineItemDraft = $orderLineItemDraft;
-
-                $orderLineItemDraft = $orderDraftManager->createOrderLineItemDraft($orderDraft);
+                $orderLineItem = new OrderLineItem();
+                $order->addLineItem($orderLineItem);
 
                 $form = $this->createForm(
                     OrderLineItemDraftType::class,
-                    $orderLineItemDraft,
+                    $orderLineItem,
                     ['initial_validation' => false]
                 );
 
@@ -95,7 +94,7 @@ final class OrderLineItemDraftCreateController extends AbstractController
                     '@OroOrder/Order/orderLineItemDraftCreate.html.twig',
                     [
                         'form' => $form->createView(),
-                        'entity' => $orderLineItemDraft,
+                        'entity' => $orderLineItem,
                         'createdEntity' => $createdOrderLineItemDraft ?? null,
                     ]
                 ),
@@ -106,7 +105,7 @@ final class OrderLineItemDraftCreateController extends AbstractController
 
         return [
             'form' => $form->createView(),
-            'entity' => $orderLineItemDraft,
+            'entity' => $orderLineItem,
         ];
     }
 
@@ -115,7 +114,7 @@ final class OrderLineItemDraftCreateController extends AbstractController
     {
         return [
             ...parent::getSubscribedServices(),
-            ManagerRegistry::class,
+            AuthorizationCheckerInterface::class,
             OrderDraftManager::class,
         ];
     }

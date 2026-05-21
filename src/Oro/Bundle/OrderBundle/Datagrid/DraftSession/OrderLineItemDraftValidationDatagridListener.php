@@ -8,6 +8,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Event\OrmResultBeforeQuery;
+use Oro\Bundle\DataGridBundle\Event\OrmResultBeforeQueryListenerInterface;
 use Oro\Bundle\OrderBundle\DraftSession\Manager\OrderDraftManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -23,7 +24,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * Adds isValid property to the datagrid result to indicate whether the order line item is valid.
  * Prepends ordering by isValid column so invalid line items appear at the top.
  */
-class OrderLineItemDraftValidationDatagridListener
+class OrderLineItemDraftValidationDatagridListener implements OrmResultBeforeQueryListenerInterface
 {
     public function __construct(
         private readonly ManagerRegistry $doctrine,
@@ -42,7 +43,7 @@ class OrderLineItemDraftValidationDatagridListener
             $draftSessionUuid = (string)$event->getDatagrid()->getParameters()->get('draft_session_uuid');
             $orderId = (int)$event->getDatagrid()->getParameters()->get('order_id');
 
-            if (!$draftSessionUuid) {
+            if (!$draftSessionUuid || !$orderId) {
                 return;
             }
 
@@ -62,24 +63,16 @@ class OrderLineItemDraftValidationDatagridListener
 
     private function getOrderForValidation(int $orderId, string $draftSessionUuid): ?Order
     {
-        // Dealing with existing order.
-        if ($orderId) {
-            /** @var OrderRepository $orderRepository */
-            $orderRepository = $this->doctrine->getRepository(Order::class);
-            $order = $orderRepository->getOrderWithRelations($orderId);
-            if (!$order) {
-                // Order does not exist anymore.
-                return null;
-            }
+        /** @var OrderRepository $orderRepository */
+        $orderRepository = $this->doctrine->getRepository(Order::class);
+        $order = $orderRepository->getOrderWithRelations($orderId);
+        if (!$order) {
+            // Order does not exist anymore.
+            return null;
         }
 
-        $orderDraft = $this->orderDraftManager->findOrderDraft($draftSessionUuid);
-        if (!$orderDraft) {
-            return $order ?? null;
-        }
-
-        $order ??= $orderDraft->getDraftSource() ?? new Order();
-        $this->orderDraftManager->synchronizeEntityFromDraft($orderDraft, $order);
+        $order = $this->orderDraftManager->loadFromEntityDraft($order, $draftSessionUuid);
+        assert($order instanceof Order);
 
         return $order;
     }

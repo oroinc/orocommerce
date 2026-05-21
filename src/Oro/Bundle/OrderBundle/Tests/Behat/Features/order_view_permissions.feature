@@ -11,7 +11,7 @@ Feature: Order View Permissions
     And I click "Create Order"
     And fill "Order Form" with:
       | Customer | first customer |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product | PSKU1 |
       | Price   | 50    |
     And click "Add Product"

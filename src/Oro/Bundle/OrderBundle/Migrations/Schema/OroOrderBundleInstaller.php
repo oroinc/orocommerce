@@ -48,7 +48,7 @@ class OroOrderBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v7_0_0_3';
+        return 'v7_0_2_1';
     }
 
     #[\Override]
@@ -247,6 +247,7 @@ class OroOrderBundleInstaller implements
         $table->addColumn('validated_at', 'datetime', ['notnull' => false]);
         $table->addColumn('created', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 
@@ -270,6 +271,7 @@ class OroOrderBundleInstaller implements
             'money',
             ['notnull' => true, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
+        $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['order_id'], 'IDX_F9A53B6A8D9F6D38');
     }
@@ -585,6 +587,7 @@ class OroOrderBundleInstaller implements
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 

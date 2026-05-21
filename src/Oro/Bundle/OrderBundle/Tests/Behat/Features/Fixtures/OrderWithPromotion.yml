@@ -1,0 +1,215 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    productName1:
+        string: 'Laptop Computer'
+    productName2:
+        string: 'Wireless Mouse'
+    productName3:
+        string: 'USB Keyboard'
+    productName4:
+        string: 'Monitor 24 inch'
+    productName5:
+        string: 'HDMI Cable'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '0'
+    precision2:
+        unit: '@set'
+        precision: '0'
+    precision3:
+        unit: '@item'
+        precision: '0'
+    precision4:
+        unit: '@item'
+        precision: '0'
+    precision5:
+        unit: '@item'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'SKU1'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@precision1'
+        unitPrecisions: ['@precision1']
+        __calls:
+            - addName: ['@productName1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+    product2:
+        sku: 'SKU2'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@precision2'
+        unitPrecisions: ['@precision2']
+        __calls:
+            - addName: ['@productName2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+    product3:
+        sku: 'SKU3'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@precision3'
+        unitPrecisions: ['@precision3']
+        __calls:
+            - addName: ['@productName3']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+    product4:
+        sku: 'SKU4'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@precision4'
+        unitPrecisions: ['@precision4']
+        __calls:
+            - addName: ['@productName4']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+    product5:
+        sku: 'SKU5'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@precision5'
+        unitPrecisions: ['@precision5']
+        __calls:
+            - addName: ['@productName5']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'SimpleOrder'
+        website: '@website1'
+        currency: USD
+        poNumber: 'ORD1'
+        shipUntil: '<(new DateTime("2027-12-31T23:59:59Z"))>'
+        customerNotes: 'Customer Notes'
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price1:
+        value: 1299.99
+        currency: USD
+    price2:
+        value: 29.99
+        currency: USD
+    price3:
+        value: 59.99
+        currency: USD
+    price4:
+        value: 349.99
+        currency: USD
+    price5:
+        value: 15.99
+        currency: USD
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    orderLineItem1:
+        product: '@product1'
+        price: '@price1'
+        quantity: 2
+        productUnit: '@item'
+        productUnitCode: item
+        shipBy: '<(new \DateTime("2010-01-01", new \DateTimeZone("UTC")))>'
+        __calls:
+            - addOrder: ['@order']
+    orderLineItem2:
+        product: '@product2'
+        price: '@price2'
+        quantity: 5
+        productUnit: '@set'
+        productUnitCode: set
+        shipBy: '<(new \DateTime("2010-02-02", new \DateTimeZone("UTC")))>'
+        __calls:
+            - addOrder: ['@order']
+    orderLineItem3:
+        product: '@product3'
+        price: '@price3'
+        quantity: 3
+        productUnit: '@item'
+        productUnitCode: item
+        shipBy: '<(new \DateTime("2010-03-03", new \DateTimeZone("UTC")))>'
+        __calls:
+            - addOrder: ['@order']
+    orderLineItem4:
+        product: '@product4'
+        price: '@price4'
+        quantity: 1
+        productUnit: '@item'
+        productUnitCode: item
+        shipBy: '<(new \DateTime("2010-04-04", new \DateTimeZone("UTC")))>'
+        __calls:
+            - addOrder: ['@order']
+    orderLineItem5:
+        product: '@product5'
+        price: '@price5'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item
+        shipBy: '<(new \DateTime("2010-05-05", new \DateTimeZone("UTC")))>'
+        __calls:
+            - addOrder: ['@order']
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    orderCouponPromotionSegment:
+        name: 'Order Coupon Promotion Matching Products'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU1","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    orderCouponDiscountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.1
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    orderCouponPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'Order Coupon Promotion'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    orderCouponPromotion:
+        __calls:
+            - addScope: ['@default_scope']
+        productsSegment: '@orderCouponPromotionSegment'
+        rule: '@orderCouponPromotionRule'
+        discountConfiguration: '@orderCouponDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true
+
+Oro\Bundle\PromotionBundle\Entity\Coupon:
+    orderEditCoupon1:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'order-coupon-1'
+        promotion: '@orderCouponPromotion'
+        enabled: true
+        usesPerPerson: 10
+        usesPerCoupon: 100
+        validFrom: '<(new DateTime("01-01-2020 00:00:00"))>'
+        validUntil: '<(new DateTime("01-01-5000 00:00:00"))>'

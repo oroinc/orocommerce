@@ -80,7 +80,7 @@ Feature: Previously purchased products
       | Customer User    | Amanda Cole                                  |
       | Billing Address  | ORO, 801 Scenic Hwy, HAINES CITY FL US 33844 |
       | Shipping Address | ORO, 801 Scenic Hwy, HAINES CITY FL US 33844 |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | PSKU4 |
       | Quantity | 5     |
       | Price    | 10    |
@@ -97,7 +97,7 @@ Feature: Previously purchased products
     Given I proceed as the Admin
     And go to Sales / Orders
     And click Edit "SimpleOrder" in grid
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | PSKU3 |
       | Quantity | 5     |
       | Price    | 10    |

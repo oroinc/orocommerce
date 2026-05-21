@@ -24,6 +24,10 @@ parameters:
         - 'oro_order_line_item_draft_delete'
         - 'oro_order_line_item_draft_calculate_taxes_and_discounts'
         - 'oro_promotion_validate_coupon_applicability'
+    oro_order.draft_session.isolator.event_listeners_isolator.whitelisted_listener_classes:
+        - 'Oro\Bundle\OrganizationBundle\EventListener\RecordOwnerDataListener'
+        - 'Oro\Bundle\EntityBundle\EventListener\ModifyCreatedAndUpdatedPropertiesListener'
+        - 'Oro\Component\DraftSession\EventListener\ResetDraftSourceDoctrineListener'
 
 services:
 
@@ -88,6 +92,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: Oro\Bundle\DistributionBundle\Event\RouterGenerateEvent, method: onRouterGenerate }
 
+    # @bc-layer This service is retained for BC reasons.
     oro_order.datagrid.draft_session.add_order_draft_session_parameters_listener:
         class: Oro\Bundle\OrderBundle\Datagrid\DraftSession\AddOrderDraftSessionParametersDatagridListener
         arguments:
@@ -103,17 +108,23 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_datagrid.provider.selected_fields'
+        lazy: true
         tags:
+            - { name: 'proxy', interface: 'Oro\Bundle\DataGridBundle\Event\OrmResultAfterListenerInterface' }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.order-line-items-edit-grid, method: onResultAfter }
 
     oro_order.draft_session.datagrid.order_line_item_draft_update_listener:
         class: 'Oro\Bundle\OrderBundle\Datagrid\DraftSession\OrderLineItemDraftUpdateDatagridListener'
+        lazy: true
         tags:
+            - { name: 'proxy', interface: 'Oro\Bundle\DataGridBundle\Event\BuildBeforeListenerInterface' }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-edit-grid, method: onBuildBefore }
 
     oro_order.draft_session.datagrid.order_line_item_draft_delete_listener:
         class: 'Oro\Bundle\OrderBundle\Datagrid\DraftSession\OrderLineItemDraftDeleteDatagridListener'
+        lazy: true
         tags:
+            - { name: 'proxy', interface: 'Oro\Bundle\DataGridBundle\Event\BuildBeforeListenerInterface' }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-edit-grid, method: onBuildBefore }
 
     oro_order.draft_session.datagrid.order_line_item_draft_validation_listener:
@@ -123,7 +134,9 @@ services:
             - '@oro_order.draft_session.manager.order_draft'
             - '@validator'
             - '@oro_order.draft_session.manager.draft_session_orm_filter_manager'
+        lazy: true
         tags:
+            - { name: 'proxy', interface: 'Oro\Bundle\DataGridBundle\Event\OrmResultBeforeQueryListenerInterface' }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before_query.order-line-items-edit-grid, method: onResultBeforeQuery }
 
     oro_order.draft_session.manager.draft_session_orm_filter_manager:
@@ -142,6 +155,7 @@ services:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
             - { name: kernel.event_listener, event: kernel.terminate, method: onKernelTerminate }
 
+    # @bc-layer This service is retained for BC reasons. It won't have any replacement.
     oro_order.draft_session.event_listener.load_order_draft_on_request_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\DraftSession\LoadOrderDraftOnRequestListener'
         arguments:
@@ -182,6 +196,8 @@ services:
         class: Oro\Bundle\OrderBundle\DraftSession\Factory\OrderLineItemDraftFactory
         arguments:
             - '@oro_order.draft_session.synchronizer'
+        calls:
+            - [ setOrderDraftRepository, [ '@oro_order.draft_session.provider.order_draft_repository' ] ]
         tags:
             - { name: oro_order.draft_session.factory }
 
@@ -190,6 +206,23 @@ services:
         arguments:
             - !tagged_iterator { tag: oro_order.draft_session.factory }
             - '@event_dispatcher'
+
+    oro_order.pricing.order_line_item_is_price_overridden_calculator:
+        class: Oro\Bundle\OrderBundle\Pricing\OrderLineItemIsPriceOverriddenCalculator
+        arguments:
+            - '@oro_pricing.provider.product_price_by_matching_criteria'
+
+    oro_order.datagrid.draft_session.order_line_item_draft_is_price_overridden_datagrid_listener:
+        class: Oro\Bundle\OrderBundle\Datagrid\DraftSession\OrderLineItemDraftIsPriceOverriddenDatagridListener
+        arguments:
+            - '@oro_order.provider.order_line_item_tier_prices'
+            - '@oro_order.pricing.order_line_item_is_price_overridden_calculator'
+        lazy: true
+        tags:
+            - { name: proxy, interface: 'Oro\Bundle\DataGridBundle\Event\OrmResultAfterListenerInterface' }
+            -   name: kernel.event_listener
+                event: oro_datagrid.orm_datasource.result.after.order-line-items-edit-grid
+                method: onResultAfter
 
     oro_order.form.extension.remove_line_items_from_order_type:
         class: Oro\Bundle\OrderBundle\Form\Extension\RemoveLineItemsFromOrderTypeExtension
@@ -281,6 +314,7 @@ services:
         arguments:
             - '@doctrine'
 
+    # @bc-layer This service is retained for BC reasons. It is replaced by oro_order.draft_session.event_listener.delete_order_draft_after_entity_flush.
     oro_order.draft_session.event_listener.sync_order_draft_before_entity_flush:
         class: Oro\Bundle\OrderBundle\EventListener\DraftSession\OrderDraftBeforeEntityFlushListener
         arguments:
@@ -289,6 +323,20 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_order_type, method: onBeforeEntityFlush }
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_suborder_type, method: onBeforeEntityFlush }
+
+    oro_order.draft_session.event_listener.delete_order_draft_after_entity_flush:
+        class: Oro\Bundle\OrderBundle\EventListener\DraftSession\DeleteOrderDraftOnAfterEntityFlushListener
+        arguments:
+            - '@oro_order.draft_session.manager.order_draft'
+        tags:
+            -   name: kernel.event_listener
+                event: oro.form.update_handler.after_entity_flush.oro_order_type
+                method: onAfterEntityFlush
+                priority: -1000 # Must be executed as late as possible to ensure that order draft is deleted after all changes to order are flushed and no longer needed.
+            -   name: kernel.event_listener
+                event: oro.form.update_handler.after_entity_flush.oro_suborder_type
+                method: onAfterEntityFlush
+                priority: -1000 # Must be executed as late as possible to ensure that order draft is deleted after all changes to order are flushed and no longer needed.
 
     oro_order.draft_session.event_listener.sync_order_to_order_draft_on_order_event:
         class: Oro\Bundle\OrderBundle\EventListener\DraftSession\SyncOrderToOrderDraftOnOrderEventListener
@@ -351,6 +399,7 @@ services:
             - '@oro_order.draft_session.reference_resolver'
             - '@oro_entity.helper.field_helper'
 
+    # @bc-layer This service is retained for BC reasons. Use oro_order.draft_session.provider.draft_session_uuid instead.
     oro_order.draft_session.provider.order_draft_session_uuid:
         class: Oro\Bundle\OrderBundle\DraftSession\Provider\OrderDraftSessionUuidProvider
         arguments:
@@ -372,6 +421,8 @@ services:
             - '@oro_order.draft_session.provider.order_draft_session_uuid'
             - '@oro_order.draft_session.factory'
             - '@oro_order.draft_session.synchronizer'
+        calls:
+            - [ setEntityDraftManager, [ '@oro_order.draft_session.manager.entity_draft_manager' ] ]
 
     Oro\Bundle\OrderBundle\DraftSession\Manager\OrderDraftManager:
         alias: oro_order.draft_session.manager.order_draft
@@ -385,3 +436,112 @@ services:
 
     Oro\Bundle\OrderBundle\DraftSession\Provider\OrderLineItemTaxesAndDiscountsProvider:
         alias: oro_order.draft_session.provider.order_line_item_taxes_and_discounts
+
+    oro_order.draft_session.isolator.event_listeners_isolator:
+        class: Oro\Component\DraftSession\Isolator\DoctrineListenersIsolator
+        arguments:
+            - '@doctrine'
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+            - '%oro_order.draft_session.isolator.event_listeners_isolator.whitelisted_listener_classes%'
+
+    oro_order.draft_session.provider.order_draft_repository:
+        class: Oro\Component\DraftSession\Provider\EntityDraftRepositoryChain
+        arguments:
+            - !tagged_iterator { tag: oro_order.draft_session.repository.entity_draft }
+
+    oro_order.draft_session.provider.order_entity_draft_repository:
+        class: Oro\Component\DraftSession\Provider\ExclusiveEntityDraftRepository
+        arguments:
+            - '@doctrine'
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+        tags:
+            - { name: oro_order.draft_session.repository.entity_draft }
+
+    oro_order.draft_session.provider.order_line_item_entity_draft_repository:
+        class: Oro\Component\DraftSession\Provider\GenericEntityDraftRepository
+        arguments:
+            - '@doctrine'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
+        tags:
+            - { name: oro_order.draft_session.repository.entity_draft }
+
+    oro_order.draft_session.provider.draft_session_uuid:
+        class: Oro\Component\DraftSession\Provider\DraftSessionUuidProvider
+        arguments:
+            - '@router'
+            - '%oro_order.draft_session.uuid_param%'
+
+    oro_order.draft_session.manager.entity_draft_manager:
+        class: Oro\Component\DraftSession\Manager\EntityDraftManager
+        arguments:
+            - '@oro_order.draft_session.provider.order_draft_repository'
+            - '@oro_order.draft_session.provider.draft_session_uuid'
+            - '@oro_order.draft_session.manager.entity_draft_loader'
+            - '@oro_order.draft_session.manager.entity_draft_persister'
+            - '@oro_order.draft_session.manager.entity_draft_remover'
+
+    oro_order.draft_session.manager.entity_draft_loader:
+        class: Oro\Component\DraftSession\Manager\EntityDraftLoader
+        arguments:
+            - '@oro_order.draft_session.provider.order_draft_repository'
+            - '@oro_order.draft_session.provider.draft_session_uuid'
+            - '@oro_order.draft_session.synchronizer'
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: oro_order }
+
+    oro_order.draft_session.manager.entity_draft_persister:
+        class: Oro\Component\DraftSession\Manager\EntityDraftPersister
+        arguments:
+            - '@doctrine'
+            - '@oro_order.draft_session.provider.order_draft_repository'
+            - '@oro_order.draft_session.provider.draft_session_uuid'
+            - '@oro_order.draft_session.factory'
+            - '@oro_order.draft_session.synchronizer'
+            - '@oro_order.draft_session.isolator.event_listeners_isolator'
+            - '@oro_order.draft_session.isolator.draft_entities_entity_manager_isolator'
+            - '@event_dispatcher'
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: oro_order }
+
+    oro_order.draft_session.manager.entity_draft_remover:
+        class: Oro\Component\DraftSession\Manager\EntityDraftRemover
+        arguments:
+            - '@doctrine'
+            - '@oro_order.draft_session.provider.order_draft_repository'
+            - '@oro_order.draft_session.provider.draft_session_uuid'
+            - '@oro_order.draft_session.isolator.event_listeners_isolator'
+            - '@oro_order.draft_session.isolator.draft_entities_entity_manager_isolator'
+            - '@event_dispatcher'
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: oro_order }
+
+    oro_order.draft_session.event_listener.clear_draft_source_on_order_draft_persist:
+        class: Oro\Bundle\OrderBundle\EventListener\DraftSession\ClearDraftSourceOnOrderDraftPersistEventListener
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: kernel.event_listener, event: Oro\Component\DraftSession\Event\EntityDraftPersistBeforeEvent, method: onEntityDraftPersistBefore }
+            - { name: kernel.event_listener, event: Oro\Component\DraftSession\Event\EntityDraftPersistAfterEvent, method: onEntityDraftPersistAfter }
+            - { name: monolog.logger, channel: oro_order }
+
+    oro_order.draft_session.isolator.non_draft_entities_unit_of_work_isolator:
+        class: Oro\Component\DraftSession\Isolator\NonDraftEntitiesUnitOfWorkIsolator
+
+    oro_order.draft_session.isolator.draft_entities_entity_manager_isolator:
+        class: Oro\Component\DraftSession\Isolator\DraftEntitiesEntityManagerIsolator
+        arguments:
+            - '@oro_order.draft_session.isolator.non_draft_entities_unit_of_work_isolator'
+
+    oro_order.draft_session.isolator.draft_entities_unit_of_work_isolator:
+        class: Oro\Component\DraftSession\Isolator\DraftEntitiesUnitOfWorkIsolator
+
+    oro_order.draft_session.isolator.non_draft_entities_entity_manager_isolator:
+        class: Oro\Component\DraftSession\Isolator\NonDraftEntitiesEntityManagerIsolator
+        arguments:
+            - '@oro_order.draft_session.isolator.draft_entities_unit_of_work_isolator'

@@ -24,7 +24,7 @@ Feature: Order product with fractional price in different locales
     And fill "Order Form" with:
       | Customer      | first customer |
       | Customer User | Amanda Cole    |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product  | PSKU1 |
       | Quantity | 500   |
       | Price    | 12,99 |

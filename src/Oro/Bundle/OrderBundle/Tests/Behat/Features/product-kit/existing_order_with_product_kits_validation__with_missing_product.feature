@@ -12,8 +12,8 @@ Feature: Existing Order with Product Kits Validation - with Missing Product
 
   Scenario: Check the kit item line items with a missing product
     Given I click "Line Items"
-    And I click on the first "Edit Line Item Button"
-    And "Order Form" must contains values:
+    And I click edit product-kit-01 in "Order Line Item Draft Grid"
+    And "Order Line Item Draft Edit Form" must contains values:
       | Quantity                | 1                     |
       | Price                   | 12.3400               |
       | ProductKitItem1Product  | MP1 - Missing Product |
@@ -22,30 +22,29 @@ Feature: Existing Order with Product Kits Validation - with Missing Product
       | ProductKitItem2Product  | MP1 - Missing Product |
       | ProductKitItem2Quantity | 1                     |
       | ProductKitItem2Price    | 23.45                 |
-    And I should see the following options for "ProductKitItem1Product" select in form "Order Form":
+    And I should see the following options for "ProductKitItem1Product" select in form "Order Line Item Draft Edit Form":
       | MP1 - Missing Product                 |
       | simple-product-03 - Simple Product 03 |
-    And I should see the following options for "ProductKitItem2Product" select in form "Order Form":
+    And I should see the following options for "ProductKitItem2Product" select in form "Order Line Item Draft Edit Form":
       | MP1 - Missing Product                 |
       | simple-product-01 - Simple Product 01 |
       | simple-product-02 - Simple Product 02 |
 
   Scenario: Change the kit item line items with a missing product
-    When fill "Order Form" with:
+    When fill "Order Line Item Draft Edit Form" with:
       | Quantity               | 2                     |
       | ProductKitItem1Product | MP1 - Missing Product |
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | ProductKitItem1Quantity | 3 |
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | ProductKitItem1Price | 35.56 |
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | ProductKitItem2Product | simple-product-02 - Simple Product 02 |
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | ProductKitItem2Quantity | 4 |
-    And I click "Order Form Line Item 1 Price Overridden"
+    And I click on "Order Line Item Draft Edit Form Price Overridden"
     And I click "Reset price"
-    And I click on empty space
-    Then "Order Form" must contains values:
+    Then "Order Line Item Draft Edit Form" must contains values:
       | Quantity                | 2                                     |
       | Price                   | 240.02                                |
       | ProductKitItem1Product  | MP1 - Missing Product                 |
@@ -54,7 +53,7 @@ Feature: Existing Order with Product Kits Validation - with Missing Product
       | ProductKitItem2Product  | simple-product-02 - Simple Product 02 |
       | ProductKitItem2Quantity | 4                                     |
       | ProductKitItem2Price    | 2.47                                  |
-    And I click on the first "Order Edit Save Changes"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     When I save form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
@@ -69,8 +68,8 @@ Feature: Existing Order with Product Kits Validation - with Missing Product
 
   Scenario: Check the kit item line items with disabled product
     Given I click "Line Items"
-    And I click on the first "Edit Line Item Button"
-    And "Order Form" must contains values:
+    And I click edit product-kit-01 in "Order Line Item Draft Grid"
+    And "Order Line Item Draft Edit Form" must contains values:
       | Quantity                | 1                                                |
       | Price                   | 12.3400                                          |
       | ProductKitItem1Product  | simple-product-04 - Simple Product 04 - Disabled |
@@ -79,30 +78,29 @@ Feature: Existing Order with Product Kits Validation - with Missing Product
       | ProductKitItem2Product  | simple-product-04 - Simple Product 04 - Disabled |
       | ProductKitItem2Quantity | 1                                                |
       | ProductKitItem2Price    | 23.45                                            |
-    And I should see the following options for "ProductKitItem1Product" select in form "Order Form":
+    And I should see the following options for "ProductKitItem1Product" select in form "Order Line Item Draft Edit Form":
       | simple-product-04 - Simple Product 04 - Disabled |
       | simple-product-03 - Simple Product 03            |
-    And I should see the "Order Product Kit Item Line Item Product Ghost Option 1" element in "ProductKitItem1Product" select in form "Order Form"
-    And I should see the following options for "ProductKitItem2Product" select in form "Order Form":
+    And I should see the "Order Product Kit Item Line Item Product Ghost Option 1" element in "ProductKitItem1Product" select in form "Order Line Item Draft Edit Form"
+    And I should see the following options for "ProductKitItem2Product" select in form "Order Line Item Draft Edit Form":
       | simple-product-04 - Simple Product 04 - Disabled |
       | simple-product-01 - Simple Product 01            |
       | simple-product-02 - Simple Product 02            |
-    And I should see the "Order Product Kit Item Line Item Product Ghost Option 1" element in "ProductKitItem2Product" select in form "Order Form"
+    And I should see the "Order Product Kit Item Line Item Product Ghost Option 1" element in "ProductKitItem2Product" select in form "Order Line Item Draft Edit Form"
 
   Scenario: Change the kit item line items with disabled product
-    When fill "Order Form" with:
+    When fill "Order Line Item Draft Edit Form" with:
       | Quantity                | 2 |
       | ProductKitItem1Quantity | 2 |
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | ProductKitItem1Price | 37.56 |
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | ProductKitItem2Product | simple-product-02 - Simple Product 02 |
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | ProductKitItem2Quantity | 3 |
-    And I click "Order Form Line Item 1 Price Overridden"
+    And I click on "Order Line Item Draft Edit Form Price Overridden"
     And I click "Reset price"
-    And I click on empty space
-    Then "Order Form" must contains values:
+    Then "Order Line Item Draft Edit Form" must contains values:
       | Quantity                | 2                                                |
       | Price                   | 205.99                                           |
       | ProductKitItem1Product  | simple-product-04 - Simple Product 04 - Disabled |
@@ -111,7 +109,7 @@ Feature: Existing Order with Product Kits Validation - with Missing Product
       | ProductKitItem2Product  | simple-product-02 - Simple Product 02            |
       | ProductKitItem2Quantity | 3                                                |
       | ProductKitItem2Price    | 2.47                                             |
-    And I click on the first "Order Edit Save Changes"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     When I save form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message

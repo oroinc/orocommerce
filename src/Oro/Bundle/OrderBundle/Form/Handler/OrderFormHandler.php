@@ -11,6 +11,8 @@ use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use Oro\Bundle\FormBundle\Form\Handler\FormHandlerInterface;
 use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Component\DraftSession\Isolator\DraftEntitiesUnitOfWorkIsolator;
+use Oro\Component\DraftSession\Isolator\NonDraftEntitiesEntityManagerIsolator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,10 +24,33 @@ class OrderFormHandler implements FormHandlerInterface
 {
     use RequestHandlerTrait;
 
+    private ?NonDraftEntitiesEntityManagerIsolator $nonDraftEntitiesEntityManagerIsolator = null;
+
     public function __construct(
         private readonly ManagerRegistry $doctrine,
         private readonly EventDispatcherInterface $eventDispatcher
     ) {
+    }
+
+    /**
+     * @bc-layer This method exists for BC reasons.
+     */
+    public function setNonDraftEntitiesEntityManagerIsolator(
+        ?NonDraftEntitiesEntityManagerIsolator $nonDraftEntitiesEntityManagerIsolator
+    ): void {
+        $this->nonDraftEntitiesEntityManagerIsolator = $nonDraftEntitiesEntityManagerIsolator;
+    }
+
+    /**
+     * @bc-layer Ensures ::nonDraftEntitiesEntityManagerIsolator is always set.
+     */
+    private function getNonDraftEntitiesEntityManagerIsolator(): NonDraftEntitiesEntityManagerIsolator
+    {
+        $this->nonDraftEntitiesEntityManagerIsolator ??= new NonDraftEntitiesEntityManagerIsolator(
+            new DraftEntitiesUnitOfWorkIsolator()
+        );
+
+        return $this->nonDraftEntitiesEntityManagerIsolator;
     }
 
     /**
@@ -101,7 +126,7 @@ class OrderFormHandler implements FormHandlerInterface
         try {
             $entityManager->persist($order);
             $this->eventDispatcher->dispatch(new AfterFormProcessEvent($form, $order), Events::BEFORE_FLUSH);
-            $entityManager->flush();
+            $this->getNonDraftEntitiesEntityManagerIsolator()->flushNonDraftEntities($entityManager);
             $this->eventDispatcher->dispatch(new AfterFormProcessEvent($form, $order), Events::AFTER_FLUSH);
             $entityManager->commit();
         } catch (\Exception $exception) {

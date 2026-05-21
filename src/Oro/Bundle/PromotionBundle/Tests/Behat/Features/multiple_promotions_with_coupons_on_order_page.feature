@@ -1,8 +1,6 @@
 @ticket-BB-11877
 @automatically-ticket-tagged
 @fixture-OroPromotionBundle:multiple-promotions-with-coupons-on-order-page.yml
-# Should be fixed in BB-27097
-@skip
 Feature: Multiple promotions with coupons on Order page
   In order to manage multiple promotions with coupons on order page
   As administrator

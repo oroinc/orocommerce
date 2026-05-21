@@ -27,6 +27,7 @@ final class PromotionAwareOrderDraftSynchronizerTest extends TestCase
     private OrderLineItemDraftSynchronizer&MockObject $orderLineItemDraftSynchronizer;
     private PromotionAwareOrderDraftSynchronizer $synchronizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
@@ -184,10 +185,74 @@ final class PromotionAwareOrderDraftSynchronizerTest extends TestCase
 
         $draft = new OrderStub();
         ReflectionUtil::setId($draft, 300);
+        $draft->setDraftSessionUuid('draft-session-uuid');
 
         $this->synchronizer->synchronizeToDraft($entity, $draft);
 
         self::assertCount(1, $draft->getAppliedPromotions());
+        self::assertSame('draft-session-uuid', $draft->getAppliedPromotions()->first()->getDraftSessionUuid());
+    }
+
+    public function testSynchronizeToDraftSetsAppliedCouponDraftSessionUuid(): void
+    {
+        $sourceCoupon = new AppliedCoupon();
+        $sourceCoupon->setCouponCode('SUMMER2026');
+        $sourceCoupon->setSourcePromotionId(100);
+        $sourceCoupon->setSourceCouponId(200);
+
+        $sourceAppliedPromotion = new AppliedPromotion();
+        $sourceAppliedPromotion->setSourcePromotionId(100);
+        $sourceAppliedPromotion->setType('order');
+        $sourceAppliedPromotion->setPromotionName('Coupon Promotion');
+        $sourceAppliedPromotion->setAppliedCoupon($sourceCoupon);
+
+        $entity = new OrderStub();
+        ReflectionUtil::setId($entity, 200);
+        $entity->addAppliedPromotion($sourceAppliedPromotion);
+        $entity->addAppliedCoupon($sourceCoupon);
+
+        $draft = new OrderStub();
+        ReflectionUtil::setId($draft, 300);
+        $draft->setDraftSessionUuid('draft-session-uuid');
+
+        $this->entityManager->expects(self::any())
+            ->method('persist');
+
+        $this->synchronizer->synchronizeToDraft($entity, $draft);
+
+        $syncedCoupon = $draft->getAppliedPromotions()->first()->getAppliedCoupon();
+        self::assertNotNull($syncedCoupon);
+        self::assertSame('draft-session-uuid', $syncedCoupon->getDraftSessionUuid());
+    }
+
+    public function testSynchronizeToDraftSetsAppliedDiscountDraftSessionUuid(): void
+    {
+        $sourceDiscount = new AppliedDiscount();
+        $sourceDiscount->setAmount(15.00);
+        $sourceDiscount->setCurrency('USD');
+
+        $sourceAppliedPromotion = new AppliedPromotion();
+        $sourceAppliedPromotion->setSourcePromotionId(100);
+        $sourceAppliedPromotion->setType('order');
+        $sourceAppliedPromotion->setPromotionName('Discount Promotion');
+        $sourceAppliedPromotion->addAppliedDiscount($sourceDiscount);
+
+        $entity = new OrderStub();
+        ReflectionUtil::setId($entity, 200);
+        $entity->addAppliedPromotion($sourceAppliedPromotion);
+
+        $draft = new OrderStub();
+        ReflectionUtil::setId($draft, 300);
+        $draft->setDraftSessionUuid('draft-session-uuid');
+
+        $this->entityManager->expects(self::any())
+            ->method('persist');
+
+        $this->synchronizer->synchronizeToDraft($entity, $draft);
+
+        $syncedDiscount = $draft->getAppliedPromotions()->first()->getAppliedDiscounts()->first();
+        self::assertNotNull($syncedDiscount);
+        self::assertSame('draft-session-uuid', $syncedDiscount->getDraftSessionUuid());
     }
 
     public function testSynchronizeFromDraftHandlesAppliedCoupon(): void
@@ -529,5 +594,81 @@ final class PromotionAwareOrderDraftSynchronizerTest extends TestCase
         $clonedDiscount = $entity->getAppliedPromotions()->first()->getAppliedDiscounts()->first();
         self::assertSame($createdLineItem, $clonedDiscount->getLineItem());
         self::assertTrue($entity->getLineItems()->contains($createdLineItem));
+    }
+
+    public function testSynchronizeFromDraftRemovesAppliedPromotionWithCouponNotInSource(): void
+    {
+        $targetCoupon = new AppliedCoupon();
+        $targetCoupon->setCouponCode('EXPIRED-COUPON');
+        $targetCoupon->setSourcePromotionId(100);
+
+        $targetAppliedPromotion = new AppliedPromotion();
+        $targetAppliedPromotion->setSourcePromotionId(100);
+        $targetAppliedPromotion->setAppliedCoupon($targetCoupon);
+
+        $draft = new OrderStub();
+        ReflectionUtil::setId($draft, 200);
+        // No promotions in draft — removing all.
+
+        $entity = new OrderStub();
+        ReflectionUtil::setId($entity, 300);
+        $entity->addAppliedPromotion($targetAppliedPromotion);
+        $entity->addAppliedCoupon($targetCoupon);
+
+        $removedEntities = [];
+        $this->entityManager->expects(self::exactly(2))
+            ->method('remove')
+            ->willReturnCallback(function ($e) use (&$removedEntities) {
+                $removedEntities[] = $e;
+            });
+
+        $this->synchronizer->synchronizeFromDraft($draft, $entity);
+
+        self::assertCount(0, $entity->getAppliedPromotions());
+        self::assertContains($targetAppliedPromotion, $removedEntities);
+        self::assertContains($targetCoupon, $removedEntities);
+    }
+
+    public function testSynchronizeFromDraftDiscountFindsMatchingTargetLineItemByNewEntityWithDraftRef(): void
+    {
+        $createdDraftLineItem = new OrderLineItem();
+        ReflectionUtil::setId($createdDraftLineItem, 300);
+
+        $sourceLineItem = new OrderLineItem();
+        // New line item — no ID, but has a draft reference.
+        $sourceLineItem->addDraft($createdDraftLineItem);
+
+        $targetLineItem = new OrderLineItem();
+        ReflectionUtil::setId($targetLineItem, 300);
+
+        $sourceDiscount = new AppliedDiscount();
+        $sourceDiscount->setAmount(20.00);
+        $sourceDiscount->setCurrency('EUR');
+        $sourceDiscount->setLineItem($sourceLineItem);
+
+        $sourceAppliedPromotion = new AppliedPromotion();
+        $sourceAppliedPromotion->setSourcePromotionId(100);
+        $sourceAppliedPromotion->setType('line_item');
+        $sourceAppliedPromotion->setPromotionName('New Entity Line Item Discount');
+        $sourceAppliedPromotion->addAppliedDiscount($sourceDiscount);
+
+        $draft = new OrderStub();
+        ReflectionUtil::setId($draft, 300);
+        $draft->addAppliedPromotion($sourceAppliedPromotion);
+
+        $entity = new OrderStub();
+        ReflectionUtil::setId($entity, 400);
+        $entity->addLineItem($targetLineItem);
+
+        $this->orderLineItemDraftFactory->expects(self::never())
+            ->method('createDraft');
+
+        $this->entityManager->expects(self::any())
+            ->method('persist');
+
+        $this->synchronizer->synchronizeFromDraft($draft, $entity);
+
+        $clonedDiscount = $entity->getAppliedPromotions()->first()->getAppliedDiscounts()->first();
+        self::assertSame($targetLineItem, $clonedDiscount->getLineItem());
     }
 }

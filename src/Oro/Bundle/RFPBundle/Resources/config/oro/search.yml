@@ -8,6 +8,10 @@ search:
         search_template:                '@OroRFP/Request/searchResult.html.twig'
         fields:
             -
+                name: id
+                target_type: integer
+                target_fields: [id]
+            -
                 name:                   firstName
                 target_type:            text
                 target_fields:          [firstName]
@@ -44,6 +48,10 @@ search:
                 target_type:            datetime
                 target_fields:          [shipUntil]
             -
+                name:                   projectName
+                target_type:            text
+                target_fields:          [projectName]
+            -
                 name:                   customer_status
                 relation_type:          many-to-one
                 relation_fields:
@@ -51,6 +59,10 @@ search:
                         name:           name
                         target_type:    text
                         target_fields:  [customerStatus]
+                    -
+                        name: internal_id
+                        target_type: text
+                        target_fields: [ customerStatusCode ]
             -
                 name:                   internal_status
                 relation_type:          many-to-one
@@ -59,10 +71,18 @@ search:
                         name:           name
                         target_type:    text
                         target_fields:  [internalStatus]
+                    -
+                        name:           internal_id
+                        target_type:    text
+                        target_fields:  [ internalStatusCode ]
             -
                 name:                   createdAt
                 target_type:            datetime
                 target_fields:          [createdAt]
+            -
+                name:                   updatedAt
+                target_type:            datetime
+                target_fields:          [ updatedAt ]
             -
                 name: assignedUsers
                 relation_type:          many-to-many

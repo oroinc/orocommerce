@@ -76,7 +76,9 @@
 {% set pageComponentOptions = {} %}
 {% if draftSessionUuid %}
     {% set entryPointRouteParams = entryPointRouteParams|merge({ 'orderDraftSessionUuid': draftSessionUuid }) %}
-    {% set pageComponentOptions = pageComponentOptions|merge({triggerSelector: 'input:not([data-line-items-content] input),select:not([data-line-items-content] select),textarea:not([data-line-items-content] textarea)'}) %}
+    {% set pageComponentOptions = pageComponentOptions|merge({
+        triggerSelector: 'input:not([data-line-items-content] input),select:not([data-line-items-content] select),textarea:not([data-line-items-content] textarea)'
+    }) %}
 {% endif %}
 
 {% set pageComponent = {
@@ -113,13 +115,23 @@
             {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
             <div class="grid grid-row-gap-24">
                 <div class="grid-col-12">
-                    {{ dataGrid.renderGrid('order-line-items-edit-grid', { order_id: entity.id|default(0), draft_session_uuid: draftSessionUuid }, { cssClass: 'order-line-items-edit-grid' }) }}
+                    {% set grid_parameters = {
+                        order_id: oro_order_get_order_or_draft_id(entity)|default(0),
+                        order_draft_id: oro_order_get_order_draft_id(entity)|default(0),
+                        draft_session_uuid: draftSessionUuid
+                    } %}
+                    {% set render_parameters = { cssClass: 'order-line-items-edit-grid' } %}
+                    {{ dataGrid.renderGrid('order-line-items-edit-grid', grid_parameters, render_parameters) }}
                 </div>
                 <div class="grid-col-12">
                     <div class="order-line-item-draft-form-container">
+                        {% set routeParameters = {
+                            orderId: oro_order_get_order_or_draft_id(entity)|default(0),
+                            orderDraftSessionUuid: draftSessionUuid
+                        } %}
                         {{ oro_widget_render({
                             'widgetType': 'order-line-item-draft-create',
-                            'url': path('oro_order_line_item_draft_create', { orderId: entity.id|default(0), orderDraftSessionUuid: draftSessionUuid }),
+                            'url': path('oro_order_line_item_draft_create', routeParameters),
                             'alias': 'order-line-item-draft-create',
                             'elementFirst': false
                         }) }}
@@ -140,7 +152,8 @@
             {{ UI.renderPropertyControlGroup('oro.order.currency.label'|trans, entity.currency) }}
         {% else %}
             <div data-page-component-module="oroui/js/app/components/view-component"
-                 data-page-component-options="{{ {view: 'oroorder/js/app/views/currency-select-view'}|json_encode }}" class="control-group-container">
+                 data-page-component-options="{{ {view: 'oroorder/js/app/views/currency-select-view'}|json_encode }}"
+                 class="control-group-container">
                 {{ form_row(form.currency) }}
             </div>
         {% endif %}
@@ -322,6 +335,13 @@
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks
     }%}
+
+    {% if draftSessionUuid %}
+        <div class="alert alert-info" role="alert" data-draft-session-notice>
+            <span class="fa-info alert-icon" aria-hidden="true"></span>
+            {{ 'oro.order.draft_session.informational_message'|trans }}
+        </div>
+    {% endif %}
 
     {{ parent() }}
 {% endblock content_data %}

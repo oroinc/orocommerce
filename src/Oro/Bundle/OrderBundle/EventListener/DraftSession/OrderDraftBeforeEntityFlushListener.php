@@ -7,10 +7,12 @@ namespace Oro\Bundle\OrderBundle\EventListener\DraftSession;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\OrderBundle\DraftSession\Manager\OrderDraftManager;
-use Oro\Bundle\OrderBundle\Entity\Order;
 
 /**
  * Removes the order draft when the original order is flushed to the database.
+ *
+ * @bc-layer This listener is retained for BC reasons. It is replaced
+ * by {@see DeleteOrderDraftOnAfterEntityFlushListener}.
  */
 class OrderDraftBeforeEntityFlushListener
 {
@@ -20,17 +22,10 @@ class OrderDraftBeforeEntityFlushListener
     ) {
     }
 
+    /**
+     * @bc-layer This method is retained for BC reasons.
+     */
     public function onBeforeEntityFlush(AfterFormProcessEvent $event): void
     {
-        /** @var Order|null $order */
-        $order = $event->getData();
-        if (!$order instanceof Order) {
-            return;
-        }
-
-        $orderDraft = $this->orderDraftManager->getOrderDraft();
-        if ($orderDraft !== null) {
-            $this->doctrine->getManagerForClass(Order::class)->remove($orderDraft);
-        }
     }
 }

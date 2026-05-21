@@ -35,7 +35,18 @@ class TaxBackendOrderDraftEditLineItem extends Element
         $cell = $this->find('css', 'td.grid-body-cell-productSku');
         self::assertNotNull($cell, 'Cannot find product SKU cell in draft edit line item');
 
-        return trim($cell->getText());
+        $text = trim($cell->getText());
+        if ($text !== '') {
+            return $text;
+        }
+
+        // Free-form product: SKU is stored in the value attribute of the input inside the cell
+        $input = $cell->find('css', 'input[name="oro_order_line_item_draft[productSku]"]');
+        if ($input !== null) {
+            return (string) $input->getAttribute('value');
+        }
+
+        return '';
     }
 
     /**

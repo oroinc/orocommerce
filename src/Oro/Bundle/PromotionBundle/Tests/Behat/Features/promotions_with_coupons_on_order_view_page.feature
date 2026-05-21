@@ -10,7 +10,7 @@ Feature: Promotions with coupons on Order view page
     When go to Sales / Orders
     And click edit SimpleOrder in grid
     # Triggered to re-calculate discounts
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product | Second Product |
       | Price   | 5              |
     And click "Add Product"

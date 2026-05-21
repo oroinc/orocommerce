@@ -8,6 +8,7 @@ use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\TaxBundle\Event\SkipOrderTaxRecalculationEvent;
 use Oro\Bundle\TaxBundle\EventListener\OrderTax\AbstractTaxableListener;
 use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
+use Oro\Component\DraftSession\Util\EntityDraftUtils;
 
 /**
  * Skips tax recalculation for orders drafts.
@@ -25,7 +26,7 @@ class SkipOrderTaxRecalculationEntityDraftAwareEventListener extends AbstractTax
 
         $entity = $uow->tryGetById($taxable->getIdentifier(), $taxable->getClassName());
 
-        if ($entity instanceof EntityDraftAwareInterface && $entity->getDraftSessionUuid()) {
+        if ($entity instanceof EntityDraftAwareInterface && EntityDraftUtils::isEntityDraft($entity)) {
             $event->setSkipOrderTaxRecalculation(true);
         }
     }

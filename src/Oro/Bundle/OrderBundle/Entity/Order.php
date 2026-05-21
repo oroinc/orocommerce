@@ -41,6 +41,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
+use Oro\Component\DraftSession\Entity\EntityDraftAwareTrait;
 
 /**
  * Order entity
@@ -115,6 +116,7 @@ class Order implements
     use AuditableFrontendCustomerUserAwareTrait;
     use DatesAwareTrait;
     use ExtendEntityTrait;
+    use EntityDraftAwareTrait;
 
     public const INTERNAL_STATUS_CODE = 'order_internal_status';
     public const STATUS_CODE = 'order_status';
@@ -384,12 +386,6 @@ class Order implements
     #[ORM\InverseJoinColumn(name: 'pdf_document_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected Collection $pdfDocuments;
-
-    /**
-     * The UUID of the draft session the order belongs to.
-     */
-    #[ORM\Column(name: 'draft_session_uuid', type: Types::GUID, nullable: true)]
-    protected ?string $draftSessionUuid = null;
 
     /**
      * The source order to which the draft order belongs.
@@ -1424,57 +1420,5 @@ class Order implements
     public function getPdfDocuments(): Collection
     {
         return $this->pdfDocuments;
-    }
-
-    public function getDraftSessionUuid(): ?string
-    {
-        return $this->draftSessionUuid;
-    }
-
-    public function setDraftSessionUuid(?string $draftSessionUuid): self
-    {
-        $this->draftSessionUuid = $draftSessionUuid;
-
-        return $this;
-    }
-
-    public function getDraftSource(): ?EntityDraftAwareInterface
-    {
-        return $this->draftSource;
-    }
-
-    public function setDraftSource(?EntityDraftAwareInterface $draftSource): self
-    {
-        $this->draftSource = $draftSource;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<Order>
-     */
-    public function getDrafts(): Collection
-    {
-        return $this->drafts;
-    }
-
-    public function addDraft(EntityDraftAwareInterface $draft): self
-    {
-        if (!$this->drafts->contains($draft)) {
-            $this->drafts->add($draft);
-            $draft->setDraftSource($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDraft(EntityDraftAwareInterface $draft): self
-    {
-        if ($this->drafts->contains($draft)) {
-            $this->drafts->removeElement($draft);
-            $draft->setDraftSource(null);
-        }
-
-        return $this;
     }
 }

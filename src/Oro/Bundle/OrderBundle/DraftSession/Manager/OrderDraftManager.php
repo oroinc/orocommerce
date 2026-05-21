@@ -11,14 +11,20 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\EventListener\DraftSession\LoadOrderDraftOnRequestListener;
 use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
 use Oro\Component\DraftSession\Factory\EntityDraftFactoryInterface;
+use Oro\Component\DraftSession\Manager\EntityDraftManager;
 use Oro\Component\DraftSession\Synchronizer\EntityDraftSynchronizerInterface;
+use Oro\Component\DraftSession\Util\EntityDraftUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Provides methods to manage order drafts in the context of a draft session.
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class OrderDraftManager
 {
+    private ?EntityDraftManager $entityDraftManager = null;
+
     public function __construct(
         private readonly ManagerRegistry $doctrine,
         private readonly RequestStack $requestStack,
@@ -28,15 +34,94 @@ class OrderDraftManager
     ) {
     }
 
+    /**
+     * @bc-layer This method exists for BC reasons.
+     */
+    public function setEntityDraftManager(?EntityDraftManager $entityDraftManager): void
+    {
+        $this->entityDraftManager = $entityDraftManager;
+    }
+
     public function getDraftSessionUuid(): ?string
     {
         return $this->draftSessionUuidProvider->getDraftSessionUuid();
     }
 
     /**
-     * Returns the order draft for the current request if it exists.
+     * Determines whether a draft exists for the given entity in the resolved draft session.
      *
-     * @return Order|null
+     * @param EntityDraftAwareInterface $entity Entity to check draft presence for.
+     * @param string|null $draftSessionUuid Draft session UUID; current session UUID is used when null.
+     *
+     * @return bool True when a matching draft exists; otherwise false.
+     */
+    public function hasEntityDraft(
+        EntityDraftAwareInterface $entity,
+        ?string $draftSessionUuid = null
+    ): bool {
+        return $this->entityDraftManager->hasEntityDraft($entity, $draftSessionUuid);
+    }
+
+    /**
+     * Finds a draft for the given entity in the resolved draft session.
+     *
+     * @param EntityDraftAwareInterface $entity Entity to find a draft for.
+     * @param string|null $draftSessionUuid Draft session UUID; current session UUID is used when null.
+     *
+     * @return EntityDraftAwareInterface|null Draft entity when found; otherwise null.
+     */
+    public function findEntityDraft(
+        EntityDraftAwareInterface $entity,
+        ?string $draftSessionUuid = null
+    ): ?EntityDraftAwareInterface {
+        return $this->entityDraftManager->findEntityDraft($entity, $draftSessionUuid);
+    }
+
+    /**
+     * Loads entity state from its draft using loader service logic.
+     *
+     * @param EntityDraftAwareInterface $entity Regular entity or draft entity.
+     * @param string|null $draftSessionUuid Draft session UUID; current session UUID is used when null.
+     *
+     * @return EntityDraftAwareInterface Synchronized regular entity instance.
+     */
+    public function loadFromEntityDraft(
+        EntityDraftAwareInterface $entity,
+        ?string $draftSessionUuid = null
+    ): EntityDraftAwareInterface {
+        return $this->entityDraftManager->loadFromEntityDraft($entity, $draftSessionUuid);
+    }
+
+    /**
+     * Saves draft state for the given entity using persister service logic.
+     *
+     * @param EntityDraftAwareInterface $entity Regular entity or draft entity.
+     * @param string|null $draftSessionUuid Draft session UUID; current session UUID is used when null.
+     *
+     * @return EntityDraftAwareInterface Persisted draft entity.
+     */
+    public function saveToEntityDraft(
+        EntityDraftAwareInterface $entity,
+        ?string $draftSessionUuid = null
+    ): EntityDraftAwareInterface {
+        return $this->entityDraftManager->saveToEntityDraft($entity, $draftSessionUuid);
+    }
+
+    /**
+     * Deletes a draft for the given entity in the resolved draft session.
+     *
+     * @param EntityDraftAwareInterface $entity Entity whose draft should be removed.
+     * @param string|null $draftSessionUuid Draft session UUID; current session UUID is used when null.
+     */
+    public function deleteEntityDraft(
+        EntityDraftAwareInterface $entity,
+        ?string $draftSessionUuid = null
+    ): void {
+        $this->entityDraftManager->deleteEntityDraft($entity, $draftSessionUuid);
+    }
+
+    /**
+     * @bc-layer This method is retained for BC reasons. Use ::findEntityDraft() instead.
      */
     public function getOrderDraft(): ?Order
     {
@@ -45,6 +130,9 @@ class OrderDraftManager
         return $request?->attributes->get(LoadOrderDraftOnRequestListener::ORDER_DRAFT);
     }
 
+    /**
+     * @bc-layer This method is retained for BC reasons. Use ::saveToEntityDraft() instead.
+     */
     public function createEntityDraft(
         EntityDraftAwareInterface $entity,
         ?string $draftSessionUuid = null
@@ -56,6 +144,9 @@ class OrderDraftManager
         return $this->entityDraftFactory->createDraft($entity, $draftSessionUuid);
     }
 
+    /**
+     * @bc-layer This method is retained for BC reasons. Use ::loadFromEntityDraft() instead.
+     */
     public function synchronizeEntityFromDraft(
         EntityDraftAwareInterface $draft,
         EntityDraftAwareInterface $entity
@@ -63,13 +154,16 @@ class OrderDraftManager
         $this->entityDraftSynchronizer->synchronizeFromDraft($draft, $entity);
     }
 
+    /**
+     * @bc-layer This method is retained for BC reasons. Use ::saveToEntityDraft() instead.
+     */
     public function synchronizeEntityToDraft(EntityDraftAwareInterface $entity, EntityDraftAwareInterface $draft): void
     {
         $this->entityDraftSynchronizer->synchronizeToDraft($entity, $draft);
     }
 
     /**
-     * Finds an order draft by a draft session UUID.
+     * @bc-layer This method is retained for BC reasons. Use ::findEntityDraft() instead.
      */
     public function findOrderDraft(?string $draftSessionUuid): ?Order
     {
@@ -83,7 +177,7 @@ class OrderDraftManager
     }
 
     /**
-     * Finds an order line item draft by the order line item ID.
+     * @bc-layer This method is retained for BC reasons. Use ::findEntityDraft() instead.
      */
     public function findOrderLineItemDraft(
         OrderLineItem $orderLineItem,
@@ -100,6 +194,9 @@ class OrderDraftManager
             ->findOrderLineItemDraftWithRelations($orderLineItemOrDraftId, $draftSessionUuid);
     }
 
+    /**
+     * @bc-layer This method is retained for BC reasons. Use ::saveToEntityDraft() instead.
+     */
     public function createOrderLineItemDraft(
         Order $orderDraft,
         ?OrderLineItem $orderLineItem = null,
@@ -120,7 +217,7 @@ class OrderDraftManager
     }
 
     /**
-     * Returns the order line item ID if the given order line item is persisted, or its draft ID if it's a new entity.
+     * @bc-layer This method is retained for BC reasons. Use {@see EntityDraftUtils::getEntityOrDraftId()} instead.
      */
     public function getOrderLineItemOrDraftId(OrderLineItem $orderLineItem): int
     {

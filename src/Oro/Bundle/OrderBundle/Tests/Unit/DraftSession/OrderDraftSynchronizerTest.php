@@ -312,6 +312,30 @@ final class OrderDraftSynchronizerTest extends TestCase
         self::assertCount(0, $order->getDrafts());
     }
 
+    public function testSynchronizeToDraftSetsDraftSource(): void
+    {
+        $draftSource = new OrderStub();
+        ReflectionUtil::setId($draftSource, 100);
+
+        $order = new OrderStub();
+        ReflectionUtil::setId($order, 500);
+
+        $orderDraft = new OrderStub();
+        ReflectionUtil::setId($orderDraft, 2000);
+        $orderDraft->setDraftSource($draftSource);
+
+        $this->doctrine->expects(self::any())
+            ->method('getManagerForClass')
+            ->willReturn($this->entityManager);
+        $this->entityManager->expects(self::any())
+            ->method('contains')
+            ->willReturn(true);
+
+        $this->synchronizer->synchronizeToDraft($order, $orderDraft);
+
+        self::assertSame($draftSource, $orderDraft->getDraftSource());
+    }
+
     public function testSynchronizeToDraftCopiesFields(): void
     {
         $organization = new Organization();

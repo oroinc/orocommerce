@@ -24,6 +24,34 @@ The current file describes significant changes in the code that may affect the u
 - [1.2.0](#120-2017-06-01)
 - [1.1.0](#110-2017-03-31)
 
+## UNRELEASED
+
+### Added
+
+#### OrderBundle
+* Added `\Oro\Bundle\OrderBundle\Datagrid\DraftSession\OrderLineItemDraftIsPriceOverriddenDatagridListener` — that collects all eligible line items from the result set, fetches their tier prices in a single batch query.
+* Added `\Oro\Bundle\OrderBundle\Pricing\OrderLineItemIsPriceOverriddenCalculator` — determines whether the price set on an `OrderLineItem` differs from the matched tier price.
+
+#### RFPBundle
+* Added **RFQ-to-Order draft session integration** — the `oro_rfp_request_create_order` action can now create an `Order` draft directly from a `Request For Quote`, using the draft session component. The draft is pre-populated with the RFQ's customer, currency, addresses, line items, and matched prices.
+  * Added `\Oro\Bundle\RFPBundle\DraftSession\Factory\OrderDraftFromRfqFactory` — creates an `Order` draft from a `Request`, copying organization, owner, customer, customer user, PO number, website, currency, ship-until date, customer notes, and source entity reference.
+  * Added `\Oro\Bundle\RFPBundle\DraftSession\Factory\OrderLineItemDraftFromRfqFactory` — creates `OrderLineItem` drafts from `RequestProduct` entities, copying product, SKU, primary unit, quantity, comment, kit item line items, and the `requestProduct` back-reference extended field. When the referenced product has been deleted, the line item is created as a free-form item with the original SKU and product unit, and a zero placeholder price.
+  * Added a nullable `requestProduct` many-to-one extended relation from `OrderLineItem` to `RequestProduct` (column `requestproduct_id`, `ON DELETE SET NULL`, hidden from UI, datagrid, audit, and import/export).
+  * Added `\Oro\Bundle\RFPBundle\DraftSession\RequestProductAwareOrderLineItemDraftSynchronizer` — synchronizes the `requestProduct` extended field between source and draft `OrderLineItem` during draft sync operations.
+  * Added `\Oro\Bundle\RFPBundle\Provider\RfqCurrencyProvider` — resolves the correct currency for an RFQ-derived order draft via `CustomerUserCurrencyProvider`, with a fallback to the system default currency.
+  * Added `\Oro\Bundle\RFPBundle\Form\Extension\OrderLineItemDraftOffersExtension` — extends `OrderLineItemDraftType` to expose an `offers` field (pre-filtered to the order draft's currency) when the line item is linked to an RFQ `RequestProduct`.
+  * Added event listeners under `\Oro\Bundle\RFPBundle\EventListener\DraftSession\` namespace: `SetMatchedPricesOnOrderDraftCreatedEventListener` (resolves and applies matched prices including kit item prices), `SetOrderAddressOnOrderDraftCreatedEventListener` (resolves default billing and shipping addresses from the RFQ customer data), `SyncLineItemsOnOrderDraftCreatedEventListener` (creates draft `OrderLineItem` entities from `RequestProduct` entries), `SyncExtendedFieldsOnOrderDraftCreatedEventListener` / `SyncExtendedFieldsOnOrderLineItemDraftCreatedEventListener` (copy extended fields to the draft), `GenerateChecksumOnOrderLineItemDraftCreatedEventListener` (sets the checksum on newly created line item drafts), and `ClearRequestProductsOnOrderBeforeEntityFlushListener` (nulls out stale `requestProduct` FK references on new orders before flush).
+
+### Changed
+
+#### RFPBundle
+* Updated `oro_rfp_request_create_order` action to use `oro_rfp.operation.create_order_draft_from_rfq` service to create an order draft instead of pre-filling the order form via order data storage extension.
+* `\Oro\Bundle\RFPBundle\Entity\Request` now implements `\Oro\Component\DraftSession\Entity\EntityDraftAwareInterface` and `\Oro\Bundle\CurrencyBundle\Entity\WebsiteBasedCurrencyAwareInterface` to support use as a draft source entity in the RFQ-to-Order draft flow.
+* `\Oro\Bundle\RFPBundle\Entity\RequestProduct` now implements `\Oro\Component\DraftSession\Entity\EntityDraftAwareInterface` to support use as a draft source entity.
+
+#### OrderBundle
+* Updated `\Oro\Bundle\OrderBundle\Provider\OrderLineItemTierPricesProvider` — added `getTierPricesForLineItems(array $orderLineItems)` method that retrieves tier prices for multiple order line items using a single price-storage query. The result array is indexed by the same keys as the `$orderLineItems` input array, and simple products are deduplicated before querying the price storage.
+
 ## 7.0.0 (2026-03-31)
 [Show detailed list of changes](incompatibilities-7-0.md)
 

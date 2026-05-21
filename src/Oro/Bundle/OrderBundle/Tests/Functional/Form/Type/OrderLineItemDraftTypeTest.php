@@ -147,6 +147,7 @@ final class OrderLineItemDraftTypeTest extends WebTestCase
             'required' => true,
             'error_bubbling' => true,
             'hide_currency' => true,
+            'by_reference' => false,
         ]);
     }
 
@@ -174,6 +175,43 @@ final class OrderLineItemDraftTypeTest extends WebTestCase
         self::assertFormHasField($form, 'shipBy', OroDateType::class, [
             'required' => false,
         ]);
+    }
+
+    public function testPriceValueSyncedAfterSubmit(): void
+    {
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        /** @var ProductUnit $liter */
+        $liter = $this->getReference(LoadProductUnits::LITER);
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+
+        // Pre-condition: the line item already has a price
+        $lineItem = new OrderLineItem();
+        $lineItem->setProduct($product);
+        $lineItem->setPrice(Price::create(10.00, 'USD'));
+        $order->addLineItem($lineItem);
+
+        self::assertEquals(10.00, $lineItem->getValue());
+        self::assertEquals('USD', $lineItem->getCurrency());
+
+        $form = self::createForm(OrderLineItemDraftType::class, $lineItem);
+
+        // Submit a different price value
+        $form->submit([
+            'product' => $product->getId(),
+            'quantity' => 2,
+            'productUnit' => $liter->getCode(),
+            'price' => [
+                'value' => 123.45,
+                'currency' => 'USD',
+            ],
+            'priceType' => PriceTypeAwareInterface::PRICE_TYPE_UNIT,
+        ]);
+
+        self::assertTrue($form->isValid(), (string) $form->getErrors(true, true));
+        self::assertTrue($form->isSynchronized());
+
+        self::assertEquals(123.45, $lineItem->getValue(), 'Scalar $value must be updated after price change');
     }
 
     public function testCommentFieldConfiguration(): void
@@ -691,6 +729,7 @@ final class OrderLineItemDraftTypeTest extends WebTestCase
         self::assertTrue($form->isValid(), 'Form should be valid');
         self::assertTrue($form->isSynchronized(), 'Form should be synchronized');
         self::assertTrue($lineItem->isFreeForm(), 'String "1" should be converted to true by setter');
+        self::assertCount(0, $form->get('freeFormProduct')->getErrors());
 
         // Verify free form data is set
         self::assertEquals('SKU-TEST-001', $lineItem->getProductSku());
@@ -956,5 +995,63 @@ final class OrderLineItemDraftTypeTest extends WebTestCase
         // the price should be cleared when kit item line item fields trigger dry submit
         // so it can be recalculated
         self::assertNull($submittedData->getPrice(), 'Price should be cleared when is_price_changed is false');
+    }
+
+    public function testFreeFormProductErrorAppearsOnRealSubmitWhenNameIsEmpty(): void
+    {
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        $lineItem = new OrderLineItem();
+        $order->addLineItem($lineItem);
+
+        $form = self::createForm(OrderLineItemDraftType::class, $lineItem, ['initial_validation' => false]);
+        $form->submit([
+            'isFreeForm' => '1',
+            'freeFormProduct' => '',
+            'productSku' => '',
+            'quantity' => '1',
+            'productUnit' => 'item',
+            'price' => ['value' => '10', 'currency' => 'USD'],
+            'drySubmitTrigger' => '',
+        ]);
+
+        self::assertFalse($form->isValid());
+
+        $errors = $form->get('freeFormProduct')->getErrors();
+        self::assertCount(1, $errors);
+        self::assertSame(
+            'The free-form product name should not be blank.',
+            $errors[0]->getMessage()
+        );
+    }
+
+    public function testFinishViewSetsTierPricesEmptyWhenLineItemHasNoProduct(): void
+    {
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        $lineItem = new OrderLineItem();
+        $order->addLineItem($lineItem);
+
+        $form = self::createForm(OrderLineItemDraftType::class, $lineItem);
+        $view = $form->createView();
+
+        self::assertArrayHasKey('tierPrices', $view->vars);
+        self::assertSame([], $view->vars['tierPrices']);
+    }
+
+    public function testFinishViewSetsTierPricesIndexedByProductIdWhenLineItemHasProduct(): void
+    {
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+
+        $lineItem = new OrderLineItem();
+        $lineItem->setProduct($product);
+        $order->addLineItem($lineItem);
+
+        $form = self::createForm(OrderLineItemDraftType::class, $lineItem);
+        $view = $form->createView();
+
+        self::assertArrayHasKey('tierPrices', $view->vars);
+        self::assertArrayHasKey($product->getId(), $view->vars['tierPrices']);
+        self::assertIsArray($view->vars['tierPrices'][$product->getId()]);
     }
 }

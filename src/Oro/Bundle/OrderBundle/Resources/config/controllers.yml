@@ -8,7 +8,6 @@ services:
         tags:
             - { name: container.service_subscriber }
             - { name: container.service_subscriber, id: oro_order.duplicator.order_duplicator }
-            - { name: container.service_subscriber, id: oro_order.form.handler.order, key: Oro\Bundle\OrderBundle\Form\Handler\OrderFormHandler }
 
     Oro\Bundle\OrderBundle\Controller\AjaxOrderController:
         calls:

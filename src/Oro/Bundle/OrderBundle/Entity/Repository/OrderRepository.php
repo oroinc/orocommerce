@@ -85,6 +85,8 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
      * @param string|null $draftSessionUuid UUID of the draft session.
      *
      * @return Order|null
+     *
+     * @bc-layer This method is retained for BC reasons. Use {@see EntityDraftRepository::findEntityDraft} instead.
      */
     public function getOrderDraftWithRelations(?string $draftSessionUuid): ?Order
     {

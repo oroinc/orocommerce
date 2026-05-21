@@ -22,7 +22,10 @@ class AddFreeFormTaxCodeToOrderLineItem implements Migration, ExtendExtensionAwa
     #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
-        $this->addFreeFormTaxCodeRelation($schema);
+        $table = $schema->getTable('oro_order_line_item');
+        if (!$table->hasColumn('freeFormTaxCode')) {
+            $this->addFreeFormTaxCodeRelation($schema);
+        }
     }
 
     private function addFreeFormTaxCodeRelation(Schema $schema): void

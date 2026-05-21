@@ -74,6 +74,7 @@ class OrderAddressAwareOrderDraftSynchronizer implements EntityDraftSynchronizer
     ): void {
         if (!$targetAddress) {
             $targetAddress = new OrderAddress();
+            $targetAddress->setDraftSessionUuid($targetOrder->getDraftSessionUuid());
             if ($addressType === AddressType::TYPE_BILLING) {
                 $targetOrder->setBillingAddress($targetAddress);
             } else {

@@ -20,10 +20,10 @@ Feature: Order promotions
   Scenario: Recalculate discounts if line items changed(automatically added promotions)
     When I click "Line Items"
     And I click Edit "Product1" in grid
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | Product | Product2 |
       | Price   | 20       |
-    And I click on "Order Edit Save Changes"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     Then I should see next rows in "Promotions" table
       | Promotion                 | Type            | Status | Discount |
       | Order Line Item Promotion | Order Line Item | Active | -$2.00   |
@@ -58,9 +58,9 @@ Feature: Order promotions
   Scenario: Add coupon if line items changed
     When I click "Line Items"
     And I click Edit "Product2" in grid
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | Price | 30 |
-    And I click on "Order Edit Save Changes"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     Given I click "Add Coupon Code"
     And type "orderLineItemCoupon" in "Coupon Code"
     And should see a "Highlighted Suggestion" element
@@ -117,9 +117,9 @@ Feature: Order promotions
   Scenario: Remove coupon if line items changed
     When I click "Line Items"
     And I click Edit "Product2" in grid
-    And fill "Order Form" with:
+    And fill "Order Line Item Draft Edit Form" with:
       | Price | 40 |
-    And I click on "Order Edit Save Changes"
+    And I click on "Order Line Item Draft Edit Form Save Button"
 
     Given I click "Remove" on row "Order Line Item Coupon Promotion" in "Promotions"
     Then should see next rows in "Promotions" table

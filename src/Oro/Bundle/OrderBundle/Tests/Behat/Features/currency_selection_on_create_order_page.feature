@@ -37,7 +37,7 @@ Feature: Currency selection on create order page
       | Customer User    | Amanda Cole                            |
       | Billing Address  | ORO, Fifth avenue, ORLANDO FL US 90001 |
       | Shipping Address | ORO, Fifth avenue, ORLANDO FL US 90001 |
-    And fill "Order Edit Add Line Item Form" with:
+    And fill "Order Line Item Draft Create Form" with:
       | Product | SKU |
     And click "Add Product"
 

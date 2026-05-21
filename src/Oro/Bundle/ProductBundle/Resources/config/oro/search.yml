@@ -12,6 +12,10 @@ search:
                 target_type:            text
                 target_fields:          [sku]
             -
+                name: sku_uppercase
+                target_type: text
+                target_fields: [ skuUppercase ]
+            -
                 name:                   defaultName
                 target_type:            text
                 target_fields:          [defaultName]
@@ -39,6 +43,14 @@ search:
                 name:                   defaultShortDescription
                 target_type:            text
                 target_fields:          [defaultShortDescription]
+            -
+                name: createdAt
+                target_type: datetime
+                target_fields: [ createdAt ]
+            -
+                name: updatedAt
+                target_type: datetime
+                target_fields: [ updatedAt ]
             -
                 name: descriptions
                 relation_type: many-to-many
@@ -87,7 +99,11 @@ search:
                     -
                         name:           name
                         target_type:    text
-                        target_fields:  [inventoryStatus]
+                        target_fields:  [inventory_status]
+                    -
+                        name: internal_id
+                        target_type: text
+                        target_fields: [ inventory_status_code ]
 
     Oro\Bundle\ProductBundle\Entity\Brand:
         alias:                          oro_brand
@@ -96,6 +112,10 @@ search:
         search_template:                '@OroProduct/Brand/searchResult.html.twig'
         acl_permission:                 'VIEW'
         fields:
+            -
+                name: id
+                target_type: integer
+                target_fields: [ id ]
             -
                 name: names
                 relation_type: many-to-many
@@ -128,3 +148,11 @@ search:
                         name: text
                         target_type: text
                         target_fields: [shortDescriptions]
+            -
+                name: createdAt
+                target_type: datetime
+                target_fields: [ createdAt ]
+            -
+                name: updatedAt
+                target_type: datetime
+                target_fields: [ updatedAt ]

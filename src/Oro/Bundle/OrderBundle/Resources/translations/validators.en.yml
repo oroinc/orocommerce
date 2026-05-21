@@ -35,6 +35,7 @@ oro:
                 invalid: 'The currency is not a valid currency.'
                 not_match: 'The specified currency must be equal to "{{ expected_value }}".'
             free_form_product:
+                blank: 'The free-form product name should not be blank.'
                 max_length: 'The free-form product value is too long. It should have {{ limit }} character or less.|The free-form product value is too long. It should have {{ limit }} characters or less.'
             shipping_estimate_amount:
                 invalid_decimal: 'The shipping estimate amount should be a valid number.'

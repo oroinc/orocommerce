@@ -25,11 +25,12 @@ Feature: Create Order and Quote from RFQ with deleted product
     And I click on "RFQ Create Order"
     # Free-form items inherit the RFQ currency and start with a zero placeholder price
     And I click Edit "PRODUCT_TO_DELETE" in grid
-    Then "Order Form" must contains values:
-      | LineItemFreeFormProduct | PRODUCT_TO_DELETE |
-      | LineItemFreeFormSku     | PRODUCT_TO_DELETE |
-      | Price                   | 0.00              |
-    And I click on the first "Order Edit Save Changes"
+    Then "Order Line Item Draft Edit Form" must contains values:
+      | FreeProduct    | PRODUCT_TO_DELETE |
+      | FreeProductSku | PRODUCT_TO_DELETE |
+      | Price          | 0.00              |
+      | ProductUnit    | piece             |
+    And I click on "Order Line Item Draft Edit Form Save Button"
     And I save and close form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
@@ -53,11 +54,12 @@ Feature: Create Order and Quote from RFQ with deleted product
     And I click on "RFQ Create Order"
     # Free-form items inherit the RFQ currency and start with a zero placeholder price
     And I click Edit "KIT_TO_DELETE" in grid
-    Then "Order Form" must contains values:
-      | LineItemFreeFormProduct | KIT_TO_DELETE |
-      | LineItemFreeFormSku     | KIT_TO_DELETE |
-      | Price                   | 0.00          |
-    And I click on the first "Order Edit Save Changes"
+    Then "Order Line Item Draft Edit Form" must contains values:
+      | FreeProduct    | KIT_TO_DELETE |
+      | FreeProductSku | KIT_TO_DELETE |
+      | Price          | 0.00          |
+      | ProductUnit    | piece         |
+    And I click on "Order Line Item Draft Edit Form Save Button"
     And I save and close form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message

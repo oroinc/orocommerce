@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace Oro\Bundle\OrderBundle\Datagrid\DraftSession;
 
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfterListenerInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultBefore;
+use Oro\Bundle\DataGridBundle\Event\OrmResultBeforeListenerInterface;
 use Oro\Component\DraftSession\Manager\DraftSessionOrmFilterManager;
 
 /**
  * Disables the order_draft ORM filter for order line items datagrid to allow view and edit for draft order line items.
  * The filter is disabled before the ORM queries are executed and re-enabled after.
  */
-class OrderLineItemsDraftSessionFilterListener
+class OrderLineItemsDraftSessionFilterListener implements
+    OrmResultBeforeListenerInterface,
+    OrmResultAfterListenerInterface
 {
     /**
      * Stores the original state of the order draft ORM filter before it is disabled.

@@ -7,6 +7,7 @@ namespace Oro\Bundle\OrderBundle\DraftSession\Factory;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
 use Oro\Component\DraftSession\Factory\EntityDraftFactoryInterface;
+use Oro\Component\DraftSession\Provider\EntityDraftRepositoryInterface;
 use Oro\Component\DraftSession\Synchronizer\EntityDraftSynchronizerInterface;
 
 /**
@@ -14,9 +15,19 @@ use Oro\Component\DraftSession\Synchronizer\EntityDraftSynchronizerInterface;
  */
 class OrderLineItemDraftFactory implements EntityDraftFactoryInterface
 {
+    private ?EntityDraftRepositoryInterface $orderDraftRepository = null;
+
     public function __construct(
         private readonly EntityDraftSynchronizerInterface $entityDraftSynchronizer,
     ) {
+    }
+
+    /**
+     * @bc-layer This method exists for BC reasons.
+     */
+    public function setOrderDraftRepository(?EntityDraftRepositoryInterface $orderDraftRepository): void
+    {
+        $this->orderDraftRepository = $orderDraftRepository;
     }
 
     #[\Override]
@@ -32,7 +43,20 @@ class OrderLineItemDraftFactory implements EntityDraftFactoryInterface
 
         $orderLineItemDraft = new OrderLineItem();
         $orderLineItemDraft->setDraftSessionUuid($draftSessionUuid);
-        $orderLineItemDraft->setDraftSource($entity->getId() ? $entity : null);
+        $orderLineItemDraft->setDraftSource($entity);
+
+        $order = $entity->getOrder();
+        if ($order !== null) {
+            if ($order->getId() !== null) {
+                // Existing order may have an existing draft.
+                $orderDraft = $this->orderDraftRepository?->findEntityDraft($order, $draftSessionUuid);
+            } else {
+                // New order may have a reference to its draft.
+                $orderDraft = $order->getDrafts()->first() ?: null;
+            }
+
+            $orderDraft?->addLineItem($orderLineItemDraft);
+        }
 
         $this->entityDraftSynchronizer->synchronizeToDraft($entity, $orderLineItemDraft);
 

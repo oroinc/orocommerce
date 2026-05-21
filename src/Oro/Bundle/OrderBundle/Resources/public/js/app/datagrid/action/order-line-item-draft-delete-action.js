@@ -32,10 +32,6 @@ const OrderLineItemDraftDeleteAction = DeleteAction.extend({
 
         mediator.execute('showLoading');
 
-        if (this.model.get('editMode') && this.model.get('fieldChanged')) {
-            this.model.set('fieldChanged', false);
-        }
-
         $.ajax({
             url: url,
             method: 'DELETE',

@@ -16,11 +16,11 @@ Feature: Allowed inventory statuses configuration
   Scenario: Check product availability for the Order/Quote in the select dropdown and on hamburger grid
     Given I go to Sales/Orders
     And click "Create Order"
-    Then I should see the following options for "Product" select in form "Order Edit Add Line Item Form":
+    Then I should see the following options for "Product" select in form "Order Line Item Draft Create Form":
       | SKU1 - Product1 |
       | SKU2 - Product2 |
       | SKU3 - Product3 |
-    When I open select entity popup for field "Product" in form "Order Edit Add Line Item Form"
+    When I open select entity popup for field "Product" in form "Order Line Item Draft Create Form"
     Then I should see following "SelectProductsGrid" grid:
       | SKU  | Name     | Inventory Status |
       | SKU3 | Product3 | In Stock         |
@@ -88,12 +88,12 @@ Feature: Allowed inventory statuses configuration
     Then I should see "Record has been successfully updated" flash message
     And I go to Sales/Orders
     When click "Create Order"
-    Then I should see the following options for "Product" select in form "Order Edit Add Line Item Form":
+    Then I should see the following options for "Product" select in form "Order Line Item Draft Create Form":
       | SKU2 - Product2 |
       | SKU3 - Product3 |
-    And I should not see the following options for "Product" select in form "Order Edit Add Line Item Form":
+    And I should not see the following options for "Product" select in form "Order Line Item Draft Create Form":
       | SKU1 - Product1 |
-    When I open select entity popup for field "Product" in form "Order Edit Add Line Item Form"
+    When I open select entity popup for field "Product" in form "Order Line Item Draft Create Form"
     Then I should see following "SelectProductsGrid" grid:
       | SKU  | Name     | Inventory Status |
       | SKU3 | Product3 | In Stock         |

@@ -140,7 +140,7 @@ final class OrderLineItemDraftDeleteControllerTest extends WebTestCase
         self::assertEquals($lineItem->getId(), $draftLineItems[0]->getDraftSource()->getId());
     }
 
-    public function testDeleteNewDraftLineItemPhysicallyRemovesIt(): void
+    public function testDeleteNewDraftLineItemMarksAsDeleted(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_2);
@@ -172,8 +172,12 @@ final class OrderLineItemDraftDeleteControllerTest extends WebTestCase
         $entityManager = self::getContainer()->get('doctrine')->getManagerForClass(OrderLineItem::class);
         $entityManager->clear();
 
+        // ORM filter should be disabled again after the entity manager is cleared.
+        $this->draftSessionOrmFilterManager->disable();
+
         $deletedLineItem = $entityManager->getRepository(OrderLineItem::class)->find($lineItemId);
-        self::assertNull($deletedLineItem, 'New draft line item should be physically deleted');
+        self::assertNotNull($deletedLineItem);
+        self::assertTrue($deletedLineItem->isDraftDelete());
     }
 
     public function testDeleteReturns404WhenOrderDraftNotExists(): void

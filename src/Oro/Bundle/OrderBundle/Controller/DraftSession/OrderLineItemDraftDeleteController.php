@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Controller to delete a draft order line item.
@@ -39,25 +40,13 @@ final class OrderLineItemDraftDeleteController extends AbstractController
         #[MapEntity(expr: 'repository.findOrderLineItemWithRelations(orderLineItemId)')]
         OrderLineItem $orderLineItem
     ): Response {
-        $orderDraft = $this->getOrderDraft();
-        $orderLineItemDraft = $this->findOrCreateOrderLineItemDraft($orderDraft, $orderLineItem);
+        $this->assertOrderDraftExists($order);
 
-        /** @var ManagerRegistry $doctrine */
-        $doctrine = $this->container->get(ManagerRegistry::class);
-        $entityManager = $doctrine->getManagerForClass(OrderLineItem::class);
+        $this->container->get(ManagerRegistry::class)
+            ->getManagerForClass(OrderLineItem::class)
+            ->remove($orderLineItem);
 
-        // Scenario 1: Existing draft (modified source item in current session)
-        // Action: Mark the draft as deleted
-        if ($orderLineItemDraft !== $orderLineItem) {
-            $orderLineItemDraft->setDraftDelete(true);
-            $entityManager->persist($orderLineItemDraft);
-        } else {
-            // Scenario 2: New draft (added in current session, no source)
-            // Action: Physical delete - it doesn't exist in the original order
-            $entityManager->remove($orderLineItemDraft);
-        }
-
-        $entityManager->flush();
+        $this->getOrderDraftManager()->saveToEntityDraft($orderLineItem);
 
         return new JsonResponse([
             'successful' => true,
@@ -77,6 +66,7 @@ final class OrderLineItemDraftDeleteController extends AbstractController
     {
         return [
             ...parent::getSubscribedServices(),
+            AuthorizationCheckerInterface::class,
             ManagerRegistry::class,
             OrderDraftManager::class,
         ];

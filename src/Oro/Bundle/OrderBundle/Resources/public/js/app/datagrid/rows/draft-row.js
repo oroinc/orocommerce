@@ -80,6 +80,9 @@ const DraftRow = Row.extend({
         return this;
     },
 
+    /** Avoid behavior on row click */
+    onClick() {},
+
     /**
      * Switches a row into edit mode.
      * @param {Object} params

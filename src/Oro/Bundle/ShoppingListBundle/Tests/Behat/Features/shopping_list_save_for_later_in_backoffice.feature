@@ -137,9 +137,9 @@ Feature: Shopping list Save for later in Backoffice
 
   Scenario: Check Create Order
     When I click "Create Order"
-    Then "Order Form" must contains values:
+    Then "Order Line Item Draft Edit Form" must contains values:
       | Product     | simple-product-05 - Product 5 |
-      | Quantity    | 1                 |
-      | ProductUnit | item              |
+      | Quantity    | 1                             |
+      | ProductUnit | item                          |
     And I should see "No matching price found."
     And I should not see "Product Kit 1 Line Item 1 Notes"
