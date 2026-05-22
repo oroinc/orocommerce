@@ -37,7 +37,7 @@ class OrderPageAddressFormFactory implements AddressValidationAddressFormFactory
         $this->propertyAccessor->setValue($order, $this->addressFieldName, $address);
 
         return $this->formFactory
-            ->create(OrderType::class, $order)
+            ->create(OrderType::class, $order, ['draft_session_sync' => true])
             ->get($this->addressFieldName);
     }
 }

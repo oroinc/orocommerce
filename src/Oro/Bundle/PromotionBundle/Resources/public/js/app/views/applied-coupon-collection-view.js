@@ -39,6 +39,10 @@ const AppliedCouponCollectionView = BaseView.extend({
         'dialogWidgetAlias'
     ],
 
+    listen: {
+        'entry-point:order:load mediator': 'refreshCollectionBlock'
+    },
+
     /**
      * @inheritdoc
      */
@@ -156,6 +160,17 @@ const AppliedCouponCollectionView = BaseView.extend({
         });
         if (requiredSelectors.length) {
             throw new TypeError('Missing required selectors(s): ' + requiredSelectors.join(', '));
+        }
+    },
+
+    /**
+     * @param {Object} response
+     */
+    refreshCollectionBlock: function(response) {
+        if (!_.isUndefined(response.appliedCoupons)) {
+            const $content = $(response.appliedCoupons);
+            this.$el.html($content.html());
+            this.$el.trigger('content:changed');
         }
     }
 });

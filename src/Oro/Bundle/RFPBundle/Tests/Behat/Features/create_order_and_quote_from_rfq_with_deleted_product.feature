@@ -23,11 +23,14 @@ Feature: Create Order and Quote from RFQ with deleted product
     When I go to Sales/ Requests For Quote
     And I click view "PO-ORDER" in grid
     And I click on "RFQ Create Order"
-    Then "Order Form" must contains values:
-      | FreeProduct0 | PRODUCT_TO_DELETE |
-    # Free-form items have no product, so no tier price is resolved automatically
-    And fill "Order Form" with:
-      | Price | 10 |
+    # Free-form items inherit the RFQ currency and start with a zero placeholder price
+    And I click Edit "PRODUCT_TO_DELETE" in grid
+    Then "Order Line Item Draft Edit Form" must contains values:
+      | FreeProduct    | PRODUCT_TO_DELETE |
+      | FreeProductSku | PRODUCT_TO_DELETE |
+      | Price          | 0.00              |
+      | ProductUnit    | piece             |
+    And I click on "Order Line Item Draft Edit Form Save Button"
     And I save and close form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
@@ -49,11 +52,14 @@ Feature: Create Order and Quote from RFQ with deleted product
     When I go to Sales/ Requests For Quote
     And I click view "PO-KIT-ORDER" in grid
     And I click on "RFQ Create Order"
-    Then "Order Form" must contains values:
-      | FreeProduct0 | KIT_TO_DELETE |
-    # Free-form items have no product, so no tier price is resolved automatically
-    And fill "Order Form" with:
-      | Price | 50 |
+    # Free-form items inherit the RFQ currency and start with a zero placeholder price
+    And I click Edit "KIT_TO_DELETE" in grid
+    Then "Order Line Item Draft Edit Form" must contains values:
+      | FreeProduct    | KIT_TO_DELETE |
+      | FreeProductSku | KIT_TO_DELETE |
+      | Price          | 0.00          |
+      | ProductUnit    | piece         |
+    And I click on "Order Line Item Draft Edit Form Save Button"
     And I save and close form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message

@@ -27,7 +27,7 @@ class OroPromotionBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_9';
+        return 'v7_1_0_0';
     }
 
     #[\Override]
@@ -190,6 +190,7 @@ class OroPromotionBundleInstaller implements
         $table->addColumn('currency', 'currency', ['length' => 3, 'comment' => '(DC2Type:currency)']);
         $table->addColumn('created_at', 'datetime');
         $table->addColumn('updated_at', 'datetime');
+        $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 
@@ -218,6 +219,7 @@ class OroPromotionBundleInstaller implements
         $table->addColumn('source_promotion_id', 'integer');
         $table->addColumn('source_coupon_id', 'integer');
         $table->addColumn('created_at', 'datetime');
+        $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['applied_promotion_id']);
     }
@@ -238,6 +240,7 @@ class OroPromotionBundleInstaller implements
         $table->addColumn('promotion_data', 'json', ['comment' => '(DC2Type:json)']);
         $table->addColumn('created_at', 'datetime');
         $table->addColumn('updated_at', 'datetime');
+        $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 

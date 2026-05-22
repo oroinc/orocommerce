@@ -1274,6 +1274,13 @@ services:
             - '@oro_currency.config.currency'
             - '@oro_entity.doctrine_helper'
 
+    oro_pricing.provider.customer_user_currency_provider:
+        class: Oro\Bundle\PricingBundle\Provider\CustomerUserCurrencyProvider
+        arguments:
+            - '@oro_website.manager'
+            - '@oro_pricing.provider.website_currency_provider'
+            - '@oro_currency.config.currency'
+
     oro_pricing.event_listener.quick_add_rows_collection_ready:
         class: 'Oro\Bundle\PricingBundle\EventListener\CalculatePriceForCollectionListener'
         arguments:

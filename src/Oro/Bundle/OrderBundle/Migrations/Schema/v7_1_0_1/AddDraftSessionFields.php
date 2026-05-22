@@ -1,0 +1,89 @@
+<?php
+
+namespace Oro\Bundle\OrderBundle\Migrations\Schema\v7_1_0_1;
+
+use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+
+class AddDraftSessionFields implements Migration
+{
+    #[\Override]
+    public function up(Schema $schema, QueryBag $queries): void
+    {
+        $this->addDraftFieldsToOrder($schema);
+        $this->addDraftFieldsToOrderLineItem($schema);
+        $this->addDraftSessionUuidToOrderAddress($schema);
+        $this->addDraftSessionUuidToOrderDiscount($schema);
+        $this->addDraftSessionUuidToOrderProductKitItemLineItem($schema);
+    }
+
+    private function addDraftFieldsToOrder(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_order');
+
+        if (!$table->hasColumn('draft_session_uuid')) {
+            $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
+        }
+
+        if (!$table->hasColumn('draft_source_id')) {
+            $table->addColumn('draft_source_id', 'integer', ['notnull' => false]);
+            $table->addForeignKeyConstraint(
+                $table,
+                ['draft_source_id'],
+                ['id'],
+                ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            );
+        }
+    }
+
+    private function addDraftFieldsToOrderLineItem(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_order_line_item');
+
+        if (!$table->hasColumn('draft_session_uuid')) {
+            $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
+        }
+
+        if (!$table->hasColumn('draft_source_id')) {
+            $table->addColumn('draft_source_id', 'integer', ['notnull' => false]);
+            $table->addForeignKeyConstraint(
+                $table,
+                ['draft_source_id'],
+                ['id'],
+                ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            );
+        }
+
+        if (!$table->hasColumn('draft_delete')) {
+            $table->addColumn('draft_delete', 'boolean', ['notnull' => true, 'default' => false]);
+        }
+    }
+
+    private function addDraftSessionUuidToOrderAddress(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_order_address');
+
+        if (!$table->hasColumn('draft_session_uuid')) {
+            $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
+        }
+    }
+
+    private function addDraftSessionUuidToOrderDiscount(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_order_discount');
+
+        if (!$table->hasColumn('draft_session_uuid')) {
+            $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
+        }
+    }
+
+    private function addDraftSessionUuidToOrderProductKitItemLineItem(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_order_product_kit_item_line_item');
+
+        if (!$table->hasColumn('draft_session_uuid')) {
+            $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
+        }
+    }
+}

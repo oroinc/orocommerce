@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
@@ -7,25 +9,23 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class TotalCalculateListenerTest extends \PHPUnit\Framework\TestCase
+final class TotalCalculateListenerTest extends TestCase
 {
-    /** @var FormFactory|\PHPUnit\Framework\MockObject\MockObject */
-    private $formFactory;
+    private FormFactory&MockObject $formFactory;
 
-    /** @var FormRegistryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $formRegistry;
+    private FormRegistryInterface&MockObject $formRegistry;
 
-    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $frontendHelper;
+    private FrontendHelper&MockObject $frontendHelper;
 
-    /** @var TotalCalculateListener */
-    private $listener;
+    private TotalCalculateListener $listener;
 
     #[\Override]
     protected function setUp(): void
@@ -41,93 +41,99 @@ class TotalCalculateListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testOnBeforeTotalCalculateWhenEntityIsNotOrder()
+    public function testOnBeforeTotalCalculateWhenEntityIsNotOrder(): void
     {
-        $this->frontendHelper->expects($this->never())
+        $this->frontendHelper
+            ->expects(self::never())
             ->method('isFrontendRequest');
-        $this->formFactory->expects($this->never())
+
+        $this->formFactory
+            ->expects(self::never())
             ->method('create');
 
-        $event = new TotalCalculateBeforeEvent(new \stdClass(), $this->getRequest());
+        $event = new TotalCalculateBeforeEvent(new \stdClass(), new Request());
         $this->listener->onBeforeTotalCalculate($event);
     }
 
-    public function testOnBeforeTotalCalculateForFrontend()
+    public function testOnBeforeTotalCalculateForFrontend(): void
     {
-        $this->frontendHelper->expects($this->once())
+        $this->frontendHelper
+            ->expects(self::once())
             ->method('isFrontendRequest')
             ->willReturn(true);
-        $this->formFactory->expects($this->never())
+
+        $this->formFactory
+            ->expects(self::never())
             ->method('create');
 
-        $event = new TotalCalculateBeforeEvent(new Order(), $this->getRequest());
+        $event = new TotalCalculateBeforeEvent(new Order(), new Request());
         $this->listener->onBeforeTotalCalculate($event);
     }
 
-    public function testOnBeforeTotalCalculateWhenRequestNotContainsData()
+    public function testOnBeforeTotalCalculateWhenRequestDoesNotContainOrderTypeData(): void
     {
-        $this->frontendHelper->expects($this->once())
+        $this->frontendHelper
+            ->expects(self::once())
             ->method('isFrontendRequest')
             ->willReturn(false);
-        $this->formFactory->expects($this->never())
+
+        $this->formFactory
+            ->expects(self::never())
             ->method('create');
 
-        $this->configureFormRegistry(OrderType::class, OrderType::NAME);
+        $this->configureFormRegistry(OrderType::class, 'order');
 
-        $event = new TotalCalculateBeforeEvent(new Order(), $this->getRequest());
+        $event = new TotalCalculateBeforeEvent(new Order(), new Request());
         $this->listener->onBeforeTotalCalculate($event);
     }
 
-    public function testOnBeforeTotalCalculate()
+    public function testOnBeforeTotalCalculateSubmitsFormWhenPayloadExists(): void
     {
-        $this->frontendHelper->expects($this->once())
+        $this->frontendHelper
+            ->expects(self::once())
             ->method('isFrontendRequest')
             ->willReturn(false);
 
         $entity = new Order();
+        $formPrefix = 'order';
         $formData = ['field' => 'value'];
-        $request = $this->getRequest([OrderType::NAME => ['some data'], 'formName' => $formData]);
+        $request = new Request([], [$formPrefix => ['irrelevant' => 'value'], 'formName' => $formData]);
+
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->any())
+        $form
+            ->expects(self::once())
             ->method('getName')
             ->willReturn('formName');
-        $form->expects($this->once())
+
+        $form
+            ->expects(self::once())
             ->method('submit')
             ->with($formData);
-        $this->formFactory->expects($this->once())
+
+        $this->formFactory
+            ->expects(self::once())
             ->method('create')
-            ->with(OrderType::class, $entity)
+            ->with(OrderType::class, $entity, ['draft_session_sync' => true])
             ->willReturn($form);
 
-        $this->configureFormRegistry(OrderType::class, OrderType::NAME);
+        $this->configureFormRegistry(OrderType::class, $formPrefix);
 
         $event = new TotalCalculateBeforeEvent($entity, $request);
         $this->listener->onBeforeTotalCalculate($event);
     }
 
-    /**
-     * @param string $className
-     * @param string $formName
-     */
-    private function configureFormRegistry($className, $formName)
+    private function configureFormRegistry(string $className, string $formName): void
     {
         $formType = $this->createMock(ResolvedFormTypeInterface::class);
-        $formType ->expects($this->any())
+        $formType
+            ->expects(self::once())
             ->method('getBlockPrefix')
             ->willReturn($formName);
 
-        $this->formRegistry->expects($this->any())
+        $this->formRegistry
+            ->expects(self::once())
             ->method('getType')
             ->with($className)
             ->willReturn($formType);
-    }
-
-    /**
-     * @param array $postData
-     * @return Request
-     */
-    private function getRequest(array $postData = [])
-    {
-        return new Request([], $postData);
     }
 }

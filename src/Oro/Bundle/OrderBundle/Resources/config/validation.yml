@@ -151,6 +151,11 @@ Oro\Bundle\OrderBundle\Entity\Order:
                     groups:
                         # Used in CREATE action by orderlineitems storefront API resource
                         - api_frontend_order_create
+        draftSessionUuid:
+            -   Length:
+                    max: 36
+            -   Uuid:
+                    versions: [ 4 ]
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     constraints:
@@ -172,6 +177,8 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
                     - api_order_line_item_create
                     # Used in CREATE action by orderlineitems storefront API resource
                     - api_frontend_order_line_item_create
+                    # Used by AdaptivelyValidCollection for Order::$lineItems validation
+                    - order_line_item_create
     properties:
         orders:
             -   Count:
@@ -186,24 +193,29 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         productSku:
             -   Length:
                     max: 255
+                    maxMessage: oro.order.orderlineitem.product_sku.max_length
                     groups:
                         - Default
                         - external_order_import
         quantity:
             -   NotBlank:
+                    message: oro.order.orderlineitem.quantity.blank
                     groups:
                         - Default
                         - external_order_import
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
+                    message: oro.order.orderlineitem.quantity.invalid_decimal
                     groups:
                         - Default
                         - external_order_import
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+                    message: oro.order.orderlineitem.quantity.greater_than_zero
                     groups:
                         - Default
                         - external_order_import
         priceType:
-            -   NotBlank: ~
+            -   NotBlank:
+                    message: oro.order.orderlineitem.price_type.blank
         productUnit:
             -   NotBlank:
                     message: 'oro.product.productunit.invalid'
@@ -212,10 +224,12 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
                         - external_order_import
         currency:
             -   NotBlank:
+                    message: oro.order.orderlineitem.currency.blank
                     groups:
                         - Default
                         - external_order_import
             -   Currency:
+                    message: oro.order.orderlineitem.currency.invalid
                     groups:
                         - Default
                         - external_order_import
@@ -229,6 +243,7 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         freeFormProduct:
             -   Length:
                     max: 255
+                    maxMessage: oro.order.orderlineitem.free_form_product.max_length
                     groups:
                         - Default
                         - external_order_import
@@ -256,6 +271,7 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
                         - external_order_import
         shippingEstimateAmount:
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
+                    message: oro.order.orderlineitem.shipping_estimate_amount.invalid_decimal
                     groups:
                         - Default
                         - external_order_import
@@ -288,11 +304,19 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
                         - api_frontend_order_line_item_create
                         # Used in UPDATE action by orderlineitems storefront API resource
                         - api_frontend_order_line_item_update
+        draftSessionUuid:
+            -   Length:
+                    max: 36
+                    maxMessage: oro.order.orderlineitem.draft_session_uuid.max_length
+            -   Regex:
+                    pattern: '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i'
+                    message: oro.order.orderlineitem.draft_session_uuid.invalid
 
 Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
     properties:
         lineItem:
-            -   NotNull: ~
+            -   NotNull:
+                    message: 'oro.order.orderproductkititemlineitem.line_item.blank'
             -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
                     message: 'oro.order.orderproductkititemlineitem.line_item.changed'
                     groups:
@@ -353,7 +377,8 @@ Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
         quantity:
             -   NotNull:
                     message: 'oro.order.orderproductkititemlineitem.quantity.greater_than_zero.message'
-            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
+                    message: oro.order.orderproductkititemlineitem.quantity.invalid_decimal
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
                     message: 'oro.order.orderproductkititemlineitem.quantity.greater_than_zero.message'
                     groups:
@@ -397,6 +422,7 @@ Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
                         - order_kit_item_line_item_update
         productUnit:
             -   NotNull:
+                    message: oro.order.orderproductkititemlineitem.product_unit.blank
                     groups:
                         # Used in CREATE action by orderproductkititemlineitems API resource
                         - api_order_kit_item_line_item_create
@@ -418,16 +444,20 @@ Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
                         # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
                         - order_kit_item_line_item_update
         productUnitCode:
-            -   NotNull: ~
+            -   NotNull:
+                    message: oro.order.orderproductkititemlineitem.product_unit_code.blank
         sortOrder:
-            -   NotNull: ~
+            -   NotNull:
+                    message: oro.order.orderproductkititemlineitem.sort_order.blank
             -   Type:
                     type: integer
+                    message: oro.order.orderproductkititemlineitem.sort_order.invalid_type
             -   Range:
                     # Minimum of 4-byte integer value.
                     min: -2147483648
                     # Maximum of 4-byte integer value.
                     max: 2147483647
+                    notInRangeMessage: oro.order.orderproductkititemlineitem.sort_order.not_in_range
         price:
             -   NotNull:
                     message: 'oro.order.orderproductkititemlineitem.product_price.blank'
@@ -439,18 +469,32 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
                 groups:
                     - Default
                     - external_order_import
-        -   Oro\Bundle\AddressBundle\Validator\Constraints\RegionText: ~
-        -   Oro\Bundle\AddressBundle\Validator\Constraints\RequiredRegion: ~
-        -   Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
+        -   Oro\Bundle\AddressBundle\Validator\Constraints\RegionText:
+                groups:
+                    - Default
+        -   Oro\Bundle\AddressBundle\Validator\Constraints\RequiredRegion:
+                groups:
+                    - Default
+        -   Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization:
+                groups:
+                    - Default
     properties:
         street:
-            -   NotBlank: ~
+            -   NotBlank:
+                    groups:
+                        - Default
         city:
-            -   NotBlank: ~
+            -   NotBlank:
+                    groups:
+                        - Default
         postalCode:
-            -   NotBlank: ~
+            -   NotBlank:
+                    groups:
+                        - Default
         country:
-            -   NotBlank: ~
+            -   NotBlank:
+                    groups:
+                        - Default
         phone:
             -   Length:
                     max: 255
@@ -507,7 +551,9 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
                         - OrderDiscountItemType
                         - external_order_import
         order:
-            -   Oro\Bundle\OrderBundle\Validator\Constraints\Discounts: ~
+            -   Oro\Bundle\OrderBundle\Validator\Constraints\Discounts:
+                    groups:
+                        - Default
             -   Oro\Bundle\OrderBundle\Validator\Constraints\Discounts:
                     errorMessage: 'oro.order.discounts.sum.error.single_discount.label'
                     groups:

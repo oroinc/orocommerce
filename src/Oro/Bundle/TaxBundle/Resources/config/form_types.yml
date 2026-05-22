@@ -53,6 +53,11 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_order_line_item, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType }
 
+    oro_tax.form.extension.order_line_item_draft:
+        class: 'Oro\Bundle\TaxBundle\Form\Extension\OrderLineItemDraftTypeTaxExtension'
+        tags:
+            - { name: form.type_extension }
+
     oro_tax.form.extension.order_line_items_collection:
         class: 'Oro\Bundle\TaxBundle\Form\Extension\OrderLineItemsCollectionTypeExtension'
         arguments:

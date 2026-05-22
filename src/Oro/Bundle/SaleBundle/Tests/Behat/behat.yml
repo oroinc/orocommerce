@@ -217,11 +217,6 @@ oro_behat_extension:
         locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//div[@class="quote-lineitem-product-select quote-lineitem-product-form"]//a[text()="Free-form entry"]'
         type: xpath
 
-    Free-form_line_item3_order:
-      selector:
-        locator: '//tr[@data-content="oro_order_type[lineItems][2]"]//div[@class="order-line-item-type-product"]//a[text()="Free-form entry"]'
-        type: xpath
-
     Add Offer line item2:
       selector:
         locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//button[text()="Add Offer"]'

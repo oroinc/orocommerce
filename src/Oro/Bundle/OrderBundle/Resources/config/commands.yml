@@ -1,0 +1,8 @@
+services:
+
+    oro_order.command.order_drafts_cleanup:
+        class: Oro\Bundle\OrderBundle\Command\OrderDraftsCleanupCommand
+        arguments:
+            - '@oro_message_queue.message_producer'
+        tags:
+            - { name: console.command }

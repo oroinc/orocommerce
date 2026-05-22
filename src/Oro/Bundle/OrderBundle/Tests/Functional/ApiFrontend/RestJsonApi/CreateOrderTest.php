@@ -506,12 +506,12 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             [
                 [
                     'title'  => 'not blank constraint',
-                    'detail' => 'This value should not be blank.',
+                    'detail' => 'The quantity should not be blank.',
                     'source' => ['pointer' => '/included/0/attributes/quantity']
                 ],
                 [
                     'title'  => 'not blank constraint',
-                    'detail' => 'This value should not be blank.',
+                    'detail' => 'The quantity should not be blank.',
                     'source' => ['pointer' => '/included/3/attributes/quantity']
                 ]
             ],
@@ -537,18 +537,18 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             [
                 [
                     'title'  => 'greater than constraint',
-                    'detail' => 'This value should be greater than 0.',
+                    'detail' => 'The kit item quantity should be greater than 0.',
+                    'source' => ['pointer' => '/included/4/attributes/quantity']
+                ],
+                [
+                    'title'  => 'greater than constraint',
+                    'detail' => 'The quantity should be greater than 0.',
                     'source' => ['pointer' => '/included/0/attributes/quantity']
                 ],
                 [
                     'title'  => 'greater than constraint',
-                    'detail' => 'This value should be greater than 0.',
-                    'source' => ['pointer' => '/included/3/attributes/quantity']
-                ],
-                [
-                    'title'  => 'greater than constraint',
                     'detail' => 'The quantity should be greater than 0',
-                    'source' => ['pointer' => '/included/4/attributes/quantity']
+                    'source' => ['pointer' => '/included/3/attributes/quantity']
                 ]
             ],
             $response

@@ -114,25 +114,40 @@ Feature: RFQ from Shipping List
       | Customer Notes   | Parish so enable innate in formed missed. Hand two was eat busy fail. |
       | Billing Address  | ORO, 2849 Junkins Avenue, ALBANY NY US 31707                          |
       | Shipping Address | ORO, 2849 Junkins Avenue, ALBANY NY US 31707                          |
-    And I should see next rows in "Backend Order First Line Item Taxes Items Table" table
+    And I click edit AA1 in grid
+    And "Order Line Item Draft Edit Form" must contains values:
+      | Quantity    | 1    |
+      | ProductUnit | item |
+      | Price       | 2.00 |
+    And I click "View taxes & discounts"
+    Then I see the next line item taxes for backoffice order edit for "AA1":
       |            | Incl. Tax | Excl. Tax | Tax Amount |
       | Unit Price | $2.00     | $2.00     | $0.00      |
       | Row Total  | $2.00     | $2.00     | $0.00      |
-    When I click "Order Form Line Item 1 Offer 1"
-    And I should see next rows in "Backend Order First Line Item Taxes Items Table" table
+
+    When I should see "Requested 10 items $1.00"
+    And I click "Order Line Item Draft Edit Form Offer 1"
+    Then "Order Line Item Draft Edit Form" must contains values:
+      | Quantity    | 10   |
+      | ProductUnit | item |
+      | Price       | 1.00 |
+    And I see the next line item taxes for backoffice order edit for "AA1":
       |            | Incl. Tax | Excl. Tax | Tax Amount |
       | Unit Price | $1.00     | $1.00     | $0.00      |
       | Row Total  | $10.00    | $10.00    | $0.00      |
+    And I click on "Order Line Item Draft Edit Form Save Button"
     When I click "Totals"
     Then I should see "Subtotal $10.00"
     And I should see "Total $10.00"
     When I click "Line Items"
+    And I click edit AA1 in grid
     And I click "Tier prices button"
     Then I should see "Click to select price per unit"
     And I should see "$2.00"
     When I click "$2.00"
-    Then "Order Form" must contains values:
+    Then "Order Line Item Draft Edit Form" must contains values:
       | Price | 2.00 |
+    And I click on "Order Line Item Draft Edit Form Save Button"
     When I click "Totals"
     Then I should see "Subtotal $20.00"
     And I should see "Total $20.00"
@@ -184,16 +199,31 @@ Feature: RFQ from Shipping List
     Then "Order Form" must contains values:
       | PO Number | PO Test 02  |
       | Ship By   | Jul 1, 2018 |
-    When I click "Order Form Line Item 1 Offer 1"
-    Then I should see next rows in "Backend Order First Line Item Taxes Items Table" table
+    And I click edit AA1 in grid
+    And I click "View taxes & discounts"
+    When I click "Order Line Item Draft Edit Form Offer 1"
+    Then I see the next line item taxes for backoffice order edit for "AA1":
       |            | Incl. Tax | Excl. Tax | Tax Amount |
       | Unit Price | $3.00     | $3.00     | $0.00      |
       | Row Total  | $9.00     | $9.00     | $0.00      |
-    When I click "Order Form Line Item 2 Offer 1"
-    Then I should see next rows in "Backend Order Second Line Item Taxes Items Table" table
+    And I click on "Order Line Item Draft Edit Form Save Button"
+    And I click edit AA2 in grid
+    And "Order Line Item Draft Edit Form" must contains values:
+      | Quantity    | 1     |
+      | ProductUnit | item  |
+      | Price       | 20.00 |
+    And I click "View taxes & discounts"
+    When I should see "Requested 4 items $30.00"
+    And I click "Order Line Item Draft Edit Form Offer 1"
+    Then "Order Line Item Draft Edit Form" must contains values:
+      | Quantity    | 4     |
+      | ProductUnit | item  |
+      | Price       | 30.00 |
+    And I see the next line item taxes for backoffice order edit for "AA2":
       |            | Incl. Tax | Excl. Tax | Tax Amount |
       | Unit Price | $30.00    | $30.00    | $0.00      |
       | Row Total  | $120.00   | $120.00   | $0.00      |
+    And I click on "Order Line Item Draft Edit Form Save Button"
     When I click "Totals"
     Then I should see "Subtotal $129.00"
     And I should see "Total $129.00"

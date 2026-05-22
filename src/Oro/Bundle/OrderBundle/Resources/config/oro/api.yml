@@ -46,6 +46,12 @@ api:
                         mapped: false
                 externalId:
                     property_path: external_id
+                draftSessionUuid:
+                    exclude: true
+                draftSource:
+                    exclude: true
+                drafts:
+                    exclude: true
             filters:
                 fields:
                     identifier:
@@ -116,6 +122,12 @@ api:
                 checksum:
                     form_options:
                         mapped: false
+                draftSessionUuid:
+                    exclude: true
+                draftSource:
+                    exclude: true
+                drafts:
+                    exclude: true
             filters:
                 fields:
                     createdAt: ~
@@ -187,6 +199,8 @@ api:
                 maximumQuantity:
                     form_options:
                         mapped: false
+                draftSessionUuid:
+                    exclude: true
             actions:
                 create:
                     form_options:
@@ -212,6 +226,8 @@ api:
                 customRegion:
                     exclude: false # set manually because this field is marked as excluded in entity.yml
                     property_path: regionText
+                draftSessionUuid:
+                    exclude: true
             filters:
                 fields:
                     customRegion:
@@ -236,6 +252,8 @@ api:
             fields:
                 percent:
                     data_type: percent_100
+                draftSessionUuid:
+                    exclude: true
             actions:
                 update:
                     fields:

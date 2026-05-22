@@ -18,6 +18,11 @@ class OrderTypeExtension extends AbstractTypeExtension
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        if ($options['data']?->getId() === null) {
+            // Applied promotions fields should not be present on order creation page.
+            return;
+        }
+
         $builder->add('appliedPromotions', AppliedPromotionCollectionTableType::class);
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData']);
     }

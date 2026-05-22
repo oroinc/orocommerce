@@ -36,9 +36,9 @@ Feature: External orders import
     When I follow "Error log" link from the email
     Then I should see "Error in row #1. currency: This value should not be blank."
     And I should see "Error in row #1. lineItems.0.productSku: Please choose Product."
-    And I should see "Error in row #1. lineItems.0.quantity: This value should not be blank."
+    And I should see "Error in row #1. lineItems.0.quantity: The quantity should not be blank."
     And I should see "Error in row #1. lineItems.0.productUnit: The product unit does not exist for the product."
-    And I should see "Error in row #1. lineItems.0.currency: This value should not be blank."
+    And I should see "Error in row #1. lineItems.0.currency: The currency should not be blank."
     And I should see "Error in row #1. lineItems.0: No matching price found. Source: price."
     And I should see "Error in row #1. This value should not be blank. Source: /data/0/relationships/customer/data."
 

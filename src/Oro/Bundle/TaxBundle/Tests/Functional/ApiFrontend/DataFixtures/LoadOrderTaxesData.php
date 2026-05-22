@@ -83,6 +83,30 @@ class LoadOrderTaxesData extends AbstractFixture implements DependentFixtureInte
         $order3LineItem1 = $this->getReference('order3_line_item1');
         $this->ensureTaxValueNotExists($manager, OrderLineItem::class, $order3LineItem1->getId());
 
+        /** @var Order $order3 */
+        $order4 = $this->getReference('order4');
+        $this->ensureTaxValueNotExists($manager, Order::class, $order4->getId());
+
+        /** @var OrderLineItem $order3LineItem1 */
+        $order4LineItem1 = $this->getReference('product_kit_2_line_item.1');
+        $this->ensureTaxValueNotExists($manager, OrderLineItem::class, $order4LineItem1->getId());
+
+        /** @var OrderLineItem $order3LineItem1 */
+        $order4LineItem2 = $this->getReference('product_kit_3_line_item.1');
+        $this->ensureTaxValueNotExists($manager, OrderLineItem::class, $order4LineItem2->getId());
+
+        /** @var OrderLineItem $order3LineItem1 */
+        $order4LineItem3 = $this->getReference('product_kit_2_line_item.2');
+        $this->ensureTaxValueNotExists($manager, OrderLineItem::class, $order4LineItem3->getId());
+
+        /** @var Order $order3 */
+        $order5 = $this->getReference('order5');
+        $this->ensureTaxValueNotExists($manager, Order::class, $order5->getId());
+
+        /** @var OrderLineItem $order3LineItem1 */
+        $order5LineItem1 = $this->getReference('order5_product_kit_2_line_item.1');
+        $this->ensureTaxValueNotExists($manager, OrderLineItem::class, $order5LineItem1->getId());
+
         $manager->flush();
     }
 

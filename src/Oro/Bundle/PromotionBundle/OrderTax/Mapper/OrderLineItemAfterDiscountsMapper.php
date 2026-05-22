@@ -3,9 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\OrderTax\Mapper;
 
 use Brick\Math\BigDecimal;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItemInterface;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
@@ -18,8 +16,6 @@ use Oro\Component\Math\RoundingMode;
  */
 class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
 {
-    private array $discountContexts = [];
-
     public function __construct(
         private TaxMapperInterface $innerMapper,
         private TaxationSettingsProvider $taxationSettingsProvider,
@@ -48,7 +44,7 @@ class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
                 $this->taxationSettingsProvider->isCalculateAfterPromotionsEnabled() &&
                 $this->promotionExecutor->supports($order)
             ) {
-                $discountContext = $this->getDiscountContext($order);
+                $discountContext = $this->promotionExecutor->execute($order);
 
                 /** @var DiscountLineItemInterface $discountLineItem */
                 foreach ($discountContext->getLineItems() as $discountLineItem) {
@@ -69,16 +65,6 @@ class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
             && $item1->getQuantity() === $item2->getQuantity()
             && $item1->getProductUnitCode() === $item2->getProductUnitCode()
             && $item1->getValue() === $item2->getValue();
-    }
-
-    private function getDiscountContext(Order $order): DiscountContextInterface
-    {
-        $orderId = spl_object_id($order);
-        if (!\array_key_exists($orderId, $this->discountContexts)) {
-            $this->discountContexts[$orderId] = $this->promotionExecutor->execute($order);
-        }
-
-        return $this->discountContexts[$orderId];
     }
 
     private function adjustTaxable(Taxable $taxable, DiscountLineItemInterface $discountLineItem): void

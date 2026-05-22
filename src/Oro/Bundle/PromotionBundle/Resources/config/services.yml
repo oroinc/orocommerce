@@ -483,6 +483,22 @@ services:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_order_type, method: onBeforeFlush }
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_suborder_type, method: onBeforeFlush }
 
+    oro_promotion.draft_session.synchronizer.promotion_aware:
+        class: Oro\Bundle\PromotionBundle\DraftSession\PromotionAwareOrderDraftSynchronizer
+        arguments:
+            - '@doctrine'
+            - '@oro_order.draft_session.factory'
+            - '@oro_order.draft_session.synchronizer'
+        tags:
+            - { name: oro_order.draft_session.synchronizer, priority: -200 }
+
+    oro_promotion.draft_session.synchronizer.apply_promotions:
+        class: Oro\Bundle\PromotionBundle\DraftSession\ApplyPromotionsOrderDraftSynchronizer
+        arguments:
+            - '@oro_promotion.applied_promotion_manager'
+        tags:
+            - { name: oro_order.draft_session.synchronizer, priority: -210 }
+
     oro_promotion.promotion_executor.link:
         tags:
             - { name: oro_service_link,  service: oro_promotion.promotion_executor }
@@ -494,6 +510,9 @@ services:
             - '@oro_promotion.promotion_executor.link'
             - '@oro_entity.doctrine_helper'
             - '@oro_promotion.mapper.applied_promotion'
+
+    Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager:
+        alias: oro_promotion.applied_promotion_manager
 
     oro_promotion.coupon_usage_manager:
         class: Oro\Bundle\PromotionBundle\Manager\CouponUsageManager
@@ -931,3 +950,19 @@ services:
             - '@oro_organization.organization_restriction_provider'
         tags:
             - { name: oro_security.access_rule, entityClass: 'Oro\Bundle\PromotionBundle\Entity\Coupon', frontend: true}
+
+    oro_promotion.provider.order_line_item_discount:
+        class: Oro\Bundle\PromotionBundle\Provider\OrderLineItemDiscountProvider
+        arguments:
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_tax.provider.tax_provider_registry'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+            - '@oro_promotion.provider.applied_discounts_provider'
+
+    Oro\Bundle\PromotionBundle\Provider\OrderLineItemDiscountProvider:
+        alias: oro_promotion.provider.order_line_item_discount
+
+    oro_promotion.event_listener.order_duplicate_after:
+        class: Oro\Bundle\PromotionBundle\EventListener\OrderDuplicateAfterEventListener
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\OrderBundle\Event\OrderDuplicateAfterEvent, method: onOrderDuplicateAfter }

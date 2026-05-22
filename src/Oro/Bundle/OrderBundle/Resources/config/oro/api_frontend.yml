@@ -104,6 +104,12 @@ api:
                 status: ~
                 shippingStatus: ~
                 documents: ~
+                draftSessionUuid:
+                    exclude: true
+                draftSource:
+                    exclude: true
+                drafts:
+                    exclude: true
             filters:
                 fields:
                     identifier:
@@ -190,6 +196,12 @@ api:
                 checksum:
                     form_options:
                         mapped: false
+                draftSessionUuid:
+                    exclude: true
+                draftSource:
+                    exclude: true
+                drafts:
+                    exclude: true
             filters:
                 fields:
                     createdAt: ~
@@ -243,6 +255,8 @@ api:
                 optional:
                     form_options:
                         mapped: false
+                draftSessionUuid:
+                    exclude: true
             actions:
                 create:
                     form_options:
@@ -269,6 +283,8 @@ api:
                     exclude: false # set manually because this field is marked as excluded in entity.yml
                     property_path: regionText
                 fromExternalSource:
+                    exclude: true
+                draftSessionUuid:
                     exclude: true
             actions:
                 get_list: false

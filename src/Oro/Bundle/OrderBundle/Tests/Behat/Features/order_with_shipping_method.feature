@@ -11,7 +11,6 @@ Feature: Order with shipping method
     Given I login as administrator
     And go to Sales/Orders
     And click edit SimpleOrder in grid
-    When click "Calculate Shipping Button"
     And I click "Flat Rate"
     And I save and close form
     Then go to Sales/Orders

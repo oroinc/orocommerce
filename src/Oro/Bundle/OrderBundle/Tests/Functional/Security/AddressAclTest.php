@@ -34,6 +34,7 @@ class AddressAclTest extends AbstractAddressAclTest
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->followRedirects();
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures([

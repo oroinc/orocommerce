@@ -583,7 +583,6 @@ Oro\Bundle\OrderBundle\Entity\Order:
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     order1_line_item1:
         productSku: 'SKU1'
-        productName: 'Product 1'
         freeFormProduct: 'product_1'
         quantity: 5
         productUnit: '@set'

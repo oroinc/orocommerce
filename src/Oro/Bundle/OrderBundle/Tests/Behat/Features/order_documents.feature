@@ -25,7 +25,6 @@ Feature: Order documents
       | Documents File Sort Order 2 | 1         |
       | Documents File Sort Order 3 | 2         |
     And I save and close form
-    And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
     And I should see following "Order Customer Documents Grid" grid:
       | Sort order | File name | Uploaded by |

@@ -24,7 +24,13 @@ class LineItemProductValidator extends ConstraintValidator
             throw new UnexpectedValueException($value, OrderLineItem::class);
         }
 
-        if (!$value->getProduct() && !$value->getFreeFormProduct()) {
+        if ($value->isFreeForm()) {
+            if (!$value->getFreeFormProduct()) {
+                $this->context->buildViolation($constraint->emptyFreeFormProductMessage)
+                    ->atPath('freeFormProduct')
+                    ->addViolation();
+            }
+        } elseif (!$value->getProduct()) {
             $this->context->buildViolation($constraint->emptyProductMessage)
                 ->atPath('product')
                 ->addViolation();

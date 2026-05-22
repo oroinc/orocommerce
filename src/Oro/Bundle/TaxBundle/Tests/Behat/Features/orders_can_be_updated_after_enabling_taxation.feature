@@ -21,11 +21,12 @@ Feature: Orders can be updated after enabling taxation
   Scenario: Create order
     Given I go to Sales/Orders
     When I click "Create Order"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
-      | Product       | SKU123      |
-      | Quantity      | 5           |
+    And fill "Order Line Item Draft Create Form" with:
+      | Product  | SKU123 |
+      | Quantity | 5      |
+    And click "Add Product"
     And click "Calculate Shipping"
     And click "Shipping Method Flat Rate Radio Button"
     When I save and close form
@@ -41,8 +42,10 @@ Feature: Orders can be updated after enabling taxation
   Scenario: Update order
     Given I go to Sales/Orders
     When I click edit "1" in grid
-    And fill "Order Form" with:
+    And I click Edit "SKU123" in grid
+    And fill "Order Line Item Draft Edit Form" with:
       | Quantity | 6 |
+    And I click on "Order Line Item Draft Edit Form Save Button"
     And save and close form
     And click "Save" in modal window
     Then I should see "Order has been saved" flash message

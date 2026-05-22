@@ -1,0 +1,30 @@
+include:
+    - '@OroPricingBundle:ProductPricesWithMultipleCurrencies.yml'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    priceListWholesalerB:
+        name: 'Wholesaler B Price List'
+        organization: '@organization'
+        __calls:
+            - addCurrencyByCode: ['USD']
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    priceUsdWholesalerB:
+        product: '@product1'
+        priceList: '@priceListWholesalerB'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 11
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomerWholesalerB:
+        pricelist: '@priceListWholesalerB'
+        customer: '@customer4'
+        website: '@website1'
+        sortOrder: 100
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelationWholesalerB:
+        product: '@product1'
+        priceList: '@priceListWholesalerB'

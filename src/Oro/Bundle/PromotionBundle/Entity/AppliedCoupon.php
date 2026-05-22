@@ -11,6 +11,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Component\DraftSession\Entity\DraftSessionAwareInterface;
+use Oro\Component\DraftSession\Entity\DraftSessionAwareTrait;
 
 /**
  * Store Applied Coupon in database.
@@ -23,10 +25,11 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 #[ORM\Entity]
 #[ORM\Table(name: 'oro_promotion_applied_coupon')]
 #[Config]
-class AppliedCoupon implements CreatedAtAwareInterface, ExtendEntityInterface
+class AppliedCoupon implements CreatedAtAwareInterface, ExtendEntityInterface, DraftSessionAwareInterface
 {
     use CreatedAtAwareTrait;
     use ExtendEntityTrait;
+    use DraftSessionAwareTrait;
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]

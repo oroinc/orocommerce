@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle;
 
+use Oro\Bundle\OrderBundle\DependencyInjection\Compiler\ExcludeExtendedFieldFromDraftSyncPass;
 use Oro\Bundle\OrderBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Component\DependencyInjection\Compiler\PriorityNamedTaggedServiceWithHandlerCompilerPass;
 use Oro\Component\DependencyInjection\Compiler\TaggedServiceTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -28,5 +30,8 @@ class OroOrderBundle extends Bundle
                 ];
             }
         ));
+        $container->addCompilerPass(new ExcludeExtendedFieldFromDraftSyncPass([
+            [Order::class, 'documents'],
+        ]));
     }
 }

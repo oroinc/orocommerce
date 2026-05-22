@@ -1,0 +1,5 @@
+{% if oro_is_unit_code_visible(record.getValue('productUnitCode')) %}
+    {{ record.getValue('quantity')|oro_format_product_unit_code(record.getValue('productUnitCode')) }}
+{% else %}
+    {{ record.getValue('quantity') }}
+{% endif %}

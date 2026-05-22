@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -63,6 +64,9 @@ class OrderLineItemTest extends TestCase
             ['shippingMethodType', 'shipping_method_type'],
             ['shippingEstimateAmount', 10.00],
             ['checksum', $checksum],
+            ['draftSessionUuid', '8f091a9a-c0d7-4560-975a-d3b0090bcfbd'],
+            ['draftSource', new OrderLineItem()],
+            ['draftDelete', true],
         ];
 
         $entity = new OrderLineItem();
@@ -83,6 +87,20 @@ class OrderLineItemTest extends TestCase
         $entity->removeKitItemLineItem($orderProductKitItemLineItem);
         self::assertSame([], $entity->getKitItemLineItems()->toArray());
         self::assertPropertyCollection($entity, 'orders', new Order());
+        self::assertPropertyCollection($entity, 'drafts', new OrderLineItem());
+    }
+
+    public function testSetKitItemLineItems(): void
+    {
+        $entity = new OrderLineItem();
+        $entity->addKitItemLineItem(new OrderProductKitItemLineItem());
+
+        $oldCollection = $entity->getKitItemLineItems();
+
+        $entity->setKitItemLineItems(new ArrayCollection());
+        $newCollection = $entity->getKitItemLineItems();
+
+        self::assertNotSame($newCollection, $oldCollection);
     }
 
     public function testCreatePrice(): void
@@ -270,5 +288,160 @@ class OrderLineItemTest extends TestCase
         self::assertInstanceOf(Price::class, $shippingCost);
         self::assertEquals(7.00, $shippingCost->getValue());
         self::assertEquals('USD', $shippingCost->getCurrency());
+    }
+
+    public function testDraftRelations(): void
+    {
+        $lineItem = new OrderLineItem();
+        $draftLineItem = new OrderLineItem();
+        $order = new Order();
+
+        // Test drafts collection
+        self::assertEmpty($lineItem->getDrafts()->toArray());
+        $lineItem->addDraft($draftLineItem);
+        self::assertCount(1, $lineItem->getDrafts());
+        self::assertSame($lineItem, $draftLineItem->getDraftSource());
+
+        $lineItem->removeDraft($draftLineItem);
+        self::assertEmpty($lineItem->getDrafts()->toArray());
+        self::assertNull($draftLineItem->getDraftSource());
+    }
+
+    public function testGetOrderReturnsNullWhenNoOrders(): void
+    {
+        $lineItem = new OrderLineItem();
+        self::assertNull($lineItem->getOrder());
+    }
+
+    public function testGetOrderReturnsFirstOrderWhenNoSubOrders(): void
+    {
+        $lineItem = new OrderLineItem();
+        $order1 = new Order();
+        $order2 = new Order();
+
+        $lineItem->addOrder($order1);
+        $lineItem->addOrder($order2);
+
+        self::assertSame($order1, $lineItem->getOrder());
+    }
+
+    public function testGetOrderReturnsOrderWithSubOrders(): void
+    {
+        $lineItem = new OrderLineItem();
+        $orderWithoutSubOrders = new Order();
+        $orderWithSubOrders = new Order();
+        $subOrder = new Order();
+
+        $orderWithSubOrders->addSubOrder($subOrder);
+
+        $lineItem->addOrder($orderWithoutSubOrders);
+        $lineItem->addOrder($orderWithSubOrders);
+
+        self::assertSame($orderWithSubOrders, $lineItem->getOrder());
+    }
+
+    public function testProductNameIsClearedWhenIsFreeForm(): void
+    {
+        $orderLineItem = new OrderLineItem();
+        $orderLineItem->setProductName('Test Product');
+        $orderLineItem->setFreeFormProduct('Free Form Product');
+
+        self::assertSame('Test Product', $orderLineItem->getProductName());
+
+        $orderLineItem->preSave();
+
+        self::assertSame('', $orderLineItem->getProductName(), 'Product name should be cleared when product is null');
+    }
+
+    public function testIsFreeFormReturnsFalseByDefault(): void
+    {
+        $orderLineItem = new OrderLineItem();
+        self::assertFalse($orderLineItem->isFreeForm(), 'isFreeForm should return false by default');
+    }
+
+    public function testIsFreeFormReturnsTrueWhenFreeFormProductIsSet(): void
+    {
+        $orderLineItem = new OrderLineItem();
+        $orderLineItem->setFreeFormProduct('Custom Product');
+        self::assertTrue($orderLineItem->isFreeForm(), 'isFreeForm should return true when freeFormProduct is set');
+    }
+
+    public function testIsFreeFormReturnsFalseWhenFreeFormProductIsNull(): void
+    {
+        $orderLineItem = new OrderLineItem();
+        $orderLineItem->setFreeFormProduct(null);
+        self::assertFalse($orderLineItem->isFreeForm(), 'isFreeForm should return false when freeFormProduct is null');
+    }
+
+    public function testIsFreeFormReturnsTrueWhenWhenExplicitlySetEvenIfFreeFormProductIsNull(): void
+    {
+        $orderLineItem = new OrderLineItem();
+        $orderLineItem->setIsFreeForm(true);
+        $orderLineItem->setFreeFormProduct(null);
+
+        self::assertTrue(
+            $orderLineItem->isFreeForm(),
+            'isFreeForm should return true when explicitly set to true even if freeFormProduct is null'
+        );
+    }
+
+    public function testSetIsFreeFormToTrueClearsProduct(): void
+    {
+        $orderLineItem = new OrderLineItem();
+        $orderLineItem->setProduct(new ProductStub());
+        $orderLineItem->setIsFreeForm(true);
+        self::assertNull($orderLineItem->getProduct(), 'Product should be cleared when isFreeForm is set to true');
+    }
+
+    public function testSetIsFreeFormToTrueClearsProductSku(): void
+    {
+        $orderLineItem = new OrderLineItem();
+        $orderLineItem->setProductSku('SKU123');
+        $orderLineItem->setIsFreeForm(true);
+        self::assertNull(
+            $orderLineItem->getProductSku(),
+            'Product SKU should be cleared when isFreeForm is set to true'
+        );
+    }
+
+    public function testSetIsFreeFormToTrueClearsProductName(): void
+    {
+        $orderLineItem = new OrderLineItem();
+        $orderLineItem->setProductName('Test Product');
+        $orderLineItem->setIsFreeForm(true);
+        self::assertSame(
+            '',
+            $orderLineItem->getProductName(),
+            'Product name should be cleared when isFreeForm is set to true'
+        );
+    }
+
+    public function testSetIsFreeFormToFalseClearsFreeFormProduct(): void
+    {
+        $orderLineItem = new OrderLineItem();
+        $orderLineItem->setFreeFormProduct('Custom Product');
+        $orderLineItem->setIsFreeForm(false);
+        self::assertNull(
+            $orderLineItem->getFreeFormProduct(),
+            'Free form product should be cleared when isFreeForm is set to false'
+        );
+    }
+
+    public function testSetIsFreeFormToFalseClearsProductSku(): void
+    {
+        $orderLineItem = new OrderLineItem();
+        $orderLineItem->setProductSku('SKU123');
+        $orderLineItem->setIsFreeForm(false);
+        self::assertNull(
+            $orderLineItem->getProductSku(),
+            'Product SKU should be cleared when isFreeForm is set to false'
+        );
+    }
+
+    public function testIsFreeFormUsesExplicitValueWhenSet(): void
+    {
+        $orderLineItem = new OrderLineItem();
+        $orderLineItem->setIsFreeForm(true);
+        self::assertTrue($orderLineItem->isFreeForm(), 'isFreeForm should return the explicitly set value');
     }
 }

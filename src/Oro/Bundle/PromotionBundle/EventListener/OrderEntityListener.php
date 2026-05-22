@@ -24,6 +24,11 @@ class OrderEntityListener
             return;
         }
 
+        if ($order->getDraftSessionUuid()) {
+            // Prevents the promotions from being applied to order draft because it is not a completed order.
+            return;
+        }
+
         $this->appliedPromotionManager->createAppliedPromotions($order);
     }
 }
