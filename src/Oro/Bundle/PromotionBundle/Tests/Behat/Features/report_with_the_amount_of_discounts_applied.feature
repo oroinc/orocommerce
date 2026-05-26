@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @ticket-BB-20436
 @regression
 @fixture-OroPromotionBundle:product_for_report_with_discounts.yml

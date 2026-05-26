@@ -2,6 +2,8 @@
 {% import '@OroUI/macros.html.twig' as UI %}
 {% import '@OroOrder/Order/macros.html.twig' as SM %}
 
+{% set draftSessionUuid = oro_order_draft_session_uuid() %}
+
 {% oro_title_set({params : {
     '%identifier%': entity.identifier|default('N/A'|trans),
     '%entityName%': 'oro.order.entity_label'|trans
@@ -70,9 +72,21 @@
     {% endif %}
 {% endblock breadcrumbs %}
 
+{% set entryPointRouteParams = {id: entity.id|default(0)} %}
+{% set pageComponentOptions = {} %}
+{% if feature_enabled('order_draft_edit_mode') and draftSessionUuid %}
+    {% set entryPointRouteParams = entryPointRouteParams|merge({ 'orderDraftSessionUuid': draftSessionUuid }) %}
+    {% set pageComponentOptions = pageComponentOptions|merge({
+        triggerSelector: 'input:not([data-line-items-content] input),select:not([data-line-items-content] select),textarea:not([data-line-items-content] textarea)'
+    }) %}
+{% endif %}
+
 {% set pageComponent = {
     module: 'oroorder/js/app/components/entry-point-component',
-    options: { route: 'oro_order_entry_point', routeParams: {id: entity.id|default(0)} },
+    options: {
+        route: 'oro_order_entry_point',
+        routeParams: entryPointRouteParams
+    }|merge(pageComponentOptions),
 } %}
 
 {% block content_data %}
@@ -90,28 +104,57 @@
                  }
              }|json_encode }}">
             <div data-page-component-module="orocustomer/js/app/components/customer-selection-component">
-                {{ form_row(form.customer) }}
-                {{ form_row(form.customerUser) }}
+                {{ form_row(form.customer, { 'attr': { 'data-entry-point-trigger': 1 } }) }}
+                {{ form_row(form.customerUser, { 'attr': { 'data-entry-point-trigger': 1 } }) }}
             </div>
         </div>
     {% endset %}
 
     {% if form.shippingMethod is defined %}
         {% set lineItems %}
-            {% set subtotalType = constant('Oro\\Bundle\\PricingBundle\\SubtotalProcessor\\Provider\\LineItemSubtotalProvider::TYPE') %}
-            <div class="order-line-items"
-                 data-page-component-module="oroui/js/app/components/view-component"
-                 data-page-component-options="{{ {
-                     view: 'oroorder/js/app/views/line-items-view',
-                     tierPrices: orderData.tierPrices|default({}),
-                     currency: entity.currency,
-                     customer: entity.customer is null ? null : entity.customer.id,
-                     subtotalType: subtotalType
-                 }|json_encode }}"
-                 data-layout="separate">
-                {{ form_widget(form.lineItems) }}
-                {{ form_errors(form.lineItems) }}
-            </div>
+            {% if feature_enabled('order_draft_edit_mode') and draftSessionUuid %}
+                {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+                <div class="grid grid-row-gap-24">
+                    <div class="grid-col-12">
+                        {% set grid_parameters = {
+                            order_id: oro_order_get_order_or_draft_id(entity)|default(0),
+                            order_draft_id: oro_order_get_order_draft_id(entity)|default(0),
+                            draft_session_uuid: draftSessionUuid
+                        } %}
+                        {% set render_parameters = { cssClass: 'order-line-items-edit-grid' } %}
+                        {{ dataGrid.renderGrid('order-line-items-edit-grid', grid_parameters, render_parameters) }}
+                    </div>
+                    <div class="grid-col-12">
+                        <div class="order-line-item-draft-form-container">
+                            {% set routeParameters = {
+                                orderId: oro_order_get_order_or_draft_id(entity)|default(0),
+                                orderDraftSessionUuid: draftSessionUuid
+                            } %}
+                            {{ oro_widget_render({
+                                'widgetType': 'order-line-item-draft-create',
+                                'url': path('oro_order_line_item_draft_create', routeParameters),
+                                'alias': 'order-line-item-draft-create',
+                                'elementFirst': false
+                            }) }}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                {% set subtotalType = constant('Oro\\Bundle\\PricingBundle\\SubtotalProcessor\\Provider\\LineItemSubtotalProvider::TYPE') %}
+                <div class="order-line-items"
+                     data-page-component-module="oroui/js/app/components/view-component"
+                     data-page-component-options="{{ {
+                         view: 'oroorder/js/app/views/line-items-view',
+                         tierPrices: orderData.tierPrices|default({}),
+                         currency: entity.currency,
+                         customer: entity.customer is null ? null : entity.customer.id,
+                         subtotalType: subtotalType
+                     }|json_encode }}"
+                     data-layout="separate">
+                    {{ form_widget(form.lineItems) }}
+                    {{ form_errors(form.lineItems) }}
+                </div>
+            {% endif %}
 
             {% set entityDataOptions = {entityData: orderData} %}
             <div
@@ -126,7 +169,8 @@
             {{ UI.renderPropertyControlGroup('oro.order.currency.label'|trans, entity.currency) }}
         {% else %}
             <div data-page-component-module="oroui/js/app/components/view-component"
-                 data-page-component-options="{{ {view: 'oroorder/js/app/views/currency-select-view'}|json_encode }}" class="control-group-container">
+                 data-page-component-options="{{ {view: 'oroorder/js/app/views/currency-select-view'}|json_encode }}"
+                 class="control-group-container">
                 {{ form_row(form.currency) }}
             </div>
         {% endif %}
@@ -147,7 +191,7 @@
     {% if lineItems is defined %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.order.sections.order_line_items'|trans,
-            'content_attr': {'class': 'order-line-items-content'},
+            'content_attr': {'class': 'order-line-items-content', 'data-line-items-content': ''},
             'subblocks': [{
                 'title': '',
                 'data': [lineItems]
@@ -196,24 +240,24 @@
                     {% set idAddressBlock = null %}
                 {% endif %}
                 <div
-                    data-content="address-form"
-                    data-layout="separate"
-                    data-page-component-module="oroui/js/app/components/view-component"
-                    data-page-component-options="{{ {
-                        view: 'oroorder/js/app/views/address-view',
-                        type: 'shipping',
-                        selectors: {
-                            address: idAddressBlock ,
-                            subtotalsFields: [
-                            '#' ~ form.shippingAddress.country.vars.id,
-                            '#' ~ form.shippingAddress.street.vars.id,
-                            '#' ~ form.shippingAddress.street2.vars.id,
-                            '#' ~ form.shippingAddress.city.vars.id,
-                            '#' ~ form.shippingAddress.region.vars.id,
-                            '#' ~ form.shippingAddress.postalCode.vars.id
-                            ]
-                        }
-                    }|json_encode }}">
+                        data-content="address-form"
+                        data-layout="separate"
+                        data-page-component-module="oroui/js/app/components/view-component"
+                        data-page-component-options="{{ {
+                            view: 'oroorder/js/app/views/address-view',
+                            type: 'shipping',
+                            selectors: {
+                                address: idAddressBlock ,
+                                subtotalsFields: [
+                                    '#' ~ form.shippingAddress.country.vars.id,
+                                    '#' ~ form.shippingAddress.street.vars.id,
+                                    '#' ~ form.shippingAddress.street2.vars.id,
+                                    '#' ~ form.shippingAddress.city.vars.id,
+                                    '#' ~ form.shippingAddress.region.vars.id,
+                                    '#' ~ form.shippingAddress.postalCode.vars.id
+                                ]
+                            }
+                        }|json_encode }}">
                     {{ form_widget(form.shippingAddress) }}
                 </div>
             {% endset %}
@@ -224,39 +268,39 @@
                 }]
             }]) %}
         {% endif %}
-    
+
         {% if form.shippingMethod is defined %}
-        {% set shippingInformation %}
-            <div class="possible-shipping-methods-info">
-                {{ UI.renderControlGroup('oro.order.form.shipping_options.label'|trans,
-                    '<div class="possible_shipping_methods_container">' ~ SM.renderPossibleShippingMethods(form, entity) ~ '</div>',
-                    {
-                        rootClass: null
-                    }
-                ) }}
-    
-                {% set options = {
-                    view: 'oroorder/js/app/views/shipping-cost-view'
-                } %}
-    
-                <div
-                    data-layout="separate"
-                    data-page-component-module="oroui/js/app/components/view-component"
-                    data-page-component-options="{{ options|json_encode }}">
-                    {{ form_row(form.overriddenShippingCostAmount) }}
+            {% set shippingInformation %}
+                <div class="possible-shipping-methods-info">
+                    {{ UI.renderControlGroup('oro.order.form.shipping_options.label'|trans,
+                        '<div class="possible_shipping_methods_container">' ~ SM.renderPossibleShippingMethods(form, entity) ~ '</div>',
+                        {
+                            rootClass: null
+                        }
+                    ) }}
+
+                    {% set options = {
+                        view: 'oroorder/js/app/views/shipping-cost-view'
+                    } %}
+
+                    <div
+                            data-layout="separate"
+                            data-page-component-module="oroui/js/app/components/view-component"
+                            data-page-component-options="{{ options|json_encode }}">
+                        {{ form_row(form.overriddenShippingCostAmount) }}
+                    </div>
                 </div>
-            </div>
-        {% endset %}
-    
-        {% set dataBlocks = dataBlocks|merge([{
-            'title': 'oro.order.sections.shipping_information'|trans,
-            'subblocks': [{
-                'data': [
-                    form_row(form.shippingStatus),
-                    shippingInformation
-                ]
-            }]
-        }]) %}
+            {% endset %}
+
+            {% set dataBlocks = dataBlocks|merge([{
+                'title': 'oro.order.sections.shipping_information'|trans,
+                'subblocks': [{
+                    'data': [
+                        form_row(form.shippingStatus),
+                        shippingInformation
+                    ]
+                }]
+            }]) %}
         {% endif %}
     {% endif %}
 
@@ -308,6 +352,13 @@
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks
     }%}
+
+    {% if feature_enabled('order_draft_edit_mode') and draftSessionUuid %}
+        <div class="alert alert-info" role="alert" data-draft-session-notice>
+            <span class="fa-info alert-icon" aria-hidden="true"></span>
+            {{ 'oro.order.draft_session.informational_message'|trans }}
+        </div>
+    {% endif %}
 
     {{ parent() }}
 {% endblock content_data %}

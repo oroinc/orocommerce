@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @fixture-OroOrderBundle:order.yml
 
 Feature: Order shipping status
@@ -40,7 +41,6 @@ Feature: Order shipping status
     And fill "Order Form" with:
       | Shipping Status | Shipped |
     And I click "Save and Close"
-    And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
     And I should see Order with:
       | Shipping Status | Shipped |

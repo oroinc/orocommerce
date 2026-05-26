@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @random-failed
 @feature-BB-21128
 @fixture-OroOrderBundle:product-kit/order_with_product_kits_validation.yml
@@ -21,8 +22,8 @@ Feature: Order with Product Kits Validation
     And click "Calculate Shipping Button"
     And I save form
     Then I should see "Order Form" validation errors:
-      | ProductKitItem1Quantity | The quantity should be between 2 and 5  |
-      | ProductKitItem2Quantity | The quantity should be between 3 and 10 |
+      | ProductKitItem1Quantity | The kit item quantity should be between 2 and 5.  |
+      | ProductKitItem2Quantity | The kit item quantity should be between 3 and 10. |
     And fill "Order Form" with:
       | ProductKitItem1Quantity | 2 |
       | ProductKitItem2Quantity | 3 |
@@ -35,8 +36,8 @@ Feature: Order with Product Kits Validation
     And click "Calculate Shipping Button"
     And I save form
     Then I should see "Order Form" validation errors:
-      | ProductKitItem1Quantity | The quantity should be between 2 and 5  |
-      | ProductKitItem2Quantity | The quantity should be between 3 and 10 |
+      | ProductKitItem1Quantity | The kit item quantity should be between 2 and 5.  |
+      | ProductKitItem2Quantity | The kit item quantity should be between 3 and 10. |
     And fill "Order Form" with:
       | ProductKitItem1Quantity | 2 |
       | ProductKitItem2Quantity | 3 |
@@ -69,8 +70,8 @@ Feature: Order with Product Kits Validation
       | ProductKitItem1Quantity | invalid |
       | ProductKitItem2Quantity | invalid |
     Then I should see "Order Form" validation errors:
-      | ProductKitItem1Quantity | This value should be decimal number. |
-      | ProductKitItem2Quantity | This value should be decimal number. |
+      | ProductKitItem1Quantity | The kit item quantity should be a valid number. |
+      | ProductKitItem2Quantity | The kit item quantity should be a valid number. |
     And the "Price" field should be readonly in form "Order Form"
     And fill "Order Form" with:
       | ProductKitItem1Quantity | 2 |
@@ -102,8 +103,8 @@ Feature: Order with Product Kits Validation
       | ProductKitItem1Price | -1 |
       | ProductKitItem2Price | -1 |
     Then I should see "Order Form" validation errors:
-      | ProductKitItem1Price | This value should be 0 or more. |
-      | ProductKitItem2Price | This value should be 0 or more. |
+      | ProductKitItem1Price | Price value should be equal or greater than 0. |
+      | ProductKitItem2Price | Price value should be equal or greater than 0. |
     And the "Price" field should be readonly in form "Order Form"
 
   Scenario: Add a product kit line item with non-numeric price violation
@@ -111,8 +112,8 @@ Feature: Order with Product Kits Validation
       | ProductKitItem1Price | invalid |
       | ProductKitItem2Price | invalid |
     Then I should see "Order Form" validation errors:
-      | ProductKitItem1Price | This value should be of type numeric. |
-      | ProductKitItem2Price | This value should be of type numeric. |
+      | ProductKitItem1Price | Price value should be a valid number. |
+      | ProductKitItem2Price | Price value should be a valid number. |
     And the "Price" field should be readonly in form "Order Form"
 
   Scenario: Check that zero kit item prices are still valid

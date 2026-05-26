@@ -24,7 +24,7 @@ operations:
 
     oro_rfp_create_order:
         label: oro.rfp.btn.create_order
-        applications: [default]
+        applications: [ default ]
         routes:
             - oro_rfp_request_view
         acl_resource: oro_order_create
@@ -34,16 +34,36 @@ operations:
             class: icons-holder-text no-hash btn
         preconditions:
             '@and':
-                - '@feature_enabled': 'rfp'
+                -   '@feature_enabled': 'rfp'
         actions:
-            - '@call_service_method':
-                  service: oro_rfp.service.request_to_order_data_storage
-                  method: saveToStorage
-                  method_parameters: [$.data]
-            - '@redirect':
-                  parameters:
-                      route: oro_order_create
-                      route_parameters: {'storage': true}
+            -   '@tree':
+                    conditions:
+                        '@feature_enabled': 'order_draft_edit_mode'
+                    actions:
+                        -   '@call_service_method':
+                                conditions:
+                                    '@feature_enabled': 'order_draft_edit_mode'
+                                service: oro_rfp.operation.create_order_draft_from_rfq
+                                method: createOrderDraftFromRfq
+                                method_parameters: [ $.data ]
+                                attribute: $.orderDraft
+                        -   '@redirect':
+                                parameters:
+                                    route: oro_order_create
+                                    route_parameters: { 'orderDraftSessionUuid': $.orderDraft.draftSessionUuid }
+            -   '@tree':
+                    conditions:
+                        '@not':
+                            -   '@feature_enabled': 'order_draft_edit_mode'
+                    actions:
+                        -   '@call_service_method':
+                                service: oro_rfp.service.request_to_order_data_storage
+                                method: saveToStorage
+                                method_parameters: [ $.data ]
+                        -   '@redirect':
+                                parameters:
+                                    route: oro_order_create
+                                    route_parameters: { 'storage': true }
 
     oro_rfp_frontend_request_a_quote:
         label: oro.rfp.btn.add_to_rfp

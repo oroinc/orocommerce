@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @feature-BB-21128
 @fixture-OroOrderBundle:product-kit/update_order_with_product_kits__product.yml
 @fixture-OroOrderBundle:product-kit/update_order_with_product_kits__order.yml
@@ -45,7 +46,6 @@ Feature: Update Order with Product Kits
 
   Scenario: Check that order can be saved
     When I save form
-    And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
 
   Scenario: Reset kit item line item price

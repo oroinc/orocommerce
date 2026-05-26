@@ -27,6 +27,7 @@ class Configuration implements ConfigurationInterface
         'validate_billing_addresses__backoffice_order_page';
     public const string ENABLE_ORDER_PDF_DOWNLOAD_IN_STOREFRONT = 'enable_order_pdf_download_in_storefront';
     public const string GENERATE_ORDER_PDF_ON_CHECKOUT_FINISH = 'generate_order_pdf_on_checkout_finish';
+    public const string ENABLE_ORDER_DRAFT_EDIT_MODE = 'enable_order_draft_edit_mode';
 
     #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
@@ -105,6 +106,7 @@ class Configuration implements ConfigurationInterface
                 'enable_external_order_import' => [ 'type' => 'boolean', 'value' => false],
                 self::ENABLE_ORDER_PDF_DOWNLOAD_IN_STOREFRONT => ['type' => 'boolean', 'value' => false],
                 self::GENERATE_ORDER_PDF_ON_CHECKOUT_FINISH => ['type' => 'boolean', 'value' => false],
+                self::ENABLE_ORDER_DRAFT_EDIT_MODE => ['type' => 'boolean', 'value' => false],
             ]
         );
 

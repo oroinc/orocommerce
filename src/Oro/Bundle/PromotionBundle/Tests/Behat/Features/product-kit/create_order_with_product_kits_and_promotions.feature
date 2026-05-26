@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @feature-BB-21128
 @fixture-OroPromotionBundle:product-kit/create_order_with_product_kits_and_promotions.yml
 
@@ -47,7 +48,7 @@ Feature: Create Order with Product Kits and Promotions
 
   Scenario: Change product kit item line item product
     When I fill "Order Form" with:
-      | ProductKitItem2Product | simple-product-02 - Simple Product 02 |
+      | ProductKitItem2Product | simple-product-02 - Simple-Product-02 |
     Then I see next line item discounts for backoffice order:
       | SKU            | Row Total Incl Tax | Row Total Excl Tax | Discount            |
       | product-kit-01 | $233.334           | $233.334           | $25.925999999999998 |

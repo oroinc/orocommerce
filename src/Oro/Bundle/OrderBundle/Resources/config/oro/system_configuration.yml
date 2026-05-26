@@ -17,6 +17,9 @@ system_configuration:
         order_external_order_import:
             title: oro.order.external_import.label
             icon: fa-download
+        order_draft_edit_mode:
+            title: oro.order.system_configuration.groups.order_draft_edit_mode.title
+            icon: fa-pencil-square-o
 
     fields:
         oro_order.backend_product_visibility:
@@ -142,6 +145,13 @@ system_configuration:
                 label: oro.order.system_configuration.fields.generate_order_pdf_on_checkout_finish.title
                 tooltip: oro.order.system_configuration.fields.generate_order_pdf_on_checkout_finish.tooltip
 
+        oro_order.enable_order_draft_edit_mode:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.order.system_configuration.fields.enable_order_draft_edit_mode.title
+                tooltip: oro.order.system_configuration.fields.enable_order_draft_edit_mode.tooltip
+
     tree:
         system_configuration:
             commerce:
@@ -188,6 +198,12 @@ system_configuration:
                                     order_external_order_import:
                                         children:
                                             - oro_order.enable_external_order_import
+                            order_draft_edit_mode:
+                                children:
+                                    order_draft_edit_mode:
+                                        children:
+                                            - oro_order.enable_order_draft_edit_mode
+
                     shipping:
                         children:
                             address_validation:

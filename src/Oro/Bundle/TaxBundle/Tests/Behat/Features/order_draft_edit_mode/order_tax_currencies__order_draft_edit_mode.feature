@@ -1,0 +1,64 @@
+@feature-BB-26023-enabled
+@regression
+@ticket-BB-15521
+@ticket-CRM-9323
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
+@fixture-OroCheckoutBundle:Payment.yml
+@fixture-OroCheckoutBundle:Shipping.yml
+@fixture-OroTaxBundle:OrderTaxCurrencies.yml
+
+Feature: Order tax currencies - Order Draft Edit Mode
+  In order to manage orders
+  As an Administrator
+  I want to see correct currencies in tax tables for line items
+
+  Scenario: Feature Background
+    Given I login as administrator
+    And I go to System / Configuration
+    And I follow "System Configuration/General Setup/Currency" on configuration sidebar
+    And I click "EuroAsDefaultValue"
+    And I click "Yes"
+    And I click "CurrencyPopover"
+    And I should see "This currency can't be removed because it is used as base for all currency related operations."
+    And I click "Save settings"
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Enable Order Draft Edit Mode
+    Given I set configuration property "oro_order.enable_order_draft_edit_mode" to "1"
+
+    When I go to System / Configuration
+    And I follow "Commerce/Catalog/Pricing" on configuration sidebar
+    And fill "Pricing Form" with:
+      | Enabled Currencies System | false                     |
+      | Enabled Currencies        | [US Dollar ($), Euro (€)] |
+    And click "Save settings"
+    Then I should see "Configuration saved" flash message
+
+    When I go to System / Configuration
+    And I follow "Commerce/Taxation/Tax Calculation" on configuration sidebar
+    And uncheck "Use default" for "Origin Address" field
+    And I fill "Tax Calculation Form" with:
+      | Use As Base By Default | Origin  |
+      | Origin Country         | Germany |
+      | Origin Region          | Berlin  |
+      | Origin Zip Code        | 10115   |
+    And I click "Save settings"
+    Then I should see "Configuration saved" flash message
+
+    When I go to Sales / Orders
+    And I click "Create Order"
+    And I fill "Order Form" with:
+      | Customer | Company A |
+    And fill "Order Line Item Draft Create Form" with:
+      | Product | SKU1 |
+    And click "Add Product"
+    And I click edit SKU123 in grid
+    And I click "View taxes & discounts"
+    Then I see the next line item taxes for backoffice order edit for "SKU123":
+      |            | Incl. Tax | Excl. Tax | Tax Amount |
+      | Unit Price | €43.60    | €40.00    | €3.60      |
+      | Row Total  | €43.60    | €40.00    | €3.60      |
+    And I see the next line item tax results for backoffice order edit for "SKU123":
+      | Tax          | Rate | Taxable Amount | Tax Amount |
+      | berlin_sales | 9%   | €40.00         | €3.60      |

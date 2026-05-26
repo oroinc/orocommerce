@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @regression
 @fixture-OroSaleBundle:QuoteBackofficeDefaultFixture.yml
 @fixture-OroCustomerBundle:CustomerUserAddressMarleneFixture.yml

@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @regression
 @ticket-BB-25261
 @fixture-OroRFPBundle:create_order_and_quote_from_rfq_with_deleted_product.yml

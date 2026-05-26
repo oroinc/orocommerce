@@ -12,3 +12,10 @@ oro_frontend:
         Oro\Bundle\OrderBundle\Entity\Order:
             index: oro_order_frontend_index
             view: oro_order_frontend_view
+
+doctrine:
+    orm:
+        filters:
+            order_draft:
+                class: Oro\Component\DraftSession\Doctrine\DraftSessionOrmFilter
+                enabled: true

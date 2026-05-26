@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @ticket-BB-14800
 @fixture-OroPricingBundle:FractionalProductPrice.yml
 @fixture-OroLocaleBundle:GermanLocalization.yml

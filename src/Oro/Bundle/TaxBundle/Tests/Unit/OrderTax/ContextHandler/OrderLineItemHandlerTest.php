@@ -17,10 +17,10 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler;
 use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxCodeProvider;
+use Oro\Bundle\TaxBundle\Tests\Unit\Stub\OrderLineItemStub;
 
 class OrderLineItemHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    private const ORDER_LINE_ITEM_CLASS = OrderLineItem::class;
     private const PRODUCT_TAX_CODE = 'PTC';
     private const ACCOUNT_TAX_CODE = 'ATC';
     private const ACCOUNT_GROUP_TAX_CODE = 'AGTC';
@@ -88,8 +88,7 @@ class OrderLineItemHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->handler = new OrderLineItemHandler(
             $addressProvider,
-            $this->taxCodeProvider,
-            self::ORDER_LINE_ITEM_CLASS
+            $this->taxCodeProvider
         );
     }
 
@@ -339,5 +338,141 @@ class OrderLineItemHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame($object, $contextEvent->getMappingObject());
         $this->assertEmpty($contextEvent->getContext());
+    }
+
+    public function testOnContextEventWithFreeFormLineItemWithFreeFormTaxCode(): void
+    {
+        $this->isProductTaxCodeDigital = false;
+
+        $taxationAddress = (new OrderAddress())
+            ->setCountry(new Country(self::ORDER_ADDRESS_COUNTRY_CODE));
+        $this->address = $taxationAddress;
+
+        $orderLineItem = new OrderLineItemStub();
+        $orderLineItem->setFreeFormProduct('Free Form Product');
+        $orderLineItem->setFreeFormTaxCode($this->productTaxCode);
+
+        $this->order->setCustomer(new Customer());
+        $orderLineItem->addOrder($this->order);
+
+        $this->customerTaxCode = (new CustomerTaxCode())->setCode(self::ACCOUNT_TAX_CODE);
+
+        $this->taxCodeProvider->expects($this->once())
+            ->method('getTaxCode')
+            ->willReturnCallback(function ($type) {
+                if ($type === TaxCodeInterface::TYPE_ACCOUNT) {
+                    return $this->customerTaxCode;
+                }
+
+                return null;
+            });
+
+        $contextEvent = new ContextEvent($orderLineItem);
+        $this->handler->onContextEvent($contextEvent);
+
+        $expectedContext = new \ArrayObject([
+            Taxable::DIGITAL_PRODUCT => false,
+            Taxable::PRODUCT_TAX_CODE => self::PRODUCT_TAX_CODE,
+            Taxable::ACCOUNT_TAX_CODE => self::ACCOUNT_TAX_CODE,
+        ]);
+
+        $this->assertSame($orderLineItem, $contextEvent->getMappingObject());
+        $this->assertEquals($expectedContext, $contextEvent->getContext());
+    }
+
+    public function testOnContextEventWithFreeFormLineItemWithoutFreeFormTaxCode(): void
+    {
+        $this->isProductTaxCodeDigital = false;
+
+        $taxationAddress = (new OrderAddress())
+            ->setCountry(new Country(self::ORDER_ADDRESS_COUNTRY_CODE));
+        $this->address = $taxationAddress;
+
+        $orderLineItem = new OrderLineItemStub();
+        $orderLineItem->setFreeFormProduct('Free Form Product');
+        // Not setting freeFormTaxCode
+
+        $this->order->setCustomer(new Customer());
+        $orderLineItem->addOrder($this->order);
+
+        $this->customerTaxCode = (new CustomerTaxCode())->setCode(self::ACCOUNT_TAX_CODE);
+
+        $this->taxCodeProvider->expects($this->once())
+            ->method('getTaxCode')
+            ->willReturnCallback(function ($type) {
+                if ($type === TaxCodeInterface::TYPE_ACCOUNT) {
+                    return $this->customerTaxCode;
+                }
+                return null;
+            });
+
+        $contextEvent = new ContextEvent($orderLineItem);
+        $this->handler->onContextEvent($contextEvent);
+
+        $expectedContext = new \ArrayObject([
+            Taxable::DIGITAL_PRODUCT => false,
+            Taxable::PRODUCT_TAX_CODE => null,
+            Taxable::ACCOUNT_TAX_CODE => self::ACCOUNT_TAX_CODE,
+        ]);
+
+        $this->assertSame($orderLineItem, $contextEvent->getMappingObject());
+        $this->assertEquals($expectedContext, $contextEvent->getContext());
+    }
+
+    public function testChecksumIsUsedInLocalCache(): void
+    {
+        $taxationAddress = (new OrderAddress())
+            ->setCountry(new Country(self::ORDER_ADDRESS_COUNTRY_CODE));
+        $this->address = $taxationAddress;
+
+        $orderLineItem = new OrderLineItem();
+        $orderLineItem->setProduct(new Product());
+        $orderLineItem->setChecksum('checksum_v1');
+
+        $this->order->setCustomer(new Customer());
+        $orderLineItem->addOrder($this->order);
+
+        $this->productTaxCode = (new ProductTaxCode())->setCode(self::PRODUCT_TAX_CODE);
+        $this->customerTaxCode = (new CustomerTaxCode())->setCode(self::ACCOUNT_TAX_CODE);
+
+        $this->taxCodeProvider->expects($this->exactly(4))
+            ->method('getTaxCode')
+            ->willReturnCallback(function ($type) {
+                if ($type === TaxCodeInterface::TYPE_PRODUCT) {
+                    return $this->productTaxCode;
+                }
+                if ($type === TaxCodeInterface::TYPE_ACCOUNT) {
+                    return $this->customerTaxCode;
+                }
+
+                return null;
+            });
+
+        // First call - should retrieve tax codes from provider and cache them
+        $contextEvent = new ContextEvent($orderLineItem);
+        $this->handler->onContextEvent($contextEvent);
+
+        $expectedContext = new \ArrayObject([
+            Taxable::DIGITAL_PRODUCT => false,
+            Taxable::PRODUCT_TAX_CODE => self::PRODUCT_TAX_CODE,
+            Taxable::ACCOUNT_TAX_CODE => self::ACCOUNT_TAX_CODE,
+        ]);
+
+        $this->assertEquals($expectedContext, $contextEvent->getContext());
+
+        // Second call with same checksum - should use cached values (no additional provider calls)
+        $contextEvent2 = new ContextEvent($orderLineItem);
+        $this->handler->onContextEvent($contextEvent2);
+
+        $this->assertEquals($expectedContext, $contextEvent2->getContext());
+
+        // Change checksum - cache should be invalidated
+        $orderLineItem->setChecksum('checksum_v2');
+
+        // Third call with different checksum - should retrieve tax codes again from provider
+        $contextEvent3 = new ContextEvent($orderLineItem);
+        $this->handler->onContextEvent($contextEvent3);
+
+        $this->assertEquals($expectedContext, $contextEvent3->getContext());
     }
 }

@@ -9,6 +9,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener;
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
@@ -56,6 +57,7 @@ class SubOrderType extends AbstractType
         $this->orderCurrencyHandler->setOrderCurrency($order);
 
         $builder
+            ->add('recalculationRequired', HiddenType::class, ['mapped' => false])
             ->add(
                 'customer',
                 CustomerSelectType::class,
@@ -123,7 +125,6 @@ class SubOrderType extends AbstractType
                 }
             });
         $this->addShippingFields($builder, $order);
-        $this->addAddresses($builder, $order);
         $this->addShippingAddress($builder, $order, $options);
 
         $builder->addEventSubscriber($this->subtotalSubscriber);
@@ -146,6 +147,9 @@ class SubOrderType extends AbstractType
         return self::NAME;
     }
 
+    /**
+     * @deprecated since 6.1. Use {@see addShippingAddress} instead.
+     */
     protected function addAddresses(FormBuilderInterface|FormInterface $form, Order $order): void
     {
         if (!$form instanceof FormInterface && !$form instanceof FormBuilderInterface) {
@@ -180,6 +184,14 @@ class SubOrderType extends AbstractType
                         'address_type' => AddressType::TYPE_SHIPPING,
                     ]
                 );
+
+            $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                $form = $event->getForm();
+
+                FormUtils::replaceField($form, 'shippingAddress', [
+                    'order' => $event->getData(),
+                ]);
+            });
         }
     }
 

@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @fixture-OroPricingBundle:PriceListsWithPrices.yml
 @fixture-OroOrderBundle:OrderDefaultAddressesFixture.yml
 @ticket-BB-21324

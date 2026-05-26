@@ -81,8 +81,14 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
         );
 
         foreach ($matchedPrices as $identifier => $price) {
+            if ($price === null) {
+                continue;
+            }
+
             foreach ($lineItems[$identifier] as $lineItem) {
-                $lineItem->setPrice($price);
+                if ($lineItem->getPrice() === null) {
+                    $lineItem->setPrice($price);
+                }
             }
         }
     }

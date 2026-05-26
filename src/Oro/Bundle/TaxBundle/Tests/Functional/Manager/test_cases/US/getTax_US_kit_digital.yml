@@ -90,78 +90,141 @@ databaseBeforeSecondPart:
 disableTaxCalculation: false
 expectedResult:
     total:
-        includingTax: '67.09'
+        includingTax: '78.39'
         excludingTax: '67.09'
-        taxAmount: '0'
-        adjustment: '0'
-        currency: 'USD'
+        taxAmount: '11.3'
+        adjustment: '0.00669'
+        currency: USD
     items:
         -
-            row:
-                includingTax: '15.99'
-                excludingTax: '15.99'
-                taxAmount: '0'
-                adjustment: '0'
-                currency: 'USD'
             unit:
-                includingTax: '15.99'
+                includingTax: '18.85'
                 excludingTax: '15.99'
-                taxAmount: '0'
-                adjustment: '0'
-                currency: 'USD'
+                taxAmount: '2.86'
+                adjustment: '0.00221'
+                currency: USD
+            row:
+                includingTax: '18.85'
+                excludingTax: '15.99'
+                taxAmount: '2.86'
+                adjustment: '0.00221'
+                currency: USD
+            taxes:
+                -
+                    tax: TAX1
+                    rate: '0.104'
+                    taxableAmount: '15.99'
+                    taxAmount: '1.66'
+                    currency: USD
+                -
+                    tax: TAX3
+                    rate: '0.075'
+                    taxableAmount: '15.99'
+                    taxAmount: '1.2'
+                    currency: USD
         -
-            row:
-                includingTax: '51.1'
-                excludingTax: '51.1'
-                taxAmount: '0'
-                adjustment: '0'
-                currency: 'USD'
-            unit:
-                includingTax: '25.55'
-                excludingTax: '25.55'
-                taxAmount: '0'
-                adjustment: '0'
-                currency: 'USD'
             items:
                 -
-                    row:
-                        includingTax: '11.1'
-                        excludingTax: '11.1'
-                        taxAmount: '0'
-                        adjustment: '0'
-                        currency: 'USD'
                     unit:
-                        includingTax: '5.55'
+                        includingTax: '6.54'
                         excludingTax: '5.55'
-                        taxAmount: '0'
-                        adjustment: '0'
-                        currency: 'USD'
-                -
+                        taxAmount: '0.99'
+                        adjustment: '0.00345'
+                        currency: USD
                     row:
-                        includingTax: '3.98'
+                        includingTax: '13.09'
+                        excludingTax: '11.1'
+                        taxAmount: '1.99'
+                        adjustment: '-0.0031'
+                        currency: USD
+                    taxes:
+                        -
+                            tax: TAX1
+                            rate: '0.104'
+                            taxableAmount: '11.1'
+                            taxAmount: '1.15'
+                            currency: USD
+                        -
+                            tax: TAX3
+                            rate: '0.075'
+                            taxableAmount: '11.1'
+                            taxAmount: '0.83'
+                            currency: USD
+                -
+                    unit:
+                        includingTax: '2.35'
+                        excludingTax: '1.99'
+                        taxAmount: '0.36'
+                        adjustment: '-0.00379'
+                        currency: USD
+                    row:
+                        includingTax: '4.69'
                         excludingTax: '3.98'
-                        taxAmount: '0'
-                        adjustment: '0'
-                        currency: 'USD'
+                        taxAmount: '0.71'
+                        adjustment: '0.00242'
+                        currency: USD
+                    taxes:
+                        -
+                            tax: TAX1
+                            rate: '0.104'
+                            taxableAmount: '3.98'
+                            taxAmount: '0.41'
+                            currency: USD
+                        -
+                            tax: TAX3
+                            rate: '0.075'
+                            taxableAmount: '3.98'
+                            taxAmount: '0.3'
+                            currency: USD
+                -
                     unit:
                         includingTax: '1.99'
                         excludingTax: '1.99'
                         taxAmount: '0'
                         adjustment: '0'
-                        currency: 'USD'
-                -
+                        currency: USD
                     row:
                         includingTax: '1.99'
                         excludingTax: '1.99'
                         taxAmount: '0'
                         adjustment: '0'
-                        currency: 'USD'
-                    unit:
-                        includingTax: '1.99'
-                        excludingTax: '1.99'
-                        taxAmount: '0'
-                        adjustment: '0'
-                        currency: 'USD'
-                    taxes: {}
-            taxes: {}
-    taxes: {}
+                        currency: USD
+                    taxes: {  }
+            unit:
+                includingTax: '29.77'
+                excludingTax: '25.55'
+                taxAmount: '4.22'
+                adjustment: '-0.00276'
+                currency: USD
+            row:
+                includingTax: '59.53'
+                excludingTax: '51.1'
+                taxAmount: '8.43'
+                adjustment: '0.00448'
+                currency: USD
+            taxes:
+                -
+                    tax: TAX1
+                    rate: '0.104'
+                    taxableAmount: '47.12'
+                    taxAmount: '4.9'
+                    currency: USD
+                -
+                    tax: TAX3
+                    rate: '0.075'
+                    taxableAmount: '47.12'
+                    taxAmount: '3.53'
+                    currency: USD
+    taxes:
+        -
+            tax: TAX1
+            rate: '0.104'
+            taxableAmount: '63.11'
+            taxAmount: '6.56'
+            currency: USD
+        -
+            tax: TAX3
+            rate: '0.075'
+            taxableAmount: '63.11'
+            taxAmount: '4.73'
+            currency: USD

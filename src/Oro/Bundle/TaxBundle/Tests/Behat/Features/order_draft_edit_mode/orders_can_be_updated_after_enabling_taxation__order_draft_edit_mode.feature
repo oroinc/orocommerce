@@ -1,0 +1,57 @@
+@feature-BB-26023-enabled
+@regression
+@ticket-BB-21759
+
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
+@fixture-OroCheckoutBundle:Payment.yml
+@fixture-OroTaxBundle:OrderTaxCurrencies.yml
+
+Feature: Orders can be updated after enabling taxation - Order Draft Edit Mode
+  Check if it is possible to update the order after re-enabling taxation
+
+  Scenario: Enable Order Draft Edit Mode
+    Given I set configuration property "oro_order.enable_order_draft_edit_mode" to "1"
+
+  Scenario: Disable taxes
+    Given I login as administrator
+    And go to System/Configuration
+    And follow "Commerce/Taxation/Tax Calculation" on configuration sidebar
+    When uncheck "Use default" for "Enabled" field
+    And fill "Tax Calculation Form" with:
+      | Enabled | false |
+    And save form
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Create order
+    Given I go to Sales/Orders
+    When I click "Create Order"
+    And fill "Order Form" with:
+      | Customer User | Amanda Cole |
+    And fill "Order Line Item Draft Create Form" with:
+      | Product  | SKU123 |
+      | Quantity | 5      |
+    And click "Add Product"
+    And click "Calculate Shipping"
+    And click "Shipping Method Flat Rate Radio Button"
+    When I save and close form
+    Then I should see "Order has been saved" flash message
+
+  Scenario: Enable taxes
+    Given I go to System/Configuration
+    And follow "Commerce/Taxation/Tax Calculation" on configuration sidebar
+    When check "Use default" for "Enabled" field
+    And I save form
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Update order
+    Given I go to Sales/Orders
+    When I click edit "1" in grid
+    And I click Edit "SKU123" in grid
+    And fill "Order Line Item Draft Edit Form" with:
+      | Quantity | 6 |
+    And I click on "Order Line Item Draft Edit Form Save Button"
+    And save and close form
+    And click "Save" in modal window
+    Then I should see "Order has been saved" flash message
+    And should not see "There was an error performing the requested operation. Please try again or contact us for assistance."

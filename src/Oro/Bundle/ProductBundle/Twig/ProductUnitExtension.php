@@ -3,9 +3,11 @@
 namespace Oro\Bundle\ProductBundle\Twig;
 
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitPrecisionLabelFormatter;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
@@ -20,21 +22,16 @@ use Twig\TwigFunction;
  *   - oro_format_product_unit_value
  *   - oro_format_short_product_unit_value
  *   - oro_format_product_unit_code
+ *   - oro_get_product_units_with_precision
  *
  * Provides a Twig function to check if product units are visible:
  *   - oro_is_unit_code_visible
  */
 class ProductUnitExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    private ContainerInterface $container;
-    private ?UnitLabelFormatterInterface $unitLabelFormatter = null;
-    private ?UnitValueFormatterInterface $unitValueFormatter = null;
-    private ?UnitVisibilityInterface $unitVisibility = null;
-    private ?UnitPrecisionLabelFormatter $unitPrecisionLabelFormatter = null;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -43,6 +40,10 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
         return [
             new TwigFunction('oro_is_unit_code_visible', [$this, 'isUnitCodeVisible']),
             new TwigFunction('oro_format_product_unit_precision_label', [$this, 'formatUnitPrecisionLabel']),
+            new TwigFunction(
+                'oro_get_product_units_with_precision',
+                [$this, 'getProductUnitsWithPrecision']
+            ),
         ];
     }
 
@@ -123,9 +124,30 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
         return $this->getUnitVisibility()->isUnitCodeVisible($code);
     }
 
-    public function formatUnitPrecisionLabel(string $unitCode, int $precision): string
+    public function formatUnitPrecisionLabel(?string $unitCode, int $precision): string
     {
+        if ($unitCode === null) {
+            return '';
+        }
+
         return $this->getUnitPrecisionLabelFormatter()->formatUnitPrecisionLabel($unitCode, $precision);
+    }
+
+    /**
+     * @param Product|null $product
+     *
+     * @return array<string,int> Array of product unit codes with their default precision, e.g. ['kg' => 3, 'item' => 0]
+     */
+    public function getProductUnitsWithPrecision(?Product $product = null): array
+    {
+        if ($product !== null) {
+            return $product->getAvailableUnitsPrecision();
+        }
+
+        /** @var ProductUnitsProvider $productUnitsProvider */
+        $productUnitsProvider = $this->container->get('oro_product.provider.product_units_provider');
+
+        return $productUnitsProvider->getAvailableProductUnitsWithPrecision();
     }
 
     #[\Override]
@@ -137,42 +159,27 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
             'oro_product.formatter.product_unit_precision' => UnitLabelFormatterInterface::class,
             'oro_product.visibility.unit' => UnitVisibilityInterface::class,
             'oro_product.formatter.unit_precision_label' => UnitPrecisionLabelFormatter::class,
+            'oro_product.provider.product_units_provider' => ProductUnitsProvider::class,
         ];
     }
 
     private function getLabelFormatter(): UnitLabelFormatterInterface
     {
-        if (null === $this->unitLabelFormatter) {
-            $this->unitLabelFormatter = $this->container->get('oro_product.formatter.product_unit_label');
-        }
-
-        return $this->unitLabelFormatter;
+        return $this->container->get('oro_product.formatter.product_unit_label');
     }
 
     private function getValueFormatter(): UnitValueFormatterInterface
     {
-        if (null === $this->unitValueFormatter) {
-            $this->unitValueFormatter = $this->container->get('oro_product.formatter.product_unit_value');
-        }
-
-        return $this->unitValueFormatter;
+        return $this->container->get('oro_product.formatter.product_unit_value');
     }
 
     private function getUnitVisibility(): UnitVisibilityInterface
     {
-        if (null === $this->unitVisibility) {
-            $this->unitVisibility = $this->container->get('oro_product.visibility.unit');
-        }
-
-        return $this->unitVisibility;
+        return $this->container->get('oro_product.visibility.unit');
     }
 
     private function getUnitPrecisionLabelFormatter(): UnitPrecisionLabelFormatter
     {
-        if (null === $this->unitPrecisionLabelFormatter) {
-            $this->unitPrecisionLabelFormatter = $this->container->get('oro_product.formatter.unit_precision_label');
-        }
-
-        return $this->unitPrecisionLabelFormatter;
+        return $this->container->get('oro_product.formatter.unit_precision_label');
     }
 }

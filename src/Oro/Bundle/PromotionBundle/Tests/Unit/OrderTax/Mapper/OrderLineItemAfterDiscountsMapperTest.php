@@ -37,48 +37,6 @@ class OrderLineItemAfterDiscountsMapperTest extends TestCase
         );
     }
 
-    public function testMapCachedDiscountContext(): void
-    {
-        $taxable = new Taxable();
-        $order = new Order();
-        $price = new Price();
-        $lineItem = new OrderLineItem();
-        $lineItem
-            ->setPrice($price)
-            ->addOrder($order);
-
-        $this->innerMapper
-            ->expects(self::exactly(2))
-            ->method('map')
-            ->with($lineItem)
-            ->willReturn($taxable);
-
-        $this->taxationSettingsProvider
-            ->expects(self::exactly(2))
-            ->method('isCalculateAfterPromotionsEnabled')
-            ->willReturn(true);
-
-        $discountLineItem = new DiscountLineItem();
-        $discountLineItem->setSourceLineItem($lineItem);
-        $discountContext = new DiscountContext();
-        $discountContext->setLineItems([$discountLineItem]);
-
-        $this->promotionExecutor
-            ->expects(self::exactly(2))
-            ->method('supports')
-            ->with($order)
-            ->willReturn(true);
-        $this->promotionExecutor
-            ->expects(self::once())
-            ->method('execute')
-            ->with($order)
-            ->willReturn($discountContext);
-
-        $this->orderLineItemAfterDiscountsMapper->map($lineItem);
-        // Make sure that promotionExecutor->execute() does not call more than 2 times.
-        $this->orderLineItemAfterDiscountsMapper->map($lineItem);
-    }
-
     public function testMapLineItemNoPrice(): void
     {
         $taxable = new Taxable();

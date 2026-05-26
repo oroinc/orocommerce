@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @ticket-BB-26425
 @fixture-OroProductBundle:product_search_by_name.yml
 

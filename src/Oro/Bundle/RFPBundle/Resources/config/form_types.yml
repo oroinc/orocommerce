@@ -126,6 +126,13 @@ services:
             - { name: form.type_extension }
             - { name: oro_featuretogle.feature, feature: rfp }
 
+    oro_rfp.form.type.extension.order_line_item_draft_offers:
+        class: 'Oro\Bundle\RFPBundle\Form\Extension\OrderLineItemDraftOffersExtension'
+        arguments:
+            - '@oro_rfp.provider.offers_from_request_product'
+        tags:
+            - { name: form.type_extension }
+
     oro_rfp.form.type.request_offers:
         class: 'Oro\Bundle\RFPBundle\Form\Type\OffersType'
         tags:

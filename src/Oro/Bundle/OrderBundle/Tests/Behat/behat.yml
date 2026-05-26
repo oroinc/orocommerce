@@ -616,6 +616,226 @@ oro_behat_extension:
         locator: '//a[contains(@href,"/customer/order/pdf-document")]'
         type: xpath
 
+    #
+    # <Order Draft Edit Mode Elements>
+    #
+    Order Line Item Draft Edit Form Save Button:
+      selector: '.draft-form__form-actions button[type="submit"]'
+
+    Order Line Item Draft Edit Form Discard Button:
+      selector: '.draft-form__form-actions button[type="reset"]'
+
+    Order Line Item Draft Edit Form Delete Button:
+      selector: 'button[data-role="delete-line-item"]'
+
+    Order Line Item Draft Create Form Add Product:
+      selector: '.draft-form__actions button[type="submit"]'
+
+    Order Line Item Draft Grid:
+      selector: 'div[data-page-component-name="order-line-items-edit-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Order Line Item Tier Prices Hint:
+        selector:
+            type: css
+            locator: 'div[data-page-component-name="order-line-items-edit-grid"] button.order-line-item-tier-prices-hint'
+
+    Order Line Item Draft Edit Form:
+      selector: '.grid-row-line-item-edit form[name="oro_order_line_item_draft"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Product:
+            locator: '//input[starts-with(@id,"oro_order_line_item_draft_product-uid")]'
+            type: xpath
+            element: Select2Entity
+          Quantity:
+            locator: '//input[@name="oro_order_line_item_draft[quantity]"]'
+            type: xpath
+          ProductUnit:
+            locator: '//select[@name="oro_order_line_item_draft[productUnit]"]'
+            type: xpath
+          Price:
+            locator: '//input[starts-with(@id,"oro_order_line_item_draft_price_value-uid")]'
+            type: xpath
+          Warehouse:
+            locator: '//input[@name="oro_order_line_item_draft[warehouse]"]'
+            type: xpath
+          FreeProductSku:
+            locator: '//input[@name="oro_order_line_item_draft[productSku]"]'
+            type: xpath
+          FreeProduct:
+            locator: '//input[contains(@id,"oro_order_line_item_draft_freeFormProduct-uid")]'
+            type: xpath
+          ProductKitItem1Product:
+            locator: './/tr[contains(@class,"order-line-kit-item")][1]//select[@data-name="field__product"]'
+            type: xpath
+          ProductKitItem1Quantity:
+            locator: './/tr[contains(@class,"order-line-kit-item")][1]//input[@data-name="field__quantity"]'
+            type: xpath
+          ProductKitItem1Price:
+            locator: './/tr[contains(@class,"order-line-kit-item")][1]//input[@data-name="field__value"]'
+            type: xpath
+          ProductKitItem2Product:
+            locator: './/tr[contains(@class,"order-line-kit-item")][2]//select[@data-name="field__product"]'
+            type: xpath
+          ProductKitItem2Quantity:
+            locator: './/tr[contains(@class,"order-line-kit-item")][2]//input[@data-name="field__quantity"]'
+            type: xpath
+          ProductKitItem2Price:
+            locator: './/tr[contains(@class,"order-line-kit-item")][2]//input[@data-name="field__value"]'
+            type: xpath
+          ProductKitItem3Product:
+            locator: './/tr[contains(@class,"order-line-kit-item")][3]//select[@data-name="field__product"]'
+            type: xpath
+          ProductKitItem3Quantity:
+            locator: './/tr[contains(@class,"order-line-kit-item")][3]//input[@data-name="field__quantity"]'
+            type: xpath
+          ProductKitItem3Price:
+            locator: './/tr[contains(@class,"order-line-kit-item")][3]//input[@data-name="field__value"]'
+            type: xpath
+
+    Order Line Item Draft Create Form:
+      selector: 'div[data-role="order-line-item-draft-create-form-container"] form[name="oro_order_line_item_draft"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Product:
+            type: css
+            locator: 'input[id^="oro_order_line_item_draft_product-uid"]'
+            element: Select2Entity
+          Price:
+            type: css
+            locator: 'input[id^="oro_order_line_item_draft_price_value-uid"]'
+          Quantity:
+            locator: '//input[@name="oro_order_line_item_draft[quantity]"]'
+            type: xpath
+          ProductUnit:
+            locator: '//select[@name="oro_order_line_item_draft[productUnit]"]'
+            type: xpath
+          Warehouse:
+            locator: '//input[@name="oro_order_line_item_draft[warehouse]"]'
+            type: xpath
+          FreeProductSku:
+            locator: '//input[@name="oro_order_line_item_draft[productSku]"]'
+            type: xpath
+          FreeProduct:
+            locator: '//input[contains(@id,"oro_order_line_item_draft_freeFormProduct-uid")]'
+            type: xpath
+          FreeProductTaxCode:
+            type: css
+            locator: 'input[id^="oro_order_line_item_draft_freeFormTaxCode-uid"]'
+            element: Select2Entity
+          ProductKitItem1Product:
+            locator: './/tr[contains(@class,"order-line-kit-item")][1]//select[@data-name="field__product"]'
+            type: xpath
+          ProductKitItem1Quantity:
+            locator: './/tr[contains(@class,"order-line-kit-item")][1]//input[@data-name="field__quantity"]'
+            type: xpath
+          ProductKitItem1Price:
+            locator: './/tr[contains(@class,"order-line-kit-item")][1]//input[@data-name="field__value"]'
+            type: xpath
+          ProductKitItem2Product:
+            locator: './/tr[contains(@class,"order-line-kit-item")][2]//select[@data-name="field__product"]'
+            type: xpath
+          ProductKitItem2Quantity:
+            locator: './/tr[contains(@class,"order-line-kit-item")][2]//input[@data-name="field__quantity"]'
+            type: xpath
+          ProductKitItem2Price:
+            locator: './/tr[contains(@class,"order-line-kit-item")][2]//input[@data-name="field__value"]'
+            type: xpath
+
+    Order Line Item Draft Create Free-Form Switch:
+      selector:
+        locator: '//*[@data-role="order-line-item-draft-create-form-container"]//a[text()="Free-form entry"]'
+        type: xpath
+
+    Order Line Item Draft Edit Form Kit Item 1 Label:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//tr[contains(@class,"order-line-kit-item")][1]/td[contains(@class,"line-item-label")]/label'
+        type: xpath
+
+    Order Line Item Draft Edit Form Kit Item 1 Quantity Label Tooltip:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//tr[contains(@class,"order-line-kit-item")][1]/td[contains(@class,"line-item-quantity-label")]//i[contains(@class,"tooltip-icon")]'
+        type: xpath
+
+    Order Line Item Draft Edit Form Kit Item 1 Unit:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//tr[contains(@class,"order-line-kit-item")][1]/td//span[contains(@class,"prices-tier-per-item")]'
+        type: xpath
+
+    Order Line Item Draft Edit Form Kit Item 1 Price Label:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//tr[contains(@class,"order-line-kit-item")][1]/td[contains(@class,"line-item-price-label")]/label'
+        type: xpath
+
+    Order Line Item Draft Edit Form Price Overridden:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//td[contains(@class,"grid-body-cell-price")]//div[contains(@class,"product-price-overridden")]'
+        type: xpath
+
+    Order Line Item Draft Edit Form Kit Item 1 Matched Price:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//tr[contains(@class,"order-line-kit-item")][1]/td//div[contains(@class,"line-item-matched-price")]//strong'
+        type: xpath
+
+    Order Line Item Draft Edit Form Kit Item 1 Price Overridden:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//tr[contains(@class,"order-line-kit-item")][1]/td//div[contains(@class,"product-price-overridden")]'
+        type: xpath
+
+    Order Line Item Draft Edit Form Kit Item 2 Label:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//tr[contains(@class,"order-line-kit-item")][2]/td[contains(@class,"line-item-label")]/label'
+        type: xpath
+
+    Order Line Item Draft Edit Form Kit Item 2 Quantity Label Tooltip:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//tr[contains(@class,"order-line-kit-item")][2]/td[contains(@class,"line-item-quantity-label")]//i[contains(@class,"tooltip-icon")]'
+        type: xpath
+
+    Order Line Item Draft Edit Form Kit Item 2 Unit:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//tr[contains(@class,"order-line-kit-item")][2]/td//span[contains(@class,"prices-tier-per-item")]'
+        type: xpath
+
+    Order Line Item Draft Edit Form Kit Item 2 Price Label:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//tr[contains(@class,"order-line-kit-item")][2]/td[contains(@class,"line-item-price-label")]/label'
+        type: xpath
+
+    Order Line Item Draft Edit Form Kit Item 2 Matched Price:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//tr[contains(@class,"order-line-kit-item")][2]/td//div[contains(@class,"line-item-matched-price")]//strong'
+        type: xpath
+
+    Order Line Item Draft Edit Form Kit Item 2 Price Overridden:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//tr[contains(@class,"order-line-kit-item")][2]/td//div[contains(@class,"product-price-overridden")]'
+        type: xpath
+
+    Order Line Item Draft Edit Form Kit Item 3 Label:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//tr[contains(@class,"order-line-kit-item")][3]/td[contains(@class,"line-item-label")]/label'
+        type: xpath
+
+    Order Line Item Draft Edit Form Offer 1:
+      selector:
+        locator: '(//input[@name="oro_order_line_item_draft[offers]"])[1]'
+        type: xpath
+
+    Configuration Order Draft Edit Mode Form:
+      selector: 'form[name="order_draft_edit_mode"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Enable Order Draft Edit Mode: 'order_draft_edit_mode[oro_order___enable_order_draft_edit_mode][value]'
+          Enable Order Draft Edit Mode Use Default: 'order_draft_edit_mode[oro_order___enable_order_draft_edit_mode][use_parent_scope_value]'
+    #
+    # </Order Draft Edit Mode Elements>
+    #
+
   pages:
     OrderFrontendView:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderFrontendViewPage

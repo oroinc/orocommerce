@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -10,6 +11,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -133,5 +135,24 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('first', $request->getFirstName());
         $this->assertEquals('last', $request->getLastName());
         $this->assertEquals(['email'], $request->getEmailFields());
+    }
+
+    public function testEntityDraftAwareInterfaceImplementationIsNoOp(): void
+    {
+        $request = new Request();
+        $mock = $this->createMock(EntityDraftAwareInterface::class);
+
+        self::assertNull($request->getDraftSessionUuid());
+        self::assertSame($request, $request->setDraftSessionUuid('any'));
+
+        self::assertNull($request->getDraftSource());
+        self::assertSame($request, $request->setDraftSource(null));
+
+        $drafts = $request->getDrafts();
+        self::assertInstanceOf(ArrayCollection::class, $drafts);
+        self::assertTrue($drafts->isEmpty());
+
+        self::assertSame($request, $request->addDraft($mock));
+        self::assertSame($request, $request->removeDraft($mock));
     }
 }

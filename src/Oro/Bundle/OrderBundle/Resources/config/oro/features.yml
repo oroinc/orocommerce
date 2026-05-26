@@ -69,3 +69,18 @@ features:
     external_order_import:
         label: oro.order.system_configuration.fields.enable_external_order_import.title
         toggle: oro_order.enable_external_order_import
+
+    order_draft_edit_mode:
+        label: oro.order.feature.order_draft_edit_mode.label
+        description: oro.order.feature.order_draft_edit_mode.description
+        toggle: oro_order.enable_order_draft_edit_mode
+        routes:
+            - oro_order_line_item_draft_update
+            - oro_order_line_item_draft_mass_update
+            - oro_order_line_item_draft_create
+            - oro_order_line_item_draft_delete
+            - oro_order_line_item_draft_calculate_taxes_and_discounts
+        commands:
+            - oro:cron:draft-session:cleanup:order
+        mq_topics:
+            - oro.order.draft_session.cleanup.order_draft

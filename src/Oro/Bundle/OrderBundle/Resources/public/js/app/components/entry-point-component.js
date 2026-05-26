@@ -30,7 +30,15 @@ define(function(require) {
                 listenersOn: 'entry-point:listeners:on',
                 interruptPostpone: 'entry-point:interrupt:postpone'
             },
-            triggerTimeout: 1500
+            triggerTimeout: 1500,
+            triggerSelector: '[data-entry-point-trigger]',
+            skipTriggerSelector: '[data-skip-entry-point-trigger]',
+            // Selector to detect if the field that triggered entry point is marked to trigger
+            // the recalculation (subtotals, shipping cost, etc.).
+            recalculationRequiredSelector: '[data-entry-point-trigger]',
+            // Selector of the hidden input holding the recalculation required flag that should be set to 1
+            // when the entry point is triggered by fields marked correspondingly.
+            recalculationRequiredField: '[name$="[recalculationRequired]"]'
         },
 
         listenerEnabled: null,
@@ -78,12 +86,13 @@ define(function(require) {
 
         initializeListener: function() {
             this.options._sourceElement
-                .on('change', '[data-entry-point-trigger]', this.callEntryPoint.bind(this))
-                .on('keyup', '[data-entry-point-trigger]', this.callEntryPointDelayed.bind(this));
+                .on('change', this.options.triggerSelector, this.callEntryPoint.bind(this))
+                .on('keyup', this.options.triggerSelector, this.callEntryPointDelayed.bind(this));
         },
 
         interruptPostpone() {
             this.postponedEntryPointAction = false;
+            mediator.execute('isRequestPending', false);
         },
 
         listenerOff: function() {
@@ -94,7 +103,7 @@ define(function(require) {
             this.listenerEnabled = true;
             if (this.postponedEntryPointAction) {
                 this.postponedEntryPointAction = false;
-                this.callEntryPoint();
+                this.callEntryPoint({recalculationRequired: this.isRecalculationRequired()});
             }
         },
 
@@ -106,10 +115,55 @@ define(function(require) {
             }
         },
 
+        /**
+         * Handles event validation and preprocessing before entry point execution
+         *
+         * @returns {boolean} Returns false if execution should be skipped, true otherwise.
+         * @private
+         */
+        _handleEntryPointEvent: function(e) {
+            if (e instanceof $.Event) {
+                const $target = $(e.target);
+                if ($target.is(this.options.recalculationRequiredField)) {
+                    // Skips when triggered by recalculationRequired field.
+                    return false;
+                }
+
+                if ($target.is(this.options.skipTriggerSelector)) {
+                    // Skips when complies with skip trigger selector.
+                    return false;
+                }
+
+                // Once recalculationRequired flag is on - it should not be changed until the entry point is executed.
+                if (!this.isRecalculationRequired()) {
+                    // Sets the recalculationRequired field value to 1 if the field that triggered entry point is marked
+                    // to trigger the recalculation (subtotals, shipping cost, etc.).
+                    this.setRecalculationRequired($target.is(this.options.recalculationRequiredSelector));
+                }
+
+                if (!this.listenerEnabled) {
+                    // User input event - register postponed action.
+                    this.postponedEntryPointAction = true;
+                    mediator.execute('isRequestPending', true);
+
+                    return false;
+                }
+            } else if (typeof e === 'object' && e.hasOwnProperty('recalculationRequired')) {
+                // Once recalculationRequired flag is on - it should not be changed until the entry point is executed.
+                if (!this.isRecalculationRequired()) {
+                    this.setRecalculationRequired(e.recalculationRequired);
+                }
+            } else {
+                this.setRecalculationRequired(true);
+            }
+
+            mediator.execute('isRequestPending', true);
+
+            return true;
+        },
+
         callEntryPointDelayed: function(e) {
-            if (!this.listenerEnabled && e instanceof $.Event) {
-                // user input event -- register postponed action
-                this.postponedEntryPointAction = true;
+            if (!this._handleEntryPointEvent(e)) {
                 return;
             }
 
@@ -123,9 +177,7 @@ define(function(require) {
         },
 
         callEntryPoint: function(e) {
-            if (!this.listenerEnabled && e instanceof $.Event) {
-                // user input event -- register postponed action
-                this.postponedEntryPointAction = true;
+            if (!this._handleEntryPointEvent(e)) {
                 return;
             }
 
@@ -134,10 +186,30 @@ define(function(require) {
         },
 
         /**
+         * @returns {Boolean}
+         */
+        isRecalculationRequired() {
+            return $(this.options._sourceElement)
+                .find(this.options.recalculationRequiredField)
+                .val() === '1';
+        },
+
+        /**
+         * @param {Boolean} value
+         */
+        setRecalculationRequired(value) {
+            $(this.options._sourceElement)
+                .find(this.options.recalculationRequiredField)
+                .val(value ? '1' : '0')
+                .trigger('change');
+        },
+
+        /**
          * @private
          */
         _sendEntryPointAjax: function() {
             if (this.disposed || this.request && this.request.readyState !== 4) {
+                mediator.execute('isRequestPending', false);
                 return;
             }
 
@@ -152,6 +224,8 @@ define(function(require) {
                 mediator.trigger(this.options.events.load, {});
             }).always(() => {
                 mediator.trigger(this.options.events.after);
+                mediator.execute('isRequestPending', false);
+                this.setRecalculationRequired(false);
 
                 if (this.disposed) {
                     return;
@@ -186,6 +260,7 @@ define(function(require) {
             }
 
             this.listenerOff();
+            mediator.execute('isRequestPending', false);
 
             EntryPointComponent.__super__.dispose.call(this);
         }

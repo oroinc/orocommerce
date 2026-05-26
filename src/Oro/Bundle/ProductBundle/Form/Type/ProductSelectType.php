@@ -93,7 +93,7 @@ class ProductSelectType extends AbstractType
             return;
         }
 
-        if (!$productHolder->getProduct()) {
+        if (!$productHolder->getProduct() && (string) $productHolder->getProductSku() !== '') {
             $emptyValueTitle = $this->translator->trans(
                 (string) $options['empty_label'],
                 ['{title}' => $productHolder->getProductSku()]

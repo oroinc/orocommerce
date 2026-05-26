@@ -7,7 +7,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'kit'
         attributeFamily: '@defaultProductFamily'
         __calls:
-            -   setDefaultName: [ 'Product Kit 01' ]
+            -   setDefaultName: [ 'Product-Kit-01' ]
             -   addKitItem: [ '@product_kit1_item1' ]
             -   addKitItem: [ '@product_kit1_item2' ]
         status: 'enabled'
@@ -26,7 +26,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         __calls:
-            -   setDefaultName: [ 'Simple Product <sprintf("%02d", $current)>' ]
+            -   setDefaultName: [ 'Simple-Product-<sprintf("%02d", $current)>' ]
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     product_kit1_precision1:

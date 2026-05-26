@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @fixture-OroUPSBundle:AddressValidationUpsClient.yml
 @fixture-OroOrderBundle:OrderAddressesFixture.yml
 @feature-BB-24101
@@ -30,8 +31,6 @@ Feature: Address Validation - Edit Order - Validate New Address And Save Suggest
     And I should be on Order Update page
     And I check "Save Address"
     And I click on "Use Selected Address Button"
-    Then I should see "Review Shipping Cost"
-    When I click "Save" in modal window
     Then I should see "Order has been saved" flash message
     When I click "Edit Order"
     And I click "Shipping Address"

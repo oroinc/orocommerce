@@ -6,6 +6,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Component\DraftSession\Entity\DraftSessionAwareInterface;
+use Oro\Component\DraftSession\Entity\DraftSessionAwareTrait;
 
 /**
  * Represents discounts that are applied to an order.
@@ -13,10 +15,12 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 #[ORM\Entity]
 #[ORM\Table('oro_order_discount')]
 #[Config(defaultValues: ['entity' => ['icon' => 'fa-discount']])]
-class OrderDiscount
+class OrderDiscount implements DraftSessionAwareInterface
 {
-    const TYPE_AMOUNT = 'oro_order_discount_item_type_amount';
-    const TYPE_PERCENT = 'oro_order_discount_item_type_percent';
+    use DraftSessionAwareTrait;
+
+    public const TYPE_AMOUNT = 'oro_order_discount_item_type_amount';
+    public const TYPE_PERCENT = 'oro_order_discount_item_type_percent';
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]

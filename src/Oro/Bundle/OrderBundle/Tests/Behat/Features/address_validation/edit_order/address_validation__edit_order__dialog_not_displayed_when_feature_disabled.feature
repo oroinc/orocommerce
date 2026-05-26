@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @fixture-OroUPSBundle:AddressValidationUpsClient.yml
 @fixture-OroOrderBundle:OrderAddressesFixture.yml
 @feature-BB-24101
@@ -22,6 +23,4 @@ Feature: Address Validation - Edit Order - Dialog Not Displayed When Feature Dis
     Given I go to Sales/ Orders
     And I click edit order1 in grid
     When I save form
-    Then I should see "Review Shipping Cost"
-    When I click "Save" in modal window
     Then I should see "Order has been saved" flash message

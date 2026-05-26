@@ -190,13 +190,15 @@ define(function(require) {
         },
 
         getHintContent: function() {
-            if (_.isEmpty(this.prices)) {
+            const prices = pricesHelper.sortUnitPricesByLowQuantity(this.prices, this.model.get('unit'));
+
+            if (_.isEmpty(prices)) {
                 return '';
             }
 
             return this.templates.pricesHintContent({
                 model: this.model.toJSON(),
-                prices: pricesHelper.sortUnitPricesByLowQuantity(this.prices, this.model.get('unit')),
+                prices,
                 matchedPrice: this.findPrice(),
                 clickable: this.options.editable,
                 formatter: NumberFormatter,

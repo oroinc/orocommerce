@@ -1,0 +1,333 @@
+@feature-BB-26023-enabled
+@regression
+@ticket-BB-16482
+@ticket-BB-18607
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
+@fixture-OroInventoryBundle:checkout.yml
+Feature: Allowed inventory statuses configuration - Order Draft Edit Mode
+
+  Scenario: Enable Order Draft Edit Mode
+    Given I set configuration property "oro_order.enable_order_draft_edit_mode" to "1"
+
+  Scenario: Create window sessions
+    Given sessions active:
+      | Admin   | first_session  |
+      | Manager | second_session |
+    And I proceed as the Admin
+    And I login as administrator
+
+  Scenario: Enable Save for later and Enforce separate shopping list validations for checkout and RFQ
+    Given I go to System/Configuration
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
+    And I fill "Shopping List Configuration Form" with:
+      | Enable Save For Later Use default                            | false |
+      | Enable Save For Later                                        | true  |
+      | Enable Enforce separate shopping list validations for checkout and RFQ Use default | false |
+      | Enable Enforce separate shopping list validations for checkout and RFQ             | true  |
+    And I save setting
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Check product availability for the Order/Quote in the select dropdown and on hamburger grid
+    Given I go to Sales/Orders
+    And click "Create Order"
+    Then I should see the following options for "Product" select in form "Order Line Item Draft Create Form":
+      | SKU1 - Product1 |
+      | SKU2 - Product2 |
+      | SKU3 - Product3 |
+    When I open select entity popup for field "Product" in form "Order Line Item Draft Create Form"
+    Then I should see following "SelectProductsGrid" grid:
+      | SKU  | Name     | Inventory Status |
+      | SKU3 | Product3 | In Stock         |
+      | SKU2 | Product2 | In Stock         |
+      | SKU1 | Product1 | In Stock         |
+    And click on SKU2 in grid
+    And click "Cancel"
+
+    And go to Sales/Quotes
+    When click "Create Quote"
+    Then I should see the following options for "LineItemProduct" select in form "Quote Form":
+      | SKU1 - Product1 |
+      | SKU2 - Product2 |
+      | SKU3 - Product3 |
+    When I open select entity popup for field "LineItemProduct" in form "Quote Form"
+    Then I should see following grid:
+      | SKU  | Name     | Inventory Status | Category     |
+      | SKU3 | Product3 | In Stock         | NewCategory3 |
+      | SKU2 | Product2 | In Stock         | NewCategory2 |
+      | SKU1 | Product1 | In Stock         | NewCategory  |
+    When I filter "Category" as is equal to "NewCategory2"
+    Then there is one record in grid
+    And I should see following grid:
+      | SKU  | Name     | Inventory Status | Category     |
+      | SKU2 | Product2 | In Stock         | NewCategory2 |
+    And click on SKU2 in grid
+    And click "Cancel"
+
+  Scenario: Check product availability for the Shopping/RFQ in the select dropdown and on hamburger grid
+    Given go to Sales/Shopping Lists
+    When click view "List 3" in grid
+    And click "Add Line Item"
+    Then I should see the following options for "Product" select:
+      | SKU1 - Product1 |
+      | SKU2 - Product2 |
+      | SKU3 - Product3 |
+    When I open select entity popup for field "Product"
+    Then I should see following "Add Products Popup" grid:
+      | SKU  | Name     | Inventory Status |
+      | SKU3 | Product3 | In Stock         |
+      | SKU2 | Product2 | In Stock         |
+      | SKU1 | Product1 | In Stock         |
+    And click on SKU2 in grid
+    And click "Cancel"
+
+    And go to Sales/Requests For Quote
+    When click edit "0111" in grid
+    Then I should see the following options for "Line Item Product" select in form "Request Form":
+      | SKU1 - Product1 |
+      | SKU2 - Product2 |
+      | SKU3 - Product3 |
+    When I open select entity popup for field "Line Item Product" in form "Request Form"
+    Then I should see following grid:
+      | SKU  | Name     | Inventory Status |
+      | SKU3 | Product3 | In Stock         |
+      | SKU2 | Product2 | In Stock         |
+      | SKU1 | Product1 | In Stock         |
+    And click on SKU2 in grid
+    And click "Cancel"
+
+  Scenario: Check product availability for the Order/Quote in the select dropdown and on hamburger grid when product have discontinued status
+    Given go to Products/Products
+    And edit "SKU1" Inventory status as "Discontinued" by double click
+    And I click "Save changes"
+    Then I should see "Record has been successfully updated" flash message
+    And I go to Sales/Orders
+    When click "Create Order"
+    Then I should see the following options for "Product" select in form "Order Line Item Draft Create Form":
+      | SKU2 - Product2 |
+      | SKU3 - Product3 |
+    And I should not see the following options for "Product" select in form "Order Line Item Draft Create Form":
+      | SKU1 - Product1 |
+    When I open select entity popup for field "Product" in form "Order Line Item Draft Create Form"
+    Then I should see following "SelectProductsGrid" grid:
+      | SKU  | Name     | Inventory Status |
+      | SKU3 | Product3 | In Stock         |
+      | SKU2 | Product2 | In Stock         |
+    And number of records in "SelectProductsGrid" should be 2
+    And click on SKU2 in grid "SelectProductsGrid"
+    And click "Cancel"
+
+    And go to Sales/Quotes
+    When click "Create Quote"
+    Then I should see the following options for "LineItemProduct" select in form "Quote Form":
+      | SKU2 - Product2 |
+      | SKU3 - Product3 |
+    And I should not see the following options for "LineItemProduct" select in form "Quote Form":
+      | SKU1 - Product1 |
+    When I open select entity popup for field "LineItemProduct" in form "Quote Form"
+    Then I should see following grid:
+      | SKU  | Name     | Inventory Status |
+      | SKU3 | Product3 | In Stock         |
+      | SKU2 | Product2 | In Stock         |
+    And there are 2 records in grid
+    And click on SKU2 in grid
+    And click "Cancel"
+
+  Scenario: Check product availability for the Shopping/RFQ in the select dropdown and on hamburger grid when product have discontinued status
+    Given go to Sales/Shopping Lists
+    When click view "List 3" in grid
+    And click "Add Line Item"
+    Then I should see the following options for "Product" select:
+      | SKU2 - Product2 |
+      | SKU3 - Product3 |
+    And I should not see the following options for "Product" select:
+      | SKU1 - Product1 |
+    When I open select entity popup for field "Product"
+    Then I should see following "Add Products Popup" grid:
+      | SKU  | Name     | Inventory Status |
+      | SKU3 | Product3 | In Stock         |
+      | SKU2 | Product2 | In Stock         |
+    And number of records in "Add Products Popup" grid should be 2
+    And click on SKU2 in grid
+    And click "Cancel"
+
+    And go to Sales/Requests For Quote
+    When click edit "0111" in grid
+    Then I should see the following options for "Line Item Product" select in form "Request Form":
+      | SKU2 - Product2 |
+      | SKU3 - Product3 |
+    And I should not see the following options for "Line Item Product" select in form "Request Form":
+      | SKU1 - Product1 |
+    When I open select entity popup for field "Line Item Product" in form "Request Form"
+    Then I should see following grid:
+      | SKU  | Name     | Inventory Status |
+      | SKU3 | Product3 | In Stock         |
+      | SKU2 | Product2 | In Stock         |
+    And there are 2 records in grid
+    And click on SKU2 in grid
+    And click "Cancel"
+
+  Scenario: Allow discontinued for order, rfq, quote
+    Given go to System / Configuration
+    And I follow "Commerce/Inventory/Allowed Statuses" on configuration sidebar
+    And uncheck "Use default" for "Visible Inventory Statuses" field
+    And uncheck "Use default" for "Can Be Added to RFQs" field
+    And uncheck "Use default" for "Can Be Added to Orders" field
+    And fill form with:
+      | Visible Inventory Statuses | [In Stock, Out of Stock, Discontinued] |
+      | Can Be Added to RFQs       | [In Stock, Out of Stock, Discontinued] |
+      | Can Be Added to Orders     | [In Stock, Out of Stock, Discontinued] |
+    And click "Save settings"
+    And should see "Configuration saved" flash message
+
+  Scenario: Check that it is possible to create RFQ from the shopping list with Discontinued product
+    Given I proceed as the Manager
+    And I signed in as AmandaRCole@example.org on the store frontend
+    When I open page with shopping list List 1
+    Then I should see "Discontinued" for "SKU1" product on shopping list
+    And I click "Request Quote"
+    And I fill form with:
+      | PO Number | Test RFQ |
+    And Request a Quote contains products
+      | SKU1 - Product1 | 5 | item |
+      | SKU2 - Product2 | 5 | item |
+    When I click "Submit Request"
+    Then I should see "Request has been saved" flash message
+    And should see "REQUEST FOR QUOTE #2"
+    And should see "Product2"
+
+  Scenario: Check that it is possible to create Order from the shopping list with Discontinued product
+    Given I open page with shopping list List 1
+    And I click "Create Order"
+    And I proceed as the Admin
+    And go to System / Configuration
+    And I follow "Commerce/Inventory/Allowed Statuses" on configuration sidebar
+    And check "Use default" for "Visible Inventory Statuses" field
+    And click "Save settings"
+    And should see "Configuration saved" flash message
+    When I proceed as the Manager
+    And I go through the order completion, and should be on order view page
+    Then I should see following "Order Line Items Grid" grid:
+      | Product            |
+      | Product1 SKU: SKU1 |
+      | Product2 SKU: SKU2 |
+
+  Scenario: Check that it is possible to ReOrder order with Discontinued product
+    Given click "Re-Order"
+    Then I go through the order completion, and should be on order view page
+    And I should see following "Order Line Items Grid" grid:
+      | Product            |
+      | Product1 SKU: SKU1 |
+      | Product2 SKU: SKU2 |
+
+  Scenario: Check that discontinue product is not accessible through link
+    Given go to "/product/view/1"
+    Then I should see "404 Not Found"
+
+  Scenario: Disallow discontinued for all front action
+    Given I proceed as the Admin
+    And uncheck "Use default" for "Visible Inventory Statuses" field
+    And check "Use default" for "Can Be Added to RFQs" field
+    And check "Use default" for "Can Be Added to Orders" field
+    And fill form with:
+      | Visible Inventory Statuses | [In Stock, Out of Stock, Discontinued] |
+    And click "Save settings"
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Check that it is impossible to create Order from the shopping list with Discontinued product
+    Given I proceed as the Manager
+    When I open page with shopping list List 2
+    Then I should see following "Frontend Shopping List Edit Grid" grid:
+      | SKU                                                                                                                                                                | Product  | Availability | Qty Update All | Price | Subtotal |
+      | SKU1                                                                                                                                                               | Product1 | Discontinued | 5 item         | $2.00 | $10.00   |
+      | This item can't be added to checkout because the inventory status is not supported. This item can't be added to RFQ because the inventory status is not supported. |          |              |                |       |          |
+      | SKU3                                                                                                                                                               | Product3 | In Stock     | 5 item         | $2.00 | $10.00   |
+
+    When I click "Create Order"
+    Then I should see next rows in "Frontend Customer User Shopping List Invalid Line Items Table" table without headers
+      | Product1 SKU1 5 items $2.00 $10.00                                                  |
+      | This item can't be added to checkout because the inventory status is not supported. |
+    When I click "Save For Later & Proceed"
+    And I click "Order products"
+    Then I should see following "Multi Shipping Checkout Line Items Grid" grid:
+      | SKU  | Product  | Qty | Price | Subtotal | Availability |
+      | SKU3 | Product3 | 5   | $2.00 | $10.00   | In Stock     |
+    And I should not see "Product1"
+
+  Scenario: Check that it is impossible to create RFQ from the shopping list with Discontinued product
+    When I open page with shopping list List 2
+    Then I should see following "Frontend Shopping List Edit Grid" grid:
+      | SKU  | Product  | Availability | Qty Update All | Price | Subtotal |
+      | SKU3 | Product3 | In Stock     | 5 item         | $2.00 | $10.00   |
+    And I should see following "Frontend Shopping List Saved For Later Line Items Grid" grid:
+      | SKU  | Product  | Availability | Qty    | Price | Subtotal |
+      | SKU1 | Product1 | Discontinued | 5 item | $2.00 | $10.00   |
+
+    When I click "Remove From "Saved For Later"" on row "SKU1" in grid
+    And I click "Yes, Remove"
+    Then I should see following "Frontend Shopping List Edit Grid" grid:
+      | SKU                                                                                                                                                                | Product  | Availability | Qty    | Price | Subtotal |
+      | SKU1                                                                                                                                                               | Product1 | Discontinued | 5 item | $2.00 | $10.00   |
+      | This item can't be added to checkout because the inventory status is not supported. This item can't be added to RFQ because the inventory status is not supported. |          |              |        |       |          |
+      | SKU3                                                                                                                                                               | Product3 | In Stock     | 5 item | $2.00 | $10.00   |
+
+    When I click "Request Quote"
+    Then I should see next rows in "Frontend Customer User Shopping List Invalid Line Items Table" table without headers
+      | Product1 SKU1 5 items $2.00 $10.00                                             |
+      | This item can't be added to RFQ because the inventory status is not supported. |
+    When I click "Save For Later & Proceed"
+    Then Request a Quote contains products
+      | SKU3 - Product3 | 5 | item |
+    And I should not see "Product1"
+
+  Scenario: Check that it is impossible to re-order from the Order History with Discontinued product
+    When I click "Order History Menu"
+    And I click "Re-Order" on row "$23.00" in grid
+    Then I should see "Please note that the current order differs from the original one due to the absence or insufficient quantity in stock of the following products: SKU1." flash message
+
+  Scenario: Disable Save for later
+    When I open page with shopping list List 2
+    Then I should see following "Frontend Shopping List Saved For Later Line Items Grid" grid:
+      | SKU  | Product  | Availability | Qty    | Price | Subtotal |
+      | SKU1 | Product1 | Discontinued | 5 item | $2.00 | $10.00   |
+    When I click "Remove From "Saved For Later"" on row "SKU1" in grid
+    And I click "Yes, Remove"
+    Then I should see following "Frontend Shopping List Edit Grid" grid:
+      | SKU                                                                                                                                                                | Product  | Availability | Qty    | Price | Subtotal |
+      | SKU1                                                                                                                                                               | Product1 | Discontinued | 5 item | $2.00 | $10.00   |
+      | This item can't be added to checkout because the inventory status is not supported. This item can't be added to RFQ because the inventory status is not supported. |          |              |        |       |          |
+      | SKU3                                                                                                                                                               | Product3 | In Stock     | 5 item | $2.00 | $10.00   |
+    Given I proceed as the Admin
+    And I go to System/Configuration
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
+    And I fill "Shopping List Configuration Form" with:
+      | Enable Save For Later Use default | false |
+      | Enable Save For Later             | false |
+    And I save setting
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Check that it is impossible to create Order from the shopping list with Discontinued product (delete invalid items)
+    Given I proceed as the Manager
+    When I open page with shopping list List 2
+    Then I should see following "Frontend Shopping List Edit Grid" grid:
+      | SKU                                                                                                                                                                | Product  | Availability | Qty Update All | Price | Subtotal |
+      | SKU1                                                                                                                                                               | Product1 | Discontinued | 5 item         | $2.00 | $10.00   |
+      | This item can't be added to checkout because the inventory status is not supported. This item can't be added to RFQ because the inventory status is not supported. |          |              |                |       |          |
+      | SKU3                                                                                                                                                               | Product3 | In Stock     | 5 item         | $2.00 | $10.00   |
+
+    When I click "Create Order"
+    Then I should see next rows in "Frontend Customer User Shopping List Invalid Line Items Table" table without headers
+      | Product1 SKU1 5 items $2.00 $10.00                                                  |
+      | This item can't be added to checkout because the inventory status is not supported. |
+    When I click "Delete All & Proceed"
+    And I click "Order products"
+    Then I should see following "Multi Shipping Checkout Line Items Grid" grid:
+      | SKU  | Product  | Qty | Price | Subtotal | Availability |
+      | SKU3 | Product3 | 5   | $2.00 | $10.00   | In Stock     |
+    And I should not see "Product1"
+    And I open page with shopping list List 2
+    Then I should see following "Frontend Shopping List Edit Grid" grid:
+      | SKU  | Product  | Availability | Qty Update All | Price | Subtotal |
+      | SKU3 | Product3 | In Stock     | 5 item         | $2.00 | $10.00   |
+    And I should not see "SKU1"
+    And I should not see "Product1"

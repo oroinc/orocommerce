@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @ticket-BB-19895
 @fixture-OroPromotionBundle:promotions_for_orders.yml
 @fixture-OroPromotionBundle:orders_with_customer.yml
@@ -11,7 +12,6 @@ Feature: Order promotions
     And click "edit" on first row in grid
     # Need to re-calculate discounts
     When I save form
-    And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
     When click "Totals"
     Then I see next subtotals for "Backend Order":

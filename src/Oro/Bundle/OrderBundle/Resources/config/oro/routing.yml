@@ -48,3 +48,28 @@ oro_order_frontend_pdf_document_download:
     methods: [GET]
     options:
         frontend: true
+
+oro_order_line_item_draft_update:
+    resource: "@OroOrderBundle/Controller/DraftSession/OrderLineItemDraftUpdateController.php"
+    type: attribute
+    prefix: /order
+
+oro_order_line_item_draft_mass_update:
+    resource: "@OroOrderBundle/Controller/DraftSession/OrderLineItemDraftMassUpdateController.php"
+    type: attribute
+    prefix: /order
+
+oro_order_line_item_draft_create:
+    resource: "@OroOrderBundle/Controller/DraftSession/OrderLineItemDraftCreateController.php"
+    type: attribute
+    prefix: /order
+
+oro_order_line_item_draft_delete:
+    resource: "@OroOrderBundle/Controller/DraftSession/OrderLineItemDraftDeleteController.php"
+    type: attribute
+    prefix: /order
+
+oro_order_line_item_draft_calculate_taxes_and_discounts:
+    resource: "@OroOrderBundle/Controller/DraftSession/OrderLineItemDraftCalculateTaxesAndDiscountsController.php"
+    type: attribute
+    prefix: /order

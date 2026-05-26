@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @regression
 @feature-BB-21128
 @fixture-OroOrderBundle:product-kit/existing_order_with_product_kits_validation__product.yml

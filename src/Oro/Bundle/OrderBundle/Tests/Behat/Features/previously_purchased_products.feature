@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @random-failed
 @feature-BB-9570
 @fixture-OroOrderBundle:previously-purchased.yml
@@ -27,6 +28,7 @@ Feature: Previously purchased products
     Then the "Display products purchased within" field should contain "90"
 
   Scenario: Previously purchased products page is present in Account menu
+    And I wait for action
     Given I operate as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I am on homepage

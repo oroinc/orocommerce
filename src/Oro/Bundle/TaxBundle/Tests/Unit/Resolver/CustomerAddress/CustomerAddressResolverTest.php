@@ -28,7 +28,51 @@ class CustomerAddressResolverTest extends TestCase
         $this->itemResolver->expects($this->never())
             ->method($this->anything());
 
-        $this->resolver->resolve(new Taxable());
+        $taxable = new Taxable();
+        $this->resolver->resolve($taxable);
+
+        self::assertSame([], $taxable->getResult()->getItems());
+    }
+
+    public function testEmptyCollectionWhenIsKitTaxable(): void
+    {
+        $taxableItem = new Taxable();
+        $taxableItem->setResult(new Result());
+
+        $taxable = new Taxable();
+        $taxable->setKitTaxable(true);
+        $taxable->addItem($taxableItem);
+
+        $this->itemResolver->expects($this->never())
+            ->method($this->anything());
+
+        $this->resolver->resolve($taxable);
+
+        self::assertNull($taxable->getResult()->getOffset(Result::ITEMS));
+    }
+
+    public function testEmptyCollectionWhenIsResultLocked(): void
+    {
+        $taxableItem = new Taxable();
+        $taxableItem->setResult(new Result());
+
+        $taxable = new Taxable();
+        $taxable->getResult()->lockResult();
+        $taxable->addItem($taxableItem);
+
+        $this->itemResolver->expects($this->never())
+            ->method($this->anything());
+
+        $this->resolver->resolve($taxable);
+
+        self::assertNull($taxable->getResult()->getOffset(Result::ITEMS));
+    }
+
+    public function testKitTaxableSkipped(): void
+    {
+        $this->itemResolver->expects($this->never())
+            ->method($this->anything());
+
         $this->resolver->resolve((new Taxable())->setKitTaxable(true));
     }
 

@@ -7,20 +7,16 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension;
 use Oro\Bundle\PromotionBundle\Form\Type\AppliedCouponCollectionType;
 use Oro\Bundle\PromotionBundle\Form\Type\AppliedPromotionCollectionTableType;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
-class OrderTypeExtensionTest extends \PHPUnit\Framework\TestCase
+final class OrderTypeExtensionTest extends TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var OrderTypeExtension
-     */
-    protected $orderTypeExtension;
+    private OrderTypeExtension $orderTypeExtension;
 
     #[\Override]
     protected function setUp(): void
@@ -28,35 +24,93 @@ class OrderTypeExtensionTest extends \PHPUnit\Framework\TestCase
         $this->orderTypeExtension = new OrderTypeExtension();
     }
 
-    public function testBuildForm()
+    public function testBuildFormWithExistingOrderAndDraftSessionSyncEnabled(): void
     {
-        $builder = $this->createMock(FormBuilderInterface::class);
+        $order = new Order();
+        ReflectionUtil::setId($order, 777);
 
-        $builder->expects($this->once())
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects(self::once())
             ->method('add')
             ->with('appliedPromotions', AppliedPromotionCollectionTableType::class);
-
-        $builder->expects($this->once())
+        $builder->expects(self::once())
             ->method('addEventListener')
-            ->with(FormEvents::POST_SET_DATA, $this->isType('callable'));
+            ->with(FormEvents::POST_SET_DATA, self::isType('callable'));
 
-        $this->orderTypeExtension->buildForm($builder, []);
+        $this->orderTypeExtension->buildForm($builder, ['data' => $order, 'draft_session_sync' => true]);
     }
 
-    public function testPostSetData()
+    public function testBuildFormWithNewOrderAndDraftSessionSyncEnabled(): void
     {
-        $order = $this->getEntity(Order::class, ['id' => 777]);
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+        $order = new Order();
+
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects(self::never())
+            ->method('add');
+        $builder->expects(self::never())
+            ->method('addEventListener');
+
+        $this->orderTypeExtension->buildForm($builder, ['data' => $order, 'draft_session_sync' => true]);
+    }
+
+    public function testBuildFormWithNullDataAndDraftSessionSyncEnabled(): void
+    {
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects(self::never())
+            ->method('add');
+        $builder->expects(self::never())
+            ->method('addEventListener');
+
+        $this->orderTypeExtension->buildForm($builder, ['data' => null, 'draft_session_sync' => true]);
+    }
+
+    public function testBuildFormAddsFieldsWhenDraftSessionSyncIsDisabledAndOrderIsNew(): void
+    {
+        $order = new Order();
+
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects(self::once())
+            ->method('add')
+            ->with('appliedPromotions', AppliedPromotionCollectionTableType::class);
+        $builder->expects(self::once())
+            ->method('addEventListener')
+            ->with(FormEvents::POST_SET_DATA, self::isType('callable'));
+
+        $this->orderTypeExtension->buildForm($builder, ['data' => $order, 'draft_session_sync' => false]);
+    }
+
+    public function testBuildFormAddsFieldsWhenDraftSessionSyncIsDisabledAndOrderExists(): void
+    {
+        $order = new Order();
+        ReflectionUtil::setId($order, 777);
+
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects(self::once())
+            ->method('add')
+            ->with('appliedPromotions', AppliedPromotionCollectionTableType::class);
+        $builder->expects(self::once())
+            ->method('addEventListener')
+            ->with(FormEvents::POST_SET_DATA, self::isType('callable'));
+
+        $this->orderTypeExtension->buildForm($builder, ['data' => $order, 'draft_session_sync' => false]);
+    }
+
+    public function testPostSetData(): void
+    {
+        $order = new Order();
+        ReflectionUtil::setId($order, 777);
+
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())
+        $form->expects(self::once())
             ->method('add')
             ->with('appliedCoupons', AppliedCouponCollectionType::class, ['entity' => $order]);
+
         $event = new FormEvent($form, $order);
         $this->orderTypeExtension->postSetData($event);
     }
 
-    public function testGetExtendedTypes()
+    public function testGetExtendedTypes(): void
     {
-        $this->assertEquals([OrderType::class], OrderTypeExtension::getExtendedTypes());
+        self::assertEquals([OrderType::class], OrderTypeExtension::getExtendedTypes());
     }
 }

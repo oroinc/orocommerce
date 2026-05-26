@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @regression
 @ticket-BB-27174
 @fixture-OroFixedProductShippingBundle:FixedProductShippingIntegrations.yml

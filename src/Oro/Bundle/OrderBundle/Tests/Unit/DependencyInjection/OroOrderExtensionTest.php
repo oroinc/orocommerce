@@ -51,6 +51,7 @@ class OroOrderExtensionTest extends \PHPUnit\Framework\TestCase
                         'enable_external_order_import' => ['value' => false, 'scope' => 'app'],
                         'enable_order_pdf_download_in_storefront' => ['value' => false, 'scope' => 'app'],
                         'generate_order_pdf_on_checkout_finish' => ['value' => false, 'scope' => 'app'],
+                        'enable_order_draft_edit_mode' => ['value' => false, 'scope' => 'app'],
                     ]
                 ]
             ],

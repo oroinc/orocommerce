@@ -151,6 +151,8 @@ Oro\Bundle\OrderBundle\Entity\Order:
   attributes:
     id:
       groups: ['promotion']
+    customer:
+      groups: ['promotion']
     billingAddress:
       groups: ['promotion']
     shippingAddress:
@@ -174,6 +176,34 @@ Oro\Bundle\OrderBundle\Entity\Order:
     estimatedShippingCostAmount:
       groups: ['promotion']
     overriddenShippingCostAmount:
+      groups: ['promotion']
+    appliedCoupons:
+      groups: ['promotion']
+    appliedPromotions:
+      groups: ['promotion']
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+  attributes:
+    id:
+      groups: ['promotion']
+
+Oro\Bundle\PromotionBundle\Entity\AppliedPromotion:
+  attributes:
+    id:
+      groups: ['promotion']
+    active:
+      groups: ['promotion']
+    removed:
+      groups: ['promotion']
+    type:
+      groups: ['promotion']
+    sourcePromotionId:
+      groups: ['promotion']
+    promotionName:
+      groups: ['promotion']
+    configOptions:
+      groups: ['promotion']
+    promotionData:
       groups: ['promotion']
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:

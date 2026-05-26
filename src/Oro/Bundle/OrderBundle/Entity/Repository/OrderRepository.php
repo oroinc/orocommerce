@@ -58,20 +58,38 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         return (bool)$qb->getQuery()->getSingleScalarResult();
     }
 
-    public function getOrderWithRelations(int $id): ?Order
+    /**
+     * Finds the order by ID with eagerly loaded relations.
+     *
+     * @param int $orderId Order ID
+     *
+     * @return Order|null
+     */
+    public function getOrderWithRelations(int $orderId): ?Order
     {
-        $qb = $this->createQueryBuilder('orders');
-        $qb->select('orders, lineItems, shippingAddress, billingAddress, discounts')
-            ->leftJoin('orders.lineItems', 'lineItems')
-            ->leftJoin('orders.shippingAddress', 'shippingAddress')
-            ->leftJoin('orders.billingAddress', 'billingAddress')
-            ->leftJoin('orders.discounts', 'discounts')
+        $qb = $this->createQueryBuilderWithRelations();
+        $qb
             ->where($qb->expr()->eq('orders.id', ':orderId'))
-            ->setParameter('orderId', $id)
+            ->setParameter('orderId', $orderId, Types::INTEGER)
             ->addOrderBy($qb->expr()->asc('orders.id'))
             ->addOrderBy($qb->expr()->asc('lineItems.id'));
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * Creates a query builder with eagerly loaded order relations.
+     */
+    private function createQueryBuilderWithRelations(): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('orders');
+
+        return $qb
+            ->select('orders, lineItems, shippingAddress, billingAddress, discounts')
+            ->leftJoin('orders.lineItems', 'lineItems')
+            ->leftJoin('orders.shippingAddress', 'shippingAddress')
+            ->leftJoin('orders.billingAddress', 'billingAddress')
+            ->leftJoin('orders.discounts', 'discounts');
     }
 
     public function getLatestOrderedProductsInfo(

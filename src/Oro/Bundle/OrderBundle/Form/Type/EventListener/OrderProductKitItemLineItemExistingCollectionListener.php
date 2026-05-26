@@ -7,6 +7,7 @@ namespace Oro\Bundle\OrderBundle\Form\Type\EventListener;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
@@ -46,11 +47,18 @@ class OrderProductKitItemLineItemExistingCollectionListener implements EventSubs
      */
     public function overrideRequiredOnPreSetData(FormEvent $event): void
     {
+        $form = $event->getForm();
+        /** @var OrderLineItem|null $orderLineItem */
+        $orderLineItem = $form->getParent()?->getData();
+        if ($orderLineItem?->getDraftSessionUuid()) {
+            // Kit items required option should not be overridden for order line item drafts.
+            return;
+        }
+
         /** @var Collection<OrderProductKitItemLineItem>|null $collection */
         $collection = $event->getData();
         $isExisting = $collection instanceof PersistentCollection;
 
-        $form = $event->getForm();
         foreach ($form as $key => $child) {
             if (isset($collection[$key])) {
                 // Overrides "required" option according to the already existing kit item line item.

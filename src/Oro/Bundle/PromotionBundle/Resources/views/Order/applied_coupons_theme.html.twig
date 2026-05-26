@@ -1,0 +1,6 @@
+{% block oro_promotion_applied_coupon_collection_widget %}
+    {% import '@OroOrder/Order/macros.html.twig' as order_macros %}
+    <div {{ block('widget_container_attributes') }}>
+        {{ order_macros.hiddenCollection(form) }}
+    </div>
+{% endblock %}

@@ -357,3 +357,123 @@ services:
             - 'prod_inventory_status'
         tags:
             - { name: migration.update_enumerable_system_config }
+
+    oro_rfp.draft_session.factory.order_line_item_from_rfq:
+        class: Oro\Bundle\RFPBundle\DraftSession\Factory\OrderLineItemDraftFromRfqFactory
+        arguments:
+            - '@oro_order.draft_session.reference_resolver'
+            - '@oro_product.provider.default_product_unit_provider.chain'
+        tags:
+            - { name: oro_order.draft_session.factory }
+
+    oro_rfp.draft_session.factory.order_from_rfq:
+        class: Oro\Bundle\RFPBundle\DraftSession\Factory\OrderDraftFromRfqFactory
+        arguments:
+            - '@oro_order.draft_session.reference_resolver'
+            - '@oro_rfp.provider.rfq_currency'
+            - '@oro_website.manager'
+        tags:
+            - { name: oro_order.draft_session.factory }
+
+    oro_rfp.draft_session.provider.order_draft_from_rfq_repository:
+        class: Oro\Bundle\RFPBundle\DraftSession\Provider\OrderDraftFromRfqRepository
+        tags:
+            - { name: oro_order.draft_session.repository.entity_draft, priority: 255 }
+
+    oro_rfp.event_listener.draft_session.set_order_address_on_order_draft_created:
+        class: Oro\Bundle\RFPBundle\EventListener\DraftSession\SetOrderAddressOnOrderDraftCreatedEventListener
+        arguments:
+            - '@oro_order.draft_session.reference_resolver'
+            - '@oro_order.manager.order_address'
+        tags:
+            -   name: kernel.event_listener
+                event: 'Oro\Component\DraftSession\Event\EntityDraftCreatedEvent'
+                method: onEntityDraftCreated
+                priority: 30
+
+    oro_rfp.event_listener.draft_session.sync_extended_fields_on_order_draft_created:
+        class: Oro\Bundle\RFPBundle\EventListener\DraftSession\SyncExtendedFieldsOnDraftCreatedEventListener
+        arguments:
+            - '@oro_order.draft_session.extended_fields_provider'
+            - '@oro_order.draft_session.extended_field_value_synchronizer'
+            - 'Oro\Bundle\RFPBundle\Entity\Request'
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+        tags:
+            -   name: kernel.event_listener
+                event: 'Oro\Component\DraftSession\Event\EntityDraftCreatedEvent'
+                method: onEntityDraftCreated
+                priority: 20
+
+    oro_rfp.event_listener.draft_session.sync_line_items_on_order_draft_created:
+        class: Oro\Bundle\RFPBundle\EventListener\DraftSession\SyncLineItemsOnOrderDraftCreatedEventListener
+        arguments:
+            - '@oro_order.draft_session.factory'
+        tags:
+            -   name: kernel.event_listener
+                event: 'Oro\Component\DraftSession\Event\EntityDraftCreatedEvent'
+                method: onEntityDraftCreated
+                priority: 10
+
+    oro_rfp.event_listener.draft_session.sync_extended_fields_on_order_line_item_draft_created:
+        class: Oro\Bundle\RFPBundle\EventListener\DraftSession\SyncExtendedFieldsOnDraftCreatedEventListener
+        arguments:
+            - '@oro_order.draft_session.extended_fields_provider'
+            - '@oro_order.draft_session.extended_field_value_synchronizer'
+            - 'Oro\Bundle\RFPBundle\Entity\RequestProduct'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
+        tags:
+            -   name: kernel.event_listener
+                event: 'Oro\Component\DraftSession\Event\EntityDraftCreatedEvent'
+                method: onEntityDraftCreated
+                priority: 10
+
+    oro_rfp.event_listener.draft_session.generate_checksum_on_order_line_item_draft_created:
+        class: Oro\Bundle\RFPBundle\EventListener\DraftSession\GenerateChecksumOnOrderLineItemDraftCreatedEventListener
+        arguments:
+            - '@oro_product.line_item_checksum_generator'
+        tags:
+            -   name: kernel.event_listener
+                event: 'Oro\Component\DraftSession\Event\EntityDraftCreatedEvent'
+                method: onEntityDraftCreated
+                priority: -10 # Must run after SetMatchedPricesOnOrderDraftCreatedEventListener (priority 0) so kit-item prices are included in the checksum.
+
+    oro_rfp.provider.rfq_currency:
+        class: Oro\Bundle\RFPBundle\Provider\RfqCurrencyProvider
+        arguments:
+            - '@oro_pricing.provider.customer_user_currency_provider'
+            - '@oro_pricing.provider.website_currency_provider'
+            - '@oro_currency.config.currency'
+
+    oro_rfp.event_listener.draft_session.set_matched_prices_on_order_draft_created:
+        class: Oro\Bundle\RFPBundle\EventListener\DraftSession\SetMatchedPricesOnOrderDraftCreatedEventListener
+        arguments:
+            - '@oro_pricing.provider.product_line_item_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+        calls:
+            - [ setLogger, ['@logger'] ]
+        tags:
+            - { name: kernel.event_listener, event: 'Oro\Component\DraftSession\Event\EntityDraftCreatedEvent', method: onEntityDraftCreated, priority: 0 }
+            - { name: monolog.logger, channel: oro_rfp }
+
+    oro_rfp.draft_session.request_product_aware_order_line_item_draft_synchronizer:
+        class: Oro\Bundle\RFPBundle\DraftSession\RequestProductAwareOrderLineItemDraftSynchronizer
+        arguments:
+            - '@oro_order.draft_session.reference_resolver'
+        tags:
+            - { name: oro_order.draft_session.synchronizer }
+
+    oro_rfp.operation.create_order_draft_from_rfq:
+        class: Oro\Bundle\RFPBundle\Operation\CreateOrderDraftFromRfq
+        public: true
+        arguments:
+            - '@oro_order.draft_session.manager.order_draft'
+
+    oro_rfp.provider.offers_from_request_product:
+        class: Oro\Bundle\RFPBundle\Provider\OffersFromRequestProductProvider
+
+    oro_rfp.event_listener.draft_session.clear_request_products_on_order_before_entity_flush:
+        class: Oro\Bundle\RFPBundle\EventListener\DraftSession\ClearRequestProductsOnOrderBeforeEntityFlushListener
+        tags:
+            - { name: oro_featuretogle.feature, feature: order_draft_edit_mode }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_order_type, method: onBeforeEntityFlush }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_suborder_type, method: onBeforeEntityFlush }

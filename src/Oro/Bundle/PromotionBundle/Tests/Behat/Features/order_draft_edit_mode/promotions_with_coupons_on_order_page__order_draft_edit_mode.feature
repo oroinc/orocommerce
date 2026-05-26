@@ -1,0 +1,187 @@
+@feature-BB-26023-enabled
+@regression
+@fixture-OroPromotionBundle:promotions-with-coupons-on-order-page.yml
+Feature: Promotions with coupons on Order page - Order Draft Edit Mode
+  In order to manage promotions with coupons on order page
+  As administrator
+  I need to have ability to add, remove and disable applied promotions by coupons on order edit page
+
+  Scenario: Enable Order Draft Edit Mode
+    Given I set configuration property "oro_order.enable_order_draft_edit_mode" to "1"
+
+  Scenario: Coupon applying on order edit page
+    Given I login as administrator
+    When go to Sales / Orders
+    And click edit SimpleOrder in grid
+    And click "Discounts"
+    When I click "Add Coupon Code"
+    And type "test-1" in "Coupon Code"
+    Then I should see a "Highlighted Suggestion" element
+    When I click on "Highlighted Suggestion"
+    And click "Add" in modal window
+    Then I should see next rows in "Added Coupons" table
+      | Coupon Code | Promotion                    | Type            | Discount Value |
+      | test-1      | Line Item Discount Promotion | Order Line Item | $1.00          |
+    When click "Apply" in modal window
+    Then I should see next rows in "Promotions" table
+      | Code   | Promotion                    | Type            | Status | Discount |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$10.00  |
+    And I see next subtotals for "Backend Order":
+      | Subtotal | Amount  |
+      | Subtotal | $50.00  |
+      | Discount | -$10.00 |
+      | Total    | $40.00  |
+    When I save form
+    And agree that shipping cost may have changed
+    Then I see next subtotals for "Backend Order":
+      | Subtotal | Amount  |
+      | Subtotal | $50.00  |
+      | Discount | -$10.00 |
+      | Total    | $40.00  |
+
+  Scenario: Possible to view details about added promotion in popup
+    When I click "Discounts"
+    And I click "View" on row "Line Item Discount Promotion" in "Promotions"
+    Then I should see "General Information"
+    And I should see "Conditions"
+    Then I click "Close Line Item Discount Promotion Details"
+
+  Scenario: Delete added coupon from grid
+    When I click "Discounts"
+    And I click "Remove" on row "Line Item Discount Promotion" in "Promotions"
+    Then I should see no records in "Promotions" table
+    And see next subtotals for "Backend Order":
+      | Subtotal | Amount |
+      | Subtotal | $50.00 |
+      | Total    | $50.00 |
+    When I save form
+    And agree that shipping cost may have changed
+    Then I see next subtotals for "Backend Order":
+      | Subtotal | Amount |
+      | Subtotal | $50.00 |
+      | Total    | $50.00 |
+
+  Scenario: Coupon applying on order view page
+    When go to Sales / Orders
+    And click view SimpleOrder in grid
+    And I click "More actions"
+    And I click "Add Coupon Code"
+    And type "test-1" in "Coupon Code"
+    Then I should see a "Highlighted Suggestion" element
+    When click on "Highlighted Suggestion"
+    And click "Add" in modal window
+    Then I should see next rows in "Added Coupons" table
+      | Coupon Code | Promotion                    | Type            | Discount Value |
+      | test-1      | Line Item Discount Promotion | Order Line Item | $1.00          |
+    When click "Apply" in modal window
+    Then I should see next rows in "Promotions" table
+      | Code   | Promotion                    | Type            | Status | Discount |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$10.00  |
+    And I see next subtotals for "Backend Order":
+      | Subtotal | Amount  |
+      | Subtotal | $50.00  |
+      | Discount | -$10.00 |
+      | Total    | $40.00  |
+
+  Scenario: Check whether the promotion coupon have affected the total amount
+    Given go to Sales/Orders
+    Then I should see SimpleOrder in grid with following data:
+      | Total     | $40.00 |
+      | Total ($) | $40.00 |
+
+  Scenario: "Cancel" button do not save selected coupons
+    When click view SecondOrder in grid
+    And I click "More actions"
+    And I click "Add Coupon Code"
+    And type "test-1" in "Coupon Code"
+    Then I should see a "Highlighted Suggestion" element
+    When click on "Highlighted Suggestion"
+    And click "Add" in modal window
+    Then I should see next rows in "Added Coupons" table
+      | Coupon Code | Promotion                    | Type            | Discount Value |
+      | test-1      | Line Item Discount Promotion | Order Line Item | $1.00          |
+    And I click "Cancel" in modal window
+    Then I should see no records in "Promotions" table
+
+  Scenario: Deactivate button in Promotions grid
+    When go to Sales / Orders
+    And click edit SimpleOrder in grid
+    And click "Discounts"
+    And I click "Deactivate" on row "Line Item Discount Promotion" in "Promotions"
+    Then I should see next rows in "Promotions" table
+      | Code   | Promotion                    | Type            | Status   | Discount |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Inactive | $0.00    |
+    And I see next subtotals for "Backend Order":
+      | Subtotal | Amount |
+      | Subtotal | $50.00 |
+      | Total    | $50.00 |
+
+  Scenario: Activate button in Promotions grid
+    When I click "Activate" on row "Line Item Discount Promotion" in "Promotions"
+    Then I should see next rows in "Promotions" table
+      | Code   | Promotion                    | Type            | Status | Discount |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$10.00  |
+    And I see next subtotals for "Backend Order":
+      | Subtotal | Amount  |
+      | Subtotal | $50.00  |
+      | Discount | -$10.00 |
+      | Total    | $40.00  |
+
+  Scenario: If Line item was deleted from order, applied Line Item promotion should be deleted from order as well
+    When I click "Line Items"
+    And I click delete "Product1" in grid
+    And I click "Yes, Delete" in confirmation dialogue
+    Then I should see no records in "Promotions" table
+    And I see next subtotals for "Backend Order":
+      | Subtotal | Amount |
+      | Total    | $0.00  |
+    And click "Cancel"
+
+  Scenario: Product was changed in order
+    Given I click edit SimpleOrder in grid
+    Then I should see next rows in "Promotions" table
+      | Code   | Promotion                    | Type            | Status | Discount |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$10.00  |
+    And I see next subtotals for "Backend Order":
+      | Subtotal | Amount  |
+      | Subtotal | $50.00  |
+      | Discount | -$10.00 |
+      | Total    | $40.00  |
+    When I click Edit "AA1" in grid
+    And fill "Order Line Item Draft Edit Form" with:
+      | Product | XX1 |
+      | Price   | 0   |
+    And I click on "Order Line Item Draft Edit Form Save Button"
+    Then I should see no records in "Promotions" table
+    And I see next subtotals for "Backend Order":
+      | Subtotal | Amount |
+      | Total    | $0.00  |
+    And click "Cancel"
+
+  Scenario: Promotion is applied, Order was saved. Promotion was deleted, order promotions should not be changed
+    Given I go to Marketing / Promotions / Promotions
+    When click delete Line Item Discount Promotion in grid
+    Then I confirm deletion
+    When go to Sales / Orders
+    And click edit SimpleOrder in grid
+    And I click Edit "AA1" in grid
+    And fill "Order Line Item Draft Edit Form" with:
+      | Quantity | 2 |
+    And I click on "Order Line Item Draft Edit Form Save Button"
+    Then I should see next rows in "Promotions" table
+      | Code   | Promotion                    | Type            | Status | Discount |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$2.00   |
+    And see next subtotals for "Backend Order":
+      | Subtotal | Amount |
+      | Subtotal | $10.00 |
+      | Discount | -$2.00 |
+      | Total    | $8.00  |
+    When I save and close form
+    Then I should see next rows in "Promotions" table
+      | Code   | Promotion                    | Type            | Status | Discount |
+      | test-1 | Line Item Discount Promotion | Order Line Item | Active | -$2.00   |
+    And see next subtotals for "Backend Order":
+      | Subtotal | Amount |
+      | Subtotal | $10.00 |
+      | Discount | -$2.00 |
+      | Total    | $8.00  |

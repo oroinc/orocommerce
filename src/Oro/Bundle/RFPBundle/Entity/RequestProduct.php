@@ -13,6 +13,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
+use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
 
 /**
  * RFP Request Product entity.
@@ -25,7 +26,11 @@ use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
         'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes']
     ]
 )]
-class RequestProduct implements ProductHolderInterface, ProductKitItemLineItemsAwareInterface, ExtendEntityInterface
+class RequestProduct implements
+    ProductHolderInterface,
+    ProductKitItemLineItemsAwareInterface,
+    ExtendEntityInterface,
+    EntityDraftAwareInterface
 {
     use ExtendEntityTrait;
 
@@ -269,6 +274,53 @@ class RequestProduct implements ProductHolderInterface, ProductKitItemLineItemsA
     {
         $this->kitItemLineItems->removeElement($productKitItemLineItem);
 
+        return $this;
+    }
+
+    /**
+     * No-op: RequestProduct entities are not draft-aware themselves; this interface is
+     * implemented only to satisfy the {@see EntityDraftFactoryInterface} type contract
+     * so that factory chain can accept a RequestProduct as the source entity.
+     */
+    #[\Override]
+    public function getDraftSessionUuid(): ?string
+    {
+        return null;
+    }
+
+    #[\Override]
+    public function setDraftSessionUuid(?string $draftSessionUuid): self
+    {
+        return $this;
+    }
+
+    #[\Override]
+    public function getDraftSource(): ?EntityDraftAwareInterface
+    {
+        return null;
+    }
+
+    #[\Override]
+    public function setDraftSource(?EntityDraftAwareInterface $draftSource): self
+    {
+        return $this;
+    }
+
+    #[\Override]
+    public function getDrafts(): Collection
+    {
+        return new ArrayCollection();
+    }
+
+    #[\Override]
+    public function addDraft(EntityDraftAwareInterface $draft): self
+    {
+        return $this;
+    }
+
+    #[\Override]
+    public function removeDraft(EntityDraftAwareInterface $draft): self
+    {
         return $this;
     }
 }

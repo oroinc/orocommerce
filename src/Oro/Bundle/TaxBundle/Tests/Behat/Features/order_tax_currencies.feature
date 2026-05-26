@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @ticket-BB-15521
 @ticket-CRM-9323
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml

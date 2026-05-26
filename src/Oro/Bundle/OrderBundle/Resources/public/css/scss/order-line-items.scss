@@ -1,0 +1,52 @@
+/* @theme: admin.oro; */
+
+.order-line-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    &__row {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    &__product-row {
+        display: flex;
+        gap: 8px;
+
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .product-image {
+        display: inline-flex;
+
+        border: 1px solid $neutral-grey-4;
+        border-radius: 6px;
+        overflow: hidden;
+
+        flex-basis: 44px;
+    }
+
+    .product-select-container {
+        flex-grow: 1;
+    }
+}
+
+.popover-table {
+    &__table {
+        font-size: $base-font-size--s;
+        text-align: right;
+
+        display: block;
+        max-height: 300px;
+        overflow-y: auto;
+
+        thead {
+            position: sticky;
+            top: 0;
+        }
+    }
+}

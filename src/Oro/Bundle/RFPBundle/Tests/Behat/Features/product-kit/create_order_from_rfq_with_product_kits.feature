@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @feature-BB-22730
 @fixture-OroRFPBundle:product-kit/existing_rfq_with_product_kits_validation__product.yml
 @fixture-OroRFPBundle:product-kit/create_order_from_rfq_with_product_kits__rfq.yml
@@ -31,17 +32,16 @@ Feature: Create Order from RFQ with Product Kits
       | Price2                   | 134.5667                                                    |
       | Product2KitItem1Product  | simple-product-03 - Simple Product 03                       |
       | Product2KitItem1Quantity | 2                                                           |
-      | Product2KitItem1Price    | 3.7                                                         |
+      | Product2KitItem1Price    | 3.7035                                                      |
       | Product2KitItem2Product  | simple-product-01 - Simple Product 01                       |
       | Product2KitItem2Quantity | 3                                                           |
-      | Product2KitItem2Price    | 1.23                                                        |
+      | Product2KitItem2Price    | 1.2345                                                      |
     And I see next subtotals for "Backend Order":
       | Subtotal | $135.80 |
       | Total    | $135.80 |
 
   Scenario: Check that order can be saved
     When I save form
-    And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
     And "Order Form" must contains values:
       | Customer                 | Customer1                                                   |
@@ -56,7 +56,7 @@ Feature: Create Order from RFQ with Product Kits
       | Price2                   | 134.5667                                                    |
       | Product2KitItem1Product  | simple-product-03 - Simple Product 03                       |
       | Product2KitItem1Quantity | 2                                                           |
-      | Product2KitItem1Price    | 3.7000                                                      |
+      | Product2KitItem1Price    | 3.7035                                                      |
       | Product2KitItem2Product  | simple-product-01 - Simple Product 01                       |
       | Product2KitItem2Quantity | 3                                                           |
-      | Product2KitItem2Price    | 1.2300                                                      |
+      | Product2KitItem2Price    | 1.2345                                                      |

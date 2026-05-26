@@ -69,12 +69,13 @@ final class OrderPageAddressFormFactoryTest extends TestCase
             ->method('create')
             ->with(
                 OrderType::class,
-                self::callback(static function (Order $order) use ($customer, $customerUser) {
+                self::callback(static function (Order $order) use ($customer, $customerUser): bool {
                     self::assertSame($customer, $order->getCustomer());
                     self::assertSame($customerUser, $order->getCustomerUser());
 
                     return true;
-                })
+                }),
+                ['draft_session_sync' => true]
             )
             ->willReturn($orderForm);
 
@@ -113,13 +114,14 @@ final class OrderPageAddressFormFactoryTest extends TestCase
             ->method('create')
             ->with(
                 OrderType::class,
-                self::callback(static function (Order $order) use ($customer, $customerUser, $address) {
+                self::callback(static function (Order $order) use ($customer, $customerUser, $address): bool {
                     self::assertSame($customer, $order->getCustomer());
                     self::assertSame($customerUser, $order->getCustomerUser());
                     self::assertSame($address, $order->getShippingAddress());
 
                     return true;
-                })
+                }),
+                ['draft_session_sync' => true]
             )
             ->willReturn($orderForm);
 

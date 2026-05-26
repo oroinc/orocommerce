@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem;
+use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use PHPUnit\Framework\TestCase;
@@ -78,9 +80,6 @@ class RequestProductTest extends TestCase
         self::assertEquals($product->getSku(), $requestProduct->getProductSku());
     }
 
-    /**
-     * @depends testProperties
-     */
     public function testAddRequestProductItem(): void
     {
         $requestProduct = new RequestProduct();
@@ -91,5 +90,24 @@ class RequestProductTest extends TestCase
         $requestProduct->addRequestProductItem($requestProductItem);
 
         self::assertEquals($requestProduct, $requestProductItem->getRequestProduct());
+    }
+
+    public function testEntityDraftAwareInterfaceImplementationIsNoOp(): void
+    {
+        $requestProduct = new RequestProduct();
+        $mock = $this->createMock(EntityDraftAwareInterface::class);
+
+        self::assertNull($requestProduct->getDraftSessionUuid());
+        self::assertSame($requestProduct, $requestProduct->setDraftSessionUuid('any'));
+
+        self::assertNull($requestProduct->getDraftSource());
+        self::assertSame($requestProduct, $requestProduct->setDraftSource(null));
+
+        $drafts = $requestProduct->getDrafts();
+        self::assertInstanceOf(ArrayCollection::class, $drafts);
+        self::assertTrue($drafts->isEmpty());
+
+        self::assertSame($requestProduct, $requestProduct->addDraft($mock));
+        self::assertSame($requestProduct, $requestProduct->removeDraft($mock));
     }
 }

@@ -38,9 +38,15 @@ class AppliedCouponEntityListener
             return;
         }
 
-        if ($appliedCoupon->getOrder()) {
+        $order = $appliedCoupon->getOrder();
+        if ($order) {
+            if ($order->getDraftSessionUuid()) {
+                // Skips tracking of coupon usage for order draft because it is not a completed order.
+                return;
+            }
+
             $this->couponUsageManager
-                ->createCouponUsage($coupon, $appliedCoupon->getOrder()->getCustomerUser(), true);
+                ->createCouponUsage($coupon, $order->getCustomerUser(), true);
         }
     }
 }

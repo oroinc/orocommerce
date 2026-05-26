@@ -76,7 +76,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
      */
     public function testBuildForm(
         array $lineItemsInfo,
-        array $lineItemToMatchedPrices,
+        array $expectedPrices,
         array $matchedPrices
     ) {
         $order = $this->getOrder($lineItemsInfo);
@@ -137,9 +137,17 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension->buildForm($builder, []);
 
         foreach ($order->getLineItems() as $lineItem) {
-            if (array_key_exists($lineItem->getId(), $lineItemToMatchedPrices)) {
-                $identifier = $lineItemToMatchedPrices[$lineItem->getId()];
-                $this->assertEquals($matchedPrices[$identifier], $lineItem->getPrice());
+            $lineItemId = $lineItem->getId();
+            if (array_key_exists($lineItemId, $expectedPrices)) {
+                $expectedPrice = $expectedPrices[$lineItemId];
+                if ($expectedPrice === null) {
+                    $this->assertNull($lineItem->getPrice());
+                } else {
+                    $this->assertEquals(
+                        Price::create($expectedPrice['value'], $expectedPrice['currency']),
+                        $lineItem->getPrice()
+                    );
+                }
             } else {
                 $this->assertNull($lineItem->getPrice());
             }
@@ -149,7 +157,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
     public function buildFormDataProvider(): array
     {
         return [
-            [
+            'set prices for line items without price' => [
                 'data' => [
                     'customer' => ['id' => 1],
                     'website' => ['id' => 1],
@@ -178,9 +186,10 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
-                'lineItemToMatchedPrices' => [
-                    1 => '1-piece-2-USD',
-                    2 => '3-kg-20-USD',
+                'expectedPrices' => [
+                    1 => ['value' => 10, 'currency' => 'USD'],
+                    2 => ['value' => 100, 'currency' => 'USD'],
+                    3 => null,
                 ],
                 'matchedPrices' => [
                     '1-piece-2-USD' => [
@@ -192,7 +201,76 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
                         'currency' => 'USD',
                     ],
                 ],
-            ]
+            ],
+            'do not set price if matched price is null' => [
+                'data' => [
+                    'customer' => ['id' => 1],
+                    'website' => ['id' => 1],
+                    'currency' => 'USD',
+                    'lineItems' => [
+                        [
+                            'id' => 1,
+                            'product' => ['id' => 1],
+                            'productUnit' => ['code' => 'piece'],
+                            'quantity' => 2,
+                            'identity' => '1-piece-2-USD'
+                        ],
+                        [
+                            'id' => 2,
+                            'product' => ['id' => 3],
+                            'productUnit' => ['code' => 'kg'],
+                            'quantity' => 20,
+                            'identity' => '3-kg-20-USD'
+                        ],
+                    ],
+                ],
+                'expectedPrices' => [
+                    1 => null,
+                    2 => null,
+                ],
+                'matchedPrices' => [
+                    '1-piece-2-USD' => null,
+                    '3-kg-20-USD' => null,
+                ],
+            ],
+            'do not override existing line item price' => [
+                'data' => [
+                    'customer' => ['id' => 1],
+                    'website' => ['id' => 1],
+                    'currency' => 'USD',
+                    'lineItems' => [
+                        [
+                            'id' => 1,
+                            'product' => ['id' => 1],
+                            'productUnit' => ['code' => 'piece'],
+                            'quantity' => 2,
+                            'identity' => '1-piece-2-USD',
+                            'price' => ['value' => 50, 'currency' => 'USD'],
+                        ],
+                        [
+                            'id' => 2,
+                            'product' => ['id' => 3],
+                            'productUnit' => ['code' => 'kg'],
+                            'quantity' => 20,
+                            'identity' => '3-kg-20-USD'
+                        ],
+                    ],
+                ],
+                'expectedPrices' => [
+                    1 => ['value' => 50, 'currency' => 'USD'],
+                    2 => ['value' => 100, 'currency' => 'USD'],
+                ],
+                'matchedPrices' => [
+                    '1-piece-2-USD' => [
+                        'value' => 10,
+                        'currency' => 'USD',
+                    ],
+                    '3-kg-20-USD' => [
+                        'value' => 100,
+                        'currency' => 'USD',
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -204,6 +282,9 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
                 ->getEntity(Product::class, $lineItem['product']);
             $lineItem['productUnit'] = $this
                 ->getEntity(ProductUnit::class, $lineItem['productUnit']);
+            if (isset($lineItem['price'])) {
+                $lineItem['price'] = Price::create($lineItem['price']['value'], $lineItem['price']['currency']);
+            }
             unset($lineItem['identity']);
             $lineItems->add($this->getEntity(OrderLineItem::class, $lineItem));
         }
@@ -228,7 +309,9 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
     private function getMatchedPrices(array $matchedPrices): array
     {
         foreach ($matchedPrices as &$matchedPrice) {
-            $matchedPrice = Price::create($matchedPrice['value'], $matchedPrice['currency']);
+            if ($matchedPrice !== null) {
+                $matchedPrice = Price::create($matchedPrice['value'], $matchedPrice['currency']);
+            }
         }
         return $matchedPrices;
     }

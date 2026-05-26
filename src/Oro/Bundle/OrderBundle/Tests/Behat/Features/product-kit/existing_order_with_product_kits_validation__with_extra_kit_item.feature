@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @regression
 @feature-BB-21128
 @fixture-OroOrderBundle:product-kit/existing_order_with_product_kits_validation__product.yml
@@ -40,7 +41,7 @@ Feature: Existing Order with Product Kits Validation - with Extra Kit Item
     And I save form
     And I click "Save" in modal window
     Then I should see "Order Form" validation errors:
-      | ProductKitItem3Quantity | The quantity should be between 1 and 3 |
+      | ProductKitItem3Quantity | The kit item quantity should be between 1 and 3. |
 
   Scenario: Change the line item with an extra mandatory kit item
     When fill "Order Form" with:
@@ -105,7 +106,7 @@ Feature: Existing Order with Product Kits Validation - with Extra Kit Item
     And I save form
     And I click "Save" in modal window
     Then I should see "Order Form" validation errors:
-      | ProductKitItem3Quantity | The quantity should be between 1 and 3 |
+      | ProductKitItem3Quantity | The kit item quantity should be between 1 and 3. |
 
   Scenario: Change the line item with an extra optional kit item
     When fill "Order Form" with:

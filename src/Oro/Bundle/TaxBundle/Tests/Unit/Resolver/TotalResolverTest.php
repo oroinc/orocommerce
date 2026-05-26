@@ -35,9 +35,57 @@ class TotalResolverTest extends TestCase
 
         $this->resolver->resolve($taxable);
 
-        $this->assertInstanceOf(Result::class, $taxable->getResult());
-        $this->assertInstanceOf(ResultElement::class, $taxable->getResult()->getTotal());
-        $this->compareResult([], $taxable->getResult());
+        $result = $taxable->getResult();
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertInstanceOf(ResultElement::class, $result->getTotal());
+        $this->assertEquals(
+            ResultElement::create('0', '0', '0', '0'),
+            $result->getTotal()
+        );
+        $this->assertEquals([], $result->getTaxes());
+        $this->assertTrue($result->isResultLocked());
+    }
+
+    public function testResolveEmptyItemsWhenIsKitTaxable(): void
+    {
+        $itemTaxable = new Taxable();
+        $itemTaxable->setResult(new Result([
+            Result::ROW => ResultElement::create('21.5892', '19.99', '1.5992', '0.0008'),
+            Result::TAXES => [
+                TaxResultElement::create('1', '0.08', '19.99', '1.5992'),
+            ],
+        ]));
+
+        $taxable = new Taxable();
+        $taxable->setKitTaxable(true);
+        $taxable->addItem($itemTaxable);
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertNull($taxable->getResult()->getOffset(Result::TOTAL));
+        $this->assertNull($taxable->getResult()->getOffset(Result::TAXES));
+        $this->assertFalse($taxable->getResult()->isResultLocked());
+    }
+
+    public function testResolveEmptyItemsWhenIsResultLocked(): void
+    {
+        $itemTaxable = new Taxable();
+        $itemTaxable->setResult(new Result([
+            Result::ROW => ResultElement::create('21.5892', '19.99', '1.5992', '0.0008'),
+            Result::TAXES => [
+                TaxResultElement::create('1', '0.08', '19.99', '1.5992'),
+            ],
+        ]));
+
+        $taxable = new Taxable();
+        $taxable->getResult()->lockResult();
+        $taxable->addItem($itemTaxable);
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertNull($taxable->getResult()->getOffset(Result::TOTAL));
+        $this->assertNull($taxable->getResult()->getOffset(Result::TAXES));
+        $this->assertTrue($taxable->getResult()->isResultLocked());
     }
 
     public function testResolveLockedResult(): void

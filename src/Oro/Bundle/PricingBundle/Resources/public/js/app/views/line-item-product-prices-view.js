@@ -49,6 +49,7 @@ define(function(require) {
 
             this.listenTo(mediator, {
                 'pricing:collect:line-items': this.collectLineItems,
+                'pricing:collect:tier-prices': this.collectLineItemsTierPrices,
                 'pricing:refresh:products-tier-prices': this.refreshTierPrices,
                 'pricing:currency:changed': this.currencyChanged
             });
@@ -140,6 +141,20 @@ define(function(require) {
                     quantity: this.model.get('quantity'),
                     currency: this.model.get('currency')
                 });
+            }
+        },
+
+        /**
+         * Collect line items tier prices for particular product models.
+         * Pass object to collect prices as a parameter and fill it with product id as a key and tier prices as a value.
+         *
+         * @param {object} tierPrices
+         */
+        collectLineItemsTierPrices(tierPrices) {
+            const productId = this.model.get('id');
+
+            if (productId) {
+                tierPrices[productId] = this.model.get('prices') || [];
             }
         },
 

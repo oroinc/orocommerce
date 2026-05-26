@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @fixture-OroPromotionBundle:promotions-with-coupons-on-order-page.yml
 @fixture-OroPromotionBundle:promotions-with-coupons-on-order-view-page.yml
 Feature: Promotions with coupons on Order view page

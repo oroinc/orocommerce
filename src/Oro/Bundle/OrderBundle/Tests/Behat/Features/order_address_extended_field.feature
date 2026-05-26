@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @regression
 @ticket-BB-15909
 @fixture-OroProductBundle:products.yml

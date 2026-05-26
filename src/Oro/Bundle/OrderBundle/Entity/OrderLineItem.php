@@ -15,6 +15,7 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\OrderBundle\Entity\Repository\OrderLineItemRepository;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -24,6 +25,9 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
+use Oro\Component\DraftSession\Entity\EntityDraftAwareTrait;
+use Oro\Component\DraftSession\Entity\EntityDraftSoftDeleteAwareInterface;
+use Oro\Component\DraftSession\Entity\EntityDraftSoftDeleteAwareTrait;
 
 /**
  * Represents ordered item.
@@ -34,7 +38,7 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @mixin OroOrderBundle_Entity_OrderLineItem
  */
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: OrderLineItemRepository::class)]
 #[ORM\Table(name: 'oro_order_line_item')]
 #[ORM\HasLifecycleCallbacks]
 #[Config(
@@ -52,10 +56,13 @@ class OrderLineItem implements
     PriceTypeAwareInterface,
     ShippingAwareInterface,
     ProductLineItemsHolderAwareInterface,
+    EntityDraftSoftDeleteAwareInterface,
     ExtendEntityInterface
 {
     use DatesAwareTrait;
     use ExtendEntityTrait;
+    use EntityDraftAwareTrait;
+    use EntityDraftSoftDeleteAwareTrait;
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
@@ -90,6 +97,8 @@ class OrderLineItem implements
 
     #[ORM\Column(name: 'free_form_product', type: Types::STRING, length: 255, nullable: true)]
     protected ?string $freeFormProduct = null;
+
+    protected ?bool $isFreeForm = null;
 
     /**
      * @var float|null
@@ -164,10 +173,21 @@ class OrderLineItem implements
     #[ORM\Column(name: 'checksum', type: Types::STRING, length: 40, nullable: false, options: ['default' => ''])]
     protected ?string $checksum = '';
 
+    #[ORM\ManyToOne(targetEntity: OrderLineItem::class, inversedBy: 'drafts')]
+    #[ORM\JoinColumn(name: 'draft_source_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?OrderLineItem $draftSource = null;
+
+    /**
+     * @var Collection<int, OrderLineItem>
+     */
+    #[ORM\OneToMany(mappedBy: 'draftSource', targetEntity: OrderLineItem::class, fetch: 'EXTRA_LAZY')]
+    protected ?Collection $drafts = null;
+
     public function __construct()
     {
         $this->kitItemLineItems = new ArrayCollection();
         $this->orders = new ArrayCollection();
+        $this->drafts = new ArrayCollection();
     }
 
     /**
@@ -261,11 +281,11 @@ class OrderLineItem implements
     }
 
     /**
-     * @param Product $parentProduct
+     * @param Product|null $parentProduct
      *
      * @return $this
      */
-    public function setParentProduct(Product $parentProduct)
+    public function setParentProduct(?Product $parentProduct)
     {
         $this->parentProduct = $parentProduct;
         return $this;
@@ -651,6 +671,8 @@ class OrderLineItem implements
             }
 
             $this->productName = $product->getDenormalizedDefaultName();
+        } elseif ($this->isFreeForm()) {
+            $this->productName = null;
         }
 
         if ($this->getProductUnit()) {
@@ -683,6 +705,13 @@ class OrderLineItem implements
     public function getKitItemLineItems()
     {
         return $this->kitItemLineItems;
+    }
+
+    public function setKitItemLineItems(Collection $kitItemLineItems): self
+    {
+        $this->kitItemLineItems = $kitItemLineItems;
+
+        return $this;
     }
 
     public function addKitItemLineItem(OrderProductKitItemLineItem $productKitItemLineItem): self
@@ -719,5 +748,26 @@ class OrderLineItem implements
     public function getChecksum(): string
     {
         return $this->checksum;
+    }
+
+    public function isFreeForm(): bool
+    {
+        return $this->isFreeForm ?? $this->freeFormProduct !== null;
+    }
+
+    public function setIsFreeForm(?bool $isFreeForm): self
+    {
+        $this->isFreeForm = $isFreeForm;
+
+        if ($isFreeForm) {
+            $this->product = null;
+            $this->productSku = null;
+            $this->productName = null;
+        } else {
+            $this->productSku = null;
+            $this->freeFormProduct = null;
+        }
+
+        return $this;
     }
 }

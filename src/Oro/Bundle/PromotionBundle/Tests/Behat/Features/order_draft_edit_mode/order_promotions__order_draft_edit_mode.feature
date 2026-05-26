@@ -1,0 +1,151 @@
+@feature-BB-26023-enabled
+@regression
+@ticket-BB-19895
+@fixture-OroPromotionBundle:promotions_for_orders.yml
+@fixture-OroPromotionBundle:orders_with_customer.yml
+
+Feature: Order promotions - Order Draft Edit Mode
+  Verify that all discounted actions work correctly if line items in order have been changed.
+
+  Scenario: Enable Order Draft Edit Mode
+    Given I set configuration property "oro_order.enable_order_draft_edit_mode" to "1"
+
+  Scenario: Recalculate discounts if line items not changed
+    Given I login as administrator
+    And go to Sales / Orders
+    And click "edit" on first row in grid
+    # Need to re-calculate discounts
+    When I save form
+    Then I should see "Order has been saved" flash message
+    When click "Totals"
+    Then I see next subtotals for "Backend Order":
+      | Subtotal | $10.00 |
+      | Total    | $10.00 |
+
+  Scenario: Recalculate discounts if line items changed(automatically added promotions)
+    When I click "Line Items"
+    And I click Edit "Product1" in grid
+    And fill "Order Line Item Draft Edit Form" with:
+      | Product | Product2 |
+      | Price   | 20       |
+    And I click on "Order Line Item Draft Edit Form Save Button"
+    Then I should see next rows in "Promotions" table
+      | Promotion                 | Type            | Status | Discount |
+      | Order Line Item Promotion | Order Line Item | Active | -$2.00   |
+      | Order Total Promotion     | Order Total     | Active | -$1.00   |
+    When I click "Totals"
+    Then I see next subtotals for "Backend Order":
+      | Subtotal | $20.00 |
+      | Discount | -$3.00 |
+      | Total    | $17.00 |
+    When I save form
+    And click "Save" in modal window
+    Then I should see "Order has been saved" flash message
+
+  Scenario: Add coupon if line items not changed
+    Given I click "Add Coupon Code"
+    And type "OrderTotalCoupon" in "Coupon Code"
+    And should see a "Highlighted Suggestion" element
+    And click on "Highlighted Suggestion"
+    When I click "Add" in modal window
+    And click "Apply" in modal window
+    Then should see next rows in "Promotions" table
+      | Promotion                    | Type            | Status | Discount |
+      | Order Line Item Promotion    | Order Line Item | Active | -$2.00   |
+      | Order Total Promotion        | Order Total     | Active | -$1.00   |
+      | Order Total Coupon Promotion | Order Total     | Active | -$3.00   |
+    When I click "Totals"
+    Then I see next subtotals for "Backend Order":
+      | Subtotal | $20.00 |
+      | Discount | -$6.00 |
+      | Total    | $14.00 |
+
+  Scenario: Add coupon if line items changed
+    When I click "Line Items"
+    And I click Edit "Product2" in grid
+    And fill "Order Line Item Draft Edit Form" with:
+      | Price | 30 |
+    And I click on "Order Line Item Draft Edit Form Save Button"
+    Given I click "Add Coupon Code"
+    And type "orderLineItemCoupon" in "Coupon Code"
+    And should see a "Highlighted Suggestion" element
+    And click on "Highlighted Suggestion"
+    When I click "Add" in modal window
+    When I click "Apply" in modal window
+    Then should see next rows in "Promotions" table
+      | Promotion                        | Type            | Status | Discount |
+      | Order Line Item Promotion        | Order Line Item | Active | -$2.00   |
+      | Order Total Promotion            | Order Total     | Active | -$1.00   |
+      | Order Total Coupon Promotion     | Order Total     | Active | -$3.00   |
+      | Order Line Item Coupon Promotion | Order Line Item | Active | -$4.00   |
+    When I click "Totals"
+    Then see next subtotals for "Backend Order":
+      | Subtotal | $30.00  |
+      | Discount | -$10.00 |
+      | Total    | $20.00  |
+    When I save form
+    And click "Save" in modal window
+    Then I should see "Order has been saved" flash message
+
+  Scenario: Change coupons codes
+    Given I go to Marketing/Promotions/Coupons
+    When I click edit OrderTotalCoupon in grid
+    And fill "Coupon Form" with:
+      | Coupon Code | OrderTotalCouponChanged |
+    And save and close form
+    Then I should see "Coupon has been saved" flash message
+    When I click edit OrderLineItemCoupon in grid
+    And fill "Coupon Form" with:
+      | Coupon Code | OrderLineItemCouponChanged |
+    And save and close form
+    Then I should see "Coupon has been saved" flash message
+
+  Scenario: Check the order saved without changes after changing the coupon codes
+    Given I go to Sales / Orders
+    And click "edit" on first row in grid
+    When I save form
+    Then I should see "Order has been saved" flash message
+
+  Scenario: Remove coupon if line items not changed
+    Given I click "Remove" on row "Order Total Coupon Promotion" in "Promotions"
+    Then should see next rows in "Promotions" table
+      | Promotion                        | Type            | Status | Discount |
+      | Order Line Item Promotion        | Order Line Item | Active | -$2.00   |
+      | Order Total Promotion            | Order Total     | Active | -$1.00   |
+      | Order Line Item Coupon Promotion | Order Line Item | Active | -$4.00   |
+    When I click "Totals"
+    Then see next subtotals for "Backend Order":
+      | Subtotal | $30.00 |
+      | Discount | -$7.00 |
+      | Total    | $23.00 |
+
+  Scenario: Remove coupon if line items changed
+    When I click "Line Items"
+    And I click Edit "Product2" in grid
+    And fill "Order Line Item Draft Edit Form" with:
+      | Price | 40 |
+    And I click on "Order Line Item Draft Edit Form Save Button"
+
+    Given I click "Remove" on row "Order Line Item Coupon Promotion" in "Promotions"
+    Then should see next rows in "Promotions" table
+      | Promotion                 | Type            | Status | Discount |
+      | Order Line Item Promotion | Order Line Item | Active | -$2.00   |
+      | Order Total Promotion     | Order Total     | Active | -$1.00   |
+    When I click "Totals"
+    Then see next subtotals for "Backend Order":
+      | Subtotal | $40.00 |
+      | Discount | -$3.00 |
+      | Total    | $37.00 |
+    When I save form
+    And click "Save" in modal window
+    Then I should see "Order has been saved" flash message
+
+  Scenario: Remove applied promotions if line items not changed
+    Given I click "Remove" on row "Order Line Item Promotion" in "Promotions"
+    And click "Remove" on row "Order Total Promotion" in "Promotions"
+    When I click "Totals"
+    Then see next subtotals for "Backend Order":
+      | Subtotal | $40.00 |
+      | Total    | $40.00 |
+
+  # There is no need to remove promotions if line items have changed because they will be added again.

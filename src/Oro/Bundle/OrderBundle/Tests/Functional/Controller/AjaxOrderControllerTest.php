@@ -8,6 +8,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresse
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddresses;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,6 +19,7 @@ class AjaxOrderControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
+        $this->client->followRedirects();
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
@@ -30,7 +32,10 @@ class AjaxOrderControllerTest extends WebTestCase
     private function assertTotal(Crawler $crawler, ?int $id = null): void
     {
         $form = $crawler->selectButton('Save and Close')->form();
-        $form->getFormNode()->setAttribute('action', $this->getUrl('oro_order_entry_point', ['id' => $id]));
+        $form->getFormNode()->setAttribute(
+            'action',
+            $this->getUrl('oro_order_entry_point', ['id' => (int)$id, 'orderDraftSessionUuid' => UUIDGenerator::v4()])
+        );
 
         $this->client->submit($form);
 
@@ -79,7 +84,7 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('oro_order_entry_point'),
+            $this->getUrl('oro_order_entry_point', ['orderDraftSessionUuid' => UUIDGenerator::v4()]),
             [
                 OrderType::NAME => [
                     'customer' => $customerEntity->getId(),

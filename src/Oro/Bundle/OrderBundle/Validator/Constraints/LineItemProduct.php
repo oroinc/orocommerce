@@ -14,6 +14,8 @@ class LineItemProduct extends Constraint
      */
     public $emptyProductMessage = 'oro.order.orderlineitem.product.blank';
 
+    public string $emptyFreeFormProductMessage = 'oro.order.orderlineitem.free_form_product.blank';
+
     #[\Override]
     public function getTargets(): string|array
     {

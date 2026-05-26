@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @fixture-OroOrderBundle:order.yml
 
 Feature: Order Processing Workflow

@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @regression
 @feature-BB-21128
 @fixture-OroOrderBundle:product-kit/existing_order_with_product_kits_validation__product.yml
@@ -31,7 +32,6 @@ Feature: Existing Order with Product Kits Validation - without Kit Items
 
   Scenario: Check that order can be saved and is not changed
     When I save form
-    And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
     And "Order Form" must contains values:
       | Quantity                | 1       |

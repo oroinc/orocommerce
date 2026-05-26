@@ -19,6 +19,7 @@ define(function(require) {
             entityId: null,
             getAddedCouponsTableRoute: 'oro_promotion_get_added_coupons_table',
             validateCouponApplicabilityRoute: 'oro_promotion_validate_coupon_applicability',
+            validateCouponApplicabilityRouteParams: {},
             delimiter: ',',
             skipMaskView: false,
             selectors: {
@@ -92,7 +93,10 @@ define(function(require) {
             this._showLoadingMask();
             const self = this;
             $.ajax({
-                url: routing.generate(this.options.validateCouponApplicabilityRoute),
+                url: routing.generate(
+                    this.options.validateCouponApplicabilityRoute,
+                    this.options.validateCouponApplicabilityRouteParams
+                ),
                 type: 'POST',
                 data: data,
                 dataType: 'json',

@@ -21,13 +21,16 @@ define(function(require) {
 
         /**
          * @param pricesByUnit {Object<{unit: Array<Object>}>}
-         * @param preferredUnit {String}
          * @returns {Object<{unit: Array<Object>}>}
          */
         sortUnitPricesByLowQuantity: function(pricesByUnit = {}, preferredUnit) {
             const unit = preferredUnit || Object.keys(pricesByUnit)[0];
             const prices = pricesByUnit[unit];
             const data = {};
+
+            if (_.isEmpty(prices)) {
+                return data;
+            }
 
             if (unit) {
                 data[unit] = PricesHelper.sortByLowQuantity(prices);

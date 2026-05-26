@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @feature-BB-21128
 @feature-BB-23530
 @fixture-OroOrderBundle:product-kit/create_order_with_product_kits.yml

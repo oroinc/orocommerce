@@ -1,0 +1,166 @@
+{% block _oro_order_line_item_draft_price_widget %}
+    <div class="multicurrency-fields-wrapper value-field input-append">
+        {{ form_widget(form.value) }}
+        {{ form_widget(form.currency) }}
+        {{ form_widget(form.is_price_changed) }}
+    </div>
+{% endblock %}
+
+{% block _oro_order_line_item_draft_kitItemLineItems_entry_price_widget %}
+    <div class="multicurrency-fields-wrapper value-field input-append">
+        {{ form_widget(form.value, {
+            'attr': {
+                'data-draft-update-field': ''
+            }
+        }) }}
+        {{ form_widget(form.currency) }}
+        {{ form_widget(form.is_price_changed) }}
+    </div>
+{% endblock %}
+
+{% block _oro_order_line_item_draft_kitItemLineItems_widget %}
+    <table class="order-draft-line-item-kit-item-collection table table-borderless">
+        <tbody>
+        {%- for child in form -%}
+            {{ form_widget(child) }}
+        {%- endfor -%}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block _oro_order_line_item_draft_kitItemLineItems_entry_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    <tr
+        data-layout="separate"
+        {% if is_optional %}data-validation-optional-group{% endif %}
+            {{ UI.renderPageComponentAttributes({
+                view: 'oroorder/js/app/views/kit-item-line-item-view',
+                options: {
+                    minimumQuantity: minimum_quantity ?: 1.0,
+                    maximumQuantity: maximum_quantity ?: null,
+                    modelAttr: {
+                        unit: unit_code,
+                        product_units: {
+                            (unit_code): unit_precision
+                        }
+                    }
+                }
+            }) }}
+            class="order-line-kit-item">
+        <td class="line-item-label">
+            {{ form_label(form, label, {translatable_label: false}) }}
+        </td>
+        <td class="line-item-product">
+            <div class="fields-row">
+                {{ form_widget(form.product, {
+                    'attr': {
+                        'data-draft-update-field': ''
+                    }
+                }) }}
+                {{ form_errors(form.product) }}
+            </div>
+        </td>
+        <td class="line-item-quantity-label">
+            {% set unit_precision_info = oro_format_product_unit_precision_label(unit_code|default('N/A'|trans), unit_precision|default(0)) %}
+            {{ form_label(form.quantity, 'oro.order.orderproductkititemlineitem.quantity.short_label'|trans ~ ':', {tooltip: 'oro.order.orderproductkititemlineitem.quantity.form.tooltip'|trans({'{{ unit_precision_info }}': unit_precision_info})}) }}
+        </td>
+        <td class="line-item-quantity">
+            <div class="fields-row">
+                {{ form_widget(form.quantity, {
+                    attr: {
+                        'data-floating-error': true,
+                        'data-precision': unit_precision,
+                        'class': 'line-item-quantity-field',
+                        'data-draft-update-field': ''
+                    }
+                }) }}
+                {{ form_errors(form.quantity) }}
+            </div>
+        </td>
+        <td class="line-item-price-label">
+            {{ form_label(
+                form.price,
+                'oro.order.orderproductkititemlineitem.price.form_label'|trans({'%currency%': oro_currency_symbol(currency)})|oro_html_sanitize ~ ':',
+                {'raw_label': true}
+            ) }}
+        </td>
+        <td class="line-item-price">
+            <div
+            {{ UI.renderPageComponentAttributes({
+                view: 'oropricing/js/app/views/line-item-product-prices-extended-view'
+            }) }}
+            >
+                {{ form_widget(form.price) }}
+                {{ form_errors(form.price) }}
+            </div>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block _oro_order_line_item_draft_offers_widget %}
+    {%- if offers is defined and offers|length -%}
+        {%- set page_component_options = {
+            offersSelector: '[name="%s"]'|format(full_name),
+            priceSelector: '#%s'|format(form.parent.price.value.vars.id),
+            quantitySelector: '#%s'|format(form.parent.quantity.vars.id),
+            unitSelector: '#%s'|format(form.parent.productUnit.vars.id),
+            productSelector: '#%s'|format(form.parent.product.vars.id),
+        } -%}
+
+        <table class="grid grid-main-container table order-line-item-offers"
+               data-page-component-module="ororfp/js/app/components/order-line-item-offers"
+               data-page-component-options="{{ page_component_options|json_encode }}">
+            <tbody>
+            {%- for child in form.children -%}
+                <tr>
+                    {{ form_row(child, { offer: offers[loop.index - 1] }) }}
+                </tr>
+            {%- endfor -%}
+            </tbody>
+        </table>
+    {%- endif -%}
+{%- endblock -%}
+
+{%- block _oro_order_line_item_draft_offers_entry_row -%}
+    <td class="order-line-item-offers-radio">
+        {%- set quantity = offer.quantity -%}
+        {%- if quantity is not empty -%}
+            {%- set quantity = quantity|oro_format_decimal -%}
+        {%- endif -%}
+
+        {%- set price = offer.price|default -%}
+        {%- if price is not empty -%}
+            {%- set MIN_FRACTION_DIGITS = constant('\\NumberFormatter::MIN_FRACTION_DIGITS') -%}
+            {%- set options = {
+                'attributes': {
+                    MIN_FRACTION_DIGITS: oro_locale_number_attribute('min_fraction_digits', 'currency')
+                }
+            } -%}
+            {%- set price = price|oro_format_decimal(options) -%}
+        {%- endif -%}
+
+        {{ form_widget(form, {
+            attr: {
+                'data-quantity': quantity|default,
+                'data-unit': offer.unit|default,
+                'data-price': price|default,
+                'data-currency': offer.currency|default
+            }
+        }) }}
+    </td>
+    <td class="order-line-item-offers-quantity">
+        {%- if offer.quantity is defined and offer.unit is defined -%}
+            <label for="{{ id }}">
+                {{ offer.quantity|oro_format_product_unit_code(offer.unit) }}
+            </label>
+        {%- endif -%}
+    </td>
+    <td class="order-line-item-offers-price">
+        {%- if offer.price is defined and offer.currency is defined -%}
+            <label for="{{ id }}">
+                {{ offer.price|oro_format_currency({'currency': offer.currency}) }}
+            </label>
+        {%- endif -%}
+    </td>
+{%- endblock -%}

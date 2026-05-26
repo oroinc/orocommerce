@@ -40,6 +40,8 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
+use Oro\Component\DraftSession\Entity\EntityDraftAwareTrait;
 
 /**
  * Order entity
@@ -107,12 +109,14 @@ class Order implements
     ProductLineItemsHolderInterface,
     PreConfiguredShippingMethodConfigurationInterface,
     PdfDocumentContainerInterface,
+    EntityDraftAwareInterface,
     ExtendEntityInterface
 {
     use AuditableUserAwareTrait;
     use AuditableFrontendCustomerUserAwareTrait;
     use DatesAwareTrait;
     use ExtendEntityTrait;
+    use EntityDraftAwareTrait;
 
     public const INTERNAL_STATUS_CODE = 'order_internal_status';
     public const STATUS_CODE = 'order_status';
@@ -383,6 +387,19 @@ class Order implements
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected Collection $pdfDocuments;
 
+    /**
+     * The source order to which the draft order belongs.
+     */
+    #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'drafts')]
+    #[ORM\JoinColumn(name: 'draft_source_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?self $draftSource = null;
+
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\OneToMany(mappedBy: 'draftSource', targetEntity: Order::class, fetch: 'EXTRA_LAZY')]
+    protected ?Collection $drafts = null;
+
     public function __construct()
     {
         $this->lineItems = new ArrayCollection();
@@ -390,6 +407,7 @@ class Order implements
         $this->shippingTrackings = new ArrayCollection();
         $this->subOrders = new ArrayCollection();
         $this->pdfDocuments = new ArrayCollection();
+        $this->drafts = new ArrayCollection();
         $this->loadMultiCurrencyFields();
     }
 
@@ -1149,7 +1167,7 @@ class Order implements
      */
     public function setShippingMethod($shippingMethod)
     {
-        $this->shippingMethod = (string) $shippingMethod;
+        $this->shippingMethod = $shippingMethod;
 
         return $this;
     }
@@ -1166,7 +1184,7 @@ class Order implements
      */
     public function setShippingMethodType($shippingMethodType)
     {
-        $this->shippingMethodType = (string) $shippingMethodType;
+        $this->shippingMethodType = $shippingMethodType;
 
         return $this;
     }

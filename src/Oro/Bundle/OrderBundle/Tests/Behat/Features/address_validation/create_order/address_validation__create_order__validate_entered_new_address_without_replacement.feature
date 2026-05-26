@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @fixture-OroUPSBundle:AddressValidationUpsClient.yml
 @fixture-OroOrderBundle:OrderAddressesFixture.yml
 @feature-BB-24101

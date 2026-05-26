@@ -361,6 +361,8 @@ services:
 
     oro_catalog.event_listener.category_preloading:
         parent: oro_entity.event_listener.default_preloading
+        calls:
+            - [ setStopPropagation, [ true ] ]
         tags:
             - { name: kernel.event_listener, event: oro_entity.preload_entity.category, method: onPreload }
 

@@ -1,0 +1,40 @@
+@feature-BB-26023-enabled
+@regression
+@ticket-BB-16902
+@fixture-OroProductBundle:products.yml
+Feature: Order View Permissions - Order Draft Edit Mode
+  In order to restrict order view by a customer
+  As administrator
+  I need to be able to set local permission for Order view
+
+  Scenario: Enable Order Draft Edit Mode
+    Given I set configuration property "oro_order.enable_order_draft_edit_mode" to "1"
+
+  Scenario: Create order without customer user assigned
+    Given I login as administrator
+    And I go to Sales/Orders
+    And I click "Create Order"
+    And fill "Order Form" with:
+      | Customer | first customer |
+    And fill "Order Line Item Draft Create Form" with:
+      | Product | PSKU1 |
+      | Price   | 50    |
+    And click "Add Product"
+    When I click "Save and Close"
+    And agree that shipping cost may have changed
+    Then I should see "Order has been saved" flash message
+
+  Scenario: Change Administrator role's Order view permission to Department level access
+    When I go to Customers/Customer User Roles
+    When I click Edit Administrator in grid
+    And select following permissions:
+      | Order | View:Department (Same Level) |
+    And save and close form
+    Then I should see "Customer User Role has been saved" flash message
+
+  Scenario: Check that Order can be viewed by frontend user
+    Given I signed in as AmandaRCole@example.org on the store frontend
+    And I click "Account Dropdown"
+    And I click "Order History"
+    And I click "view" on first row in "Past Orders Grid"
+    Then I should see "Order #2"

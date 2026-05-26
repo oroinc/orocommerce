@@ -1,3 +1,4 @@
+@feature-BB-26023-disabled
 @ticket-BB-24934
 @fixture-OroPromotionBundle:promotion_for_order.yml
 @fixture-OroPromotionBundle:order_with_customer.yml

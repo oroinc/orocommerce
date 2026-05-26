@@ -150,6 +150,9 @@ class OrderProductKitItemLineItemType extends AbstractType
             $view->vars['unit_code'] = null;
             $view->vars['unit_precision'] = null;
         }
+
+        // @bc-layer This block prefix will become the one returned by ::getBlockPrefix
+        array_splice($view->vars['block_prefixes'], -1, 0, ['oro_order_product_kit_item_line_item']);
     }
 
     #[\Override]
