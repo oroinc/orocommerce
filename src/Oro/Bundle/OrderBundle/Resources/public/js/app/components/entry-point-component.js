@@ -89,6 +89,7 @@ const EntryPointComponent = BaseComponent.extend({
 
     interruptPostpone() {
         this.postponedEntryPointAction = false;
+        mediator.execute('isRequestPending', false);
     },
 
     listenerOff: function() {
@@ -205,6 +206,7 @@ const EntryPointComponent = BaseComponent.extend({
      */
     _sendEntryPointAjax: function() {
         if (this.disposed || this.request && this.request.readyState !== 4) {
+            mediator.execute('isRequestPending', false);
             return;
         }
 
@@ -219,6 +221,7 @@ const EntryPointComponent = BaseComponent.extend({
             mediator.trigger(this.options.events.load, {});
         }).always(() => {
             mediator.trigger(this.options.events.after);
+            mediator.execute('isRequestPending', false);
             this.setRecalculationRequired(false);
 
             if (this.disposed) {
@@ -254,6 +257,7 @@ const EntryPointComponent = BaseComponent.extend({
         }
 
         this.listenerOff();
+        mediator.execute('isRequestPending', false);
 
         EntryPointComponent.__super__.dispose.call(this);
     }

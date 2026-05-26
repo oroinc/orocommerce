@@ -39,7 +39,7 @@ class ProductUnitExtensionTest extends TestCase
             ->add('oro_product.formatter.product_unit_label', $this->labelFormatter)
             ->add('oro_product.formatter.product_unit_value', $this->valueFormatter)
             ->add('oro_product.visibility.unit', $this->unitVisibility)
-            ->add(UnitPrecisionLabelFormatter::class, $this->unitPrecisionLabelFormatter)
+            ->add('oro_product.formatter.unit_precision_label', $this->unitPrecisionLabelFormatter)
             ->add('oro_product.provider.product_units_provider', $this->productUnitsProvider)
             ->getContainer($this);
 

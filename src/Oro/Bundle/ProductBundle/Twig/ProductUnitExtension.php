@@ -158,7 +158,7 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
             'oro_product.formatter.product_unit_label' => UnitLabelFormatterInterface::class,
             'oro_product.formatter.product_unit_precision' => UnitLabelFormatterInterface::class,
             'oro_product.visibility.unit' => UnitVisibilityInterface::class,
-            UnitPrecisionLabelFormatter::class,
+            'oro_product.formatter.unit_precision_label' => UnitPrecisionLabelFormatter::class,
             'oro_product.provider.product_units_provider' => ProductUnitsProvider::class,
         ];
     }
@@ -180,6 +180,6 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
 
     private function getUnitPrecisionLabelFormatter(): UnitPrecisionLabelFormatter
     {
-        return $this->container->get(UnitPrecisionLabelFormatter::class);
+        return $this->container->get('oro_product.formatter.unit_precision_label');
     }
 }
