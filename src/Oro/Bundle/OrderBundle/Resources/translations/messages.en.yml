@@ -459,9 +459,6 @@ oro:
                 label: Drafts
                 description: The collection of draft line items created from this line item.
             draft_form:
-                kit_item:
-                    quantity.label: Qty
-                    price.label: 'Price, <span class="line-item-price-symbol">%currency%</span>'
                 success_message: 'Product %sku% has been added to the list.'
                 view_line_item_in_grid: 'Show only this product'
                 comment:
