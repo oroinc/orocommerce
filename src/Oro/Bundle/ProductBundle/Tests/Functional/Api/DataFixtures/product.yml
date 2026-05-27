@@ -431,7 +431,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - addName: ['@product3_name']
             - addShortDescription: ['@product3_short_description']
             - addDescription: ['@product3_description']
-            - addMetaTitl: ['@product3_meta_title']
+            - addMetaTitle: ['@product3_meta_title']
             - addMetaDescription: ['@product3_meta_description']
             - addMetaKeyword: ['@product3_meta_keywords']
         status: 'enabled'

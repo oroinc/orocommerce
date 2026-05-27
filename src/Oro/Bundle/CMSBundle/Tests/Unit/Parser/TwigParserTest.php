@@ -60,7 +60,7 @@ class TwigParserTest extends \PHPUnit\Framework\TestCase
                 new Node([]),
                 new Node([]),
                 new Node([]),
-                '',
+                [],
                 new Source('', '')
             ));
 

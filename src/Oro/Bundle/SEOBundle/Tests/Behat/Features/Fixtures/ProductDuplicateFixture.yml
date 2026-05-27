@@ -25,7 +25,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@name']
-            - addMetaTitl: ['@metaTitle']
+            - addMetaTitle: ['@metaTitle']
             - addMetaDescription: ['@metaDescription']
             - addMetaKeyword: ['@metaKeywords']
         inventoryStatus: '@enumInventoryStatuses'

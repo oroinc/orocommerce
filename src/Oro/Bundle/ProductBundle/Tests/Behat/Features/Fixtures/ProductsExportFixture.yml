@@ -23,7 +23,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@locvalue1']
-            - addMetaTitl: ['@metaTitle']
+            - addMetaTitle: ['@metaTitle']
             - addMetaDescription: ['@metaDescription']
             - addMetaKeyword: ['@metaKeywords']
             - addDescription: ['@description_value1']
