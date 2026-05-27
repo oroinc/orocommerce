@@ -40,7 +40,7 @@ class OrderMapper extends AbstractOrderMapper
             ->setTaxationAddress($this->getTaxationAddress($order))
             ->setContext($this->getContext($order))
             ->setCurrency($order->getCurrency())
-            ->setItems($this->mapLineItems($order->getLineItems()));//mapLineItems after getContext to preloadTaxCodes
+            ->setItems($this->mapLineItems($order->getLineItems())); //mapLineItems after getContext to preloadTaxCodes
 
         if ($order->getSubtotal()) {
             $taxable->setAmount($order->getSubtotal());

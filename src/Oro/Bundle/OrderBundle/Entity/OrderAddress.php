@@ -15,6 +15,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Component\DraftSession\Entity\DraftSessionAwareInterface;
+use Oro\Component\DraftSession\Entity\DraftSessionAwareTrait;
 
 /**
  * Represents billing and shipping address for an order.
@@ -35,11 +37,13 @@ class OrderAddress extends AbstractAddress implements
     ExtendEntityInterface,
     AddressPhoneAwareInterface,
     AddressBookAwareInterface,
-    AddressValidatedAtAwareInterface
+    AddressValidatedAtAwareInterface,
+    DraftSessionAwareInterface
 {
     use ExtendEntityTrait;
     use AddressBookAwareTrait;
     use AddressValidatedAtAwareTrait;
+    use DraftSessionAwareTrait;
 
     #[ORM\Column(name: 'from_external_source', type: Types::BOOLEAN, options: ['default' => false])]
     protected ?bool $fromExternalSource = false;

@@ -89,6 +89,7 @@ expectedResult:
                 taxAmount: '0'
                 adjustment: '0'
                 currency: 'USD'
+            taxes: []
     taxes:
         - { tax: 'TAX1', rate: '0.104', taxableAmount: '33.3', taxAmount: '3.46', currency: 'USD' }
         - { tax: 'TAX3', rate: '0.075', taxableAmount: '33.3', taxAmount: '2.5', currency: 'USD' }

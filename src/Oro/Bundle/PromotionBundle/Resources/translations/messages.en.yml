@@ -201,6 +201,9 @@ oro:
             line_item.label: Line Item
             order.label: Order
             promotion.label: Promotion
+            draft_session_uuid:
+                label: Draft Session UUID
+                description: The UUID of the draft session the applied discount belongs to.
 
         coupon:
             entity_label: Coupon
@@ -296,6 +299,9 @@ oro:
             promotion_data.label: Promotion Data
             applied_discounts.label: Applied Discounts
             order.label: Order
+            draft_session_uuid:
+                label: Draft Session UUID
+                description: The UUID of the draft session the applied promotion belongs to.
             table_columns:
                 code: Code
                 promotion: Promotion
@@ -320,6 +326,9 @@ oro:
             source_coupon_id.label: Source Coupon ID
             order.label: Order
             checkout.label: Checkout
+            draft_session_uuid:
+                label: Draft Session UUID
+                description: The UUID of the draft session the applied coupon belongs to.
 
     applied_discount:
         name: Name

@@ -201,14 +201,20 @@ class SearchProductKitListenerTest extends WebTestCase
                 'defaultDescription' => (string)$product6->getDefaultDescription(),
                 'defaultShortDescription' => (string)$product6->getDefaultShortDescription(),
                 'shortDescriptions' => (string)$product6->getDefaultShortDescription(),
-                'all_text' => 'product-6.names.default product 6 names default product-6 simple enabled '
-                    . 'product-6.descriptions.default descriptions product-6.shortDescriptions.default '
-                    . 'shortDescriptions Default In Stock',
+                'all_text' => 'product-6.names.default product 6 names default product-6 PRODUCT-6 PRODUCT simple ' .
+                    'enabled product-6.descriptions.default descriptions product-6.shortDescriptions.default ' .
+                    'shortDescriptions Default In Stock in_stock in stock',
                 'productType' => 'simple',
                 'productStatus' => 'enabled',
                 'productFamilyName' => 'Default',
                 'category' => '',
-                'inventoryStatus' => 'In Stock'
+                'skuUppercase' => 'PRODUCT-6',
+                'inventory_status' => 'In Stock',
+                'inventory_status_code' => 'in_stock'
+            ],
+            'datetime' => [
+                'createdAt' => $product6->getCreatedAt(),
+                'updatedAt' => $product6->getUpdatedAt(),
             ]
         ];
 
@@ -233,16 +239,22 @@ class SearchProductKitListenerTest extends WebTestCase
                 'sku' => $kit1->getSku(),
                 'defaultName' => $name,
                 'names' => $name,
-                'all_text' => 'PKSKU1 - Unit of Quantity Taken from Product Kit product-1.names.default '
-                    . 'product 1 names default product-1 simple enabled product-1.names.en_CA en CA '
-                    . 'product-1.descriptions.default descriptions product-1.shortDescriptions.default '
-                    . 'shortDescriptions product-1.shortDescriptions.en_CA Default In Stock '
-                    . 'with Single Item product-kit-1 kit',
+                'all_text' => 'PKSKU1 - Unit of Quantity Taken from Product Kit product-1.names.default product 1 ' .
+                    'names default product-1 PRODUCT-1 PRODUCT simple enabled product-1.names.en_CA en CA ' .
+                    'product-1.descriptions.default descriptions product-1.shortDescriptions.default ' .
+                    'shortDescriptions product-1.shortDescriptions.en_CA Default In Stock in_stock in stock ' .
+                    'with Single Item product-kit-1 kit PRODUCT-KIT-1 KIT',
                 'productType' => 'kit',
                 'productStatus' => 'enabled',
                 'productFamilyName' => 'Default',
                 'category' => '',
-                'inventoryStatus' => 'In Stock'
+                'skuUppercase' => 'PRODUCT-KIT-1',
+                'inventory_status_code' => 'in_stock',
+                'inventory_status' => 'In Stock'
+            ],
+            'datetime' => [
+                'createdAt' => $kit1->getCreatedAt(),
+                'updatedAt' => $kit1->getUpdatedAt(),
             ]
         ];
 
@@ -268,12 +280,19 @@ class SearchProductKitListenerTest extends WebTestCase
                 'sku' => $kit1->getSku(),
                 'defaultName' => $name,
                 'names' => $name,
-                'all_text' => 'Product Kit with Single Item product-kit-1 product kit 1 enabled Default In Stock',
+                'all_text' => 'Product Kit with Single Item product-kit-1 product kit 1 PRODUCT-KIT-1 PRODUCT KIT ' .
+                    'enabled Default In Stock in_stock in stock',
                 'productType' => 'kit',
                 'productStatus' => 'enabled',
                 'productFamilyName' => 'Default',
                 'category' => '',
-                'inventoryStatus' => 'In Stock'
+                'inventory_status_code' => 'in_stock',
+                'skuUppercase' => 'PRODUCT-KIT-1',
+                'inventory_status' => 'In Stock'
+            ],
+            'datetime' => [
+                'createdAt' => $kit1->getCreatedAt(),
+                'updatedAt' => $kit1->getUpdatedAt(),
             ]
         ];
 

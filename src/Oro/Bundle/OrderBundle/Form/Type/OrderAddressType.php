@@ -14,6 +14,7 @@ use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
+use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -96,24 +97,37 @@ class OrderAddressType extends AbstractType
 
     private function getOnPreSetDataClosure(): \Closure
     {
-        return static function (FormEvent $event) {
+        return function (FormEvent $event) {
             // Sets the previously selected address in the customer address drop-down.
+            /** @var OrderAddress $orderAddress */
             $orderAddress = $event->getData();
             if ($orderAddress === null) {
-                $data = null;
+                $customerAddress = null;
             } elseif ($orderAddress->getCustomerAddress()) {
-                $data = $orderAddress->getCustomerAddress();
+                $customerAddress = $orderAddress->getCustomerAddress();
             } elseif ($orderAddress->getCustomerUserAddress()) {
-                $data = $orderAddress->getCustomerUserAddress();
+                $customerAddress = $orderAddress->getCustomerUserAddress();
             } else {
-                $data = OrderAddressSelectType::ENTER_MANUALLY;
+                $customerAddress = OrderAddressSelectType::ENTER_MANUALLY;
+            }
+
+            $form = $event->getForm();
+
+            // Sets default address from the customer address drop-down if the order address is empty.
+            if ($orderAddress === null) {
+                /** @var TypedOrderAddressCollection $addressCollection */
+                $addressCollection = $form->get('customerAddress')->getConfig()->getOption('address_collection');
+                $customerAddress = $addressCollection->getDefaultAddress();
+                if ($customerAddress !== null) {
+                    $event->setData($this->orderAddressManager->updateFromAbstract($customerAddress, $orderAddress));
+                }
             }
 
             FormUtils::replaceFieldOptionsRecursive(
-                $event->getForm(),
+                $form,
                 'customerAddress',
                 [
-                    'data' => $data,
+                    'data' => $customerAddress,
                 ]
             );
         };
@@ -133,7 +147,7 @@ class OrderAddressType extends AbstractType
         return function (FormEvent $event) {
             $customerAddressData = $event->getData()['customerAddress'] ?? null;
 
-            $this->doDisableFields($event, (string) $customerAddressData);
+            $this->doDisableFields($event, (string)$customerAddressData);
         };
     }
 
@@ -149,13 +163,11 @@ class OrderAddressType extends AbstractType
                 continue;
             }
 
-            if (!$isManualEditGranted || !$isNewAddress) {
-                FormUtils::replaceFieldOptionsRecursive(
-                    $event->getForm(),
-                    $child->getName(),
-                    ['disabled' => true]
-                );
-            }
+            FormUtils::replaceFieldOptionsRecursive(
+                $event->getForm(),
+                $child->getName(),
+                ['disabled' => !$isManualEditGranted || !$isNewAddress]
+            );
         }
     }
 

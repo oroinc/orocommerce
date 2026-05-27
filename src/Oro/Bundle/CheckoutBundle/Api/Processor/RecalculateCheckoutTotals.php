@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Api\Processor;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
+use Oro\Bundle\ApiBundle\Form\FormUtil;
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
@@ -76,7 +77,7 @@ class RecalculateCheckoutTotals implements ProcessorInterface
     {
         $form = $context->findForm($entity);
 
-        return null === $form || $form->isValid();
+        return null === $form || FormUtil::isValid($form);
     }
 
     private function isLineItemsValid(

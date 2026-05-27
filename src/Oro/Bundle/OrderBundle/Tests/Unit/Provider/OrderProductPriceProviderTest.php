@@ -227,4 +227,58 @@ class OrderProductPriceProviderTest extends TestCase
 
         self::assertSame($productPrices, $this->provider->getProductPrices($order));
     }
+
+    public function testGetProductPricesForLineItemsWithEmptyLineItems(): void
+    {
+        $this->productPriceProvider
+            ->expects(self::never())
+            ->method(self::anything());
+
+        $this->priceScopeCriteriaFactory
+            ->expects(self::never())
+            ->method(self::anything());
+
+        self::assertSame([], $this->provider->getProductPricesForLineItems(new Order(), []));
+    }
+
+    public function testGetProductPricesForLineItemsWithNoLineItemsWithProducts(): void
+    {
+        $this->productPriceProvider
+            ->expects(self::never())
+            ->method(self::anything());
+
+        $this->priceScopeCriteriaFactory
+            ->expects(self::never())
+            ->method(self::anything());
+
+        self::assertSame([], $this->provider->getProductPricesForLineItems(new Order(), [new OrderLineItem()]));
+    }
+
+    public function testGetProductPricesForLineItemsWithSpecificLineItems(): void
+    {
+        $product = (new ProductStub())->setId(42);
+        $lineItem = (new OrderLineItem())
+            ->setProduct($product);
+
+        $order = (new Order())
+            ->setCurrency('USD');
+
+        $scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+        $this->priceScopeCriteriaFactory
+            ->expects(self::once())
+            ->method('createByContext')
+            ->with($order)
+            ->willReturn($scopeCriteria);
+
+        $productPrice1 = $this->createMock(ProductPriceInterface::class);
+        $productPrice2 = $this->createMock(ProductPriceInterface::class);
+        $productPrices = [$product->getId() => [$productPrice1, $productPrice2]];
+        $this->productPriceProvider
+            ->expects(self::once())
+            ->method('getPricesByScopeCriteriaAndProducts')
+            ->with($scopeCriteria, [$product], ['USD'])
+            ->willReturn($productPrices);
+
+        self::assertSame($productPrices, $this->provider->getProductPricesForLineItems($order, [$lineItem]));
+    }
 }

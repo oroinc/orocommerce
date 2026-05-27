@@ -105,26 +105,12 @@ services:
         tags:
             - { name: form.type_extension }
 
-    oro_rfp.form.type.extension.order_line_item_data_storage:
-        class: 'Oro\Bundle\RFPBundle\Form\Extension\OrderLineItemDataStorageExtension'
+    oro_rfp.form.type.extension.order_line_item_draft_offers:
+        class: 'Oro\Bundle\RFPBundle\Form\Extension\OrderLineItemDraftOffersExtension'
         arguments:
-            - "@request_stack"
-            - "@oro_rfp.storage.offers_data_storage"
-            - "@oro_rfp.storage.offers_form_storage"
-        tags:
-            - { name: form.type_extension, alias: oro_order_line_item, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType, priority: 5 }
-            - { name: oro_featuretogle.feature, feature: rfp }
-
-    oro_rfp.form.type.extension.order_data_storage:
-        class: 'Oro\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension'
-        arguments:
-            - '@request_stack'
-            - '@oro_pricing.provider.product_price'
-            - '@oro_pricing.model.product_price_scope_criteria_factory'
-            - '@oro_pricing.product_price_criteria_factory'
+            - '@oro_rfp.provider.offers_from_request_product'
         tags:
             - { name: form.type_extension }
-            - { name: oro_featuretogle.feature, feature: rfp }
 
     oro_rfp.form.type.request_offers:
         class: 'Oro\Bundle\RFPBundle\Form\Type\OffersType'

@@ -13,32 +13,23 @@ use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
-class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
+class SubtotalSubscriberTest extends TestCase
 {
-    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $totalProvider;
+    private TotalProcessorProvider&MockObject $totalProvider;
 
-    /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $lineItemSubtotalProvider;
+    private LineItemSubtotalProvider&MockObject $lineItemSubtotalProvider;
 
-    /** @var DiscountSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $discountSubtotalProvider;
+    private DiscountSubtotalProvider&MockObject $discountSubtotalProvider;
 
-    /** @var PriceMatcher|\PHPUnit\Framework\MockObject\MockObject */
-    private $priceMatcher;
+    private PriceMatcher&MockObject $priceMatcher;
 
-    /** @var RateConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $rateConverter;
-
-    /** @var OrderLineItemCurrencyHandler|\PHPUnit\Framework\MockObject\MockObject */
-    private $currencyHandler;
-
-    /** @var SubtotalSubscriber */
-    private $subscriber;
+    private SubtotalSubscriber $subscriber;
 
     #[\Override]
     protected function setUp(): void
@@ -47,36 +38,162 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
         $this->discountSubtotalProvider = $this->createMock(DiscountSubtotalProvider::class);
         $this->priceMatcher = $this->createMock(PriceMatcher::class);
-        $this->rateConverter = $this->createMock(RateConverterInterface::class);
-        $this->currencyHandler = $this->createMock(OrderLineItemCurrencyHandler::class);
+        $rateConverter = $this->createMock(RateConverterInterface::class);
+        $currencyHandler = $this->createMock(OrderLineItemCurrencyHandler::class);
 
         $totalHelper = new TotalHelper(
             $this->totalProvider,
             $this->lineItemSubtotalProvider,
             $this->discountSubtotalProvider,
-            $this->rateConverter
+            $rateConverter
         );
-        $this->subscriber = new SubtotalSubscriber($totalHelper, $this->priceMatcher, $this->currencyHandler);
+        $this->subscriber = new SubtotalSubscriber($totalHelper, $this->priceMatcher, $currencyHandler);
     }
 
     public function testGetSubscribedEvents(): void
     {
-        $this->assertEquals(
+        self::assertEquals(
             [
-                FormEvents::SUBMIT => 'onSubmitEventListener'
+                FormEvents::PRE_SET_DATA => 'onPreSetDataEventListener',
+                FormEvents::SUBMIT => 'onSubmitEventListener',
             ],
             SubtotalSubscriber::getSubscribedEvents()
         );
     }
 
+    public function testOnPreSetDataEventListenerOnNotOrder(): void
+    {
+        $event = $this->createMock(FormEvent::class);
+        $event->expects(self::once())
+            ->method('getForm');
+        $event->expects(self::once())
+            ->method('getData');
+
+        $this->subscriber->onPreSetDataEventListener($event);
+    }
+
+    public function testOnPreSetDataEventListenerOnOrderEmptyTotals(): void
+    {
+        $order = $this->prepareOrder();
+
+        $subForm = $this->createMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
+        $form->expects(self::once())
+            ->method('has')
+            ->with('lineItems')
+            ->willReturn(true);
+        $form->expects(self::once())
+            ->method('get')
+            ->with('lineItems')
+            ->willReturn($subForm);
+
+        $event = $this->createMock(FormEvent::class);
+        $event->expects(self::once())
+            ->method('getForm')
+            ->willReturn($form);
+        $event->expects(self::once())
+            ->method('getData')
+            ->willReturn($order);
+
+        $this->lineItemSubtotalProvider->expects(self::once())
+            ->method('getSubtotal')
+            ->willReturn(new Subtotal());
+
+        $this->totalProvider->expects(self::once())
+            ->method('enableRecalculation')
+            ->willReturnSelf();
+
+        $this->totalProvider->expects(self::once())
+            ->method('getTotal')
+            ->with($order)
+            ->willReturn(new Subtotal());
+
+        $this->discountSubtotalProvider->expects(self::once())
+            ->method('getSubtotal')
+            ->willReturn([]);
+
+        $this->subscriber->onPreSetDataEventListener($event);
+        self::assertEquals(0, $order->getTotal());
+        self::assertEquals(0, $order->getSubtotal());
+        self::assertEquals(0, $order->getTotalDiscounts()->getValue());
+    }
+
+    public function testOnPreSetDataEventListenerOnOrder(): void
+    {
+        $order = $this->prepareOrder();
+
+        $subForm = $this->createMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
+        $form->expects(self::once())
+            ->method('has')
+            ->with('lineItems')
+            ->willReturn(true);
+        $form->expects(self::once())
+            ->method('get')
+            ->with('lineItems')
+            ->willReturn($subForm);
+
+        $event = $this->createMock(FormEvent::class);
+        $event->expects(self::once())
+            ->method('getForm')
+            ->willReturn($form);
+        $event->expects(self::once())
+            ->method('getData')
+            ->willReturn($order);
+
+        $this->prepareProviders();
+
+        $this->subscriber->onPreSetDataEventListener($event);
+        self::assertEquals(90, $order->getTotal());
+        self::assertEquals(42, $order->getSubtotal());
+        self::assertEquals(2, $order->getTotalDiscounts()->getValue());
+        $discounts = $order->getDiscounts();
+        self::assertEquals(10.00, $discounts[0]->getPercent());
+    }
+
+    public function testOnPreSetDataEventListenerOnIncorrectOrderTotal(): void
+    {
+        $order = $this->prepareOrder();
+        $order->getTotalObject()->setValue(89.00);
+        $order->setSerializedData(['precalculatedTotal' => 90.00]);
+
+        $subForm = $this->createMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
+        $form->expects(self::once())
+            ->method('has')
+            ->with('lineItems')
+            ->willReturn(true);
+        $form->expects(self::once())
+            ->method('get')
+            ->with('lineItems')
+            ->willReturn($subForm);
+
+        $event = $this->createMock(FormEvent::class);
+        $event->expects(self::once())
+            ->method('getForm')
+            ->willReturn($form);
+        $event->expects(self::once())
+            ->method('getData')
+            ->willReturn($order);
+
+        $this->prepareProviders();
+
+        $this->subscriber->onPreSetDataEventListener($event);
+        self::assertEquals(89, $order->getTotal());
+        self::assertEquals(42, $order->getSubtotal());
+        self::assertEquals(2, $order->getTotalDiscounts()->getValue());
+        $discounts = $order->getDiscounts();
+        self::assertEquals(10.00, $discounts[0]->getPercent());
+    }
+
     public function testOnSubmitEventListenerOnNotOrder(): void
     {
         $event = $this->createMock(FormEvent::class);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getForm');
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getData');
-        $event->expects($this->never())
+        $event->expects(self::never())
             ->method('setData');
 
         $this->subscriber->onSubmitEventListener($event);
@@ -87,27 +204,27 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
         $order = $this->prepareOrder();
         $event = $this->prepareEvent($order);
 
-        $this->lineItemSubtotalProvider->expects($this->any())
+        $this->lineItemSubtotalProvider->expects(self::any())
             ->method('getSubtotal')
             ->willReturn(new Subtotal());
 
-        $this->totalProvider->expects($this->once())
+        $this->totalProvider->expects(self::once())
             ->method('enableRecalculation')
             ->willReturnSelf();
 
-        $this->totalProvider->expects($this->any())
+        $this->totalProvider->expects(self::any())
             ->method('getTotal')
             ->with($order)
             ->willReturn(new Subtotal());
 
-        $this->discountSubtotalProvider->expects($this->any())
+        $this->discountSubtotalProvider->expects(self::any())
             ->method('getSubtotal')
             ->willReturn([]);
 
         $this->subscriber->onSubmitEventListener($event);
-        $this->assertEquals(0, $order->getTotal());
-        $this->assertEquals(0, $order->getSubtotal());
-        $this->assertEquals(0, $order->getTotalDiscounts()->getValue());
+        self::assertEquals(0, $order->getTotal());
+        self::assertEquals(0, $order->getSubtotal());
+        self::assertEquals(0, $order->getTotalDiscounts()->getValue());
     }
 
     public function testOnSubmitEventListenerOnOrder(): void
@@ -117,11 +234,11 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->prepareProviders();
 
         $this->subscriber->onSubmitEventListener($event);
-        $this->assertEquals(90, $order->getTotal());
-        $this->assertEquals(42, $order->getSubtotal());
-        $this->assertEquals(2, $order->getTotalDiscounts()->getValue());
+        self::assertEquals(90, $order->getTotal());
+        self::assertEquals(42, $order->getSubtotal());
+        self::assertEquals(2, $order->getTotalDiscounts()->getValue());
         $discounts = $order->getDiscounts();
-        $this->assertEquals(10.00, $discounts[0]->getPercent());
+        self::assertEquals(10.00, $discounts[0]->getPercent());
     }
 
     public function testOnSubmitEventListenerOnIncorrectOrderTotal(): void
@@ -133,11 +250,11 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->prepareProviders();
 
         $this->subscriber->onSubmitEventListener($event);
-        $this->assertEquals(89, $order->getTotal());
-        $this->assertEquals(42, $order->getSubtotal());
-        $this->assertEquals(2, $order->getTotalDiscounts()->getValue());
+        self::assertEquals(89, $order->getTotal());
+        self::assertEquals(42, $order->getSubtotal());
+        self::assertEquals(2, $order->getTotalDiscounts()->getValue());
         $discounts = $order->getDiscounts();
-        $this->assertEquals(10.00, $discounts[0]->getPercent());
+        self::assertEquals(10.00, $discounts[0]->getPercent());
     }
 
     public function prepareProviders(): void
@@ -162,22 +279,22 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
         $total->setType(TotalProcessorProvider::TYPE);
         $total->setAmount($totalAmount);
 
-        $this->lineItemSubtotalProvider->expects($this->any())
+        $this->lineItemSubtotalProvider->expects(self::any())
             ->method('getSubtotal')
             ->willReturn($subtotal);
 
-        $this->discountSubtotalProvider->expects($this->any())
+        $this->discountSubtotalProvider->expects(self::any())
             ->method('getSubtotal')
             ->willReturn([$discountSubtotal, $discountSubtotal2]);
 
-        $this->priceMatcher->expects($this->any())
+        $this->priceMatcher->expects(self::any())
             ->method('addMatchingPrices');
 
-        $this->totalProvider->expects($this->any())
+        $this->totalProvider->expects(self::any())
             ->method('enableRecalculation')
             ->willReturnSelf();
 
-        $this->totalProvider->expects($this->any())
+        $this->totalProvider->expects(self::any())
             ->method('getTotal')
             ->willReturn($total);
     }
@@ -198,25 +315,25 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
         $form = $this->createMock(FormInterface::class);
 
         $event = $this->createMock(FormEvent::class);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getForm')
             ->willReturn($form);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('setData');
 
-        $form->expects($this->exactly(2))
+        $form->expects(self::exactly(2))
             ->method('has')
             ->willReturn(true);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getData')
             ->willReturn($order);
 
         $subForm = $this->createMock(FormInterface::class);
-        $subForm->expects($this->once())
+        $subForm->expects(self::once())
             ->method('submit')
             ->willReturnSelf();
 
-        $form->expects($this->any())
+        $form->expects(self::any())
             ->method('get')
             ->willReturnMap([
                 ['lineItems', $subForm],

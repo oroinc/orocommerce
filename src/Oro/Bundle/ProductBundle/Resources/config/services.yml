@@ -63,7 +63,6 @@ services:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
-            - { name: container.service_subscriber, id: oro_product.formatter.unit_precision_label, key: Oro\Bundle\ProductBundle\Formatter\UnitPrecisionLabelFormatter }
 
     oro_product.twig.product_form_unit_fields_settings:
         class: Oro\Bundle\ProductBundle\Twig\ProductUnitFieldsSettingsExtension
@@ -1940,6 +1939,8 @@ services:
 
     oro_product.event_listener.product_preloading:
         parent: oro_entity.event_listener.default_preloading
+        calls:
+            - [ setStopPropagation, [ true ] ]
         tags:
             - { name: kernel.event_listener, event: oro_entity.preload_entity.product, method: onPreload }
             - { name: kernel.event_listener, event: oro_entity.preload_entity.productimage, method: onPreload }

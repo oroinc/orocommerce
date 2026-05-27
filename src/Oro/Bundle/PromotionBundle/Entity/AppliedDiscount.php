@@ -11,6 +11,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Component\DraftSession\Entity\DraftSessionAwareInterface;
+use Oro\Component\DraftSession\Entity\DraftSessionAwareTrait;
 
 /**
  * Represents a discount applied to order line item.
@@ -22,10 +24,12 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 #[Config]
 class AppliedDiscount implements
     DatesAwareInterface,
-    ExtendEntityInterface
+    ExtendEntityInterface,
+    DraftSessionAwareInterface
 {
     use DatesAwareTrait;
     use ExtendEntityTrait;
+    use DraftSessionAwareTrait;
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]

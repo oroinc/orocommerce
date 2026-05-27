@@ -515,6 +515,21 @@ services:
         tags:
             - { name: 'kernel.event_listener', event: 'Oro\Bundle\PaymentBundle\Event\PaymentStatusUpdatedEvent', method: 'onPaymentStatusUpdated' }
 
+    oro_order.event_listener.webhook.order_payment_status_topic:
+        class: Oro\Bundle\OrderBundle\EventListener\Webhook\OrderPaymentStatusWebhookTopicListener
+        arguments:
+            - '@oro_integration.webhook_configuration_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_integration.webhook_topic_collect, method: onWebhookTopicCollect }
+
+    oro_order.event_listener.webhook.order_payment_status:
+        class: Oro\Bundle\OrderBundle\EventListener\Webhook\OrderPaymentStatusWebhookListener
+        arguments:
+            - '@oro_payment.webhook.payment_status_notifier'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.event.transaction_complete, method: onTransactionComplete }
+
     oro_order.order.listener.orm.reindex_product_line_item_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductLineItemListener'
         public: false
@@ -702,6 +717,13 @@ services:
         tags:
             - { name: doctrine.repository_service }
 
+    Oro\Bundle\OrderBundle\Entity\Repository\OrderLineItemRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            $entityClass: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
+        tags:
+            - { name: doctrine.repository_service }
+
     oro_order.product_kit.factory.order_product_kit_item_line_item:
         class: Oro\Bundle\OrderBundle\ProductKit\Factory\OrderProductKitItemLineItemFactory
         arguments:
@@ -806,6 +828,7 @@ services:
         class: Oro\Bundle\OrderBundle\Provider\OrderDuplicator
         arguments:
             - '@oro_action.factory.duplicator_factory'
+            - '@event_dispatcher'
 
     oro_order.event_listener.recalculate_totals:
         class: Oro\Bundle\OrderBundle\EventListener\Order\RecalculateOrdersOnSave
@@ -907,3 +930,19 @@ services:
                 - !php/const Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses::PENDING
                 - !php/const Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses::DECLINED
                 - !php/const Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses::CANCELED
+
+    oro_order.provider.order_line_item_tier_prices:
+        class: Oro\Bundle\OrderBundle\Provider\OrderLineItemTierPricesProvider
+        arguments:
+            - '@oro_order.provider.order_product_price'
+            - '@oro_pricing.provider.product_line_item_product_price'
+
+    oro_order.form.handler.order:
+        class: Oro\Bundle\OrderBundle\Form\Handler\OrderFormHandler
+        arguments:
+            - '@doctrine'
+            - '@oro_order.draft_session.isolator.non_draft_entities_entity_manager_isolator'
+            - '@oro_form.event.event_dispatcher'
+
+    Oro\Bundle\OrderBundle\Form\Handler\OrderFormHandler:
+        alias: oro_order.form.handler.order

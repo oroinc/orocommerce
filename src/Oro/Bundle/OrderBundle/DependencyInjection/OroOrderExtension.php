@@ -20,12 +20,15 @@ class OroOrderExtension extends Extension
         $loader->load('services.yml');
         $loader->load('services_api.yml');
         $loader->load('services_pdf_document.yml');
+        $loader->load('services_order_draft.yml');
         $loader->load('form_types.yml');
         $loader->load('block_types.yml');
         $loader->load('controllers.yml');
+        $loader->load('commands.yml');
         $loader->load('address_validation.yml');
         $loader->load('importexport.yml');
         $loader->load('mq_topics.yml');
+        $loader->load('mq_processors.yml');
 
         if ('test' === $container->getParameter('kernel.environment')) {
             $loader->load('services_test.yml');

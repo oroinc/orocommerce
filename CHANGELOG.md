@@ -4,6 +4,7 @@ The current file describes significant changes in the code that may affect the u
 
 ## Changes in the Commerce package versions
 
+- [7.0.0](#700-2026-03-31)
 - [6.1.0](#610-2025-03-31)
 - [6.0.0](#600-2024-03-30)
 - [5.1.0](#510-2023-03-31)
@@ -24,6 +25,59 @@ The current file describes significant changes in the code that may affect the u
 - [1.1.0](#110-2017-03-31)
 
 ## UNRELEASED
+
+### Added
+
+#### OrderBundle
+* Added **Order Edit Draft Session** — the order edit page now uses a datagrid-based editing experience for line items instead of the previous embedded form collection. When editing an order, a draft copy is created in a separate draft session; changes are synced back to the original order on save.
+  * `\Oro\Bundle\OrderBundle\Entity\Order` now implements `\Oro\Component\DraftSession\Entity\EntityDraftAwareInterface`; new fields: `draftSessionUuid` (GUID), `draftSource` (self-referencing ManyToOne), `drafts` (OneToMany).
+  * `\Oro\Bundle\OrderBundle\Entity\OrderLineItem` now implements `\Oro\Component\DraftSession\Entity\EntityDraftSoftDeleteAwareInterface`; new fields: `draftSessionUuid` (GUID), `draftSource` (self-referencing ManyToOne), `drafts` (OneToMany), `draftDelete` (boolean, default `false`).
+  * Added `order-line-items-edit-grid` datagrid that joins source line items with their draft copies and displays the merged state.
+  * Added draft line item CRUD controllers under `Controller\DraftSession\` namespace: `OrderLineItemDraftCreateController`, `OrderLineItemDraftUpdateController`, `OrderLineItemDraftDeleteController`, `OrderLineItemDraftMassUpdateController`, and `OrderLineItemDraftCalculateTaxesAndDiscountsController`.
+  * Added `\Oro\Bundle\OrderBundle\DraftSession\Manager\OrderDraftManager` — contains methods for creating and managing order draft session entities.
+  * Added `\Oro\Bundle\OrderBundle\DraftSession\OrderDraftSynchronizer` and specialized synchronizers (`OrderAddressAwareOrderDraftSynchronizer`, `OrderDiscountAwareOrderDraftSynchronizer`, `PaymentTermAwareOrderDraftSynchronizer`, `RecalculateTotalsOrderDraftSynchronizer`) that handle syncing specific order fields between the draft and the original.
+  * Added `\Oro\Bundle\OrderBundle\DraftSession\Factory\OrderDraftFactory` and `\Oro\Bundle\OrderBundle\DraftSession\Factory\OrderLineItemDraftFactory` — create draft copies of orders and line items with proper field mapping.
+  * Added `\Oro\Bundle\OrderBundle\Form\Type\OrderLineItemDraftType` — standalone form type for editing a single draft line item.
+  * Added `\Oro\Bundle\OrderBundle\Form\Handler\OrderFormHandler` — replaces the default form handler for the order update action; coordinates draft-to-order synchronization on save.
+  * Added `\Oro\Bundle\OrderBundle\Form\Extension\OrderDraftSyncExtension` — form type extension for `OrderType` that triggers order draft sync on form submission when the `draft_session_sync` option is `true`.
+  * Added `\Oro\Bundle\OrderBundle\Form\Extension\ValidateOrderLineItemDraftExtension` — validates all draft line items on order form submission and prevents saving if any draft has validation errors.
+  * Added `\Oro\Bundle\OrderBundle\Form\Extension\RemoveLineItemsFromOrderTypeExtension` — removes the `lineItems` field from `OrderType` because line items are now managed through the datagrid. **Customizations that relied on the `lineItems` sub-form within `OrderType` must be updated.**
+  * Added `\Oro\Bundle\OrderBundle\Provider\OrderLineItemTierPricesProvider` — provides tier price lists for order line items to display in the draft form.
+  * Added `\Oro\Bundle\OrderBundle\Event\OrderDuplicateAfterEvent` — dispatched after `OrderDuplicator::duplicate()` completes, allowing extensions to post-process the duplicated order.
+  * Added `\Oro\Bundle\OrderBundle\Async\Topic\OrderDraftsCleanupTopic` and `\Oro\Bundle\OrderBundle\Command\OrderDraftsCleanupCommand` (`oro:cron:draft-session:cleanup:order`) — message queue topic and CLI command for removing stale draft orders that were abandoned without saving.
+  * Added frontend JS modules: `draft-order-datagrid-plugin` (manages draft grid row rendering, inline editing, and action handling), `order-line-item-draft-form-view` (renders the inline draft edit form), `order-line-item-draft-create-widget` / `order-line-item-draft-update-widget` (create/update form widget), `order-line-item-draft-discounts-taxes-view` (expandable per-line-item tax & discount details), `line-items-datagrid-presentation-plugin` (toggles between grid and presentation views).
+* Added `\Oro\Bundle\OrderBundle\Pricing\OrderLineItemIsPriceOverriddenCalculator` — determines whether the price set on an `OrderLineItem` differs from the matched tier price.
+
+#### RFPBundle
+* Added **RFQ-to-Order draft session integration** — the `oro_rfp_request_create_order` action can now create an `Order` draft directly from a `Request For Quote`, using the draft session component. The draft is pre-populated with the RFQ's customer, currency, addresses, line items, and matched prices.
+  * Added `\Oro\Bundle\RFPBundle\DraftSession\Factory\OrderDraftFromRfqFactory` — creates an `Order` draft from a `Request`, copying organization, owner, customer, customer user, PO number, website, currency, ship-until date, customer notes, and source entity reference.
+  * Added `\Oro\Bundle\RFPBundle\DraftSession\Factory\OrderLineItemDraftFromRfqFactory` — creates `OrderLineItem` drafts from `RequestProduct` entities, copying product, SKU, primary unit, quantity, comment, kit item line items, and the `requestProduct` back-reference extended field. When the referenced product has been deleted, the line item is created as a free-form item with the original SKU and product unit, and a zero placeholder price.
+  * Added a nullable `requestProduct` many-to-one extended relation from `OrderLineItem` to `RequestProduct` (column `requestproduct_id`, `ON DELETE SET NULL`, hidden from UI, datagrid, audit, and import/export).
+  * Added `\Oro\Bundle\RFPBundle\DraftSession\RequestProductAwareOrderLineItemDraftSynchronizer` — synchronizes the `requestProduct` extended field between source and draft `OrderLineItem` during draft sync operations.
+  * Added `\Oro\Bundle\RFPBundle\Form\Extension\OrderLineItemDraftOffersExtension` — extends `OrderLineItemDraftType` to expose an `offers` field (pre-filtered to the order draft's currency) when the line item is linked to an RFQ `RequestProduct`.
+
+### Changed
+
+#### RFPBundle
+* Updated `oro_rfp_request_create_order` action to use `oro_rfp.operation.create_order_draft_from_rfq` service to create an order draft instead of pre-filling the order form via order data storage extension.
+* `\Oro\Bundle\RFPBundle\Entity\Request` now implements `\Oro\Component\DraftSession\Entity\EntityDraftAwareInterface` and `\Oro\Bundle\CurrencyBundle\Entity\WebsiteBasedCurrencyAwareInterface` to support use as a draft source entity in the RFQ-to-Order draft flow.
+* `\Oro\Bundle\RFPBundle\Entity\RequestProduct` now implements `\Oro\Component\DraftSession\Entity\EntityDraftAwareInterface` to support use as a draft source entity.
+
+#### OrderBundle
+* Updated `\Oro\Bundle\OrderBundle\Provider\OrderLineItemTierPricesProvider` — added `getTierPricesForLineItems(array $orderLineItems)` method that retrieves tier prices for multiple order line items using a single price-storage query.
+
+#### TaxBundle
+* Added to `\Oro\Bundle\OrderBundle\Entity\OrderLineItem` the `freeFormTaxCode` extended field to store the tax code for free-form line items that don't have a product relation.
+* Added `\Oro\Bundle\TaxBundle\Form\Extension\OrderLineItemDraftTypeTaxExtension` — extends `OrderLineItemDraftType` with a `freeFormTaxCode` field so users can assign a tax code to free-form line items during draft editing.
+
+### Removed
+
+#### RFPBundle
+* Removed session-based RFQ-to-order prefill storage APIs: `\Oro\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension`, `\Oro\Bundle\RFPBundle\Form\Extension\OrderLineItemDataStorageExtension`, `\Oro\Bundle\RFPBundle\Storage\RequestToOrderDataStorage`, `\Oro\Bundle\RFPBundle\Storage\OffersDataStorage`, and `\Oro\Bundle\RFPBundle\Storage\OffersFormStorage`.
+  Customizations that depended on these storage services should switch to the draft-session RFQ order creation flow (`oro_rfp.operation.create_order_draft_from_rfq`).
+
+## 7.0.0 (2026-03-31)
+[Show detailed list of changes](incompatibilities-7-0.md)
 
 ### Added
 
@@ -152,6 +206,33 @@ The current file describes significant changes in the code that may affect the u
 #### OrderBundle
 * Updated `Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository` by removing the required `$customerId` argument from the `getOrdersPurchaseVolume` and `getOrdersPurchaseVolumeQueryBuilder` methods.
 * Changed the order total amount label appearance on the order view back-office page.
+* **The order edit page now uses a datagrid (`order-line-items-edit-grid`) for line item management instead of the embedded form collection.** The `lineItems` sub-form is removed from `OrderType` by `RemoveLineItemsFromOrderTypeExtension`. Customizations that added fields or listeners to the `lineItems` collection form must be migrated to the datagrid-based draft editing workflow.
+* Changed `\Oro\Bundle\OrderBundle\Controller\OrderController`: all create/update/reorder routes now accept an optional `{orderDraftSessionUuid}` path parameter (e.g. `/update/{id}/{orderDraftSessionUuid?}`). The `update()` method now passes `OrderFormHandler` and sets `'draft_session_sync' => true` in form options.
+* Changed `\Oro\Bundle\OrderBundle\Controller\AjaxOrderController`: `entryPointAction` and `suborderEntryPointAction` routes now accept an `{orderDraftSessionUuid}` parameter.
+* Changed `\Oro\Bundle\OrderBundle\Form\Type\OrderType`: billing and shipping address fields are now added separately via `addBillingAddress()` / `addShippingAddress()` with a `PRE_SET_DATA` listener that re-binds the `order` option to the actual form data (draft order). Added a `recalculationRequired` hidden field.
+* Changed `\Oro\Bundle\OrderBundle\Form\Type\SubOrderType`: shipping address is now added via `addShippingAddress()` with a `PRE_SET_DATA` listener. Added a `recalculationRequired` hidden field.
+* Changed `\Oro\Bundle\OrderBundle\Form\Type\OrderAddressType`: the `PRE_SET_DATA` listener now auto-selects the default address from the address collection when the order address is `null`, and populates the form data via `OrderAddressManager::updateFromAbstract()`. Address fields are now always toggled via `FormUtils::replaceFieldOptionsRecursive()` with a computed `disabled` value instead of conditionally skipping the call.
+* Changed `\Oro\Bundle\OrderBundle\Provider\OrderDuplicator`: constructor now requires `EventDispatcherInterface` as the second argument. Line items are now duplicated individually (not as part of the order's collection filter) to properly handle the `orders`, `drafts`, and `Price` object relations. The duplicated order's extended entity storage is cleared. `OrderDuplicateAfterEvent` is dispatched after duplication completes.
+* Changed `\Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber`: now subscribes to `PRE_SET_DATA` in addition to `SUBMIT`; on `PRE_SET_DATA`, it pre-fills totals by resetting line item prices, re-matching prices via `PriceMatcher`, and calling `TotalHelper::fill()`.
+* Changed `\Oro\Bundle\OrderBundle\Entity\Order`: `setShippingMethod()` and `setShippingMethodType()` no longer cast the value to `(string)` — they now accept `null`, which is needed when resetting shipping on a draft order.
+* Changed `oroorder/js/app/components/entry-point-component`: hardcoded `[data-entry-point-trigger]` selectors are now configurable via `triggerSelector` and `skipTriggerSelector` options. Added `recalculationRequiredSelector` / `recalculationRequiredField` options and `isRecalculationRequired()` / `setRecalculationRequired()` methods — the component now tracks whether the field that triggered the entry-point request requires a full recalculation (subtotals, shipping cost, etc.) and passes this flag via the `recalculationRequired` hidden form field.
+
+#### PromotionBundle
+* Changed `\Oro\Bundle\PromotionBundle\EventListener\OrderAppliedPromotionEventListener`: now also renders the `@OroPromotion/Order/applied_coupons.html.twig` template and adds an `appliedCoupons` key to the event data, in addition to the existing `appliedPromotions`.
+* Changed `\Oro\Bundle\PromotionBundle\EventListener\AppliedCouponEntityListener`: now skips coupon usage tracking (`CouponUsageManager::createCouponUsage()`) when the order has a `draftSessionUuid` set, because draft orders are not completed orders.
+* Changed `\Oro\Bundle\PromotionBundle\EventListener\OrderEntityListener`: now skips `AppliedPromotionManager::createAppliedPromotions()` when the order has a `draftSessionUuid` set, to prevent promotions from being applied to draft copies.
+* Changed `\Oro\Bundle\PromotionBundle\Form\Type\AppliedCouponCollectionType`: constructor now requires `AppliedCouponCollectionTransformer`; a view transformer is registered in `buildForm()` to preserve coupon ordering.
+* Changed `\Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager`: in `findOrCreateAppliedPromotion()`, applied discounts are now individually removed and explicitly deleted from the entity manager (instead of `clear()`) to handle the case when an `AppliedDiscount` is a new entity already scheduled for insertion.
+
+#### TaxBundle
+* Changed `\Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler`: now resolves `freeFormTaxCode` for free-form order line items (when there is no product). The tax code cache key now includes the line item's `checksum` to differentiate draft copies of the same line item.
+* Changed `\Oro\Bundle\TaxBundle\Resolver\CustomerAddress\CustomerAddressResolver`: removed the `$taxable->getItems()->count()` check from `isApplicable()` — the resolver now runs even when an order has zero line items (e.g. when all line items are deleted during a draft session).
+* Changed `\Oro\Bundle\TaxBundle\Resolver\TotalResolver`: same change as `CustomerAddressResolver` — removed the `$taxable->getItems()->count()` guard so tax totals are recalculated correctly when all line items are removed.
+
+#### ProductBundle
+* Changed `\Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType`: added a new `init_choices` boolean option (default `false`). When `init_choices` is `true` and a `product` is provided, unit choices are pre-populated from the product via the options resolver.
+* Added `oro_product_get_main_image` Twig function to `\Oro\Bundle\ProductBundle\Twig\ProductImageExtension` — returns the `\Oro\Bundle\AttachmentBundle\Entity\File` object for the product's main image, or `null` if not available.
+* Added `oro_get_product_units_with_precision` Twig function to `\Oro\Bundle\ProductBundle\Twig\ProductUnitExtension` — returns an associative array of unit codes to their default precision (e.g. `['kg' => 3, 'item' => 0]`). When a `Product` is provided, returns only that product's available units; otherwise, returns all system-wide product units.
 
 #### PaymentBundle
 * Implemented `\Oro\Bundle\PaymentBundle\Entity\RequestLogsAwareInterface` in `\Oro\Bundle\PaymentBundle\Entity\PaymentTransaction`.

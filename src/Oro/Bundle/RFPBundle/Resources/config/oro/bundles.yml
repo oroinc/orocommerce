@@ -1,2 +1,5 @@
 bundles:
-    - { name: Oro\Bundle\RFPBundle\OroRFPBundle, priority: 40 }
+    -   name: Oro\Bundle\RFPBundle\OroRFPBundle
+        # Must be loaded after: OroOrderBundle
+        priority: 60
+

@@ -12,6 +12,7 @@ use Oro\Bundle\CheckoutBundle\Helper\CheckoutCompareHelper;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutBySourceCriteriaManipulatorInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\FindOrCreateCheckout;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
@@ -173,9 +174,13 @@ class FindOrCreateCheckoutTest extends TestCase
             ->with($workflow, self::isInstanceOf(Checkout::class), null)
             ->willReturn($workflowItem);
 
-        $this->tokenStorage->expects(self::once())
+        $token = $this->createMock(AnonymousCustomerUserToken::class);
+        $token->expects(self::any())
+            ->method('getVisitor')
+            ->willReturn(null);
+        $this->tokenStorage->expects(self::exactly(2))
             ->method('getToken')
-            ->willReturn($this->createMock(AnonymousCustomerUserToken::class));
+            ->willReturn($token);
 
         $result = $this->findOrCreateCheckout->execute($sourceCriteria, $checkoutData, false, false, null);
 
@@ -189,6 +194,148 @@ class FindOrCreateCheckoutTest extends TestCase
         self::assertInstanceOf(WorkflowItem::class, $result['workflowItem']);
 
         self::assertArrayHasKey('updateData', $result);
+        self::assertTrue($result['updateData']);
+    }
+
+    public function testExecuteCreatesNewCheckoutWithVisitorCustomerUserWhenVisitorAlreadyHasOne(): void
+    {
+        $shoppingList = $this->createMock(ShoppingList::class);
+        $sourceCriteria = ['shoppingList' => $shoppingList];
+        $checkoutData = ['key' => 'value'];
+        $currentCurrency = 'USD';
+
+        $workflow = $this->getWorkflow();
+        $website = $this->createMock(Website::class);
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $checkout = new Checkout();
+
+        $visitorCustomerUser = $this->createMock(CustomerUser::class);
+        $visitorCustomerUser->expects(self::any())
+            ->method('isGuest')
+            ->willReturn(true);
+        $visitor = $this->createMock(CustomerVisitor::class);
+        $visitor->expects(self::any())
+            ->method('getCustomerUser')
+            ->willReturn($visitorCustomerUser);
+        $token = $this->createMock(AnonymousCustomerUserToken::class);
+        $token->expects(self::any())
+            ->method('getVisitor')
+            ->willReturn($visitor);
+
+        $this->workflowManager->expects(self::once())
+            ->method('getAvailableWorkflowByRecordGroup')
+            ->with(Checkout::class, 'b2b_checkout_flow')
+            ->willReturn($workflow);
+
+        $this->actionExecutor->expects(self::exactly(2))
+            ->method('executeAction')
+            ->willReturnMap([
+                ['get_active_user_or_null', ['attribute' => null], ['attribute' => null]],
+                ['flush_entity']
+            ]);
+
+        $this->checkoutBySourceCriteriaManipulator->expects(self::once())
+            ->method('findCheckout')
+            ->with($sourceCriteria, null, $currentCurrency, 'workflow_name')
+            ->willReturn($checkout);
+
+        $this->userCurrencyManager->expects(self::once())
+            ->method('getUserCurrency')
+            ->willReturn($currentCurrency);
+
+        $this->websiteManager->expects(self::once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        $this->checkoutBySourceCriteriaManipulator->expects(self::once())
+            ->method('createCheckout')
+            ->with($website, $sourceCriteria, $visitorCustomerUser, $currentCurrency, $checkoutData)
+            ->willReturn($checkout);
+
+        $this->workflowManager->expects(self::once())
+            ->method('startWorkflow')
+            ->with($workflow, self::isInstanceOf(Checkout::class), null)
+            ->willReturn($workflowItem);
+
+        $this->tokenStorage->expects(self::exactly(2))
+            ->method('getToken')
+            ->willReturn($token);
+
+        $result = $this->findOrCreateCheckout->execute($sourceCriteria, $checkoutData, false, false, null);
+
+        self::assertSame($checkout, $result['checkout']);
+        self::assertSame($workflowItem, $result['workflowItem']);
+        self::assertTrue($result['updateData']);
+    }
+
+    public function testExecuteCreatesNewCheckoutWithNullUserWhenVisitorCustomerUserIsAlreadyRegistered(): void
+    {
+        $shoppingList = $this->createMock(ShoppingList::class);
+        $sourceCriteria = ['shoppingList' => $shoppingList];
+        $checkoutData = ['key' => 'value'];
+        $currentCurrency = 'USD';
+
+        $workflow = $this->getWorkflow();
+        $website = $this->createMock(Website::class);
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $checkout = new Checkout();
+
+        $visitorCustomerUser = $this->createMock(CustomerUser::class);
+        $visitorCustomerUser->expects(self::any())
+            ->method('isGuest')
+            ->willReturn(false);
+        $visitor = $this->createMock(CustomerVisitor::class);
+        $visitor->expects(self::any())
+            ->method('getCustomerUser')
+            ->willReturn($visitorCustomerUser);
+        $token = $this->createMock(AnonymousCustomerUserToken::class);
+        $token->expects(self::any())
+            ->method('getVisitor')
+            ->willReturn($visitor);
+
+        $this->workflowManager->expects(self::once())
+            ->method('getAvailableWorkflowByRecordGroup')
+            ->with(Checkout::class, 'b2b_checkout_flow')
+            ->willReturn($workflow);
+
+        $this->actionExecutor->expects(self::exactly(2))
+            ->method('executeAction')
+            ->willReturnMap([
+                ['get_active_user_or_null', ['attribute' => null], ['attribute' => null]],
+                ['flush_entity']
+            ]);
+
+        $this->checkoutBySourceCriteriaManipulator->expects(self::once())
+            ->method('findCheckout')
+            ->with($sourceCriteria, null, $currentCurrency, 'workflow_name')
+            ->willReturn($checkout);
+
+        $this->userCurrencyManager->expects(self::once())
+            ->method('getUserCurrency')
+            ->willReturn($currentCurrency);
+
+        $this->websiteManager->expects(self::once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        $this->checkoutBySourceCriteriaManipulator->expects(self::once())
+            ->method('createCheckout')
+            ->with($website, $sourceCriteria, null, $currentCurrency, $checkoutData)
+            ->willReturn($checkout);
+
+        $this->workflowManager->expects(self::once())
+            ->method('startWorkflow')
+            ->with($workflow, self::isInstanceOf(Checkout::class), null)
+            ->willReturn($workflowItem);
+
+        $this->tokenStorage->expects(self::exactly(2))
+            ->method('getToken')
+            ->willReturn($token);
+
+        $result = $this->findOrCreateCheckout->execute($sourceCriteria, $checkoutData, false, false, null);
+
+        self::assertSame($checkout, $result['checkout']);
+        self::assertSame($workflowItem, $result['workflowItem']);
         self::assertTrue($result['updateData']);
     }
 

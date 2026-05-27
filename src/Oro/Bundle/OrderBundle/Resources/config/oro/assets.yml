@@ -1,3 +1,5 @@
 css:
     inputs:
+        - 'bundles/oroorder/css/scss/variables/order-line-items-edit-grid-config.scss'
+
         - 'bundles/oroorder/css/scss/main.scss'

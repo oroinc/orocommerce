@@ -51,7 +51,9 @@ Feature: RFQ with fractional price
     When I go to Sales/Requests For Quote
     And I click view Amanda Cole in grid
     And I click on "RFQ Create Order"
-    And I click "Order Form Line Item 1 Offer 1"
+    And I click edit PSKU1 in grid
+    And I click "Order Line Item Draft Edit Form Offer 1"
+    And I click on "Order Line Item Draft Edit Form Save Button"
     When I save and close form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message

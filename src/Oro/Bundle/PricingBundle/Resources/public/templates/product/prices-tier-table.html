@@ -1,9 +1,16 @@
+<%
+    const headerTitle = typeof title !== 'undefined' && title !== null && title !== ''
+        ? title
+        : (clickable ? _.__('oro.pricing.click_to_select') : null);
+    const showTableHead = clickable ||
+        (typeof alwaysShowHead !== 'undefined' && alwaysShowHead === true);
+%>
 <div class="prices-tier">
-    <% if (clickable) { %>
-    <h3 class="prices-tier-title"><%- _.__('oro.pricing.click_to_select') %></h3>
+    <% if (headerTitle) { %>
+    <h3 class="prices-tier-title"><%- headerTitle %></h3>
     <% } %>
     <table class="table">
-        <% if (clickable) { %>
+        <% if (showTableHead) { %>
         <thead>
             <tr>
                 <th class="text-uppercase"><%- _.__('oro.pricing.qty') %></th>

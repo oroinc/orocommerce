@@ -473,7 +473,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->assertResponseContainsValidationError(
             [
                 'title' => 'not blank constraint',
-                'detail' => 'This value should not be blank.',
+                'detail' => 'Currency should not be blank.',
                 'source' => ['pointer' => '/data/attributes/currency']
             ],
             $response
@@ -494,7 +494,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->assertResponseContainsValidationError(
             [
                 'title' => 'type constraint',
-                'detail' => 'This value should be of type numeric.',
+                'detail' => 'Price value should be a valid number.',
                 'source' => ['pointer' => '/data/attributes/value']
             ],
             $response

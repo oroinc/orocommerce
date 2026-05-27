@@ -1,0 +1,78 @@
+/* @theme: admin.oro; */
+
+// Action column
+$order-line-items-edit-grid-action-column-min-width: 90px !default;
+
+// Product SKU column
+$order-line-items-edit-grid-product-sku-width: 92px !default;
+
+// Product column
+$order-line-items-edit-grid-product-width: 440px !default;
+
+// Quantity column
+$order-line-items-edit-grid-quantity-width: 170px !default;
+$order-line-items-edit-grid-quantity-input-width: 74px !default;
+$order-line-items-edit-grid-quantity-selector-width: 88px !default;
+
+// Price column
+$order-line-items-edit-grid-price-width: 140px !default;
+
+// Ship By column
+$order-line-items-edit-grid-ship-by-width: 140px !default;
+
+// Warehouse column
+$order-line-items-edit-grid-warehouse-width: 270px !default;
+
+// Quantity unit row
+$order-line-items-edit-grid-quantity-unit-row-column-gap: 8px !default;
+
+// Row with product image
+$order-line-items-edit-grid-product-image-cell-padding-top: 18px !default;
+
+// Update row cells
+$order-line-items-edit-grid-cell-update-padding-bottom: 6px !default;
+$order-line-items-edit-grid-cell-update-form-padding-top: 6px !default;
+
+// Grid row
+$order-line-items-edit-grid-row-scroll-margin-top: 200px !default;
+
+// Line item view row
+$order-line-items-edit-grid-line-item-view-cell-padding-top: 22px !default;
+$order-line-items-edit-grid-line-item-view-action-cell-padding-top: 12px !default;
+
+// Draft form container
+$order-line-items-edit-grid-draft-form-container-height: 70px !default;
+
+// Overridden price
+$order-line-items-edit-grid-overridden-price-padding-left: 28px !default;
+
+// Product price overridden
+$order-line-items-edit-grid-product-price-overridden-z-index: 1 !default;
+
+// Draft update calculations
+$order-line-item-draft-update-calculations-discounts-and-taxes-gap: 16px !default;
+$order-line-item-draft-update-calculations-discounts-and-taxes-margin-top: 16px !default;
+$order-line-item-draft-update-calculations-table-min-width: 440px !default;
+$order-line-item-draft-update-calculations-actions-margin-top: 16px !default;
+$order-line-item-draft-update-calculations-actions-gap: 16px !default;
+$order-line-item-draft-update-calculations-trigger-font-weight: 500 !default;
+
+// Draft form actions
+$order-line-item-draft-form-actions-margin-top: 16px !default;
+
+// Extra fields container
+$grid-row-update-form-extra-fields-container-gap: 16px !default;
+
+// Extra fields form
+$order-line-items-edit-grid-extra-fields-max-width: 440px !default;
+$order-line-items-edit-grid-extra-fields-label-width: 140px !default;
+$order-line-items-edit-grid-extra-fields-control-margin-start: 8px !default;
+
+// Kit item collection
+$order-draft-line-item-kit-item-quantity-input-width: 61px !default;
+$order-draft-line-item-kit-item-label-padding-top: 6px !default;
+$order-draft-line-item-kit-item-label-padding-right: 8px !default;
+$order-draft-line-item-kit-item-label-line-height: 20px !default;
+$order-draft-line-item-kit-item-tooltip-margin-right: 8px !default;
+$order-draft-line-item-kit-item-label-width: 140px !default;
+$order-draft-line-item-kit-item-product-width: 430px !default;

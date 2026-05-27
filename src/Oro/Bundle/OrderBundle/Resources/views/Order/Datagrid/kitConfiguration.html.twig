@@ -9,7 +9,13 @@
                 <div>
                     <span class="product-kit-line-items__item-name">{{ kitItemLabel|e }}</span>
                     <span class="product-kit-line-items__item-quantity">[{{ kitItemLineItem.productUnitCode|e }} x {{ kitItemLineItem.quantity }}]</span>
-                    <strong class="product-kit-line-items__item-price">{{ kitItemLineItem.price|oro_format_price }}</strong>
+                    <span class="product-kit-line-items__item-price">
+                        {%- if kitItemLineItem.price -%}
+                            {{ kitItemLineItem.price|oro_format_price }}
+                        {%- else -%}
+                            {{ dataGrid.renderBlankCellValue() }}
+                        {%- endif -%}
+                    </span>
                 </div>
                 {% set productId = kitItemLineItem.product.id|default(0) %}
                 {% if productId %}

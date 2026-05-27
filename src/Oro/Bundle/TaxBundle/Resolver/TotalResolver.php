@@ -100,8 +100,7 @@ class TotalResolver implements ResolverInterface
 
     private function isApplicable(Taxable $taxable): bool
     {
-        return $taxable->getItems()->count() &&
-            !$taxable->isKitTaxable() &&
+        return !$taxable->isKitTaxable() &&
             !$taxable->getResult()->isResultLocked();
     }
 }

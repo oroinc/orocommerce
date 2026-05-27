@@ -575,6 +575,22 @@ services:
             - '@oro_payment.payment_status.helper'
             - '@oro_currency.rounding.price_rounding_service'
 
+    oro_payment.provider.payment_info:
+        class: 'Oro\Bundle\PaymentBundle\Provider\PaymentInfoProvider'
+        arguments:
+            - '@doctrine'
+            - '@oro_payment.payment_status.helper'
+            - '@oro_payment.manager.payment_status'
+            - '@oro_currency.rounding.price_rounding_service'
+
+    oro_payment.webhook.payment_status_notifier:
+        class: 'Oro\Bundle\PaymentBundle\Webhook\PaymentStatusWebhookNotifier'
+        arguments:
+            - '@oro_integration.webhook_notifier'
+            - '@oro_payment.provider.payment_info'
+            - '@oro_payment.formatter.payment_status_label'
+            - '@oro_api.entity_alias_resolver_registry'
+
     oro_payment.action.payment_transaction_partial_refund:
         class: 'Oro\Bundle\PaymentBundle\Action\PaymentTransactionPartialRefundAction'
         parent: 'oro_payment.action.payment_method_action.abstract'

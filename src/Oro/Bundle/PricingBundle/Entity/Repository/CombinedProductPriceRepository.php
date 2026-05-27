@@ -35,6 +35,8 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
 {
     private const BATCH_SIZE = 100000;
     private const BATCH_SIZE_GROUP_BY = 10;
+    // PostgreSQL limits bound parameters to 65535 per query; use a safe limit for IN (:ids) clauses
+    private const MAX_IDS_PER_QUERY = 50000;
 
     public function copyPricesByPriceList(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
@@ -452,7 +454,9 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             // Restore batch size
             $insertFromSelectQueryExecutor->setBatchSize($originalBatchSize);
         } else {
-            yield $result;
+            foreach (array_chunk($result, self::MAX_IDS_PER_QUERY) as $ids) {
+                yield $ids;
+            }
         }
     }
 

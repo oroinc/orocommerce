@@ -1,0 +1,29 @@
+/* @theme: admin.oro; */
+
+.create-draft-container {
+    padding: 16px 0;
+
+    border: 1px solid $neutral-grey-3;
+    background-color: $neutral-grey-2;
+
+    --row-form-background-color: #{$neutral-grey-2};
+    --row-form-background-color-hover: #{$neutral-grey-2};
+
+    .grid-main-container {
+        padding: 0 8px;
+        background-color: transparent;
+    }
+
+    &__title {
+        margin-bottom: 24px - $oro-datagrid-body-cell-inner-top;
+        padding: 0 24px;
+
+        font-weight: font-weight('semi-bold');
+    }
+
+    .grid-body-cell-update-form {
+        padding-bottom: 0;
+
+        border-bottom-width: 0;
+    }
+}

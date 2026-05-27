@@ -397,3 +397,11 @@
         {{ form_errors(form) }}
     </div>
 {% endblock %}
+
+{% block _oro_order_type_recalculationRequired_widget %}
+    {{ form_widget(form, { 'attr': { 'data-ignore-form-state-change': '1' } }) }}
+{% endblock %}
+
+{% block _oro_suborder_type_recalculationRequired_widget %}
+    {{ form_widget(form, { 'attr': { 'data-ignore-form-state-change': '1' } }) }}
+{% endblock %}

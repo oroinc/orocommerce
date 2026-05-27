@@ -251,3 +251,8 @@ oro.customer.customergroup:
     tax_code:
         label: Tax Code
         description: The tax code for the customer group.
+
+oro.order.orderlineitem:
+    free_form_tax_code:
+        label: Tax Code
+        description: Tax code to use for free-form line items

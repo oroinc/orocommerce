@@ -96,6 +96,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
                     'label' => 'oro.order.orderlineitem.price.label',
                     'hide_currency' => true,
                     'default_currency' => $options['currency'],
+                    'by_reference' => false,
                 ]
             )
             ->add('priceType', HiddenType::class, [

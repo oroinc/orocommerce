@@ -69,6 +69,9 @@
             data-page-component-options="{{ {
                 entityClass: entityClass,
                 entityId: entityId,
+                validateCouponApplicabilityRouteParams: {
+                    orderDraftSessionUuid: oro_order_draft_session_uuid()
+                },
                 selectors: {
                     couponAutocompleteSelector: '#' ~ form.coupon.vars.id,
                     couponAddButtonSelector: '#' ~ addButtonId,
@@ -113,12 +116,18 @@
     <div class="oro-collection-table-heading">
         <h5>{{ 'oro.promotion.all_label'|trans }}</h5>
         {% if not form.vars.entity.disablePromotions %}
+        {% set routeParams = {
+            operationName: 'oro_promotion_add_coupon_form',
+            entityClass: oro_class_name(form.vars.entity),
+            entityId: {id: form.vars.entity.id}
+        } %}
+        {% set draftSessionUuid = oro_order_draft_session_uuid() %}
+        {% if draftSessionUuid %}
+            {% set routeParams = routeParams|merge({ 'orderDraftSessionUuid': draftSessionUuid }) %}
+        {% endif %}
+
         {{ UI.clientLink({
-            'dataUrl': path('oro_action_widget_form', {
-                operationName: 'oro_promotion_add_coupon_form',
-                entityClass: oro_class_name(form.vars.entity),
-                entityId: {id: form.vars.entity.id}
-            }),
+            'dataUrl': path('oro_action_widget_form', routeParams),
             'aCss': 'btn',
             'dataAttributes': {
                 'role': 'add'

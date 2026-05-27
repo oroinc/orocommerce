@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\PromotionBundle\Form\Type;
 
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -16,7 +20,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class AppliedCouponCollectionType extends AbstractType
 {
-    public const NAME = 'oro_promotion_applied_coupon_collection';
+    public function __construct(
+        private readonly EventSubscriberInterface $sortAppliedCouponCollectionEventSubscriber
+    ) {
+    }
+
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder->addEventSubscriber($this->sortAppliedCouponCollectionEventSubscriber);
+    }
 
     #[\Override]
     public function getParent(): ?string
@@ -30,10 +43,12 @@ class AppliedCouponCollectionType extends AbstractType
         $options['page_component_options']['dialogWidgetAlias'] = $options['dialog_widget_alias'];
         $view->vars['dialogWidgetAlias'] = $options['dialog_widget_alias'];
         $view->vars['entity'] = $options['entity'];
-        $view->vars = array_replace_recursive($view->vars, ['attr' => [
-            'data-page-component-view' => $options['page_component_view'],
-            'data-page-component-options' => json_encode($options['page_component_options']),
-        ]]);
+        $view->vars = array_replace_recursive($view->vars, [
+            'attr' => [
+                'data-page-component-view' => $options['page_component_view'],
+                'data-page-component-options' => json_encode($options['page_component_options']),
+            ]
+        ]);
     }
 
     #[\Override]
@@ -56,14 +71,9 @@ class AppliedCouponCollectionType extends AbstractType
         );
     }
 
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
     #[\Override]
     public function getBlockPrefix(): string
     {
-        return self::NAME;
+        return 'oro_promotion_applied_coupon_collection';
     }
 }

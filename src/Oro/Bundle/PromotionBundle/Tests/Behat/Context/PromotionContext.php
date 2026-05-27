@@ -9,15 +9,13 @@ use Oro\Bundle\ConfigBundle\Tests\Behat\Element\SystemConfigForm;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
-use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrder;
-use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrderLineItem;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionCheckoutStep;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionOrder;
-use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionOrderForm;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionShoppingList;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionShoppingListLineItem;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\LineItemsAwareInterface;
+use Oro\Bundle\TaxBundle\Tests\Behat\Element\TaxBackendOrderDraftEditLineItem;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
@@ -89,26 +87,38 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @Then /^(?:|I )see next line item discounts for backoffice order:$/
+     * Example: And I see next line item discounts for backoffice order edit for "SKU1":
+     *      |           | After Disc. Incl. Tax | After Disc. Excl. Tax | Disc. Amount |
+     *      | Row Total | €40.00                | €40.00                | €0.00        |
+     *
+     * @Then /^(?:|I )see next line item discounts for backoffice order edit for "([^"]+)":$/
      */
-    public function assertBackendOrderLineItemDiscount(TableNode $table)
+    public function checkLineItemDiscountsInOrderEditForSku(string $sku, TableNode $table): void
     {
-        // discount update request is executed after 1.5 sec timeout
-        $this->getSession()->wait(1600);
-        $this->waitForAjax();
-        /** @var PromotionBackendOrder $order */
-        $order = $this->createElement('PromotionBackendOrder');
-
-        $discounts = [];
-        /** @var PromotionBackendOrderLineItem $lineItem */
-        foreach ($order->getLineItems() as $lineItem) {
-            $discounts[] = array_merge([$lineItem->getProductSKU()], $lineItem->getDiscountWithRowTotals());
-        }
-
         $rows = $table->getRows();
         array_shift($rows);
 
-        static::assertEquals($rows, $discounts);
+        $actualDiscounts = $this->spin(function () use ($sku) {
+            return $this->findDraftEditLineItemBySku($sku)->getDiscounts();
+        });
+
+        self::assertNotNull(
+            $actualDiscounts,
+            sprintf('Unable to get discounts for line item with SKU "%s"', $sku)
+        );
+        self::assertEquals($rows, $actualDiscounts);
+    }
+
+    private function findDraftEditLineItemBySku(string $sku): TaxBackendOrderDraftEditLineItem
+    {
+        /** @var TaxBackendOrderDraftEditLineItem $lineItem */
+        foreach ($this->findAllElements('TaxBackendOrderDraftEditLineItem') as $lineItem) {
+            if ($lineItem->getProductSKU() === $sku) {
+                return $lineItem;
+            }
+        }
+
+        self::fail(sprintf('Line item with SKU "%s" not found in edit grid', $sku));
     }
 
     /**
@@ -205,17 +215,6 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
         $this->oroMainContext->clickLink('click here to review');
         $this->waitForAjax();
         $this->oroMainContext->assertPage('Order Frontend View');
-    }
-
-    /**
-     * @When /^(?:|I )save order without discounts recalculation$/
-     */
-    public function iSaveOrderWithoutDiscountsRecalculation()
-    {
-        /** @var PromotionOrderForm $orderForm */
-        $orderForm = $this->createElement('PromotionOrderForm');
-
-        $orderForm->saveWithoutDiscountsRecalculation();
     }
 
     // phpcs:disable

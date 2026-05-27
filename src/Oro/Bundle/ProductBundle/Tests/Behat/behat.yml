@@ -2047,6 +2047,11 @@ oro_behat_extension:
         type: 'xpath'
         locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][contains(@data-content,"2")]//*[contains(concat(" ",normalize-space(@class)," ")," removeRow ")]'
 
+    Kit Item 2 Product Remove Button:
+      selector:
+        type: 'xpath'
+        locator: './/*[contains(concat(" ", normalize-space(@class), " "), " oro-collection-item ")][contains(@data-content,"1")]//*[@title="Remove"]'
+
     Kit Item 1 Title:
       selector:
         type: xpath

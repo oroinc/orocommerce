@@ -1,0 +1,27 @@
+{% set tierPrices = record.getValue('tierPrices') %}
+{% set isPriceOverridden = record.getValue('isPriceOverridden') %}
+
+<span class="order-line-item-price-cell{% if isPriceOverridden %} price-overridden{% endif %}">
+    {% if record.getValue('price') is not null %}
+        {{ record.getValue('price')|oro_format_price }}
+    {% else %}
+        {{ 'N/A'|trans }}
+    {% endif %}
+
+    {% if isPriceOverridden and tierPrices %}
+        <button type="button"
+            class="btn btn-icon btn-square-lighter order-line-item-tier-prices-hint"
+            data-role="tier-prices-hint"
+            data-class="prices-tier-popover"
+            data-toggle="popover"
+            data-placement="bottom"
+            data-close="false"
+            data-tier-prices="{{ tierPrices|json_encode|e('html_attr') }}"
+            data-quantity="{{ record.getValue('quantity') }}"
+            data-unit="{{ record.getValue('productUnitCode') }}"
+            aria-label="{{ 'oro.order.datagrid.price_is_overridden.hint_label'|trans }}"
+        >
+            <span class="fa-info-circle" aria-hidden="true"></span>
+        </button>
+    {% endif %}
+</span>

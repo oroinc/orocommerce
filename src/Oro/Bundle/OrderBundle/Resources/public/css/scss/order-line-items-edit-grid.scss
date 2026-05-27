@@ -1,0 +1,357 @@
+/* @theme: admin.oro; */
+
+.order-line-items-edit-grid {
+    .grid-header-row {
+        > .action-column {
+            min-width: $order-line-items-edit-grid-action-column-min-width;
+        }
+    }
+
+    .grid-header-cell-productSku,
+    .grid-body-cell-productSku {
+        width: $order-line-items-edit-grid-product-sku-width;
+        max-width: $order-line-items-edit-grid-product-sku-width;
+        overflow-wrap: break-word;
+
+        input[type='text'] {
+            width: inherit;
+            max-width: 100%;
+        }
+    }
+
+    .grid-header-cell-product,
+    .grid-body-cell-product {
+        width: $order-line-items-edit-grid-product-width;
+        min-width: $order-line-items-edit-grid-product-width;
+
+        .order-line-items {
+            max-width: $order-line-items-edit-grid-product-width;
+
+            --input-field-width: 100%;
+        }
+
+        .input-append .select2-container {
+            max-width: 100%;
+            width: 0;
+            flex-grow: 1;
+        }
+    }
+
+    .grid-header-cell-quantity,
+    .grid-body-cell-quantity {
+        width: $order-line-items-edit-grid-quantity-width;
+        max-width: $order-line-items-edit-grid-quantity-width;
+
+        input[type='text'] {
+            width: $order-line-items-edit-grid-quantity-input-width;
+        }
+
+        .selector {
+            width: $order-line-items-edit-grid-quantity-selector-width;
+        }
+    }
+
+    .grid-header-cell-price,
+    .grid-body-cell-price {
+        width: $order-line-items-edit-grid-price-width;
+        max-width: $order-line-items-edit-grid-price-width;
+
+        padding-left: 0;
+
+        .input-append .select2-container,
+        input[type='text'] {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .order-line-item-tier-prices-hint {
+            margin-top: -4px;
+        }
+    }
+
+    .grid-body-cell-quantity,
+    .grid-body-cell-price {
+        &.has-offers {
+            &:before {
+                content: '';
+                position: absolute;
+                inset: 12px 0 0;
+                background-color: $neutral-grey-2;
+            }
+        }
+    }
+
+    .grid-body-cell-quantity.has-offers:before {
+        border-radius: 6px 0 0;
+    }
+
+    .grid-body-cell-price.has-offers:before {
+        border-radius: 0 6px 0 0;
+    }
+
+    .grid-header-cell-shipBy,
+    .grid-body-cell-shipBy {
+        width: $order-line-items-edit-grid-ship-by-width;
+        max-width: $order-line-items-edit-grid-ship-by-width;
+
+        input[type='text'] {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
+
+    .grid-header-cell-warehouse,
+    .grid-body-cell-warehouse {
+        width: $order-line-items-edit-grid-warehouse-width;
+        max-width: $order-line-items-edit-grid-warehouse-width;
+
+        .input-append .select2-container {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
+
+    .quantity-unit-row {
+        display: flex;
+        column-gap: $order-line-items-edit-grid-quantity-unit-row-column-gap;
+        position: relative;
+    }
+
+    .grid-row-update {
+        .action-cell {
+            padding-bottom: $oro-datagrid-body-cell-inner-bottom;
+        }
+    }
+
+    .grid-row-update,
+    .grid-row-update-form,
+    .grid-row-update-form-validation {
+        background-color: var(--row-form-background-color, #{$oro-datagrid-cell-background-hover});
+
+        &:hover {
+            background-color: var(--row-form-background-color-hover, #{$oro-datagrid-cell-background-hover});
+        }
+
+        .grid-body-cell {
+            padding-top: $oro-datagrid-body-cell-inner-top;
+        }
+
+        &:has(.product-image) {
+            .grid-body-cell {
+                padding-top: $order-line-items-edit-grid-product-image-cell-padding-top;
+
+                &.grid-body-cell-product {
+                    padding-top: $oro-datagrid-body-cell-inner-top;
+                }
+            }
+        }
+
+        .grid-body-cell-update {
+            padding-bottom: $order-line-items-edit-grid-cell-update-padding-bottom;
+            border-bottom-width: 0;
+        }
+
+        .grid-body-cell-update-form {
+            padding-top: $order-line-items-edit-grid-cell-update-form-padding-top;
+        }
+    }
+
+    .grid-row {
+        scroll-margin-top: $order-line-items-edit-grid-row-scroll-margin-top;
+    }
+
+    .grid-row-update-form-validation {
+        .grid-body-cell-update {
+            padding-block: 0;
+        }
+
+        .grid-body-cell-product {
+            height: 100%;
+        }
+    }
+
+    .grid-row.grid-row-line-item-view:has(.order-line-items) {
+        > .grid-body-cell {
+            padding-top: $order-line-items-edit-grid-line-item-view-cell-padding-top;
+        }
+
+        > .grid-body-cell-product {
+            padding-top: $oro-datagrid-body-cell-inner-top;
+        }
+
+        > .action-cell {
+            padding-top: $order-line-items-edit-grid-line-item-view-action-cell-padding-top;
+        }
+    }
+
+    .action-cell.grid-body-cell-update {
+        min-width: $order-line-items-edit-grid-action-column-min-width;
+    }
+
+    .order-draft-form-container {
+        height: var(--placeholder-size, $order-line-items-edit-grid-draft-form-container-height);
+
+        .draft-form > .grid-main-container {
+            height: 100%;
+        }
+    }
+
+    .multicurrency-fields-wrapper {
+        position: relative;
+    }
+
+    .overridden-price {
+        padding-left: $order-line-items-edit-grid-overridden-price-padding-left;
+    }
+
+    .alert {
+        width: max-content;
+    }
+
+    .product-price-overridden {
+        z-index: $order-line-items-edit-grid-product-price-overridden-z-index;
+    }
+
+    .order-line-item-offers {
+        background: transparent;
+
+        --order-line-item-offers-radio-vertical-align: baseline;
+
+        --order-line-item-offers-text-align: left;
+
+        td {
+            background-color: transparent;
+            vertical-align: middle;
+
+            border-bottom: 1px dashed $neutral-grey-3;
+            border-top: none;
+
+            padding: 0 8px;
+
+            height: 34px;
+
+            label {
+                display: block;
+                text-transform: none;
+            }
+
+            &:first-child {
+                border-radius: 0;
+            }
+
+            &:last-child {
+                border-radius: 0;
+            }
+
+            &.order-line-item-offers-quantity {
+                width: 148px;
+                min-width: 148px;
+            }
+
+            &.order-line-item-offers-radio {
+                padding-left: 0;
+                width: 25px;
+            }
+        }
+
+        &-label {
+            font-weight: 500;
+            color: $text-primary;
+
+            margin-bottom: 8px;
+        }
+
+        &-container {
+            background-color: $neutral-grey-2;
+            border-radius: 0 0 6px 6px;
+
+            margin: 0 -8px;
+            padding: 0 8px 8px;
+        }
+    }
+}
+
+.order-line-item-draft-update-form-container-inner {
+    gap: 0;
+}
+
+.order-line-item-draft-update-calculations {
+    display: grid;
+
+    &__discounts-and-taxes {
+        display: flex;
+        width: 100%;
+        gap: $order-line-item-draft-update-calculations-discounts-and-taxes-gap;
+        flex: 1 1 auto;
+        overflow-x: auto;
+
+        margin-top: $order-line-item-draft-update-calculations-discounts-and-taxes-margin-top;
+
+        .table {
+            min-width: $order-line-item-draft-update-calculations-table-min-width;
+        }
+    }
+
+    &__actions {
+        margin-top: $order-line-item-draft-update-calculations-actions-margin-top;
+        display: flex;
+        gap: $order-line-item-draft-update-calculations-actions-gap;
+
+        .grid-row-update-form-extra-fields-container & {
+            margin-top: auto;
+        }
+    }
+
+    &__trigger {
+        font-weight: $order-line-item-draft-update-calculations-trigger-font-weight;
+    }
+
+    &__actions:has(&__trigger[aria-expanded='true']) {
+        display: none;
+    }
+
+    &__taxes,
+    &__discounts {
+        flex-shrink: 0;
+
+        &:empty {
+            display: none;
+        }
+    }
+
+    + .draft-form__actions {
+        margin-top: $order-line-item-draft-form-actions-margin-top;
+    }
+}
+
+.grid-row-update-form-extra-fields-container {
+    display: flex;
+    flex-direction: column;
+    gap: $grid-row-update-form-extra-fields-container-gap;
+    flex: 1;
+}
+
+.grid-row-update-form-validation {
+    span.validation-failed + span.validation-failed[id] {
+        display: block;
+    }
+}
+
+.grid-row-update-form-extra-fields {
+    max-width: $order-line-items-edit-grid-extra-fields-max-width;
+    --form-horizontal-control-label-width: #{$order-line-items-edit-grid-extra-fields-label-width};
+    --form-horizontal-control-label-text-align: left;
+    --form-horizontal-control-min-width: auto;
+    --form-horizontal-control-margin-start: #{$order-line-items-edit-grid-extra-fields-control-margin-start};
+    --input-field-width: 100%;
+
+    &:not(:has(.control-group)) {
+        display: none;
+    }
+}
+
+.order-line-item-draft-form-cell-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}

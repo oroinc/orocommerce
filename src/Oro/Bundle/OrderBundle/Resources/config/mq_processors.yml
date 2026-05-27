@@ -1,0 +1,11 @@
+services:
+
+    oro_order.async.entity_drafts_cleanup_processor:
+        class: Oro\Component\DraftSession\Async\EntityDraftsCleanupProcessor
+        arguments:
+            - '@oro_order.draft_session.cleanup.strategy'
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: oro_message_queue.client.message_processor, topicName: !php/const Oro\Bundle\OrderBundle\Async\Topic\OrderDraftsCleanupTopic::NAME }
+            - { name: monolog.logger, channel: oro_order }

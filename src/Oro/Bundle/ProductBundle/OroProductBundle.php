@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle;
 
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\EntityFallbackFieldsStoragePass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\AttributeBlockTypeMapperPass;
+use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ExtIdApiDocumentationPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductCollectionCompilerPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\TwigSandboxConfigurationPass;
 use Oro\Component\DependencyInjection\Compiler\PriorityNamedTaggedServiceCompilerPass;
@@ -48,5 +49,6 @@ class OroProductBundle extends Bundle
         ]));
         $container->addCompilerPass(new ProductCollectionCompilerPass());
         $container->addCompilerPass(new AttributeBlockTypeMapperPass());
+        $container->addCompilerPass(new ExtIdApiDocumentationPass());
     }
 }

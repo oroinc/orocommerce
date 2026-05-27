@@ -9,9 +9,12 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtensionAwareInterface;
 use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtensionAwareTrait;
@@ -45,7 +48,7 @@ class OroOrderBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v7_0_0_1';
+        return 'v7_1_0_1';
     }
 
     #[\Override]
@@ -90,6 +93,9 @@ class OroOrderBundleInstaller implements
     private function createOroOrderTable(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->createTable('oro_order');
+        $table->addOption(OroOptions::KEY, [
+            'extend' => ['unique_key' => ['keys' => [['name' => 'external_id', 'key' => ['external_id']]]]]
+        ]);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
@@ -173,6 +179,15 @@ class OroOrderBundleInstaller implements
         $table->addColumn('source_entity_id', 'integer', ['notnull' => false]);
         $table->addColumn('source_entity_identifier', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('is_external', 'boolean', ['default' => false]);
+        $table->addColumn('external_id', 'string', ['length' => 36, 'notnull' => false, OroOptions::KEY => [
+            ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+            'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
+            'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
+            'importexport' => ['excluded' => true],
+            'dataaudit' => ['auditable' => true]
+        ]]);
+        $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
+        $table->addColumn('draft_source_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'oro_order_created_at_index');
         $table->addUniqueIndex(['identifier'], 'uniq_oro_order_identifier');
@@ -232,6 +247,7 @@ class OroOrderBundleInstaller implements
         $table->addColumn('validated_at', 'datetime', ['notnull' => false]);
         $table->addColumn('created', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 
@@ -255,6 +271,7 @@ class OroOrderBundleInstaller implements
             'money',
             ['notnull' => true, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
+        $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['order_id'], 'IDX_F9A53B6A8D9F6D38');
     }
@@ -294,6 +311,9 @@ class OroOrderBundleInstaller implements
             'comment' => '(DC2Type:money)'
         ]);
         $table->addColumn('checksum', 'string', ['length' => 40, 'notnull' => true, 'default' => '']);
+        $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
+        $table->addColumn('draft_source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('draft_delete', 'boolean', ['notnull' => true, 'default' => false]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
@@ -400,6 +420,12 @@ class OroOrderBundleInstaller implements
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+        $table->addForeignKeyConstraint(
+            $table,
+            ['draft_source_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
     }
 
     /**
@@ -457,6 +483,12 @@ class OroOrderBundleInstaller implements
             ['parent_product_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $table,
+            ['draft_source_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 
@@ -555,6 +587,7 @@ class OroOrderBundleInstaller implements
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 

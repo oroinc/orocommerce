@@ -29,6 +29,8 @@ use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use Oro\Bundle\WebsiteBundle\Entity\WebsiteBasedCurrencyAwareInterface;
+use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
 
 /**
  * Request for Quote entity
@@ -77,7 +79,9 @@ class Request implements
     OrganizationAwareInterface,
     WebsiteAwareInterface,
     ExtendEntityInterface,
-    CustomerVisitorOwnerAwareInterface
+    CustomerVisitorOwnerAwareInterface,
+    WebsiteBasedCurrencyAwareInterface,
+    EntityDraftAwareInterface
 {
     use SoftDeleteableTrait;
     use DatesAwareTrait;
@@ -651,6 +655,53 @@ class Request implements
     {
         $this->visitor = $visitor;
 
+        return $this;
+    }
+
+    /**
+     * No-op: Request entities are not draft-aware themselves; this interface is
+     * implemented only to satisfy the {@see EntityDraftFactoryInterface} type contract
+     * so that factory chain can accept a Request as the source entity.
+     */
+    #[\Override]
+    public function getDraftSessionUuid(): ?string
+    {
+        return null;
+    }
+
+    #[\Override]
+    public function setDraftSessionUuid(?string $draftSessionUuid): self
+    {
+        return $this;
+    }
+
+    #[\Override]
+    public function getDraftSource(): ?EntityDraftAwareInterface
+    {
+        return null;
+    }
+
+    #[\Override]
+    public function setDraftSource(?EntityDraftAwareInterface $draftSource): self
+    {
+        return $this;
+    }
+
+    #[\Override]
+    public function getDrafts(): Collection
+    {
+        return new ArrayCollection();
+    }
+
+    #[\Override]
+    public function addDraft(EntityDraftAwareInterface $draft): self
+    {
+        return $this;
+    }
+
+    #[\Override]
+    public function removeDraft(EntityDraftAwareInterface $draft): self
+    {
         return $this;
     }
 }

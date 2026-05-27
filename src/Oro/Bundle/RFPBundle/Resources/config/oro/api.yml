@@ -70,3 +70,8 @@ api:
 
         Extend\Entity\EV_Rfp_Internal_Status:
             documentation_resource: '@OroRFPBundle/Resources/doc/api/request.md'
+
+        Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+            fields:
+                requestProduct:
+                    exclude: true

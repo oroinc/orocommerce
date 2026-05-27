@@ -134,12 +134,12 @@ class CreateOrderWithNotValidProductKitForVisitorWithGuestCheckoutTest extends F
             [
                 [
                     'title' => 'not null constraint',
-                    'detail' => 'This value should not be null.',
+                    'detail' => 'The kit item product unit should not be blank.',
                     'source' => ['pointer' => '/included/4/relationships/productUnit/data'],
                 ],
                 [
                     'title' => 'not null constraint',
-                    'detail' => 'This value should not be null.',
+                    'detail' => 'The kit item product unit code should not be blank.',
                     'source' => ['pointer' => '/included/4/attributes/productUnitCode'],
                 ],
             ],
@@ -213,7 +213,7 @@ class CreateOrderWithNotValidProductKitForVisitorWithGuestCheckoutTest extends F
             [
                 [
                     'title' => 'not null constraint',
-                    'detail' => 'The quantity should be greater than 0',
+                    'detail' => 'The kit item quantity should be greater than 0',
                     'source' => ['pointer' => '/included/4/attributes/quantity'],
                 ],
             ],
@@ -237,7 +237,7 @@ class CreateOrderWithNotValidProductKitForVisitorWithGuestCheckoutTest extends F
             [
                 [
                     'title' => 'greater than constraint',
-                    'detail' => 'The quantity should be greater than 0',
+                    'detail' => 'The kit item quantity should be greater than 0',
                     'source' => ['pointer' => '/included/4/attributes/quantity'],
                 ],
             ],

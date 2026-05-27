@@ -22,6 +22,7 @@ oro_behat_extension:
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
         - Oro\Bundle\PricingBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\TaxBundle\Tests\Behat\Context\TaxContext
       paths:
         - '@OroTaxBundle/Tests/Behat/Features'
 
@@ -87,17 +88,9 @@ oro_behat_extension:
             type: xpath
             element: Select2Entities
 
-    TaxBackendOrder:
-      class: Oro\Bundle\TaxBundle\Tests\Behat\Element\TaxBackendOrder
-      selector: 'div.layout-content'
-
-    TaxBackendOrderLineItem:
-      class: Oro\Bundle\TaxBundle\Tests\Behat\Element\TaxBackendOrderLineItem
-      selector: 'tbody > tr.order-line-item'
-
-    BackendLineItemTaxTable:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
-      selector: 'table.tax-result-grid'
+    TaxBackendOrderDraftEditLineItem:
+      class: Oro\Bundle\TaxBundle\Tests\Behat\Element\TaxBackendOrderDraftEditLineItem
+      selector: 'td.order-draft-form-container'
 
     Backend Order Taxes Totals Table:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table

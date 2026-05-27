@@ -70,6 +70,14 @@ class ChannelLoaderTest extends WebTestCase
         );
     }
 
+    public function testLoadChannelsWhenNoSecurityTokenAndAclNotRequested(): void
+    {
+        $this->assertChannels(
+            [],
+            $this->getChannelLoader()->loadChannels('bar', false)
+        );
+    }
+
     public function testLoadChannels(): void
     {
         $this->setUpTokenStorage();

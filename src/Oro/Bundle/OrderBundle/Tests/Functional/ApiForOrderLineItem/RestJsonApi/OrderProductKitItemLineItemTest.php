@@ -146,7 +146,7 @@ class OrderProductKitItemLineItemTest extends RestJsonApiTestCase
         $this->assertResponseContainsValidationError(
             [
                 'title' => 'not blank constraint',
-                'detail' => 'This value should not be blank.',
+                'detail' => 'Currency should not be blank.',
                 'source' => ['pointer' => '/data/attributes/currency'],
             ],
             $response
@@ -167,7 +167,7 @@ class OrderProductKitItemLineItemTest extends RestJsonApiTestCase
         $this->assertResponseContainsValidationError(
             [
                 'title' => 'type constraint',
-                'detail' => 'This value should be of type numeric.',
+                'detail' => 'Price value should be a valid number.',
                 'source' => ['pointer' => '/data/attributes/value'],
             ],
             $response
@@ -466,7 +466,7 @@ class OrderProductKitItemLineItemTest extends RestJsonApiTestCase
             [
                 [
                     'title' => 'not null constraint',
-                    'detail' => 'This value should not be null.',
+                    'detail' => 'Line Item of the Product Kit Item Line Item should not be blank.',
                     'source' => ['pointer' => '/data/relationships/lineItem/data'],
                 ],
                 [

@@ -14,6 +14,8 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository;
+use Oro\Component\DraftSession\Entity\DraftSessionAwareInterface;
+use Oro\Component\DraftSession\Entity\DraftSessionAwareTrait;
 
 /**
  * Represents applied promotions to the order
@@ -26,10 +28,11 @@ use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository;
 #[ORM\Entity(repositoryClass: AppliedPromotionRepository::class)]
 #[ORM\Table(name: 'oro_promotion_applied')]
 #[Config]
-class AppliedPromotion implements DatesAwareInterface, ExtendEntityInterface
+class AppliedPromotion implements DatesAwareInterface, ExtendEntityInterface, DraftSessionAwareInterface
 {
     use DatesAwareTrait;
     use ExtendEntityTrait;
+    use DraftSessionAwareTrait;
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]

@@ -9,6 +9,7 @@ use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProviderInterface;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
@@ -34,6 +35,7 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
             new TwigFunction('product_filtered_image', [$this, 'getProductFilteredImage']),
             new TwigFunction('product_image_placeholder', [$this, 'getProductImagePlaceholder']),
             new TwigFunction('product_filtered_picture_sources', [$this, 'getProductFilteredPictureSources']),
+            new TwigFunction('oro_product_get_main_image', [$this, 'getProductMainImage']),
         ];
     }
 
@@ -131,6 +133,13 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
         );
 
         return $pictureSources;
+    }
+
+    public function getProductMainImage(?Product $product): ?File
+    {
+        $productImage = $product?->getImagesByType(ProductImageType::TYPE_MAIN)->first() ?: null;
+
+        return $productImage?->getImage();
     }
 
     #[\Override]

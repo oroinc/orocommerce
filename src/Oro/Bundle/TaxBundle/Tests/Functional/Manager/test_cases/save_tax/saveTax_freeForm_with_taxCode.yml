@@ -1,0 +1,62 @@
+method: saveTax
+reference: free_form_order_save_tax
+configuration: { use_as_base_by_default: destination }
+databaseBefore:
+    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
+        us_al_billing_address:
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        free_form_order_save_tax:
+            poNumber: free_form_save_001
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
+            currency: USD
+            billingAddress: '@us_al_billing_address'
+            shippingAddress: '@us_al_billing_address'
+            __calls:
+                - addLineItem: ['@free_form_line_item_save']
+    'Oro\Bundle\CurrencyBundle\Entity\Price':
+        usd_price_18.50:
+            value: 18.50
+            currency: USD
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
+        free_form_line_item_save:
+            freeFormProduct: 'Free Form Save Tax Product'
+            productSku: 'FF-SAVE-SKU'
+            quantity: 6
+            price: '@usd_price_18.50'
+            productUnit: { class: 'Oro\Bundle\ProductBundle\Entity\ProductUnit', query: { code: 'liter' } }
+            freeFormTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
+            __calls:
+                - addOrder: ['@free_form_order_save_tax']
+databaseBeforeSecondPart: []
+disableTaxCalculation: false
+expectedResult:
+    total:
+        includingTax: '122.54'    # 111 + 11.544
+        excludingTax: '111'       # 18.5 * 6
+        taxAmount: '11.54'        # 111 * 0.104 = 11.544
+        adjustment: '0.004'       # 11.544 - 11.54 (calculated - stored)
+        currency: 'USD'
+    items:
+        -
+            row:
+                includingTax: '122.54'  # 20.424 * 6 = 122.544
+                excludingTax: '111'     # 18.5 * 6
+                taxAmount: '11.54'      # 1.924 * 6 = 11.544
+                adjustment: '0.004'     # 11.544 - 11.54
+                currency: 'USD'
+            unit:
+                includingTax: '20.42'   # 18.5 + 1.924 = 20.424
+                excludingTax: '18.5'
+                taxAmount: '1.92'       # 18.5 * 0.104 = 1.924
+                adjustment: '0.004'     # 1.924 - 1.92
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '111', taxAmount: '11.54', currency: 'USD' }
+    taxes:
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '111', taxAmount: '11.54', currency: 'USD' }
+databaseAfter:
+    'Oro\Bundle\TaxBundle\Entity\TaxValue':
+        - { entityClass: 'Oro\Bundle\OrderBundle\Entity\Order', entityId: { reference: 'free_form_order_save_tax' } }
+        - { entityClass: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem', entityId: { reference: 'free_form_line_item_save' } }

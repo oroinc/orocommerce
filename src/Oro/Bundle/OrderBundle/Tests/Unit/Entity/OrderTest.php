@@ -58,6 +58,8 @@ class OrderTest extends \PHPUnit\Framework\TestCase
             ['parent', new Order()],
             ['createdBy', new User()],
             ['external', true, false],
+            ['draftSessionUuid', '8f091a9a-c0d7-4560-975a-d3b0090bcfbd'],
+            ['draftSource', new Order()],
         ];
 
         $order = new Order();
@@ -66,6 +68,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         self::assertPropertyCollection($order, 'discounts', new OrderDiscount());
         self::assertPropertyCollection($order, 'shippingTrackings', new OrderShippingTracking());
         self::assertPropertyCollection($order, 'subOrders', new Order());
+        self::assertPropertyCollection($order, 'drafts', new Order());
     }
 
     public function testSourceDocument(): void

@@ -43,7 +43,7 @@ class TotalCalculateListener
             && !$this->frontendHelper->isFrontendRequest()
             && $request->request->has($this->getFormName(OrderType::class))
         ) {
-            $form = $this->formFactory->create(OrderType::class, $entity);
+            $form = $this->formFactory->create(OrderType::class, $entity, ['draft_session_sync' => true]);
             $form->submit($request->get($form->getName()));
         }
     }

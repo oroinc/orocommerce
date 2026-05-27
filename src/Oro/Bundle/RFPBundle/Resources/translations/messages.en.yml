@@ -429,4 +429,10 @@ oro:
                 btn:
                     print: 'Print RFQ'
 
-oro.order.orderlineitem.offers.label: 'Requested QTY and price'
+oro.order.orderlineitem:
+    offers.label: 'Requested QTY and price'
+    draft_update_form:
+        offers.label: 'Requested'
+    request_product:
+        label: 'Related RFQ Line Item'
+        description: 'The related RFQ line item used as a source for the order line item.'

@@ -1,0 +1,23 @@
+/* @theme: admin.oro; */
+
+.draft-form {
+    &__actions {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__form-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    &__side-actions {
+        display: flex;
+        gap: 16px;
+    }
+
+    .order-comment-field {
+        width: 440px;
+        height: 62px;
+    }
+}

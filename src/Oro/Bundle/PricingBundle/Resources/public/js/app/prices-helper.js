@@ -25,6 +25,10 @@ const PricesHelper = {
         const prices = pricesByUnit[unit];
         const data = {};
 
+        if (_.isEmpty(prices)) {
+            return data;
+        }
+
         if (unit) {
             data[unit] = PricesHelper.sortByLowQuantity(prices);
         }

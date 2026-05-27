@@ -14,6 +14,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -22,6 +23,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * validating units
  * setAcceptable units
  * formatting view choices values using UnitLabelFormatterInterface
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class ProductUnitSelectionType extends AbstractProductAwareType
 {
@@ -51,8 +54,11 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'setAcceptableUnits']);
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'validateUnits']);
+        if (!$options['choices'] || !$options['init_choices']) {
+            // Set and validate units automatically if they are not set explicitly.
+            $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'setAcceptableUnits']);
+            $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'validateUnits']);
+        }
     }
 
     public function setAcceptableUnits(FormEvent $event)
@@ -142,6 +148,18 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     protected function getProductUnits(FormInterface $form, ?Product $product = null)
     {
         $options = $form->getConfig()->getOptions();
+
+        return $this->getUnits($product, $options);
+    }
+
+    /**
+     * @param Product|null $product
+     * @param Options|array $options
+     *
+     * @return array<ProductUnit>
+     */
+    private function getUnits(?Product $product, Options|array $options): array
+    {
         $sell = $options['sell'];
         $choices = [];
 
@@ -185,9 +203,21 @@ class ProductUnitSelectionType extends AbstractProductAwareType
                 'choices_updated' => false,
                 'required' => true,
                 'empty_label' => 'oro.product.productunit.removed',
-                'sell' => null
+                'sell' => null,
+                'init_choices' => false,
             ]
         );
+
+        $resolver->setAllowedTypes('init_choices', 'boolean');
+        $resolver->setInfo('init_choices', 'Initialize "choices" option based on the "product" option.');
+
+        $resolver->setDefault('choices', function (Options $options, $previousValue) {
+            if ($options['product'] === null || $options['init_choices'] === false) {
+                return $previousValue;
+            }
+
+            return $this->getUnits($options['product'], $options);
+        });
     }
 
     #[\Override]
@@ -221,7 +251,10 @@ class ProductUnitSelectionType extends AbstractProductAwareType
 
         $productUnit = $productUnitHolder->getProductUnit();
 
-        if ($this->isProductUnitRemoved($productUnitHolder, $product, $choices, $productUnit)) {
+        if (
+            $this->isProductUnitRemoved($productUnitHolder, $product, $choices, $productUnit) &&
+            (string) $productUnitHolder->getProductUnitCode() !== ''
+        ) {
             $productUnitCode = (string) $productUnitHolder->getProductUnitCode();
             $removedValue = $this->translator->trans($productUnitCode);
             $removedValueTitle = $this->translator->trans(

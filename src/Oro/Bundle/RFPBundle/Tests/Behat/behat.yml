@@ -23,6 +23,7 @@ oro_behat_extension:
                 - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
                 - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
                 - Oro\Bundle\CustomerBundle\Tests\Behat\Context\ACLContext
+                - Oro\Bundle\TaxBundle\Tests\Behat\Context\TaxContext
             paths:
                 - '@OroRFPBundle/Tests/Behat/Features'
 

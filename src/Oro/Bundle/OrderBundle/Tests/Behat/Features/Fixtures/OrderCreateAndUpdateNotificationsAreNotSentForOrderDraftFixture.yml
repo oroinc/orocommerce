@@ -1,0 +1,12 @@
+include:
+    - '@OroOrderBundle:order.yml'
+
+Oro\Bundle\EmailBundle\Entity\EmailTemplate:
+    orderUpdateNotificationTemplate:
+        organization: '@organization'
+        is_system: 0
+        name: 'order_update_notification_test'
+        entity_name: 'Oro\\Bundle\\OrderBundle\\Entity\\Order'
+        type: 'html'
+        subject: 'Order Update Test Notification'
+        content: 'Order has been updated'

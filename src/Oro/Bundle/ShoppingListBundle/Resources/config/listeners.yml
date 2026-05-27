@@ -23,6 +23,8 @@ services:
 
     oro_shopping_list.event_listener.line_item_preloading:
         parent: oro_entity.event_listener.default_preloading
+        calls:
+            - [ setStopPropagation, [ true ] ]
         tags:
             - { name: kernel.event_listener, event: oro_entity.preload_entity.lineitem, method: onPreload }
             - { name: kernel.event_listener, event: oro_entity.preload_entity.productkititemlineitem, method: onPreload }

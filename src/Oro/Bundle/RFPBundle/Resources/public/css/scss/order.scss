@@ -3,19 +3,19 @@
 .order-line-item-offers {
     td {
         &.order-line-item-offers-radio {
-            min-width: 20px;
+            min-width: var(--order-line-item-offers-radio-min-width, 20px);
         }
 
         &.order-line-item-offers-quantity,
         &.order-line-item-offers-price {
-            min-width: 120px;
-            text-align: center;
+            min-width: var(--order-line-item-offers-min-width, 120px);
+            text-align: var(--order-line-item-offers-text-align, center);
         }
     }
 
     input[type='radio'] {
         // stylelint-disable-next-line declaration-no-important
-        vertical-align: top !important;
+        vertical-align: var(--order-line-item-offers-radio-vertical-align, top) !important;
     }
 
     label {

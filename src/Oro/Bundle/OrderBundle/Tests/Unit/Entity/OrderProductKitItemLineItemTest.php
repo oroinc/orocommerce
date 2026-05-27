@@ -47,6 +47,7 @@ class OrderProductKitItemLineItemTest extends TestCase
             ['value', 12.3456],
             ['currency', 'USD'],
             ['price', Price::create(34.5678, 'USD')],
+            ['draftSessionUuid', '8f091a9a-c0d7-4560-975a-d3b0090bcfbd'],
         ];
 
         self::assertPropertyAccessors(new OrderProductKitItemLineItem(), $properties);

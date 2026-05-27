@@ -21,6 +21,9 @@ oro:
             entity_grid_all_view_label: All %entity_plural_label%
             entity_description:   Inventory Level is a product quantity that is availabile in a warehouse.
             id.label:             Id
+            external_id:
+                label:            External ID
+                description:      A unique identifier from an external system.
             quantity:
                 label:            Quantity
                 description:      The quantity of product that is availabile in a warehouse.

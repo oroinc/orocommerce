@@ -1,0 +1,44 @@
+/* @theme: admin.oro; */
+
+.order-draft-line-item-kit-item-collection {
+    width: auto;
+
+    .line-item-quantity {
+        --input-field-width: #{$order-draft-line-item-kit-item-quantity-input-width};
+    }
+
+    .order-line-kit-item {
+        td {
+            vertical-align: top;
+
+            label {
+                padding-top: $order-draft-line-item-kit-item-label-padding-top;
+                padding-right: $order-draft-line-item-kit-item-label-padding-right;
+                line-height: $order-draft-line-item-kit-item-label-line-height;
+            }
+
+            .tooltip-icon {
+                margin-right: $order-draft-line-item-kit-item-tooltip-margin-right;
+            }
+
+            &:first-child {
+                padding-left: 0;
+            }
+
+            &:last-child {
+                padding-right: 0;
+            }
+        }
+    }
+
+    .line-item-label {
+        width: $order-draft-line-item-kit-item-label-width;
+    }
+
+    .line-item-product {
+        width: $order-draft-line-item-kit-item-product-width;
+
+        --select2-container-horizontal-width: #{$order-draft-line-item-kit-item-product-width};
+        --select2-container-horizontal-max-width: #{$order-draft-line-item-kit-item-product-width};
+    }
+}

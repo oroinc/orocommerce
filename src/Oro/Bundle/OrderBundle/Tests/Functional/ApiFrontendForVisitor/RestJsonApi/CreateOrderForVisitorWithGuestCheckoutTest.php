@@ -393,7 +393,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $this->assertResponseValidationError(
             [
                 'title' => 'not blank constraint',
-                'detail' => 'This value should not be blank.',
+                'detail' => 'The quantity should not be blank.',
                 'source' => ['pointer' => '/included/0/attributes/quantity']
             ],
             $response
@@ -409,7 +409,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $this->assertResponseValidationError(
             [
                 'title' => 'greater than constraint',
-                'detail' => 'This value should be greater than 0.',
+                'detail' => 'The quantity should be greater than 0.',
                 'source' => ['pointer' => '/included/0/attributes/quantity']
             ],
             $response

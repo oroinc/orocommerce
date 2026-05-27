@@ -262,4 +262,65 @@ class ProductImageExtensionTest extends TestCase
 
         return $productImage;
     }
+
+    public function testGetProductMainImageReturnsMainImage(): void
+    {
+        $file = new File();
+        $file->setFilename('main-image.jpg');
+
+        $mainImage = $this->createProductImage(1, ['main']);
+        $mainImage->setImage($file);
+
+        $product = new Product();
+        $product->addImage($mainImage);
+
+        $result = self::callTwigFunction($this->extension, 'oro_product_get_main_image', [$product]);
+
+        self::assertSame($file, $result);
+    }
+
+    public function testGetProductMainImageReturnsNullWhenNoMainImage(): void
+    {
+        $file = new File();
+        $file->setFilename('additional-image.jpg');
+
+        $additionalImage = $this->createProductImage(1, ['additional']);
+        $additionalImage->setImage($file);
+
+        $product = new Product();
+        $product->addImage($additionalImage);
+
+        $result = self::callTwigFunction($this->extension, 'oro_product_get_main_image', [$product]);
+
+        self::assertNull($result, 'Should return null when there is no main image');
+    }
+
+    public function testGetProductMainImageReturnsNullWhenProductHasNoImages(): void
+    {
+        $product = new Product();
+
+        $result = self::callTwigFunction($this->extension, 'oro_product_get_main_image', [$product]);
+
+        self::assertNull($result, 'Should return null when product has no images');
+    }
+
+    public function testGetProductMainImageReturnsNullWhenProductIsNull(): void
+    {
+        $result = self::callTwigFunction($this->extension, 'oro_product_get_main_image', [null]);
+
+        self::assertNull($result, 'Should return null when product is null');
+    }
+
+    public function testGetProductMainImageReturnsNullWhenMainImageHasNoFile(): void
+    {
+        $mainImage = $this->createProductImage(1, ['main']);
+        // Not setting an image file
+
+        $product = new Product();
+        $product->addImage($mainImage);
+
+        $result = self::callTwigFunction($this->extension, 'oro_product_get_main_image', [$product]);
+
+        self::assertNull($result, 'Should return null when main image has no file');
+    }
 }
