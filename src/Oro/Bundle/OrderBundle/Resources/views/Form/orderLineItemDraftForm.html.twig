@@ -1,20 +1,3 @@
-{% block oro_order_product_kit_item_line_item_widget %}
-    <div>
-        {{ form_row(form.product, { 'label': false }) }}
-        {{ form_row(form.quantity, { 'label': 'oro.order.orderlineitem.draft_form.kit_item.quantity.label' }) }}
-        <div class="control-group control-group-oro_currency_price">
-            <div class="control-label wrap">
-                {{ form_label(form.price, 'oro.order.orderlineitem.draft_form.kit_item.price.label'|trans({ '%currency%': oro_currency_symbol(currency) }), { 'raw_label': true }) }}
-            </div>
-            <div class="controls" data-page-component-view="oropricing/js/app/views/line-item-product-prices-extended-view">
-                {{ form_widget(form.price) }}
-                {{ form_help(form.price) }}
-                {{ form_errors(form.price) }}
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
 {% block _oro_order_line_item_draft_price_widget %}
     <div class="multicurrency-fields-wrapper value-field input-append">
         {{ form_widget(form.value) }}

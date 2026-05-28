@@ -515,6 +515,21 @@ services:
         tags:
             - { name: 'kernel.event_listener', event: 'Oro\Bundle\PaymentBundle\Event\PaymentStatusUpdatedEvent', method: 'onPaymentStatusUpdated' }
 
+    oro_order.event_listener.webhook.order_payment_status_topic:
+        class: Oro\Bundle\OrderBundle\EventListener\Webhook\OrderPaymentStatusWebhookTopicListener
+        arguments:
+            - '@oro_integration.webhook_configuration_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_integration.webhook_topic_collect, method: onWebhookTopicCollect }
+
+    oro_order.event_listener.webhook.order_payment_status:
+        class: Oro\Bundle\OrderBundle\EventListener\Webhook\OrderPaymentStatusWebhookListener
+        arguments:
+            - '@oro_payment.webhook.payment_status_notifier'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.event.transaction_complete, method: onTransactionComplete }
+
     oro_order.order.listener.orm.reindex_product_line_item_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductLineItemListener'
         public: false
