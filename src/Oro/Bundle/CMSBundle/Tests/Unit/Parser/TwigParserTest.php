@@ -19,6 +19,9 @@ class TwigParserTest extends \PHPUnit\Framework\TestCase
     /** @var TwigParser */
     private $parser;
 
+    /**
+     * @inheritdoc
+     */
     protected function setUp(): void
     {
         $this->twig = $this->createMock(Environment::class);
@@ -59,7 +62,7 @@ class TwigParserTest extends \PHPUnit\Framework\TestCase
                 new Node([]),
                 new Node([]),
                 new Node([]),
-                '',
+                [],
                 new Source('', '')
             ));
 
