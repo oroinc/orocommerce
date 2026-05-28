@@ -27,6 +27,8 @@ final class QuickAddControllerTest extends WebTestCase
 
     private TranslatorInterface $translator;
 
+    private mixed $defaultProductVisibility;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -49,6 +51,16 @@ final class QuickAddControllerTest extends WebTestCase
             EntityFieldFallbackValue::class
         );
         $this->translator = self::getContainer()->get('translator');
+        $this->defaultProductVisibility = self::getConfigManager()->get('oro_order.frontend_product_visibility');
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_order.frontend_product_visibility', $this->defaultProductVisibility);
+        $configManager->flush();
+        parent::tearDown();
     }
 
     public function testQuickAddReturnsErrorIfInventoryStatusNotSupported(): void
