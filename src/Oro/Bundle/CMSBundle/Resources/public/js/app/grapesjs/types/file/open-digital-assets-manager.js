@@ -14,6 +14,8 @@ const openDigitalAssetsManager = model => {
                     target = '_self'
                 } = digitalAssetModel.get('previewMetadata');
                 const traitText = model.getTrait('text');
+                const hasNonTextComponents = model.get('components')
+                    .some(component => component.get('type') !== 'textnode');
 
                 model.setAttributes({
                     href: url,
@@ -21,13 +23,22 @@ const openDigitalAssetsManager = model => {
                     target: target
                 });
 
-                model.components([{
-                    type: 'textnode',
-                    content: title
-                }]);
+                if (hasNonTextComponents) {
+                    return;
+                }
+
+                const textNodes = model.findType('textnode');
+                if (!model.get('components').length) {
+                    model.components([{
+                        type: 'textnode',
+                        content: title
+                    }]);
+                } else if (textNodes.length) {
+                    textNodes[0].set('content', title);
+                }
 
                 if (traitText) {
-                    traitText.set('value', title);
+                    traitText.setValue(title);
                 }
             }
         }

@@ -63,8 +63,7 @@ export default (BaseTypeModel, {editor}) => {
             'droppable': 1,
             'editable': 1,
             'highlightable': 0,
-            'resizable': 0,
-            'traits': ['title', 'text', 'target']
+            'resizable': 0
         }
     });
 
