@@ -187,7 +187,7 @@ class FrontendConsentContentNodeValidFilterTest extends \PHPUnit\Framework\TestC
             ->willReturn($currentWebsite);
 
         $this->logger->expects($this->once())
-            ->method('error')
+            ->method('notice')
             ->with(
                 "Consent with id '999' point to the WebCatalog that doesn't use in the website with id '1'!"
             );
