@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Provider;
 
+use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CustomerBundle\Layout\DataProvider\SignInTargetPathProviderInterface;
@@ -16,6 +17,8 @@ class SignInTargetPathProvider implements SignInTargetPathProviderInterface
 {
     private string $checkoutRoute = 'oro_checkout_frontend_checkout';
 
+    private ?CheckoutManager $checkoutManager = null;
+
     public function __construct(
         private SignInTargetPathProviderInterface $innerProvider,
         private ConfigManager $configManager,
@@ -27,6 +30,13 @@ class SignInTargetPathProvider implements SignInTargetPathProviderInterface
     public function setCheckoutRoute(string $checkoutRoute): void
     {
         $this->checkoutRoute = $checkoutRoute;
+    }
+
+    public function setCheckoutManager(CheckoutManager $checkoutManager): self
+    {
+        $this->checkoutManager = $checkoutManager;
+
+        return $this;
     }
 
     public function getTargetPath(): ?string
@@ -44,15 +54,30 @@ class SignInTargetPathProvider implements SignInTargetPathProviderInterface
             // Route not found.
         }
 
-        if (($routeInfo['_route'] ?? null) === $this->checkoutRoute) {
-            return $referer;
-        } else {
+        if (($routeInfo['_route'] ?? null) !== $this->checkoutRoute) {
             return $this->innerProvider->getTargetPath();
         }
+
+        if (!$this->isCheckoutInProgress($routeInfo['id'] ?? null)) {
+            return $this->innerProvider->getTargetPath();
+        }
+
+        return $referer;
     }
 
     private function isDoNotLeaveCheckout(): bool
     {
         return (bool)$this->configManager->get(Configuration::getConfigKey(Configuration::DO_NOT_LEAVE_CHECKOUT));
+    }
+
+    private function isCheckoutInProgress(?int $checkoutId): bool
+    {
+        if (!$checkoutId) {
+            return false;
+        }
+
+        $checkout = $this->checkoutManager->getCheckoutById($checkoutId);
+
+        return $checkout !== null && !$checkout->isCompleted();
     }
 }
