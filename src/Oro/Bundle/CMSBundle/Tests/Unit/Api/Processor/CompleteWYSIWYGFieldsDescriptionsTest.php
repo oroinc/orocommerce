@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Api\Processor;
 
+use Michelf\MarkdownExtra;
 use Oro\Bundle\ApiBundle\ApiDoc\EntityDescriptionProvider;
 use Oro\Bundle\ApiBundle\Request\ApiAction;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\GetConfig\ConfigProcessorTestCase;
 use Oro\Bundle\CMSBundle\Api\Processor\CompleteWYSIWYGFieldsDescriptions;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Config\FileLocatorInterface;
 
 /**
@@ -13,14 +15,9 @@ use Symfony\Component\Config\FileLocatorInterface;
  */
 class CompleteWYSIWYGFieldsDescriptionsTest extends ConfigProcessorTestCase
 {
-    /** @var EntityDescriptionProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityDescriptionProvider;
-
-    /** @var FileLocatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $fileLocator;
-
-    /** @var CompleteWYSIWYGFieldsDescriptions */
-    private $processor;
+    private EntityDescriptionProvider&MockObject $entityDescriptionProvider;
+    private FileLocatorInterface&MockObject $fileLocator;
+    private CompleteWYSIWYGFieldsDescriptions $processor;
 
     protected function setUp(): void
     {
@@ -43,7 +40,7 @@ class CompleteWYSIWYGFieldsDescriptionsTest extends ConfigProcessorTestCase
             ->with('@OroCMSBundle/Resources/doc/api/' . $fileName)
             ->willReturn($filePath);
 
-        return file_get_contents($filePath);
+        return (new MarkdownExtra())->transform(file_get_contents($filePath));
     }
 
     public function testProcessWhenNoWysiwygFields(): void
@@ -515,9 +512,8 @@ class CompleteWYSIWYGFieldsDescriptionsTest extends ConfigProcessorTestCase
 
         $expectedConfig = $config;
         $expectedConfig['fields']['field1']['description'] =
-            '<p>'
-            . $descriptionFileContent
-            . '</p><p><strong>The read-only field. A passed value will be ignored.</strong></p>';
+            $descriptionFileContent
+            . '<p><strong>The read-only field. A passed value will be ignored.</strong></p>';
         $this->assertConfig($expectedConfig, $this->context->getResult());
     }
 
