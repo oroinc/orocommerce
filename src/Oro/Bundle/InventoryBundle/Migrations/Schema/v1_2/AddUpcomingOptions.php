@@ -84,7 +84,8 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],
                     'dataaudit' => ['auditable' => true],
-                    'importexport' => ['full' => true]
+                    'importexport' => ['full' => true],
+                    'email' => ['available_in_template' => true],
                 ],
             ]
         );
@@ -110,7 +111,8 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],
                     'dataaudit' => ['auditable' => true],
-                    'importexport' => ['full' => true]
+                    'importexport' => ['full' => true],
+                    'email' => ['available_in_template' => true],
                 ],
             ]
         );

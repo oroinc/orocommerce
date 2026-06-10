@@ -186,7 +186,8 @@ class OroOrderBundleInstaller implements
             'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
             'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
             'importexport' => ['excluded' => true],
-            'dataaudit' => ['auditable' => true]
+            'dataaudit' => ['auditable' => true],
+            'email' => ['available_in_template' => true],
         ]]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'oro_order_created_at_index');
@@ -522,7 +523,8 @@ class OroOrderBundleInstaller implements
                         LoadOrderInternalStatuses::getDataKeys(),
                         LoadAdditionalOrderInternalStatuses::getDataKeys()
                     ))
-                ]
+                ],
+                'email' => ['available_in_template' => true],
             ]
         );
     }
@@ -536,7 +538,10 @@ class OroOrderBundleInstaller implements
             Order::STATUS_CODE,
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
     }
 
@@ -556,7 +561,8 @@ class OroOrderBundleInstaller implements
                         Order::SHIPPING_STATUS_CODE,
                         ['not_shipped', 'shipped']
                     )
-                ]
+                ],
+                'email' => ['available_in_template' => true],
             ]
         );
     }

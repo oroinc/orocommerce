@@ -41,7 +41,7 @@ class OroSaleBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v7_1_0_0';
+        return 'v7_0_2_0';
     }
 
     #[\Override]
@@ -550,7 +550,10 @@ class OroSaleBundleInstaller implements
             Quote::CUSTOMER_STATUS_CODE,
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
         $enumOptionIds = [];
         foreach (LoadQuoteCustomerStatuses::getDataKeys() as $key) {
@@ -574,7 +577,10 @@ class OroSaleBundleInstaller implements
             Quote::INTERNAL_STATUS_CODE,
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
 
         $enumOptionIds = [];

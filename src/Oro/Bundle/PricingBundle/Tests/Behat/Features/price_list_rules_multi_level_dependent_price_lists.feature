@@ -76,6 +76,9 @@ Feature: Price list rules multi level Dependent Price Lists
   Scenario Outline: Check Dependent Prices after base price creation
     When I go to Sales/ Price Lists
     And click View <Name> in grid
+    And I click "Recalculate"
+    Then I should see "Product Prices have been successfully recalculated" flash message
+    When I reload the page
     Then I should see following grid containing rows:
       | Product SKU | Quantity | Unit | Value   | Currency | Type      |
       | SKU1        | 1        | each | <Price> | USD      | Generated |
@@ -100,6 +103,9 @@ Feature: Price list rules multi level Dependent Price Lists
   Scenario Outline: Check Dependent Prices after base price creation
     When I go to Sales/ Price Lists
     And click View <Name> in grid
+    And I click "Recalculate"
+    Then I should see "Product Prices have been successfully recalculated" flash message
+    When I reload the page
     Then I should see following grid containing rows:
       | Product SKU | Quantity | Unit | Value   | Currency | Type      |
       | SKU1        | 1        | each | <Price> | USD      | Generated |

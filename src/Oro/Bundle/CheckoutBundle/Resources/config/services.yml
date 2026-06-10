@@ -1124,6 +1124,14 @@ services:
         tags:
             - { name: validator.constraint_validator }
 
+    oro_checkout.constraint.validator.order_amount_limits:
+        class: Oro\Bundle\CheckoutBundle\Validator\Constraints\OrderAmountLimitsValidator
+        arguments:
+            - '@oro_shopping_list.provider.order_limit'
+            - '@oro_shopping_list.provider.order_limit_formatted'
+        tags:
+            - { name: validator.constraint_validator }
+
     oro_checkout.constraint.validator.has_applicable_payment_methods:
         class: Oro\Bundle\CheckoutBundle\Validator\Constraints\HasApplicablePaymentMethodsValidator
         arguments:
@@ -1197,6 +1205,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: extendable_condition.shopping_list_start, method: onStartFromShoppingList, priority: 128 }
 
+    oro_checkout.event_listener.validate_shopping_list_order_amount_limits:
+        class: Oro\Bundle\CheckoutBundle\EventListener\ValidateShoppingListOrderAmountLimitsEventListener
+        arguments:
+            - '@validator'
+        tags:
+            - { name: kernel.event_listener, event: extendable_condition.shopping_list_start, method: onStartFromShoppingList }
+
     oro_checkout.event_listener.config_setting_form.minimum_order_amount:
         class: Oro\Bundle\CheckoutBundle\EventListener\OrderLimitConfigListener
         arguments:
@@ -1228,6 +1243,8 @@ services:
             - '@oro_config.manager'
             - '@oro_security.util.same_site_url_helper'
             - '@router'
+        calls:
+            - [setCheckoutManager, ['@oro_checkout.manager']]
 
     oro_checkout.provider.checkout_id_by_target_path_request:
         class: Oro\Bundle\CheckoutBundle\Provider\CheckoutIdByTargetPathRequestProvider

@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 
 /**
@@ -18,10 +19,12 @@ use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 class ProductKitItemLabel extends AbstractLocalizedFallbackValue
 {
     #[ORM\Column(name: 'string', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $string = null;
 
     #[ORM\ManyToOne(targetEntity: ProductKitItem::class, inversedBy: 'labels')]
     #[ORM\JoinColumn(name: 'product_kit_item_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?ProductKitItem $kitItem = null;
 
     public function getKitItem(): ?ProductKitItem

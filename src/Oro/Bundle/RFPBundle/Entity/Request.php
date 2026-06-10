@@ -68,7 +68,8 @@ use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
             'frontend_customer_column_name' => 'customer_id'
         ],
         'dataaudit' => ['auditable' => true],
-        'grid' => ['default' => 'rfp-requests-grid', 'context' => 'rfp-requests-for-context-grid']
+        'grid' => ['default' => 'rfp-requests-grid', 'context' => 'rfp-requests-for-context-grid'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class Request implements
@@ -97,38 +98,39 @@ class Request implements
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'first_name', type: Types::STRING, length: 255)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $firstName = null;
 
     #[ORM\Column(name: 'last_name', type: Types::STRING, length: 255)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $lastName = null;
 
     #[ORM\Column(name: 'email', type: Types::STRING, length: 255)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $email = null;
 
     #[ORM\Column(name: 'phone', type: Types::STRING, length: 255, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $phone = null;
 
     #[ORM\Column(name: 'company', type: Types::STRING, length: 255)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $company = null;
 
     #[ORM\Column(name: 'role', type: Types::STRING, length: 255, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $role = null;
 
     #[ORM\Column(name: 'note', type: Types::TEXT, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $note = null;
 
     #[ORM\Column(name: 'cancellation_reason', type: Types::TEXT, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $cancellationReason = null;
 
     /**
@@ -136,15 +138,15 @@ class Request implements
      */
     #[ORM\OneToMany(mappedBy: 'request', targetEntity: RequestProduct::class, cascade: ['ALL'], orphanRemoval: true)]
     #[ORM\OrderBy(['id' => Criteria::ASC])]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $requestProducts = null;
 
     #[ORM\Column(name: 'po_number', type: Types::STRING, length: 255, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $poNumber = null;
 
     #[ORM\Column(name: 'ship_until', type: Types::DATE_MUTABLE, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?\DateTimeInterface $shipUntil = null;
 
     /**
@@ -154,6 +156,7 @@ class Request implements
     #[ORM\JoinTable(name: 'oro_rfp_assigned_users')]
     #[ORM\JoinColumn(name: 'request_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $assignedUsers = null;
 
     /**
@@ -163,6 +166,7 @@ class Request implements
     #[ORM\JoinTable(name: 'oro_rfp_assigned_cus_users')]
     #[ORM\JoinColumn(name: 'request_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'customer_user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $assignedCustomerUsers = null;
 
     /**
@@ -174,19 +178,21 @@ class Request implements
         cascade: ['ALL'],
         orphanRemoval: true
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $requestAdditionalNotes = null;
 
     #[ORM\ManyToOne(targetEntity: Website::class)]
     #[ORM\JoinColumn(name: 'website_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Website $website = null;
 
     #[ORM\Column(name: 'project_name', type: Types::STRING, length: 255, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $projectName = null;
 
     #[ORM\ManyToOne(targetEntity: CustomerVisitor::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'visitor_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?CustomerVisitor $visitor = null;
 
     public function __construct()

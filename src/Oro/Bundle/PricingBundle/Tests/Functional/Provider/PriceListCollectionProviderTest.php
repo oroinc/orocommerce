@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Provider;
 
-use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -15,13 +16,15 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelation
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class PriceListCollectionProviderTest extends WebTestCase
+final class PriceListCollectionProviderTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    private const DEFAULT_PRICE_LIST = 1;
+    private const string CONFIG_PRICE_LIST = 'price_list_1';
 
     private PriceListCollectionProvider $provider;
+
+    private array|null $defaultPriceLists = null;
 
     #[\Override]
     protected function setUp(): void
@@ -34,29 +37,43 @@ class PriceListCollectionProviderTest extends WebTestCase
         ]);
 
         $this->provider = self::getContainer()->get('oro_pricing.provider.price_list_collection');
+
+        $configManager = self::getConfigManager();
+        $this->defaultPriceLists = $configManager->get('oro_pricing.default_price_lists');
+
+        /** @var PriceList $configPriceList */
+        $configPriceList = $this->getReference(self::CONFIG_PRICE_LIST);
+        $configManager->set(
+            'oro_pricing.default_price_lists',
+            [new PriceListConfig($configPriceList, 100, true)]
+        );
+        $configManager->flush();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configConverter = self::getContainer()->get('oro_pricing.system_config_converter');
+        $configManager->set(
+            'oro_pricing.default_price_lists',
+            $configConverter->convertFromSaved($this->defaultPriceLists)
+        );
+        $configManager->flush();
+
+        parent::tearDown();
     }
 
     public function testGetPriceListsByConfig(): void
     {
-        $em = self::getContainer()->get('doctrine')->getManager();
-        $priceList = $em->getReference(PriceList::class, self::DEFAULT_PRICE_LIST);
+        $pricesChain = $this->provider->getPriceListsByConfig();
 
-        $configManager = self::getConfigManager();
-        $configConverter = self::getContainer()->get('oro_pricing.system_config_converter');
-        $initialPriceLists = $configConverter->convertFromSaved(
-            $configManager->get('oro_pricing.default_price_lists')
-        );
-        $configManager->set('oro_pricing.default_price_lists', [new PriceListConfig($priceList, 100, true)]);
-        $configManager->flush();
-        try {
-            $pricesChain = $this->provider->getPriceListsByConfig();
-        } finally {
-            $configManager->set('oro_pricing.default_price_lists', $initialPriceLists);
-            $configManager->flush();
-        }
+        self::assertCount(1, $pricesChain);
+        self::assertTrue($pricesChain[0]->isMergeAllowed());
 
-        $this->assertCount(1, $pricesChain);
-        $this->assertTrue($pricesChain[0]->isMergeAllowed());
+        /** @var PriceList $configPriceList */
+        $configPriceList = $this->getReference(self::CONFIG_PRICE_LIST);
+        self::assertSame($configPriceList->getId(), $pricesChain[0]->getPriceList()->getId());
     }
 
     /**
@@ -69,7 +86,7 @@ class PriceListCollectionProviderTest extends WebTestCase
         /** @var Website $website */
         $website = $this->getReference($websiteReference);
         $result = $this->provider->getPriceListsByWebsite($website);
-        $this->assertEquals($expectedPriceLists, $this->resolveResult($result));
+        self::assertEquals($expectedPriceLists, $this->resolveResult($result));
     }
 
     public function testGetPriceListsByWebsiteDataProvider(): array
@@ -90,7 +107,7 @@ class PriceListCollectionProviderTest extends WebTestCase
                     /** End From Website */
                     /** From config */
                     [
-                        'priceList' => self::DEFAULT_PRICE_LIST,
+                        'priceList' => self::CONFIG_PRICE_LIST,
                         'mergeAllowed' => true,
                     ],
                     /** End From config */
@@ -114,7 +131,7 @@ class PriceListCollectionProviderTest extends WebTestCase
                     /** End From Website */
                     /** From config */
                     [
-                        'priceList' => self::DEFAULT_PRICE_LIST,
+                        'priceList' => self::CONFIG_PRICE_LIST,
                         'mergeAllowed' => true,
                     ],
                     /** End From config */
@@ -138,7 +155,7 @@ class PriceListCollectionProviderTest extends WebTestCase
         /** @var Website $website */
         $website = $this->getReference($websiteReference);
         $result = $this->provider->getPriceListsByCustomerGroup($customerGroup, $website);
-        $this->assertEquals($expectedPriceLists, $this->resolveResult($result));
+        self::assertEquals($expectedPriceLists, $this->resolveResult($result));
     }
 
     public function testGetPriceListsByCustomerGroupDataProvider(): array
@@ -174,7 +191,7 @@ class PriceListCollectionProviderTest extends WebTestCase
                     /** End From Website */
                     /** From config */
                     [
-                        'priceList' => self::DEFAULT_PRICE_LIST,
+                        'priceList' => self::CONFIG_PRICE_LIST,
                         'mergeAllowed' => true,
                     ],
                     /** End From config */
@@ -227,7 +244,7 @@ class PriceListCollectionProviderTest extends WebTestCase
                     /** End From Website */
                     /** From config */
                     [
-                        'priceList' => self::DEFAULT_PRICE_LIST,
+                        'priceList' => self::CONFIG_PRICE_LIST,
                         'mergeAllowed' => true,
                     ],
                     /** End From config */
@@ -251,7 +268,7 @@ class PriceListCollectionProviderTest extends WebTestCase
         /** @var Website $website */
         $website = $this->getReference($websiteReference);
         $result = $this->provider->getPriceListsByCustomer($customer, $website);
-        $this->assertEquals($expectedPriceLists, $this->resolveResult($result));
+        self::assertEquals($expectedPriceLists, $this->resolveResult($result));
     }
 
     public function testGetPriceListsByCustomerDataProvider(): array
@@ -297,14 +314,14 @@ class PriceListCollectionProviderTest extends WebTestCase
     ): void {
         /** @var Customer $customer */
         $customer = $this->getReference('customer.level_1_1');
-        $this->assertNull($customer->getGroup());
+        self::assertNull($customer->getGroup());
 
         /** @var Website $website */
         $website = $this->getReference($website);
 
         $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
         $result = $this->provider->getPriceListsByCustomer($customer, $website);
-        $this->assertEquals($expectedPriceLists, $this->resolveResult($result));
+        self::assertEquals($expectedPriceLists, $this->resolveResult($result));
     }
 
     public function getPriceListsByCustomerForCustomerWithoutGroupDataProvider(): array
@@ -348,7 +365,7 @@ class PriceListCollectionProviderTest extends WebTestCase
                     /** End From Website */
                     /** From config */
                     [
-                        'priceList' => self::DEFAULT_PRICE_LIST,
+                        'priceList' => self::CONFIG_PRICE_LIST,
                         'mergeAllowed' => true,
                     ],
                     /** End From config */
@@ -360,14 +377,8 @@ class PriceListCollectionProviderTest extends WebTestCase
     private function resolveExpectedPriceLists(array $expectedPriceLists): array
     {
         $result = [];
-        /** @var EntityManager $em */
-        $em = self::getContainer()->get('doctrine')->getManager();
         foreach ($expectedPriceLists as $expectedPriceListData) {
-            if ($expectedPriceListData['priceList'] === self::DEFAULT_PRICE_LIST) {
-                $priceList = $em->getReference(PriceList::class, self::DEFAULT_PRICE_LIST);
-            } else {
-                $priceList = $this->getReference($expectedPriceListData['priceList']);
-            }
+            $priceList = $this->getReference($expectedPriceListData['priceList']);
             $result[] = [
                 'priceList' => $priceList->getName(),
                 'mergeAllowed' => $expectedPriceListData['mergeAllowed']

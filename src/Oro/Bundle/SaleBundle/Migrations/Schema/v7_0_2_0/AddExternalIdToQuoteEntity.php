@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SaleBundle\Migrations\Schema\v7_1_0_0;
+namespace Oro\Bundle\SaleBundle\Migrations\Schema\v7_0_2_0;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;

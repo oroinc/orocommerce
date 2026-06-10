@@ -38,7 +38,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
             'owner_column_name' => 'organization_id'
         ],
         'dataaudit' => ['auditable' => true],
-        'security' => ['type' => 'ACL', 'group_name' => '']
+        'security' => ['type' => 'ACL', 'group_name' => ''],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class ShippingMethodsConfigsRule implements RuleOwnerInterface, ExtendEntityInterface
@@ -48,12 +49,19 @@ class ShippingMethodsConfigsRule implements RuleOwnerInterface, ExtendEntityInte
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Rule::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'rule_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 10]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 10],
+        'email' => ['available_in_template' => true],
+    ])]
     private ?Rule $rule = null;
 
     /**
@@ -66,6 +74,7 @@ class ShippingMethodsConfigsRule implements RuleOwnerInterface, ExtendEntityInte
         fetch: 'EAGER',
         orphanRemoval: true
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     private ?Collection $methodConfigs = null;
 
     /**
@@ -78,14 +87,20 @@ class ShippingMethodsConfigsRule implements RuleOwnerInterface, ExtendEntityInte
         fetch: 'EAGER',
         orphanRemoval: true
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     private ?Collection $destinations = null;
 
     #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: false)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 20]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 20],
+        'email' => ['available_in_template' => true],
+    ])]
     private ?string $currency = null;
 
     #[ORM\ManyToOne(targetEntity: Organization::class)]
     #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     private ?Organization $organization = null;
 
     /**
@@ -95,6 +110,7 @@ class ShippingMethodsConfigsRule implements RuleOwnerInterface, ExtendEntityInte
     #[ORM\JoinTable(name: 'oro_ship_mtds_rule_website')]
     #[ORM\JoinColumn(name: 'oro_ship_mtds_cfgs_rl_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'website_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     private ?Collection $websites = null;
 
     public function __construct()

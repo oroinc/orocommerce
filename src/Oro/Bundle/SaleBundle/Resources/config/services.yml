@@ -581,3 +581,17 @@ services:
             - 'prod_inventory_status'
         tags:
             - { name: migration.update_enumerable_system_config }
+
+    oro_sale.event_listener.reset_migration_version.v7_1_0_0:
+        class: Oro\Bundle\MigrationBundle\EventListener\ResetMigrationVersionListener
+        arguments:
+            - '@doctrine.dbal.default_connection'
+            - 'OroSaleBundle'
+            - 'v7_1_0_0'
+            - 'v7_0_2_0'
+        tags:
+            -   name: kernel.event_listener
+                event: oro_migration.pre_up
+                method: onPreUp
+                # Must be executed before `oro_migration.migration.pre_up.listener`
+                priority: 255
