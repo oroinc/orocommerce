@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Api\Processor;
 
+use Michelf\MarkdownExtra;
 use Oro\Bundle\ApiBundle\ApiDoc\EntityDescriptionProvider;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Processor\GetConfig\CompleteDescriptions\FieldDescriptionUtil;
@@ -171,9 +172,9 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
     private function loadDescriptionFile(string $descriptionFile): string
     {
         if (!isset($this->descriptions[$descriptionFile])) {
-            $this->descriptions[$descriptionFile] = file_get_contents(
+            $this->descriptions[$descriptionFile] = (new MarkdownExtra())->transform(file_get_contents(
                 $this->fileLocator->locate('@OroCMSBundle/Resources/doc/api/' . $descriptionFile)
-            );
+            ));
         }
 
         return $this->descriptions[$descriptionFile];
