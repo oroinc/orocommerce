@@ -107,7 +107,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - addTitle: ['@category1_title']
             - addShortDescription: ['@category1_short_description']
             - addLongDescription: ['@category1_description']
-            - addMetaTitl: ['@category1_meta_title']
+            - addMetaTitle: ['@category1_meta_title']
             - addMetaDescription: ['@category1_meta_description']
             - addMetaKeyword: ['@category1_meta_keywords']
         organization: '@organization'
@@ -120,7 +120,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - addTitle: ['@category1_1_title']
             - addShortDescription: ['@category1_1_short_description']
             - addLongDescription: ['@category1_1_description']
-            - addMetaTitl: ['@category1_1_meta_title']
+            - addMetaTitle: ['@category1_1_meta_title']
             - addMetaDescription: ['@category1_1_meta_description']
             - addMetaKeyword: ['@category1_1_meta_keywords']
         organization: '@organization'

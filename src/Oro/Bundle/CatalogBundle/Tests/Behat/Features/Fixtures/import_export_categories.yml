@@ -15,8 +15,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - addMetaDescription: ['@localizedFallbackValueMetaDesc21']
             # 'addMetaKeyword' is not a typo, see EX_OroCatalogBundle_Category
             - addMetaKeyword: ['@localizedFallbackValueMetaKeywords21']
-            # 'addMetaTitl' is not a typo, see EX_OroCatalogBundle_Category
-            - addMetaTitl: ['@localizedFallbackValueMetaTitles21']
+            - addMetaTitle: ['@localizedFallbackValueMetaTitles21']
             - addSlugPrototype: ['@localizedFallbackValueSlugPrototype21']
 
     categoryWithTreeLevel1:
