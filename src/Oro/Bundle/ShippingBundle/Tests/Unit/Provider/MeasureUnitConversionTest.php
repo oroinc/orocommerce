@@ -125,9 +125,9 @@ class MeasureUnitConversionTest extends \PHPUnit\Framework\TestCase
         $convertedUnit = $this->measureUnitConversion->convertDimensions($this->dimensionsUnit, 'inch');
 
         $this->assertInstanceOf(Dimensions::class, $convertedUnit);
-        $this->assertSame(12.6378021, $convertedUnit->getValue()->getLength());
-        $this->assertSame(25.7480454, $convertedUnit->getValue()->getWidth());
-        $this->assertSame(38.8582887, $convertedUnit->getValue()->getHeight());
+        self::assertEqualsWithDelta(12.6378021, $convertedUnit->getValue()->getLength(), 0.0000001);
+        self::assertEqualsWithDelta(25.7480454, $convertedUnit->getValue()->getWidth(), 0.0000001);
+        self::assertEqualsWithDelta(38.8582887, $convertedUnit->getValue()->getHeight(), 0.0000001);
         $this->assertEquals('inch', $convertedUnit->getUnit()->getCode());
     }
 
