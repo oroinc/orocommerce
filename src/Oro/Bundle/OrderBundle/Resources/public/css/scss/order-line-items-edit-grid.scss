@@ -11,6 +11,7 @@
     .grid-body-cell-productSku {
         width: $order-line-items-edit-grid-product-sku-width;
         max-width: $order-line-items-edit-grid-product-sku-width;
+        min-width: $order-line-items-edit-grid-product-sku-width;
         overflow-wrap: break-word;
 
         input[type='text'] {
@@ -23,6 +24,7 @@
     .grid-body-cell-product {
         width: $order-line-items-edit-grid-product-width;
         min-width: $order-line-items-edit-grid-product-width;
+        max-width: $order-line-items-edit-grid-product-width;
 
         .order-line-items {
             max-width: $order-line-items-edit-grid-product-width;
@@ -40,6 +42,7 @@
     .grid-header-cell-quantity,
     .grid-body-cell-quantity {
         width: $order-line-items-edit-grid-quantity-width;
+        min-width: $order-line-items-edit-grid-quantity-width;
         max-width: $order-line-items-edit-grid-quantity-width;
 
         input[type='text'] {
@@ -54,6 +57,7 @@
     .grid-header-cell-price,
     .grid-body-cell-price {
         width: $order-line-items-edit-grid-price-width;
+        min-width: $order-line-items-edit-grid-price-width;
         max-width: $order-line-items-edit-grid-price-width;
 
         padding-left: 0;
@@ -92,6 +96,7 @@
     .grid-header-cell-shipBy,
     .grid-body-cell-shipBy {
         width: $order-line-items-edit-grid-ship-by-width;
+        min-width: $order-line-items-edit-grid-ship-by-width;
         max-width: $order-line-items-edit-grid-ship-by-width;
 
         input[type='text'] {
@@ -103,6 +108,7 @@
     .grid-header-cell-warehouse,
     .grid-body-cell-warehouse {
         width: $order-line-items-edit-grid-warehouse-width;
+        min-width: $order-line-items-edit-grid-warehouse-width;
         max-width: $order-line-items-edit-grid-warehouse-width;
 
         .input-append .select2-container {
