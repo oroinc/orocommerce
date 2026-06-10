@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
 use Oro\Bundle\CheckoutBundle\Provider\SignInTargetPathProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
@@ -18,6 +20,7 @@ final class SignInTargetPathProviderTest extends TestCase
     private ConfigManager&MockObject $configManager;
     private SameSiteUrlHelper&MockObject $sameSiteUrlHelper;
     private UrlMatcherInterface&MockObject $urlMatcher;
+    private CheckoutManager&MockObject $checkoutManager;
 
     private SignInTargetPathProvider $provider;
 
@@ -28,6 +31,7 @@ final class SignInTargetPathProviderTest extends TestCase
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->sameSiteUrlHelper = $this->createMock(SameSiteUrlHelper::class);
         $this->urlMatcher = $this->createMock(UrlMatcherInterface::class);
+        $this->checkoutManager = $this->createMock(CheckoutManager::class);
 
         $this->provider = new SignInTargetPathProvider(
             $this->innerProvider,
@@ -35,6 +39,7 @@ final class SignInTargetPathProviderTest extends TestCase
             $this->sameSiteUrlHelper,
             $this->urlMatcher
         );
+        $this->provider->setCheckoutManager($this->checkoutManager);
     }
 
     public function testGetTargetPathWhenDonNotLeaveCheckoutIsOff(): void
@@ -111,7 +116,70 @@ final class SignInTargetPathProviderTest extends TestCase
         self::assertEquals('https://inner-test.com', $this->provider->getTargetPath());
     }
 
-    public function testGetTargetPath(): void
+    public function testGetTargetPathWhenCheckoutInProgress(): void
+    {
+        $checkout = new Checkout();
+
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with(Configuration::getConfigKey(Configuration::DO_NOT_LEAVE_CHECKOUT))
+            ->willReturn(true);
+
+        $this->sameSiteUrlHelper->expects(self::once())
+            ->method('getSameSiteReferer')
+            ->willReturn('https://test.com/customer/checkout/42');
+
+        $this->urlMatcher->expects(self::once())
+            ->method('match')
+            ->with('/customer/checkout/42')
+            ->willReturn(['_route' => 'oro_checkout_frontend_checkout', 'id' => 42]);
+
+        $this->checkoutManager->expects(self::once())
+            ->method('getCheckoutById')
+            ->with(42)
+            ->willReturn($checkout);
+
+        $this->innerProvider->expects(self::never())
+            ->method('getTargetPath');
+
+        self::assertEquals(
+            'https://test.com/customer/checkout/42',
+            $this->provider->getTargetPath()
+        );
+    }
+
+    public function testGetTargetPathWhenCheckoutCompleted(): void
+    {
+        $checkout = new Checkout();
+        $checkout->setCompleted(true);
+
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with(Configuration::getConfigKey(Configuration::DO_NOT_LEAVE_CHECKOUT))
+            ->willReturn(true);
+
+        $this->sameSiteUrlHelper->expects(self::once())
+            ->method('getSameSiteReferer')
+            ->willReturn('https://test.com/customer/checkout/42');
+
+        $this->urlMatcher->expects(self::once())
+            ->method('match')
+            ->with('/customer/checkout/42')
+            ->willReturn(['_route' => 'oro_checkout_frontend_checkout', 'id' => 42]);
+
+        $this->checkoutManager->expects(self::once())
+            ->method('getCheckoutById')
+            ->with(42)
+            ->willReturn($checkout);
+
+        $this->innerProvider->expects(self::once())
+            ->method('getTargetPath')
+            ->willReturn('https://inner-test.com');
+
+        self::assertEquals('https://inner-test.com', $this->provider->getTargetPath());
+    }
+
+    public function testGetTargetPathWhenCheckoutNotFound(): void
     {
         $this->configManager->expects(self::once())
             ->method('get')
@@ -120,16 +188,22 @@ final class SignInTargetPathProviderTest extends TestCase
 
         $this->sameSiteUrlHelper->expects(self::once())
             ->method('getSameSiteReferer')
-            ->willReturn('https://test.com/test');
+            ->willReturn('https://test.com/customer/checkout/99');
 
         $this->urlMatcher->expects(self::once())
             ->method('match')
-            ->with('/test')
-            ->willReturn(['_route' => 'oro_checkout_frontend_checkout']);
+            ->with('/customer/checkout/99')
+            ->willReturn(['_route' => 'oro_checkout_frontend_checkout', 'id' => 99]);
 
-        $this->innerProvider->expects(self::never())
-            ->method('getTargetPath');
+        $this->checkoutManager->expects(self::once())
+            ->method('getCheckoutById')
+            ->with(99)
+            ->willReturn(null);
 
-        self::assertEquals('https://test.com/test', $this->provider->getTargetPath());
+        $this->innerProvider->expects(self::once())
+            ->method('getTargetPath')
+            ->willReturn(null);
+
+        self::assertNull($this->provider->getTargetPath());
     }
 }
