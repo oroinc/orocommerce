@@ -1243,6 +1243,7 @@ services:
             - '@oro_config.manager'
             - '@oro_security.util.same_site_url_helper'
             - '@router'
+            - '@oro_checkout.manager'
 
     oro_checkout.provider.checkout_id_by_target_path_request:
         class: Oro\Bundle\CheckoutBundle\Provider\CheckoutIdByTargetPathRequestProvider
