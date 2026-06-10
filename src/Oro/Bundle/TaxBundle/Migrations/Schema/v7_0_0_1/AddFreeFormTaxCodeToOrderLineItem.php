@@ -55,6 +55,7 @@ class AddFreeFormTaxCodeToOrderLineItem implements Migration, ExtendExtensionAwa
                 'merge' => ['display' => true],
                 'dataaudit' => ['auditable' => true],
                 'importexport' => ['excluded' => true],
+                'email' => ['available_in_template' => true],
             ]
         );
     }

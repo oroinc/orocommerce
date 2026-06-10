@@ -52,6 +52,7 @@ class OroTaxBundle implements Migration, ExtendExtensionAwareInterface, OrderedM
                 'merge' => ['display' => true],
                 'dataaudit' => ['auditable' => true],
                 'importexport' => ['excluded' => true],
+                'email' => ['available_in_template' => true],
             ]
         );
         $this->extendExtension->addManyToOneRelation(
@@ -79,6 +80,7 @@ class OroTaxBundle implements Migration, ExtendExtensionAwareInterface, OrderedM
                 'merge' => ['display' => true],
                 'dataaudit' => ['auditable' => true],
                 'importexport' => ['excluded' => true],
+                'email' => ['available_in_template' => true],
             ]
         );
         $this->extendExtension->addManyToOneRelation(
@@ -106,6 +108,7 @@ class OroTaxBundle implements Migration, ExtendExtensionAwareInterface, OrderedM
                 'merge' => ['display' => true],
                 'dataaudit' => ['auditable' => true],
                 'importexport' => ['excluded' => true],
+                'email' => ['available_in_template' => true],
             ]
         );
     }

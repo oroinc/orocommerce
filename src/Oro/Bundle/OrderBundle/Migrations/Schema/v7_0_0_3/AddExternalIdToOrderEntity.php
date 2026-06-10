@@ -23,7 +23,8 @@ class AddExternalIdToOrderEntity implements Migration
                 'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
                 'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
                 'importexport' => ['excluded' => true],
-                'dataaudit' => ['auditable' => true]
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
             ]]);
             $options = new OroOptions();
             $options->append('extend', 'unique_key.keys', [['name' => 'external_id', 'key' => ['external_id']]]);

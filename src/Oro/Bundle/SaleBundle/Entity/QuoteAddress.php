@@ -41,7 +41,10 @@ class QuoteAddress extends AbstractAddress implements
     use AddressValidatedAtAwareTrait;
 
     #[ORM\Column(name: 'phone', type: Types::STRING, length: 255, nullable: true)]
-    #[ConfigField(defaultValues: ['entity' => ['contact_information' => 'phone']])]
+    #[ConfigField(defaultValues: [
+        'entity' => ['contact_information' => 'phone'],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?string $phone = null;
 
     /**

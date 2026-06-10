@@ -89,7 +89,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
                 name: 'product_id',
                 referencedColumnName: 'id',
                 onDelete: 'CASCADE'
-            )
+            ),
         ],
         inverseJoinColumns: [
             new ORM\JoinColumn(
@@ -97,7 +97,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
                 referencedColumnName: 'id',
                 unique: true,
                 onDelete: 'CASCADE'
-            )
+            ),
         ],
         joinTable: new ORM\JoinTable(name: 'oro_product_slug_prototype')
     ),
@@ -108,7 +108,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
                 name: 'product_id',
                 referencedColumnName: 'id',
                 onDelete: 'CASCADE'
-            )
+            ),
         ],
         inverseJoinColumns: [
             new ORM\JoinColumn(
@@ -116,10 +116,10 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
                 referencedColumnName: 'id',
                 unique: true,
                 onDelete: 'CASCADE'
-            )
+            ),
         ],
         joinTable: new ORM\JoinTable(name: 'oro_product_slug')
-    )
+    ),
 ])]
 #[ORM\HasLifecycleCallbacks]
 #[Config(
@@ -133,7 +133,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
             'owner_field_name' => 'owner',
             'owner_column_name' => 'business_unit_owner_id',
             'organization_field_name' => 'organization',
-            'organization_column_name' => 'organization_id'
+            'organization_column_name' => 'organization_id',
         ],
         'dataaudit' => ['auditable' => true],
         'security' => [
@@ -141,11 +141,12 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
             'group_name' => '',
             'category' => 'catalog',
             'field_acl_supported' => true,
-            'field_acl_enabled' => false
+            'field_acl_enabled' => false,
         ],
         'form' => ['form_type' => ProductSelectType::class, 'grid_name' => 'products-select-grid'],
         'attribute' => ['has_attributes' => true],
-        'slug' => ['source' => 'names']
+        'slug' => ['source' => 'names'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class Product implements
@@ -179,7 +180,10 @@ class Product implements
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
@@ -189,13 +193,17 @@ class Product implements
             'importexport' => ['identity' => true, 'order' => 10],
             'attribute' => ['is_attribute' => true],
             'frontend' => ['use_in_export' => true],
-            'security' => ['permissions' => 'EDIT']
-        ]
+            'security' => ['permissions' => 'EDIT'],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?string $sku = null;
 
     #[ORM\Column(name: 'sku_uppercase', type: Types::STRING, length: 255, nullable: true)]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]], mode: 'hidden')]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => false],
+    ], mode: 'hidden')]
     protected ?string $skuUppercase = null;
 
     #[ORM\Column(name: 'status', type: Types::STRING, length: 16, nullable: false)]
@@ -203,8 +211,9 @@ class Product implements
         defaultValues: [
             'dataaudit' => ['auditable' => true],
             'importexport' => ['order' => 20],
-            'security' => ['permissions' => 'VIEW;EDIT']
-        ]
+            'security' => ['permissions' => 'VIEW;EDIT'],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?string $status = self::STATUS_DISABLED;
 
@@ -215,20 +224,28 @@ class Product implements
     #[ConfigField(
         defaultValues: [
             'dataaudit' => ['auditable' => true],
-            'importexport' => ['order' => 80, 'process_as_scalar' => true]
+            'importexport' => ['order' => 80, 'process_as_scalar' => true],
         ]
     )]
     protected $variantFields = [];
 
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE)]
     #[ConfigField(
-        defaultValues: ['entity' => ['label' => 'oro.ui.created_at'], 'importexport' => ['excluded' => true]]
+        defaultValues: [
+            'entity' => ['label' => 'oro.ui.created_at'],
+            'importexport' => ['excluded' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
     #[ConfigField(
-        defaultValues: ['entity' => ['label' => 'oro.ui.updated_at'], 'importexport' => ['excluded' => true]]
+        defaultValues: [
+            'entity' => ['label' => 'oro.ui.updated_at'],
+            'importexport' => ['excluded' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?\DateTimeInterface $updatedAt = null;
 
@@ -239,12 +256,20 @@ class Product implements
 
     #[ORM\ManyToOne(targetEntity: BusinessUnit::class)]
     #[ORM\JoinColumn(name: 'business_unit_owner_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?BusinessUnit $owner = null;
 
     #[ORM\ManyToOne(targetEntity: Organization::class)]
     #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?OrganizationInterface $organization = null;
 
     /**
@@ -262,7 +287,8 @@ class Product implements
         defaultValues: [
             'dataaudit' => ['auditable' => true],
             'importexport' => ['order' => 30, 'full' => true],
-            'security' => ['permissions' => 'VIEW;EDIT']
+            'security' => ['permissions' => 'VIEW;EDIT'],
+            'email' => ['available_in_template' => true],
         ]
     )]
     protected ?Collection $unitPrecisions = null;
@@ -273,8 +299,9 @@ class Product implements
         defaultValues: [
             'dataaudit' => ['auditable' => true],
             'importexport' => ['order' => 25, 'full' => true],
-            'security' => ['permissions' => 'VIEW;EDIT']
-        ]
+            'security' => ['permissions' => 'VIEW;EDIT'],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?ProductUnitPrecision $primaryUnitPrecision = null;
 
@@ -288,7 +315,8 @@ class Product implements
             'importexport' => ['order' => 40, 'full' => true, 'fallback_field' => 'string'],
             'attribute' => ['is_attribute' => true],
             'frontend' => ['use_in_export' => true],
-            'security' => ['permissions' => 'EDIT']
+            'security' => ['permissions' => 'EDIT'],
+            'email' => ['available_in_template' => true],
         ]
     )]
     protected ?Collection $names = null;
@@ -307,7 +335,8 @@ class Product implements
         defaultValues: [
             'importexport' => ['order' => 60, 'full' => true, 'fallback_field' => 'wysiwyg'],
             'attribute' => ['is_attribute' => true],
-            'attachment' => ['acl_protected' => false]
+            'attachment' => ['acl_protected' => false],
+            'email' => ['available_in_template' => true],
         ]
     )]
     protected ?Collection $descriptions = null;
@@ -323,7 +352,11 @@ class Product implements
         orphanRemoval: true
     )]
     #[ConfigField(
-        defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 90, 'full' => true]]
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['order' => 90, 'full' => true],
+            'email' => ['available_in_template' => true]
+        ]
     )]
     protected ?Collection $variantLinks = null;
 
@@ -344,7 +377,8 @@ class Product implements
     #[ORM\JoinColumn(name: 'default_variant_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
     #[ConfigField(defaultValues: [
         'dataaudit' => ['auditable' => true],
-        'importexport' => ['order' => 100]
+        'importexport' => ['order' => 100],
+        'email' => ['available_in_template' => true],
     ])]
     protected ?Product $defaultVariant = null;
 
@@ -361,7 +395,8 @@ class Product implements
     #[ConfigField(
         defaultValues: [
             'importexport' => ['order' => 50, 'full' => true, 'fallback_field' => 'text'],
-            'attribute' => ['is_attribute' => true]
+            'attribute' => ['is_attribute' => true],
+            'email' => ['available_in_template' => true],
         ]
     )]
     protected ?Collection $shortDescriptions = null;
@@ -380,7 +415,8 @@ class Product implements
         defaultValues: [
             'dataaudit' => ['auditable' => true],
             'importexport' => ['excluded' => true],
-            'attribute' => ['is_attribute' => true]
+            'attribute' => ['is_attribute' => true],
+            'email' => ['available_in_template' => true],
         ]
     )]
     protected ?Collection $images = null;
@@ -390,8 +426,9 @@ class Product implements
         defaultValues: [
             'dataaudit' => ['auditable' => true],
             'importexport' => ['order' => 20],
-            'security' => ['permissions' => 'VIEW;EDIT']
-        ]
+            'security' => ['permissions' => 'VIEW;EDIT'],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?string $type = self::TYPE_SIMPLE;
 
@@ -401,8 +438,9 @@ class Product implements
         defaultValues: [
             'dataaudit' => ['auditable' => false],
             'importexport' => ['order' => 10],
-            'security' => ['permissions' => 'VIEW;EDIT']
-        ]
+            'security' => ['permissions' => 'VIEW;EDIT'],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?AttributeFamily $attributeFamily = null;
 
@@ -410,8 +448,9 @@ class Product implements
     #[ConfigField(
         defaultValues: [
             'attribute' => ['is_attribute' => true, 'visible' => false],
-            'security' => ['permissions' => 'VIEW;EDIT']
-        ]
+            'security' => ['permissions' => 'VIEW;EDIT'],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?bool $featured = false;
 
@@ -419,8 +458,9 @@ class Product implements
     #[ConfigField(
         defaultValues: [
             'attribute' => ['is_attribute' => true, 'visible' => false],
-            'security' => ['permissions' => 'VIEW;EDIT']
-        ]
+            'security' => ['permissions' => 'VIEW;EDIT'],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?bool $newArrival = false;
 
@@ -430,8 +470,9 @@ class Product implements
         defaultValues: [
             'attribute' => ['is_attribute' => true, 'visible' => true],
             'dataaudit' => ['auditable' => true],
-            'importexport' => ['excluded' => true]
-        ]
+            'importexport' => ['excluded' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?Brand $brand = null;
 
@@ -442,11 +483,17 @@ class Product implements
      * @var string
      */
     #[ORM\Column(name: 'name', type: Types::STRING, length: 255, nullable: false)]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]], mode: 'hidden')]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => false],
+    ], mode: 'hidden')]
     protected ?string $denormalizedDefaultName = null;
 
     #[ORM\Column(name: 'name_uppercase', type: Types::STRING, length: 255, nullable: false)]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]], mode: 'hidden')]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => false],
+    ], mode: 'hidden')]
     protected ?string $denormalizedDefaultNameUppercase = null;
 
     /**
@@ -463,7 +510,8 @@ class Product implements
     #[ConfigField(
         defaultValues: [
             'dataaudit' => ['auditable' => true],
-            'importexport' => ['excluded' => false, 'immutable' => true, 'full' => true, 'process_as_scalar' => true]
+            'importexport' => ['excluded' => false, 'immutable' => true, 'full' => true, 'process_as_scalar' => true],
+            'email' => ['available_in_template' => true],
         ]
     )]
     protected ?Collection $kitItems = null;
@@ -474,7 +522,7 @@ class Product implements
         length: 32,
         nullable: true
     )]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 100]])]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 100], 'email' => ['available_in_template' => true]])]
     protected ?string $kitShippingCalculationMethod = null;
 
     public function __construct()
@@ -521,12 +569,12 @@ class Product implements
     {
         try {
             if ($this->getDefaultName()) {
-                return (string) $this->getDefaultName();
+                return (string)$this->getDefaultName();
             }
 
-            return (string) $this->sku;
+            return (string)$this->sku;
         } catch (\LogicException $e) {
-            return (string) $this->sku;
+            return (string)$this->sku;
         }
     }
 
@@ -588,7 +636,7 @@ class Product implements
      */
     public function getVariantFields()
     {
-        return (array) $this->variantFields;
+        return (array)$this->variantFields;
     }
 
     /**
@@ -1399,7 +1447,7 @@ class Product implements
      */
     public function setFeatured($featured)
     {
-        $this->featured = (bool) $featured;
+        $this->featured = (bool)$featured;
 
         return $this;
     }
@@ -1419,7 +1467,7 @@ class Product implements
      */
     public function setNewArrival($newArrival)
     {
-        $this->newArrival = (bool) $newArrival;
+        $this->newArrival = (bool)$newArrival;
 
         return $this;
     }

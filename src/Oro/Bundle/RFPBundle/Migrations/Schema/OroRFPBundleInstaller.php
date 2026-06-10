@@ -140,7 +140,10 @@ class OroRFPBundleInstaller implements
             'rfp_customer_status',
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
 
         $enumOptionIds = array_map(
@@ -161,7 +164,10 @@ class OroRFPBundleInstaller implements
             'rfp_internal_status',
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
 
         $enumOptionIds = array_map(
