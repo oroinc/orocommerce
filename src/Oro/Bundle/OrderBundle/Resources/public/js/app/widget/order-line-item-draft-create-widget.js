@@ -120,6 +120,7 @@ const OrderLineItemDraftCreateWidget = AbstractWidgetView.extend({
             tracker.initialState = preservedState;
         } else {
             tracker.captureInitialState();
+            this.$el.trigger('patchInitialState');
         }
     },
 
