@@ -113,31 +113,13 @@
     {% if form.shippingMethod is defined %}
         {% set lineItems %}
             {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
-            <div class="grid grid-row-gap-24">
-                <div class="grid-col-12">
-                    {% set grid_parameters = {
-                        order_id: oro_order_get_order_or_draft_id(entity)|default(0),
-                        order_draft_id: oro_order_get_order_draft_id(entity)|default(0),
-                        draft_session_uuid: draftSessionUuid
-                    } %}
-                    {% set render_parameters = { cssClass: 'order-line-items-edit-grid' } %}
-                    {{ dataGrid.renderGrid('order-line-items-edit-grid', grid_parameters, render_parameters) }}
-                </div>
-                <div class="grid-col-12">
-                    <div class="order-line-item-draft-form-container">
-                        {% set routeParameters = {
-                            orderId: oro_order_get_order_or_draft_id(entity)|default(0),
-                            orderDraftSessionUuid: draftSessionUuid
-                        } %}
-                        {{ oro_widget_render({
-                            'widgetType': 'order-line-item-draft-create',
-                            'url': path('oro_order_line_item_draft_create', routeParameters),
-                            'alias': 'order-line-item-draft-create',
-                            'elementFirst': false
-                        }) }}
-                    </div>
-                </div>
-            </div>
+            {% set grid_parameters = {
+                order_id: oro_order_get_order_or_draft_id(entity)|default(0),
+                order_draft_id: oro_order_get_order_draft_id(entity)|default(0),
+                draft_session_uuid: draftSessionUuid
+            } %}
+            {% set render_parameters = { cssClass: 'order-line-items-edit-grid' } %}
+            {{ dataGrid.renderGrid('order-line-items-edit-grid', grid_parameters, render_parameters) }}
 
             {% set entityDataOptions = {entityData: orderData} %}
             <div
