@@ -23,6 +23,7 @@ const RemoveFromSavedForLaterMassAction = SaveForLaterMassAction.extend({
 
         this._showAjaxSuccessMessage(data);
         mediator.trigger('products:removed-from-saved-for-later', {gridName: this.datagrid.name, data: data});
+        mediator.trigger('shopping-list:refresh');
     },
 
     /**

@@ -1,0 +1,118 @@
+include:
+    - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '0'
+    precision3:
+        unit: '@item'
+        precision: '0'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    pricelist:
+        name: 'pricelist'
+        __calls:
+            - setCurrencies: [['USD']]
+        active: true
+        organization: '@organization'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListToProduct1:
+        product: '@product1'
+        priceList: '@pricelist'
+    priceListToProduct3:
+        product: '@product3'
+        priceList: '@pricelist'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite:
+        priceList: '@pricelist'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer:
+        customer: '@Customer_AmandaRCole'
+        priceList: '@pricelist'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice1:
+        priceList: '@pricelist'
+        product: '@product1'
+        productSku: 'SKU1'
+        quantity: 1
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+    productPrice3:
+        priceList: '@pricelist'
+        product: '@product3'
+        productSku: 'SKU3'
+        quantity: 1
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locValue1:
+        string: 'Product1'
+    locValue3:
+        string: 'Product3'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'SKU1'
+        __calls:
+            - addName: ['@locValue1']
+            - addUnitPrecision: ['@precision1']
+            - setPrimaryUnitPrecision: ['@precision1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+    product3:
+        sku: 'SKU3'
+        __calls:
+            - addName: ['@locValue3']
+            - addUnitPrecision: ['@precision3']
+            - setPrimaryUnitPrecision: ['@precision3']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist:
+        label: 'Shopping List'
+        customer: '@CustomerUser_AmandaRCole->customer'
+        customerUser: '@CustomerUser_AmandaRCole'
+        owner: '@admin'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem1:
+        product: '@product1'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@CustomerUser_AmandaRCole'
+        shoppingList: '@shoppinglist'
+        owner: '@admin'
+        organization: '@organization'
+    lineitem3:
+        product: '@product3'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@CustomerUser_AmandaRCole'
+        shoppingList: '@shoppinglist'
+        owner: '@admin'
+        organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    shoppingListTotal:
+        __construct: ['@shoppinglist','USD']
+        subtotalValue: '20'
+        valid: true

@@ -5,13 +5,6 @@
         flex-wrap: nowrap;
     }
 
-    .grid-header-cell-product,
-    .grid-body-cell-product {
-        .order-line-items {
-            width: 440px;
-        }
-    }
-
     .grid-body-cell-quantity {
         .selector {
             min-width: auto;
@@ -20,8 +13,6 @@
 
     .grid-body-cell-price {
         input[type=text] {
-            width: 80px;
-
             &.overridden-price {
                 padding-left: $order-line-items-edit-grid-overridden-price-padding-left;
             }
@@ -29,6 +20,43 @@
     }
 
     .product-price-overridden {
-        top: 13px;
+        top: $order-line-items-edit-grid-mobile-product-price-overridden-top;
     }
+
+    .order-draft-form-container {
+        --placeholder-size: #{$order-line-items-edit-grid-mobile-draft-form-container-placeholder-size};
+
+        padding: 0;
+    }
+
+    .action-cell.grid-body-cell-update {
+        min-width: $order-line-items-edit-grid-mobile-action-cell-update-min-width;
+    }
+
+    .grid-row-update,
+    .grid-row-update-form,
+    .grid-row-update-form-validation {
+        &:has(.product-image) {
+            .grid-body-cell {
+                padding-top: $order-line-items-edit-grid-mobile-product-image-cell-padding-top;
+
+                &.grid-body-cell-product {
+                    padding-top: $oro-datagrid-body-cell-inner-top;
+                }
+            }
+        }
+    }
+
+    .grid-body-cell-quantity,
+    .grid-body-cell-price {
+        &.has-offers {
+            &:before {
+                inset: 8px 0 0;
+            }
+        }
+    }
+}
+
+.draft-form .order-comment-field {
+    width: 100%;
 }

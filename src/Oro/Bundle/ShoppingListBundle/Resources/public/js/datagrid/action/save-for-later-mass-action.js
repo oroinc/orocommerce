@@ -23,6 +23,7 @@ const SaveForLaterMassAction = MassAction.extend({
 
         this._showAjaxSuccessMessage(data);
         mediator.trigger('products:saved-for-later', {gridName: this.datagrid.name, data: data});
+        mediator.trigger('shopping-list:refresh');
     },
 
     /**
