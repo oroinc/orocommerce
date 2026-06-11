@@ -6,6 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Component\DraftSession\Entity\DraftSessionAwareInterface;
 use Oro\Component\DraftSession\Entity\DraftSessionAwareTrait;
 
@@ -14,7 +15,10 @@ use Oro\Component\DraftSession\Entity\DraftSessionAwareTrait;
  */
 #[ORM\Entity]
 #[ORM\Table('oro_order_discount')]
-#[Config(defaultValues: ['entity' => ['icon' => 'fa-discount']])]
+#[Config(defaultValues: [
+    'entity' => ['icon' => 'fa-discount'],
+    'email' => ['available_in_template' => true],
+])]
 class OrderDiscount implements DraftSessionAwareInterface
 {
     use DraftSessionAwareTrait;
@@ -25,21 +29,25 @@ class OrderDiscount implements DraftSessionAwareInterface
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $description = null;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'percent', type: 'percent', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $percent;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'amount', type: 'money', nullable: false)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $amount;
 
     /**
@@ -49,9 +57,11 @@ class OrderDiscount implements DraftSessionAwareInterface
 
     #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'discounts')]
     #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Order $order = null;
 
     #[ORM\Column(name: 'type', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $type = null;
 
     /**
