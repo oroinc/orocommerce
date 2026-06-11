@@ -634,6 +634,13 @@ oro_behat_extension:
     Order Line Item Draft Grid:
       selector: 'div[data-page-component-name="order-line-items-edit-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+      options:
+        mapping:
+          GridTable: OrderLineItemDraftGridTable
+
+    OrderLineItemDraftGridTable:
+      selector: '.grid-container > table.grid-main-container'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
 
     Order Line Item Tier Prices Hint:
         selector:
