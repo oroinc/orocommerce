@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 /* @theme: admin.oro; */
 
 .product-price-collection {
@@ -167,7 +169,7 @@
 .line-item-product-prices-extended {
     display: flex;
     flex-direction: column;
-    row-gap: $content-padding-small / 2;
+    row-gap: math.div($content-padding-small, 2);
 
     .prices-tier-per-item {
         color: $primary-550;
