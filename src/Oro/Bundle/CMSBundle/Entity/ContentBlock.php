@@ -41,7 +41,8 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
             'organization_field_name' => 'organization',
             'organization_column_name' => 'organization_id'
         ],
-        'security' => ['type' => 'ACL', 'group_name' => '']
+        'security' => ['type' => 'ACL', 'group_name' => ''],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class ContentBlock implements
@@ -56,9 +57,11 @@ class ContentBlock implements
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 100, unique: true, nullable: false)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $alias = null;
 
     /**
@@ -68,7 +71,7 @@ class ContentBlock implements
     #[ORM\JoinTable(name: 'oro_cms_content_block_title')]
     #[ORM\JoinColumn(name: 'content_block_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $titles = null;
 
     /**
@@ -89,10 +92,14 @@ class ContentBlock implements
         cascade: ['ALL'],
         orphanRemoval: true
     )]
-    #[ConfigField(defaultValues: ['entity' => ['actualize_owning_side_on_change' => true]])]
+    #[ConfigField(defaultValues: [
+        'entity' => ['actualize_owning_side_on_change' => true],
+        'email' => ['available_in_template' => true]
+    ])]
     protected ?Collection $contentVariants = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $enabled = true;
 
     /**

@@ -40,7 +40,8 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
             'owner_column_name' => 'organization_id'
         ],
         'security' => ['type' => 'ACL', 'group_name' => ''],
-        'form' => ['form_type' => PriceListSelectType::class, 'grid_name' => 'pricing-price-list-select-grid']
+        'form' => ['form_type' => PriceListSelectType::class, 'grid_name' => 'pricing-price-list-select-grid'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class PriceList extends BasePriceList implements
@@ -52,19 +53,22 @@ class PriceList extends BasePriceList implements
 
     #[ORM\ManyToOne(targetEntity: Organization::class)]
     #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?OrganizationInterface $organization = null;
 
     #[ORM\Column(name: 'active', type: Types::BOOLEAN, options: ['default' => true])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $active = true;
 
     #[ORM\Column(name: 'actual', type: Types::BOOLEAN, options: ['default' => true])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $actual = true;
 
     /**
      * @var Collection<int, ProductPrice>
      **/
     #[ORM\OneToMany(mappedBy: 'priceList', targetEntity: ProductPrice::class, fetch: 'EXTRA_LAZY')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $prices = null;
 
     /**
@@ -76,6 +80,7 @@ class PriceList extends BasePriceList implements
         cascade: ['all'],
         orphanRemoval: true
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $currencies = null;
 
     /**
@@ -91,9 +96,11 @@ class PriceList extends BasePriceList implements
     protected ?Collection $schedules = null;
 
     #[ORM\Column(name: 'contain_schedule', type: Types::BOOLEAN)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $containSchedule = false;
 
     #[ORM\Column(name: 'product_assignment_rule', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $productAssignmentRule = null;
 
     /**

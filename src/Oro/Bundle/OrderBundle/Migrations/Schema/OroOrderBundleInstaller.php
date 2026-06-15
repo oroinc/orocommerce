@@ -461,7 +461,10 @@ class OroOrderBundleInstaller implements
             Order::INTERNAL_STATUS_CODE,
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
         $internalStatusEnumTable->addOption(OroOptions::KEY, $internalStatusOptions);
     }
@@ -475,7 +478,10 @@ class OroOrderBundleInstaller implements
             Order::STATUS_CODE,
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
     }
 

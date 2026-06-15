@@ -138,7 +138,10 @@ class OroRFPBundleInstaller implements
             'rfp_customer_status',
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
 
         $customerStatusOptions = new OroOptions();
@@ -157,7 +160,10 @@ class OroRFPBundleInstaller implements
             'rfp_internal_status',
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
 
         $internalStatusOptions = new OroOptions();

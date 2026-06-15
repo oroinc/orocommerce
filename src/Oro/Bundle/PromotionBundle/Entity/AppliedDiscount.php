@@ -8,6 +8,7 @@ use Extend\Entity\Autocomplete\OroPromotionBundle_Entity_AppliedDiscount;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -30,26 +31,31 @@ class AppliedDiscount implements
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: AppliedPromotion::class, inversedBy: 'appliedDiscounts')]
     #[ORM\JoinColumn(name: 'applied_promotion_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?AppliedPromotion $appliedPromotion = null;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'amount', type: 'money_value')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $amount;
 
     /**
      * @var string
      */
     #[ORM\Column(name: 'currency', type: 'currency', length: 3)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $currency;
 
     #[ORM\ManyToOne(targetEntity: OrderLineItem::class)]
     #[ORM\JoinColumn(name: 'line_item_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?OrderLineItem $lineItem = null;
 
     /**

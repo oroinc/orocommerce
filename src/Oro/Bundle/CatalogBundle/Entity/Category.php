@@ -78,7 +78,7 @@ use Symfony\Component\Validator\Constraints\All;
                 name: 'category_id',
                 referencedColumnName: 'id',
                 onDelete: 'CASCADE'
-            )
+            ),
         ],
         inverseJoinColumns: [
             new ORM\JoinColumn(
@@ -86,18 +86,18 @@ use Symfony\Component\Validator\Constraints\All;
                 referencedColumnName: 'id',
                 unique: true,
                 onDelete: 'CASCADE'
-            )
+            ),
         ],
         joinTable: new ORM\JoinTable(name: 'oro_catalog_cat_slug_prototype')
     ),
     new ORM\AssociationOverride(
         name: 'slugs',
         joinColumns: [
-        new ORM\JoinColumn(
-            name: 'category_id',
-            referencedColumnName: 'id',
-            onDelete: 'CASCADE'
-        )
+            new ORM\JoinColumn(
+                name: 'category_id',
+                referencedColumnName: 'id',
+                onDelete: 'CASCADE'
+            ),
         ],
         inverseJoinColumns: [
             new ORM\JoinColumn(
@@ -105,10 +105,10 @@ use Symfony\Component\Validator\Constraints\All;
                 referencedColumnName: 'id',
                 unique: true,
                 onDelete: 'CASCADE'
-            )
+            ),
         ],
         joinTable: new ORM\JoinTable(name: 'oro_catalog_cat_slug')
-    )
+    ),
 ])]
 #[ORM\HasLifecycleCallbacks]
 #[Gedmo\Tree(type: 'nested')]
@@ -118,15 +118,16 @@ use Symfony\Component\Validator\Constraints\All;
         'entity' => ['icon' => 'fa-folder'],
         'security' => ['type' => 'ACL', 'group_name' => '', 'category' => 'catalog'],
         'activity' => [
-            'show_on_page' => ActivityScope::UPDATE_PAGE
+            'show_on_page' => ActivityScope::UPDATE_PAGE,
         ],
         'dataaudit' => ['auditable' => true],
         'ownership' => [
             'owner_type' => 'ORGANIZATION',
             'owner_field_name' => 'organization',
-            'owner_column_name' => 'organization_id'
+            'owner_column_name' => 'organization_id',
         ],
-        'slug' => ['source' => 'titles']
+        'slug' => ['source' => 'titles'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class Category implements
@@ -151,7 +152,11 @@ class Category implements
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     #[ConfigField(
-        defaultValues: ['dataaudit' => ['auditable' => false], 'importexport' => ['identity' => true, 'order' => 10]]
+        defaultValues: [
+            'dataaudit' => ['auditable' => false],
+            'importexport' => ['identity' => true, 'order' => 10],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?int $id = null;
 
@@ -162,7 +167,8 @@ class Category implements
     #[ConfigField(
         defaultValues: [
             'dataaudit' => ['auditable' => true],
-            'importexport' => ['order' => 20, 'full' => true, 'fallback_field' => 'string']
+            'importexport' => ['order' => 20, 'full' => true, 'fallback_field' => 'string'],
+            'email' => ['available_in_template' => true],
         ]
     )]
     protected ?Collection $titles = null;
@@ -170,7 +176,11 @@ class Category implements
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'childCategories')]
     #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[Gedmo\TreeParent]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 30]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 30],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Category $parentCategory = null;
 
     /**
@@ -178,7 +188,11 @@ class Category implements
      */
     #[ORM\OneToMany(mappedBy: 'parentCategory', targetEntity: Category::class, cascade: ['persist'])]
     #[ORM\OrderBy(['left' => Criteria::ASC])]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Collection $childCategories = null;
 
     /**
@@ -190,7 +204,10 @@ class Category implements
         cascade: ['ALL'],
         orphanRemoval: true
     )]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 50, 'full' => true, 'fallback_field' => 'text']])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['order' => 50, 'full' => true, 'fallback_field' => 'text'],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Collection $shortDescriptions = null;
 
     /**
@@ -205,7 +222,8 @@ class Category implements
     #[ConfigField(
         defaultValues: [
             'importexport' => ['order' => 60, 'full' => true, 'fallback_field' => 'wysiwyg'],
-            'attachment' => ['acl_protected' => false]
+            'attachment' => ['acl_protected' => false],
+            'email' => ['available_in_template' => true],
         ]
     )]
     protected ?Collection $longDescriptions = null;
@@ -230,7 +248,10 @@ class Category implements
      *
      */
     #[ORM\Column(name: 'title', type: Types::STRING, length: 255, nullable: false)]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]], mode: 'hidden')]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => false],
+    ], mode: 'hidden')]
     protected ?string $denormalizedDefaultTitle = null;
 
     /**
@@ -264,19 +285,27 @@ class Category implements
 
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE)]
     #[ConfigField(
-        defaultValues: ['entity' => ['label' => 'oro.ui.created_at'], 'importexport' => ['excluded' => true]]
+        defaultValues: [
+            'entity' => ['label' => 'oro.ui.created_at'],
+            'importexport' => ['excluded' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
     #[ConfigField(
-        defaultValues: ['entity' => ['label' => 'oro.ui.updated_at'], 'importexport' => ['excluded' => true]]
+        defaultValues: [
+            'entity' => ['label' => 'oro.ui.updated_at'],
+            'importexport' => ['excluded' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\ManyToOne(targetEntity: Organization::class)]
     #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 80]])]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 80], 'email' => ['available_in_template' => true]])]
     protected ?OrganizationInterface $organization = null;
 
     /**

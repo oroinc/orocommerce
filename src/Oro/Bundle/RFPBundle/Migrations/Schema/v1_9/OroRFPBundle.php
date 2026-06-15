@@ -60,7 +60,10 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface, RenameEx
             'rfp_customer_status',
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
         $customerStatusEnumTable->addOption(OroOptions::KEY, $customerStatusOptions);
 
@@ -78,7 +81,10 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface, RenameEx
             'rfp_internal_status',
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
 
         $internalStatusEnumTable->addOption(OroOptions::KEY, $internalStatusOptions);

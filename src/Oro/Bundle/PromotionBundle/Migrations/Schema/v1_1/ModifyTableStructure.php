@@ -228,7 +228,8 @@ class ModifyTableStructure implements
                     'on_delete' => 'CASCADE'
                 ],
                 'form' => ['is_enabled' => false],
-                'view' => ['is_displayable' => false]
+                'view' => ['is_displayable' => false],
+                'email' => ['available_in_template' => true],
             ]
         );
     }
@@ -270,7 +271,8 @@ class ModifyTableStructure implements
                     'on_delete' => 'CASCADE'
                 ],
                 'form' => ['is_enabled' => false],
-                'view' => ['is_displayable' => false]
+                'view' => ['is_displayable' => false],
+                'email' => ['available_in_template' => true],
             ]
         );
     }

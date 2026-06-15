@@ -22,23 +22,32 @@ class ProductKitItemProduct implements ExtendEntityInterface
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: ProductKitItem::class, inversedBy: 'kitItemProducts')]
     #[ORM\JoinColumn(name: 'product_kit_item_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['identity' => true, 'immutable' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['identity' => true, 'immutable' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?ProductKitItem $kitItem = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['identity' => true, 'immutable' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['identity' => true, 'immutable' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Product $product = null;
 
     #[ORM\Column(name: 'sort_order', type: Types::INTEGER, options: ['default' => 0])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $sortOrder = 0;
 
     #[ORM\ManyToOne(targetEntity: ProductUnitPrecision::class)]
     #[ORM\JoinColumn(name: 'product_unit_precision_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?ProductUnitPrecision $productUnitPrecision = null;
 
     public function __toString(): string

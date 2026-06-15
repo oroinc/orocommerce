@@ -26,7 +26,8 @@ use Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
             'owner_type' => 'ORGANIZATION',
             'owner_field_name' => 'organization',
             'owner_column_name' => 'organization_id'
-        ]
+        ],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class TaxRule implements DatesAwareInterface
@@ -34,42 +35,69 @@ class TaxRule implements DatesAwareInterface
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 500]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 500],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?string $description = null;
 
     #[ORM\ManyToOne(targetEntity: ProductTaxCode::class)]
     #[ORM\JoinColumn(name: 'product_tax_code_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['identity' => true, 'order' => 200]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['identity' => true, 'order' => 200],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?ProductTaxCode $productTaxCode = null;
 
     #[ORM\ManyToOne(targetEntity: CustomerTaxCode::class)]
     #[ORM\JoinColumn(name: 'customer_tax_code_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['identity' => true, 'order' => 100]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['identity' => true, 'order' => 100],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?CustomerTaxCode $customerTaxCode = null;
 
     #[ORM\ManyToOne(targetEntity: Tax::class)]
     #[ORM\JoinColumn(name: 'tax_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['identity' => true, 'order' => 400]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['identity' => true, 'order' => 400],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Tax $tax = null;
 
     #[ORM\ManyToOne(targetEntity: TaxJurisdiction::class)]
     #[ORM\JoinColumn(name: 'tax_jurisdiction_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['identity' => true, 'order' => 300]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['identity' => true, 'order' => 300],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?TaxJurisdiction $taxJurisdiction = null;
 
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE)]
     #[ConfigField(
-        defaultValues: ['entity' => ['label' => 'oro.ui.created_at'], 'importexport' => ['excluded' => true]]
+        defaultValues: [
+            'entity' => ['label' => 'oro.ui.created_at'],
+            'importexport' => ['excluded' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
     #[ConfigField(
-        defaultValues: ['entity' => ['label' => 'oro.ui.updated_at'], 'importexport' => ['excluded' => true]]
+        defaultValues: [
+            'entity' => ['label' => 'oro.ui.updated_at'],
+            'importexport' => ['excluded' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?\DateTimeInterface $updatedAt = null;
 
@@ -80,6 +108,7 @@ class TaxRule implements DatesAwareInterface
 
     #[ORM\ManyToOne(targetEntity: Organization::class)]
     #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     private ?Organization $organization = null;
 
     /**

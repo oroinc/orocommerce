@@ -85,7 +85,8 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
         ],
         'dataaudit' => ['auditable' => true],
         'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'orders'],
-        'grid' => ['default' => 'orders-grid', 'context' => 'orders-for-context-grid']
+        'grid' => ['default' => 'orders-grid', 'context' => 'orders-for-context-grid'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class Order implements
@@ -116,10 +117,11 @@ class Order implements
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'identifier', type: Types::STRING, length: 255, unique: true, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $identifier = null;
 
     #[ORM\Column(name: 'uuid', type: Types::GUID, unique: true, nullable: false)]
@@ -127,33 +129,33 @@ class Order implements
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'created_by_user_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?User $createdBy = null;
 
     #[ORM\OneToOne(targetEntity: OrderAddress::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'billing_address_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?OrderAddress $billingAddress = null;
 
     #[ORM\OneToOne(targetEntity: OrderAddress::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'shipping_address_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?OrderAddress $shippingAddress = null;
 
     #[ORM\Column(name: 'po_number', type: Types::STRING, length: 255, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $poNumber = null;
 
     #[ORM\Column(name: 'customer_notes', type: Types::TEXT, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $customerNotes = null;
 
     #[ORM\Column(name: 'ship_until', type: Types::DATE_MUTABLE, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?\DateTimeInterface $shipUntil = null;
 
     #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $currency = null;
 
     /**
@@ -169,7 +171,8 @@ class Order implements
         defaultValues: [
             'dataaudit' => ['auditable' => true, 'immutable' => true],
             'importexport' => ['order' => 55],
-            'multicurrency' => ['target' => 'subtotalDiscounts']
+            'multicurrency' => ['target' => 'subtotalDiscounts'],
+            'email' => ['available_in_template' => true]
         ]
     )]
     protected $subtotalWithDiscountsCurrency;
@@ -186,7 +189,8 @@ class Order implements
             'multicurrency' => [
                 'target' => 'subtotalDiscounts',
                 'virtual_field' => 'subtotalWithDiscountsCurrency'
-            ]
+            ],
+            'email' => ['available_in_template' => true],
         ]
     )]
     protected $subtotalWithDiscountsValue;
@@ -200,8 +204,9 @@ class Order implements
     #[ConfigField(
         defaultValues: [
             'dataaudit' => ['auditable' => true],
-            'multicurrency' => ['target' => 'subtotalDiscounts']
-        ]
+            'multicurrency' => ['target' => 'subtotalDiscounts'],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected $subtotalWithDiscounts;
 
@@ -217,7 +222,11 @@ class Order implements
      * @var string
      */
     #[ORM\Column(name: 'subtotal_currency', type: 'currency', length: 3, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'multicurrency' => ['target' => 'subtotal']])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'multicurrency' => ['target' => 'subtotal'],
+        'email' => ['available_in_template' => true]
+    ])]
     protected $subtotalCurrency;
 
     /**
@@ -231,7 +240,8 @@ class Order implements
                 'form_options' => ['constraints' => [['Range' => ['min' => 0]]]]
             ],
             'dataaudit' => ['auditable' => true],
-            'multicurrency' => ['target' => 'subtotal', 'virtual_field' => 'subtotalBaseCurrency']
+            'multicurrency' => ['target' => 'subtotal', 'virtual_field' => 'subtotalBaseCurrency'],
+            'email' => ['available_in_template' => true]
         ]
     )]
     protected $subtotalValue;
@@ -240,7 +250,11 @@ class Order implements
      * @var float
      */
     #[ORM\Column(name: 'base_subtotal_value', type: 'money', nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'multicurrency' => ['target' => 'subtotal']])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'multicurrency' => ['target' => 'subtotal'],
+        'email' => ['available_in_template' => true],
+    ])]
     protected $baseSubtotalValue;
 
     /**
@@ -255,7 +269,11 @@ class Order implements
      * @var string
      */
     #[ORM\Column(name: 'total_currency', type: 'currency', length: 3, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'multicurrency' => ['target' => 'total']])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'multicurrency' => ['target' => 'total'],
+        'email' => ['available_in_template' => true]
+    ])]
     protected $totalCurrency;
 
     /**
@@ -269,7 +287,8 @@ class Order implements
                 'form_options' => ['constraints' => [['Range' => ['min' => 0]]]]
             ],
             'dataaudit' => ['auditable' => true],
-            'multicurrency' => ['target' => 'total', 'virtual_field' => 'totalBaseCurrency']
+            'multicurrency' => ['target' => 'total', 'virtual_field' => 'totalBaseCurrency'],
+            'email' => ['available_in_template' => true]
         ]
     )]
     protected $totalValue;
@@ -278,12 +297,16 @@ class Order implements
      * @var float
      */
     #[ORM\Column(name: 'base_total_value', type: 'money', nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'multicurrency' => ['target' => 'total']])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'multicurrency' => ['target' => 'total'],
+        'email' => ['available_in_template' => true],
+    ])]
     protected $baseTotalValue;
 
     #[ORM\ManyToOne(targetEntity: Website::class)]
     #[ORM\JoinColumn(name: 'website_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Website $website = null;
 
     /**
@@ -291,40 +314,48 @@ class Order implements
      */
     #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderLineItem::class, cascade: ['ALL'], orphanRemoval: true)]
     #[ORM\OrderBy(['id' => Criteria::ASC])]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $lineItems = null;
 
     #[ORM\Column(name: 'shipping_method', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $shippingMethod = null;
 
     #[ORM\Column(name: 'shipping_method_type', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $shippingMethodType = null;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'estimated_shipping_cost_amount', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $estimatedShippingCostAmount;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'override_shipping_cost_amount', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $overriddenShippingCostAmount;
 
     #[ORM\Column(name: 'source_entity_class', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $sourceEntityClass = null;
 
     #[ORM\Column(name: 'source_entity_id', type: Types::INTEGER, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $sourceEntityId = null;
 
     #[ORM\Column(name: 'source_entity_identifier', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $sourceEntityIdentifier = null;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'total_discounts_amount', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $totalDiscountsAmount;
 
     /**
@@ -336,7 +367,7 @@ class Order implements
      * @var Collection<int, OrderDiscount>
      */
     #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderDiscount::class, cascade: ['ALL'], orphanRemoval: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $discounts = null;
 
     /**
@@ -348,20 +379,23 @@ class Order implements
         cascade: ['ALL'],
         orphanRemoval: true
     )]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $shippingTrackings = null;
 
     #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'subOrders')]
     #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Order $parent = null;
 
     /**
      * @var Collection<int, Order>
      */
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: Order::class, cascade: ['all'], orphanRemoval: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $subOrders = null;
 
     #[ORM\Column(name: 'is_external', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     private bool $external = false;
 
     public function __construct()

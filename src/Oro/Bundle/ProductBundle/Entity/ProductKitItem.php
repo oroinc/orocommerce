@@ -39,7 +39,10 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['immutable' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $id = null;
 
     /**
@@ -52,17 +55,26 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
         orphanRemoval: true
     )]
     #[ConfigField(
-        defaultValues: ['importexport' => ['immutable' => true, 'full' => true, 'fallback_field' => 'string']]
+        defaultValues: [
+            'importexport' => ['immutable' => true, 'full' => true, 'fallback_field' => 'string'],
+            'email' => ['available_in_template' => true]
+        ]
     )]
     protected ?Collection $labels = null;
 
     #[ORM\Column(name: 'sort_order', type: Types::INTEGER, options: ['default' => 0])]
-    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['immutable' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $sortOrder = 0;
 
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'kitItems')]
     #[ORM\JoinColumn(name: 'product_kit_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['immutable' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Product $productKit = null;
 
     /**
@@ -76,24 +88,39 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
         orphanRemoval: true
     )]
     #[OrderBy(['sortOrder' => Criteria::ASC])]
-    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true, 'full' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['immutable' => true, 'full' => true],
+        'email' => ['available_in_template' => true]
+    ])]
     protected ?Collection $kitItemProducts = null;
 
     #[ORM\Column(name: 'optional', type: Types::BOOLEAN, options: ['default' => false])]
-    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['immutable' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?bool $optional = false;
 
     #[ORM\Column(name: 'minimum_quantity', type: Types::FLOAT, nullable: true)]
-    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['immutable' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?float $minimumQuantity = null;
 
     #[ORM\Column(name: 'maximum_quantity', type: Types::FLOAT, nullable: true)]
-    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['immutable' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?float $maximumQuantity = null;
 
     #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
     #[ORM\JoinColumn(name: 'unit_code', referencedColumnName: 'code', onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['immutable' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?ProductUnit $productUnit = null;
 
     public function __construct()
@@ -119,12 +146,12 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
     {
         try {
             if ($this->getDefaultLabel()) {
-                return (string) $this->getDefaultLabel();
+                return (string)$this->getDefaultLabel();
             }
 
-            return (string) $this->id;
+            return (string)$this->id;
         } catch (\LogicException $e) {
-            return (string) $this->id;
+            return (string)$this->id;
         }
     }
 
@@ -286,7 +313,7 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
 
     public function setSortOrder(?int $sortOrder): self
     {
-        $this->sortOrder = (int) $sortOrder;
+        $this->sortOrder = (int)$sortOrder;
 
         return $this;
     }

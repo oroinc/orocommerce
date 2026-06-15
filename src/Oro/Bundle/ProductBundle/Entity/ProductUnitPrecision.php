@@ -22,35 +22,44 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'unitPrecisions')]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Product $product = null;
 
     #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
     #[ORM\JoinColumn(name: 'unit_code', referencedColumnName: 'code', onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 10, 'identity' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['order' => 10, 'identity' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?ProductUnit $unit = null;
 
     /**
      * @var integer
      */
     #[ORM\Column(name: 'unit_precision', type: Types::INTEGER)]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 20]])]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 20], 'email' => ['available_in_template' => true]])]
     protected $precision;
 
     /**
      * @var float|null
      */
     #[ORM\Column(name: 'conversion_rate', type: Types::FLOAT, nullable: true)]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 30]])]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 30], 'email' => ['available_in_template' => true]])]
     protected $conversionRate;
 
     #[ORM\Column(name: 'sell', type: Types::BOOLEAN, nullable: false)]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 40]])]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 40], 'email' => ['available_in_template' => true]])]
     protected ?bool $sell = true;
 
     public function __clone()

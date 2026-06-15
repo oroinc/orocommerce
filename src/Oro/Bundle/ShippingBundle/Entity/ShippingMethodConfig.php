@@ -29,10 +29,11 @@ class ShippingMethodConfig implements ExtendEntityInterface
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'method', type: Types::STRING, length: 255, nullable: false)]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 10]])]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 10], 'email' => ['available_in_template' => true]])]
     protected ?string $method = null;
 
     /**
@@ -52,11 +53,15 @@ class ShippingMethodConfig implements ExtendEntityInterface
         fetch: 'EAGER',
         orphanRemoval: true
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $typeConfigs = null;
 
     #[ORM\ManyToOne(targetEntity: ShippingMethodsConfigsRule::class, inversedBy: 'methodConfigs')]
     #[ORM\JoinColumn(name: 'rule_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?ShippingMethodsConfigsRule $methodConfigsRule = null;
 
     public function __construct()

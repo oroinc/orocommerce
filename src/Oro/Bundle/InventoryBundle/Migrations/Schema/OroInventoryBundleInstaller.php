@@ -661,8 +661,9 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],
                     'dataaudit' => ['auditable' => true],
-                    'importexport' => ['full' => true]
-                ],
+                    'importexport' => ['full' => true],
+                    'email' => ['available_in_template' => true],
+                ]
             ]
         );
     }
@@ -687,8 +688,9 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],
                     'dataaudit' => ['auditable' => true],
-                    'importexport' => ['excluded' => true]
-                ],
+                    'importexport' => ['excluded' => true],
+                    'email' => ['available_in_template' => true],
+                ]
             ]
         );
     }

@@ -22,10 +22,12 @@ class TextContentVariant
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: ContentBlock::class, inversedBy: 'contentVariants')]
     #[ORM\JoinColumn(name: 'content_block_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?ContentBlock $contentBlock = null;
 
     /**
@@ -58,6 +60,7 @@ class TextContentVariant
     protected $contentProperties;
 
     #[ORM\Column(name: 'is_default', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $default = false;
 
     /**

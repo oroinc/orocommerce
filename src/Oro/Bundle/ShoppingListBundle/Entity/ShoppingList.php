@@ -61,7 +61,8 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
             'frontend_customer_column_name' => 'customer_id'
         ],
         'dataaudit' => ['auditable' => true],
-        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'shopping']
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'shopping'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class ShoppingList implements
@@ -83,19 +84,20 @@ class ShoppingList implements
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'label', type: Types::STRING, length: 255)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $label = null;
 
     #[ORM\Column(name: 'notes', type: Types::TEXT, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $notes = null;
 
     #[ORM\ManyToOne(targetEntity: Website::class)]
     #[ORM\JoinColumn(name: 'website_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Website $website = null;
 
     /**
@@ -103,6 +105,7 @@ class ShoppingList implements
      **/
     #[ORM\OneToMany(mappedBy: 'shoppingList', targetEntity: LineItem::class, cascade: ['ALL'], orphanRemoval: true)]
     #[ORM\OrderBy(['id' => Criteria::ASC])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $lineItems = null;
 
     /**
@@ -119,6 +122,7 @@ class ShoppingList implements
         cascade: ['ALL'],
         orphanRemoval: true
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $totals = null;
 
     /**
@@ -127,7 +131,7 @@ class ShoppingList implements
      */
     #[ORM\ManyToOne(targetEntity: CustomerUser::class)]
     #[ORM\JoinColumn(name: 'customer_user_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?CustomerUser $customerUser = null;
 
     /**
@@ -135,7 +139,7 @@ class ShoppingList implements
      */
     #[ORM\ManyToOne(targetEntity: Customer::class)]
     #[ORM\JoinColumn(name: 'customer_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Customer $customer = null;
 
     /**
@@ -144,7 +148,7 @@ class ShoppingList implements
     protected $subtotal;
 
     #[ORM\Column(name: 'currency', type: Types::STRING, length: 3)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $currency = null;
 
 

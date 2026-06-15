@@ -52,11 +52,12 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
             'owner_field_name' => 'owner',
             'owner_column_name' => 'user_owner_id',
             'organization_field_name' => 'organization',
-            'organization_column_name' => 'organization_id'
+            'organization_column_name' => 'organization_id',
         ],
         'dataaudit' => ['auditable' => true],
         'security' => ['type' => 'ACL', 'group_name' => ''],
-        'form' => ['form_type' => PromotionSelectType::class, 'grid_name' => 'promotion-select-grid']
+        'form' => ['form_type' => PromotionSelectType::class, 'grid_name' => 'promotion-select-grid'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class Promotion implements
@@ -72,12 +73,18 @@ class Promotion implements
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Rule::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'rule_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['identity' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['identity' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Rule $rule = null;
 
     /**
@@ -87,7 +94,7 @@ class Promotion implements
     #[ORM\JoinTable(name: 'oro_promotion_label')]
     #[ORM\JoinColumn(name: 'promotion_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $labels = null;
 
     /**
@@ -97,7 +104,7 @@ class Promotion implements
     #[ORM\JoinTable(name: 'oro_promotion_description')]
     #[ORM\JoinColumn(name: 'promotion_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $descriptions = null;
 
     /**
@@ -124,22 +131,23 @@ class Promotion implements
 
     #[ORM\OneToOne(targetEntity: DiscountConfiguration::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'discount_config_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?DiscountConfiguration $discountConfiguration = null;
 
     #[ORM\Column(name: 'use_coupons', type: Types::BOOLEAN)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?bool $useCoupons = false;
 
     /**
      * @var Collection<int, Coupon>
      */
     #[ORM\OneToMany(mappedBy: 'promotion', targetEntity: Coupon::class, fetch: 'EXTRA_LAZY')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $coupons = null;
 
     #[ORM\ManyToOne(targetEntity: Segment::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'products_segment_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Segment $productsSegment = null;
 
     public function __construct()

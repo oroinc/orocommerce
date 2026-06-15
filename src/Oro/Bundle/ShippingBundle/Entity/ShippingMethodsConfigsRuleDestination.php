@@ -24,7 +24,10 @@ class ShippingMethodsConfigsRuleDestination
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $id = null;
 
     /**
@@ -37,25 +40,35 @@ class ShippingMethodsConfigsRuleDestination
         fetch: 'EAGER',
         orphanRemoval: true
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $postalCodes = null;
 
     #[ORM\ManyToOne(targetEntity: Region::class)]
     #[ORM\JoinColumn(name: 'region_code', referencedColumnName: 'combined_code')]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 20, 'short' => true, 'identity' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['order' => 20, 'short' => true, 'identity' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Region $region = null;
 
     #[ORM\Column(name: 'region_text', type: Types::STRING, length: 255, nullable: true)]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 30]])]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 30], 'email' => ['available_in_template' => true]])]
     protected ?string $regionText = null;
 
     #[ORM\ManyToOne(targetEntity: Country::class)]
     #[ORM\JoinColumn(name: 'country_code', referencedColumnName: 'iso2_code', nullable: false)]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 40, 'short' => true, 'identity' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['order' => 40, 'short' => true, 'identity' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Country $country = null;
 
     #[ORM\ManyToOne(targetEntity: ShippingMethodsConfigsRule::class, inversedBy: 'destinations')]
     #[ORM\JoinColumn(name: 'rule_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?ShippingMethodsConfigsRule $methodConfigsRule = null;
 
     public function __construct()

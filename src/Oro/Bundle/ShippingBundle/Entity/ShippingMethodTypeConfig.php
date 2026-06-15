@@ -26,10 +26,11 @@ class ShippingMethodTypeConfig implements ExtendEntityInterface
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'type', type: Types::STRING, length: 255, nullable: false)]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 10]])]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 10], 'email' => ['available_in_template' => true]])]
     protected ?string $type = null;
 
     /**
@@ -40,12 +41,15 @@ class ShippingMethodTypeConfig implements ExtendEntityInterface
     protected $options = [];
 
     #[ORM\Column(name: 'enabled', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 30]])]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 30], 'email' => ['available_in_template' => true]])]
     protected ?bool $enabled = false;
 
     #[ORM\ManyToOne(targetEntity: ShippingMethodConfig::class, inversedBy: 'typeConfigs')]
     #[ORM\JoinColumn(name: 'method_config_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?ShippingMethodConfig $methodConfig = null;
 
     /**

@@ -8,6 +8,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -24,7 +25,8 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 #[Config(
     defaultValues: [
         'entity' => ['icon' => 'fa-list-alt'],
-        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes']
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class RequestProductItem implements
@@ -38,32 +40,39 @@ class RequestProductItem implements
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: RequestProduct::class, inversedBy: 'requestProductItems')]
     #[ORM\JoinColumn(name: 'request_product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?RequestProduct $requestProduct = null;
 
     /**
      * @var float|null
      */
     #[ORM\Column(name: 'quantity', type: Types::FLOAT, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $quantity;
 
     #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
     #[ORM\JoinColumn(name: 'product_unit_id', referencedColumnName: 'code', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?ProductUnit $productUnit = null;
 
     #[ORM\Column(name: 'product_unit_code', type: Types::STRING, length: 255)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $productUnitCode = null;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'value', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $value;
 
     #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $currency = null;
 
     /**
@@ -81,6 +90,7 @@ class RequestProductItem implements
      * moving the logic of distinguishing of such line items out of the entity class.
      */
     #[ORM\Column(name: 'checksum', type: 'string', length: 40, nullable: false, options: ['default' => ''])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected string $checksum = '';
 
     public function __construct()

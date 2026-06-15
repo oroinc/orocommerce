@@ -72,7 +72,8 @@ class ChangeCategoryProductRelation implements
                     'without_default' => true,
                     'cascade' => ['persist'],
                     'on_delete' => 'SET NULL',
-                ]
+                ],
+                'email' => ['available_in_template' => true],
             ]
         );
 

@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 
 /**
  * Trait for ORM entities holding Order addresses.
@@ -14,6 +15,7 @@ trait CheckoutAddressesTrait
     use ShippingAddressTrait;
 
     #[ORM\Column(name: 'ship_to_billing_address', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $shipToBillingAddress = false;
 
     /**

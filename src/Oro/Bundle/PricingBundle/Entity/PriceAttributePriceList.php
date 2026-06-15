@@ -26,7 +26,8 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository
             'owner_type' => 'ORGANIZATION',
             'owner_field_name' => 'organization',
             'owner_column_name' => 'organization_id'
-        ]
+        ],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class PriceAttributePriceList extends BasePriceList implements OrganizationAwareInterface
@@ -37,6 +38,7 @@ class PriceAttributePriceList extends BasePriceList implements OrganizationAware
      * @var Collection<int, PriceAttributeProductPrice>
      */
     #[ORM\OneToMany(mappedBy: 'priceList', targetEntity: PriceAttributeProductPrice::class, fetch: 'EXTRA_LAZY')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $prices = null;
 
     /**
@@ -48,13 +50,15 @@ class PriceAttributePriceList extends BasePriceList implements OrganizationAware
         cascade: ['all'],
         orphanRemoval: true
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $currencies = null;
 
     #[ORM\Column(name: 'field_name', type: Types::STRING, length: 255)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $fieldName = null;
 
     #[ORM\Column(name: 'is_enabled_in_export', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $enabledInExport = false;
 
     /**

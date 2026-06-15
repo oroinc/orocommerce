@@ -61,11 +61,11 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
     new ORM\AssociationOverride(
         name: 'slugPrototypes',
         joinColumns: [
-        new ORM\JoinColumn(
-            name: 'brand_id',
-            referencedColumnName: 'id',
-            onDelete: 'CASCADE'
-        )
+            new ORM\JoinColumn(
+                name: 'brand_id',
+                referencedColumnName: 'id',
+                onDelete: 'CASCADE'
+            ),
         ],
         inverseJoinColumns: [
             new ORM\JoinColumn(
@@ -73,18 +73,18 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
                 referencedColumnName: 'id',
                 unique: true,
                 onDelete: 'CASCADE'
-            )
+            ),
         ],
         joinTable: new ORM\JoinTable(name: 'oro_brand_slug_prototype')
     ),
     new ORM\AssociationOverride(
         name: 'slugs',
         joinColumns: [
-        new ORM\JoinColumn(
-            name: 'brand_id',
-            referencedColumnName: 'id',
-            onDelete: 'CASCADE'
-        )
+            new ORM\JoinColumn(
+                name: 'brand_id',
+                referencedColumnName: 'id',
+                onDelete: 'CASCADE'
+            ),
         ],
         inverseJoinColumns: [
             new ORM\JoinColumn(
@@ -92,10 +92,10 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
                 referencedColumnName: 'id',
                 unique: true,
                 onDelete: 'CASCADE'
-            )
+            ),
         ],
         joinTable: new ORM\JoinTable(name: 'oro_brand_slug')
-    )
+    ),
 ])]
 #[ORM\HasLifecycleCallbacks]
 #[Config(
@@ -107,12 +107,13 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
             'owner_field_name' => 'owner',
             'owner_column_name' => 'business_unit_owner_id',
             'organization_field_name' => 'organization',
-            'organization_column_name' => 'organization_id'
+            'organization_column_name' => 'organization_id',
         ],
         'form' => ['form_type' => BrandSelectType::class, 'grid_name' => 'brand-select-grid'],
         'dataaudit' => ['auditable' => true],
         'security' => ['type' => 'ACL', 'group_name' => ''],
-        'slug' => ['source' => 'names']
+        'slug' => ['source' => 'names'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class Brand implements
@@ -132,21 +133,36 @@ class Brand implements
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'status', type: Types::STRING, length: 16, nullable: false)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 20]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 20],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?string $status = self::STATUS_ENABLED;
 
     #[ORM\ManyToOne(targetEntity: BusinessUnit::class)]
     #[ORM\JoinColumn(name: 'business_unit_owner_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?BusinessUnit $owner = null;
 
     #[ORM\ManyToOne(targetEntity: Organization::class)]
     #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?OrganizationInterface $organization = null;
 
     /**
@@ -160,7 +176,8 @@ class Brand implements
         defaultValues: [
             'dataaudit' => ['auditable' => true],
             'importexport' => ['order' => 40, 'full' => true, 'fallback_field' => 'string'],
-            'attribute' => ['is_attribute' => true]
+            'attribute' => ['is_attribute' => true],
+            'email' => ['available_in_template' => true],
         ]
     )]
     protected ?Collection $names = null;
@@ -176,7 +193,8 @@ class Brand implements
         defaultValues: [
             'importexport' => ['order' => 60, 'full' => true, 'fallback_field' => 'wysiwyg'],
             'attachment' => ['acl_protected' => false],
-            'attribute' => ['is_attribute' => true]
+            'attribute' => ['is_attribute' => true],
+            'email' => ['available_in_template' => true],
         ]
     )]
     protected ?Collection $descriptions = null;
@@ -191,7 +209,8 @@ class Brand implements
     #[ConfigField(
         defaultValues: [
             'importexport' => ['order' => 50, 'full' => true, 'fallback_field' => 'text'],
-            'attribute' => ['is_attribute' => true]
+            'attribute' => ['is_attribute' => true],
+            'email' => ['available_in_template' => true],
         ]
     )]
     protected ?Collection $shortDescriptions = null;
@@ -202,7 +221,10 @@ class Brand implements
      * @var string
      */
     #[ORM\Column(name: 'default_title', type: Types::STRING, length: 255, nullable: false)]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]], mode: 'hidden')]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => false],
+    ], mode: 'hidden')]
     protected ?string $defaultTitle = null;
 
     /**
@@ -277,6 +299,7 @@ class Brand implements
     {
         return $this->owner;
     }
+
     /**
      * @param BusinessUnit $owningBusinessUnit
      * @return Brand
@@ -284,8 +307,10 @@ class Brand implements
     public function setOwner($owningBusinessUnit)
     {
         $this->owner = $owningBusinessUnit;
+
         return $this;
     }
+
     /**
      * @param OrganizationInterface|null $organization
      * @return Brand
@@ -293,8 +318,10 @@ class Brand implements
     public function setOrganization(OrganizationInterface $organization = null)
     {
         $this->organization = $organization;
+
         return $this;
     }
+
     /**
      * @return OrganizationInterface
      */

@@ -26,7 +26,8 @@ use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType;
         'entity' => ['icon' => 'fa-usd'],
         'dataaudit' => ['auditable' => true],
         'security' => ['type' => 'ACL', 'group_name' => ''],
-        'form' => ['form_type' => PaymentTermSelectType::class, 'grid_name' => 'payment-terms-select-grid']
+        'form' => ['form_type' => PaymentTermSelectType::class, 'grid_name' => 'payment-terms-select-grid'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class PaymentTerm implements ExtendEntityInterface
@@ -36,11 +37,18 @@ class PaymentTerm implements ExtendEntityInterface
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'label', type: Types::STRING)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['identity' => true]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['identity' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?string $label = null;
 
     /**
