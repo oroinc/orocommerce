@@ -18,7 +18,10 @@ class ProductDescription extends AbstractLocalizedFallbackValue
 {
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'descriptions')]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Product $product = null;
 
     /**

@@ -353,7 +353,8 @@ class OroProductBundleInstaller implements
                 'attachment' => [
                     'acl_protected' => false,
                     'use_dam' => true,
-                ]
+                ],
+                'email' => ['available_in_template' => true],
             ],
             10
         );

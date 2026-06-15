@@ -18,7 +18,10 @@ class CategoryLongDescription extends AbstractLocalizedFallbackValue
 {
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'longDescriptions')]
     #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Category $category = null;
 
     /**

@@ -30,7 +30,7 @@ use Oro\Component\DraftSession\Entity\DraftSessionAwareTrait;
         'entity' => ['icon' => 'fa-map-marker'],
         'activity' => ['immutable' => true],
         'attachment' => ['immutable' => true],
-        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'orders']
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'orders'],
     ]
 )]
 class OrderAddress extends AbstractAddress implements
@@ -46,10 +46,14 @@ class OrderAddress extends AbstractAddress implements
     use DraftSessionAwareTrait;
 
     #[ORM\Column(name: 'from_external_source', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $fromExternalSource = false;
 
     #[ORM\Column(name: 'phone', type: Types::STRING, length: 255, nullable: true)]
-    #[ConfigField(defaultValues: ['entity' => ['contact_information' => 'phone']])]
+    #[ConfigField(defaultValues: [
+        'entity' => ['contact_information' => 'phone'],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?string $phone = null;
 
     /**

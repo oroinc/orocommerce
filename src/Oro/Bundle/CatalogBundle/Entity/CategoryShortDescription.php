@@ -18,12 +18,19 @@ use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 class CategoryShortDescription extends AbstractLocalizedFallbackValue
 {
     #[ORM\Column(name: 'text', type: Types::TEXT, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => false]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['excluded' => false],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?string $text = null;
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'shortDescriptions')]
     #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Category $category = null;
 
     public function getCategory(): ?Category

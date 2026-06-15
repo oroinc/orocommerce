@@ -550,7 +550,10 @@ class OroSaleBundleInstaller implements
             Quote::CUSTOMER_STATUS_CODE,
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
         $enumOptionIds = [];
         foreach (LoadQuoteCustomerStatuses::getDataKeys() as $key) {
@@ -574,7 +577,10 @@ class OroSaleBundleInstaller implements
             Quote::INTERNAL_STATUS_CODE,
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
 
         $enumOptionIds = [];

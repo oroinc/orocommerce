@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -40,6 +41,7 @@ class BaseQuoteProductItem implements
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $id;
 
     /**
@@ -47,12 +49,14 @@ class BaseQuoteProductItem implements
      */
     #[ORM\ManyToOne(targetEntity: 'Oro\Bundle\SaleBundle\Entity\QuoteProduct')]
     #[ORM\JoinColumn(name: 'quote_product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?QuoteProduct $quoteProduct = null;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'quantity', type: 'float', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $quantity;
 
     /**
@@ -60,24 +64,28 @@ class BaseQuoteProductItem implements
      */
     #[ORM\ManyToOne(targetEntity: 'Oro\Bundle\ProductBundle\Entity\ProductUnit')]
     #[ORM\JoinColumn(name: 'product_unit_id', referencedColumnName: 'code', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $productUnit;
 
     /**
      * @var string
      */
     #[ORM\Column(name: 'product_unit_code', type: 'string', length: 255)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $productUnitCode;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'value', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $value;
 
     /**
      * @var string
      */
     #[ORM\Column(name: 'currency', type: 'string', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $currency;
 
     /**
@@ -95,6 +103,7 @@ class BaseQuoteProductItem implements
      * moving the logic of distinguishing of such line items out of the entity class.
      */
     #[ORM\Column(name: 'checksum', type: Types::STRING, length: 40, nullable: false, options: ['default' => ''])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected string $checksum = '';
 
     public function __construct()

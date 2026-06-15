@@ -18,7 +18,7 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v6_1_5_1';
+        return 'v6_1_9_0';
     }
 
     #[\Override]

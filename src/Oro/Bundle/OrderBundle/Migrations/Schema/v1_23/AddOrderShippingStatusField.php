@@ -31,7 +31,8 @@ class AddOrderShippingStatusField implements Migration, ExtendExtensionAwareInte
                         Order::SHIPPING_STATUS_CODE,
                         ['not_shipped', 'shipped']
                     )
-                ]
+                ],
+                'email' => ['available_in_template' => true],
             ]
         );
     }

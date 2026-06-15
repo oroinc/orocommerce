@@ -58,7 +58,8 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
             'frontend_customer_field_name' => 'customer',
             'frontend_customer_column_name' => 'customer_id'
         ],
-        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'checkout']
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'checkout'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class Checkout implements
@@ -83,31 +84,39 @@ class Checkout implements
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'po_number', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $poNumber = null;
 
     #[ORM\ManyToOne(targetEntity: Website::class)]
     #[ORM\JoinColumn(name: 'website_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Website $website = null;
 
     #[ORM\Column(name: 'shipping_method', type: Types::STRING, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $shippingMethod = null;
 
     #[ORM\Column(name: 'shipping_method_type', type: Types::STRING, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $shippingMethodType = null;
 
     #[ORM\Column(name: 'payment_method', type: Types::STRING, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $paymentMethod = null;
 
     /**
      * @var float|null
      */
     #[ORM\Column(name: 'shipping_estimate_amount', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $shippingEstimateAmount;
 
     #[ORM\Column(name: 'shipping_estimate_currency', type: Types::STRING, length: 3, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $shippingEstimateCurrency = null;
 
     /**
@@ -116,16 +125,20 @@ class Checkout implements
     protected $shippingCost;
 
     #[ORM\Column(name: 'ship_until', type: Types::DATE_MUTABLE, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?\DateTimeInterface $shipUntil = null;
 
     #[ORM\Column(name: 'customer_notes', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $customerNotes = null;
 
     #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $currency = null;
 
     #[ORM\OneToOne(targetEntity: CheckoutSource::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'source_id', referencedColumnName: 'id', nullable: false)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?CheckoutSource $source = null;
 
     #[ORM\OneToOne(targetEntity: Order::class)]
@@ -135,15 +148,19 @@ class Checkout implements
         nullable: true,
         onDelete: 'SET NULL'
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Order $order = null;
 
     #[ORM\Column(name: 'deleted', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected bool $deleted = false;
 
     #[ORM\Column(name: 'completed', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected bool $completed = false;
 
     #[ORM\Column(name: 'payment_in_progress', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected bool $paymentInProgress = false;
 
     /**
@@ -166,6 +183,7 @@ class Checkout implements
         orphanRemoval: true
     )]
     #[ORM\OrderBy(['id' => Criteria::ASC])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $lineItems = null;
 
     /**
@@ -177,6 +195,7 @@ class Checkout implements
         cascade: ['ALL'],
         orphanRemoval: true
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $subtotals = null;
 
     #[ORM\OneToOne(targetEntity: CustomerUser::class)]
@@ -186,9 +205,11 @@ class Checkout implements
         nullable: true,
         onDelete: 'SET NULL'
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?CustomerUser $registeredCustomerUser = null;
 
     #[ORM\Column(name: 'additional_data', type: 'text', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => false, 'immutable' => true]])]
     protected ?string $additionalData = null;
 
     public function __construct()

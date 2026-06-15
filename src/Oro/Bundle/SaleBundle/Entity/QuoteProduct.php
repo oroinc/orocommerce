@@ -8,6 +8,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -28,7 +29,8 @@ use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 #[Config(
     defaultValues: [
         'entity' => ['icon' => 'fa-list-alt'],
-        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes']
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, ProductKitItemLineItemsAwareInterface
@@ -42,39 +44,50 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Quote::class, inversedBy: 'quoteProducts')]
     #[ORM\JoinColumn(name: 'quote_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Quote $quote = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Product $product = null;
 
     #[ORM\Column(name: 'free_form_product', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $freeFormProduct = null;
 
     #[ORM\Column(name: 'product_sku', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $productSku = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'product_replacement_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Product $productReplacement = null;
 
     #[ORM\Column(name: 'free_form_product_replacement', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $freeFormProductReplacement = null;
 
     #[ORM\Column(name: 'product_replacement_sku', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $productReplacementSku = null;
 
     #[ORM\Column(name: 'type', type: Types::SMALLINT, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $type = self::TYPE_REQUESTED;
 
     #[ORM\Column(name: 'comment', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $comment = null;
 
     #[ORM\Column(name: 'comment_customer', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $commentCustomer = null;
 
     /**
@@ -86,6 +99,7 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
         cascade: ['ALL'],
         orphanRemoval: true
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $quoteProductOffers = null;
 
     /**
@@ -97,6 +111,7 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
         cascade: ['ALL'],
         orphanRemoval: true
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $quoteProductRequests = null;
 
     /**
@@ -110,6 +125,7 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
         indexBy: 'kitItemId'
     )]
     #[OrderBy(['sortOrder' => 'ASC'])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $kitItemLineItems;
 
     /**

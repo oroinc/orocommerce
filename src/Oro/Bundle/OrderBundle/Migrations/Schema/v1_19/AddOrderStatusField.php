@@ -23,7 +23,10 @@ class AddOrderStatusField implements Migration, ExtendExtensionAwareInterface
             Order::STATUS_CODE,
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
     }
 }
