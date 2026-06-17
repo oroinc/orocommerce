@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Async\Topic\ReindexProductsByAttributesTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Provider\ReindexProductsByAttributesWebsiteResolverInterface;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -33,14 +34,18 @@ class ReindexProductsByAttributesProcessor implements
 
     private EventDispatcherInterface $dispatcher;
 
+    private ReindexProductsByAttributesWebsiteResolverInterface $websiteResolver;
+
     public function __construct(
         JobRunner $jobRunner,
         ManagerRegistry $registry,
-        EventDispatcherInterface $dispatcher
+        EventDispatcherInterface $dispatcher,
+        ReindexProductsByAttributesWebsiteResolverInterface $websiteResolver
     ) {
         $this->jobRunner = $jobRunner;
         $this->registry = $registry;
         $this->dispatcher = $dispatcher;
+        $this->websiteResolver = $websiteResolver;
         $this->logger = new NullLogger();
     }
 
@@ -93,7 +98,13 @@ class ReindexProductsByAttributesProcessor implements
             $productIds = $repository->getProductIdsByAttributesId($attributeIds);
             if ($productIds) {
                 $this->dispatcher->dispatch(
-                    new ReindexationRequestEvent([Product::class], [], $productIds, true, ['main']),
+                    new ReindexationRequestEvent(
+                        [Product::class],
+                        array_values($this->websiteResolver->getWebsiteIdsToReindex($attributeIds)),
+                        $productIds,
+                        true,
+                        ['main']
+                    ),
                     ReindexationRequestEvent::EVENT_NAME
                 );
             }

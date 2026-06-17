@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Async\ReindexProductsByAttributesProcessor;
 use Oro\Bundle\ProductBundle\Async\Topic\ReindexProductsByAttributesTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Provider\ReindexProductsByAttributesWebsiteResolverInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -16,21 +17,24 @@ use Oro\Component\MessageQueue\Test\JobRunner;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use LoggerAwareTraitTestTrait;
 
-    private JobRunner|\PHPUnit\Framework\MockObject\MockObject $jobRunner;
+    private JobRunner|MockObject $jobRunner;
 
-    private ProductRepository|\PHPUnit\Framework\MockObject\MockObject $repository;
+    private ProductRepository|MockObject $repository;
 
-    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $dispatcher;
+    private EventDispatcherInterface|MockObject $dispatcher;
 
-    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry;
+    private ManagerRegistry|MockObject $registry;
 
-    private SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session;
+    private ReindexProductsByAttributesWebsiteResolverInterface|MockObject $websiteResolver;
+
+    private SessionInterface|MockObject $session;
 
     private ReindexProductsByAttributesProcessor $processor;
 
@@ -40,13 +44,15 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
         $this->jobRunner = $this->createMock(JobRunner::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->websiteResolver = $this->createMock(ReindexProductsByAttributesWebsiteResolverInterface::class);
         $this->session = $this->createMock(SessionInterface::class);
         $this->repository = $this->createMock(ProductRepository::class);
 
         $this->processor = new ReindexProductsByAttributesProcessor(
             $this->jobRunner,
             $this->registry,
-            $this->dispatcher
+            $this->dispatcher,
+            $this->websiteResolver
         );
 
         $this->setUpLoggerMock($this->processor);
@@ -86,6 +92,7 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
     public function testProcess($productIds, $dispatchExpected): void
     {
         $attributeIds = [1, 2];
+        $websiteIds = [1, 2, 3];
         $messageBody = ['attributeIds' => $attributeIds];
         $message = $this->getMessage($messageBody);
 
@@ -106,10 +113,15 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
             ->with(Product::class)
             ->willReturn($manager);
 
+        $this->websiteResolver->expects($productIds ? self::once() : self::never())
+            ->method('getWebsiteIdsToReindex')
+            ->with($attributeIds)
+            ->willReturn($websiteIds);
+
         $this->dispatcher->expects($dispatchExpected)
             ->method('dispatch')
             ->with(
-                new ReindexationRequestEvent([Product::class], [], $productIds, true, ['main']),
+                new ReindexationRequestEvent([Product::class], $websiteIds, $productIds, true, ['main']),
                 ReindexationRequestEvent::EVENT_NAME
             );
 
@@ -139,6 +151,11 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
             ->method('getManagerForClass')
             ->with(Product::class)
             ->willReturn($manager);
+
+        $this->websiteResolver->expects(self::once())
+            ->method('getWebsiteIdsToReindex')
+            ->with($attributeIds)
+            ->willReturn([1, 2, 3]);
 
         $exception = new \Exception();
         $this->dispatcher->expects(self::once())

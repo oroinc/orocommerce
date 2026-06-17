@@ -1783,12 +1783,18 @@ services:
         tags:
             - { name: oro_action.action, alias: remove_restricted_products }
 
+    oro_product.async.reindex_products_by_attributes_website_resolver:
+        class: Oro\Bundle\ProductBundle\Provider\ReindexProductsByAttributesWebsiteResolver
+        arguments:
+            - '@doctrine'
+
     oro_product.async.reindex_products_by_attributes_processor:
         class: Oro\Bundle\ProductBundle\Async\ReindexProductsByAttributesProcessor
         arguments:
             - '@oro_message_queue.job.runner'
             - '@doctrine'
             - '@event_dispatcher'
+            - '@oro_product.async.reindex_products_by_attributes_website_resolver'
         calls:
             - ['setLogger', ['@logger']]
         tags:
