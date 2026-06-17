@@ -8,6 +8,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\PaymentBundle\Model\ExtendPaymentMethodsConfigsRuleDestinationPostalCode;
 
 /**
+ * Store payment method config rule destination post code in database.
+ *
  * @ORM\Entity
  * @ORM\Table(name="oro_payment_mtdscfgsrl_dst_pc")
  * @ORM\HasLifecycleCallbacks

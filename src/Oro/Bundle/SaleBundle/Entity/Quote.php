@@ -68,6 +68,9 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *          },
  *          "dataaudit"={
  *              "auditable"=true
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

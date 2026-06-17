@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 
 /**
- * BaseQuoteProductItem
+ * Model contains information about quote product
  *
  * @ORM\MappedSuperclass
  * @ORM\HasLifecycleCallbacks()

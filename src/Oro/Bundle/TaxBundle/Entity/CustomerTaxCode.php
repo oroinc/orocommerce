@@ -40,6 +40,9 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"="commerce"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

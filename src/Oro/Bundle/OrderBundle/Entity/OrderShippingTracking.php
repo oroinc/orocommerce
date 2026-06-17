@@ -9,7 +9,13 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  * Represents shipping tracking record for an order.
  * @ORM\Entity
  * @ORM\Table("oro_order_shipping_tracking")
- * @Config
+ * @Config(
+ *      defaultValues={
+ *          "email"={
+ *              "available_in_template"=true
+ *          }
+ *      }
+ * )
  */
 class OrderShippingTracking
 {

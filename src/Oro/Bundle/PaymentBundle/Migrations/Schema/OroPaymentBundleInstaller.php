@@ -24,7 +24,7 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_11';
+        return 'v5_0_23_0';
     }
 
     /**

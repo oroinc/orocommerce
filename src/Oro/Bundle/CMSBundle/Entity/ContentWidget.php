@@ -40,6 +40,9 @@ use Oro\Component\Layout\ContextItemInterface;
  *          },
  *          "dataaudit"={
  *              "auditable"=true
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *     }
  * )

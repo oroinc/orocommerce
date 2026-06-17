@@ -7,6 +7,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\PromotionBundle\Model\ExtendDiscountConfiguration;
 
 /**
+ * Store discount configuration in database.
+ *
  * @ORM\Table(
  *     name="oro_promotion_discount_config",
  *     indexes={

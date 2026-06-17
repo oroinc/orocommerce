@@ -41,6 +41,9 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *          "tag"={
  *              "enabled"=true
  *          },
+ *          "email"={
+ *              "available_in_template"=true
+ *          }
  *      }
  * )
  */

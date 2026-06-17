@@ -12,6 +12,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\PaymentBundle\Model\ExtendPaymentMethodsConfigsRuleDestination;
 
 /**
+ * Store payment methods config rule destination in database.
+ *
  * @ORM\Entity
  * @ORM\Table("oro_payment_mtds_cfgs_rl_d")
  * @ORM\HasLifecycleCallbacks

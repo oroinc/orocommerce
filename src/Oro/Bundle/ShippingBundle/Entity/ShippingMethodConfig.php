@@ -11,6 +11,8 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodConfig;
 
 /**
+ * Store shipping method config in database.
+ *
  * @ORM\Table(name="oro_ship_method_config")
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository")
  * @Config

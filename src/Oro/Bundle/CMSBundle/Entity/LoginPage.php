@@ -8,6 +8,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
+ * Login page entity class.
+ *
  * @ORM\Table(name="oro_cms_login_page")
  * @ORM\Entity()
  * @Config(

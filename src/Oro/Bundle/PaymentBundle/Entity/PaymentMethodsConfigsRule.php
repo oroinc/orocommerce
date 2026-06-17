@@ -16,6 +16,8 @@ use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
+ * Store payment method config rule in database.
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository")
  * @ORM\Table(name="oro_payment_mtds_cfgs_rl")
  * @Config(
@@ -35,6 +37,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )
