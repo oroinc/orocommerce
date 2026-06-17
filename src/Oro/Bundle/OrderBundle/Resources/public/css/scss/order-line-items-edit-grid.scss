@@ -7,6 +7,36 @@
         }
     }
 
+    .oro-datagrid .grid-footer {
+        text-transform: initial;
+        font-size: inherit;
+    }
+
+    .oro-datagrid.no-data-visible {
+        .other-scroll-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .no-data {
+            order: -1;
+        }
+
+        .datagrid,
+        .grid-scrollable-container {
+            display: block;
+        }
+
+        .grid-main-container > thead,
+        .grid-main-container > tbody {
+            display: none;
+        }
+
+        .create-draft-container tbody {
+            display: table-row-group;
+        }
+    }
+
     .grid-header-cell-productSku,
     .grid-body-cell-productSku {
         width: $order-line-items-edit-grid-product-sku-width;
@@ -164,6 +194,10 @@
 
     .grid-row {
         scroll-margin-top: $order-line-items-edit-grid-row-scroll-margin-top;
+
+        &.order-line-item-draft-create-row:hover {
+            background-color: transparent;
+        }
     }
 
     .grid-row-update-form-validation {
