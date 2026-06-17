@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Async\Topic\ReindexProductsByAttributesTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Provider\ReindexProductsByAttributesWebsiteResolverInterface;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -33,6 +34,8 @@ class ReindexProductsByAttributesProcessor implements
 
     private EventDispatcherInterface $dispatcher;
 
+    private ?ReindexProductsByAttributesWebsiteResolverInterface $websiteResolver = null;
+
     public function __construct(
         JobRunner $jobRunner,
         ManagerRegistry $registry,
@@ -42,6 +45,13 @@ class ReindexProductsByAttributesProcessor implements
         $this->registry = $registry;
         $this->dispatcher = $dispatcher;
         $this->logger = new NullLogger();
+    }
+
+    public function setWebsiteResolver(ReindexProductsByAttributesWebsiteResolverInterface $websiteResolver): self
+    {
+        $this->websiteResolver = $websiteResolver;
+
+        return $this;
     }
 
     #[\Override]
@@ -92,8 +102,17 @@ class ReindexProductsByAttributesProcessor implements
 
             $productIds = $repository->getProductIdsByAttributesId($attributeIds);
             if ($productIds) {
+                $websiteIds = null !== $this->websiteResolver
+                    ? array_values($this->websiteResolver->getWebsiteIdsToReindex($attributeIds))
+                    : [];
                 $this->dispatcher->dispatch(
-                    new ReindexationRequestEvent([Product::class], [], $productIds, true, ['main']),
+                    new ReindexationRequestEvent(
+                        [Product::class],
+                        $websiteIds,
+                        $productIds,
+                        true,
+                        ['main']
+                    ),
                     ReindexationRequestEvent::EVENT_NAME
                 );
             }
