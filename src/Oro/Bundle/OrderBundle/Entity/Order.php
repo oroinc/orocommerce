@@ -82,6 +82,9 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *          "grid"={
  *              "default"="orders-grid",
  *              "context"="orders-for-context-grid"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

@@ -26,7 +26,13 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
  *          )
  *      }
  * )
- * @Config()
+ * @Config(
+ *      defaultValues={
+ *          "email"={
+ *              "available_in_template"=true
+ *          }
+ *      }
+ * )
  *
  * @method CustomerUser getCustomerUser()
  * @method setCustomerUser(CustomerUser $customerUser)

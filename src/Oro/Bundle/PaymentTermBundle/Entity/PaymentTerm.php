@@ -31,6 +31,9 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
  *          "form"={
  *              "form_type"="Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType",
  *              "grid_name"="payment-terms-select-grid",
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

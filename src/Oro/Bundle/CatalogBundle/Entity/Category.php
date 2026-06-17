@@ -98,6 +98,9 @@ use Oro\Component\Tree\Entity\TreeTrait;
  *          },
  *          "slug"={
  *              "source"="titles"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

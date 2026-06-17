@@ -86,6 +86,9 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *          },
  *          "slug"={
  *              "source"="titles"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

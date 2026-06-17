@@ -13,6 +13,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *       defaultValues={
  *          "entity"={
  *              "icon"="fa-discount"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

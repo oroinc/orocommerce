@@ -39,6 +39,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

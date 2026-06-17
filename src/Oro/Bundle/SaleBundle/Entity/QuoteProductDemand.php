@@ -20,6 +20,9 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  *       defaultValues={
  *           "entity"={
  *               "icon"="fa-list-alt"
+ *           },
+ *           "email"={
+ *               "available_in_template"=true
  *           }
  *       }
  *  )

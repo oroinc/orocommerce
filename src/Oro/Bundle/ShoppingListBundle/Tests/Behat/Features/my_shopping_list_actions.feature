@@ -143,7 +143,8 @@ Feature: My Shopping List Actions
     And I filter First Name as is equal to "Nancy" in "Shopping List Action Reassign Grid"
     And I click "Shopping List Action Reassign Radio"
     And I click "Shopping List Action Submit"
-    Then I should see "Nancy Sallee"
+    Then I should see 'Shopping list "Shopping List 3" was updated successfully' flash message and I close it
+    And I should see "Nancy Sallee"
     When I click "Nancy Sallee"
     Then Page title equals to "Nancy Sallee - Users - My Account"
 

@@ -43,6 +43,9 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
  *          "form"={
  *              "form_type"="Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType",
  *              "grid_name"="pricing-price-list-select-grid",
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

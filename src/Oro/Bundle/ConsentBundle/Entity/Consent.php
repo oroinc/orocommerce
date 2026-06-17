@@ -47,6 +47,9 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
  *              "type"="ACL",
  *              "group_name"="",
  *              "category"="account_management"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

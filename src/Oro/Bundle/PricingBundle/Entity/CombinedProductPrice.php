@@ -43,6 +43,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      defaultValues={
  *          "entity"={
  *              "icon"="fa-usd"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

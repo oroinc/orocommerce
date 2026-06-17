@@ -58,6 +58,9 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *              "type"="ACL",
  *              "group_name"="commerce",
  *              "category"="checkout"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

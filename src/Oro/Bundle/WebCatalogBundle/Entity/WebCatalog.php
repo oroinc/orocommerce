@@ -40,6 +40,9 @@ use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *     }
  * )

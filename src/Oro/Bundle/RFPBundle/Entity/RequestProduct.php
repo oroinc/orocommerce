@@ -25,6 +25,9 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
  *              "type"="ACL",
  *              "group_name"="commerce",
  *              "category"="quotes"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

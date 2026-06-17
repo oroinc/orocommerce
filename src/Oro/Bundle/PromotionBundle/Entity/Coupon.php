@@ -48,6 +48,9 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
  *              "permissions"="VIEW;CREATE;EDIT;DELETE",
  *              "group_name"="commerce",
  *              "category"="marketing"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

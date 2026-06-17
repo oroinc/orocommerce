@@ -18,6 +18,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *          },
  *          "dataaudit"={
  *              "auditable"=true
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

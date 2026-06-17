@@ -62,6 +62,9 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *          "grid"={
  *              "default"="rfp-requests-grid",
  *              "context"="rfp-requests-for-context-grid"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

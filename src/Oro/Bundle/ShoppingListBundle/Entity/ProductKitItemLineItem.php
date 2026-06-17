@@ -25,6 +25,9 @@ use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
  *      defaultValues={
  *          "dataaudit"={
  *              "auditable"=true
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

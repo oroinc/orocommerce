@@ -36,6 +36,9 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *     }
  * )
