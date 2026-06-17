@@ -17,6 +17,15 @@ define(function(require) {
             BackendPaginationInput.__super__.constructor.call(this, options);
         },
 
+        /**
+         * @inheritdoc
+         */
+        initialize: function(options) {
+            BackendPaginationInput.__super__.initialize.call(this, options);
+
+            this.scrollToPosition = this.$el.closest('[data-role="page-main-container"]').position();
+        },
+
         makeHandles: function(handles) {
             handles = BackendPaginationInput.__super__.makeHandles.call(this, handles);
 
@@ -56,6 +65,8 @@ define(function(require) {
             this.collection.trigger('backgrid:checkUnSavedData', obj);
 
             if (obj.live) {
+                this.scrollToSavedPosition();
+
                 BackendPaginationInput.__super__.onChangePageByInput.call(this, e);
             }
         },
