@@ -1,33 +1,35 @@
 {% macro _renderItemRow(shippingOption) %}
     <tr>
-        <td class="renderable"><div class="text-center">{{ shippingOption.productUnit|oro_format_product_unit_label }}</div></td>
-        <td class="renderable"><div class="text-center">{{ shippingOption.weight.value|oro_weight_unit_format_value_short(shippingOption.weight.unit) }}</div></td>
-        <td class="renderable"><div class="text-center" dir="ltr">{{ shippingOption.dimensions.value|oro_dimensions_unit_format_value_short(shippingOption.dimensions.unit) }}</div></td>
-        <td class="renderable"><div class="text-center">{{ shippingOption.freightClass|oro_freight_class_format_label() }}</div></td>
+        <td class="renderable">{{ shippingOption.productUnit|oro_format_product_unit_label }}</td>
+        <td class="renderable">{{ shippingOption.weight.value|oro_weight_unit_format_value_short(shippingOption.weight.unit) }}</td>
+        <td class="renderable"><div dir="ltr">{{ shippingOption.dimensions.value|oro_dimensions_unit_format_value_short(shippingOption.dimensions.unit) }}</div></td>
+        <td class="renderable">{{ shippingOption.freightClass|oro_freight_class_format_label() }}</td>
     </tr>
 {% endmacro %}
 
 {% macro _renderItemsHead() %}
-    <thead>
-    <tr>
-        <th class="renderable">{{ 'oro.shipping.product_shipping_options.product_unit.label'|trans }}</th>
-        <th class="renderable">{{ 'oro.shipping.product_shipping_options.weight.label'|trans }}</th>
-        <th class="renderable">{{ 'oro.shipping.product_shipping_options.dimensions.label'|trans }}</th>
-        <th class="renderable">{{ 'oro.shipping.product_shipping_options.freight_class.label'|trans }}</th>
-    </tr>
+    <thead class="grid-header">
+        <tr class="grid-header-row">
+            <th class="grid-cell grid-header-cell renderable">{{ 'oro.shipping.product_shipping_options.product_unit.label'|trans }}</th>
+            <th class="grid-cell grid-header-cell renderable">{{ 'oro.shipping.product_shipping_options.weight.label'|trans }}</th>
+            <th class="grid-cell grid-header-cell renderable">{{ 'oro.shipping.product_shipping_options.dimensions.label'|trans }}</th>
+            <th class="grid-cell grid-header-cell renderable">{{ 'oro.shipping.product_shipping_options.freight_class.label'|trans }}</th>
+        </tr>
     </thead>
 {% endmacro %}
 
 {% macro renderProductShippingOptions(shippingOptions) %}
     {% import _self as shippingMacros %}
     {% if shippingOptions and shippingOptions|length > 0 %}
-        <table class="grid grid-main-container table table-condensed table-bordered shipping-options-result-grid">
-            {{ shippingMacros._renderItemsHead() }}
-            <tbody>
-                {% for key, options in shippingOptions %}
-                    {{ shippingMacros._renderItemRow(options) }}
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="oro-datagrid">
+            <table class="grid grid-main-container table table-bordered shipping-options-result-grid">
+                {{ shippingMacros._renderItemsHead() }}
+                <tbody>
+                    {% for key, options in shippingOptions %}
+                        {{ shippingMacros._renderItemRow(options) }}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% endif %}
 {% endmacro %}

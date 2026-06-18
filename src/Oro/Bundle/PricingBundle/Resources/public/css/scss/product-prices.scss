@@ -146,28 +146,25 @@ table.product-price-attributes {
 
                     &:nth-child(odd) {
                         padding-left: 0;
-                    }
 
-                    &:nth-child(even) {
-                        padding-right: 0;
-
-                        // stylelint-disable-next-line max-nesting-depth
-                        &::after {
-                            content: none;
-                        }
-                    }
-
-                    &:not(:last-child) {
                         // stylelint-disable-next-line max-nesting-depth
                         &::after {
                             content: '';
-                            border-left: 1px solid $neutral-grey-4;
+                            border-left: 1px solid $neutral-grey-3;
                             position: absolute;
                             top: 0;
                             right: 0;
                             bottom: 0;
                             display: block;
                         }
+                    }
+
+                    &:nth-child(even) {
+                        padding-right: 0;
+                    }
+
+                    &:not(:nth-child(-n + 2)) {
+                        padding-top: $content-padding-medium;
                     }
                 }
 
@@ -202,7 +199,7 @@ table.product-price-attributes {
                         font-weight: font-weight('bold');
                         text-align: left;
                         width: 100%;
-                        margin-bottom: $content-padding-small;
+                        margin-bottom: $content-padding-xmd;
                         padding-top: 0;
                     }
 

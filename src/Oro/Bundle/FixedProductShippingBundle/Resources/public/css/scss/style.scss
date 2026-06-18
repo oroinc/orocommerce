@@ -1,4 +1,5 @@
 /* @theme: admin.oro; */
+
 .fixed-product-shipping-cost,
 .shipping-cost-attribute-view {
     margin-top: 25px;
@@ -6,6 +7,12 @@
 
 .shipping-cost-attribute-view {
     max-width: 800px;
+
+    &__title {
+        font-weight: font-weight('semi-bold');
+        letter-spacing: .2px;
+        margin-bottom: $content-padding-xmd;
+    }
 }
 
 .fixed-product-shipping-cost {
@@ -14,9 +21,9 @@
 
         .control-label.wrap label {
             display: block;
-            font-weight: bold;
-            line-height: 26px;
-            margin-bottom: 8px;
+            font-weight: font-weight('semi-bold');
+            letter-spacing: .2px;
+            margin-bottom: $content-padding-xmd;
             text-align: left;
         }
 
