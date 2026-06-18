@@ -88,40 +88,39 @@ const PictureType = BaseType.extend({
         },
 
         updateToolbar() {
-            if (!this.get('toolbar').find(toolbar => toolbar.id === 'picture-settings')) {
-                const toolbarAction = {
-                    id: 'picture-settings',
-                    attributes: {
-                        'class': 'fa fa-gear',
-                        'label': __('oro.cms.wysiwyg.toolbar.pictureSettings')
-                    },
-                    command(editor) {
-                        let selected = editor.getSelected();
-                        if (selected.is('image')) {
-                            selected = selected.wrapper;
-                        }
-
-                        const {sources, mainImage, setSources, setMain} = selected.getCommandProps();
-
-                        if (mainImage.isNew) {
-                            return;
-                        }
-
-                        editor.Commands.run('open-picture-settings', {
-                            sources,
-                            mainImage,
-                            setSources: setSources.bind(selected),
-                            setMain: setMain.bind(selected)
-                        });
+            const toolbarAction = {
+                id: 'picture-settings',
+                attributes: {
+                    'class': 'fa fa-gear',
+                    'label': __('oro.cms.wysiwyg.toolbar.pictureSettings')
+                },
+                command(editor) {
+                    let selected = editor.getSelected();
+                    if (selected.is('image')) {
+                        selected = selected.wrapper;
                     }
-                };
 
-                this.set('toolbar', [
-                    toolbarAction,
-                    ...this.get('toolbar')
-                ]);
+                    const {sources, mainImage, setSources, setMain} = selected.getCommandProps();
 
-                const imageActions = this.image.get('toolbar').map(action => {
+                    if (mainImage.isNew) {
+                        return;
+                    }
+
+                    editor.Commands.run('open-picture-settings', {
+                        sources,
+                        mainImage,
+                        setSources: setSources.bind(selected),
+                        setMain: setMain.bind(selected)
+                    });
+                }
+            };
+
+            this.mergeToolbarItems([toolbarAction]);
+
+            const imageToolbar = this.image.get('toolbar');
+
+            if (!imageToolbar.some(item => item.id === 'picture-settings')) {
+                const imageActions = imageToolbar.map(action => {
                     if (action.command === 'tlb-clone') {
                         action.command = editor => {
                             const selected = editor.getSelected();

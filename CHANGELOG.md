@@ -28,6 +28,12 @@ The current file describes significant changes in the code that may affect the u
 
 ### Added
 
+#### CMSBundle
+* Extracted link component into a modular architecture (`types/link/`) with separate files for model, view, variants, sources, and commands. The link, link-block, link-button, and file types are now consolidated into a single link component with pluggable variant and source registries.
+* Added `createRegistry` utility for managing link styles, sources, and trait renderers as plain-object registries.
+* Added `BaseType` shared methods: `mergeToolbarItems` (model) for idempotent toolbar item management, and `onDoubleClick` via `mainToolbarAction` (view) for double-click-to-action behavior.
+* Added link style variants (`link`, `button`) and source types (`url`, `file`) as pluggable registry entries.
+
 #### OrderBundle
 * Added **Order Edit Draft Session** — the order edit page now uses a datagrid-based editing experience for line items instead of the previous embedded form collection. When editing an order, a draft copy is created in a separate draft session; changes are synced back to the original order on save.
   * `\Oro\Bundle\OrderBundle\Entity\Order` now implements `\Oro\Component\DraftSession\Entity\EntityDraftAwareInterface`; new fields: `draftSessionUuid` (GUID), `draftSource` (self-referencing ManyToOne), `drafts` (OneToMany).
@@ -58,6 +64,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Changed
 
+#### CMSBundle
+* Refactored `content-block-type`, `content-widget-type`, `custom-code-type`, and `picture-type` to use `BaseType` `mergeToolbarItems` and `mainToolbarAction` instead of custom toolbar and double-click handling.
+
 #### RFPBundle
 * Updated `oro_rfp_request_create_order` action to use `oro_rfp.operation.create_order_draft_from_rfq` service to create an order draft instead of pre-filling the order form via order data storage extension.
 * `\Oro\Bundle\RFPBundle\Entity\Request` now implements `\Oro\Component\DraftSession\Entity\EntityDraftAwareInterface` and `\Oro\Bundle\CurrencyBundle\Entity\WebsiteBasedCurrencyAwareInterface` to support use as a draft source entity in the RFQ-to-Order draft flow.
@@ -71,6 +80,10 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\TaxBundle\Form\Extension\OrderLineItemDraftTypeTaxExtension` — extends `OrderLineItemDraftType` with a `freeFormTaxCode` field so users can assign a tax code to free-form line items during draft editing.
 
 ### Removed
+
+#### CMSBundle
+* Removed `link-type.js`, `link-block-type.js`, `link-button/` directory, and `file/` directory — these are replaced by the unified link component in `types/link/`.
+* Removed the `CreateLinkModal` dialog (`dialogs/create-link-dialog.js`), its `create-link-form.html` template, and the `open-create-link-dialog` editor command. Link attributes (`href`, `title`, `target`, `rel`) are now edited through the Settings panel traits instead of a modal. The `link-settings` toolbar item and the default `mainToolbarAction` were removed accordingly. Customizations that opened the dialog or ran the `open-create-link-dialog` command should select the link component and use the Settings panel.
 
 #### RFPBundle
 * Removed session-based RFQ-to-order prefill storage APIs: `\Oro\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension`, `\Oro\Bundle\RFPBundle\Form\Extension\OrderLineItemDataStorageExtension`, `\Oro\Bundle\RFPBundle\Storage\RequestToOrderDataStorage`, `\Oro\Bundle\RFPBundle\Storage\OffersDataStorage`, and `\Oro\Bundle\RFPBundle\Storage\OffersFormStorage`.
@@ -179,7 +192,7 @@ The current file describes significant changes in the code that may affect the u
 
 #### ShoppingListBundle
 * Move import `FilteredProductVariantsPlugin`, `ShoppingListRefreshPlugin`, `HighlightRelatedRowsPlugin` from `oroshoppinglist/js/datagrid/builder/shoppinglist-flat-data-builder` to separate datagrid builder `oroshoppinglist/js/datagrid/builder/shoppinglist-plugins-builder`
-* Updated `oro_shopping_list_line_item_uidx` unique index in `\Oro\Bundle\ShoppingListBundle\Entity\LineItem` - now uses `NULLS NOT DISTINCT` and the following fields: 
+* Updated `oro_shopping_list_line_item_uidx` unique index in `\Oro\Bundle\ShoppingListBundle\Entity\LineItem` - now uses `NULLS NOT DISTINCT` and the following fields:
   * `product_id`;
   * `shopping_list_id`;
   * `saved_for_later_list_id`;

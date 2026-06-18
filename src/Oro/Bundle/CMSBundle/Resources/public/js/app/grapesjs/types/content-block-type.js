@@ -95,26 +95,19 @@ const ContentBlockType = BaseType.extend({
             classes: ['content-block', 'content-placeholder'],
             contentBlock: null,
             droppable: false,
-            name: 'Content Block'
+            name: 'Content Block',
+            mainToolbarAction: 'content-block-settings'
         },
 
         init() {
-            const toolbar = this.get('toolbar');
-            const commandExists = _.some(toolbar, {
+            this.mergeToolbarItems([{
+                id: 'content-block-settings',
+                attributes: {
+                    'class': 'fa fa-gear',
+                    'label': __('oro.cms.wysiwyg.toolbar.blockSetting')
+                },
                 command: 'content-block-settings'
-            });
-
-            if (!commandExists) {
-                toolbar.unshift({
-                    attributes: {
-                        'class': 'fa fa-gear',
-                        'label': __('oro.cms.wysiwyg.toolbar.blockSetting')
-                    },
-                    command: 'content-block-settings'
-                });
-
-                this.set('toolbar', toolbar);
-            }
+            }]);
 
             this.listenTo(this, 'change:contentBlock', this.onContentBlockChange, this);
         },
@@ -137,7 +130,7 @@ const ContentBlockType = BaseType.extend({
 
     viewProps: {
         events: {
-            dblclick: 'onActive'
+            dblclick: 'onDoubleClick'
         },
 
         onRender() {
@@ -151,12 +144,6 @@ const ContentBlockType = BaseType.extend({
             }
 
             this.$el.html(template({title}));
-        },
-
-        onActive(event) {
-            this.em.get('Commands').run('content-block-settings', this.model);
-
-            event && event.stopPropagation();
         }
     },
 

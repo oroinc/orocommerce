@@ -29,8 +29,17 @@ export default [{
             className: 'fa fa-align-right'
         }]
     }, {
-        property: 'display',
-        name: __('oro.cms.wysiwyg.style_manager.properties.display.name')
+        'property': 'display',
+        'name': __('oro.cms.wysiwyg.style_manager.properties.display.name'),
+        'type': 'select',
+        'default': '',
+        'options': [
+            {id: '', label: '-'},
+            {id: 'block', label: 'block'},
+            {id: 'inline', label: 'inline'},
+            {id: 'inline-block', label: 'inline-block'},
+            {id: 'none', label: 'none'}
+        ]
     }, {
         property: 'top',
         name: __('oro.cms.wysiwyg.style_manager.properties.top.name')
@@ -137,8 +146,9 @@ export default [{
         property: 'letter-spacing',
         name: __('oro.cms.wysiwyg.style_manager.properties.letter_spacing.name')
     }, {
-        property: 'color',
-        name: __('oro.cms.wysiwyg.style_manager.properties.color.name')
+        'property': 'color',
+        'default': '#000000',
+        'name': __('oro.cms.wysiwyg.style_manager.properties.color.name')
     }, {
         property: 'line-height',
         name: __('oro.cms.wysiwyg.style_manager.properties.line_height.name')

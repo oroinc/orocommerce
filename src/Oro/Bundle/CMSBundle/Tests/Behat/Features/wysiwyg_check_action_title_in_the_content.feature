@@ -16,9 +16,7 @@ Feature: Wysiwyg check action title in the content
     And I click on "Scrollspy Link" with title "Content Variants"
     And I fill in WYSIWYG "Content Variant Content" with "<a href='#' title='File name' target='_self' class='digital-asset-file no-hash'>File name</a>"
     And should see text matching "File name" in WYSIWYG editor
-    And I click on "WysiwygFileTypeBlock" with title "File name" in WYSIWYG editor
-    When I hover on "WysiwygToolbarActionFileSettings"
-    Then I should see "TooltipInner" element with text "File Settings" inside "Tooltip" element
+    And I click on "WysiwygLinkTypeBlock" with title "File name" in WYSIWYG editor
     When I hover on "WysiwygToolbarActionSelectParent"
     Then I should see "TooltipInner" element with text "Select Parent" inside "Tooltip" element
     When I hover on "WysiwygToolbarActionMove"
