@@ -9,6 +9,76 @@ export const CATEGORIES = {
     legacy: __('oro.cms.wysiwyg.block_manager.categories.legacy')
 };
 
+/**
+ * Base model methods available to all component types.
+ * These are injected into modelProps-based types automatically.
+ */
+const baseModelMethods = {
+    /**
+     * Merge toolbar items, adding only those not already present (by id or command).
+     * New items are prepended to the toolbar.
+     */
+    mergeToolbarItems(items) {
+        if (!items || !items.length) {
+            return;
+        }
+
+        const toolbar = [...this.get('toolbar')];
+        const newItems = items.filter(item => {
+            const id = item.id || item.command;
+
+            return !toolbar.some(existing => (existing.id || existing.command) === id);
+        });
+
+        if (newItems.length) {
+            this.set('toolbar', [...newItems, ...toolbar]);
+        }
+    }
+};
+
+/**
+ * Base view methods available to all component types.
+ * These are injected into viewProps-based types automatically.
+ */
+const baseViewMethods = {
+    /**
+     * Handle component activation (e.g., when added to canvas with activate: true).
+     * Runs the mainToolbarAction command if defined.
+     */
+    onActive(event) {
+        const actionId = this.model.get('mainToolbarAction');
+
+        if (!actionId) {
+            return;
+        }
+
+        const toolbar = this.model.get('toolbar') || [];
+        const item = toolbar.find(toolbarItem => (toolbarItem.id || toolbarItem.command) === actionId);
+
+        if (!item) {
+            return;
+        }
+
+        if (typeof item.command === 'function') {
+            item.command(this.em);
+        } else if (item.command) {
+            this.em.get('Commands').run(item.command, this.model);
+        }
+
+        if (event) {
+            event.stopPropagation();
+        }
+    },
+
+    /**
+     * Handle double-click by executing the main toolbar action.
+     * Types should set mainToolbarAction in model defaults to enable this behavior.
+     */
+    onDoubleClick(event) {
+        this.onActive(event);
+    }
+};
+
 const BaseType = BaseClass.extend({
     optionNames: ['editor', 'componentType', 'usedTags', 'template'],
 
@@ -131,6 +201,7 @@ const BaseType = BaseClass.extend({
 
             return {
                 model: {
+                    ...baseModelMethods,
                     ...modelProps,
                     ...this.getTypeModelOptions(),
                     editor: this.editor
@@ -165,6 +236,7 @@ const BaseType = BaseClass.extend({
 
             return {
                 view: {
+                    ...baseViewMethods,
                     ...viewProps,
                     ...this.getTypeViewOptions()
                 },

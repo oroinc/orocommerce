@@ -56,23 +56,17 @@ const ContentWidgetType = BaseType.extend({
                 this.setClass('content-widget-inline');
             }
 
-            const toolbar = this.get('toolbar');
             const commandName = this.getSettingsCommandName();
-            const commandExists = _.some(toolbar, {
+
+            this.set('mainToolbarAction', commandName, {silent: true});
+            this.mergeToolbarItems([{
+                id: commandName,
+                attributes: {
+                    'class': 'fa fa-gear',
+                    'label': __('oro.cms.wysiwyg.toolbar.widgetSetting')
+                },
                 command: commandName
-            });
-
-            if (!commandExists) {
-                toolbar.unshift({
-                    attributes: {
-                        'class': 'fa fa-gear',
-                        'label': __('oro.cms.wysiwyg.toolbar.widgetSetting')
-                    },
-                    command: commandName
-                });
-
-                this.set('toolbar', toolbar);
-            }
+            }]);
 
             this.listenTo(this, 'change:contentWidget', this.onContentBlockChange, this);
         },
@@ -100,7 +94,7 @@ const ContentWidgetType = BaseType.extend({
 
     viewProps: {
         events: {
-            dblclick: 'onActive'
+            dblclick: 'onDoubleClick'
         },
 
         onRender() {
@@ -120,12 +114,6 @@ const ContentWidgetType = BaseType.extend({
                 title,
                 widgetType
             }));
-        },
-
-        onActive(event) {
-            this.em.get('Commands').run(this.model.getSettingsCommandName(), this.model);
-
-            event && event.stopPropagation();
         }
     },
 

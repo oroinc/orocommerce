@@ -13,6 +13,23 @@
         min-width: 32px;
         min-height: 32px;
 
+        background-color: $button-bg-color-default;
+        color: $button-color-default;
+        border-radius: $button-border-radius;
+
+        &:last-child {
+            margin-right: 0;
+        }
+
+        &:hover {
+            background-color: $button-bg-color-hover-default;
+        }
+
+        &.#{gjs_vars.$pn-prefix}active,
+        &[aria-expanded="true"] {
+            background-color: $button-bg-color-active-default;
+        }
+
         &.fa-code {
             margin-top: -1px;
         }

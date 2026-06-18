@@ -111,3 +111,9 @@ body {
 .dashboard-news__link::after {
     content: none;
 }
+
+.link--empty-container {
+    min-width: 80px;
+    min-height: 32px;
+    display: inline-block;
+}

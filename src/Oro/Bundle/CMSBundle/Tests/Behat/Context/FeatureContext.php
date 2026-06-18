@@ -380,16 +380,25 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
                 sprintf('.gjs-trt-trait__wrp-%s > .gjs-trt-trait', $fieldName)
             );
 
-            $fieldElement = $fieldWrap->find('css', 'input, select');
+            $fieldElements = $fieldWrap->findAll('css', 'input, select');
 
-            if ($fieldElement->getAttribute('type') === 'checkbox') {
-                if ($fieldElement->isChecked() !== $value) {
-                    $fieldElement->getParent()->click();
+            foreach ($fieldElements as $fieldElement) {
+                if ($fieldElement->getAttribute('type') === 'checkbox') {
+                    if ($fieldElement->isChecked() !== $value) {
+                        $fieldElement->getParent()->click();
+                    }
+                    continue;
                 }
-                continue;
-            }
 
-            $fieldElement->setValue($value);
+                if ($fieldElement->getAttribute('type') === 'radio') {
+                    if ($fieldElement->getAttribute('value') === $value) {
+                        $fieldElement->getParent()->click();
+                    }
+                    continue;
+                }
+
+                $fieldElement->setValue($value);
+            }
         }
     }
 
