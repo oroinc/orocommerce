@@ -8,6 +8,8 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
+ * Additional Note for Request.
+ *
  * @ORM\Table(name="oro_rfp_request_add_note")
  * @ORM\Entity
  * @Config

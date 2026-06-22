@@ -59,6 +59,9 @@ use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
  *          },
  *          "slug"={
  *              "source"="titles"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *     }
  * )

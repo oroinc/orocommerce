@@ -26,6 +26,9 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      defaultValues={
  *          "entity"={
  *              "icon"="fa-list-alt"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

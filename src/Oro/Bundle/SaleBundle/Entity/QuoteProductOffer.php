@@ -7,6 +7,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 
 /**
+ * Represents a quote product line item offer.
+ *
  * @ORM\Table(name="oro_sale_quote_prod_offer")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
@@ -18,6 +20,9 @@ use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

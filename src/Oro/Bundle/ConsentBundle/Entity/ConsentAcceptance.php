@@ -24,7 +24,13 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *          )
  *      }
  * )
- * @Config()
+ * @Config(
+ *      defaultValues={
+ *          "email"={
+ *              "available_in_template"=true
+ *          }
+ *      }
+ * )
  */
 class ConsentAcceptance extends ExtendConsentAcceptance implements CreatedAtAwareInterface
 {

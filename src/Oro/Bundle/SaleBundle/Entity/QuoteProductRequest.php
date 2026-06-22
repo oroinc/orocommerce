@@ -23,6 +23,9 @@ use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
  *              "type"="ACL",
  *              "group_name"="commerce",
  *              "category"="quotes"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

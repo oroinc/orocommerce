@@ -22,6 +22,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *              "type"="ACL",
  *              "group_name"=""
  *          },
+ *          "email"={
+ *              "available_in_template"=true
+ *          }
  *      }
  * )
  */

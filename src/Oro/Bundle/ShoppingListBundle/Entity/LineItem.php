@@ -49,6 +49,9 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *          },
  *          "entity"={
  *              "icon"="fa-shopping-cart"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

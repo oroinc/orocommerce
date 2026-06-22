@@ -33,7 +33,13 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
  *      )
  * })
  * @ORM\Table(name="oro_web_catalog_variant")
- * @Config
+ * @Config(
+ *      defaultValues={
+ *          "email"={
+ *              "available_in_template"=true
+ *          }
+ *      }
+ * )
  */
 class ContentVariant extends ExtendContentVariant implements
     ContentVariantInterface,

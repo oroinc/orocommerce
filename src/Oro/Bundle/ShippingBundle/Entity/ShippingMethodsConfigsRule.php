@@ -15,6 +15,8 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodsConfigsRule;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
+ * Store shipping method config rule in database.
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository")
  * @ORM\Table(
  *     name="oro_ship_method_configs_rule"
@@ -36,6 +38,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

@@ -9,6 +9,8 @@ use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
+ * Entity that represents quote product demand
+ *
  * @ORM\Table(name="oro_quote_product_demand")
  * @ORM\Entity
  */

@@ -18,6 +18,8 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
+ * Store promotion data in database.
+ *
  * @ORM\Table(name="oro_promotion")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository")
  * @Config(
@@ -44,6 +46,9 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *              "form_type"="Oro\Bundle\PromotionBundle\Form\Type\PromotionSelectType",
  *              "grid_name"="promotion-select-grid"
  *          },
+ *          "email"={
+ *              "available_in_template"=true
+ *          }
  *      }
  * )
  * @SuppressWarnings(PHPMD.TooManyMethods)

@@ -9,6 +9,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\PromotionBundle\Model\ExtendAppliedCoupon;
 
 /**
+ * Store Applied Coupon in database.
+ *
  * @Config()
  * @ORM\Table(name="oro_promotion_applied_coupon")
  * @ORM\Entity

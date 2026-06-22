@@ -8,6 +8,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\PaymentTermBundle\Model\ExtendPaymentTerm;
 
 /**
+ * Implements Payment Term payment method
+ *
  * @ORM\Table(name="oro_payment_term")
  * @ORM\Entity()
  * @Config(
@@ -28,6 +30,9 @@ use Oro\Bundle\PaymentTermBundle\Model\ExtendPaymentTerm;
  *          "form"={
  *              "form_type"="Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType",
  *              "grid_name"="payment-terms-select-grid",
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

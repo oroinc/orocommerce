@@ -10,6 +10,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\RuleBundle\Model\ExtendRule;
 
 /**
+ * Store rule data in database.
+ *
  * @ORM\Entity
  * @ORM\Table(
  *     name="oro_rule",

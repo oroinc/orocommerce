@@ -25,7 +25,13 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository")
- * @Config()
+ * @Config(
+ *      defaultValues={
+ *          "email"={
+ *              "available_in_template"=true
+ *          }
+ *      }
+ * )
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
@@ -57,6 +63,14 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
     /**
      * @var string
      * @ORM\Column(name="access_identifier", type="string")
+     * @ConfigField(
+     *      defaultValues={
+     *          "email"={
+     *              "available_in_template"=false,
+     *              "immutable"=true
+     *          }
+     *      }
+     * )
      */
     protected $accessIdentifier;
 

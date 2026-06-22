@@ -5,6 +5,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Parser;
 use Oro\Bundle\CMSBundle\Parser\TwigParser;
 use Twig\Environment;
 use Twig\Node\BodyNode;
+use Twig\Node\EmptyNode;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\ModuleNode;
 use Twig\Node\Node;
@@ -59,7 +60,7 @@ class TwigParserTest extends \PHPUnit\Framework\TestCase
                 new Node([]),
                 new Node([]),
                 new Node([]),
-                '',
+                new EmptyNode(),
                 new Source('', '')
             ));
 

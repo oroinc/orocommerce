@@ -66,6 +66,9 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *              "type"="ACL",
  *              "group_name"="commerce",
  *              "category"="shopping"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )
