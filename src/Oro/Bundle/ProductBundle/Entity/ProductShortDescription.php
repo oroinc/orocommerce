@@ -18,12 +18,19 @@ use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 class ProductShortDescription extends AbstractLocalizedFallbackValue
 {
     #[ORM\Column(name: 'text', type: Types::TEXT, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => false]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['excluded' => false],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?string $text = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'shortDescriptions')]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Product $product = null;
 
     public function getProduct(): ?Product

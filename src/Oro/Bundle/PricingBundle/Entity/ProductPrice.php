@@ -38,17 +38,22 @@ class ProductPrice extends BaseProductPrice
     #[ConfigField(
         defaultValues: [
             'importexport' => ['identity' => true],
-            'dataaudit' => ['auditable' => true, 'propagate' => true]
-        ]
+            'dataaudit' => ['auditable' => true, 'propagate' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected $priceList;
 
     #[ORM\ManyToOne(targetEntity: PriceRule::class)]
     #[ORM\JoinColumn(name: 'price_rule_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?PriceRule $priceRule = null;
 
     #[ORM\Column(name: 'version', type: Types::INTEGER, nullable: true)]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $version = null;
 
     /**

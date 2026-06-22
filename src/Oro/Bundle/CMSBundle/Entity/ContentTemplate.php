@@ -37,7 +37,8 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
             'organization_column_name' => 'organization_id'
         ],
         'security' => ['type' => 'ACL', 'group_name' => ''],
-        'tag' => ['enabled' => true]
+        'tag' => ['enabled' => true],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class ContentTemplate implements DatesAwareInterface, OrganizationAwareInterface, ExtendEntityInterface
@@ -49,9 +50,11 @@ class ContentTemplate implements DatesAwareInterface, OrganizationAwareInterface
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'name', type: Types::STRING, length: 255, nullable: false)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $name = null;
 
     #[ORM\Column(name: 'content', type: 'wysiwyg', nullable: true)]
@@ -66,6 +69,7 @@ class ContentTemplate implements DatesAwareInterface, OrganizationAwareInterface
     protected ?array $contentProperties = null;
 
     #[ORM\Column(name: 'enabled', type: Types::BOOLEAN, options: ['default' => true])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $enabled = true;
 
     public function getId(): ?int

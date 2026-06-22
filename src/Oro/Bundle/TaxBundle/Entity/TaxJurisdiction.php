@@ -33,31 +33,39 @@ class TaxJurisdiction implements DatesAwareInterface
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'code', type: Types::STRING, length: 255, unique: true)]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 10, 'identity' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['order' => 10, 'identity' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?string $code = null;
 
     #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $description = null;
 
     #[ORM\ManyToOne(targetEntity: Country::class)]
     #[ORM\JoinColumn(name: 'country_code', referencedColumnName: 'iso2_code')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Country $country = null;
 
     #[ORM\ManyToOne(targetEntity: Region::class)]
     #[ORM\JoinColumn(name: 'region_code', referencedColumnName: 'combined_code')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Region $region = null;
 
     #[ORM\Column(name: 'region_text', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $regionText = null;
 
     /**
      * @var Collection<int, ZipCode>
      */
     #[ORM\OneToMany(mappedBy: 'taxJurisdiction', targetEntity: ZipCode::class, cascade: ['all'], orphanRemoval: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $zipCodes = null;
 
     public function __construct()

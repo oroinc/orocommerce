@@ -329,6 +329,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                 'merge' => ['display' => true],
                 'dataaudit' => ['auditable' => true],
                 'importexport' => ['excluded' => true],
+                'email' => ['available_in_template' => true],
             ]
         );
         $this->extendExtension->addManyToOneRelation(
@@ -355,6 +356,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                 'merge' => ['display' => true],
                 'dataaudit' => ['auditable' => true],
                 'importexport' => ['excluded' => true],
+                'email' => ['available_in_template' => true],
             ]
         );
         $this->extendExtension->addManyToOneRelation(
@@ -381,6 +383,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                 'merge' => ['display' => true],
                 'dataaudit' => ['auditable' => true],
                 'importexport' => ['excluded' => true],
+                'email' => ['available_in_template' => true],
             ]
         );
     }
@@ -412,6 +415,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                 'merge' => ['display' => true],
                 'dataaudit' => ['auditable' => true],
                 'importexport' => ['excluded' => true],
+                'email' => ['available_in_template' => true],
             ]
         );
     }
