@@ -79,6 +79,9 @@ The current file describes significant changes in the code that may affect the u
 * Added to `\Oro\Bundle\OrderBundle\Entity\OrderLineItem` the `freeFormTaxCode` extended field to store the tax code for free-form line items that don't have a product relation.
 * Added `\Oro\Bundle\TaxBundle\Form\Extension\OrderLineItemDraftTypeTaxExtension` — extends `OrderLineItemDraftType` with a `freeFormTaxCode` field so users can assign a tax code to free-form line items during draft editing.
 
+#### PricingBundle
+* Changed `oropricing/js/app/views/list-item-product-prices-view`: the prices hint popover is no longer initialized on render — it is created lazily on the first user interaction with the hint trigger (`onPricesHintInteraction()`). `updateQtyForUnit()` no longer renders the hint and now contains only quantity logic. The hint content is refreshed on unit change by the new `updateHintContent()` method subscribed to the model's `change:unit` event.
+
 ### Removed
 
 #### CMSBundle
