@@ -61,6 +61,9 @@ The current file describes significant changes in the code that may affect the u
 #### OrderBundle
 * Updated `\Oro\Bundle\OrderBundle\Provider\OrderLineItemTierPricesProvider` — added `getTierPricesForLineItems(array $orderLineItems)` method that retrieves tier prices for multiple order line items using a single price-storage query. The result array is indexed by the same keys as the `$orderLineItems` input array, and simple products are deduplicated before querying the price storage.
 
+#### PricingBundle
+* Changed `oropricing/js/app/views/list-item-product-prices-view`: the prices hint popover is no longer initialized on render — it is created lazily on the first user interaction with the hint trigger (`onPricesHintInteraction()`). `updateQtyForUnit()` no longer renders the hint and now contains only quantity logic. The hint content is refreshed on unit change by the new `updateHintContent()` method subscribed to the model's `change:unit` event.
+
 ### Removed
 
 #### CMSBundle
