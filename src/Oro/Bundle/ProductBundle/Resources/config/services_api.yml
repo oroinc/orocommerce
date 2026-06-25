@@ -472,6 +472,9 @@ services:
 
     oro_product.api.build_product_query:
         class: Oro\Bundle\ProductBundle\Api\Processor\BuildProductQuery
+        calls:
+            - [ setCountQueryBuilderOptimizer, [ '@oro_batch.orm.query_builder.count_query_optimizer' ] ]
+            - [ setQueryResolver, [ '@oro_api.query_resolver' ] ]
         tags:
             - { name: oro.api.processor, action: get_list, group: build_query, requestType: '!frontend', class: Oro\Bundle\ProductBundle\Entity\Product, priority: -255 }
 
