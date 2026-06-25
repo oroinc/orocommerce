@@ -61,17 +61,17 @@ class ProductPriceCPLEntityListenerTest extends TestCase
     {
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         $product = $this->getEntity(Product::class, ['id' => 1]);
-        $productPrice = $this->getEntity(ProductPrice::class);
+        $productPrice = $this->getEntity(ProductPrice::class, ['id' => 42]);
         $productPrice->setPriceList($priceList);
         $productPrice->setProduct($product);
         $productPrice->setVersion(123);
 
         $em = $this->createMock(EntityManager::class);
-        $changeSet = [];
+        // Non-empty changeset with version change: this is a versioned mass UPDATE (import / batch API).
+        $changeSet = ['version' => [null, 123], 'price' => [10, 20]];
         $eventArgs = new PreUpdateEventArgs($productPrice, $em, $changeSet);
         $event = new ProductPriceSaveAfterEvent($eventArgs);
 
-        // Mock the repository for addPriceListToProductRelation
         $priceListToProductRepository = $this->createMock(PriceListToProductRepository::class);
         $priceListToProductRepository->expects(self::once())
             ->method('createRelation')
@@ -88,9 +88,138 @@ class ProductPriceCPLEntityListenerTest extends TestCase
             ->with(PriceListToProduct::class)
             ->willReturn($em);
 
-        // But should NOT handle price creation when version is present
+        // Per-entity processing must be skipped for a versioned mass operation.
         $this->combinedPriceListBuildTriggerHandler->expects(self::never())
             ->method('handlePriceCreation');
+
+        $this->listener->onSave($event);
+    }
+
+    /**
+     * A brand-new price row created within a versioned mass operation (import / batch API)
+     * carries a version on the entity but has an empty Doctrine changeset.
+     * Per-entity processing must be skipped to prevent OOM / MQ flooding.
+     */
+    public function testOnSaveNewVersionedInsertIsSkipped(): void
+    {
+        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+        $productPrice = $this->getEntity(ProductPrice::class);
+        $productPrice->setPriceList($priceList);
+        $productPrice->setProduct($product);
+        $productPrice->setVersion(123);
+
+        $em = $this->createMock(EntityManager::class);
+        // Empty changeset: new insert within a versioned mass operation.
+        $changeSet = [];
+        $eventArgs = new PreUpdateEventArgs($productPrice, $em, $changeSet);
+        $event = new ProductPriceSaveAfterEvent($eventArgs);
+
+        $priceListToProductRepository = $this->createMock(PriceListToProductRepository::class);
+        $priceListToProductRepository->expects(self::once())
+            ->method('createRelation')
+            ->with($priceList, $product, true)
+            ->willReturn(false);
+
+        $em->expects(self::any())
+            ->method('getRepository')
+            ->with(PriceListToProduct::class)
+            ->willReturn($priceListToProductRepository);
+
+        $this->registry->expects(self::any())
+            ->method('getManagerForClass')
+            ->with(PriceListToProduct::class)
+            ->willReturn($em);
+
+        $this->combinedPriceListBuildTriggerHandler->expects(self::never())
+            ->method('handlePriceCreation');
+
+        $this->listener->onSave($event);
+    }
+
+    /**
+     * A price row that was previously imported (carries a stale version) and is now edited
+     * manually (back-office UI or single API) produces a non-empty changeset that does NOT
+     * contain a version change.  Per-entity CPL recalculation must be triggered.
+     */
+    public function testOnSaveStaleVersionUpdateIsProcessed(): void
+    {
+        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+        $productPrice = $this->getEntity(ProductPrice::class, ['id' => 42]);
+        $productPrice->setPriceList($priceList);
+        $productPrice->setProduct($product);
+        // Version was stamped during a previous import run and persisted in the DB.
+        // It is NOT changing in this operation.
+        $productPrice->setVersion(123);
+
+        $em = $this->createMock(EntityManager::class);
+        // Non-empty changeset without a version entry: a plain UI / single-API edit.
+        $changeSet = ['price' => [11, 19], 'value' => [11.0, 19.0]];
+        $eventArgs = new PreUpdateEventArgs($productPrice, $em, $changeSet);
+        $event = new ProductPriceSaveAfterEvent($eventArgs);
+
+        $priceListToProductRepository = $this->createMock(PriceListToProductRepository::class);
+        $priceListToProductRepository->expects(self::once())
+            ->method('createRelation')
+            ->with($priceList, $product, true)
+            ->willReturn(false);
+
+        $em->expects(self::any())
+            ->method('getRepository')
+            ->with(PriceListToProduct::class)
+            ->willReturn($priceListToProductRepository);
+
+        $this->registry->expects(self::any())
+            ->method('getManagerForClass')
+            ->with(PriceListToProduct::class)
+            ->willReturn($em);
+
+        // Per-entity processing must proceed so the CPL is rescheduled.
+        $this->combinedPriceListBuildTriggerHandler->expects(self::once())
+            ->method('handlePriceCreation')
+            ->with($productPrice);
+
+        $this->listener->onSave($event);
+    }
+
+    public function testOnSaveVersionSetToNullIsProcessed(): void
+    {
+        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+        $productPrice = $this->getEntity(ProductPrice::class, ['id' => 42]);
+        $productPrice->setPriceList($priceList);
+        $productPrice->setProduct($product);
+        // Version was stamped during a previous import run and persisted in the DB.
+        // It is NOT changing in this operation.
+        $productPrice->setVersion(123);
+
+        $em = $this->createMock(EntityManager::class);
+        // Non-empty changeset with a version set to null
+        $changeSet = ['price' => [11, 19], 'value' => [11.0, 19.0], 'version' => [123, null]];
+        $eventArgs = new PreUpdateEventArgs($productPrice, $em, $changeSet);
+        $event = new ProductPriceSaveAfterEvent($eventArgs);
+
+        $priceListToProductRepository = $this->createMock(PriceListToProductRepository::class);
+        $priceListToProductRepository->expects(self::once())
+            ->method('createRelation')
+            ->with($priceList, $product, true)
+            ->willReturn(false);
+
+        $em->expects(self::any())
+            ->method('getRepository')
+            ->with(PriceListToProduct::class)
+            ->willReturn($priceListToProductRepository);
+
+        $this->registry->expects(self::any())
+            ->method('getManagerForClass')
+            ->with(PriceListToProduct::class)
+            ->willReturn($em);
+
+        // Per-entity processing must proceed so the CPL is rescheduled.
+        $this->combinedPriceListBuildTriggerHandler->expects(self::once())
+            ->method('handlePriceCreation')
+            ->with($productPrice);
 
         $this->listener->onSave($event);
     }

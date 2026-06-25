@@ -688,6 +688,44 @@ class ProductPriceTest extends RestJsonApiTestCase
         self::assertNull($productPrice->getPriceRule());
     }
 
+    public function testUpdateVersionedPriceSendsMQMessage(): void
+    {
+        $priceList1 = $this->getReference('price_list_1');
+        $priceList2 = $this->getReference('price_list_2');
+        $product1 = $this->getReference('product-1');
+
+        $productPrice = $this->getReference(LoadProductPricesWithRules::PRODUCT_PRICE_1);
+        $productPriceApiId = $productPrice->getId() . '-' . $priceList1->getId();
+
+        // Simulate a previously-imported price that carries a version stamp.
+        self::clearTopicMessages(ResolvePriceRulesTopic::getName());
+        $priceManager = self::getContainer()->get('oro_pricing.manager.price_manager');
+        $productPrice->setVersion(1);
+        $priceManager->persist($productPrice);
+        $priceManager->flush();
+        self::assertMessagesCount(ResolvePriceRulesTopic::getName(), 0);
+
+        $data = [
+            'data' => [
+                'type' => 'productprices',
+                'id' => $productPriceApiId,
+                'attributes' => [
+                    'value' => '99.0000'
+                ]
+            ]
+        ];
+        $this->patch(['entity' => 'productprices', 'id' => $productPriceApiId], $data);
+
+        self::assertMessageSent(
+            ResolvePriceRulesTopic::getName(),
+            [
+                'product' => [
+                    $priceList2->getId() => [$product1->getId()]
+                ]
+            ]
+        );
+    }
+
     public function testDelete()
     {
         $priceList = $this->getReference('price_list_1');
