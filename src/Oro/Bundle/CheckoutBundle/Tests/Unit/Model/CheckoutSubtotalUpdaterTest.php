@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Model;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
@@ -133,6 +134,29 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
         $this->checkoutSubtotalUpdater->recalculateInvalidSubtotals();
         $this->assertSame(100.0, $totalUsd->getSubtotal()->getAmount());
         $this->assertSame(80.0, $totalEur->getSubtotal()->getAmount());
+    }
+
+    public function testRecalculateInvalidSubtotalsBufferSizeIsSetOnIterator()
+    {
+        $iterator = $this->createMock(BufferedIdentityQueryResultIterator::class);
+        $iterator->expects($this->once())
+            ->method('setBufferSize')
+            ->with(25);
+        $iterator->method('valid')->willReturn(false);
+
+        $repository = $this->createMock(CheckoutRepository::class);
+        $repository->expects($this->once())
+            ->method('findWithInvalidSubtotals')
+            ->willReturn($iterator);
+        $this->objectManager->expects($this->once())
+            ->method('getRepository')
+            ->with(Checkout::class)
+            ->willReturn($repository);
+        $this->currencyManager->expects($this->once())
+            ->method('getAvailableCurrencies');
+
+        $this->checkoutSubtotalUpdater->setBatchSize(25);
+        $this->checkoutSubtotalUpdater->recalculateInvalidSubtotals();
     }
 
     public function testRecalculateInvalidSubtotalsNoCheckouts()
