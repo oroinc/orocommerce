@@ -1,4 +1,3 @@
-@regression
 @ticket-BB-19911
 @ticket-BB-19652
 @ticket-BB-20956
