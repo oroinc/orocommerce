@@ -1,4 +1,3 @@
-@regression
 @fixture-OroShoppingListBundle:ShoppingListFixtureForConfigurableProducts.yml
 
 Feature: Delete line item from shopping list for configurable products
