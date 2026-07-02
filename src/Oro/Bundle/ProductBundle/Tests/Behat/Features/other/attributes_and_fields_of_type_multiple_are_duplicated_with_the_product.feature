@@ -1,4 +1,3 @@
-@regression
 @ticket-BB-23017
 
 Feature: Attributes and fields of type multiple are duplicated with the product
