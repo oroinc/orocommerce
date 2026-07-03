@@ -200,7 +200,7 @@ class CategoryType extends AbstractType
                 [
                     'label'    => 'oro.catalog.category.slug_prototypes.label',
                     'required' => false,
-                    'source_field' => 'names',
+                    'source_field' => 'titles',
                     'get_changed_slugs_url' => $url,
                     'allow_slashes' => true,
                 ]
