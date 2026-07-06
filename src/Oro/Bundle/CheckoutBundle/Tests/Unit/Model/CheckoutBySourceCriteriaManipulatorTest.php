@@ -10,6 +10,8 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutActualizeEvent;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutCreateEvent;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutFindEvent;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutLineItemsFactory;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutBySourceCriteriaManipulator;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutSubtotalUpdater;
@@ -94,10 +96,6 @@ class CheckoutBySourceCriteriaManipulatorTest extends TestCase
         $this->checkoutSubtotalUpdater->expects(self::once())
             ->method('recalculateCheckoutSubtotals')
             ->with(self::isInstanceOf(Checkout::class));
-
-        $this->eventDispatcher->expects(self::once())
-            ->method('dispatch')
-            ->with(self::isInstanceOf(CheckoutActualizeEvent::class));
     }
 
     public function testActualizeCheckoutWithoutUpdate(): void
@@ -118,6 +116,10 @@ class CheckoutBySourceCriteriaManipulatorTest extends TestCase
         $checkoutLineItems = new ArrayCollection([$this->createMock(CheckoutLineItem::class)]);
 
         $this->expectsActualizeCheckoutCalls($source, $checkoutLineItems);
+
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(self::isInstanceOf(CheckoutActualizeEvent::class), CheckoutActualizeEvent::NAME);
 
         $this->actionExecutor->expects(self::never())
             ->method('executeAction')
@@ -159,6 +161,10 @@ class CheckoutBySourceCriteriaManipulatorTest extends TestCase
         $checkoutLineItems = new ArrayCollection([$this->createMock(CheckoutLineItem::class)]);
 
         $this->expectsActualizeCheckoutCalls($source, $checkoutLineItems);
+
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(self::isInstanceOf(CheckoutActualizeEvent::class), CheckoutActualizeEvent::NAME);
 
         $this->shippingMethodsProvider->expects(self::once())
             ->method('getPrice')
@@ -203,6 +209,10 @@ class CheckoutBySourceCriteriaManipulatorTest extends TestCase
 
         $this->expectsActualizeCheckoutCalls($source, $checkoutLineItems);
 
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(self::isInstanceOf(CheckoutActualizeEvent::class), CheckoutActualizeEvent::NAME);
+
         $this->actionExecutor->expects(self::never())
             ->method('executeAction')
             ->with('copy_values');
@@ -242,6 +252,10 @@ class CheckoutBySourceCriteriaManipulatorTest extends TestCase
 
         $this->expectsActualizeCheckoutCalls($source, $checkoutLineItems);
 
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(self::isInstanceOf(CheckoutActualizeEvent::class), CheckoutActualizeEvent::NAME);
+
         $this->actionExecutor->expects(self::once())
             ->method('executeAction')
             ->with(
@@ -279,6 +293,10 @@ class CheckoutBySourceCriteriaManipulatorTest extends TestCase
             ->method('findCheckoutByCustomerUserAndSourceCriteriaWithCurrency')
             ->willReturn($checkout);
 
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(self::isInstanceOf(CheckoutFindEvent::class), CheckoutFindEvent::NAME);
+
         $result = $this->checkoutBySourceCriteriaManipulator->findCheckout(
             $sourceCriteria,
             $currentUser,
@@ -302,6 +320,10 @@ class CheckoutBySourceCriteriaManipulatorTest extends TestCase
             ->method('findCheckoutBySourceCriteriaWithCurrency')
             ->willReturn($checkout);
 
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(self::isInstanceOf(CheckoutFindEvent::class), CheckoutFindEvent::NAME);
+
         $result = $this->checkoutBySourceCriteriaManipulator->findCheckout(
             $sourceCriteria,
             $currentUser,
@@ -310,6 +332,122 @@ class CheckoutBySourceCriteriaManipulatorTest extends TestCase
         );
 
         self::assertSame($checkout, $result);
+    }
+
+    public function testFindCheckoutWithCustomerUserReturnsNull(): void
+    {
+        $source = $this->createMock(CheckoutSourceEntityInterface::class);
+        $sourceCriteria = ['source_entity' => $source];
+        $currentUser = $this->createMock(CustomerUser::class);
+        $currency = 'USD';
+
+        $this->checkoutRepository->expects(self::once())
+            ->method('findCheckoutByCustomerUserAndSourceCriteriaWithCurrency')
+            ->willReturn(null);
+
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(self::isInstanceOf(CheckoutFindEvent::class), CheckoutFindEvent::NAME);
+
+        $result = $this->checkoutBySourceCriteriaManipulator->findCheckout(
+            $sourceCriteria,
+            $currentUser,
+            $currency,
+            'test'
+        );
+
+        self::assertNull($result);
+    }
+
+    public function testFindCheckoutWithoutCustomerUserReturnsNull(): void
+    {
+        $source = $this->createMock(CheckoutSourceEntityInterface::class);
+        $sourceCriteria = ['source_entity' => $source];
+        $currentUser = null;
+        $currency = 'USD';
+
+        $this->checkoutRepository->expects(self::once())
+            ->method('findCheckoutBySourceCriteriaWithCurrency')
+            ->willReturn(null);
+
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(self::isInstanceOf(CheckoutFindEvent::class), CheckoutFindEvent::NAME);
+
+        $result = $this->checkoutBySourceCriteriaManipulator->findCheckout(
+            $sourceCriteria,
+            $currentUser,
+            $currency,
+            'test'
+        );
+
+        self::assertNull($result);
+    }
+
+    public function testFindCheckoutCanBeSetViaEvent(): void
+    {
+        $source = $this->createMock(CheckoutSourceEntityInterface::class);
+        $sourceCriteria = ['source_entity' => $source];
+        $currentUser = $this->createMock(CustomerUser::class);
+        $currency = 'USD';
+        $injectedCheckout = $this->getCheckout(42);
+
+        $this->checkoutRepository->expects(self::once())
+            ->method('findCheckoutByCustomerUserAndSourceCriteriaWithCurrency')
+            ->willReturn(null);
+
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(self::isInstanceOf(CheckoutFindEvent::class), CheckoutFindEvent::NAME)
+            ->willReturnCallback(static function (CheckoutFindEvent $event) use ($injectedCheckout): CheckoutFindEvent {
+                $event->setCheckout($injectedCheckout);
+
+                return $event;
+            });
+
+        $result = $this->checkoutBySourceCriteriaManipulator->findCheckout(
+            $sourceCriteria,
+            $currentUser,
+            $currency,
+            'test'
+        );
+
+        self::assertSame($injectedCheckout, $result);
+    }
+
+    public function testFindCheckoutCanBeReplacedViaEvent(): void
+    {
+        $source = $this->createMock(CheckoutSourceEntityInterface::class);
+        $sourceCriteria = ['source_entity' => $source];
+        $currentUser = $this->createMock(CustomerUser::class);
+        $currency = 'USD';
+        $checkout1 = $this->getCheckout(1);
+        $checkout2 = $this->getCheckout(2);
+
+        $this->checkoutRepository->expects(self::once())
+            ->method('findCheckoutByCustomerUserAndSourceCriteriaWithCurrency')
+            ->willReturn($checkout1);
+
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(self::isInstanceOf(CheckoutFindEvent::class), CheckoutFindEvent::NAME)
+            ->willReturnCallback(
+                static function (CheckoutFindEvent $event) use ($checkout1, $checkout2): CheckoutFindEvent {
+                    self::assertSame($checkout1, $event->getCheckout());
+                    $event->setCheckout($checkout2);
+
+                    return $event;
+                }
+            );
+
+        $result = $this->checkoutBySourceCriteriaManipulator->findCheckout(
+            $sourceCriteria,
+            $currentUser,
+            $currency,
+            'test'
+        );
+
+        self::assertSame($checkout2, $result);
     }
 
     public function testCreateCheckout(): void
@@ -327,6 +465,13 @@ class CheckoutBySourceCriteriaManipulatorTest extends TestCase
         $checkout->setSource($checkoutSource);
 
         $checkoutLineItems = new ArrayCollection([$this->createMock(CheckoutLineItem::class)]);
+
+        $this->eventDispatcher->expects(self::exactly(2))
+            ->method('dispatch')
+            ->withConsecutive(
+                [self::isInstanceOf(CheckoutCreateEvent::class), CheckoutCreateEvent::NAME],
+                [self::isInstanceOf(CheckoutActualizeEvent::class), CheckoutActualizeEvent::NAME]
+            );
 
         $this->expectsActualizeCheckoutCalls($source, $checkoutLineItems);
 
