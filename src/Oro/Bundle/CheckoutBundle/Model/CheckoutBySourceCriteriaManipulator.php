@@ -7,6 +7,8 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutActualizeEvent;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutCreateEvent;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutFindEvent;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutLineItemsFactory;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -50,6 +52,10 @@ class CheckoutBySourceCriteriaManipulator implements CheckoutBySourceCriteriaMan
         $checkout->setUpdatedAt(clone $createdAt);
         $checkout->setCustomerUser($customerUser);
 
+        $event = new CheckoutCreateEvent($checkout, $sourceCriteria, $checkoutData);
+        $this->eventDispatcher->dispatch($event, CheckoutCreateEvent::NAME);
+        $checkout = $event->getCheckout();
+
         $this->actualizeCheckout(
             $checkout,
             $website,
@@ -64,6 +70,20 @@ class CheckoutBySourceCriteriaManipulator implements CheckoutBySourceCriteriaMan
 
     #[\Override]
     public function findCheckout(
+        array $sourceCriteria,
+        ?UserInterface $customerUser,
+        ?string $currency,
+        ?string $workflowName = null
+    ): ?Checkout {
+        $checkout = $this->searchCheckoutByCriteria($sourceCriteria, $customerUser, $currency, $workflowName);
+
+        $event = new CheckoutFindEvent($sourceCriteria, $customerUser, $currency, $workflowName, $checkout);
+        $this->eventDispatcher->dispatch($event, CheckoutFindEvent::NAME);
+
+        return $event->getCheckout();
+    }
+
+    private function searchCheckoutByCriteria(
         array $sourceCriteria,
         ?UserInterface $customerUser,
         ?string $currency,
@@ -116,7 +136,7 @@ class CheckoutBySourceCriteriaManipulator implements CheckoutBySourceCriteriaMan
         $this->checkoutSubtotalUpdater->recalculateCheckoutSubtotals($checkout);
 
         $event = new CheckoutActualizeEvent($checkout, $sourceCriteria, $checkoutData);
-        $this->eventDispatcher->dispatch($event, 'oro_checkout.actualize');
+        $this->eventDispatcher->dispatch($event, CheckoutActualizeEvent::NAME);
 
         return $checkout;
     }
