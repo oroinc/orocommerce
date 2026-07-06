@@ -73,17 +73,13 @@ class RestrictSitemapProductByInventoryStatusListenerTest extends WebTestCase
 
         $qb->select(UrlItemsProvider::ENTITY_ALIAS . '.id');
 
-        $configManager = self::getConfigManager();
-        $initialProductVisibility = $configManager->get('oro_product.general_frontend_product_visibility');
-        $configManager->set('oro_product.general_frontend_product_visibility', []);
-        $configManager->flush();
+        $this->setConfigValue('oro_product.general_frontend_product_visibility', []);
         try {
             $listener = new RestrictSitemapProductByInventoryStatusListener(self::getConfigManager(null));
             $listener->restrictQueryBuilder(new RestrictSitemapEntitiesEvent($qb, time()));
             $actual = array_map('current', $qb->getQuery()->getResult());
         } finally {
-            $configManager->set('oro_product.general_frontend_product_visibility', $initialProductVisibility);
-            $configManager->flush();
+            $this->restoreConfigValues();
         }
 
         $this->assertEmpty($actual);
