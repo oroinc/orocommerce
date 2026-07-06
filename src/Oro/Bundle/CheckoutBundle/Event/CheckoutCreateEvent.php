@@ -6,11 +6,11 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Fires within checkout data actualization.
+ * Fires within checkout creation.
  */
-final class CheckoutActualizeEvent extends Event
+final class CheckoutCreateEvent extends Event
 {
-    public const NAME = 'oro_checkout.actualize';
+    public const string NAME = 'oro_checkout.create';
 
     public function __construct(
         private readonly Checkout $checkout,
