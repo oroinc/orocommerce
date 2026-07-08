@@ -40,10 +40,10 @@ Feature: Create Order from RFQ with Product Kits - Order Draft Edit Mode
     When I save form
     Then I should see "Order has been saved" flash message
     And "Order Form" must contains values:
-      | Customer                 | Customer1                                                   |
-      | Customer User            | Amanda Cole                                                 |
-      | Billing Address          | Test Customer, ORO, 801 Scenic Hwy, HAINES CITY FL US 33844 |
-      | Shipping Address         | Test Customer, ORO, 801 Scenic Hwy, HAINES CITY FL US 33844 |
+      | Customer         | Customer1                                                   |
+      | Customer User    | Amanda Cole                                                 |
+      | Billing Address  | Test Customer, ORO, 801 Scenic Hwy, HAINES CITY FL US 33844 |
+      | Shipping Address | Test Customer, ORO, 801 Scenic Hwy, HAINES CITY FL US 33844 |
     Then I should see following grid:
       | SKU               | Product                                                                                                                 | Quantity | Price     |
       | simple-product-01 | Simple Product 01                                                                                                       | 1 piece  | $1.2345   |

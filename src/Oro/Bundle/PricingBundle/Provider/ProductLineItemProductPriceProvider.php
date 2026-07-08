@@ -89,7 +89,13 @@ class ProductLineItemProductPriceProvider implements ProductLineItemProductPrice
         foreach ($productLineItem->getKitItemLineItems() as $kitItemLineItem) {
             $kitItemPrice = $this->getKitItemLineItemPrice($kitItemLineItem, $productPriceCollection, $currency);
             if ($kitItemPrice === null) {
-                continue;
+                if ($kitItemLineItem->getKitItem()?->isOptional()) {
+                    // Optional product kit item does not have a price, but product kit price still can be calculated.
+                    continue;
+                }
+
+                // Required product kit item does not have a price, so product kit price cannot be calculated as well.
+                return [];
             }
 
             $kitItemPriceValue = BigDecimal::of($kitItemPrice->getValue())
@@ -135,7 +141,7 @@ class ProductLineItemProductPriceProvider implements ProductLineItemProductPrice
         $price = null;
         if ($kitItemLineItem instanceof PriceAwareInterface && $kitItemLineItem->getPrice()) {
             $price = $kitItemLineItem->getPrice();
-        } elseif ($kitItemLineItem->getProduct() && $kitItemLineItem->getProductUnit()) {
+        } elseif ($this->isKitItemLineItemSupported($kitItemLineItem)) {
             $productPriceCriteria = $this->productPriceCriteriaFactory
                 ->createFromProductLineItem($kitItemLineItem, $currency);
             if ($productPriceCriteria !== null) {
@@ -146,5 +152,21 @@ class ProductLineItemProductPriceProvider implements ProductLineItemProductPrice
         }
 
         return $price;
+    }
+
+    private function isKitItemLineItemSupported(ProductKitItemLineItemInterface $kitItemLineItem): bool
+    {
+        $kitItem = $kitItemLineItem->getKitItem();
+        $product = $kitItemLineItem->getProduct();
+
+        if ($kitItem === null
+            || $product === null
+            || $kitItemLineItem->getProductUnit() === null
+            || $kitItemLineItem->getQuantity() === null
+            || $kitItemLineItem->getQuantity() <= 0.0) {
+            return false;
+        }
+
+        return true;
     }
 }

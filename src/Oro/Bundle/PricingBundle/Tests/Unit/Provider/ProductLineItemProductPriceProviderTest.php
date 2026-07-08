@@ -200,15 +200,44 @@ class ProductLineItemProductPriceProviderTest extends TestCase
             ->expects(self::never())
             ->method(self::anything());
 
-        $productPrice = new ProductPriceDTO(
-            $lineItem->getProduct(),
-            Price::create(0.0, 'USD'),
-            1.0,
-            $lineItem->getUnit()
+        self::assertSame(
+            [],
+            $this->provider->getProductLineItemProductPrices(
+                $lineItem,
+                $productPriceCollection,
+                'USD'
+            )
         );
+    }
 
-        self::assertEquals(
-            [$productPrice],
+    public function testGetProductLineItemProductPricesWhenIsProductKitAndKitItemLineItemWithoutKitItem(): void
+    {
+        $productPriceCollection = new ProductPriceCollectionDTO();
+        $unitItem = (new ProductUnit())->setCode('item');
+        $product = (new ProductStub())
+            ->setId(42)
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit($unitItem))
+            ->setType(Product::TYPE_KIT);
+        $kitItemLineItem1 = (new ProductKitItemLineItemStub(1000))
+            ->setProduct((new ProductStub())->setId(100))
+            ->setUnit($unitItem)
+            ->setQuantity(1.2345);
+        $lineItem = (new ProductKitItemLineItemsAwareStub(42))
+            ->setProduct($product)
+            ->setUnit($unitItem)
+            ->setQuantity(23.4567)
+            ->addKitItemLineItem($kitItemLineItem1);
+
+        $this->productPriceCriteriaFactory
+            ->expects(self::never())
+            ->method(self::anything());
+
+        $this->productPriceByMatchingCriteriaProvider
+            ->expects(self::never())
+            ->method(self::anything());
+
+        self::assertSame(
+            [],
             $this->provider->getProductLineItemProductPrices(
                 $lineItem,
                 $productPriceCollection,
@@ -251,15 +280,8 @@ class ProductLineItemProductPriceProviderTest extends TestCase
             ->expects(self::never())
             ->method(self::anything());
 
-        $productPrice = new ProductPriceDTO(
-            $lineItem->getProduct(),
-            Price::create(0.0, 'USD'),
-            1.0,
-            $lineItem->getUnit()
-        );
-
-        self::assertEquals(
-            [$productPrice],
+        self::assertSame(
+            [],
             $this->provider->getProductLineItemProductPrices(
                 $lineItem,
                 $productPriceCollection,
@@ -305,15 +327,8 @@ class ProductLineItemProductPriceProviderTest extends TestCase
             ->with($productPriceCriteria, $productPriceCollection)
             ->willReturn(null);
 
-        $productPrice = new ProductPriceDTO(
-            $lineItem->getProduct(),
-            Price::create(0.0, 'USD'),
-            1.0,
-            $lineItem->getUnit()
-        );
-
-        self::assertEquals(
-            [$productPrice],
+        self::assertSame(
+            [],
             $this->provider->getProductLineItemProductPrices(
                 $lineItem,
                 $productPriceCollection,
@@ -625,5 +640,145 @@ class ProductLineItemProductPriceProviderTest extends TestCase
             [$productPrice1, $productPrice2],
             $this->provider->getProductLineItemProductPrices($lineItem2, $productPriceCollection, 'USD')
         );
+    }
+
+    public function testGetProductLineItemProductPricesWhenIsProductKitAndOptionalKitItemWithoutPrice(): void
+    {
+        $unitItem = (new ProductUnit())->setCode('item');
+        $kitItem1Product = (new ProductStub())->setId(100);
+        $kitItem1 = (new ProductKitItemStub(10))
+            ->setOptional(true)
+            ->setProductUnit($unitItem)
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($kitItem1Product));
+        $product = (new ProductStub())
+            ->setId(42)
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit($unitItem))
+            ->setType(Product::TYPE_KIT)
+            ->addKitItem($kitItem1);
+        $productPriceUsd1 = new ProductPriceDTO($product, Price::create(12.3456, 'USD'), 1.0, $unitItem);
+        $productPriceCollection = new ProductPriceCollectionDTO([$productPriceUsd1]);
+
+        $kitItemLineItem1 = (new ProductKitItemLineItemStub(1000))
+            ->setKitItem($kitItem1)
+            ->setProduct($kitItem1Product)
+            ->setUnit($unitItem)
+            ->setQuantity(1.2345);
+        $lineItem = (new ProductKitItemLineItemsAwareStub(42))
+            ->setProduct($product)
+            ->setUnit($unitItem)
+            ->setQuantity(23.4567)
+            ->addKitItemLineItem($kitItemLineItem1);
+
+        $productPriceCriteria = $this->createMock(ProductKitPriceCriteria::class);
+        $this->productPriceCriteriaFactory
+            ->expects(self::once())
+            ->method('createFromProductLineItem')
+            ->with($kitItemLineItem1)
+            ->willReturn($productPriceCriteria);
+
+        $this->productPriceByMatchingCriteriaProvider
+            ->expects(self::once())
+            ->method('getProductPriceMatchingCriteria')
+            ->with($productPriceCriteria, $productPriceCollection)
+            ->willReturn(null);
+
+        $productPrice = new ProductPriceDTO(
+            $lineItem->getProduct(),
+            Price::create(12.3456, 'USD'),
+            1.0,
+            $lineItem->getUnit()
+        );
+
+        self::assertEquals(
+            [$productPrice],
+            $this->provider->getProductLineItemProductPrices($lineItem, $productPriceCollection, 'USD')
+        );
+    }
+
+    /**
+     * @dataProvider notSupportedKitItemLineItemDataProvider
+     */
+    public function testGetProductLineItemProductPricesWhenIsProductKitAndKitItemLineItemNotSupported(
+        ProductKitItemLineItemsAwareStub $lineItem
+    ): void {
+        $this->productPriceCriteriaFactory
+            ->expects(self::never())
+            ->method(self::anything());
+
+        $this->productPriceByMatchingCriteriaProvider
+            ->expects(self::never())
+            ->method(self::anything());
+
+        self::assertSame(
+            [],
+            $this->provider->getProductLineItemProductPrices(
+                $lineItem,
+                new ProductPriceCollectionDTO(),
+                'USD'
+            )
+        );
+    }
+
+    public function notSupportedKitItemLineItemDataProvider(): array
+    {
+        $unitItem = (new ProductUnit())->setCode('item');
+        $kitItemProduct = (new ProductStub())->setId(100);
+        $createKitItem = static fn () => (new ProductKitItemStub(10))
+            ->setProductUnit($unitItem)
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($kitItemProduct));
+        $createProduct = static fn (ProductKitItemStub $kitItem) => (new ProductStub())
+            ->setId(42)
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit($unitItem))
+            ->setType(Product::TYPE_KIT)
+            ->addKitItem($kitItem);
+        $createLineItem = static fn (
+            ProductStub $product,
+            ProductKitItemLineItemStub $kitItemLineItem
+        ) => (new ProductKitItemLineItemsAwareStub(42))
+            ->setProduct($product)
+            ->setUnit($unitItem)
+            ->setQuantity(23.4567)
+            ->addKitItemLineItem($kitItemLineItem);
+
+        $kitItemWithoutUnit = $createKitItem();
+        $kitItemLineItemWithoutUnit = (new ProductKitItemLineItemStub(1000))
+            ->setKitItem($kitItemWithoutUnit)
+            ->setProduct($kitItemProduct)
+            ->setQuantity(1.2345);
+
+        $kitItemWithoutQuantity = $createKitItem();
+        $kitItemLineItemWithoutQuantity = (new ProductKitItemLineItemStub(1000))
+            ->setKitItem($kitItemWithoutQuantity)
+            ->setProduct($kitItemProduct)
+            ->setUnit($unitItem)
+            ->setQuantity(null);
+
+        $kitItemWithZeroQuantity = $createKitItem();
+        $kitItemLineItemWithZeroQuantity = (new ProductKitItemLineItemStub(1000))
+            ->setKitItem($kitItemWithZeroQuantity)
+            ->setProduct($kitItemProduct)
+            ->setUnit($unitItem)
+            ->setQuantity(0.0);
+
+        return [
+            'kit item line item without product unit' => [
+                'lineItem' => $createLineItem(
+                    $createProduct($kitItemWithoutUnit),
+                    $kitItemLineItemWithoutUnit
+                ),
+            ],
+            'kit item line item without quantity' => [
+                'lineItem' => $createLineItem(
+                    $createProduct($kitItemWithoutQuantity),
+                    $kitItemLineItemWithoutQuantity
+                ),
+            ],
+            'kit item line item with non-positive quantity' => [
+                'lineItem' => $createLineItem(
+                    $createProduct($kitItemWithZeroQuantity),
+                    $kitItemLineItemWithZeroQuantity
+                ),
+            ],
+        ];
     }
 }

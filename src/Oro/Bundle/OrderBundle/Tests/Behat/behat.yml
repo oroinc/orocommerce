@@ -839,6 +839,16 @@ oro_behat_extension:
         mapping:
           Enable Order Draft Edit Mode: 'order_draft_edit_mode[oro_order___enable_order_draft_edit_mode][value]'
           Enable Order Draft Edit Mode Use Default: 'order_draft_edit_mode[oro_order___enable_order_draft_edit_mode][use_parent_scope_value]'
+
+    Order Line Item Draft Edit Form Errors:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//td[contains(@class,"grid-body-cell-product")]//div[contains(@class,"order-line-item-draft-form-cell-inner")]/div[contains(@class,"fields-row-error")]'
+        type: xpath
+
+    Order Line Item Draft Edit Form Kit Item 1 Errors:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//tr[contains(@class,"order-line-kit-item")][1]//td[contains(@class,"line-item-product")]//span[contains(@class, "validation-failed")]'
+        type: xpath
     #
     # </Order Draft Edit Mode Elements>
     #
