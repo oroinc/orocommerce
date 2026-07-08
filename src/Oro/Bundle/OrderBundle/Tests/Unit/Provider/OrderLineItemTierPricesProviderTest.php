@@ -8,6 +8,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Oro\Bundle\OrderBundle\Provider\OrderLineItemTierPricesProvider;
+use Oro\Bundle\OrderBundle\Provider\OrderProductPriceProvider;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceCollectionDTO;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
@@ -299,7 +300,48 @@ final class OrderLineItemTierPricesProviderTest extends TestCase
 
         $result = $this->provider->getTierPricesForLineItem($lineItem);
 
-        self::assertSame([1 => []], $result);
+        self::assertSame([], $result);
+    }
+
+    public function testGetTierPricesForKitLineItemWhenNoPricesReturned(): void
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, 1);
+        $product->setType(Product::TYPE_KIT);
+
+        $order = new Order();
+        $order->setCurrency('EUR');
+
+        $lineItem = new OrderLineItem();
+        $lineItem->setProduct($product);
+        $lineItem->addOrder($order);
+
+        // Prices for kit product and its kit item products returned by OrderProductPriceProvider.
+        $priceKit = $this->createMock(ProductPriceDTO::class);
+        $priceItem1 = $this->createMock(ProductPriceDTO::class);
+        $priceItem2 = $this->createMock(ProductPriceDTO::class);
+
+        $orderProductPriceProvider = $this->createMock(OrderProductPriceProvider::class);
+        $orderProductPriceProvider
+            ->expects(self::once())
+            ->method('getProductPricesForLineItems')
+            ->with(self::identicalTo($order), [$lineItem])
+            ->willReturn([1 => [$priceKit], 2 => [$priceItem1], 3 => [$priceItem2]]);
+
+        $this->productLineItemProductPriceProvider
+            ->expects(self::once())
+            ->method('getProductLineItemProductPrices')
+            ->with(
+                self::identicalTo($lineItem),
+                self::callback(static fn ($c) => $c instanceof ProductPriceCollectionDTO && count($c) === 3),
+                self::equalTo('EUR')
+            )
+            ->willReturn([]);
+
+        $this->provider->setOrderProductPriceProvider($orderProductPriceProvider);
+        $result = $this->provider->getTierPricesForLineItem($lineItem);
+
+        self::assertSame([], $result);
     }
 
     public function testGetTierPricesForProductKitWithNullProductInKitItemLineItem(): void
@@ -355,7 +397,7 @@ final class OrderLineItemTierPricesProviderTest extends TestCase
 
         $result = $this->provider->getTierPricesForLineItem($lineItem);
 
-        self::assertSame([1 => []], $result);
+        self::assertSame([], $result);
     }
 
     public function testGetTierPricesForProductKitWithMultipleCurrencies(): void
@@ -401,7 +443,7 @@ final class OrderLineItemTierPricesProviderTest extends TestCase
 
         $result = $this->provider->getTierPricesForLineItem($lineItem);
 
-        self::assertSame([10 => []], $result);
+        self::assertSame([], $result);
     }
 
     // -------------------------------------------------------------------------

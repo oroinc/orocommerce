@@ -130,7 +130,19 @@ const OrderLineItemDraftFormView = LineItemProductView.extend({
 
         this.getElement('drySubmitTrigger').val(this.getDrySubmitTriggerName(fieldName));
 
-        this.$form.trigger('submit', {isDrySubmit: true});
+        const validator = this.$form.data('validator');
+
+        if (validator) {
+            validator.cancelSubmit = true;
+        }
+
+        try {
+            this.$form.trigger('submit', {isDrySubmit: true});
+        } finally {
+            if (validator) {
+                validator.cancelSubmit = false;
+            }
+        }
     },
 
     onProductChanged() {

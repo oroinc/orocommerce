@@ -62,6 +62,82 @@ class OrderProductKitItemLineItemGhostOptionListenerTest extends TestCase
         self::assertEquals([$product1, $product2], $form->get('product')->getConfig()->getOption('choices'));
     }
 
+    public function testOnPreSetDataWhenKitItemLineItemIsNewWithProductNotPresent(): void
+    {
+        $product1 = (new ProductStub())->setId(42)->setDefaultName('Product42');
+        $product2 = (new ProductStub())->setId(43)->setDefaultName('Product43');
+        $product3 = (new ProductStub())->setId(44)->setDefaultName('Product44');
+
+        $kitItemLineItem = (new OrderProductKitItemLineItem())->setProduct($product3);
+
+        $formBuilder = $this->formFactory->createBuilder(FormType::class, $kitItemLineItem)
+            ->add('product', FormTypeStub::class, ['choices' => [$product1, $product2]])
+            ->addEventSubscriber($this->listener);
+
+        $form = $formBuilder->getForm();
+
+        $expectedChoices = [$product3, $product1, $product2];
+        self::assertEquals($expectedChoices, $form->get('product')->getConfig()->getOption('choices'));
+        self::assertEquals($product3, $form->get('product')->getConfig()->getOption('data'));
+
+        $form->submit(['product' => array_search($product3, $expectedChoices, true)]);
+
+        self::assertTrue($form->isValid());
+        self::assertSame($product3, $form->getData()?->getProduct());
+
+        $formView = $form->createView();
+        self::assertEquals(
+            ['data-ghost-option' => true, 'class' => 'ghost-option'],
+            $formView['product']->vars['choices'][0]->attr
+        );
+        self::assertEquals([], $formView['product']->vars['choices'][1]->attr);
+        self::assertEquals([], $formView['product']->vars['choices'][2]->attr);
+    }
+
+    public function testOnPreSetDataWhenKitItemLineItemIsNewWithNoProductButHasProductSku(): void
+    {
+        $product1 = (new ProductStub())->setId(42)->setDefaultName('Product42');
+        $product2 = (new ProductStub())->setId(43)->setDefaultName('Product43');
+
+        $kitItemLineItem = (new OrderProductKitItemLineItem())
+            ->setProductSku('GP1')
+            ->setProductName('Ghost Product');
+
+        $formBuilder = $this->formFactory->createBuilder(FormType::class, $kitItemLineItem)
+            ->add('product', FormTypeStub::class, ['choices' => [$product1, $product2]])
+            ->addEventSubscriber($this->listener);
+
+        $form = $formBuilder->getForm();
+
+        $ghostProduct = (new ProductStub())
+            ->setSku($kitItemLineItem->getProductSku())
+            ->setDefaultName($kitItemLineItem->getProductName());
+
+        ReflectionUtil::getProperty(new \ReflectionClass(Product::class), 'id')
+            ?->setValue($ghostProduct, PHP_INT_MIN);
+
+        $expectedChoices = [$ghostProduct, $product1, $product2];
+        self::assertEquals(
+            $expectedChoices,
+            $form->get('product')->getConfig()->getOption('choices')
+        );
+        self::assertEquals($ghostProduct, $form->get('product')->getConfig()->getOption('data'));
+
+        $form->submit(['product' => array_search($ghostProduct, $expectedChoices, true)]);
+
+        self::assertTrue($form->isValid());
+        self::assertEquals('GP1', $form->getData()?->getProductSku());
+        self::assertEquals('Ghost Product', $form->getData()?->getProductName());
+
+        $formView = $form->createView();
+        self::assertEquals(
+            ['data-ghost-option' => true, 'class' => 'ghost-option'],
+            $formView['product']->vars['choices'][0]->attr
+        );
+        self::assertEquals([], $formView['product']->vars['choices'][1]->attr);
+        self::assertEquals([], $formView['product']->vars['choices'][2]->attr);
+    }
+
     public function testOnPreSetDataWhenProductPresent(): void
     {
         $product1 = (new ProductStub())->setId(42)->setDefaultName('Product42');

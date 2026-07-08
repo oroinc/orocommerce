@@ -177,10 +177,6 @@
                                 {{ priceTypeErrors|oro_html_sanitize }}
                                 {{ shipByErrors|oro_html_sanitize }}
 
-                                {{ form_errors(form.price.value) }}
-                                {{ form_errors(form.price.currency) }}
-                                {{ form_errors(form.price.is_price_changed) }}
-
                                 {% if form.vars.errors|length > 0 %}
                                     {%- for error in form.vars.errors -%}
                                         <span class="validation-failed">
