@@ -174,4 +174,24 @@ class ResultTest extends \PHPUnit\Framework\TestCase
         $result->unlockResult();
         $this->assertFalse($result->isResultLocked());
     }
+
+    public function testGetEmptyItemsTotalWhenNotSet(): void
+    {
+        $result = new Result([Result::TOTAL => $this->createTotal()]);
+
+        $this->assertEquals(new ResultElement(), $result->getItemsTotal());
+    }
+
+    public function testJsonSerializePreservesItemsTotal(): void
+    {
+        $itemsTotal = ResultElement::create(10, 20, 30, 40);
+        $result = new Result([
+            Result::TOTAL => $this->createTotal(),
+            Result::ITEMS_TOTAL => $itemsTotal,
+        ]);
+
+        $deserialized = Result::jsonDeserialize(json_decode(json_encode($result), true));
+
+        $this->assertEquals($itemsTotal, $deserialized->getItemsTotal());
+    }
 }

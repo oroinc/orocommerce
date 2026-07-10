@@ -51,6 +51,12 @@ expectedResult:
         taxAmount: '6.24'         # 6.24 + 0
         adjustment: '0'
         currency: 'USD'
+    items_total:
+        includingTax: '141.24'
+        excludingTax: '135'
+        taxAmount: '6.24'
+        adjustment: '0'
+        currency: 'USD'
     items:
         -
             row:

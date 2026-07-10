@@ -67,15 +67,13 @@ class LineItemTaxSubtotalProvider extends AbstractTaxSubtotalProvider
     #[\Override]
     protected function fillSubtotal(Subtotal $subtotal, Result $tax, ?object $entity = null): Subtotal
     {
-        $itemTotalAmount = 0.0;
-        $currency = "";
-        foreach ($tax->getTaxes() as $taxElement) {
-            $itemTotalAmount += (float)$taxElement->getTaxAmount();
-            $currency = $taxElement->getCurrency();
-        }
+        /**
+         * ITEMS_TOTAL is rounded once on the aggregated sum; getTaxes() values are already rounded per item.
+         */
+        $itemsTotal = $tax->getItemsTotal();
 
-        $subtotal->setAmount($itemTotalAmount);
-        $subtotal->setCurrency($currency);
+        $subtotal->setAmount($itemsTotal->getTaxAmount());
+        $subtotal->setCurrency($itemsTotal->getCurrency() ?? '');
         $subtotal->setVisible(false);
 
         if ($this->taxationSettingsProvider->isProductPricesIncludeTax()) {
