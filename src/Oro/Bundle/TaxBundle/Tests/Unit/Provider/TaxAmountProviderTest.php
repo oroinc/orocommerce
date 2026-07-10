@@ -81,19 +81,19 @@ class TaxAmountProviderTest extends TestCase
     public function testGetExcludedTaxAmount(
         bool $isProductPricesIncludeTax,
         bool $isShippingRatesIncludeTax,
-        int $tax,
+        float $itemsTotalTax,
         int $shippingTax,
         float $expectedTax
     ): void {
         $entity = new Order();
 
         $taxShipping = [ResultElement::TAX_AMOUNT => $shippingTax, AbstractResultElement::CURRENCY => 'USD'];
-        $tax = [ResultElement::TAX_AMOUNT => $tax, AbstractResultElement::CURRENCY => 'USD'];
+        $itemsTotal = [ResultElement::TAX_AMOUNT => $itemsTotalTax, AbstractResultElement::CURRENCY => 'USD'];
 
         $taxResult = Result::jsonDeserialize(
             [
                 Result::SHIPPING => $taxShipping,
-                Result::TAXES => [$tax]
+                Result::ITEMS_TOTAL => $itemsTotal
             ]
         );
 
@@ -119,25 +119,49 @@ class TaxAmountProviderTest extends TestCase
             'Both product and shipping not included tax' => [
                 'isProductPricesIncludeTax' => false,
                 'isShippingRatesIncludeTax' => false,
-                'tax' => 2,
+                'itemsTotalTax' => 2.0,
                 'shippingTax' => 1,
                 'expectedTax' => 3.0
             ],
             'Shipping rate not included tax' => [
                 'isProductPricesIncludeTax' => true,
                 'isShippingRatesIncludeTax' => false,
-                'tax' => 3,
+                'itemsTotalTax' => 3.0,
                 'shippingTax' => 1,
                 'expectedTax' => 1.0
             ],
             'Product subtotal not included tax' => [
                 'isProductPricesIncludeTax' => false,
                 'isShippingRatesIncludeTax' => true,
-                'tax' => 2,
+                'itemsTotalTax' => 2.0,
                 'shippingTax' => 1,
                 'expectedTax' => 2.0
             ]
         ];
+    }
+
+    public function testGetExcludedTaxAmountUsesItemsTotalNotPerCodeTaxesSum(): void
+    {
+        $entity = new Order();
+
+        $taxResult = Result::jsonDeserialize([
+            Result::SHIPPING => [ResultElement::TAX_AMOUNT => 0, AbstractResultElement::CURRENCY => 'USD'],
+            Result::ITEMS_TOTAL => [ResultElement::TAX_AMOUNT => 60.57, AbstractResultElement::CURRENCY => 'USD'],
+            Result::TAXES => [
+                [ResultElement::TAX_AMOUNT => 30.29, AbstractResultElement::CURRENCY => 'USD'],
+                [ResultElement::TAX_AMOUNT => 30.29, AbstractResultElement::CURRENCY => 'USD'],
+            ]
+        ]);
+
+        $this->taxationSettingsProvider->method('isProductPricesIncludeTax')->willReturn(false);
+        $this->taxationSettingsProvider->method('isShippingRatesIncludeTaxWithEntity')->willReturn(false);
+
+        $this->taxProvider->expects($this->once())
+            ->method('loadTax')
+            ->with($entity)
+            ->willReturn($taxResult);
+
+        $this->assertSame(60.57, $this->provider->getExcludedTaxAmount($entity));
     }
 
     /**

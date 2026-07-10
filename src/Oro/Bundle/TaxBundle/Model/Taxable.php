@@ -47,6 +47,8 @@ class Taxable
 
     protected bool $kitTaxable = false;
 
+    protected ?BigDecimal $rowTotal = null;
+
     public function __construct()
     {
         $this->quantity = BigDecimal::one();
@@ -275,6 +277,18 @@ class Taxable
     public function setKitTaxable(bool $kitTaxable): self
     {
         $this->kitTaxable = $kitTaxable;
+
+        return $this;
+    }
+
+    public function getRowTotal(): ?BigDecimal
+    {
+        return $this->rowTotal;
+    }
+
+    public function setRowTotal(BigDecimal|float|int|string $rowTotal): self
+    {
+        $this->rowTotal = BigDecimal::of($rowTotal);
 
         return $this;
     }

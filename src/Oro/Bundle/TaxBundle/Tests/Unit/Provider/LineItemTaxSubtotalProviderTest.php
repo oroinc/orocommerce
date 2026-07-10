@@ -105,10 +105,73 @@ class LineItemTaxSubtotalProviderTest extends TaxSubtotalProviderTest
         $tax = new Result();
         $tax->offsetSet(Result::ITEMS, [$rowTax]);
         $tax->offsetSet(Result::TAXES, [$total]);
+        $tax->offsetSet(Result::ITEMS_TOTAL, $total);
 
         return $tax;
     }
 
+    public function testGetSubtotalUsesItemsTotalNotSumOfRoundedTaxes(): void
+    {
+        $this->taxSettingsProvider->expects($this->once())
+            ->method('isProductPricesIncludeTax')
+            ->willReturn(false);
+
+        /**
+         * Product 1 (VAT 10%): exact tax = 0.346, rounded = 0.35
+         * Product 2 (VAT 22%): exact tax = 0.3388, rounded = 0.34
+         * sum(rounded) = 0.69  - wrong behaviour
+         * round(sum)   = 0.68  - correct: ITEMS_TOTAL stores the pre-rounding sum
+         **/
+
+        $itemsTotal = new ResultElement();
+        $itemsTotal->setCurrency('EUR')->offsetSet(ResultElement::TAX_AMOUNT, '0.68');
+
+        $taxElement1 = new ResultElement();
+        $taxElement1->setCurrency('EUR')->offsetSet(ResultElement::TAX_AMOUNT, '0.35');
+
+        $taxElement2 = new ResultElement();
+        $taxElement2->setCurrency('EUR')->offsetSet(ResultElement::TAX_AMOUNT, '0.34');
+
+        $tax = new Result();
+        $tax->offsetSet(Result::ITEMS_TOTAL, $itemsTotal);
+        $tax->offsetSet(Result::TAXES, [$taxElement1, $taxElement2]);
+
+        $this->taxProvider->expects($this->once())
+            ->method('getTax')
+            ->willReturn($tax);
+
+        $subtotal = $this->provider->getSubtotal(new Order());
+
+        $this->assertEquals('0.68', $subtotal->getAmount());
+        $this->assertEquals('EUR', $subtotal->getCurrency());
+    }
+
+    public function testGetSubtotalFallsBackToSumOfTaxesWhenItemsTotalAbsent(): void
+    {
+        $this->taxSettingsProvider->expects($this->once())
+            ->method('isProductPricesIncludeTax')
+            ->willReturn(false);
+
+        $taxElement1 = new ResultElement();
+        $taxElement1->setCurrency('USD')->offsetSet(ResultElement::TAX_AMOUNT, '0.35');
+
+        $taxElement2 = new ResultElement();
+        $taxElement2->setCurrency('USD')->offsetSet(ResultElement::TAX_AMOUNT, '0.34');
+
+        $tax = new Result();
+        $tax->offsetSet(Result::TAXES, [$taxElement1, $taxElement2]);
+
+        $this->taxProvider->expects($this->once())
+            ->method('getTax')
+            ->willReturn($tax);
+
+        $subtotal = $this->provider->getSubtotal(new Order());
+
+        $this->assertEquals(0.69, $subtotal->getAmount());
+        $this->assertEquals('USD', $subtotal->getCurrency());
+    }
+
+    #[\Override]
     protected function getLabel(): string
     {
         return 'Oro.tax.subtotals.lineitem_' . TaxSubtotalProvider::TYPE;
