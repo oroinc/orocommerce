@@ -135,6 +135,12 @@ expectedResult:
         taxAmount: '8.37'        # 2.092246 * 4 = 8.368984
         adjustment: '0.008984'   # 0.002246 * 4
         currency: 'USD'
+    items_total:
+        includingTax: '199.89'
+        excludingTax: '191.52'
+        taxAmount: '8.37'
+        adjustment: '0.008984'
+        currency: 'USD'
     items:
         -
             row:

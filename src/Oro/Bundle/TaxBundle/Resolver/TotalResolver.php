@@ -60,9 +60,11 @@ class TotalResolver implements ResolverInterface
             $taxResults = $mergedTaxResults;
         }
 
+        $result = $taxable->getResult();
+        $result->offsetSet(Result::ITEMS_TOTAL, $data);
+
         $data = $this->mergeShippingData($taxable, $data);
 
-        $result = $taxable->getResult();
         $result->offsetSet(Result::TOTAL, $data);
         $result->offsetSet(Result::TAXES, array_values($taxResults));
         $result->lockResult();
