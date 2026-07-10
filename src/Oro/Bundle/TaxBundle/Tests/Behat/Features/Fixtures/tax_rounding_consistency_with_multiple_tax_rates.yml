@@ -1,0 +1,174 @@
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
+        name: 'Customer1'
+        organization: '@organization'
+        owner: '@admin'
+        taxCode: '@customer_tax_code_non_exempt'
+        payment_term_7c4f1e8e: '@paymentTerm'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer1'
+        organization: '@organization'
+        userRoles: ['@buyer']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
+    customerAddress:
+        region: '@florida'
+        frontendOwner: '@customer1'
+        country: '@united_states'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        firstName: 'Test'
+        lastName: 'Customer'
+        primary: true
+        label: 'Primary address'
+        street: '801 Scenic Hwy'
+        city: 'Haines City'
+        postalCode: '33844'
+        organization: 'ORO'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
+    customerAddressShipping:
+        address: '@customerAddress'
+        type: '@shippingType'
+        default: true
+    customerAddressBilling:
+        address: '@customerAddress'
+        type: '@billingType'
+        default: true
+
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    taxable_vat10:
+        code: 'TAXABLE_VAT10'
+        organization: '@organization'
+    taxable_vat22:
+        code: 'TAXABLE_VAT22'
+        organization: '@organization'
+
+Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+    customer_tax_code_non_exempt:
+        owner: '@admin'
+        organization: '@organization'
+        code: 'NON_EXEMPT'
+
+Oro\Bundle\TaxBundle\Entity\Tax:
+    tax_vat_10:
+        code: 'VAT_10'
+        rate: 0.10
+    tax_vat_22:
+        code: 'VAT_22'
+        rate: 0.22
+
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+    tax_jurisdiction_florida:
+        code: 'TAX_JURISDICTION_FLORIDA'
+        country: '@united_states'
+        region: '@florida'
+
+Oro\Bundle\TaxBundle\Entity\TaxRule:
+    tax_rule_vat10:
+        productTaxCode: '@taxable_vat10'
+        customerTaxCode: '@customer_tax_code_non_exempt'
+        tax: '@tax_vat_10'
+        taxJurisdiction: '@tax_jurisdiction_florida'
+    tax_rule_vat22:
+        productTaxCode: '@taxable_vat22'
+        customerTaxCode: '@customer_tax_code_non_exempt'
+        tax: '@tax_vat_22'
+        taxJurisdiction: '@tax_jurisdiction_florida'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product_vat10:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'TAX-PRODUCT-10'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@product_vat10_precision'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        taxCode: '@taxable_vat10'
+        __calls:
+            - setDefaultName: ['Product VAT 10']
+    product_vat22:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'TAX-PRODUCT-22'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@product_vat22_precision'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        taxCode: '@taxable_vat22'
+        __calls:
+            - setDefaultName: ['Product VAT 22']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product_vat10_precision:
+        unit: '@piece'
+        precision: '2'
+    product_vat22_precision:
+        unit: '@piece'
+        precision: '2'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price_product_vat10:
+        product: '@product_vat10'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 3.46
+    price_product_vat22:
+        product: '@product_vat22'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 1.54
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    price_relation_vat10:
+        product: '@product_vat10'
+        priceList: '@defaultPriceList'
+    price_relation_vat22:
+        product: '@product_vat22'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist1:
+        label: 'List 1'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        organization: '@organization'
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem_vat10:
+        product: '@product_vat10'
+        quantity: '1'
+        unit: '@piece'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist1'
+        organization: '@organization'
+        owner: '@admin'
+    lineitem_vat22:
+        product: '@product_vat22'
+        quantity: '1'
+        unit: '@piece'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist1'
+        organization: '@organization'
+        owner: '@admin'

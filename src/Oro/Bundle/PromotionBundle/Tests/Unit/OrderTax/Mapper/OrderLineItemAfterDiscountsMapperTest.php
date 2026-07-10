@@ -13,6 +13,7 @@ use Oro\Bundle\PromotionBundle\OrderTax\Mapper\OrderLineItemAfterDiscountsMapper
 use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Component\Math\RoundingMode;
 
 class OrderLineItemAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
 {
@@ -233,9 +234,7 @@ class OrderLineItemAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
         self::assertEquals(clone $taxable, $this->orderLineItemAfterDiscountsMapper->map($lineItem));
     }
 
-    /**
-     * @dataProvider getMapProvider
-     */
+    /** @dataProvider getMapProvider */
     public function testMap(
         float $lineItemSubtotal,
         float $lineItemSubtotalAfterDiscounts,
@@ -298,5 +297,144 @@ class OrderLineItemAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
                 'expectedTaxablePrice' => 2,
             ]
         ];
+    }
+
+    public function testMapSetsRowTotalForOrderLevelDiscountInUnitPriceMode(): void
+    {
+        $taxable = new Taxable();
+        $taxable->setPrice(4);
+        $taxable->setQuantity(5);
+
+        $order = new Order();
+        $price = new Price();
+        $lineItem = new OrderLineItem();
+        $lineItem
+            ->setPrice($price)
+            ->setOrder($order);
+        $this->innerMapper->expects(self::once())
+            ->method('map')
+            ->with($lineItem)
+            ->willReturn($taxable);
+
+        $this->taxationSettingsProvider->expects(self::once())
+            ->method('isCalculateAfterPromotionsEnabled')
+            ->willReturn(true);
+        $this->taxationSettingsProvider->expects(self::once())
+            ->method('isStartCalculationWithUnitPrice')
+            ->willReturn(true);
+
+        $discountLineItem = new DiscountLineItem();
+        $discountLineItem
+            ->setSourceLineItem($lineItem)
+            ->setSubtotal(10)
+            ->setSubtotalAfterDiscounts(8);
+        $discountContext = new DiscountContext();
+        $discountContext->setLineItems([$discountLineItem]);
+
+        $this->promotionExecutor->expects(self::once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
+        $this->promotionExecutor->expects(self::once())
+            ->method('execute')
+            ->with($order)
+            ->willReturn($discountContext);
+
+        $result = $this->orderLineItemAfterDiscountsMapper->map($lineItem);
+
+        self::assertEquals(BigDecimal::of(8), $result->getRowTotal());
+        self::assertEquals(
+            BigDecimal::of(8)->dividedBy(5, TaxationSettingsProvider::CALCULATION_SCALE, RoundingMode::HALF_UP),
+            $result->getPrice()
+        );
+    }
+
+    public function testMapDoesNotSetRowTotalForLineItemDiscount(): void
+    {
+        $taxable = new Taxable();
+        $taxable->setPrice(4);
+
+        $order = new Order();
+        $price = new Price();
+        $lineItem = new OrderLineItem();
+        $lineItem
+            ->setPrice($price)
+            ->setOrder($order);
+        $this->innerMapper->expects(self::once())
+            ->method('map')
+            ->with($lineItem)
+            ->willReturn($taxable);
+
+        $this->taxationSettingsProvider->expects(self::once())
+            ->method('isCalculateAfterPromotionsEnabled')
+            ->willReturn(true);
+
+        // Same subtotal and subtotalAfterDiscounts means line-item-level discount applied to subtotal directly
+        $discountLineItem = new DiscountLineItem();
+        $discountLineItem
+            ->setSourceLineItem($lineItem)
+            ->setSubtotal(8)
+            ->setSubtotalAfterDiscounts(8);
+        $discountContext = new DiscountContext();
+        $discountContext->setLineItems([$discountLineItem]);
+
+        $this->promotionExecutor->expects(self::once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
+        $this->promotionExecutor->expects(self::once())
+            ->method('execute')
+            ->with($order)
+            ->willReturn($discountContext);
+
+        $result = $this->orderLineItemAfterDiscountsMapper->map($lineItem);
+
+        self::assertNull($result->getRowTotal());
+    }
+
+    public function testMapDoesNotSetRowTotalWhenNotUnitPriceMode(): void
+    {
+        $taxable = new Taxable();
+        $taxable->setPrice(4);
+        $taxable->setQuantity(5);
+
+        $order = new Order();
+        $price = new Price();
+        $lineItem = new OrderLineItem();
+        $lineItem
+            ->setPrice($price)
+            ->setOrder($order);
+        $this->innerMapper->expects(self::once())
+            ->method('map')
+            ->with($lineItem)
+            ->willReturn($taxable);
+
+        $this->taxationSettingsProvider->expects(self::once())
+            ->method('isCalculateAfterPromotionsEnabled')
+            ->willReturn(true);
+        $this->taxationSettingsProvider->expects(self::once())
+            ->method('isStartCalculationWithUnitPrice')
+            ->willReturn(false);
+
+        $discountLineItem = new DiscountLineItem();
+        $discountLineItem
+            ->setSourceLineItem($lineItem)
+            ->setSubtotal(10)
+            ->setSubtotalAfterDiscounts(8);
+        $discountContext = new DiscountContext();
+        $discountContext->setLineItems([$discountLineItem]);
+
+        $this->promotionExecutor->expects(self::once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
+        $this->promotionExecutor->expects(self::once())
+            ->method('execute')
+            ->with($order)
+            ->willReturn($discountContext);
+
+        $result = $this->orderLineItemAfterDiscountsMapper->map($lineItem);
+
+        self::assertNull($result->getRowTotal());
     }
 }

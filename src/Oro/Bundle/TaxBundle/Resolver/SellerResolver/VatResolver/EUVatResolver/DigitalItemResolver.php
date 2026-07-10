@@ -41,7 +41,17 @@ class DigitalItemResolver extends AbstractItemResolver
 
             $result = $taxable->getResult();
             $this->unitResolver->resolveUnitPrice($result, $taxRules, $taxableAmount);
-            $this->rowTotalResolver->resolveRowTotal($result, $taxRules, $taxableAmount, $taxable->getQuantity());
+
+            // When the row total is a final allocated amount (e.g. order-level discount), use it directly
+            // to avoid rounding a synthetic per-unit price before multiplying it back by quantity.
+            if ($taxable->getRowTotal() !== null) {
+                $rowAmount = $taxable->getRowTotal();
+                $quantity = BigDecimal::one();
+            } else {
+                $rowAmount = $taxableAmount;
+                $quantity = $taxable->getQuantity();
+            }
+            $this->rowTotalResolver->resolveRowTotal($result, $taxRules, $rowAmount, $quantity);
 
             $result->lockResult();
         }

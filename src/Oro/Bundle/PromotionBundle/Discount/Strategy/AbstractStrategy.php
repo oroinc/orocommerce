@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount\Strategy;
 
+use Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItemInterface;
 use Oro\Component\Math\BigDecimal;
+use Oro\Component\Math\RoundingMode;
 
 /**
  * Provide default functionality for discount strategies
@@ -28,7 +30,9 @@ abstract class AbstractStrategy implements StrategyInterface
     protected function processTotalDiscounts(DiscountContextInterface $discountContext)
     {
         foreach ($discountContext->getSubtotalDiscounts() as $discount) {
-            $discountAmount = $discount->calculate($discountContext);
+            $discountAmount = BigDecimal::of($discount->calculate($discountContext))
+                ->toScale(PriceRoundingService::DEFAULT_PRECISION, RoundingMode::HALF_UP)
+                ->toFloat();
             $discountContext->addSubtotalDiscountInformation(new DiscountInformation($discount, $discountAmount));
 
             $subtotal = $this->getSubtotalWithDiscount($discountContext->getSubtotal(), $discountAmount);
@@ -87,7 +91,8 @@ abstract class AbstractStrategy implements StrategyInterface
     ): void {
         $lineItems = $discountContext->getLineItems();
         $lastLineItem = \array_pop($lineItems);
-        $lastLineItemDiscountAmount = $discountAmount;
+        $remaining = BigDecimal::of($discountAmount)
+            ->toScale(PriceRoundingService::DEFAULT_PRECISION, RoundingMode::HALF_UP);
 
         /** @var DiscountLineItemInterface $discountLineItem */
         foreach ($lineItems as $discountLineItem) {
@@ -103,15 +108,13 @@ abstract class AbstractStrategy implements StrategyInterface
             );
             $discountLineItem->setSubtotalAfterDiscounts($subtotalAfterDiscounts);
 
-            $lastLineItemDiscountAmount -= $lineItemDiscountAmount;
+            $remaining = $remaining->minus(BigDecimal::of($lineItemDiscountAmount));
         }
 
         if ($lastLineItem instanceof DiscountLineItemInterface) {
-            $subtotalAfterDiscounts = $this->getSubtotalWithDiscount(
-                $lastLineItem->getSubtotalAfterDiscounts(),
-                $lastLineItemDiscountAmount
+            $lastLineItem->setSubtotalAfterDiscounts(
+                $this->getSubtotalWithDiscount($lastLineItem->getSubtotalAfterDiscounts(), $remaining->toFloat())
             );
-            $lastLineItem->setSubtotalAfterDiscounts($subtotalAfterDiscounts);
         }
     }
 
@@ -126,6 +129,9 @@ abstract class AbstractStrategy implements StrategyInterface
             return 0.0;
         }
 
-        return ($discountLineItem->getSubtotalAfterDiscounts() * $discountAmount) / $subtotal;
+        return BigDecimal::of($discountLineItem->getSubtotalAfterDiscounts())
+            ->multipliedBy($discountAmount)
+            ->dividedBy($subtotal, PriceRoundingService::DEFAULT_PRECISION, RoundingMode::HALF_UP)
+            ->toFloat();
     }
 }

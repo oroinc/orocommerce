@@ -8,7 +8,7 @@ data:
         shipUntil: null
         currency: USD
         subtotalValue: '21.8000'
-        totalValue: '12.3800'
+        totalValue: '12.3700'
         shippingCostAmount: null
         shippingMethod: null
         paymentStatus:
@@ -18,9 +18,9 @@ data:
             -
                 code: '@payment_term_method_config->type'
                 label: Payment Term
-        totalIncludingTax: '12.4300'
-        totalExcludingTax: '11.8500'
-        totalTaxAmount: '0.5800'
+        totalIncludingTax: '12.3700'
+        totalExcludingTax: '11.8000'
+        totalTaxAmount: '0.5700'
         paymentTerm: '@payment_term_net_10->label'
         discounts: []
         shippingTrackings: []
@@ -68,16 +68,16 @@ included:
             unitPriceIncludingTax: '0.6000'
             unitPriceExcludingTax: '0.5500'
             unitPriceTaxAmount: '0.0600'
-            rowTotalIncludingTax: '6.0800'
-            rowTotalExcludingTax: '5.5000'
-            rowTotalTaxAmount: '0.5800'
+            rowTotalIncludingTax: '6.0400'
+            rowTotalExcludingTax: '5.4700'
+            rowTotalTaxAmount: '0.5700'
             taxes:
                 -
                     tax: TAX1
                     rate: '0.105'
                     currency: USD
-                    taxAmount: '0.58'
-                    taxableAmount: '5.5'
+                    taxAmount: '0.57'
+                    taxableAmount: '5.47'
         relationships:
             order:
                 data:
@@ -111,8 +111,8 @@ included:
             unitPriceIncludingTax: '1.2700'
             unitPriceExcludingTax: '1.2700'
             unitPriceTaxAmount: '0.0000'
-            rowTotalIncludingTax: '6.3500'
-            rowTotalExcludingTax: '6.3500'
+            rowTotalIncludingTax: '6.3300'
+            rowTotalExcludingTax: '6.3300'
             rowTotalTaxAmount: '0.0000'
             taxes: []
         relationships:
