@@ -8,6 +8,7 @@ namespace Oro\Bundle\TaxBundle\Model;
 final class Result extends AbstractResult implements \JsonSerializable
 {
     const TOTAL = 'total';
+    const ITEMS_TOTAL = 'items_total';
     const SHIPPING = 'shipping';
 
     const UNIT = 'unit';
@@ -37,6 +38,7 @@ final class Result extends AbstractResult implements \JsonSerializable
 
         $result = new self($serialized);
         $result->deserializeAsResultElement(self::TOTAL, $serialized);
+        $result->deserializeAsResultElement(self::ITEMS_TOTAL, $serialized);
         $result->deserializeAsResultElement(self::SHIPPING, $serialized);
         $result->deserializeAsResultElement(self::UNIT, $serialized);
         $result->deserializeAsResultElement(self::ROW, $serialized);
@@ -62,6 +64,14 @@ final class Result extends AbstractResult implements \JsonSerializable
     public function getTotal()
     {
         return $this->getOffset(self::TOTAL, new ResultElement());
+    }
+
+    /**
+     * Aggregated line item totals and taxes, without shipping. Null when absent from legacy serialized data.
+     */
+    public function getItemsTotal(): ?ResultElement
+    {
+        return $this->offsetExists(self::ITEMS_TOTAL) ? $this->getOffset(self::ITEMS_TOTAL) : null;
     }
 
     /**

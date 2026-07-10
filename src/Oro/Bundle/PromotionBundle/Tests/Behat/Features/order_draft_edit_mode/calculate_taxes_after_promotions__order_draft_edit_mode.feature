@@ -63,8 +63,8 @@ Feature: Calculate taxes after promotions - Order Draft Edit Mode
     And I should see "Discount -$16.50"
     And I should see "Shipping $3.00"
     And I should see "Shipping Discount -$1.00"
-    And I should see "Tax $0.24"
-    And I should see "Total $5.74"
+    And I should see "Tax $0.23"
+    And I should see "Total $5.73"
     When I save and close form
     Then I should see "Order has been saved" flash message
 
@@ -82,8 +82,8 @@ Feature: Calculate taxes after promotions - Order Draft Edit Mode
     And I should see "Discount -$16.50"
     And I should see "Shipping $3.00"
     And I should see "Shipping Discount -$1.00"
-    And I should see "Tax $0.24"
-    And I should see "Total: $5.74"
+    And I should see "Tax $0.23"
+    And I should see "Total: $5.73"
     When I fill form with:
       | PO Number | PONumber2 |
     And I click "Delete this shopping list after ordering"
@@ -98,16 +98,16 @@ Feature: Calculate taxes after promotions - Order Draft Edit Mode
     And I should see "Discount -$16.50"
     And I should see "Shipping $3.00"
     And I should see "Shipping Discount -$1.00"
-    And I should see "Tax $0.24"
-    And I should see "Total $5.74"
+    And I should see "Tax $0.23"
+    And I should see "Total $5.73"
     When I click on "FrontendGridColumnManagerButton"
     And I click "Select All"
     And I click on empty space
     And I hide column "Taxes" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
       | Product             | UPIT  | UPET  | UPTA  | RTIT  | RTET  | RTTA  | RTDA  | RTADIT | RTADET |
-      | Product 1 SKU: SKU1 | $0.51 | $0.47 | $0.05 | $2.59 | $2.35 | $0.24 | $0.00 | $2.59  | $2.35  |
-      | Product 2 SKU: SKU2 | $0.23 | $0.23 | $0.00 | $1.15 | $1.15 | $0.00 | $5.00 | $0.00  | $0.00  |
+      | Product 1 SKU: SKU1 | $0.51 | $0.47 | $0.05 | $2.56 | $2.33 | $0.23 | $0.00 | $2.56  | $2.33  |
+      | Product 2 SKU: SKU2 | $0.23 | $0.23 | $0.00 | $1.17 | $1.17 | $0.00 | $5.00 | $0.00  | $0.00  |
 
   Scenario: Enable Product Prices Include Tax option
     Given I proceed as the Admin
@@ -183,8 +183,8 @@ Feature: Calculate taxes after promotions - Order Draft Edit Mode
     And I hide column "Taxes" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
       | Product             | UPIT  | UPET  | UPTA  | RTIT  | RTET  | RTTA  | RTDA  | RTADIT | RTADET |
-      | Product 1 SKU: SKU1 | $0.47 | $0.42 | $0.04 | $2.35 | $2.14 | $0.21 | $0.00 | $2.35  | $2.14  |
-      | Product 2 SKU: SKU2 | $0.23 | $0.23 | $0.00 | $1.15 | $1.15 | $0.00 | $5.00 | $0.00  | $0.00  |
+      | Product 1 SKU: SKU1 | $0.47 | $0.42 | $0.04 | $2.33 | $2.12 | $0.21 | $0.00 | $2.33  | $2.12  |
+      | Product 2 SKU: SKU2 | $0.23 | $0.23 | $0.00 | $1.17 | $1.17 | $0.00 | $5.00 | $0.00  | $0.00  |
 
   Scenario: Check Orders grid
     Given I proceed as the Admin
@@ -194,8 +194,8 @@ Feature: Calculate taxes after promotions - Order Draft Edit Mode
       | PO Number | Total |
       | PONumber4 | $5.50 |
       | PONumber3 | $5.50 |
-      | PONumber2 | $5.74 |
-      | PONumber1 | $5.74 |
+      | PONumber2 | $5.73 |
+      | PONumber1 | $5.73 |
 
   Scenario Outline: Taxes correctly displayed on Backoffice Order view page
     Given I go to Sales/Orders
@@ -209,10 +209,10 @@ Feature: Calculate taxes after promotions - Order Draft Edit Mode
       | SKU2 | Product 2 | <UPIT_SKU2> | <UPET_SKU2> | <UPTA_SKU2> | <RTIT_SKU2> | <RTET_SKU2> | <RTTA_SKU2> | <RTDA_SKU2> | <RTADIT_SKU2> | <RTADET_SKU2> |
     Examples:
       | PONumber  | UPIT_SKU1 | UPET_SKU1 | UPTA_SKU1 | RTIT_SKU1 | RTET_SKU1 | RTTA_SKU1 | RTDA_SKU1 | RTADIT_SKU1 | RTADET_SKU1 | UPIT_SKU2 | UPET_SKU2 | UPTA_SKU2 | RTIT_SKU2 | RTET_SKU2 | RTTA_SKU2 | RTDA_SKU2 | RTADIT_SKU2 | RTADET_SKU2 |
-      | PONumber1 | $0.51     | $0.47     | $0.05     | $2.59     | $2.35     | $0.24     | $0.00     | $2.59       | $2.35       | $0.23     | $0.23     | $0.00     | $1.15     | $1.15     | $0.00     | $5.00     | $0.00       | $0.00       |
-      | PONumber2 | $0.51     | $0.47     | $0.05     | $2.59     | $2.35     | $0.24     | $0.00     | $2.59       | $2.35       | $0.23     | $0.23     | $0.00     | $1.15     | $1.15     | $0.00     | $5.00     | $0.00       | $0.00       |
-      | PONumber3 | $0.47     | $0.42     | $0.04     | $2.35     | $2.14     | $0.21     | $0.00     | $2.35       | $2.14       | $0.23     | $0.23     | $0.00     | $1.15     | $1.15     | $0.00     | $5.00     | $0.00       | $0.00       |
-      | PONumber4 | $0.47     | $0.42     | $0.04     | $2.35     | $2.14     | $0.21     | $0.00     | $2.35       | $2.14       | $0.23     | $0.23     | $0.00     | $1.15     | $1.15     | $0.00     | $5.00     | $0.00       | $0.00       |
+      | PONumber1 | $0.51     | $0.47     | $0.05     | $2.56     | $2.33     | $0.23     | $0.00     | $2.56       | $2.33       | $0.23     | $0.23     | $0.00     | $1.17     | $1.17     | $0.00     | $5.00     | $0.00       | $0.00       |
+      | PONumber2 | $0.51     | $0.47     | $0.05     | $2.56     | $2.33     | $0.23     | $0.00     | $2.56       | $2.33       | $0.23     | $0.23     | $0.00     | $1.17     | $1.17     | $0.00     | $5.00     | $0.00       | $0.00       |
+      | PONumber3 | $0.47     | $0.42     | $0.04     | $2.33     | $2.12     | $0.21     | $0.00     | $2.33       | $2.12       | $0.23     | $0.23     | $0.00     | $1.17     | $1.17     | $0.00     | $5.00     | $0.00       | $0.00       |
+      | PONumber4 | $0.47     | $0.42     | $0.04     | $2.33     | $2.12     | $0.21     | $0.00     | $2.33       | $2.12       | $0.23     | $0.23     | $0.00     | $1.17     | $1.17     | $0.00     | $5.00     | $0.00       | $0.00       |
 
   Scenario: Disable Product Prices Include Tax option
     When I go to System/Configuration
@@ -239,5 +239,5 @@ Feature: Calculate taxes after promotions - Order Draft Edit Mode
   Scenario: Taxes recalculated when coupon was deactivated
     When I click "Edit"
     And I click "Fifth Promotion Change Active Button"
-    Then I should see "Tax $0.24"
-    And I should see "Total $5.74"
+    Then I should see "Tax $0.23"
+    And I should see "Total $5.73"
