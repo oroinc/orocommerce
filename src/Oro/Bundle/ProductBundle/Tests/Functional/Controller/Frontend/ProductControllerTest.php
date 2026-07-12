@@ -88,6 +88,42 @@ class ProductControllerTest extends WebTestCase
         self::assertInputValueSame('search', 'product');
     }
 
+    public function testSearchActionWithNonExistentCategoryId(): void
+    {
+        $this->client->request(
+            'GET',
+            $this->getUrl('oro_product_frontend_product_search'),
+            [
+                'search' => 'product',
+                'categoryId' => 2472,
+            ]
+        );
+        $result = $this->client->getResponse();
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $content = $result->getContent();
+        self::assertNotEmpty($content);
+        self::assertStringContainsString(LoadProductData::PRODUCT_1, $content);
+        self::assertStringContainsString(LoadProductData::PRODUCT_2, $content);
+        self::assertStringContainsString(LoadProductData::PRODUCT_3, $content);
+    }
+
+    public function testSearchGridWithNonExistentCategoryId(): void
+    {
+        $response = $this->client->requestFrontendGrid(
+            self::PRODUCT_GRID_NAME,
+            [
+                'search' => LoadProductData::PRODUCT_8,
+                'categoryId' => 2472,
+            ],
+            true
+        );
+
+        $result = self::getJsonResponseContent($response, 200);
+        self::assertNotEmpty($result['data']);
+        self::assertStringContainsString(LoadProductData::PRODUCT_8, $result['data'][0]['sku']);
+    }
+
     public function testAutocompleteAction(): void
     {
         $key = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
