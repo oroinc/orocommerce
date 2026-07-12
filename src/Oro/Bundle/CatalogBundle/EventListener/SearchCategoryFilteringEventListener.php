@@ -189,7 +189,7 @@ class SearchCategoryFilteringEventListener
         }
     }
 
-    private function getCategoryId(ParameterBag $parameters): int
+    private function getCategoryId(ParameterBag $parameters): ?int
     {
         $categoryId = $this->requestProductHandler->getCategoryId();
         if (!$categoryId) {
@@ -199,7 +199,11 @@ class SearchCategoryFilteringEventListener
             );
         }
 
-        return $categoryId && $categoryId > 0 ? $categoryId : 0;
+        if (!$categoryId) {
+            return null;
+        }
+
+        return $this->getCategoryRepository()->find($categoryId)?->getId();
     }
 
     private function getCategoryContentVariantId(ParameterBag $parameters): int
