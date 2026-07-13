@@ -138,6 +138,14 @@ oro_behat_extension:
             type: 'css'
             locator: 'input[name^="oro_order_type_shipUntil"]'
 
+    Field Config Form:
+      selector: 'form[name="oro_entity_config_type"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Other, Show On Form: 'oro_entity_config_type[form][is_enabled]'
+          Other, Show On View: 'oro_entity_config_type[view][is_displayable]'
+
     Order Line Item Draft Edit Form Save Button:
       selector: '.draft-form__form-actions button[type="submit"]'
 
