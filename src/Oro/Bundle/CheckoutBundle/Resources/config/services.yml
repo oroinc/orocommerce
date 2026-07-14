@@ -496,6 +496,7 @@ services:
             - '@oro_order.shipping_line_item.converter_basic'
             - '@oro_checkout.shipping_origin_provider'
             - '@oro_shipping.context.builder_factory_basic'
+            - '@oro_customer.provider.customer_user_relations_provider'
 
     oro_checkout.factory.payment_context_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory'
@@ -506,6 +507,7 @@ services:
             - '@oro_order.payment_line_item.converter_basic'
             - '@oro_checkout.shipping_origin_provider'
             - '@oro_payment.context.builder_factory_basic'
+            - '@oro_customer.provider.customer_user_relations_provider'
 
     oro_checkout.mapper.order_mapper:
         class: 'Oro\Bundle\CheckoutBundle\Mapper\OrderMapper'

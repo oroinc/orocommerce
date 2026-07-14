@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\B2bFlowCheckoutSinglePag
 use Oro\Bundle\CheckoutBundle\Action\DefaultPaymentMethodSetterInterface;
 use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CustomerUserActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckoutSinglePage\Transition\Start;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
@@ -14,22 +13,19 @@ use PHPUnit\Framework\TestCase;
 
 class StartTest extends TestCase
 {
-    private CustomerUserActionsInterface|MockObject $customerUserActions;
-    private DefaultShippingMethodSetterInterface|MockObject $defaultShippingMethodSetter;
-    private DefaultPaymentMethodSetterInterface|MockObject $defaultPaymentMethodSetter;
-    private TransitionServiceInterface|MockObject $baseTransition;
+    private DefaultShippingMethodSetterInterface&MockObject $defaultShippingMethodSetter;
+    private DefaultPaymentMethodSetterInterface&MockObject $defaultPaymentMethodSetter;
+    private TransitionServiceInterface&MockObject $baseTransition;
     private Start $start;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->customerUserActions = $this->createMock(CustomerUserActionsInterface::class);
         $this->defaultShippingMethodSetter = $this->createMock(DefaultShippingMethodSetterInterface::class);
         $this->defaultPaymentMethodSetter = $this->createMock(DefaultPaymentMethodSetterInterface::class);
         $this->baseTransition = $this->createMock(TransitionServiceInterface::class);
 
         $this->start = new Start(
-            $this->customerUserActions,
             $this->defaultShippingMethodSetter,
             $this->defaultPaymentMethodSetter,
             $this->baseTransition
@@ -48,10 +44,6 @@ class StartTest extends TestCase
         $this->baseTransition->expects($this->once())
             ->method('execute')
             ->with($workflowItem);
-
-        $this->customerUserActions->expects($this->once())
-            ->method('createGuestCustomerUser')
-            ->with($checkout);
 
         $this->defaultShippingMethodSetter->expects($this->once())
             ->method('setDefaultShippingMethod')

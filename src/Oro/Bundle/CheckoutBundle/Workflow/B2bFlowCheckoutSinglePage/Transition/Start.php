@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckoutSinglePage\Transitio
 use Oro\Bundle\CheckoutBundle\Action\DefaultPaymentMethodSetterInterface;
 use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CustomerUserActionsInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
@@ -16,7 +15,6 @@ use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 class Start extends TransitionServiceAbstract
 {
     public function __construct(
-        private CustomerUserActionsInterface $customerUserActions,
         private DefaultShippingMethodSetterInterface $defaultShippingMethodSetter,
         private DefaultPaymentMethodSetterInterface $defaultPaymentMethodSetter,
         private TransitionServiceInterface $baseTransition
@@ -31,7 +29,6 @@ class Start extends TransitionServiceAbstract
 
         $this->baseTransition->execute($workflowItem);
 
-        $this->customerUserActions->createGuestCustomerUser($checkout);
         $this->defaultShippingMethodSetter->setDefaultShippingMethod($checkout);
         $this->defaultPaymentMethodSetter->setDefaultPaymentMethod($checkout);
     }
