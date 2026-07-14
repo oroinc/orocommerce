@@ -10,6 +10,7 @@ use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingOriginProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -27,17 +28,19 @@ class CheckoutShippingContextFactoryTest extends TestCase
 {
     use ShippingLineItemTrait;
 
-    private CheckoutLineItemsManager|MockObject $checkoutLineItemsManager;
+    private CheckoutLineItemsManager&MockObject $checkoutLineItemsManager;
 
-    private SubtotalProviderInterface|MockObject $checkoutSubtotalProvider;
+    private SubtotalProviderInterface&MockObject $checkoutSubtotalProvider;
 
-    private OrderShippingLineItemConverterInterface|MockObject $shippingLineItemConverter;
+    private OrderShippingLineItemConverterInterface&MockObject $shippingLineItemConverter;
 
-    private ShippingContextBuilderInterface|MockObject $contextBuilder;
+    private ShippingContextBuilderInterface&MockObject $contextBuilder;
 
-    private CheckoutShippingOriginProviderInterface|MockObject $shippingOriginProvider;
+    private CheckoutShippingOriginProviderInterface&MockObject $shippingOriginProvider;
 
-    private ShippingContextBuilderFactoryInterface|MockObject $shippingContextBuilderFactory;
+    private ShippingContextBuilderFactoryInterface&MockObject $shippingContextBuilderFactory;
+
+    private CustomerUserRelationsProvider&MockObject $customerUserRelationsProvider;
 
     private CheckoutShippingContextFactory $factory;
 
@@ -50,6 +53,7 @@ class CheckoutShippingContextFactoryTest extends TestCase
         $this->shippingLineItemConverter = $this->createMock(OrderShippingLineItemConverterInterface::class);
         $this->shippingOriginProvider = $this->createMock(CheckoutShippingOriginProviderInterface::class);
         $this->shippingContextBuilderFactory = $this->createMock(ShippingContextBuilderFactoryInterface::class);
+        $this->customerUserRelationsProvider = $this->createMock(CustomerUserRelationsProvider::class);
 
         $this->factory = new CheckoutShippingContextFactory(
             $this->checkoutLineItemsManager,
@@ -58,11 +62,15 @@ class CheckoutShippingContextFactoryTest extends TestCase
             $this->shippingOriginProvider,
             $this->shippingContextBuilderFactory
         );
+        $this->factory->setCustomerUserRelationsProvider($this->customerUserRelationsProvider);
     }
 
-    public function testCreate(): void
+    /**
+     * @dataProvider createDataProvider
+     */
+    public function testCreate(?Customer $customer, ?CustomerUser $customerUser): void
     {
-        $checkout = $this->prepareCheckout();
+        $checkout = $this->prepareCheckout($customer, $customerUser);
         $convertedLineItems = new ArrayCollection([
             $this->getShippingLineItem()
         ]);
@@ -78,14 +86,20 @@ class CheckoutShippingContextFactoryTest extends TestCase
         $this->factory->create($checkout);
     }
 
-    private function prepareCheckout(): Checkout
+    public function createDataProvider(): array
+    {
+        return [
+            'with customer' => [new Customer(), new CustomerUser()],
+            'anonymous (no customer, no customer user)' => [null, null],
+        ];
+    }
+
+    private function prepareCheckout(?Customer $customer, ?CustomerUser $customerUser): Checkout
     {
         $address = $this->createMock(OrderAddress::class);
         $currency = 'USD';
         $paymentMethod = 'SomePaymentMethod';
         $amount = 100;
-        $customer = new Customer();
-        $customerUser = new CustomerUser();
         $checkoutLineItems = new ArrayCollection([new OrderLineItem()]);
         $website = $this->createMock(Website::class);
         $shippingOrigin = $this->createMock(ShippingOrigin::class);
@@ -103,6 +117,18 @@ class CheckoutShippingContextFactoryTest extends TestCase
             ->setCustomerUser($customerUser)
             ->setWebsite($website);
 
+        $expectedCustomer = $customer;
+        if (null === $customer) {
+            $expectedCustomer = new Customer();
+            $this->customerUserRelationsProvider->expects(self::once())
+                ->method('getCustomerIncludingEmpty')
+                ->with($customerUser)
+                ->willReturn($expectedCustomer);
+        } else {
+            $this->customerUserRelationsProvider->expects(self::never())
+                ->method('getCustomerIncludingEmpty');
+        }
+
         $this->contextBuilder->expects(self::once())
             ->method('setShippingAddress')
             ->with($address);
@@ -117,9 +143,9 @@ class CheckoutShippingContextFactoryTest extends TestCase
 
         $this->contextBuilder->expects(self::once())
             ->method('setCustomer')
-            ->with($customer);
+            ->with($expectedCustomer);
 
-        $this->contextBuilder->expects(self::once())
+        $this->contextBuilder->expects($customerUser ? self::once() : self::never())
             ->method('setCustomerUser')
             ->with($customerUser);
 
