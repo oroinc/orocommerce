@@ -31,7 +31,6 @@ class Start extends TransitionServiceAbstract
 
         $this->baseTransition->execute($workflowItem);
 
-        $this->customerUserActions->createGuestCustomerUser($checkout);
         $this->defaultShippingMethodSetter->setDefaultShippingMethod($checkout);
         $this->defaultPaymentMethodSetter->setDefaultPaymentMethod($checkout);
     }

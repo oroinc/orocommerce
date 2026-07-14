@@ -81,10 +81,12 @@ class CreateOrder extends BasePlaceOrder
             ['acceptedConsents' => $data->offsetGet('customerConsents')]
         );
 
+        $email = $data->offsetGet('email');
+        $this->customerUserActions->createGuestCustomerUser($checkout, $email, $checkout->getBillingAddress());
+
         $this->updateShippingPrice->execute($checkout);
         $this->orderActions->placeOrder($checkout);
 
-        $email = $data->offsetGet('email');
         $this->customerUserActions->updateGuestCustomerUser($checkout, $email, $checkout->getBillingAddress());
 
         $validatePayment = $data->offsetGet('payment_validate');
