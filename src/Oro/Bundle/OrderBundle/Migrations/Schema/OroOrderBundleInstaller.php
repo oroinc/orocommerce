@@ -93,9 +93,6 @@ class OroOrderBundleInstaller implements
     private function createOroOrderTable(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->createTable('oro_order');
-        $table->addOption(OroOptions::KEY, [
-            'extend' => ['unique_key' => ['keys' => [['name' => 'external_id', 'key' => ['external_id']]]]]
-        ]);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
