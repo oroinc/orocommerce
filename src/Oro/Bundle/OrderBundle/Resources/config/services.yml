@@ -766,15 +766,6 @@ services:
         tags:
             - { name: validator.constraint_validator }
 
-    oro_order.validator.unique_entity:
-        class: Oro\Bundle\OrderBundle\Validator\Constraints\OrderUniqueEntityValidator
-        decorates: doctrine.orm.validator.unique
-        arguments:
-            - '@.inner'
-            - '@oro_order.draft_session.manager.draft_session_orm_filter_manager'
-        tags:
-            - { name: validator.constraint_validator, alias: doctrine.orm.validator.unique }
-
     oro_order.product_kit.checksum.order_product_kit_line_item_checksum_generator:
         class: Oro\Bundle\OrderBundle\ProductKit\Checksum\OrderProductKitLineItemChecksumGenerator
         tags:
