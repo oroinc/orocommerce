@@ -67,7 +67,7 @@ included:
         attributes:
             label: 'Subtotal Tax'
             amount: '0.0000'
-            currency: ''
+            currency: 'USD'
             data:
                 total:
                     includingTax: '0'

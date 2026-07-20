@@ -62,8 +62,6 @@ const BackendPaginationInput = PaginationInput.extend({
         this.collection.trigger('backgrid:checkUnSavedData', obj);
 
         if (obj.live) {
-            this.scrollToSavedPosition();
-
             BackendPaginationInput.__super__.onChangePageByInput.call(this, e);
         }
     },

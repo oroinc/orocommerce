@@ -97,26 +97,61 @@ class CheckoutActionsTest extends TestCase
                 ],
             ]);
 
-        $this->actionExecutor->expects($this->once())
+        $purchaseResult = new ActionData(['responseData' => ['success' => true]]);
+
+        $paymentTransactionOptions = [
+            'successUrl' => '/success',
+            'failureUrl' => '/error',
+            'partiallyPaidUrl' => '/partial',
+            'failedShippingAddressUrl' => '/error',
+            'checkoutId' => 123
+        ];
+
+        $this->actionExecutor->expects($this->exactly(3))
             ->method('executeAction')
-            ->with(
-                'payment_purchase',
+            ->withConsecutive(
                 [
-                    'attribute' => new PropertyPath('responseData'),
-                    'object' => $order,
-                    'amount' => 100,
-                    'currency' => 'USD',
-                    'paymentMethod' => 'credit_card',
-                    'transactionOptions' => [
-                        'successUrl' => '/success',
-                        'failureUrl' => '/error',
-                        'partiallyPaidUrl' => '/partial',
-                        'failedShippingAddressUrl' => '/error',
-                        'checkoutId' => 123
+                    ExtendableAction::NAME,
+                    [
+                        'events' => ['extendable_action.checkout_payment_purchase_start'],
+                        'eventData' => [
+                            'checkout' => $checkout,
+                            'order' => $order,
+                            'transactionOptions' => []
+                        ]
+                    ]
+                ],
+                [
+                    'payment_purchase',
+                    [
+                        'attribute' => new PropertyPath('responseData'),
+                        'object' => $order,
+                        'amount' => 100,
+                        'currency' => 'USD',
+                        'paymentMethod' => 'credit_card',
+                        'transactionOptions' => $paymentTransactionOptions
+                    ]
+                ],
+                [
+                    ExtendableAction::NAME,
+                    [
+                        'events' => ['extendable_action.checkout_payment_purchase_complete'],
+                        'eventData' => [
+                            'checkout' => $checkout,
+                            'order' => $order,
+                            'transactionOptions' => [],
+                            'purchaseResult' => $purchaseResult
+                        ]
                     ]
                 ]
             )
-            ->willReturn(new ActionData(['responseData' => ['success' => true]]));
+            ->willReturnCallback(function ($action) use ($purchaseResult) {
+                if ($action === 'payment_purchase') {
+                    return $purchaseResult;
+                }
+
+                return null;
+            });
 
         $result = $this->checkoutActions->purchase($checkout, $order);
 

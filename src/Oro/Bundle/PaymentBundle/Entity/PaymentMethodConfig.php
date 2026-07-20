@@ -26,16 +26,22 @@ class PaymentMethodConfig implements ExtendEntityInterface
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: PaymentMethodsConfigsRule::class, inversedBy: 'methodConfigs')]
     #[ORM\JoinColumn(name: 'configs_rule_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?PaymentMethodsConfigsRule $methodsConfigsRule = null;
 
     #[ORM\Column(name: 'method', type: Types::STRING, length: 255, nullable: false)]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 10]])]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 10], 'email' => ['available_in_template' => true]])]
     protected ?string $type = null;
 
     /**

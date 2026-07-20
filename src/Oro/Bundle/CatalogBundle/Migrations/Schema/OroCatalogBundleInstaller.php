@@ -409,7 +409,8 @@ class OroCatalogBundleInstaller implements
                 'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false],
-                'merge' => ['display' => false]
+                'merge' => ['display' => false],
+                'email' => ['available_in_template' => true],
             ]
         );
 

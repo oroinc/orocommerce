@@ -58,6 +58,18 @@ class CheckoutActions implements CheckoutActionsInterface
             $transactionOptions
         );
 
+        $this->actionExecutor->executeAction(
+            ExtendableAction::NAME,
+            [
+                'events' => ['extendable_action.checkout_payment_purchase_start'],
+                'eventData' => [
+                    'checkout' => $checkout,
+                    'order' => $order,
+                    'transactionOptions' => $transactionOptions
+                ]
+            ]
+        );
+
         $result = $this->actionExecutor->executeAction(
             'payment_purchase',
             [
@@ -67,6 +79,19 @@ class CheckoutActions implements CheckoutActionsInterface
                 'currency' => $order->getCurrency(),
                 'paymentMethod' => $checkout->getPaymentMethod(),
                 'transactionOptions' => $paymentTransactionOptions
+            ]
+        );
+
+        $this->actionExecutor->executeAction(
+            ExtendableAction::NAME,
+            [
+                'events' => ['extendable_action.checkout_payment_purchase_complete'],
+                'eventData' => [
+                    'checkout' => $checkout,
+                    'order' => $order,
+                    'transactionOptions' => $transactionOptions,
+                    'purchaseResult' => $result
+                ]
             ]
         );
 

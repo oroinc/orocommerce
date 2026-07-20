@@ -34,11 +34,15 @@ class ProductImage implements ExtendEntityInterface
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'images')]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Product $product = null;
 
     /**
@@ -51,12 +55,16 @@ class ProductImage implements ExtendEntityInterface
         orphanRemoval: true,
         indexBy: 'type'
     )]
-    #[ConfigField(defaultValues: ['importexport' => ['full' => true]])]
+    #[ConfigField(defaultValues: ['importexport' => ['full' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $types = null;
 
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
     #[ConfigField(
-        defaultValues: ['entity' => ['label' => 'oro.ui.updated_at'], 'importexport' => ['excluded' => true]]
+        defaultValues: [
+            'entity' => ['label' => 'oro.ui.updated_at'],
+            'importexport' => ['excluded' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?\DateTimeInterface $updatedAt = null;
 

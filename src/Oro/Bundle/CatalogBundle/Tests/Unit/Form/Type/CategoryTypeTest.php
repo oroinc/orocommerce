@@ -173,6 +173,24 @@ class CategoryTypeTest extends FormIntegrationTestCase
         );
     }
 
+    public function testSlugPrototypesSourceFieldIsTitlesForExistingCategory(): void
+    {
+        $this->urlGenerator->expects(self::once())
+            ->method('generate')
+            ->with('oro_catalog_category_get_changed_slugs', ['id' => 1])
+            ->willReturn('/some/url');
+
+        $existingData = new CategoryStub();
+        ReflectionUtil::setId($existingData, 1);
+
+        $form = $this->factory->create(CategoryType::class, $existingData);
+
+        self::assertEquals(
+            'titles',
+            $form->get('slugPrototypesWithRedirect')->getConfig()->getOption('source_field')
+        );
+    }
+
     #[\Override]
     protected function getExtensions(): array
     {

@@ -11,6 +11,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
@@ -27,7 +28,9 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 #[ORM\Entity(repositoryClass: ConsentAcceptanceRepository::class)]
 #[ORM\Table(name: 'oro_consent_acceptance')]
 #[ORM\UniqueConstraint(name: 'oro_customeru_consent_uidx', columns: ['consent_id', 'customerUser_id'])]
-#[Config]
+#[Config(defaultValues: [
+    'email' => ['available_in_template' => true],
+])]
 class ConsentAcceptance implements
     CreatedAtAwareInterface,
     ExtendEntityInterface
@@ -38,14 +41,17 @@ class ConsentAcceptance implements
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Page::class)]
     #[ORM\JoinColumn(name: 'landing_page_id', referencedColumnName: 'id', nullable: true, onDelete: 'RESTRICT')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Page $landingPage = null;
 
     #[ORM\ManyToOne(targetEntity: Consent::class, inversedBy: 'acceptances')]
     #[ORM\JoinColumn(name: 'consent_id', referencedColumnName: 'id', nullable: false, onDelete: 'RESTRICT')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Consent $consent = null;
 
     /**

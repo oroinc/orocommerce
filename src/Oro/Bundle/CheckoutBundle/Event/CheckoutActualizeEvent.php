@@ -10,6 +10,8 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 final class CheckoutActualizeEvent extends Event
 {
+    public const NAME = 'oro_checkout.actualize';
+
     public function __construct(
         private readonly Checkout $checkout,
         private readonly array $sourceCriteria,

@@ -72,6 +72,7 @@ describe('orocms/js/app/grapesjs/types/custom-code-type', () => {
             expect(customCodeTypeBuilder.Model.prototype.defaults.droppable).toBe(false);
             expect(customCodeTypeBuilder.Model.prototype.defaults.traits).toEqual([]);
             expect(customCodeTypeBuilder.Model.prototype.defaults.disableSelectorManager).toBe(true);
+            expect(customCodeTypeBuilder.Model.prototype.defaults.mainToolbarAction).toEqual('edit-custom-code');
 
             expect(customCodeTypeBuilder.Model.prototype.editor).toEqual(editor);
         });

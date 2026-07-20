@@ -5,6 +5,7 @@ namespace Oro\Bundle\SaleBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 
@@ -17,17 +18,20 @@ use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 #[Config(
     defaultValues: [
         'entity' => ['icon' => 'fa-file-text-o'],
-        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes']
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class QuoteProductRequest extends BaseQuoteProductItem
 {
     #[ORM\ManyToOne(targetEntity: QuoteProduct::class, inversedBy: 'quoteProductRequests')]
     #[ORM\JoinColumn(name: 'quote_product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?QuoteProduct $quoteProduct = null;
 
     #[ORM\ManyToOne(targetEntity: RequestProductItem::class)]
     #[ORM\JoinColumn(name: 'request_product_item_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?RequestProductItem $requestProductItem = null;
 
     /**

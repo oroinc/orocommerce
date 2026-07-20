@@ -6,6 +6,7 @@ use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingOriginProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\OrderBundle\Converter\OrderPaymentLineItemConverterInterface;
 use Oro\Bundle\PaymentBundle\Context\Builder\Factory\PaymentContextBuilderFactoryInterface;
 use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
@@ -18,27 +19,15 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
  */
 class CheckoutPaymentContextFactory
 {
-    private CheckoutLineItemsManager $checkoutLineItemsManager;
-    private SubtotalProviderInterface $checkoutSubtotalProvider;
-    private TotalProcessorProvider $totalProcessor;
-    private OrderPaymentLineItemConverterInterface $paymentLineItemConverter;
-    private CheckoutShippingOriginProviderInterface $shippingOriginProvider;
-    private PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory;
-
     public function __construct(
-        CheckoutLineItemsManager $checkoutLineItemsManager,
-        SubtotalProviderInterface $checkoutSubtotalProvider,
-        TotalProcessorProvider $totalProcessor,
-        OrderPaymentLineItemConverterInterface $paymentLineItemConverter,
-        CheckoutShippingOriginProviderInterface $shippingOriginProvider,
-        PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory
+        private readonly CheckoutLineItemsManager $checkoutLineItemsManager,
+        private readonly SubtotalProviderInterface $checkoutSubtotalProvider,
+        private readonly TotalProcessorProvider $totalProcessor,
+        private readonly OrderPaymentLineItemConverterInterface $paymentLineItemConverter,
+        private readonly CheckoutShippingOriginProviderInterface $shippingOriginProvider,
+        private readonly PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory,
+        private readonly CustomerUserRelationsProvider $customerUserRelationsProvider
     ) {
-        $this->checkoutLineItemsManager = $checkoutLineItemsManager;
-        $this->checkoutSubtotalProvider = $checkoutSubtotalProvider;
-        $this->totalProcessor = $totalProcessor;
-        $this->paymentLineItemConverter = $paymentLineItemConverter;
-        $this->shippingOriginProvider = $shippingOriginProvider;
-        $this->paymentContextBuilderFactory = $paymentContextBuilderFactory;
     }
 
     public function create(Checkout $checkout): PaymentContextInterface
@@ -85,12 +74,19 @@ class CheckoutPaymentContextFactory
         PaymentContextBuilderInterface $paymentContextBuilder,
         Checkout $checkout
     ): void {
-        if (null !== $checkout->getCustomer()) {
-            $paymentContextBuilder->setCustomer($checkout->getCustomer());
+        $customer = $checkout->getCustomer();
+        $customerUser = $checkout->getCustomerUser();
+
+        if (null === $customer) {
+            $customer = $this->customerUserRelationsProvider->getCustomerIncludingEmpty($customerUser);
         }
 
-        if (null !== $checkout->getCustomerUser()) {
-            $paymentContextBuilder->setCustomerUser($checkout->getCustomerUser());
+        if (null !== $customer) {
+            $paymentContextBuilder->setCustomer($customer);
+        }
+
+        if (null !== $customerUser) {
+            $paymentContextBuilder->setCustomerUser($customerUser);
         }
 
         $website = $checkout->getWebsite();

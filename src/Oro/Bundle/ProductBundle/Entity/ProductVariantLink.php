@@ -18,21 +18,30 @@ class ProductVariantLink
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'variantLinks')]
     #[ORM\JoinColumn(name: 'parent_product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Product $parentProduct = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'parentVariantLinks')]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 10, 'identity' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['order' => 10, 'identity' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Product $product = null;
 
     #[ORM\Column(name: 'visible', type: Types::BOOLEAN, nullable: false, options: ['default' => true])]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 20]])]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 20], 'email' => ['available_in_template' => true]])]
     protected ?bool $visible = true;
 
     public function __construct(?Product $parentProduct = null, ?Product $product = null)
@@ -116,7 +125,7 @@ class ProductVariantLink
      */
     public function setVisible($visible)
     {
-        $this->visible = (bool) $visible;
+        $this->visible = (bool)$visible;
 
         return $this;
     }

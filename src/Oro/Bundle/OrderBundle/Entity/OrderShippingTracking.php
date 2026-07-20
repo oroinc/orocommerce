@@ -7,30 +7,37 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 
 /**
  * Represents shipping tracking record for an order.
  */
 #[ORM\Entity]
 #[ORM\Table('oro_order_shipping_tracking')]
-#[Config]
+#[Config(defaultValues: [
+    'email' => ['available_in_template' => true],
+])]
 class OrderShippingTracking
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'method', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $method = null;
 
     #[ORM\Column(name: 'number', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $number = null;
 
     #[ORM\ManyToMany(targetEntity: Order::class, inversedBy: 'shippingTrackings')]
     #[ORM\JoinTable(name: 'oro_order_shipping_trackings')]
     #[ORM\JoinColumn(name: 'tracking_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'order_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $orders = null;
 
     public function __construct()

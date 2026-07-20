@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 
 /**
@@ -13,9 +14,11 @@ trait ShippingAddressTrait
 {
     #[ORM\OneToOne(targetEntity: OrderAddress::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'shipping_address_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?OrderAddress $shippingAddress = null;
 
     #[ORM\Column(name: 'save_shipping_address', type: Types::BOOLEAN, options: ['default' => true])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $saveShippingAddress = true;
 
     /**

@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -38,6 +39,7 @@ use Oro\Bundle\WebsiteSearchTermBundle\Entity\Repository\SearchTermRepository;
             'type' => 'ACL',
             'group_name' => '',
         ],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class SearchTerm implements
@@ -53,27 +55,35 @@ class SearchTerm implements
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'phrases', type: Types::TEXT, nullable: false)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $phrases = '';
 
     #[ORM\Column(name: 'action_type', type: Types::STRING, length: 128, nullable: false)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $actionType = '';
 
     #[ORM\Column(name: 'modify_action_type', type: Types::STRING, length: 128, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $modifyActionType = '';
 
     #[ORM\Column(name: 'redirect_action_type', type: Types::STRING, length: 128, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $redirectActionType = '';
 
     #[ORM\Column(name: 'redirect_uri', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $redirectUri = null;
 
     #[ORM\Column(name: 'redirect_system_page', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $redirectSystemPage = null;
 
     #[ORM\Column(name: 'redirect_301', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected bool $redirect301 = false;
 
     /**
@@ -88,6 +98,7 @@ class SearchTerm implements
     protected Collection $scopes;
 
     #[ORM\Column(name: 'partial_match', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected bool $partialMatch = false;
 
     public function __construct()

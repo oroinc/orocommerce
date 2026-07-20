@@ -10,6 +10,7 @@ use Extend\Entity\Autocomplete\OroPromotionBundle_Entity_AppliedPromotion;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -37,24 +38,31 @@ class AppliedPromotion implements DatesAwareInterface, ExtendEntityInterface, Dr
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'active', type: Types::BOOLEAN, options: ['default' => true])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $active = true;
 
     #[ORM\Column(name: 'removed', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $removed = false;
 
     #[ORM\OneToOne(mappedBy: 'appliedPromotion', targetEntity: AppliedCoupon::class, cascade: ['all'])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?AppliedCoupon $appliedCoupon = null;
 
     #[ORM\Column(name: 'type', type: Types::STRING, length: 255)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $type = null;
 
     #[ORM\Column(name: 'source_promotion_id', type: Types::INTEGER)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $sourcePromotionId = null;
 
     #[ORM\Column(name: 'promotion_name', type: Types::TEXT)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $promotionName = null;
 
     /**
@@ -78,6 +86,7 @@ class AppliedPromotion implements DatesAwareInterface, ExtendEntityInterface, Dr
         cascade: ['persist'],
         orphanRemoval: true
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $appliedDiscounts = null;
 
     public function __construct()

@@ -5,7 +5,9 @@ namespace Oro\Bundle\SaleBundle\DependencyInjection\Compiler;
 use Oro\Bundle\EmailBundle\DependencyInjection\Compiler\AbstractTwigSandboxConfigurationPass;
 
 /**
- * Registers the "quote_guest_access_link" Twig function for the email templates rendering sandbox:
+ * Registers the following Twig functions for the email templates rendering sandbox:
+ *  * quote_guest_access_link
+ *  * quote_products
  */
 class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
 {

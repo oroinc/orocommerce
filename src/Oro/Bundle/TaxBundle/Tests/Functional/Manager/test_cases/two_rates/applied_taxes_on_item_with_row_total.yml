@@ -117,6 +117,12 @@ expectedResult:
         taxAmount: '245.43'     # 25.1 + 22.96 + 42 + 155.37
         adjustment: '0.00048'   # -0.00062 - 0.00325 + 0.00235 + 0.002
         currency: 'USD'
+    items_total:
+        includingTax: '1616.55'
+        excludingTax: '1371.12'
+        taxAmount: '245.43'
+        adjustment: '0.00048'
+        currency: 'USD'
     taxes:
         # 140.22 * 0.104 = 14.58288 = 14.58
         # 128.25 * 0.104 = 13.338 = 13.34

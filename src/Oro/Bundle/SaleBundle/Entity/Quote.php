@@ -59,7 +59,7 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
     defaultValues: [
         'entity' => [
             'icon' => 'fa-file-text',
-            'contact_information' => ['email' => [['fieldName' => 'contactInformation']]]
+            'contact_information' => ['email' => [['fieldName' => 'contactInformation']]],
         ],
         'ownership' => [
             'owner_type' => 'USER',
@@ -71,10 +71,11 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
             'frontend_owner_field_name' => 'customerUser',
             'frontend_owner_column_name' => 'customer_user_id',
             'frontend_customer_field_name' => 'customer',
-            'frontend_customer_column_name' => 'customer_id'
+            'frontend_customer_column_name' => 'customer_id',
         ],
         'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes'],
-        'dataaudit' => ['auditable' => true]
+        'dataaudit' => ['auditable' => true],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class Quote implements
@@ -114,39 +115,43 @@ class Quote implements
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $qid = null;
 
     /**
      * @var string|null
      */
     #[ORM\Column(name: 'guest_access_id', type: Types::GUID, nullable: true)]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected $guestAccessId;
 
     #[ORM\ManyToOne(targetEntity: Website::class)]
     #[ORM\JoinColumn(name: 'website_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Website $website = null;
 
     #[ORM\ManyToOne(targetEntity: Request::class)]
     #[ORM\JoinColumn(name: 'request_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Request $request = null;
 
     #[ORM\Column(name: 'po_number', type: Types::STRING, length: 255, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $poNumber = null;
 
     #[ORM\Column(name: 'ship_until', type: Types::DATE_MUTABLE, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?\DateTimeInterface $shipUntil = null;
 
     #[ORM\Column(name: 'valid_until', type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?\DateTimeInterface $validUntil = null;
 
     /**
@@ -154,20 +159,20 @@ class Quote implements
      */
     #[ORM\OneToMany(mappedBy: 'quote', targetEntity: QuoteProduct::class, cascade: ['ALL'], orphanRemoval: true)]
     #[ORM\OrderBy(['id' => Criteria::ASC])]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $quoteProducts = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?bool $expired = false;
 
     #[ORM\Column(name: 'prices_changed', type: Types::BOOLEAN, options: ['default' => false])]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?bool $pricesChanged = false;
 
     #[ORM\OneToOne(targetEntity: QuoteAddress::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\JoinColumn(name: 'shipping_address_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?QuoteAddress $shippingAddress = null;
 
     /**
@@ -177,6 +182,7 @@ class Quote implements
     #[ORM\JoinTable(name: 'oro_quote_assigned_users')]
     #[ORM\JoinColumn(name: 'quote_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $assignedUsers = null;
 
     /**
@@ -186,33 +192,41 @@ class Quote implements
     #[ORM\JoinTable(name: 'oro_quote_assigned_cus_users')]
     #[ORM\JoinColumn(name: 'quote_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'customer_user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $assignedCustomerUsers = null;
 
     #[ORM\Column(name: 'shipping_method', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $shippingMethod = null;
 
     #[ORM\Column(name: 'shipping_method_type', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $shippingMethodType = null;
 
     #[ORM\Column(name: 'shipping_method_locked', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $shippingMethodLocked = false;
 
     #[ORM\Column(name: 'allow_unlisted_shipping_method', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $allowUnlistedShippingMethod = false;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'estimated_shipping_cost_amount', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $estimatedShippingCostAmount;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'override_shipping_cost_amount', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $overriddenShippingCostAmount;
 
     #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $currency = null;
 
     /**
@@ -220,14 +234,16 @@ class Quote implements
      */
     #[ORM\OneToMany(mappedBy: 'quote', targetEntity: QuoteDemand::class, cascade: ['all'], orphanRemoval: true)]
     #[ORM\OrderBy(['id' => Criteria::ASC])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $demands = null;
 
     #[ORM\Column(name: 'project_name', type: Types::STRING, length: 255, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $projectName = null;
 
     #[ORM\ManyToOne(targetEntity: CustomerVisitor::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'visitor_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?CustomerVisitor $visitor = null;
 
     public function __construct()
@@ -457,6 +473,7 @@ class Quote implements
                 return true;
             }
         }
+
         return false;
     }
 
@@ -694,6 +711,7 @@ class Quote implements
         if ($amount && $this->currency) {
             return Price::create($amount, $this->currency);
         }
+
         return null;
     }
 
@@ -705,6 +723,7 @@ class Quote implements
         if ($this->estimatedShippingCostAmount && $this->currency) {
             return Price::create($this->estimatedShippingCostAmount, $this->currency);
         }
+
         return null;
     }
 

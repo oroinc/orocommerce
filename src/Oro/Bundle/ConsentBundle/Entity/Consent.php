@@ -47,7 +47,8 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
             'organization_column_name' => 'organization_id'
         ],
         'dataaudit' => ['auditable' => true],
-        'security' => ['type' => 'ACL', 'group_name' => '', 'category' => 'account_management']
+        'security' => ['type' => 'ACL', 'group_name' => '', 'category' => 'account_management'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class Consent implements
@@ -62,6 +63,7 @@ class Consent implements
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     /**
@@ -71,26 +73,27 @@ class Consent implements
     #[ORM\JoinTable(name: 'oro_consent_name')]
     #[ORM\JoinColumn(name: 'consent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $names = null;
 
     #[ORM\ManyToOne(targetEntity: ContentNode::class, inversedBy: 'referencedConsents')]
     #[ORM\JoinColumn(name: 'content_node_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?ContentNode $contentNode = null;
 
     #[ORM\Column(name: 'mandatory', type: Types::BOOLEAN, nullable: false, options: ['default' => true])]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?bool $mandatory = true;
 
     /**
      * @var Collection<int, ConsentAcceptance>
      */
     #[ORM\OneToMany(mappedBy: 'consent', targetEntity: ConsentAcceptance::class, cascade: ['persist'])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $acceptances = null;
 
     #[ORM\Column(name: 'declined_notification', type: Types::BOOLEAN, nullable: false, options: ['default' => true])]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?bool $declinedNotification = true;
 
     public function __construct()

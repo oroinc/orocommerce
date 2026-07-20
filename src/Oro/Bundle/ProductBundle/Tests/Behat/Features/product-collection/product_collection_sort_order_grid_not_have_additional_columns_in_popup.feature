@@ -1,4 +1,3 @@
-@regression
 @fixture-OroProductBundle:product_collection_sort_order.yml
 
 Feature: Product collection sort order grid not have additional columns in popup

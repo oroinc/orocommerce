@@ -17,6 +17,10 @@ const ListItemProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
         pricesHint: '[data-name="prices-hint-trigger"]'
     },
 
+    elementsEvents: {
+        'pricesHint lazyInitHint': ['click', 'onPricesHintInteraction']
+    },
+
     defaultOptions: {
         showValuePrice: true,
         showListedPrice: true,
@@ -69,6 +73,9 @@ const ListItemProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
             this.model.on('change:unit', this.updateQtyForUnit, this);
         }
 
+        this.model.off('change:unit', this.updateHintContent, this);
+        this.model.on('change:unit', this.updateHintContent, this);
+
         this.render();
     },
 
@@ -93,10 +100,6 @@ const ListItemProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
             this.renderPriceBlock();
         }
 
-        if (this.showHint) {
-            this.renderHint();
-        }
-
         return this;
     },
 
@@ -105,10 +108,6 @@ const ListItemProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
      */
     updateQtyForUnit: function() {
         const unit = this.model.get('unit');
-
-        if (this.showHint) {
-            this.renderHint(unit);
-        }
 
         const qtyCheckedForUnit = this.model.get('qtyCheckedForUnit');
         if (!_.isEmpty(qtyCheckedForUnit[unit])) {
@@ -127,6 +126,26 @@ const ListItemProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
         }
 
         return true;
+    },
+
+    updateHintContent: function() {
+        if (this.showHint && this.getElement('pricesHint').data(Popover.DATA_KEY)) {
+            this.renderHint(this.model.get('unit'));
+        }
+    },
+
+    onPricesHintInteraction: function() {
+        if (!this.showHint) {
+            return;
+        }
+
+        const $pricesHint = this.getElement('pricesHint');
+        if ($pricesHint.data(Popover.DATA_KEY)) {
+            return;
+        }
+
+        this.renderHint();
+        $pricesHint.popover('show');
     },
 
     renderHint: function(unit) {

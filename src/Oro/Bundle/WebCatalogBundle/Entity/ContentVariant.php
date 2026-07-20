@@ -8,6 +8,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroWebCatalogBundle_Entity_ContentVariant;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
@@ -46,7 +47,11 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
         joinTable: new ORM\JoinTable(name: 'oro_web_catalog_variant_slug')
     )
 ])]
-#[Config]
+#[Config(
+    defaultValues: [
+        'email' => ['available_in_template' => true],
+    ]
+)]
 class ContentVariant implements
     ContentVariantInterface,
     ContentNodeAwareInterface,
@@ -60,19 +65,24 @@ class ContentVariant implements
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'type', type: Types::STRING, length: 255)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $type = null;
 
     #[ORM\Column(name: 'system_page_route', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $systemPageRoute = null;
 
     #[ORM\ManyToOne(targetEntity: ContentNode::class, inversedBy: 'contentVariants')]
     #[ORM\JoinColumn(name: 'node_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?ContentNode $node = null;
 
     #[ORM\Column(name: 'is_default', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $default = false;
 
     /**
@@ -85,9 +95,11 @@ class ContentVariant implements
     protected ?Collection $scopes = null;
 
     #[ORM\Column(name: 'override_variant_configuration', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $overrideVariantConfiguration = false;
 
     #[ORM\Column(name: 'do_not_render_title', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $doNotRenderTitle = false;
 
     /**

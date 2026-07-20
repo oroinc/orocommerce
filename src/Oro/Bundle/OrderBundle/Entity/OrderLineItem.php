@@ -13,6 +13,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderLineItemRepository;
@@ -44,7 +45,8 @@ use Oro\Component\DraftSession\Entity\EntityDraftSoftDeleteAwareTrait;
 #[Config(
     defaultValues: [
         'entity' => ['icon' => 'fa-list-alt'],
-        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'orders']
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'orders'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class OrderLineItem implements
@@ -67,26 +69,32 @@ class OrderLineItem implements
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\ManyToMany(targetEntity: Order::class, inversedBy: 'lineItems')]
     #[ORM\JoinTable(name: 'oro_order_line_items')]
     #[ORM\JoinColumn(name: 'line_item_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'order_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $orders = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Product $product = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'parent_product_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Product $parentProduct = null;
 
     #[ORM\Column(name: 'product_sku', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $productSku = null;
 
     #[ORM\Column(name: 'product_name', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $productName = null;
 
     /**
@@ -96,6 +104,7 @@ class OrderLineItem implements
     protected $productVariantFields = [];
 
     #[ORM\Column(name: 'free_form_product', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $freeFormProduct = null;
 
     protected ?bool $isFreeForm = null;
@@ -104,19 +113,24 @@ class OrderLineItem implements
      * @var float|null
      */
     #[ORM\Column(name: 'quantity', type: Types::FLOAT, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $quantity;
 
     #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
     #[ORM\JoinColumn(name: 'product_unit_id', referencedColumnName: 'code', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?ProductUnit $productUnit = null;
 
     #[ORM\Column(name: 'product_unit_code', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $productUnitCode = null;
 
     #[ORM\Column(name: 'value', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?float $value = null;
 
     #[ORM\Column(name: 'currency', type: Types::STRING, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $currency = null;
 
     protected ?Price $price = null;
@@ -125,15 +139,19 @@ class OrderLineItem implements
      * @var int
      */
     #[ORM\Column(name: 'price_type', type: Types::INTEGER)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $priceType = self::PRICE_TYPE_UNIT;
 
     #[ORM\Column(name: 'ship_by', type: Types::DATE_MUTABLE, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?\DateTimeInterface $shipBy = null;
 
     #[ORM\Column(name: 'from_external_source', type: Types::BOOLEAN)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $fromExternalSource = false;
 
     #[ORM\Column(name: 'comment', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $comment = null;
 
     /**
@@ -142,15 +160,18 @@ class OrderLineItem implements
     protected $requirePriceRecalculation = false;
 
     #[ORM\Column(name: 'shipping_method', type: Types::STRING, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $shippingMethod = null;
 
     #[ORM\Column(name: 'shipping_method_type', type: Types::STRING, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $shippingMethodType = null;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'shipping_estimate_amount', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $shippingEstimateAmount;
 
     /**
@@ -164,6 +185,7 @@ class OrderLineItem implements
         indexBy: 'kitItemId'
     )]
     #[OrderBy(['sortOrder' => Criteria::ASC])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $kitItemLineItems = null;
 
     /**
@@ -171,6 +193,7 @@ class OrderLineItem implements
      * moving the logic of distinguishing of such line items out of the entity class.
      */
     #[ORM\Column(name: 'checksum', type: Types::STRING, length: 40, nullable: false, options: ['default' => ''])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $checksum = '';
 
     #[ORM\ManyToOne(targetEntity: OrderLineItem::class, inversedBy: 'drafts')]

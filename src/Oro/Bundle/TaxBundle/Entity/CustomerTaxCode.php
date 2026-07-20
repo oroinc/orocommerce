@@ -30,7 +30,8 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
             'organization_field_name' => 'organization',
             'organization_column_name' => 'organization_id'
         ],
-        'security' => ['type' => 'ACL', 'group_name' => 'commerce']
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class CustomerTaxCode extends AbstractTaxCode implements OrganizationAwareInterface

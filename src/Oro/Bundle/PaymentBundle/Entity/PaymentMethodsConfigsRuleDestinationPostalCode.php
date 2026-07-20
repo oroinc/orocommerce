@@ -26,18 +26,28 @@ class PaymentMethodsConfigsRuleDestinationPostalCode implements ExtendEntityInte
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: false)]
     #[ConfigField(
-        defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['identity' => true, 'order' => 10]]
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['identity' => true, 'order' => 10],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?string $name = null;
 
     #[ORM\ManyToOne(targetEntity: PaymentMethodsConfigsRuleDestination::class, inversedBy: 'postalCodes')]
     #[ORM\JoinColumn(name: 'destination_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?PaymentMethodsConfigsRuleDestination $destination = null;
 
     /**

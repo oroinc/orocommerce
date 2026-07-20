@@ -94,7 +94,8 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
         'security' => ['type' => 'ACL', 'group_name' => ''],
         'form' => ['form_type' => PageSelectType::class, 'grid_name' => 'cms-page-select-grid'],
         'draft' => ['draftable' => true],
-        'slug' => ['source' => 'titles']
+        'slug' => ['source' => 'titles'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class Page implements
@@ -113,6 +114,7 @@ class Page implements
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     /**
@@ -122,7 +124,11 @@ class Page implements
     #[ORM\JoinTable(name: 'oro_cms_page_title')]
     #[ORM\JoinColumn(name: 'page_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'draft' => ['draftable' => true]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'draft' => ['draftable' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Collection $titles = null;
 
     /**
@@ -139,6 +145,7 @@ class Page implements
     protected $content;
 
     #[ORM\Column(name: 'do_not_render_title', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected bool $doNotRenderTitle = false;
 
     public function __construct()

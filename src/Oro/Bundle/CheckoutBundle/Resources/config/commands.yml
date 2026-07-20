@@ -1,0 +1,10 @@
+services:
+    _defaults:
+        public: false
+
+    Oro\Bundle\CheckoutBundle\Command\ClearExpiredGuestCheckoutsCommand:
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+        tags:
+            - { name: console.command }

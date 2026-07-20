@@ -12,6 +12,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
@@ -27,7 +28,10 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  */
 #[ORM\Entity(repositoryClass: QuoteDemandRepository::class)]
 #[ORM\Table(name: 'oro_quote_demand')]
-#[Config(defaultValues: ['entity' => ['icon' => 'fa-list-alt']])]
+#[Config(defaultValues: [
+    'entity' => ['icon' => 'fa-list-alt'],
+    'email' => ['available_in_template' => true],
+])]
 class QuoteDemand implements
     CheckoutSourceEntityInterface,
     LineItemsAwareInterface,
@@ -45,10 +49,12 @@ class QuoteDemand implements
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Quote::class, inversedBy: 'demands')]
     #[ORM\JoinColumn(name: 'quote_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Quote $quote = null;
 
     /**
@@ -61,25 +67,30 @@ class QuoteDemand implements
         orphanRemoval: true
     )]
     #[ORM\OrderBy(['id' => Criteria::ASC])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $demandProducts = null;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'subtotal', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $subtotal;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'total', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $total;
 
     #[ORM\Column(name: 'total_currency', type: Types::STRING, length: 3, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $totalCurrency = null;
 
     #[ORM\ManyToOne(targetEntity: CustomerVisitor::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'visitor_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?CustomerVisitor $visitor = null;
 
     public function __construct()

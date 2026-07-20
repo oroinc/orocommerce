@@ -6,6 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroInventoryBundle_Entity_InventoryLevel;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
@@ -32,7 +33,8 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
             'owner_type' => 'ORGANIZATION',
             'owner_field_name' => 'organization',
             'owner_column_name' => 'organization_id'
-        ]
+        ],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class InventoryLevel implements
@@ -45,16 +47,19 @@ class InventoryLevel implements
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'quantity', type: Types::DECIMAL, precision: 20, scale: 10, nullable: false)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $quantity = 0;
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Product $product = null;
 
     #[ORM\ManyToOne(targetEntity: ProductUnitPrecision::class)]
@@ -64,6 +69,7 @@ class InventoryLevel implements
         nullable: false,
         onDelete: 'CASCADE'
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?ProductUnitPrecision $productUnitPrecision = null;
 
     /**

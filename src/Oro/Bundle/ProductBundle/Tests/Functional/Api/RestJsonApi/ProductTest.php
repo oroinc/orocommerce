@@ -84,20 +84,35 @@ class ProductTest extends RestJsonApiTestCase
     {
         $response = $this->cget(
             ['entity' => 'products'],
-            ['filter' => ['sku' => '@product-1->sku']]
+            ['filter' => ['sku' => '@product-1->sku']],
+            ['HTTP_X-Include' => 'totalCount']
         );
 
         $this->assertResponseContains('cget_filter_by_product.yml', $response);
+        self::assertEquals(1, $response->headers->get('X-Include-Total-Count'));
     }
 
     public function testGetListFilteredBySeveralProductsWithDifferentInventoryStatuses(): void
     {
         $response = $this->cget(
             ['entity' => 'products'],
-            ['filter' => ['sku' => ['@product-2->sku', '@product-3->sku']]]
+            ['filter' => ['sku' => ['@product-2->sku', '@product-3->sku']]],
+            ['HTTP_X-Include' => 'totalCount']
         );
 
         $this->assertResponseContains('cget_filter_by_products_by_inventory_status.yml', $response);
+        self::assertEquals(2, $response->headers->get('X-Include-Total-Count'));
+    }
+
+    public function testGetListWithPageSizeLimitShouldNotBreakTotalCount(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'products'],
+            ['page[size]' => 2],
+            ['HTTP_X-Include' => 'totalCount']
+        );
+
+        self::assertEquals(10, $response->headers->get('X-Include-Total-Count'));
     }
 
     public function testGet(): void

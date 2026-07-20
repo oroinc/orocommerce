@@ -109,6 +109,12 @@ expectedResult:
         taxAmount: '208.17'      # 21.28870229 + 19.471374 + 35.625402884 + 131.782866836 = 208.16834601
         adjustment: '-0.001654'  # -0.00129771 + 0.001374 - 0.004597116 + 0.002866836 = -0.00165399
         currency: 'USD'
+    items_total:
+        includingTax: '1371.12'
+        excludingTax: '1162.95'
+        taxAmount: '208.17'
+        adjustment: '-0.001654'
+        currency: 'USD'
     taxes:
         - { tax: 'TAX1', rate: '0.104', taxableAmount: '1162.95', taxAmount: '120.95', currency: 'USD' } # 1166.91 * 0.104
         - { tax: 'TAX3', rate: '0.075', taxableAmount: '1162.95', taxAmount: '87.22', currency: 'USD' }  # 1166.91 * 0.075

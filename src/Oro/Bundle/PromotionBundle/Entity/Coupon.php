@@ -35,7 +35,7 @@ use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
             'owner_field_name' => 'owner',
             'owner_column_name' => 'business_unit_owner_id',
             'organization_field_name' => 'organization',
-            'organization_column_name' => 'organization_id'
+            'organization_column_name' => 'organization_id',
         ],
         'dataaudit' => ['auditable' => true],
         'security' => [
@@ -43,7 +43,8 @@ use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
             'permissions' => 'VIEW;CREATE;EDIT;DELETE',
             'group_name' => 'commerce',
             'category' => 'marketing'
-        ]
+        ],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class Coupon implements
@@ -58,59 +59,105 @@ class Coupon implements
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'code', type: Types::STRING, length: 255, unique: true, nullable: false)]
     #[ConfigField(
-        defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['identity' => true, 'order' => 10]]
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['identity' => true, 'order' => 10],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?string $code = null;
 
     #[ORM\Column(name: 'code_uppercase', type: Types::STRING, length: 255, nullable: false)]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?string $codeUppercase = null;
 
     #[ORM\Column(name: 'enabled', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 20]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 20],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?bool $enabled = false;
 
     #[ORM\Column(name: 'uses_per_coupon', type: Types::INTEGER, nullable: true, options: ['default' => 1])]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 30]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 30],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $usesPerCoupon = 1;
 
     #[ORM\Column(name: 'uses_per_person', type: Types::INTEGER, nullable: true, options: ['default' => 1])]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 40]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 40],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $usesPerPerson = 1;
 
     #[ORM\ManyToOne(targetEntity: Promotion::class, inversedBy: 'coupons')]
     #[ORM\JoinColumn(name: 'promotion_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 60]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 60],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Promotion $promotion = null;
 
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE)]
     #[ConfigField(
-        defaultValues: ['entity' => ['label' => 'oro.ui.created_at'], 'importexport' => ['excluded' => true]]
+        defaultValues: [
+            'entity' => ['label' => 'oro.ui.created_at'],
+            'importexport' => ['excluded' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
     #[ConfigField(
-        defaultValues: ['entity' => ['label' => 'oro.ui.updated_at'], 'importexport' => ['excluded' => true]]
+        defaultValues: [
+            'entity' => ['label' => 'oro.ui.updated_at'],
+            'importexport' => ['excluded' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\ManyToOne(targetEntity: Organization::class)]
     #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?OrganizationInterface $organization = null;
 
     #[ORM\Column(name: 'valid_from', type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 45]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 45],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?\DateTimeInterface $validFrom = null;
 
     #[ORM\Column(name: 'valid_until', type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 50]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 50],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?\DateTimeInterface $validUntil = null;
 
     public function setId(?int $id): self

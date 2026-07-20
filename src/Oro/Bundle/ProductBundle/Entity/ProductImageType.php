@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 
 /**
 * Entity that represents Product Image Type
@@ -23,13 +24,16 @@ class ProductImageType
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: ProductImage::class, inversedBy: 'types')]
     #[ORM\JoinColumn(name: 'product_image_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?ProductImage $productImage = null;
 
     #[ORM\Column(name: 'type', type: Types::STRING, length: 255)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $type = null;
 
     /**

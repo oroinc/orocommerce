@@ -51,20 +51,20 @@ oro_behat_extension:
                 type: 'xpath'
                 locator: '//pre[@data-gjs-type="code"]'
 
-        WysiwygFileTypeBlock:
+        WysiwygLinkTypeBlock:
             selector:
                 type: 'xpath'
-                locator: '//a[@data-gjs-type="file"]'
+                locator: '//a[@data-gjs-type="link"]'
 
         WysiwygToolbarActionPictureSettings:
             selector:
                 type: 'xpath'
                 locator: '//div[contains(@class, "gjs-toolbar-item") and @label="Picture sources manager"]'
 
-        WysiwygToolbarActionFileSettings:
+        WysiwygToolbarActionLinkSettings:
             selector:
                 type: 'xpath'
-                locator: '//div[contains(@class, "gjs-toolbar-item") and @label="File Settings"]'
+                locator: '//div[contains(@class, "gjs-toolbar-item") and @label="Link Settings"]'
 
         WysiwygToolbarActionSelectParent:
             selector:
@@ -636,12 +636,6 @@ oro_behat_extension:
 
         ClearCanvas:
             selector: '[data-original-title="Clear Canvas"]'
-
-        HrefField:
-            selector: '.modal input[name$="href"]'
-
-        TitleField:
-            selector: '.modal input[name$="title"]'
 
         ActiveEditableComponent:
             selector: '[data-gjs-type="text"][contenteditable="true"]'

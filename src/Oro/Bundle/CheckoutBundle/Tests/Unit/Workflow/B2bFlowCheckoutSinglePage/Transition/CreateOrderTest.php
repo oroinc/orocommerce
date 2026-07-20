@@ -250,6 +250,10 @@ class CreateOrderTest extends TestCase
             ->willReturn($order);
 
         $this->customerUserActions->expects(self::once())
+            ->method('createGuestCustomerUser')
+            ->with($checkout, 'test@example.com', $billingAddress);
+
+        $this->customerUserActions->expects(self::once())
             ->method('updateGuestCustomerUser')
             ->with($checkout, 'test@example.com', $billingAddress);
 
@@ -317,6 +321,10 @@ class CreateOrderTest extends TestCase
             ->method('placeOrder')
             ->with($checkout)
             ->willReturn($order);
+
+        $this->customerUserActions->expects(self::once())
+            ->method('createGuestCustomerUser')
+            ->with($checkout, 'test@example.com', $billingAddress);
 
         $this->customerUserActions->expects(self::once())
             ->method('updateGuestCustomerUser')
@@ -391,6 +399,10 @@ class CreateOrderTest extends TestCase
             ->willReturn($order);
 
         $this->customerUserActions->expects(self::once())
+            ->method('createGuestCustomerUser')
+            ->with($checkout, 'test@example.com', $billingAddress);
+
+        $this->customerUserActions->expects(self::once())
             ->method('updateGuestCustomerUser')
             ->with($checkout, 'test@example.com', $billingAddress);
 
@@ -460,6 +472,10 @@ class CreateOrderTest extends TestCase
             ->method('placeOrder')
             ->with($checkout)
             ->willReturn($order);
+
+        $this->customerUserActions->expects(self::once())
+            ->method('createGuestCustomerUser')
+            ->with($checkout, 'test@example.com', $billingAddress);
 
         $this->customerUserActions->expects(self::once())
             ->method('updateGuestCustomerUser')

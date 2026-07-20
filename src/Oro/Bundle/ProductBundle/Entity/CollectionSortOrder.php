@@ -63,6 +63,7 @@ class CollectionSortOrder implements ExtendEntityInterface
     public function setProduct(Product $product): self
     {
         $this->product = $product;
+
         return $this;
     }
 
@@ -74,6 +75,7 @@ class CollectionSortOrder implements ExtendEntityInterface
     public function setSegment(Segment $segment): self
     {
         $this->segment = $segment;
+
         return $this;
     }
 
@@ -85,6 +87,7 @@ class CollectionSortOrder implements ExtendEntityInterface
     public function setSortOrder(?float $sortOrder): self
     {
         $this->sortOrder = $sortOrder;
+
         return $this;
     }
 }

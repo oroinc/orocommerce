@@ -62,11 +62,13 @@ final class OrderLineItemDraftUpdateController extends AbstractController
             $isDrySubmit = !empty($form->get('drySubmitTrigger')->getData());
             $isValid = $form->isValid();
             if ($isDrySubmit) {
-                $form = $this->createForm(
-                    OrderLineItemDraftType::class,
-                    $orderLineItem,
-                    ['initial_validation' => false]
-                );
+                if ($isValid) {
+                    $form = $this->createForm(
+                        OrderLineItemDraftType::class,
+                        $orderLineItem,
+                        ['initial_validation' => false]
+                    );
+                }
 
                 $viewVars = $this->getViewVars($form, $order, $orderLineItem, true);
             } elseif ($isValid) {

@@ -121,10 +121,7 @@ class ProductImportExportContext extends OroFeatureContext
     public function copyProductFixtureFilesToPublicDir(): void
     {
         $sourcePath = sprintf('%s%s', __DIR__, '/../Features/Fixtures/files_import');
-        $this->copyFiles(
-            $sourcePath,
-            $this->getAppContainer()->getParameter('kernel.project_dir') . '/public/media/cache/fixtures/'
-        );
+        $this->copyFilesToStorage($sourcePath, $this->getPublicMediaCacheFileManager(), 'fixtures');
     }
 
     //phpcs:disable
@@ -142,10 +139,10 @@ class ProductImportExportContext extends OroFeatureContext
             '../Features/Fixtures/files_import',
             $this->fixStepArgument($filename)
         );
-        $targetPath = $this->getAppContainer()->getParameter('kernel.project_dir')
-            . '/public/media/cache/fixtures/' . $this->fixStepArgument($newFilename);
-
-        $this->copyFiles($sourcePath, $targetPath);
+        $this->getPublicMediaCacheFileManager()->writeFileToStorage(
+            $sourcePath,
+            'fixtures/' . $this->fixStepArgument($newFilename)
+        );
     }
 
     //phpcs:disable

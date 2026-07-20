@@ -62,6 +62,12 @@ expectedResult:
         taxAmount: '11.78'     # 8.3148 + 3.4632 = 11.778
         adjustment: '0.008'    # 0.0048 + 0.0032 = 0.008
         currency: 'USD'
+    items_total:
+        includingTax: '125.03'
+        excludingTax: '113.25'
+        taxAmount: '11.78'
+        adjustment: '0.008'
+        currency: 'USD'
     items:
         -
             unit:

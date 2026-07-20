@@ -36,10 +36,11 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
         'ownership' => [
             'owner_type' => 'ORGANIZATION',
             'owner_field_name' => 'organization',
-            'owner_column_name' => 'organization_id'
+            'owner_column_name' => 'organization_id',
         ],
         'dataaudit' => ['auditable' => true],
-        'security' => ['type' => 'ACL', 'group_name' => '']
+        'security' => ['type' => 'ACL', 'group_name' => ''],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class PaymentMethodsConfigsRule implements
@@ -52,7 +53,10 @@ class PaymentMethodsConfigsRule implements
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?int $id = null;
 
     /**
@@ -65,11 +69,15 @@ class PaymentMethodsConfigsRule implements
         fetch: 'EAGER',
         orphanRemoval: true
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $methodConfigs = null;
 
     #[ORM\ManyToOne(targetEntity: Rule::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'rule_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Rule $rule = null;
 
     /**
@@ -82,14 +90,20 @@ class PaymentMethodsConfigsRule implements
         fetch: 'EAGER',
         orphanRemoval: true
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $destinations = null;
 
     #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: false)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 10]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 10],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?string $currency = null;
 
     #[ORM\ManyToOne(targetEntity: Organization::class)]
     #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?OrganizationInterface $organization = null;
 
     /**
@@ -99,6 +113,7 @@ class PaymentMethodsConfigsRule implements
     #[ORM\JoinTable(name: 'oro_payment_mtds_rule_website')]
     #[ORM\JoinColumn(name: 'oro_payment_mtds_cfgs_rl_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'website_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $websites = null;
 
     public function __construct()

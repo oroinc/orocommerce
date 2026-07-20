@@ -463,7 +463,8 @@ class OroPromotionBundleInstaller implements
                     'on_delete' => 'CASCADE',
                 ],
                 'form' => ['is_enabled' => false],
-                'view' => ['is_displayable' => false]
+                'view' => ['is_displayable' => false],
+                'email' => ['available_in_template' => true],
             ]
         );
 
@@ -484,7 +485,8 @@ class OroPromotionBundleInstaller implements
                     'on_delete' => 'CASCADE'
                 ],
                 'form' => ['is_enabled' => false],
-                'view' => ['is_displayable' => false]
+                'view' => ['is_displayable' => false],
+                'email' => ['available_in_template' => true],
             ]
         );
     }
@@ -505,7 +507,8 @@ class OroPromotionBundleInstaller implements
                     'on_delete' => 'CASCADE',
                 ],
                 'form' => ['is_enabled' => false],
-                'view' => ['is_displayable' => false]
+                'view' => ['is_displayable' => false],
+                'email' => ['available_in_template' => true],
             ]
         );
 
@@ -526,7 +529,8 @@ class OroPromotionBundleInstaller implements
                     'on_delete' => 'CASCADE'
                 ],
                 'form' => ['is_enabled' => false],
-                'view' => ['is_displayable' => false]
+                'view' => ['is_displayable' => false],
+                'email' => ['available_in_template' => true],
             ]
         );
     }
@@ -547,7 +551,8 @@ class OroPromotionBundleInstaller implements
                     'on_delete' => 'CASCADE',
                 ],
                 'form' => ['is_enabled' => false],
-                'view' => ['is_displayable' => false]
+                'view' => ['is_displayable' => false],
+                'email' => ['available_in_template' => true],
             ]
         );
 
@@ -569,7 +574,8 @@ class OroPromotionBundleInstaller implements
                     'cascade' => ['remove'],
                 ],
                 'form' => ['is_enabled' => false],
-                'view' => ['is_displayable' => false]
+                'view' => ['is_displayable' => false],
+                'email' => ['available_in_template' => true],
             ]
         );
     }

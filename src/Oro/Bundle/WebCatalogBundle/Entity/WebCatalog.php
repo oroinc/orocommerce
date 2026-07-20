@@ -38,7 +38,8 @@ use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
         ],
         'dataaudit' => ['auditable' => true],
         'form' => ['form_type' => WebCatalogSelectType::class, 'grid_name' => 'web-catalog-select-grid'],
-        'security' => ['type' => 'ACL', 'group_name' => '']
+        'security' => ['type' => 'ACL', 'group_name' => ''],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class WebCatalog implements
@@ -54,14 +55,15 @@ class WebCatalog implements
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'name', type: Types::STRING, length: 255)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $name = null;
 
     #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $description = null;
 
     /**

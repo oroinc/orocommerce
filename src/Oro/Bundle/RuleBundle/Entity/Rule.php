@@ -22,7 +22,10 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 #[ORM\Index(columns: ['created_at'], name: 'idx_oro_rule_created_at')]
 #[ORM\Index(columns: ['updated_at'], name: 'idx_oro_rule_updated_at')]
 #[ORM\HasLifecycleCallbacks]
-#[Config(defaultValues: ['entity' => ['icon' => 'fa-briefcase'], 'dataaudit' => ['auditable' => true]])]
+#[Config(defaultValues: [
+    'entity' => ['icon' => 'fa-briefcase'],
+    'dataaudit' => ['auditable' => true]
+])]
 class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
 {
     use DatesAwareTrait;
@@ -31,29 +34,52 @@ class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: false)]
     #[ConfigField(
-        defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['identity' => true, 'order' => 10]]
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['identity' => true, 'order' => 10],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     private ?string $name = null;
 
     #[ORM\Column(name: 'enabled', type: Types::BOOLEAN, nullable: false, options: ['default' => true])]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 20]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 20],
+        'email' => ['available_in_template' => true],
+    ])]
     private ?bool $enabled = true;
 
     #[ORM\Column(name: 'sort_order', type: Types::INTEGER)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 30]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 30],
+        'email' => ['available_in_template' => true],
+    ])]
     private ?int $sortOrder = null;
 
     #[ORM\Column(name: 'stop_processing', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 40]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 40],
+        'email' => ['available_in_template' => true],
+    ])]
     private ?bool $stopProcessing = false;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 50]])]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 50],
+        'email' => ['available_in_template' => true],
+    ])]
     private ?string $expression = null;
 
     #[ORM\PrePersist]

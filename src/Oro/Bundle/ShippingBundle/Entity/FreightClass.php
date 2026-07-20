@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
 /**
@@ -19,6 +20,7 @@ class FreightClass implements MeasureUnitInterface, FreightClassInterface
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'NONE')]
     #[ORM\Column(name: 'code', type: Types::STRING, length: 255, nullable: false)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $code = null;
 
     /**

@@ -42,16 +42,16 @@ class OrderProductKitItemLineItemGhostOptionListener implements EventSubscriberI
     }
 
     /**
-     * Adds a "ghost" option to the "product" field of the kit item line item form if the currently specified product in
-     * an already existing kit item line item is not present in the choices array. Allows avoiding form validation
-     * error when submitting an already existing line item that is not valid anymore in the current application state.
+     * Adds a "ghost" option to the "product" field when the currently set product is not in the available choices.
+     * Applies to both persisted and new (e.g., pre-populated from an RFQ) kit item line items so that the proper
+     * "product not available" validation message is shown instead of misleading form transformation errors.
      */
     public function onPreSetData(FormEvent $event): void
     {
         $form = $event->getForm();
         /** @var OrderProductKitItemLineItem|null $kitItemLineItem */
         $kitItemLineItem = $event->getData();
-        if ($kitItemLineItem?->getId() === null) {
+        if ($kitItemLineItem === null) {
             return;
         }
 

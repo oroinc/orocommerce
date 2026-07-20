@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
@@ -20,7 +21,10 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'oro_quote_product_demand')]
-#[Config(defaultValues: ['entity' => ['icon' => 'fa-list-alt']])]
+#[Config(defaultValues: [
+    'entity' => ['icon' => 'fa-list-alt'],
+    'email' => ['available_in_template' => true],
+])]
 class QuoteProductDemand implements
     PriceAwareInterface,
     PriceTypeAwareInterface,
@@ -33,20 +37,24 @@ class QuoteProductDemand implements
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: QuoteDemand::class, inversedBy: 'demandProducts')]
     #[ORM\JoinColumn(name: 'quote_demand_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?QuoteDemand $quoteDemand = null;
 
     #[ORM\ManyToOne(targetEntity: QuoteProductOffer::class)]
     #[ORM\JoinColumn(name: 'quote_product_offer_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?QuoteProductOffer $quoteProductOffer = null;
 
     /**
      * @var float|null
      */
     #[ORM\Column(name: 'quantity', type: Types::FLOAT)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $quantity;
 
     /**
@@ -64,6 +72,7 @@ class QuoteProductDemand implements
      * moving the logic of distinguishing of such line items out of the entity class.
      */
     #[ORM\Column(name: 'checksum', type: Types::STRING, length: 40, nullable: false, options: ['default' => ''])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected string $checksum = '';
 
     /**

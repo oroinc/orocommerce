@@ -60,6 +60,7 @@ Feature: Order edit invalid line items are highlighted and opened for editing au
 
     And fill "Order Line Item Draft Edit Form" with:
       | ProductKitItem2Product | simple-product-02 - Simple Product 02 |
+      | ProductKitItem2Price   | 1.23                                  |
     And I click on "Order Line Item Draft Edit Form Save Button"
 
     When save form

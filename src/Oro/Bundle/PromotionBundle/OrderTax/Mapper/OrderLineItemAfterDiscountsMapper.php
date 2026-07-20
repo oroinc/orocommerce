@@ -77,6 +77,12 @@ class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
             );
 
         if (!$taxable->isKitTaxable()) {
+            // The two subtotals differ only for an order-level discount; pass its exact amount as the
+            // row total instead of re-deriving it from a rounded per-unit price.
+            $isOrderLevelDiscount = $discountLineItem->getSubtotal() !== $discountLineItem->getSubtotalAfterDiscounts();
+            if ($isOrderLevelDiscount && $this->taxationSettingsProvider->isStartCalculationWithUnitPrice()) {
+                $taxable->setRowTotal(BigDecimal::of($discountLineItem->getSubtotalAfterDiscounts()));
+            }
             $taxable->setPrice($newPrice);
             return;
         }

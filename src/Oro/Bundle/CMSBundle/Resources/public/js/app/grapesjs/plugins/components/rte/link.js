@@ -1,4 +1,6 @@
+import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
+import {TEMP_ATTR} from 'orocms/js/app/grapesjs/types/link/constants';
 
 export default {
     name: 'link',
@@ -12,6 +14,12 @@ export default {
     attributes: {
         'title': __('oro.cms.wysiwyg.component.link.label'),
         'class': 'gjs-rte-action link-format'
+    },
+
+    state(view, doc, rte) {
+        if (rte.el.closest('a')) {
+            return -1;
+        }
     },
 
     result(rte, action) {
@@ -30,8 +38,29 @@ export default {
             rte.exec('createLink', ' ');
 
             const link = action.getLinkElement(rte.selection());
+            const model = editor.Utils.helpers.getModel(rte.el);
 
-            editor.runCommand('open-create-link-dialog', {link: link});
+            if (!link || !model) {
+                return;
+            }
+
+            const uId = _.uniqueId('rte-link-');
+
+            link.setAttribute(TEMP_ATTR, uId);
+
+            model.once('rte:disable', () => {
+                const [linkComponent] = editor.getWrapper().find(`[${TEMP_ATTR}="${uId}"]`);
+
+                if (!linkComponent) {
+                    return;
+                }
+
+                linkComponent.set('selectable', true);
+                linkComponent.removeAttributes(TEMP_ATTR);
+                this.selectComponentsDebounced([linkComponent]);
+            });
+
+            model.trigger('disable');
         }
     },
 

@@ -14,6 +14,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutLineItemRepository;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
@@ -52,46 +53,57 @@ class CheckoutLineItem implements
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Checkout::class, inversedBy: 'lineItems')]
     #[ORM\JoinColumn(name: 'checkout_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Checkout $checkout = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Product $product = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'parent_product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Product $parentProduct = null;
 
     #[ORM\Column(name: 'product_sku', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $productSku = null;
 
     #[ORM\Column(name: 'free_form_product', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $freeFormProduct = null;
 
     /**
      * @var float|null
      */
     #[ORM\Column(name: 'quantity', type: Types::FLOAT, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $quantity;
 
     #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
     #[ORM\JoinColumn(name: 'product_unit_id', referencedColumnName: 'code', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?ProductUnit $productUnit = null;
 
     #[ORM\Column(name: 'product_unit_code', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $productUnitCode = null;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'value', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $value;
 
     #[ORM\Column(name: 'currency', type: Types::STRING, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $currency = null;
 
     /**
@@ -100,12 +112,15 @@ class CheckoutLineItem implements
     protected $price;
 
     #[ORM\Column(name: 'price_type', type: Types::INTEGER)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $priceType = self::PRICE_TYPE_UNIT;
 
     #[ORM\Column(name: 'from_external_source', type: Types::BOOLEAN)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $fromExternalSource = false;
 
     #[ORM\Column(name: 'comment', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $comment = null;
 
     /**
@@ -114,18 +129,22 @@ class CheckoutLineItem implements
      * @var bool
      */
     #[ORM\Column(name: 'is_price_fixed', type: Types::BOOLEAN)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $priceFixed = false;
 
     #[ORM\Column(name: 'shipping_method', type: Types::STRING, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $shippingMethod = null;
 
     #[ORM\Column(name: 'shipping_method_type', type: Types::STRING, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $shippingMethodType = null;
 
     /**
      * @var float
      */
     #[ORM\Column(name: 'shipping_estimate_amount', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $shippingEstimateAmount;
 
     /**
@@ -138,6 +157,7 @@ class CheckoutLineItem implements
         orphanRemoval: true
     )]
     #[OrderBy(['sortOrder' => Criteria::ASC])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $kitItemLineItems = null;
 
     /**
@@ -145,6 +165,7 @@ class CheckoutLineItem implements
      * moving the logic of distinguishing of such line items out of the entity class.
      */
     #[ORM\Column(name: 'checksum', type: Types::STRING, length: 40, nullable: false, options: ['default' => ''])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $checksum = '';
 
     public function __construct()

@@ -46,6 +46,60 @@ describe('orocms/js/app/grapesjs/types/base-type', () => {
         type: 'test'
     });
 
+    const ToolbarTestTypeBuilder = BaseTypeBuilder.extend({
+        modelProps: {
+            defaults: {
+                tagName: 'div',
+                mainToolbarAction: 'test-action'
+            },
+
+            init() {
+                this.mergeToolbarItems([
+                    {
+                        id: 'test-action',
+                        attributes: {
+                            'class': 'fa fa-gear',
+                            'label': 'Test'
+                        },
+                        command: 'test-toolbar-command'
+                    }
+                ]);
+            }
+        },
+
+        viewProps: {
+            events: {
+                dblclick: 'onDoubleClick'
+            }
+        },
+
+        button: {
+            label: 'Toolbar Test',
+            category: 'Test',
+            attributes: {
+                'class': 'fa fa-code'
+            }
+        },
+
+        template: _.template(`<div>Toolbar Test</div>`),
+
+        commands: {
+            'test-toolbar-command': {
+                run(editor) {
+                    editor.testCommandExecuted = true;
+                }
+            }
+        },
+
+        isComponent(el) {
+            if (el.nodeType === Node.ELEMENT_NODE && el.getAttribute('data-type') === 'toolbar-test') {
+                return {type: 'toolbar-test'};
+            }
+        }
+    }, {
+        type: 'toolbar-test'
+    });
+
     beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
@@ -113,6 +167,212 @@ describe('orocms/js/app/grapesjs/types/base-type', () => {
         it('check editor commands defined', () => {
             expect(baseTypeBuilder.editor.Commands.get('test-command1')).toBeDefined();
             expect(baseTypeBuilder.editor.Commands.get('test-command2')).toBeDefined();
+        });
+    });
+
+    describe('baseModelMethods', () => {
+        let toolbarTestBuilder;
+
+        beforeEach(() => {
+            toolbarTestBuilder = new ToolbarTestTypeBuilder({
+                editor,
+                componentType: 'toolbar-test'
+            });
+
+            toolbarTestBuilder.execute();
+        });
+
+        afterEach(() => {
+            toolbarTestBuilder.dispose();
+        });
+
+        describe('mergeToolbarItems', () => {
+            let component;
+
+            beforeEach(done => {
+                editor.addComponents([{
+                    type: 'toolbar-test',
+                    attributes: {id: 'merge-test'}
+                }]);
+
+                component = editor.Components.getComponents().models[0];
+                setTimeout(() => done(), 0);
+            });
+
+            afterEach(done => {
+                editor.setComponents([]);
+                setTimeout(() => done(), 0);
+            });
+
+            it('should add toolbar items during init', () => {
+                const toolbar = component.get('toolbar');
+                const testAction = toolbar.find(item => item.id === 'test-action');
+
+                expect(testAction).toBeDefined();
+                expect(testAction.command).toEqual('test-toolbar-command');
+            });
+
+            it('should not duplicate items on repeated merge', () => {
+                component.mergeToolbarItems([
+                    {
+                        id: 'test-action',
+                        attributes: {
+                            'class': 'fa fa-gear',
+                            'label': 'Duplicate'
+                        },
+                        command: 'test-toolbar-command'
+                    }
+                ]);
+
+                const toolbar = component.get('toolbar');
+                const matches = toolbar.filter(item => item.id === 'test-action');
+
+                expect(matches.length).toEqual(1);
+            });
+
+            it('should prepend new items to the toolbar', () => {
+                component.mergeToolbarItems([
+                    {
+                        id: 'another-action',
+                        attributes: {
+                            'class': 'fa fa-plus',
+                            'label': 'Another'
+                        },
+                        command: 'another-command'
+                    }
+                ]);
+
+                const toolbar = component.get('toolbar');
+
+                expect(toolbar[0].id).toEqual('another-action');
+            });
+
+            it('should handle empty items gracefully', () => {
+                const toolbarBefore = component.get('toolbar').length;
+
+                component.mergeToolbarItems([]);
+                component.mergeToolbarItems(null);
+                component.mergeToolbarItems(undefined);
+
+                expect(component.get('toolbar').length).toEqual(toolbarBefore);
+            });
+
+            it('should deduplicate by command when id is not set', () => {
+                component.set('toolbar', [
+                    {command: 'some-command', attributes: {'class': 'fa fa-star'}}
+                ]);
+
+                component.mergeToolbarItems([
+                    {command: 'some-command', attributes: {'class': 'fa fa-heart'}}
+                ]);
+
+                const toolbar = component.get('toolbar');
+                const matches = toolbar.filter(item => item.command === 'some-command');
+
+                expect(matches.length).toEqual(1);
+            });
+        });
+    });
+
+    describe('baseViewMethods', () => {
+        let toolbarTestBuilder;
+
+        beforeEach(() => {
+            toolbarTestBuilder = new ToolbarTestTypeBuilder({
+                editor,
+                componentType: 'toolbar-test'
+            });
+
+            toolbarTestBuilder.execute();
+        });
+
+        afterEach(() => {
+            toolbarTestBuilder.dispose();
+        });
+
+        describe('onDoubleClick', () => {
+            let component;
+
+            beforeEach(done => {
+                editor.addComponents([{
+                    type: 'toolbar-test',
+                    attributes: {id: 'dblclick-test'}
+                }]);
+
+                component = editor.Components.getComponents().models[0];
+                setTimeout(() => done(), 0);
+            });
+
+            afterEach(done => {
+                editor.setComponents([]);
+                setTimeout(() => done(), 0);
+            });
+
+            it('should execute the command of the mainToolbarAction item', () => {
+                editor.testCommandExecuted = false;
+
+                const view = component.getView();
+                const event = new Event('dblclick', {bubbles: true});
+
+                view.el.dispatchEvent(event);
+
+                expect(editor.testCommandExecuted).toBe(true);
+            });
+
+            it('should stop event propagation', () => {
+                const view = component.getView();
+                const event = new Event('dblclick', {bubbles: true});
+
+                spyOn(event, 'stopPropagation');
+                view.onDoubleClick(event);
+
+                expect(event.stopPropagation).toHaveBeenCalled();
+            });
+
+            it('should do nothing when mainToolbarAction is not set', () => {
+                component.set('mainToolbarAction', null, {silent: true});
+                editor.testCommandExecuted = false;
+
+                const view = component.getView();
+                const event = new Event('dblclick', {bubbles: true});
+
+                view.onDoubleClick(event);
+
+                expect(editor.testCommandExecuted).toBe(false);
+            });
+
+            it('should do nothing when toolbar item is not found', () => {
+                component.set('mainToolbarAction', 'non-existent-action', {silent: true});
+                editor.testCommandExecuted = false;
+
+                const view = component.getView();
+                const event = new Event('dblclick', {bubbles: true});
+
+                view.onDoubleClick(event);
+
+                expect(editor.testCommandExecuted).toBe(false);
+            });
+
+            it('should execute function commands directly', () => {
+                let functionCalled = false;
+
+                component.set('toolbar', [
+                    {
+                        id: 'fn-action',
+                        command: () => {
+                            functionCalled = true;
+                        }
+                    }
+                ]);
+                component.set('mainToolbarAction', 'fn-action', {silent: true});
+
+                const view = component.getView();
+                const event = new Event('dblclick', {bubbles: true});
+
+                view.onDoubleClick(event);
+
+                expect(functionCalled).toBe(true);
+            });
         });
     });
 });

@@ -74,6 +74,8 @@ describe('orocms/js/app/grapesjs/types/content-block-type', () => {
             );
             expect(contentBlockTypeBuilder.Model.prototype.defaults.contentBlock).toBeNull();
             expect(contentBlockTypeBuilder.Model.prototype.defaults.droppable).toBe(false);
+            expect(contentBlockTypeBuilder.Model.prototype.defaults.mainToolbarAction)
+                .toEqual('content-block-settings');
 
             expect(contentBlockTypeBuilder.Model.prototype.editor).toEqual(editor);
         });

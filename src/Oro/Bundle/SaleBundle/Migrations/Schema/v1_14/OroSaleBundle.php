@@ -39,7 +39,10 @@ class OroSaleBundle implements Migration, OutdatedExtendExtensionAwareInterface
             Quote::CUSTOMER_STATUS_CODE,
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
         $customerStatusEnumTable->addOption(OroOptions::KEY, $customerStatusOptions);
     }
@@ -56,7 +59,10 @@ class OroSaleBundle implements Migration, OutdatedExtendExtensionAwareInterface
             Quote::INTERNAL_STATUS_CODE,
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
         $internalStatusEnumTable->addOption(OroOptions::KEY, $internalStatusOptions);
     }

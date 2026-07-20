@@ -145,6 +145,48 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
         self::assertEquals([], $event->getConfig()->toArray(['options']));
     }
 
+    public function testPreBuildDoesNotAddCategoryDataWhenCategoryIdInRequestDoesNotExist(): void
+    {
+        $this->requestProductHandler->expects(self::once())
+            ->method('getCategoryId')
+            ->willReturn(101);
+        $this->requestProductHandler->expects(self::never())
+            ->method('getIncludeSubcategoriesChoice');
+        $this->requestProductHandler->expects(self::never())
+            ->method('getCategoryContentVariantId');
+
+        $event = new PreBuild($this->config, new ParameterBag());
+        $this->listener->onPreBuild($event);
+
+        self::assertEquals([], $event->getParameters()->all());
+        self::assertEquals([], $event->getConfig()->toArray(['options']));
+        self::assertArrayNotHasKey(
+            'subcategory',
+            $event->getConfig()->offsetGetByPath('[filters][columns]', [])
+        );
+    }
+
+    public function testPreBuildDoesNotAddCategoryDataWhenCategoryIdInGridParametersDoesNotExist(): void
+    {
+        $this->requestProductHandler->expects(self::once())
+            ->method('getCategoryId')
+            ->willReturn(0);
+        $this->requestProductHandler->expects(self::never())
+            ->method('getIncludeSubcategoriesChoice');
+        $this->requestProductHandler->expects(self::never())
+            ->method('getCategoryContentVariantId');
+
+        $event = new PreBuild($this->config, new ParameterBag(['categoryId' => 101]));
+        $this->listener->onPreBuild($event);
+
+        self::assertEquals(['categoryId' => 101], $event->getParameters()->all());
+        self::assertEquals([], $event->getConfig()->toArray(['options']));
+        self::assertArrayNotHasKey(
+            'subcategory',
+            $event->getConfig()->offsetGetByPath('[filters][columns]', [])
+        );
+    }
+
     /**
      * @dataProvider preBuildWithCategoryIdDataProvider
      */
@@ -159,9 +201,8 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
         $this->requestProductHandler->expects(self::once())
             ->method('getCategoryId')
             ->willReturn(0);
-        $this->requestProductHandler->expects(self::once())
+        $this->requestProductHandler->expects(self::any())
             ->method('getIncludeSubcategoriesChoice')
-            ->with($parameters['includeSubcategories'])
             ->willReturn($parameters['includeSubcategories']);
 
         $event = new PreBuild($this->config, new ParameterBag($parameters));
@@ -174,36 +215,6 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
     public function preBuildWithCategoryIdDataProvider(): array
     {
         return [
-            'category does not exist' => [
-                'parameters' => [
-                    'categoryId' => 101,
-                    'includeSubcategories' => false,
-                ],
-                'expectedParameters' => [
-                    'categoryId' => 101,
-                    'includeSubcategories' => false,
-                ],
-                'expectedConfig' => [
-                    'filters' => [
-                        'columns' => [
-                            'some_filter' => [
-                                0 => 'options',
-                            ],
-                        ],
-                        'default' => [
-                            'some_filter' => [
-                                0 => 'defaults',
-                            ],
-                        ],
-                    ],
-                    'options' => [
-                        'urlParams' => [
-                            'categoryId' => 101,
-                            'includeSubcategories' => false,
-                        ],
-                    ],
-                ],
-            ],
             'category exists' => [
                 'parameters' => [
                     'categoryId' => self::CATEGORY_ID,
@@ -330,35 +341,6 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
                             'some_filter' => [
                                 0 => 'defaults',
                             ],
-                        ],
-                    ],
-                ],
-            ],
-            'category does not exist' => [
-                'parameters' => [],
-                'categoryId' => 101,
-                'includeSubcategories' => false,
-                'expectedParameters' => [
-                    'categoryId' => 101,
-                    'includeSubcategories' => false,
-                ],
-                'expectedConfig' => [
-                    'filters' => [
-                        'columns' => [
-                            'some_filter' => [
-                                0 => 'options',
-                            ],
-                        ],
-                        'default' => [
-                            'some_filter' => [
-                                0 => 'defaults',
-                            ],
-                        ],
-                    ],
-                    'options' => [
-                        'urlParams' => [
-                            'categoryId' => 101,
-                            'includeSubcategories' => false,
                         ],
                     ],
                 ],
@@ -757,5 +739,61 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
             ],
         ];
         self::assertEquals($expectedProperties, $event->getDatagrid()->getConfig()->toArray(['properties']));
+    }
+
+    public function testOnBuildAfterWithNonExistentCategory(): void
+    {
+        $this->requestProductHandler->expects(self::once())
+            ->method('getCategoryId')
+            ->willReturn(101);
+        $this->requestProductHandler->expects(self::never())
+            ->method('getIncludeSubcategoriesChoice');
+
+        $datasource = $this->createMock(SearchDatasource::class);
+        $websiteSearchQuery = $this->createMock(WebsiteSearchQuery::class);
+        $websiteSearchQuery->expects(self::never())
+            ->method('addWhere');
+
+        $parameters = new ParameterBag(['categoryId' => 101]);
+        $dataGrid = new Datagrid('test', $this->config, $parameters);
+        $dataGrid->setDatasource($datasource);
+
+        $datasource->expects(self::any())
+            ->method('getSearchQuery')
+            ->willReturn($websiteSearchQuery);
+
+        $event = new BuildAfter($dataGrid);
+        $this->listener->onBuildAfter($event);
+
+        self::assertEquals(['categoryId' => 101], $event->getDatagrid()->getParameters()->all());
+        self::assertEquals([], $event->getDatagrid()->getConfig()->toArray(['properties']));
+    }
+
+    public function testOnBuildAfterWithNonExistentCategoryFromGridParameters(): void
+    {
+        $this->requestProductHandler->expects(self::once())
+            ->method('getCategoryId')
+            ->willReturn(0);
+        $this->requestProductHandler->expects(self::never())
+            ->method('getIncludeSubcategoriesChoice');
+
+        $datasource = $this->createMock(SearchDatasource::class);
+        $websiteSearchQuery = $this->createMock(WebsiteSearchQuery::class);
+        $websiteSearchQuery->expects(self::never())
+            ->method('addWhere');
+
+        $parameters = new ParameterBag(['categoryId' => 101]);
+        $dataGrid = new Datagrid('test', $this->config, $parameters);
+        $dataGrid->setDatasource($datasource);
+
+        $datasource->expects(self::any())
+            ->method('getSearchQuery')
+            ->willReturn($websiteSearchQuery);
+
+        $event = new BuildAfter($dataGrid);
+        $this->listener->onBuildAfter($event);
+
+        self::assertEquals(['categoryId' => 101], $event->getDatagrid()->getParameters()->all());
+        self::assertEquals([], $event->getDatagrid()->getConfig()->toArray(['properties']));
     }
 }

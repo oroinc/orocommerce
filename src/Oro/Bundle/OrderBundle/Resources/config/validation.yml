@@ -5,6 +5,11 @@ Oro\Bundle\OrderBundle\Entity\Order:
                 groups:
                     - Default
                     - external_order_import
+        -   Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+                fields: [external_id, draftSessionUuid]
+                ignoreNull: [external_id]
+                errorPath: ''
+                message: oro.order.external_id.unique
         -   Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGranted:
                 addressType: billing
                 groups:

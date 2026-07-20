@@ -13,7 +13,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TestFrameworkBundle\Test\Form\FormAwareTestTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Validator\Constraints\GroupSequence;
 
 /**
  * @dbIsolationPerTest
@@ -303,7 +302,7 @@ final class ValidateOrderLineItemDraftExtensionTest extends WebTestCase
         $config = $form->getConfig();
         $validationGroups = $config->getOption('validation_groups');
 
-        self::assertEquals(new GroupSequence(['Default', 'order_line_item_create']), $validationGroups($form));
+        self::assertEquals(['Default', 'order_line_item_create'], $validationGroups($form));
     }
 
     public function testValidationGroupsForUpdatedLineItemProduct(): void
@@ -339,7 +338,7 @@ final class ValidateOrderLineItemDraftExtensionTest extends WebTestCase
         $config = $form->getConfig();
         $validationGroups = $config->getOption('validation_groups');
 
-        self::assertEquals(new GroupSequence(['Default', 'order_line_item_update']), $validationGroups($form));
+        self::assertEquals(['Default', 'order_line_item_update'], $validationGroups($form));
     }
 
     public function testValidationGroupsForUpdatedLineItemQuantity(): void
@@ -372,7 +371,7 @@ final class ValidateOrderLineItemDraftExtensionTest extends WebTestCase
         $config = $form->getConfig();
         $validationGroups = $config->getOption('validation_groups');
 
-        self::assertEquals(new GroupSequence(['Default', 'order_line_item_update']), $validationGroups($form));
+        self::assertEquals(['Default', 'order_line_item_update'], $validationGroups($form));
     }
 
     public function testValidationGroupsForUnchangedLineItem(): void
@@ -399,7 +398,7 @@ final class ValidateOrderLineItemDraftExtensionTest extends WebTestCase
         $config = $form->getConfig();
         $validationGroups = $config->getOption('validation_groups');
 
-        self::assertEquals(new GroupSequence(['Default']), $validationGroups($form));
+        self::assertEquals(['Default'], $validationGroups($form));
     }
 
     public function testValidationGroupsForDrySubmit(): void

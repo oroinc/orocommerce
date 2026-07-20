@@ -8,6 +8,7 @@ use Extend\Entity\Autocomplete\OroPromotionBundle_Entity_AppliedCoupon;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -34,19 +35,24 @@ class AppliedCoupon implements CreatedAtAwareInterface, ExtendEntityInterface, D
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'coupon_code', type: Types::STRING, length: 255, nullable: false)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $couponCode = null;
 
     #[ORM\Column(name: 'source_promotion_id', type: Types::INTEGER, nullable: false)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $sourcePromotionId = null;
 
     #[ORM\Column(name: 'source_coupon_id', type: Types::INTEGER, nullable: false)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $sourceCouponId = null;
 
     #[ORM\OneToOne(inversedBy: 'appliedCoupon', targetEntity: AppliedPromotion::class)]
     #[ORM\JoinColumn(name: 'applied_promotion_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?AppliedPromotion $appliedPromotion = null;
 
     /**

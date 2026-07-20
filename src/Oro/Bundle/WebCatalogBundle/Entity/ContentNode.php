@@ -56,7 +56,7 @@ use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
                 name: 'node_id',
                 referencedColumnName: 'id',
                 onDelete: 'CASCADE'
-            )
+            ),
         ],
         inverseJoinColumns: [
             new ORM\JoinColumn(
@@ -64,19 +64,20 @@ use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
                 referencedColumnName: 'id',
                 unique: true,
                 onDelete: 'CASCADE'
-            )
+            ),
         ],
         joinTable: new ORM\JoinTable(name: 'oro_web_catalog_node_slug_prot')
-    )
+    ),
 ])]
 #[Gedmo\Tree(type: 'nested')]
 #[Config(
     defaultValues: [
         'dataaudit' => ['auditable' => true],
         'activity' => [
-            'show_on_page' => ActivityScope::UPDATE_PAGE
+            'show_on_page' => ActivityScope::UPDATE_PAGE,
         ],
-        'slug' => ['source' => 'titles']
+        'slug' => ['source' => 'titles'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class ContentNode implements
@@ -97,12 +98,13 @@ class ContentNode implements
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: ContentNode::class, inversedBy: 'childNodes')]
     #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[Gedmo\TreeParent]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?ContentNode $parentNode = null;
 
     /**
@@ -110,13 +112,15 @@ class ContentNode implements
      */
     #[ORM\OneToMany(mappedBy: 'parentNode', targetEntity: ContentNode::class, cascade: ['persist'])]
     #[ORM\OrderBy(['left' => Criteria::ASC])]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $childNodes = null;
 
     #[ORM\Column(name: 'parent_scope_used', type: Types::BOOLEAN, options: ['default' => true])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $parentScopeUsed = true;
 
     #[ORM\Column(name: 'rewrite_variant_title', type: Types::BOOLEAN, options: ['default' => true])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $rewriteVariantTitle = true;
 
     /**
@@ -126,7 +130,7 @@ class ContentNode implements
     #[ORM\JoinTable(name: 'oro_web_catalog_node_title')]
     #[ORM\JoinColumn(name: 'node_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $titles = null;
 
     /**
@@ -142,6 +146,7 @@ class ContentNode implements
      * @var Collection<int, ContentVariant>
      */
     #[ORM\OneToMany(mappedBy: 'node', targetEntity: ContentVariant::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $contentVariants = null;
 
     #[ORM\Column(name: 'materialized_path', type: Types::STRING, length: 1024, nullable: true)]
@@ -149,6 +154,7 @@ class ContentNode implements
 
     #[ORM\ManyToOne(targetEntity: WebCatalog::class)]
     #[ORM\JoinColumn(name: 'web_catalog_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?WebCatalog $webCatalog = null;
 
     /**
@@ -158,7 +164,7 @@ class ContentNode implements
     #[ORM\JoinTable(name: 'oro_web_catalog_node_url')]
     #[ORM\JoinColumn(name: 'node_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $localizedUrls = null;
 
     /**

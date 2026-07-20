@@ -13,16 +13,24 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
  */
 #[ORM\Entity(repositoryClass: ProductUnitRepository::class)]
 #[ORM\Table(name: 'oro_product_unit')]
-#[Config(defaultValues: ['entity' => ['icon' => 'fa-briefcase'], 'dataaudit' => ['auditable' => true]])]
+#[Config(defaultValues: [
+    'entity' => ['icon' => 'fa-briefcase'],
+    'dataaudit' => ['auditable' => true],
+    'email' => ['available_in_template' => true],
+])]
 class ProductUnit implements MeasureUnitInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: Types::STRING, length: 255)]
     #[ORM\GeneratedValue(strategy: 'NONE')]
-    #[ConfigField(defaultValues: ['importexport' => ['identity' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['identity' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?string $code = null;
 
     #[ORM\Column(name: 'default_precision', type: Types::INTEGER)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $defaultPrecision = null;
 
     /**

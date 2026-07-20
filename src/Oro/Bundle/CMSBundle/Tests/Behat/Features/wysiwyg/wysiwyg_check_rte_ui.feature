@@ -221,13 +221,13 @@ Feature: WYSIWYG check RTE UI
     And I enter "Lorem ipsum dolor sit amet" text to "SelectedComponent" component
     And I select text "ipsum dolor" range in selected component
     And I apply "link" action in RTE
-    And I type "https://test.link" in "HrefField"
-    And I type "Link" in "TitleField"
-    Then I click "Insert"
+    Then I update selected component settings:
+      | Href | https://test.link |
+      | Title | Link             |
     And I check wysiwyg content in "CMS Page Content":
-      | 1 | <div>Lorem                                                                                    |
-      | 2 | <a href="https://test.link" title="Link" target="_self" class="link">ipsum dolor</a> sit amet |
-      | 3 | </div>                                                                                        |
+      | 1 | <div>Lorem                                                                     |
+      | 2 | <a href="https://test.link" title="Link" class="link">ipsum dolor</a> sit amet |
+      | 3 | </div>                                                                         |
     And I click "GrapesJs Wysiwyg"
     And I select component in canvas by tree:
       | text | 1 |

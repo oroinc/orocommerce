@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Model;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
@@ -49,11 +50,14 @@ class CheckoutSubtotalUpdater
         $entityManager = $this->getEntityManager();
         /** @var CheckoutRepository $repository */
         $repository = $entityManager->getRepository(Checkout::class);
-        $checkouts = $repository->findWithInvalidSubtotals();
+        $checkoutsIterator = $repository->findWithInvalidSubtotals();
+        if ($checkoutsIterator instanceof BufferedIdentityQueryResultIterator) {
+            $checkoutsIterator->setBufferSize($this->batchSize);
+        }
         $enabledCurrencies = $this->currencyManager->getAvailableCurrencies();
 
         $cnt = 0;
-        foreach ($checkouts as $checkout) {
+        foreach ($checkoutsIterator as $checkout) {
             $cnt++;
             $this->processCheckoutSubtotals($checkout, $enabledCurrencies);
             if ($cnt % $this->batchSize === 0) {

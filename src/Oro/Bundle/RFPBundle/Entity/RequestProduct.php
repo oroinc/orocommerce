@@ -8,6 +8,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -23,7 +24,8 @@ use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
 #[Config(
     defaultValues: [
         'entity' => ['icon' => 'fa-list-alt'],
-        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes']
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes'],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class RequestProduct implements
@@ -37,20 +39,25 @@ class RequestProduct implements
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Request::class, inversedBy: 'requestProducts')]
     #[ORM\JoinColumn(name: 'request_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Request $request = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Product $product = null;
 
     #[ORM\Column(name: 'product_sku', type: Types::STRING, length: 255)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $productSku = null;
 
     #[ORM\Column(name: 'comment', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $comment = null;
 
     /**
@@ -62,6 +69,7 @@ class RequestProduct implements
         cascade: ['ALL'],
         orphanRemoval: true
     )]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $requestProductItems = null;
 
     /**
@@ -75,6 +83,7 @@ class RequestProduct implements
         indexBy: 'kitItemId'
     )]
     #[OrderBy(['sortOrder' => 'ASC'])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected $kitItemLineItems;
 
     public function __construct()

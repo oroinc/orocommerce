@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 
 /**
 * Entity that represents Zip Code
@@ -23,19 +24,24 @@ class ZipCode implements DatesAwareInterface
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'zip_code', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $zipCode = null;
 
     #[ORM\Column(name: 'zip_range_start', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $zipRangeStart = null;
 
     #[ORM\Column(name: 'zip_range_end', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $zipRangeEnd = null;
 
     #[ORM\ManyToOne(targetEntity: TaxJurisdiction::class, cascade: ['persist'], inversedBy: 'zipCodes')]
     #[ORM\JoinColumn(name: 'tax_jurisdiction_id', referencedColumnName: 'id', nullable: false)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?TaxJurisdiction $taxJurisdiction = null;
 
     /**

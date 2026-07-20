@@ -34,6 +34,7 @@ use Oro\Component\Layout\ContextItemInterface;
         ],
         'security' => ['type' => 'ACL', 'group_name' => ''],
         'dataaudit' => ['auditable' => true],
+        'email' => ['available_in_template' => true],
     ]
 )]
 class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, ContextItemInterface
@@ -45,21 +46,23 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $description = null;
 
     #[ORM\Column(name: 'widget_type', type: Types::STRING, length: 255, nullable: false)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $widgetType = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $layout = null;
 
     #[ORM\Column(type: Types::ARRAY)]
@@ -73,7 +76,7 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
     #[ORM\JoinTable(name: 'oro_cms_content_widget_label')]
     #[ORM\JoinColumn(name: 'content_widget_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Collection $labels = null;
 
     public function __construct()

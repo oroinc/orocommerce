@@ -30,7 +30,9 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 #[ORM\UniqueConstraint(name: 'oro_pay_trans_access_uidx', columns: ['access_identifier', 'access_token'])]
 #[ORM\Index(columns: ['entity_class', 'entity_identifier', 'payment_method'], name: 'idx_pay_txn_cls_ident_method')]
 #[ORM\Index(columns: ['entity_class', 'entity_identifier', 'id'], name: 'idx_pay_txn_cls_ident_id')]
-#[Config]
+#[Config(defaultValues: [
+    'email' => ['available_in_template' => true],
+])]
 class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterface, RequestLogsAwareInterface
 {
     use DatesAwareTrait;
@@ -39,28 +41,38 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'entity_class', type: Types::STRING)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $entityClass = null;
 
     #[ORM\Column(name: 'entity_identifier', type: Types::INTEGER)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $entityIdentifier = null;
 
     #[ORM\Column(name: 'access_identifier', type: Types::STRING)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => false, 'immutable' => true]])]
     protected ?string $accessIdentifier = null;
 
     #[ORM\Column(name: 'access_token', type: Types::STRING)]
     #[ConfigField(
-        defaultValues: ['dataaudit' => ['auditable' => false], 'importexport' => ['excluded' => true]],
-        mode: 'hidden'
+        defaultValues: [
+            'dataaudit' => ['auditable' => false],
+            'importexport' => ['excluded' => true],
+            'email' => ['available_in_template' => false],
+        ],
+        mode: 'hidden',
     )]
     protected ?string $accessToken = null;
 
     #[ORM\Column(name: 'payment_method', type: Types::STRING)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $paymentMethod = null;
 
     #[ORM\Column(name: 'action', type: Types::STRING)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $action = null;
 
     /**
@@ -68,31 +80,41 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      */
     #[ORM\Column(name: 'reference', type: Types::STRING, nullable: true)]
     #[ConfigField(
-        defaultValues: ['dataaudit' => ['auditable' => false], 'importexport' => ['excluded' => true]],
-        mode: 'hidden'
+        defaultValues: [
+            'dataaudit' => ['auditable' => false],
+            'importexport' => ['excluded' => true],
+            'email' => ['available_in_template' => false],
+        ],
+        mode: 'hidden',
     )]
     protected $reference;
 
     #[ORM\Column(name: 'amount', type: Types::STRING)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $amount = null;
 
     #[ORM\Column(name: 'currency', type: Types::STRING, length: 3)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $currency = null;
 
     #[ORM\Column(name: 'active', type: Types::BOOLEAN)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $active = false;
 
     #[ORM\Column(name: 'successful', type: Types::BOOLEAN)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $successful = false;
 
     #[ORM\ManyToOne(targetEntity: PaymentTransaction::class, inversedBy: 'relatedPaymentTransactions')]
     #[ORM\JoinColumn(name: 'source_payment_transaction', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?PaymentTransaction $sourcePaymentTransaction = null;
 
     /**
      * @var Collection<int, PaymentTransaction>
      */
     #[ORM\OneToMany(mappedBy: 'sourcePaymentTransaction', targetEntity: PaymentTransaction::class)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $relatedPaymentTransactions = null;
 
     /**
@@ -137,6 +159,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
 
     #[ORM\ManyToOne(targetEntity: CustomerUser::class)]
     #[ORM\JoinColumn(name: 'frontend_owner_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?CustomerUser $frontendOwner = null;
 
     public function __construct()

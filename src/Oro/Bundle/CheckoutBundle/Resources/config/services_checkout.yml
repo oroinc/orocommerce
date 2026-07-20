@@ -282,7 +282,6 @@ services:
     oro_checkout.workflow.b2b_flow_checkout_single_page.transition.start:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckoutSinglePage\Transition\Start
         arguments:
-            - '@oro_checkout.action_group.customer_user_actions'
             - '@oro_checkout.action.default_shipping_method_setter'
             - '@oro_checkout.action.default_payment_method_setter'
             - '@oro_checkout.workflow.b2b_flow_checkout_single_page.transition.base_state_aware'

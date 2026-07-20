@@ -37,16 +37,25 @@ class BaseProductPrice implements
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected $id;
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['importexport' => ['order' => 10, 'identity' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['order' => 10, 'identity' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?Product $product = null;
 
     #[ORM\Column(name: 'product_sku', type: Types::STRING, length: 255)]
-    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    #[ConfigField(defaultValues: [
+        'importexport' => ['excluded' => true],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?string $productSku = null;
 
     /**
@@ -59,14 +68,22 @@ class BaseProductPrice implements
      */
     #[ORM\Column(name: 'quantity', type: Types::FLOAT)]
     #[ConfigField(
-        defaultValues: ['importexport' => ['order' => 20, 'identity' => true], 'dataaudit' => ['auditable' => true]]
+        defaultValues: [
+            'importexport' => ['order' => 20, 'identity' => true],
+            'dataaudit' => ['auditable' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected $quantity;
 
     #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
     #[ORM\JoinColumn(name: 'unit_code', referencedColumnName: 'code', nullable: false, onDelete: 'CASCADE')]
     #[ConfigField(
-        defaultValues: ['importexport' => ['order' => 30, 'identity' => true], 'dataaudit' => ['auditable' => true]]
+        defaultValues: [
+            'importexport' => ['order' => 30, 'identity' => true],
+            'dataaudit' => ['auditable' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?ProductUnit $unit = null;
 
@@ -75,13 +92,21 @@ class BaseProductPrice implements
      */
     #[ORM\Column(name: 'value', type: 'money')]
     #[ConfigField(
-        defaultValues: ['importexport' => ['order' => 40, 'header' => 'Price'], 'dataaudit' => ['auditable' => true]]
+        defaultValues: [
+            'importexport' => ['order' => 40, 'header' => 'Price'],
+            'dataaudit' => ['auditable' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected $value;
 
     #[ORM\Column(name: 'currency', type: Types::STRING, length: 3)]
     #[ConfigField(
-        defaultValues: ['importexport' => ['order' => 50, 'identity' => true], 'dataaudit' => ['auditable' => true]]
+        defaultValues: [
+            'importexport' => ['order' => 50, 'identity' => true],
+            'dataaudit' => ['auditable' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?string $currency = null;
 

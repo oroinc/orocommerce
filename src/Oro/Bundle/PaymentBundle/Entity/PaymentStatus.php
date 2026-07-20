@@ -8,6 +8,7 @@ use Extend\Entity\Autocomplete\OroPaymentBundle_Entity_PaymentStatus;
 use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentStatusRepository;
@@ -20,7 +21,9 @@ use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentStatusRepository;
 #[ORM\Entity(repositoryClass: PaymentStatusRepository::class)]
 #[ORM\Table(name: 'oro_payment_status')]
 #[ORM\UniqueConstraint(name: 'oro_payment_status_unique', columns: ['entity_class', 'entity_identifier'])]
-#[Config]
+#[Config(defaultValues: [
+    'email' => ['available_in_template' => true],
+])]
 class PaymentStatus implements UpdatedAtAwareInterface, ExtendEntityInterface
 {
     use ExtendEntityTrait;
@@ -29,15 +32,19 @@ class PaymentStatus implements UpdatedAtAwareInterface, ExtendEntityInterface
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'entity_class', type: Types::STRING)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $entityClass = null;
 
     #[ORM\Column(name: 'entity_identifier', type: Types::INTEGER)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $entityIdentifier = null;
 
     #[ORM\Column(name: 'payment_status', type: Types::STRING)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $paymentStatus = null;
 
     /**
@@ -45,6 +52,7 @@ class PaymentStatus implements UpdatedAtAwareInterface, ExtendEntityInterface
      * If true, the payment status will not be recalculated in the future.
      */
     #[ORM\Column(name: 'forced', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected bool $forced = false;
 
     public function getId(): ?int

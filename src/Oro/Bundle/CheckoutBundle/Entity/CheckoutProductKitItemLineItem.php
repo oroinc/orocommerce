@@ -8,6 +8,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -31,40 +32,50 @@ class CheckoutProductKitItemLineItem implements
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: CheckoutLineItem::class, inversedBy: 'kitItemLineItems')]
     #[ORM\JoinColumn(name: 'line_item_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?CheckoutLineItem $lineItem = null;
 
     #[ORM\ManyToOne(targetEntity: ProductKitItem::class)]
     #[ORM\JoinColumn(name: 'product_kit_item_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?ProductKitItem $kitItem = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Product $product = null;
 
     #[ORM\Column(name: 'quantity', type: Types::FLOAT, nullable: false)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?float $quantity = 1;
 
     #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
     #[ORM\JoinColumn(name: 'product_unit_id', referencedColumnName: 'code', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?ProductUnit $productUnit = null;
 
     #[ORM\Column(name: 'sort_order', type: Types::INTEGER, nullable: false, options: ['default' => 0])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $sortOrder = 0;
 
     #[ORM\Column(name: 'value', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?float $value = null;
 
     #[ORM\Column(name: 'currency', type: Types::STRING, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $currency = null;
 
     /**
      * Holds flag to determine if price can be changed
      */
     #[ORM\Column(name: 'is_price_fixed', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $priceFixed = false;
 
     protected ?Price $price = null;

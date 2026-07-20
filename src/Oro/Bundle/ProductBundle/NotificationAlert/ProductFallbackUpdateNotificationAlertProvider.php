@@ -6,6 +6,7 @@ namespace Oro\Bundle\ProductBundle\NotificationAlert;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\EntityBundle\Tools\SafeDatabaseChecker;
 use Oro\Bundle\NotificationBundle\Entity\NotificationAlert;
 use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -64,6 +65,12 @@ class ProductFallbackUpdateNotificationAlertProvider
     {
         /** @var EntityManagerInterface $em */
         $em = $this->doctrine->getManagerForClass(NotificationAlert::class);
+
+        $tableName = $em->getClassMetadata(NotificationAlert::class)->getTableName();
+        if (!SafeDatabaseChecker::tablesExist($em->getConnection(), $tableName)) {
+            return false;
+        }
+
         $qb = $em->createQueryBuilder();
 
         $count = (int) $qb

@@ -43,7 +43,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_8';
+        return 'v1_9';
     }
 
     #[\Override]
@@ -197,7 +197,9 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         $table->addColumn('external_id', 'string', ['length' => 36, 'notnull' => false, OroOptions::KEY => [
             ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
             'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
-            'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
+            'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
+            'form' => ['is_enabled' => false],
+            'view' => ['is_displayable' => false],
             'importexport' => ['excluded' => true],
             'dataaudit' => ['auditable' => true]
         ]]);
@@ -667,7 +669,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],
                     'dataaudit' => ['auditable' => true],
-                    'importexport' => ['full' => true]
+                    'importexport' => ['full' => true],
+                    'email' => ['available_in_template' => true],
                 ]
             ]
         );
@@ -690,7 +693,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],
                     'dataaudit' => ['auditable' => true],
-                    'importexport' => ['excluded' => true]
+                    'importexport' => ['excluded' => true],
+                    'email' => ['available_in_template' => true],
                 ]
             ]
         );

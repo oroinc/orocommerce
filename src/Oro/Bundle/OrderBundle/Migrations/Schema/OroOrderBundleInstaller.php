@@ -48,7 +48,7 @@ class OroOrderBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v7_1_0_1';
+        return 'v7_1_0_2';
     }
 
     #[\Override]
@@ -93,9 +93,6 @@ class OroOrderBundleInstaller implements
     private function createOroOrderTable(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->createTable('oro_order');
-        $table->addOption(OroOptions::KEY, [
-            'extend' => ['unique_key' => ['keys' => [['name' => 'external_id', 'key' => ['external_id']]]]]
-        ]);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
@@ -182,9 +179,12 @@ class OroOrderBundleInstaller implements
         $table->addColumn('external_id', 'string', ['length' => 36, 'notnull' => false, OroOptions::KEY => [
             ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
             'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
-            'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
+            'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
+            'form' => ['is_enabled' => false],
+            'view' => ['is_displayable' => false],
             'importexport' => ['excluded' => true],
-            'dataaudit' => ['auditable' => true]
+            'dataaudit' => ['auditable' => true],
+            'email' => ['available_in_template' => true],
         ]]);
         $table->addColumn('draft_session_uuid', 'guid', ['notnull' => false]);
         $table->addColumn('draft_source_id', 'integer', ['notnull' => false]);
@@ -522,7 +522,8 @@ class OroOrderBundleInstaller implements
                         LoadOrderInternalStatuses::getDataKeys(),
                         LoadAdditionalOrderInternalStatuses::getDataKeys()
                     ))
-                ]
+                ],
+                'email' => ['available_in_template' => true],
             ]
         );
     }
@@ -536,7 +537,10 @@ class OroOrderBundleInstaller implements
             Order::STATUS_CODE,
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'email' => ['available_in_template' => true],
+            ]
         );
     }
 
@@ -556,7 +560,8 @@ class OroOrderBundleInstaller implements
                         Order::SHIPPING_STATUS_CODE,
                         ['not_shipped', 'shipped']
                     )
-                ]
+                ],
+                'email' => ['available_in_template' => true],
             ]
         );
     }

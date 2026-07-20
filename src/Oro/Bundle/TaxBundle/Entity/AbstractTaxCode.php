@@ -22,16 +22,21 @@ abstract class AbstractTaxCode implements TaxCodeInterface, DatesAwareInterface
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, unique: false)]
     #[ConfigField(
-        defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 10, 'identity' => true]]
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['order' => 10, 'identity' => true],
+            'email' => ['available_in_template' => true],
+        ],
     )]
     protected ?string $code = null;
 
     #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $description = null;
 
     /**
