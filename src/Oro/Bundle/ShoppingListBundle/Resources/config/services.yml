@@ -765,6 +765,21 @@ services:
             - '@oro_shopping_list.manager.shopping_list'
             - '@validator'
 
+    oro_shopping_list.line_item.factory.batch_update_line_item_models:
+        class: Oro\Bundle\ShoppingListBundle\LineItem\Factory\BatchUpdateLineItemModelsFactory
+        arguments:
+            - '@doctrine'
+            - '@security.authorization_checker'
+            - '@oro_security.token_accessor'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: oro_shopping_list }
+
+    # Required by AjaxLineItemController (service subscriber)
+    Oro\Bundle\ShoppingListBundle\LineItem\Factory\BatchUpdateLineItemModelsFactory:
+        alias: oro_shopping_list.line_item.factory.batch_update_line_item_models
+
     oro_shopping_list.datagrid.frontend_shopping_lists_views_list:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\GridView\FrontendShoppingListsViewsList
         public: true
