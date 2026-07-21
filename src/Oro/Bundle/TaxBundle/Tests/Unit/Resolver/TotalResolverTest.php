@@ -31,6 +31,45 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver = new TotalResolver($this->settingsProvider, new RoundingResolver());
     }
 
+    public function testResolveStoresItemsTotalBeforeShipping(): void
+    {
+        $this->settingsProvider->expects($this->any())
+            ->method('isStartCalculationOnItem')
+            ->willReturn(false);
+
+        $item1 = new Taxable();
+        $item1->setResult(new Result([
+            Result::ROW => ResultElement::create('3.806', '3.46', '0.346', '0'),
+            Result::TAXES => [TaxResultElement::create('VAT10', '0.10', '3.46', '0.346')],
+        ]));
+
+        $item2 = new Taxable();
+        $item2->setResult(new Result([
+            Result::ROW => ResultElement::create('1.8788', '1.54', '0.3388', '0'),
+            Result::TAXES => [TaxResultElement::create('VAT22', '0.22', '1.54', '0.3388')],
+        ]));
+
+        $taxable = new Taxable();
+        $taxable->addItem($item1);
+        $taxable->addItem($item2);
+
+        // Add shipping tax so ITEMS_TOTAL and TOTAL diverge.
+        $taxable->getResult()->offsetSet(
+            Result::SHIPPING,
+            ResultElement::create('5.50', '5.00', '0.50', '0')
+        );
+
+        $this->resolver->resolve($taxable);
+
+        $result = $taxable->getResult();
+
+        // ITEMS_TOTAL contains only line items tax (0.346 + 0.3388 = 0.6848), without shipping.
+        $this->assertEquals('0.6848', (string)$result->getItemsTotal()->getTaxAmount());
+
+        // TOTAL includes shipping tax as well (0.6848 + 0.50 = 1.1848).
+        $this->assertEquals('1.1848', (string)$result->getTotal()->getTaxAmount());
+    }
+
     public function testResolveEmptyItems()
     {
         $taxable = new Taxable();

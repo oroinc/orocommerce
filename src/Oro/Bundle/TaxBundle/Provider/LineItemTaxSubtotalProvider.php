@@ -8,6 +8,7 @@ use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Factory\TaxFactory;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -67,14 +68,14 @@ class LineItemTaxSubtotalProvider extends TaxSubtotalProvider
 
     protected function fillSubtotal(Subtotal $subtotal, Result $tax): Subtotal
     {
-        $itemTotalAmount = 0.0;
-        $currency = "";
-        foreach ($tax->getItems() as $item) {
-            $itemTotalAmount += (float)$item->getRow()->getTaxAmount();
-            $currency = $item->getRow()->getCurrency();
-        }
-        $subtotal->setAmount($itemTotalAmount);
-        $subtotal->setCurrency($currency);
+        /**
+         * ITEMS_TOTAL is rounded once on the aggregated sum; getTaxes() values are already rounded per item.
+         */
+        $itemsTotal = $tax->getItemsTotal();
+        $itemsTotal !== null ?
+            $this->applyItemsTotal($subtotal, $itemsTotal) :
+            $this->applyLegacyTaxesSum($subtotal, $tax);
+
         $subtotal->setVisible(false);
 
         if ($this->taxationSettingsProvider->isProductPricesIncludeTax()) {
@@ -108,5 +109,26 @@ class LineItemTaxSubtotalProvider extends TaxSubtotalProvider
                 $taxResult->offsetSet(Result::ITEMS, $itemsResult);
             }
         }
+    }
+
+    private function applyItemsTotal(Subtotal $subtotal, ResultElement $itemsTotal): void
+    {
+        $subtotal->setAmount($itemsTotal->getTaxAmount());
+        $subtotal->setCurrency($itemsTotal->getCurrency() ?? '');
+    }
+
+    /**
+     * Keep legacy sum so paid orders display unchanged.
+     */
+    private function applyLegacyTaxesSum(Subtotal $subtotal, Result $tax): void
+    {
+        $amount = 0.0;
+        $currency = '';
+        foreach ($tax->getTaxes() as $taxElement) {
+            $amount += (float)$taxElement->getTaxAmount();
+            $currency = $taxElement->getCurrency();
+        }
+        $subtotal->setAmount($amount);
+        $subtotal->setCurrency($currency);
     }
 }

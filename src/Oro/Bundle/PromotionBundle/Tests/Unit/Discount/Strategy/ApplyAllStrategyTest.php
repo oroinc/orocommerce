@@ -232,4 +232,34 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
 
         return $subtotals;
     }
+
+    public function testTotalDiscountAllocationSumEqualsTotal(): void
+    {
+        // 3 items with equal subtotals produce non-terminating decimal proportions (100/3 each).
+        // Float arithmetic alone accumulates error; BigDecimal remainder ensures exact total.
+        $discountContext = new DiscountContext();
+        $item1 = (new DiscountLineItem())->setSubtotal(100.0);
+        $item2 = (new DiscountLineItem())->setSubtotal(100.0);
+        $item3 = (new DiscountLineItem())->setSubtotal(100.0);
+        $discountContext->setLineItems([$item1, $item2, $item3]);
+
+        $discountAmount = 10.0;
+        $discountContext->setSubtotal(300.0 - $discountAmount);
+
+        $discount = $this->createDiscount($discountContext, $discountContext, $discountAmount);
+        $discountContext->addSubtotalDiscount($discount);
+
+        $this->strategy->process($discountContext, [$discount]);
+
+        $appliedDiscount = (100.0 - $item1->getSubtotalAfterDiscounts())
+            + (100.0 - $item2->getSubtotalAfterDiscounts())
+            + (100.0 - $item3->getSubtotalAfterDiscounts());
+
+        self::assertEqualsWithDelta($discountAmount, $appliedDiscount, 0.001);
+        self::assertEquals(
+            $discountAmount,
+            round($appliedDiscount, 2),
+            'Sum of per-item discounts must equal the total discount exactly (no extra cent).'
+        );
+    }
 }

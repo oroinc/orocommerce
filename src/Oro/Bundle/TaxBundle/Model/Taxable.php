@@ -79,6 +79,8 @@ class Taxable
      */
     protected $context;
 
+    protected ?BigDecimal $rowTotal = null;
+
     public function __construct()
     {
         $this->quantity = BigDecimal::one();
@@ -409,6 +411,18 @@ class Taxable
     public function makeOriginAddressTaxable()
     {
         $this->taxationAddress = $this->origin;
+
+        return $this;
+    }
+
+    public function getRowTotal(): ?BigDecimal
+    {
+        return $this->rowTotal;
+    }
+
+    public function setRowTotal(BigDecimal|float|int|string $rowTotal): self
+    {
+        $this->rowTotal = BigDecimal::of($rowTotal);
 
         return $this;
     }
