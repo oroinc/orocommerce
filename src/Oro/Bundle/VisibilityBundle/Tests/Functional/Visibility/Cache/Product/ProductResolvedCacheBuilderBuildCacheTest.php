@@ -98,6 +98,28 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         self::assertNull($repository->findOneBy(['scope' => $scope, 'product' => $firstProduct]));
     }
 
+    public function testProductCategoryChanged(): void
+    {
+        $repository = self::getContainer()->get('doctrine')->getRepository(ProductVisibilityResolved::class);
+        $scopes = iterator_to_array(
+            self::getContainer()->get('oro_scope.scope_manager')->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE)
+        );
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_8);
+
+        $this->builder->productCategoryChanged($product, false);
+
+        $resolvedVisibilities = $repository->findBy(['product' => $product]);
+        self::assertCount(
+            count($scopes),
+            $resolvedVisibilities,
+            'productCategoryChanged() must insert exactly one resolved row per scope, without duplicates'
+        );
+        foreach ($resolvedVisibilities as $resolvedVisibility) {
+            self::assertEquals(BaseProductVisibilityResolved::SOURCE_CATEGORY, $resolvedVisibility->getSource());
+        }
+    }
+
     private function assertResolvedEntitiesCount(int $expected): void
     {
         $count = self::getContainer()->get('doctrine')->getRepository(ProductVisibilityResolved::class)
