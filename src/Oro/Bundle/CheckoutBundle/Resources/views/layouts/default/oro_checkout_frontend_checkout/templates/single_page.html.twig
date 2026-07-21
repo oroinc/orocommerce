@@ -295,7 +295,7 @@
 
             {% if feature_enabled('checkout_customer_users_registration') and
                 checkout.registeredCustomerUser == null and
-                checkout.customerUser.isGuest
+                (checkout.customerUser == null or checkout.customerUser.isGuest)
             %}
                 <div class="grid grid-col-12"
                       data-page-component-module="oroui/js/app/components/view-component"

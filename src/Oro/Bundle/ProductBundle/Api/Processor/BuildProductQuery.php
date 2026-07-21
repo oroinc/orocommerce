@@ -3,9 +3,13 @@
 namespace Oro\Bundle\ProductBundle\Api\Processor;
 
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\ApiBundle\Processor\ListContext;
+use Oro\Bundle\ApiBundle\Processor\Shared\Provider\TotalCountCalculator;
+use Oro\Bundle\BatchBundle\ORM\QueryBuilder\CountQueryBuilderOptimizer;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
+use Oro\Component\EntitySerializer\QueryResolver;
 
 /**
  * Improves the speed of receiving products due the optimization of query.
@@ -17,9 +21,23 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class BuildProductQuery implements ProcessorInterface
 {
+    private CountQueryBuilderOptimizer $countQueryBuilderOptimizer;
+    private QueryResolver $queryResolver;
+
+    public function setCountQueryBuilderOptimizer(CountQueryBuilderOptimizer $countQueryBuilderOptimizer): void
+    {
+        $this->countQueryBuilderOptimizer = $countQueryBuilderOptimizer;
+    }
+
+    public function setQueryResolver(QueryResolver $queryResolver): void
+    {
+        $this->queryResolver = $queryResolver;
+    }
+
     #[\Override]
     public function process(ContextInterface $context): void
     {
+        /** @var ListContext $context */
         $qb = $context->getQuery();
         if (!$qb instanceof QueryBuilder) {
             return;
@@ -33,6 +51,17 @@ class BuildProductQuery implements ProcessorInterface
 
             return;
         }
+
+        $query = clone($qb);
+        // sets the custom calculate total callback because
+        // the initial query will be changed and cannot be used to calculate the total.
+        $context->setTotalCountCallback(
+            function () use ($query, $context) {
+                $calculator = new TotalCountCalculator($this->countQueryBuilderOptimizer, $this->queryResolver);
+
+                return $calculator->calculateTotalCount($query, $context->getConfig());
+            }
+        );
 
         // Filters are not needed as all filtered products already been found.
         $qb->resetDQLPart('where')->getParameters()->clear();

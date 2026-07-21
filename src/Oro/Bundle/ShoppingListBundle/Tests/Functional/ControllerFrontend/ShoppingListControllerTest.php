@@ -33,9 +33,6 @@ class ShoppingListControllerTest extends WebTestCase
     private const TEST_LABEL1 = 'Shopping list label 1';
     private const TEST_LABEL2 = 'Shopping list label 2';
 
-    private ?array $initialVisibility;
-    private ?array $initialGeneralVisibility;
-
     #[\Override]
     protected function setUp(): void
     {
@@ -49,21 +46,13 @@ class ShoppingListControllerTest extends WebTestCase
             LoadCheckoutUserACLData::class,
         ]);
 
-        $configManager = self::getConfigManager();
-        $this->initialVisibility = $configManager->get('oro_rfp.frontend_product_visibility');
-        $this->initialGeneralVisibility = $configManager->get('oro_product.general_frontend_product_visibility');
-        $configManager->set('oro_shopping_list.availability_for_guests', true);
-        $configManager->flush();
+        $this->setConfigValue('oro_shopping_list.availability_for_guests', true);
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_rfp.frontend_product_visibility', $this->initialVisibility);
-        $configManager->set('oro_product.general_frontend_product_visibility', $this->initialGeneralVisibility);
-        $configManager->set('oro_shopping_list.availability_for_guests', false);
-        $configManager->flush();
+        $this->restoreConfigValues();
     }
 
     public function testViewWhenNoId(): void
@@ -255,9 +244,7 @@ class ShoppingListControllerTest extends WebTestCase
                 ))
         ];
 
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_rfp.frontend_product_visibility', $availableInventoryStatuses);
-        $configManager->flush();
+        $this->setConfigValue('oro_rfp.frontend_product_visibility', $availableInventoryStatuses);
 
         $response = $this->client->getResponse();
         self::assertJsonResponseStatusCodeEquals($response, 200);
@@ -325,8 +312,7 @@ class ShoppingListControllerTest extends WebTestCase
             [],
             self::generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
         );
-        $configManager = self::getConfigManager();
-        $configManager->set(
+        $this->setConfigValue(
             'oro_product.general_frontend_product_visibility',
             [
                 ExtendHelper::buildEnumOptionId(
@@ -343,7 +329,6 @@ class ShoppingListControllerTest extends WebTestCase
                 ),
             ]
         );
-        $configManager->flush();
 
         $this->requestShoppingListPage('oro_shopping_list_frontend_view', $shoppingList->getId());
 
@@ -355,9 +340,7 @@ class ShoppingListControllerTest extends WebTestCase
                 ))
         ];
 
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_rfp.frontend_product_visibility', $availableInventoryStatuses);
-        $configManager->flush();
+        $this->setConfigValue('oro_rfp.frontend_product_visibility', $availableInventoryStatuses);
 
         $response = $this->client->getResponse();
         self::assertJsonResponseStatusCodeEquals($response, 200);

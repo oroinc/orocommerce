@@ -1,6 +1,7 @@
 @regression
 @pricing-storage-combined
 @ticket-BB-26237
+@ticket-BB-27513
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:ProductsExportFixture.yml
 
@@ -58,3 +59,23 @@ Feature: CPL processing with new prices added via import
       | SKU   | Price  |
       | PSKU2 | $20.00 |
       | PSKU3 | $31.00 |
+
+  Scenario: Edit previously-imported price via back-office UI
+    When I go to Sales/ Price Lists
+    And click View TESTPL in grid
+    And click edit PSKU2 in "Price list Product prices Grid"
+    And fill "Update Product Price Form" with:
+      | Price | 55 |
+    And I click "Save"
+    Then I should see "Product Price has been added" flash message
+
+  Scenario: Check updated price is reflected in CPL after editing an imported price
+    When I go to Sales/Price Calculation Details
+    And I filter SKU as Contains "PSKU2"
+    And fill "Price Calculation Details Grid Sidebar" with:
+      | Website  | Default     |
+      | Customer | AmandaRCole |
+    And click on PSKU2 in grid
+    Then I should see next prices for "Customer Prices":
+      | Item (USD) |
+      | 1 $55.00   |

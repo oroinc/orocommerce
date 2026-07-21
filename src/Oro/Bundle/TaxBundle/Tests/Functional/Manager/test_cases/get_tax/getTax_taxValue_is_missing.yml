@@ -17,4 +17,10 @@ expectedResult:
         taxAmount: '0'
         adjustment: '0'
         currency: 'USD'
+    items_total:
+        includingTax: '0'
+        excludingTax: '0'
+        taxAmount: '0'
+        adjustment: '0'
+        currency: 'USD'
     taxes: []

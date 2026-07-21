@@ -14,10 +14,10 @@ use PHPUnit\Framework\TestCase;
 
 class StartTest extends TestCase
 {
-    private CustomerUserActionsInterface|MockObject $customerUserActions;
-    private DefaultShippingMethodSetterInterface|MockObject $defaultShippingMethodSetter;
-    private DefaultPaymentMethodSetterInterface|MockObject $defaultPaymentMethodSetter;
-    private TransitionServiceInterface|MockObject $baseTransition;
+    private CustomerUserActionsInterface&MockObject $customerUserActions;
+    private DefaultShippingMethodSetterInterface&MockObject $defaultShippingMethodSetter;
+    private DefaultPaymentMethodSetterInterface&MockObject $defaultPaymentMethodSetter;
+    private TransitionServiceInterface&MockObject $baseTransition;
     private Start $start;
 
     #[\Override]
@@ -49,9 +49,8 @@ class StartTest extends TestCase
             ->method('execute')
             ->with($workflowItem);
 
-        $this->customerUserActions->expects($this->once())
-            ->method('createGuestCustomerUser')
-            ->with($checkout);
+        $this->customerUserActions->expects($this->never())
+            ->method('createGuestCustomerUser');
 
         $this->defaultShippingMethodSetter->expects($this->once())
             ->method('setDefaultShippingMethod')

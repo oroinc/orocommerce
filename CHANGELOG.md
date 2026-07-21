@@ -28,6 +28,12 @@ The current file describes significant changes in the code that may affect the u
 
 ### Added
 
+#### CMSBundle
+* Extracted link component into a modular architecture (`types/link/`) with separate files for model, view, variants, sources, and commands. The link, link-block, link-button, and file types are now consolidated into a single link component with pluggable variant and source registries.
+* Added `createRegistry` utility for managing link styles, sources, and trait renderers as plain-object registries.
+* Added `BaseType` shared methods: `mergeToolbarItems` (model) for idempotent toolbar item management, and `onDoubleClick` via `mainToolbarAction` (view) for double-click-to-action behavior.
+* Added link style variants (`link`, `button`) and source types (`url`, `file`) as pluggable registry entries.
+
 #### OrderBundle
 * Added `\Oro\Bundle\OrderBundle\Datagrid\DraftSession\OrderLineItemDraftIsPriceOverriddenDatagridListener` — that collects all eligible line items from the result set, fetches their tier prices in a single batch query.
 * Added `\Oro\Bundle\OrderBundle\Pricing\OrderLineItemIsPriceOverriddenCalculator` — determines whether the price set on an `OrderLineItem` differs from the matched tier price.
@@ -44,6 +50,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Changed
 
+#### CMSBundle
+* Refactored `content-block-type`, `content-widget-type`, `custom-code-type`, and `picture-type` to use `BaseType` `mergeToolbarItems` and `mainToolbarAction` instead of custom toolbar and double-click handling.
+
 #### RFPBundle
 * Updated `oro_rfp_request_create_order` action to use `oro_rfp.operation.create_order_draft_from_rfq` service to create an order draft instead of pre-filling the order form via order data storage extension.
 * `\Oro\Bundle\RFPBundle\Entity\Request` now implements `\Oro\Component\DraftSession\Entity\EntityDraftAwareInterface` and `\Oro\Bundle\CurrencyBundle\Entity\WebsiteBasedCurrencyAwareInterface` to support use as a draft source entity in the RFQ-to-Order draft flow.
@@ -51,6 +60,15 @@ The current file describes significant changes in the code that may affect the u
 
 #### OrderBundle
 * Updated `\Oro\Bundle\OrderBundle\Provider\OrderLineItemTierPricesProvider` — added `getTierPricesForLineItems(array $orderLineItems)` method that retrieves tier prices for multiple order line items using a single price-storage query. The result array is indexed by the same keys as the `$orderLineItems` input array, and simple products are deduplicated before querying the price storage.
+
+#### PricingBundle
+* Changed `oropricing/js/app/views/list-item-product-prices-view`: the prices hint popover is no longer initialized on render — it is created lazily on the first user interaction with the hint trigger (`onPricesHintInteraction()`). `updateQtyForUnit()` no longer renders the hint and now contains only quantity logic. The hint content is refreshed on unit change by the new `updateHintContent()` method subscribed to the model's `change:unit` event.
+
+### Removed
+
+#### CMSBundle
+* Removed `link-type.js`, `link-block-type.js`, `link-button/` directory, and `file/` directory — these are replaced by the unified link component in `types/link/`.
+* Removed the `CreateLinkModal` dialog (`dialogs/create-link-dialog.js`), its `create-link-form.html` template, and the `open-create-link-dialog` editor command. Link attributes (`href`, `title`, `target`, `rel`) are now edited through the Settings panel traits instead of a modal. The `link-settings` toolbar item and the default `mainToolbarAction` were removed accordingly. Customizations that opened the dialog or ran the `open-create-link-dialog` command should select the link component and use the Settings panel.
 
 ## 7.0.0 (2026-03-31)
 [Show detailed list of changes](incompatibilities-7-0.md)

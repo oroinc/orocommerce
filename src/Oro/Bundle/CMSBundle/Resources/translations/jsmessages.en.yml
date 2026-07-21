@@ -98,6 +98,17 @@ oro.cms:
             link:
                 label: 'Link'
                 content: 'Link'
+                variant: 'Variant'
+                style_link: 'Text Link'
+                style_block: 'Link Block'
+                style_button: 'Button'
+                href: 'URL'
+                title: 'Title'
+                target: 'Target'
+                text: 'Text'
+                rel: 'Rel'
+                container_mode: 'Allow Nested Content'
+                choose_file: 'Choose File'
             link_block:
                 label: 'Link Block'
             link_button:
@@ -105,6 +116,11 @@ oro.cms:
                 content: 'Link Button'
                 icon_enabled: 'Icon Enable'
                 icon_before: 'Icon Before'
+                style: 'Button Style'
+                style_primary: 'Primary'
+                style_outlined: 'Outlined'
+                style_plain: 'Plain'
+                style_link: 'Link'
             image:
                 label: 'Image'
             video:
@@ -169,7 +185,6 @@ oro.cms:
             delete: 'Delete'
             widgetSetting: 'Widget Settings'
             blockSetting: 'Block Settings'
-            fileSetting: 'File Settings'
             pictureSettings: 'Picture sources manager'
             table:
                 row.before: 'Insert row before'
@@ -531,7 +546,7 @@ oro.cms:
                     label: 'Title'
                     placeholder: 'eg. Text here'
                 href:
-                    label: 'Href'
+                    label: 'URL'
                     placeholder: 'eg. https://google.com'
                 provider:
                     label: 'Provider'
@@ -622,18 +637,6 @@ oro.cms:
             show_offsets_setting:
                 label: 'Show spacing'
                 info: 'Display margins and padding'
-        create_link_dialog:
-            href: 'Href'
-            text: 'Text'
-            title: 'Title'
-            target:
-                label: 'Target'
-                this_window: 'This Window'
-                new_window: 'New Window'
-            apply: 'Apply'
-            insert: 'Insert'
-            add_new_link: 'Insert a Link'
-            add_edit_link: 'Edit a Link'
         mobile:
             flash_message: 'The visual editor cannot be displayed on the current device.'
         dialog:

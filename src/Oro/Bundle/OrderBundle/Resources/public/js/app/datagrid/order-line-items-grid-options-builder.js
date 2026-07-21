@@ -2,6 +2,7 @@ import DraftRow from 'oroorder/js/app/datagrid/rows/draft-row';
 import DraftRowModel from './rows/draft-row-model';
 import DraftOrderDatagridPlugin from './plugins/draft-order-datagrid-plugin';
 import LineItemsDatagridPresentationPlugin from './plugins/line-items-datagrid-presentation-plugin';
+import DraftOrderDataGridFooter from './draft-order-datagrid-footer';
 
 export default {
     processDatagridOptions(deferred, options) {
@@ -17,7 +18,8 @@ export default {
 
         options.themeOptions = {
             ...options.themeOptions,
-            rowView: DraftRow
+            rowView: DraftRow,
+            footerView: DraftOrderDataGridFooter
         };
 
         if (!options.metadata.plugins) {

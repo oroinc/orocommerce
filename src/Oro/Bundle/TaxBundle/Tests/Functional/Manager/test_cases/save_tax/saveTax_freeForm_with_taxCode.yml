@@ -38,6 +38,12 @@ expectedResult:
         taxAmount: '11.54'        # 111 * 0.104 = 11.544
         adjustment: '0.004'       # 11.544 - 11.54 (calculated - stored)
         currency: 'USD'
+    items_total:
+        includingTax: '122.54'
+        excludingTax: '111'
+        taxAmount: '11.54'
+        adjustment: '0.004'
+        currency: 'USD'
     items:
         -
             row:

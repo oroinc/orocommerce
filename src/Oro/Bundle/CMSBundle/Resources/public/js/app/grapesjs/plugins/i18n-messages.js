@@ -20,9 +20,7 @@ const messages = {
                 'column3-7': __('oro.cms.wysiwyg.component.column37.label'),
                 'image': __('oro.cms.wysiwyg.component.image.label'),
                 'video': __('oro.cms.wysiwyg.component.video.label'),
-                'map': __('oro.cms.wysiwyg.component.map.label'),
-                'link-block': __('oro.cms.wysiwyg.component.link_block.label'),
-                'link-button': __('oro.cms.wysiwyg.component.link_button.label')
+                'map': __('oro.cms.wysiwyg.component.map.label')
             },
             categories: {
                 // 'category-id': 'Category Label'

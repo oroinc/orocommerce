@@ -14,6 +14,15 @@ const BackendPaginationInput = PaginationInput.extend({
         BackendPaginationInput.__super__.constructor.call(this, options);
     },
 
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        BackendPaginationInput.__super__.initialize.call(this, options);
+
+        this.scrollToPosition = this.$el.closest('[data-role="page-main-container"]').position();
+    },
+
     makeHandles: function(handles) {
         handles = BackendPaginationInput.__super__.makeHandles.call(this, handles);
 

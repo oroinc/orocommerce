@@ -1051,7 +1051,6 @@ final class OrderLineItemDraftTypeTest extends WebTestCase
         $view = $form->createView();
 
         self::assertArrayHasKey('tierPrices', $view->vars);
-        self::assertArrayHasKey($product->getId(), $view->vars['tierPrices']);
-        self::assertIsArray($view->vars['tierPrices'][$product->getId()]);
+        self::assertSame([], $view->vars['tierPrices']);
     }
 }

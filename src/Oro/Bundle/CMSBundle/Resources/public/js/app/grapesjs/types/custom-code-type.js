@@ -140,30 +140,18 @@ const CustomCodeType = BaseType.extend({
             stylable: false,
             droppable: false,
             traits: [],
-            disableSelectorManager: true
+            disableSelectorManager: true,
+            mainToolbarAction: 'edit-custom-code'
         },
 
         init() {
-            const toolbar = this.get('toolbar');
-            toolbarCommands.forEach(toolbarCommand => {
-                if (!toolbar.find(action => action.id === toolbarCommand.id)) {
-                    toolbar.unshift(toolbarCommand);
-                }
-            });
+            this.mergeToolbarItems(toolbarCommands);
         }
     },
 
     viewProps: {
         events: {
-            dblclick: 'onActive'
-        },
-
-        onActive() {
-            const Commands = this.em.get('Commands');
-
-            if (Commands.has('edit-source-code')) {
-                Commands.run('edit-source-code');
-            }
+            dblclick: 'onDoubleClick'
         },
 
         onRender() {

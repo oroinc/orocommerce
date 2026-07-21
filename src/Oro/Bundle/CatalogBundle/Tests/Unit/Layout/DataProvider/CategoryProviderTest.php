@@ -182,10 +182,10 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetCategoryPathWithIncorrectCategoryId()
+    public function testGetCurrentCategoryWithNonExistentCategoryIdReturnsMasterCatalogRoot(): void
     {
         $categoryId = 123;
-        $category = null;
+        $rootCategory = new Category();
 
         $this->requestProductHandler->expects(self::once())
             ->method('getCategoryId')
@@ -196,12 +196,45 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
             ->with($categoryId)
             ->willReturn(null);
 
-        $this->categoryTreeProvider->expects(self::never())
-            ->method('getParentCategories');
+        $this->masterCatalogProvider->expects(self::once())
+            ->method('getMasterCatalogRoot')
+            ->willReturn($rootCategory);
 
-        self::assertSame(
-            [],
-            $this->categoryProvider->getCategoryPath()
-        );
+        self::assertSame($rootCategory, $this->categoryProvider->getCurrentCategory());
+    }
+
+    public function testGetCategoryPathWithNonExistentCategoryIdUsesMasterCatalogRoot(): void
+    {
+        $categoryId = 123;
+        $rootCategory = new Category();
+
+        $token = $this->createMock(TokenInterface::class);
+        $token->expects(self::any())
+            ->method('getUser')
+            ->willReturn(null);
+        $this->tokenAccessor->expects(self::once())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $this->requestProductHandler->expects(self::once())
+            ->method('getCategoryId')
+            ->willReturn($categoryId);
+
+        $this->categoryRepository->expects(self::once())
+            ->method('find')
+            ->with($categoryId)
+            ->willReturn(null);
+
+        $this->masterCatalogProvider->expects(self::once())
+            ->method('getMasterCatalogRoot')
+            ->willReturn($rootCategory);
+
+        $parentCategories = [$rootCategory];
+        $this->categoryTreeProvider->expects(self::once())
+            ->method('getParentCategories')
+            ->with(null, $rootCategory)
+            ->willReturn($parentCategories);
+
+        self::assertSame($parentCategories, $this->categoryProvider->getCategoryPath());
     }
 }

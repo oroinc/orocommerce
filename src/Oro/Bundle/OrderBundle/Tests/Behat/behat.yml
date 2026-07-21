@@ -138,6 +138,14 @@ oro_behat_extension:
             type: 'css'
             locator: 'input[name^="oro_order_type_shipUntil"]'
 
+    Field Config Form:
+      selector: 'form[name="oro_entity_config_type"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Other, Show On Form: 'oro_entity_config_type[form][is_enabled]'
+          Other, Show On View: 'oro_entity_config_type[view][is_displayable]'
+
     Order Line Item Draft Edit Form Save Button:
       selector: '.draft-form__form-actions button[type="submit"]'
 
@@ -153,6 +161,13 @@ oro_behat_extension:
     Order Line Item Draft Grid:
       selector: 'div[data-page-component-name="order-line-items-edit-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+      options:
+        mapping:
+          GridTable: OrderLineItemDraftGridTable
+
+    OrderLineItemDraftGridTable:
+      selector: '.grid-container > table.grid-main-container'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
 
     Order Line Item Tier Prices Hint:
         selector:
@@ -272,6 +287,16 @@ oro_behat_extension:
     Order Form Shipping Address Select:
       selector:
         locator: '//*[contains(@id, "shippingAddress_customerAddress-uid-")]/a'
+        type: xpath
+
+    Order Line Item Draft Edit Form Errors:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//td[contains(@class,"grid-body-cell-product")]//div[contains(@class,"order-line-item-draft-form-cell-inner")]/div[contains(@class,"fields-row-error")]'
+        type: xpath
+
+    Order Line Item Draft Edit Form Kit Item 1 Errors:
+      selector:
+        locator: '(//form[contains(@class,"draft-form")])[1]//tr[contains(@class,"order-line-kit-item")][1]//td[contains(@class,"line-item-product")]//span[contains(@class, "validation-failed")]'
         type: xpath
 
     Order Line Item Draft Edit Form Kit Item 1 Label:
