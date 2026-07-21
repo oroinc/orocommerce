@@ -5,8 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectNoConflictQueryExecutor;
-use Oro\Bundle\EntityBundle\ORM\InsertQueryExecutorInterface;
+use Oro\Bundle\EntityBundle\ORM\InsertNoConflictQueryExecutorInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
@@ -24,8 +23,7 @@ class CategoryResolvedCacheBuilder extends AbstractCategoryResolvedCacheBuilder 
     CategoryCaseCacheBuilderInterface
 {
     private ScopeManager $scopeManager;
-    /** @var InsertFromSelectNoConflictQueryExecutor  */
-    private InsertQueryExecutorInterface $insertExecutor;
+    private InsertNoConflictQueryExecutorInterface $insertExecutor;
     private VisibilityChangeCategorySubtreeCacheBuilder $visibilityChangeCategorySubtreeCacheBuilder;
     private PositionChangeCategorySubtreeCacheBuilder $positionChangeCategorySubtreeCacheBuilder;
 
@@ -33,7 +31,7 @@ class CategoryResolvedCacheBuilder extends AbstractCategoryResolvedCacheBuilder 
         ManagerRegistry $doctrine,
         ProductIndexScheduler $indexScheduler,
         ScopeManager $scopeManager,
-        InsertQueryExecutorInterface $insertExecutor,
+        InsertNoConflictQueryExecutorInterface $insertExecutor,
         VisibilityChangeCategorySubtreeCacheBuilder $visibilityChangeCategorySubtreeCacheBuilder,
         PositionChangeCategorySubtreeCacheBuilder $positionChangeCategorySubtreeCacheBuilder
     ) {
@@ -126,36 +124,40 @@ class CategoryResolvedCacheBuilder extends AbstractCategoryResolvedCacheBuilder 
         // in the application do not belong to a specific website
         $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
 
-        // resolve static values
-        $resolvedRepository->insertStaticValues($this->insertExecutor, $scope);
-
-        // resolved parent category values
-        $categoryVisibilities = $this->indexVisibilities(
-            $this->doctrine->getRepository(CategoryVisibility::class)->getCategoriesVisibilities(),
-            'category_id'
-        );
-        $categoryIds = [
-            CategoryVisibilityResolved::VISIBILITY_VISIBLE => [],
-            CategoryVisibilityResolved::VISIBILITY_HIDDEN => [],
-            CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG => [],
-        ];
-        foreach ($categoryVisibilities as $categoryId => $currentCategory) {
-            // if fallback to parent category
-            if (null === $currentCategory['visibility']) {
-                $resolvedVisibility = $this->resolveVisibility($categoryVisibilities, $currentCategory);
-                $categoryIds[$resolvedVisibility][] = $categoryId;
-            }
-        }
-
         $this->insertExecutor->setOnConflictIgnoredFields(['category', 'scope']);
 
-        foreach ($categoryIds as $visibility => $ids) {
-            $resolvedRepository->insertParentCategoryValues(
-                $this->insertExecutor,
-                $ids,
-                $visibility,
-                $scope
+        try {
+            // resolve static values
+            $resolvedRepository->insertStaticValues($this->insertExecutor, $scope);
+
+            // resolved parent category values
+            $categoryVisibilities = $this->indexVisibilities(
+                $this->doctrine->getRepository(CategoryVisibility::class)->getCategoriesVisibilities(),
+                'category_id'
             );
+            $categoryIds = [
+                CategoryVisibilityResolved::VISIBILITY_VISIBLE => [],
+                CategoryVisibilityResolved::VISIBILITY_HIDDEN => [],
+                CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG => [],
+            ];
+            foreach ($categoryVisibilities as $categoryId => $currentCategory) {
+                // if fallback to parent category
+                if (null === $currentCategory['visibility']) {
+                    $resolvedVisibility = $this->resolveVisibility($categoryVisibilities, $currentCategory);
+                    $categoryIds[$resolvedVisibility][] = $categoryId;
+                }
+            }
+
+            foreach ($categoryIds as $visibility => $ids) {
+                $resolvedRepository->insertParentCategoryValues(
+                    $this->insertExecutor,
+                    $ids,
+                    $visibility,
+                    $scope
+                );
+            }
+        } finally {
+            $this->insertExecutor->setOnConflictIgnoredFields([]);
         }
     }
 

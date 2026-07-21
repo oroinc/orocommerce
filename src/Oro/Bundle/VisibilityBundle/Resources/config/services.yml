@@ -154,7 +154,7 @@ services:
             - '@doctrine'
             - '@oro_product.search.product_reindex_manager'
             - '@oro_scope.scope_manager'
-            - '@oro_entity.orm.insert_from_select_query_executor'
+            - '@oro_entity.orm.insert_from_select_no_conflict_query_executor'
 
     oro_visibility.visibility.cache.product.cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CacheBuilder'
