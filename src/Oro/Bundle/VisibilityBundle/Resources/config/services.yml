@@ -155,6 +155,8 @@ services:
             - '@oro_product.search.product_reindex_manager'
             - '@oro_scope.scope_manager'
             - '@oro_entity.orm.insert_from_select_query_executor'
+        calls:
+            - [ setInsertNoConflictQueryExecutor, [ '@oro_entity.orm.insert_from_select_no_conflict_query_executor' ] ]
 
     oro_visibility.visibility.cache.product.cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CacheBuilder'
@@ -189,6 +191,8 @@ services:
             - '@oro_entity.orm.insert_from_select_no_conflict_query_executor'
             - '@oro_visibility.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder'
             - '@oro_visibility.visibility.cache.product.category.subtree.position_change_category_subtree_cache_builder'
+        calls:
+            - [ setInsertNoConflictQueryExecutor, ['@oro_entity.orm.insert_from_select_no_conflict_query_executor']]
 
     oro_visibility.visibility.cache.product.category.cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CacheBuilder'

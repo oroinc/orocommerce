@@ -79,7 +79,7 @@ class ProductRepository extends AbstractVisibilityRepository
         Scope $scope,
         ?Category $category = null
     ) {
-        $this->insertStatic($insertExecutor, null, $product);
+        $this->insertStatic($insertExecutor, $scope, $product);
 
         if ($category) {
             $qb = $this->getVisibilitiesByCategoryQb($visibility, [$category->getId()], $scope);
