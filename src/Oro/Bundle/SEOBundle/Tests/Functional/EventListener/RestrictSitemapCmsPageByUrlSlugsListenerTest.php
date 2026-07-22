@@ -22,7 +22,7 @@ class RestrictSitemapCmsPageByUrlSlugsListenerTest extends WebTestCase
         ]);
     }
 
-    public function testRestrictQueryBuilder(): void
+    public function testRestrictQueryBuilderWhenSlugsNotJoined(): void
     {
         /** @var QueryBuilder $qb */
         $qb = $this->getContainer()->get('doctrine')
@@ -42,11 +42,41 @@ class RestrictSitemapCmsPageByUrlSlugsListenerTest extends WebTestCase
         ];
 
         $expectedIds = array_map(
-            fn ($referenceName) => $this->getReference($referenceName)->getId(),
+            fn (string $referenceName): int => $this->getReference($referenceName)->getId(),
             $expected
         );
         sort($expectedIds);
 
         self::assertEquals($expectedIds, $actualIds);
+    }
+
+    public function testRestrictQueryBuilderWhenSlugsAlreadyJoined(): void
+    {
+        /** @var QueryBuilder $qb */
+        $qb = $this->getContainer()->get('doctrine')
+            ->getRepository(Page::class)
+            ->createQueryBuilder(UrlItemsProvider::ENTITY_ALIAS);
+
+        $qb->select(UrlItemsProvider::ENTITY_ALIAS . '.id')
+            ->leftJoin(UrlItemsProvider::ENTITY_ALIAS . '.slugs', 'slugs')
+            ->addSelect('slugs.url');
+
+        $listener = new RestrictSitemapCmsPageByUrlSlugsListener();
+        $listener->restrictQueryBuilder(new RestrictSitemapEntitiesEvent($qb, time()));
+
+        $actualIds = array_unique(array_map('current', $qb->getQuery()->getResult()));
+        sort($actualIds);
+
+        $expected = [
+            LoadPageData::PAGE_1,
+        ];
+
+        $expectedIds = array_map(
+            fn (string $referenceName): int => $this->getReference($referenceName)->getId(),
+            $expected
+        );
+        sort($expectedIds);
+
+        self::assertEquals($expectedIds, array_values($actualIds));
     }
 }

@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\EntityBundle\ORM\InsertNoConflictQueryExecutorInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -25,13 +25,13 @@ class ProductResolvedCacheBuilder extends AbstractProductResolvedCacheBuilder im
     ProductCaseCacheBuilderInterface
 {
     private ScopeManager $scopeManager;
-    private InsertFromSelectQueryExecutor $insertExecutor;
+    private InsertNoConflictQueryExecutorInterface $insertExecutor;
 
     public function __construct(
         ManagerRegistry $doctrine,
         ProductReindexManager $productReindexManager,
         ScopeManager $scopeManager,
-        InsertFromSelectQueryExecutor $insertExecutor
+        InsertNoConflictQueryExecutorInterface $insertExecutor
     ) {
         parent::__construct($doctrine, $productReindexManager);
         $this->scopeManager = $scopeManager;
@@ -95,31 +95,39 @@ class ProductResolvedCacheBuilder extends AbstractProductResolvedCacheBuilder im
     public function productCategoryChanged(Product $product, bool $scheduleReindex)
     {
         $category = $this->doctrine->getRepository(Category::class)->findOneByProduct($product);
-        if ($category) {
-            $visibility = $this->getCategoryVisibility($category);
-        } else {
-            $scopes = $this->scopeManager->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
-            foreach ($scopes as $scope) {
-                $this->doctrine->getRepository(ProductVisibility::class)
-                    ->setToDefaultWithoutCategory($this->insertExecutor, $scope, $product);
+        $this->insertExecutor->setOnConflictIgnoredFields(['product', 'scope']);
+
+        try {
+            if ($category) {
+                $visibility = $this->getCategoryVisibility($category);
+            } else {
+                $scopes = $this->scopeManager->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
+                foreach ($scopes as $scope) {
+                    $this->doctrine->getRepository(ProductVisibility::class)
+                        ->setToDefaultWithoutCategory($this->insertExecutor, $scope, $product);
+                }
+                $visibility = ProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
             }
-            $visibility = ProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
-        }
 
-        $repository = $this->getProductRepository();
-        $repository->deleteByProduct($product);
-        $scopes = $this->scopeManager->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
-        foreach ($scopes as $scope) {
-            $repository->insertByProduct(
-                $this->insertExecutor,
-                $product,
-                $visibility,
-                $scope,
-                $category
-            );
-        }
+            $repository = $this->getProductRepository();
+            $repository->deleteByProduct($product);
 
-        $this->triggerProductReindexation($product, null, $scheduleReindex);
+            $scopes = $this->scopeManager->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
+
+            foreach ($scopes as $scope) {
+                $repository->insertByProduct(
+                    $this->insertExecutor,
+                    $product,
+                    $visibility,
+                    $scope,
+                    $category
+                );
+            }
+
+            $this->triggerProductReindexation($product, null, $scheduleReindex);
+        } finally {
+            $this->insertExecutor->setOnConflictIgnoredFields([]);
+        }
     }
 
     #[\Override]
@@ -130,6 +138,7 @@ class ProductResolvedCacheBuilder extends AbstractProductResolvedCacheBuilder im
         $em->beginTransaction();
         try {
             $repository->clearTable($scope);
+            $this->insertExecutor->setOnConflictIgnoredFields(['product', 'scope']);
             $repository->insertStatic($this->insertExecutor, $scope);
             if ($scope) {
                 $categoryScope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE, $scope);
@@ -145,6 +154,8 @@ class ProductResolvedCacheBuilder extends AbstractProductResolvedCacheBuilder im
         } catch (\Exception $exception) {
             $em->rollback();
             throw $exception;
+        } finally {
+            $this->insertExecutor->setOnConflictIgnoredFields([]);
         }
     }
 

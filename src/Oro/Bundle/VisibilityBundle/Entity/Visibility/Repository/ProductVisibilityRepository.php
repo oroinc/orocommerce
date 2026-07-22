@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\EntityBundle\ORM\InsertQueryExecutorInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -17,7 +17,7 @@ class ProductVisibilityRepository extends AbstractProductVisibilityRepository
      * Update to 'config' ProductVisibility for products without category with fallback to 'category'.
      */
     public function setToDefaultWithoutCategory(
-        InsertFromSelectQueryExecutor $insertExecutor,
+        InsertQueryExecutorInterface $insertExecutor,
         Scope $scope,
         ?Product $product = null
     ) {

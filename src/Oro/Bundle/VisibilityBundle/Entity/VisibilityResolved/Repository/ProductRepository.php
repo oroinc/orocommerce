@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\EntityBundle\ORM\InsertQueryExecutorInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -22,7 +22,7 @@ class ProductRepository extends AbstractVisibilityRepository
 {
     use BasicOperationRepositoryTrait;
 
-    public function insertByCategory(InsertFromSelectQueryExecutor $insertExecutor, Scope $scope, Scope $categoryScope)
+    public function insertByCategory(InsertQueryExecutorInterface $insertExecutor, Scope $scope, Scope $categoryScope)
     {
         $qb = $this->getProductVisibilityResolvedQueryBuilder($scope, $categoryScope);
 
@@ -34,12 +34,12 @@ class ProductRepository extends AbstractVisibilityRepository
     }
 
     /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
+     * @param InsertQueryExecutorInterface $insertExecutor
      * @param Scope|null $scope
      * @param Product|null $product
      */
     public function insertStatic(
-        InsertFromSelectQueryExecutor $insertExecutor,
+        InsertQueryExecutorInterface $insertExecutor,
         ?Scope $scope = null,
         $product = null
     ) {
@@ -73,13 +73,13 @@ class ProductRepository extends AbstractVisibilityRepository
     }
 
     public function insertByProduct(
-        InsertFromSelectQueryExecutor $insertExecutor,
+        InsertQueryExecutorInterface $insertExecutor,
         Product $product,
         $visibility,
         Scope $scope,
         ?Category $category = null
     ) {
-        $this->insertStatic($insertExecutor, null, $product);
+        $this->insertStatic($insertExecutor, $scope, $product);
 
         if ($category) {
             $qb = $this->getVisibilitiesByCategoryQb($visibility, [$category->getId()], $scope);
