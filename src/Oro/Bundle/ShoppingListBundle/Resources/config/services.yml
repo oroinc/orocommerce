@@ -905,13 +905,3 @@ services:
             - '@translator'
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_order_limit }
-
-    oro_shopping_list.provider.shopping_list_checkout_provider:
-        class: Oro\Bundle\CheckoutBundle\Provider\ShoppingListCheckoutProvider
-        public: true
-        arguments:
-            - '@doctrine'
-            - '@oro_shopping_list.manager.current_shopping_list'
-            - '@oro_shopping_list.provider.shopping_list_current_currency'
-            - '@oro_customer.provider.current_user'
-            - '@oro_config.manager'
