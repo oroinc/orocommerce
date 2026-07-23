@@ -1,6 +1,7 @@
 @fixture-OroProductBundle:products_grid.yml
 @ticket-BAP-17648
 @ticket-BB-21070
+@ticket-BAP-23396
 
 Feature: Products Grid
   In order to ensure backoffice products grid works correctly
@@ -325,6 +326,22 @@ Feature: Products Grid
       | Product 10 |
       | Product 20 |
     And I reset "Products Grid" grid
+
+  Scenario: Check that grid views are available for the products grid
+    When I filter Name as Contains "Product 1"
+    And I click Options in grid view
+    Then I should see "Save As" in grid view options
+    When I click on "Save As" in grid view options
+    And I type "Products starting with 1" in "name"
+    And I click "Save" in modal window
+    Then I should see "View has been successfully created" flash message
+    When click grid view list
+    Then I should see "Products starting with 1"
+    And I click "Products starting with 1"
+    Then records in grid should be 11
+    And click grid view list
+    Then I reset "Products Grid" grid
+    And records in grid should be 20
 
   @skip
   # will be fixed in BB-27134
