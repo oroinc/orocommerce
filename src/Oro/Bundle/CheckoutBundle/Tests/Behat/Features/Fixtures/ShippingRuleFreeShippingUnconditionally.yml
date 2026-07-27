@@ -1,0 +1,26 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    shippingRuleFreeShipping:
+        name: 'Unconditionally Free Shipping'
+        enabled: true
+        sortOrder: 0
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    shippingMethodTypeFreeShippingConfig:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 0
+            type: 'per_order'
+            handling_fee: ~
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    shippingMethodConfigFreeShipping:
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
+        typeConfigs: ['@shippingMethodTypeFreeShippingConfig']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    shippingMethodsConfigsRuleFreeShipping:
+        rule: '@shippingRuleFreeShipping'
+        methodConfigs: ['@shippingMethodConfigFreeShipping']
+        currency: 'USD'
+        organization: '@organization'
