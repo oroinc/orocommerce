@@ -1,5 +1,7 @@
 /* @theme: admin.oro; */
 
+@use 'sass:math';
+
 .icons-settings {
     padding: $content-padding-medium;
 
@@ -27,7 +29,7 @@
     overflow-y: auto;
 
     .trait-mode & {
-        --tiles-column-gap: #{$content-padding-small / 2};
+        --tiles-column-gap: #{math.div($content-padding-small, 2)};
 
         width: 100%;
     }

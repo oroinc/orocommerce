@@ -1,5 +1,7 @@
 /* @theme: default; */
 
+@use 'sass:math';
+
 .responsive-shopping-list-grid-edit {
     .select-row-cell {
         position: relative;
@@ -75,7 +77,7 @@
     &:has(.single-unit-mode) {
         .grid-header-cell-quantity {
             .grid-header-cell__label-container {
-                min-width: $edit-mode-cell-stepper-input-width / 2 + $input-padding-y;
+                min-width: math.div($edit-mode-cell-stepper-input-width, 2) + $input-padding-y;
             }
         }
     }
@@ -83,7 +85,7 @@
     &:has(.single-unit-mode-code-visible) {
         .grid-header-cell-quantity {
             .grid-header-cell__label-container {
-                min-width: $edit-mode-cell-stepper-input-width / 2 + $input-padding-y;
+                min-width: math.div($edit-mode-cell-stepper-input-width, 2) + $input-padding-y;
             }
         }
     }
@@ -161,7 +163,9 @@
 
     // Horizontal line occupies the next sku cell too
     .no-product-sku-row .cell-line {
-        right: -($responsive-shopping-grid-body-cell-sku-width + $datagrid-body-cell-offset + $checkbox-size / 2);
+        $checkbox-size-half: math.div($checkbox-size, 2);
+
+        right: -($responsive-shopping-grid-body-cell-sku-width + $datagrid-body-cell-offset + $checkbox-size-half);
     }
 
     .filtered-out .select-row-cell::after {

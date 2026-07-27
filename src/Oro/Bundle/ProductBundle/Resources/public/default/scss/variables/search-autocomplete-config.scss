@@ -32,7 +32,7 @@ $search-autocomplete-product-text-decoration: none !default;
 $search-autocomplete-product-display: flex !default;
 $search-autocomplete-product-hover-text-decoration: none !default;
 $search-autocomplete-product-hover-price-color: get-var-color('text', 'primary') !default;
-$search-autocomplete-product-hover-title-color: get-var-color('primary', 'base') !default;
+$search-autocomplete-product-hover-title-color: get-var-color('primary', 'main') !default;
 $search-autocomplete-product-hover-title-text-decoration: underline !default;
 
 $search-autocomplete-product-image-width: 44px !default;
@@ -106,7 +106,7 @@ $search-autocomplete-category-body-last-category-color: get-var-color('text', 's
 
 $search-autocomplete-category-body-span-white-space: nowrap !default;
 $search-autocomplete-category-hover-image-color: get-var-color('text', 'primary') !default;
-$search-autocomplete-category-hover-head-color: get-var-color('primary', 'base') !default;
+$search-autocomplete-category-hover-head-color: get-var-color('primary', 'main') !default;
 $search-autocomplete-category-hover-head-text-decoration: underline !default;
 
 // Tablet
