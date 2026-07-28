@@ -56,16 +56,18 @@ class ProductFallbackUpdateManager
 
     public function processChunk(array $productIds): int
     {
+        $updatedProducts = 0;
+
         if (!$productIds) {
-            return 0;
+            return $updatedProducts;
         }
 
         $this->listenerManager->disableListeners($this->listeners);
+        $em = null;
 
         try {
             $em = $this->getEntityManager();
             $products = $this->getProducts($productIds);
-            $updatedProducts = 0;
 
             foreach ($products as $product) {
                 if ($this->populator->populate($product)) {
@@ -75,30 +77,26 @@ class ProductFallbackUpdateManager
             }
 
             if ($updatedProducts > 0) {
-                try {
-                    $em->flush();
-                    $this->logger->info(
-                        'Product fallback chunk processed successfully',
-                        ['updated_count' => $updatedProducts, 'chunk_size' => count($productIds)]
-                    );
-                } catch (\Exception $e) {
-                    $this->logger->error(
-                        'Failed to flush product fallback changes',
-                        ['exception' => $e, 'product_ids' => $productIds]
-                    );
-                    throw $e;
-                }
+                $em->flush();
+                $this->logger->info(
+                    'Product fallback chunk processed successfully',
+                    ['updated_count' => $updatedProducts, 'chunk_size' => count($productIds)]
+                );
             }
-
-            // Detach processed products to free memory without clearing the entire EM
-            foreach ($products as $product) {
-                $em->detach($product);
-            }
-
-            return $updatedProducts;
+        } catch (\Exception $e) {
+            $this->logger->error(
+                'Failed to flush product fallback changes',
+                ['exception' => $e, 'product_ids' => $productIds]
+            );
+            throw $e;
         } finally {
+            if ($em !== null) {
+                $em->clear();
+            }
             $this->listenerManager->enableListeners($this->listeners);
         }
+
+        return $updatedProducts;
     }
 
     public function getPendingProductCount(): int
@@ -122,9 +120,9 @@ class ProductFallbackUpdateManager
     private function getProducts(array $ids): array
     {
         $repo = $this->getEntityManager()->getRepository(Product::class);
+        $qb = $repo->createQueryBuilder('p');
 
-        return $repo->createQueryBuilder('p')
-            ->where('p.id IN (:ids)')
+        return $qb->where($qb->expr()->in('p.id', ':ids'))
             ->setParameter('ids', $ids)
             ->getQuery()
             ->getResult();
