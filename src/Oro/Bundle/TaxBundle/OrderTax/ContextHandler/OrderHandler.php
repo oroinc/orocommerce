@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\OrderTax\ContextHandler;
 
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TaxBundle\Event\ContextEvent;
 use Oro\Bundle\TaxBundle\Model\Taxable;
@@ -19,7 +20,8 @@ class OrderHandler
     protected array $taxCodes = [];
 
     public function __construct(
-        private TaxCodeProvider $taxCodeProvider
+        private TaxCodeProvider $taxCodeProvider,
+        private CustomerUserRelationsProvider $customerUserRelationsProvider
     ) {
     }
 
@@ -48,14 +50,14 @@ class OrderHandler
             return $cachedTaxCode;
         }
 
-        $taxCode = null;
+        $customer = $order->getCustomer();
+        $taxCode = $customer ? $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT, $customer) : null;
 
-        if ($order->getCustomer()) {
-            $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT, $order->getCustomer());
-        }
-
-        if (!$taxCode && $order->getCustomer() && $order->getCustomer()->getGroup()) {
-            $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT_GROUP, $order->getCustomer()->getGroup());
+        if (!$taxCode) {
+            $group = $customer ? $customer->getGroup() : $this->customerUserRelationsProvider->getCustomerGroup();
+            if ($group) {
+                $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT_GROUP, $group);
+            }
         }
 
         $this->taxCodes[$cacheKey] = $taxCode;
