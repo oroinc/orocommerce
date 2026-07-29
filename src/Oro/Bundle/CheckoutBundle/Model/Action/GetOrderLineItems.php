@@ -10,6 +10,7 @@ use Oro\Component\ConfigExpression\ContextAccessor;
 
 /**
  * Gets OrderLineItem entities from Checkout and sets to the specified attribute.
+ * When reasons_attribute is specified, the reasons the line items were skipped from the order are set to it.
  *
  * Usage:
  *  - '@get_order_line_items':
@@ -17,6 +18,7 @@ use Oro\Component\ConfigExpression\ContextAccessor;
  *    checkout: $.checkout
  *    disable_price_filter: true
  *    config_visibility_path: $.visibilityPath
+ *    reasons_attribute: $.orderLineItemsSkippedReasons
  */
 class GetOrderLineItems extends AbstractAction
 {
@@ -75,8 +77,16 @@ class GetOrderLineItems extends AbstractAction
             $arguments[] =  $this->contextAccessor->getValue($context, $configVisibilityPath);
         }
 
-        $lineItems = $this->checkoutLineItemsManager->getData(...$arguments);
+        $reasonsAttribute = $this->getOption($this->options, 'reasons_attribute', null);
+        if ($reasonsAttribute === null) {
+            $lineItems = $this->checkoutLineItemsManager->getData(...$arguments);
+            $this->contextAccessor->setValue($context, $this->options['attribute'], $lineItems);
 
-        $this->contextAccessor->setValue($context, $this->options['attribute'], $lineItems);
+            return;
+        }
+
+        $data = $this->checkoutLineItemsManager->getDataWithReason(...$arguments);
+        $this->contextAccessor->setValue($context, $this->options['attribute'], $data['items']);
+        $this->contextAccessor->setValue($context, $reasonsAttribute, $data['skippedReasons']);
     }
 }
