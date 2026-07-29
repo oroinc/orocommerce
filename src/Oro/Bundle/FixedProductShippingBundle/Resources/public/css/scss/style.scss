@@ -2,11 +2,12 @@
 
 .fixed-product-shipping-cost,
 .shipping-cost-attribute-view {
-    margin-top: 25px;
+    margin-top: 16px;
 }
 
 .shipping-cost-attribute-view {
-    max-width: 800px;
+    max-width: 50%;
+    border-bottom: none;
 
     &__title {
         font-weight: font-weight('semi-bold');
@@ -18,6 +19,7 @@
 .fixed-product-shipping-cost {
     .control-group {
         display: block;
+        border-bottom: none;
 
         .control-label.wrap label {
             display: block;
@@ -30,5 +32,11 @@
         .controls {
             margin-left: 0;
         }
+    }
+}
+
+.mobile-version {
+    .shipping-cost-attribute-view {
+        max-width: 100%;
     }
 }

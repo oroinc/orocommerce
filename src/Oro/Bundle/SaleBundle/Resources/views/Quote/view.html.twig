@@ -37,7 +37,8 @@
         {{ oro_widget_render({
             'widgetType': 'block',
             'title': 'oro.sale.quote.widgets.quote_information'|trans,
-            'url': path('oro_sale_quote_info', {'id': entity.id})
+            'url': path('oro_sale_quote_info', {'id': entity.id}),
+            'widgetContainerAttributes': {'class': 'responsive-with-extra-block no-border-for-last-item--medium'}
         }) }}
     {% endset %}
 
@@ -143,6 +144,9 @@
 
     {% set dataBlocks = [{
         'title': 'oro.order.sections.general'|trans,
+        'content_attr': {
+            'class': 'row-fluid-divider'
+        },
         'subblocks': [{'data' : [quoteInformationWidget]}]
     }] %}
 

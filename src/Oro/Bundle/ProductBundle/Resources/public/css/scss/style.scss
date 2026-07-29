@@ -96,7 +96,9 @@
     }
 
     .grid-scrollable-container {
-        margin-bottom: $content-padding-small;
+        .table {
+            margin-bottom: $content-padding-small;
+        }
     }
 }
 
@@ -145,7 +147,7 @@
     overflow-x: auto;
 
     &.view table {
-        width: 60%;
+        width: 100%;
     }
 
     + .add-list-item {

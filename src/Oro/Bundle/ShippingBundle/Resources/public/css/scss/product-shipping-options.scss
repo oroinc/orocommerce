@@ -21,7 +21,7 @@
 
     .grid {
         margin-bottom: $content-padding-small;
-        display: block;
+        width: 100%;
         overflow-x: auto;
         overflow-y: hidden;
 
@@ -67,6 +67,14 @@
 
         .validation-failed {
             padding-left: $content-padding-medium;
+        }
+    }
+}
+
+.responsive-small {
+    .product-shipping-options-collection {
+        .grid {
+            display: block;
         }
     }
 }

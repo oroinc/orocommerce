@@ -50,12 +50,12 @@ table.shipping-options-result-grid {
 .oro-shipping-rule-collection.oro-item-collection {
     > div {
         position: relative;
-        padding: 15px 15px 0 0;
-        margin: 0 60% 20px 0;
-        border: 1px solid $primary-800;
+        padding: $content-padding;
+        margin-bottom: 20px;
         background: $primary-900;
         border-radius: 4px;
         min-width: 500px;
+        max-width: 800px;
     }
 
     div[data-validation-optional-group=''] {
@@ -98,6 +98,7 @@ table.shipping-options-result-grid {
 
 .oro-shipping-rule-add-method-line {
     display: flex;
+    align-items: center;
 
     &:not(:last-of-type) {
         margin-bottom: $content-padding-medium;

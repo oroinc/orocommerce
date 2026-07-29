@@ -13,6 +13,10 @@
         }
     }
 
+    &-label {
+        margin-left: $content-padding-small;
+    }
+
     input {
         &.precision {
             width: 40px;

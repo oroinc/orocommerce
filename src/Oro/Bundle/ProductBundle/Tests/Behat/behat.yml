@@ -455,42 +455,42 @@ oro_behat_extension:
     Multiple Files Attribute Label:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple files attribute")]]'
+        locator: '//div[contains(@class, "responsive-cell") or contains(@class, "responsive-block")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple files attribute")]]'
 
     Multiple Files DAM Attribute Label:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple files dam attribute")]]'
+        locator: '//div[contains(@class, "responsive-cell") or contains(@class, "responsive-block")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple files dam attribute")]]'
 
     Multiple Images Attribute Label:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple images attribute")]]'
+        locator: '//div[contains(@class, "responsive-cell") or contains(@class, "responsive-block")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple images attribute")]]'
 
     Multiple Images DAM Attribute Label:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple images dam attribute")]]'
+        locator: '//div[contains(@class, "responsive-cell") or contains(@class, "responsive-block")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple images dam attribute")]]'
 
     Multiple Files Field Label:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple files field")]]'
+        locator: '//div[contains(@class, "responsive-cell") or contains(@class, "responsive-block")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple files field")]]'
 
     Multiple Files DAM Field Label:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple files dam field")]]'
+        locator: '//div[contains(@class, "responsive-cell") or contains(@class, "responsive-block")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple files dam field")]]'
 
     Multiple Images Field Label:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple images field")]]'
+        locator: '//div[contains(@class, "responsive-cell") or contains(@class, "responsive-block")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple images field")]]'
 
     Multiple Images DAM Field Label:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple images dam field")]]'
+        locator: '//div[contains(@class, "responsive-cell") or contains(@class, "responsive-block")]/div[contains(@class, "dynamic-field") and .//div[contains(., "Multiple images dam field")]]'
 
     Multiple Files Attribute Grid:
       selector:
@@ -1692,12 +1692,12 @@ oro_behat_extension:
     Drawing Backoffice Field:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "attribute-item") and .//label[contains(., "Drawing")]]'
+        locator: '//div[contains(@class, "responsive-block")]/div[contains(@class, "attribute-item") and .//label[contains(., "Drawing")]]'
 
     Document Backoffice Field:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "attribute-item") and .//label[contains(., "Document")]]'
+        locator: '//div[contains(@class, "responsive-block")]/div[contains(@class, "attribute-item") and .//label[contains(., "Document")]]'
 
     MultipleFiles Field:
       selector:
@@ -1707,7 +1707,7 @@ oro_behat_extension:
     MultipleFiles Backoffice Field:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "dynamic-field") and .//div[contains(., "MultipleFiles")]]'
+        locator: '//div[contains(@class, "responsive-block")]/div[contains(@class, "dynamic-field") and .//div[contains(., "MultipleFiles")]]'
 
     MultipleImages Field:
       selector:
@@ -1717,7 +1717,7 @@ oro_behat_extension:
     MultipleImages Backoffice Field:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "responsive-cell")]/div[contains(@class, "dynamic-field") and .//div[contains(., "MultipleImages")]]'
+        locator: '//div[contains(@class, "responsive-block")]/div[contains(@class, "dynamic-field") and .//div[contains(., "MultipleImages")]]'
 
     Drawing Storefront Field:
       selector:

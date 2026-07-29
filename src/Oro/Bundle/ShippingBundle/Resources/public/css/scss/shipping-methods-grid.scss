@@ -73,13 +73,14 @@
     }
 
     &__body {
+        padding-left: $content-padding-medium;
         padding-bottom: $content-padding-medium;
 
         .selector.input-widget-select {
             margin: 0;
         }
 
-        @include selector-width(294px);
+        @include selector-width(300px);
     }
 
     &.shipping-method-config-grouped &__body {

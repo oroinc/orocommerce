@@ -344,7 +344,7 @@
                 }) }}>
                     {% set counterRequestMethod = tabCounterRequestMethod|default('POST') %}
                     <div class="oro-tabs__head">
-                        <ul class="nav nav-tabs" role="tablist">
+                        <ul class="nav nav-tabs nav-tabs--with-action" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <a id="{{ 'filtered_products' ~ uniqueId ~ scope ~ '-tab' }}"
                                    href="#{{ 'filtered_products' ~ uniqueId ~ scope }}"
@@ -393,7 +393,7 @@
                             <li class="nav-item pull-right">
                                 {# --Reset button start-- #}
                                 <div class="btn-group">
-                                    <a class="btn filter-reset">
+                                    <a class="btn filter-reset" href="#">
                                         {{ 'oro.product.content_variant.ui.reset'|trans }}
                                     </a>
                                 </div>

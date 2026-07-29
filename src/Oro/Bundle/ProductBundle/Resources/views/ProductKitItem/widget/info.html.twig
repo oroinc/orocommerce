@@ -16,7 +16,7 @@
 
                         {{ entityConfig.renderDynamicFields(entity) }}
 
-                        <h5>{{ 'oro.product.productkititem.kit_item_products.label'|trans }}</h5>
+                        <h5 class="product-kit-view__subtitle">{{ 'oro.product.productkititem.kit_item_products.label'|trans }}</h5>
                         {{ dataGrid.renderGrid(
                             'kit-item-products-view-grid',
                             {'kitItemId': entity.id},

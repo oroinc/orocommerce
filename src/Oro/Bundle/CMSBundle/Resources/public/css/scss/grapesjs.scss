@@ -518,7 +518,7 @@
 
 // Additional styles for fullscreen mode
 .page-content-editor {
-    margin: -$grapesjs-content-editor-offset;
+    margin: 0 -#{$grapesjs-content-editor-offset};
 
     .widget-content &,
     &.editor-unavailable {
