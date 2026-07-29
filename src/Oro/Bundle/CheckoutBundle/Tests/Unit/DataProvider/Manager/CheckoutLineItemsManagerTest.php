@@ -411,4 +411,133 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider getLineItemFilterReasonDataProvider
+     */
+    public function testGetLineItemFilterReason(
+        array $lineItemData,
+        array $supportedStatuses,
+        string $expectedReason
+    ): void {
+        $lineItem = $this->checkoutLineItemsConverter->convert([$lineItemData])->first();
+        $manager = $this->getCheckoutLineItemsManager([]);
+
+        self::assertSame(
+            $expectedReason,
+            $manager->getLineItemFilterReason($lineItem, 'USD', $supportedStatuses)
+        );
+    }
+
+    public function getLineItemFilterReasonDataProvider(): array
+    {
+        $inStock = ['test_enum_code.in_stock' => true];
+
+        return [
+            'supported' => [
+                $this->getLineItemData(true, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                $inStock,
+                CheckoutLineItemsManager::REASON_SUPPORTED,
+            ],
+            'currency mismatch' => [
+                $this->getLineItemData(true, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
+                $inStock,
+                CheckoutLineItemsManager::REASON_CURRENCY_MISMATCH,
+            ],
+            'no price' => [
+                $this->getLineItemData(true, 42, 'PRO', 'in_stock', 10, 'litre', null),
+                $inStock,
+                CheckoutLineItemsManager::REASON_NO_PRICE,
+            ],
+            'unsupported status (out of stock)' => [
+                $this->getLineItemData(true, 42, 'PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
+                $inStock,
+                CheckoutLineItemsManager::REASON_UNSUPPORTED_STATUS,
+            ],
+            'unsupported status (no inventory status)' => [
+                $this->getLineItemData(true, 42, 'PRO', null, 10, 'litre', Price::create(10, 'USD')),
+                $inStock,
+                CheckoutLineItemsManager::REASON_UNSUPPORTED_STATUS,
+            ],
+            'product-less line item' => [
+                $this->getLineItemData(false, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                $inStock,
+                CheckoutLineItemsManager::REASON_SUPPORTED,
+            ],
+        ];
+    }
+
+    public function testGetLineItemFilterReasonForUnsupportedLineItemType(): void
+    {
+        $manager = $this->getCheckoutLineItemsManager([]);
+
+        self::assertSame(
+            CheckoutLineItemsManager::REASON_UNSUPPORTED_STATUS,
+            $manager->getLineItemFilterReason(new \stdClass(), 'USD', [])
+        );
+    }
+
+    /**
+     * @dataProvider getDataWithReasonDataProvider
+     */
+    public function testGetDataWithReason(
+        array $providerData,
+        bool $disablePriceFilter,
+        array $expectedItemsData,
+        array $expectedSkippedReasons
+    ): void {
+        $checkout = new Checkout();
+
+        $checkoutLineItemsManager = $this->getCheckoutLineItemsManager(
+            [$this->getProvider($checkout, $providerData)]
+        );
+
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_order.frontend_product_visibility')
+            ->willReturn(['test_enum_code.in_stock']);
+
+        $this->memoryCacheProvider->expects(self::never())
+            ->method('get');
+
+        $expectedItems = $this->checkoutLineItemsConverter->convert($expectedItemsData);
+        $result = $checkoutLineItemsManager->getDataWithReason($checkout, $disablePriceFilter);
+
+        $this->assertEquals($expectedItems, $result['items']);
+        $this->assertEqualsCanonicalizing($expectedSkippedReasons, $result['skippedReasons']);
+    }
+
+    public function getDataWithReasonDataProvider(): array
+    {
+        $mixedFixture = $this->getDataDataProvider()[0];
+        $allSupportedData = [
+            $this->getLineItemData(true, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+            $this->getLineItemData(true, 42, 'PRO', 'in_stock', 5, 'litre', Price::create(5, 'USD')),
+        ];
+
+        return [
+            'mixed set of reasons' => [
+                'providerData' => $mixedFixture['providerData'],
+                'disablePriceFilter' => false,
+                'expectedItemsData' => $mixedFixture['expectedData'],
+                'expectedSkippedReasons' => [
+                    CheckoutLineItemsManager::REASON_NO_PRICE,
+                    CheckoutLineItemsManager::REASON_UNSUPPORTED_STATUS,
+                    CheckoutLineItemsManager::REASON_CURRENCY_MISMATCH,
+                ],
+            ],
+            'all supported' => [
+                'providerData' => $allSupportedData,
+                'disablePriceFilter' => false,
+                'expectedItemsData' => $allSupportedData,
+                'expectedSkippedReasons' => [],
+            ],
+            'disable price filter bypasses all reasons' => [
+                'providerData' => $mixedFixture['providerData'],
+                'disablePriceFilter' => true,
+                'expectedItemsData' => $mixedFixture['providerData'],
+                'expectedSkippedReasons' => [],
+            ],
+        ];
+    }
 }
