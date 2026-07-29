@@ -257,6 +257,8 @@ services:
         arguments:
             - '@oro_tax.provider.taxation_address_provider'
             - '@oro_tax.provider.tax_code'
+        calls:
+            - [setCustomerUserRelationsProvider, ['@oro_customer.provider.customer_user_relations_provider']]
         tags:
             - { name: kernel.event_listener, event: oro_tax.mapper.context, method: onContextEvent }
 
@@ -264,6 +266,8 @@ services:
         class: 'Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderHandler'
         arguments:
             - '@oro_tax.provider.tax_code'
+        calls:
+            - [setCustomerUserRelationsProvider, ['@oro_customer.provider.customer_user_relations_provider']]
         tags:
             - { name: kernel.event_listener, event: oro_tax.mapper.context, method: onContextEvent }
 

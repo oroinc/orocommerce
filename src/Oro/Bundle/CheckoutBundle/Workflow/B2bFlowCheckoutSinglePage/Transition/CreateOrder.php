@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutPaymentContextProvider;
+use Oro\Bundle\CheckoutBundle\Provider\GuestCustomerCreationConfigProvider;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CustomerUserActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderActionsInterface;
@@ -21,6 +22,8 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
  */
 class CreateOrder extends BasePlaceOrder
 {
+    private ?GuestCustomerCreationConfigProvider $guestCustomerCreationConfigProvider = null;
+
     public function __construct(
         ActionExecutor $actionExecutor,
         CheckoutPaymentContextProvider $paymentContextProvider,
@@ -39,6 +42,12 @@ class CreateOrder extends BasePlaceOrder
             $checkoutActions,
             $baseContinueTransition
         );
+    }
+
+    public function setGuestCustomerCreationConfigProvider(
+        GuestCustomerCreationConfigProvider $guestCustomerCreationConfigProvider
+    ): void {
+        $this->guestCustomerCreationConfigProvider = $guestCustomerCreationConfigProvider;
     }
 
     public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
@@ -124,12 +133,16 @@ class CreateOrder extends BasePlaceOrder
             ['acceptedConsents' => $data->offsetGet('customerConsents')]
         );
 
+        $email = $data->offsetGet('email');
+        if ($this->guestCustomerCreationConfigProvider?->isDeferredToOrderCreation()) {
+            $this->customerUserActions->createGuestCustomerUser($checkout, $email, $checkout->getBillingAddress());
+        }
+
         $this->updateShippingPrice->execute($checkout);
 
         $order = $this->orderActions->placeOrder($checkout);
         $data->offsetSet('order', $order);
 
-        $email = $data->offsetGet('email');
         $this->customerUserActions->updateGuestCustomerUser($checkout, $email, $checkout->getBillingAddress());
 
         $validatePayment = $data->offsetGet('payment_validate');

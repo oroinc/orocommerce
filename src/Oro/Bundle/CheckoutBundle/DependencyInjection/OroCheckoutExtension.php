@@ -28,6 +28,7 @@ class OroCheckoutExtension extends Extension
         $loader->load('controllers.yml');
         $loader->load('mq_topics.yml');
         $loader->load('multiple_shipping.yml');
+        $loader->load('commands.yml');
 
         if ('test' === $container->getParameter('kernel.environment')) {
             $loader->load('services_test.yml');

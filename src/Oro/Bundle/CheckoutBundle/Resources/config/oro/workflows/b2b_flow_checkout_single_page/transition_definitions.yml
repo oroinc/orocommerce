@@ -4,10 +4,15 @@ workflows:
             __start___definition:
                 # Will be merged with __start___definition from base_transition_definitions.yml.
                 actions:
-                    - '@run_action_group':
-                        action_group: b2b_flow_checkout_create_guest_customer_user
-                        parameters_mapping:
-                            checkout: $checkout
+                    - '@tree':
+                        conditions:
+                            '@not':
+                                - '@is_guest_customer_creation_deferred_to_order': ~
+                        actions:
+                            - '@run_action_group':
+                                action_group: b2b_flow_checkout_create_guest_customer_user
+                                parameters_mapping:
+                                    checkout: $checkout
                     - '@assign_value': [$billing_address_has_shipping, $ship_to_billing_address]
                     - '@tree':
                         conditions:
@@ -267,6 +272,17 @@ workflows:
                         action_group: oro_update_shipping_price
                         parameters_mapping:
                             checkout: $checkout
+
+                    - '@tree':
+                        conditions:
+                            '@is_guest_customer_creation_deferred_to_order': ~
+                        actions:
+                            - '@run_action_group':
+                                action_group: b2b_flow_checkout_create_guest_customer_user
+                                parameters_mapping:
+                                    checkout: $checkout
+                                    email: $email
+                                    billing_address: $checkout.billingAddress
 
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_place_order

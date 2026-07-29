@@ -1,0 +1,67 @@
+Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+    guest_group_tax_code:
+        owner: '@admin'
+        organization: '@organization'
+        code: 'GUEST_GROUP_TAX_CODE'
+
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    guest_product_tax_code:
+        organization: '@organization'
+        code: 'GUEST_PRODUCT_TAX_CODE'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    guest_tax_product_precision:
+        unit: '@item'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    guest_tax_product_name:
+        string: 'Guest Tax Test Product'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    guest_tax_product:
+        sku: 'GUESTTAX1'
+        type: 'simple'
+        primaryUnitPrecision: '@guest_tax_product_precision'
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@business_unit'
+        status: 'enabled'
+        taxCode: '@guest_product_tax_code'
+        __calls:
+            - addName: ['@guest_tax_product_name']
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    guest_tax_product_price_relation:
+        product: '@guest_tax_product'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    guest_tax_product_price:
+        pricelist: '@defaultPriceList'
+        product: '@guest_tax_product'
+        productSku: 'GUESTTAX1'
+        quantity: 1
+        unit: '@item'
+        value: 10
+        currency: 'USD'
+
+Oro\Bundle\TaxBundle\Entity\Tax:
+    tax_california_sales:
+        code: 'CALIFORNIA_SALES_TAX'
+        rate: 0.1
+
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+    tax_jurisdiction_california:
+        code: 'TAX_JURISDICTION_CALIFORNIA'
+        country: '@united_states'
+        region: '@california'
+
+Oro\Bundle\TaxBundle\Entity\TaxRule:
+    tax_rule_guest_group:
+        productTaxCode: '@guest_product_tax_code'
+        customerTaxCode: '@guest_group_tax_code'
+        tax: '@tax_california_sales'
+        taxJurisdiction: '@tax_jurisdiction_california'
+        organization: '@organization'

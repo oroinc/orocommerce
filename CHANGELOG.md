@@ -92,6 +92,10 @@ Previously known as GOD Object
 
 ### Added
 
+#### CheckoutBundle
+* Added `oro_checkout.defer_guest_customer_creation_to_order` configuration option to defer guest Customer/CustomerUser creation in Single Page Checkout to order placement instead of checkout start (default `false`).
+* Added the `oro:cron:checkout:clear-expired-guest-checkouts` console command to clear expired, not completed guest checkouts and their sources.
+
 #### WebsiteSearchSuggestionBundle
 * Added the ability to show users in the search autocomplete field on the storefront suggestions
   * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Suggestion` entity class;
