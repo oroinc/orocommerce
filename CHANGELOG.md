@@ -28,6 +28,10 @@ The current file describes significant changes in the code that may affect the u
 
 ### Added
 
+#### CheckoutBundle
+* Added `oro_checkout.defer_guest_customer_creation_to_order` configuration option to defer guest Customer/CustomerUser creation in Single Page Checkout to order placement instead of checkout start (default `false`).
+* Added the `oro:cron:checkout:clear-expired-guest-checkouts` console command to clear expired, not completed guest checkouts and their sources.
+
 #### CMSBundle
 * Extracted link component into a modular architecture (`types/link/`) with separate files for model, view, variants, sources, and commands. The link, link-block, link-button, and file types are now consolidated into a single link component with pluggable variant and source registries.
 * Added `createRegistry` utility for managing link styles, sources, and trait renderers as plain-object registries.
