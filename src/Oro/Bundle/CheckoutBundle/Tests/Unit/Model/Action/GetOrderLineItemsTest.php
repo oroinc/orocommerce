@@ -135,4 +135,38 @@ class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
+
+    public function testExecuteWithReasonsAttribute(): void
+    {
+        $checkout = new Checkout();
+        $context = new ActionData(['checkout' => $checkout]);
+
+        $options = [
+            'checkout' => new PropertyPath('checkout'),
+            'attribute' => 'lineItems',
+            'disable_price_filter' => false,
+            'reasons_attribute' => new PropertyPath('orderLineItemsSkippedReasons'),
+        ];
+        $this->action->initialize($options);
+
+        $orderLineItems = new ArrayCollection([new OrderLineItem()]);
+        $this->checkoutLineItemsManager->expects($this->once())
+            ->method('getDataWithReason')
+            ->with($checkout, false)
+            ->willReturn([
+                'items' => $orderLineItems,
+                'skippedReasons' => [CheckoutLineItemsManager::REASON_CURRENCY_MISMATCH],
+            ]);
+
+        $this->checkoutLineItemsManager->expects($this->never())
+            ->method('getData');
+
+        $this->action->execute($context);
+
+        $this->assertEquals($orderLineItems, $context['lineItems']);
+        $this->assertEquals(
+            [CheckoutLineItemsManager::REASON_CURRENCY_MISMATCH],
+            $context['orderLineItemsSkippedReasons']
+        );
+    }
 }

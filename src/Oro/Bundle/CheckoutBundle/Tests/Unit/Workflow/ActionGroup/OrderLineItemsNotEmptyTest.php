@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\ActionGroup;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderLineItemsNotEmpty;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -37,9 +38,10 @@ class OrderLineItemsNotEmptyTest extends TestCase
                         'checkout' => $checkout,
                         'disable_price_filter' => false,
                         'config_visibility_path' => 'oro_order.frontend_product_visibility',
-                        'attribute' => null
+                        'attribute' => null,
+                        'reasons_attribute' => null
                     ],
-                    ['attribute' => $lineItems]
+                    ['attribute' => $lineItems, 'reasons_attribute' => []]
                 ]
             ]);
 
@@ -50,6 +52,7 @@ class OrderLineItemsNotEmptyTest extends TestCase
             'orderLineItemsNotEmpty' => true,
             'orderLineItemsForRfp' => [],
             'orderLineItemsNotEmptyForRfp' => true,
+            'orderLineItemsSkippedReasons' => [],
         ], $result);
     }
 
@@ -68,9 +71,13 @@ class OrderLineItemsNotEmptyTest extends TestCase
                         'checkout' => $checkout,
                         'disable_price_filter' => false,
                         'config_visibility_path' => 'oro_order.frontend_product_visibility',
-                        'attribute' => null
+                        'attribute' => null,
+                        'reasons_attribute' => null
                     ],
-                    ['attribute' => $lineItems]
+                    [
+                        'attribute' => $lineItems,
+                        'reasons_attribute' => [CheckoutLineItemsManager::REASON_CURRENCY_MISMATCH]
+                    ]
                 ],
                 [
                     'get_order_line_items',
@@ -78,9 +85,10 @@ class OrderLineItemsNotEmptyTest extends TestCase
                         'checkout' => $checkout,
                         'disable_price_filter' => false,
                         'config_visibility_path' => 'oro_rfp.frontend_product_visibility',
-                        'attribute' => null
+                        'attribute' => null,
+                        'reasons_attribute' => null
                     ],
-                    ['attribute' => $lineItemsRfp]
+                    ['attribute' => $lineItemsRfp, 'reasons_attribute' => []]
                 ]
             ]);
 
@@ -91,6 +99,7 @@ class OrderLineItemsNotEmptyTest extends TestCase
             'orderLineItemsNotEmpty' => false,
             'orderLineItemsForRfp' => $lineItemsRfp,
             'orderLineItemsNotEmptyForRfp' => true,
+            'orderLineItemsSkippedReasons' => [CheckoutLineItemsManager::REASON_CURRENCY_MISMATCH],
         ], $result);
     }
 
@@ -109,9 +118,10 @@ class OrderLineItemsNotEmptyTest extends TestCase
                         'checkout' => $checkout,
                         'disable_price_filter' => false,
                         'config_visibility_path' => 'oro_order.frontend_product_visibility',
-                        'attribute' => null
+                        'attribute' => null,
+                        'reasons_attribute' => null
                     ],
-                    ['attribute' => $lineItems]
+                    ['attribute' => $lineItems, 'reasons_attribute' => [CheckoutLineItemsManager::REASON_NO_PRICE]]
                 ],
                 [
                     'get_order_line_items',
@@ -119,9 +129,10 @@ class OrderLineItemsNotEmptyTest extends TestCase
                         'checkout' => $checkout,
                         'disable_price_filter' => false,
                         'config_visibility_path' => 'oro_rfp.frontend_product_visibility',
-                        'attribute' => null
+                        'attribute' => null,
+                        'reasons_attribute' => null
                     ],
-                    ['attribute' => $lineItemsRfp]
+                    ['attribute' => $lineItemsRfp, 'reasons_attribute' => []]
                 ]
             ]);
 
@@ -132,6 +143,57 @@ class OrderLineItemsNotEmptyTest extends TestCase
             'orderLineItemsNotEmpty' => false,
             'orderLineItemsForRfp' => $lineItemsRfp,
             'orderLineItemsNotEmptyForRfp' => false,
+            'orderLineItemsSkippedReasons' => [CheckoutLineItemsManager::REASON_NO_PRICE],
         ], $result);
+    }
+
+    public function testExecuteExposesSkippedReasonsFromOrderCallOnly()
+    {
+        $checkout = $this->createMock(Checkout::class);
+        $lineItems = new ArrayCollection([]);
+        $lineItemsRfp = new ArrayCollection([$this->createMock(OrderLineItem::class)]);
+
+        $this->actionExecutor->expects($this->exactly(2))
+            ->method('executeAction')
+            ->willReturnMap([
+                [
+                    'get_order_line_items',
+                    [
+                        'checkout' => $checkout,
+                        'disable_price_filter' => false,
+                        'config_visibility_path' => 'oro_order.frontend_product_visibility',
+                        'attribute' => null,
+                        'reasons_attribute' => null
+                    ],
+                    [
+                        'attribute' => $lineItems,
+                        'reasons_attribute' => [
+                            CheckoutLineItemsManager::REASON_CURRENCY_MISMATCH,
+                            CheckoutLineItemsManager::REASON_NO_PRICE,
+                        ],
+                    ]
+                ],
+                [
+                    'get_order_line_items',
+                    [
+                        'checkout' => $checkout,
+                        'disable_price_filter' => false,
+                        'config_visibility_path' => 'oro_rfp.frontend_product_visibility',
+                        'attribute' => null,
+                        'reasons_attribute' => null
+                    ],
+                    [
+                        'attribute' => $lineItemsRfp,
+                        'reasons_attribute' => [CheckoutLineItemsManager::REASON_UNSUPPORTED_STATUS],
+                    ]
+                ]
+            ]);
+
+        $result = $this->actionGroup->execute($checkout);
+
+        $this->assertEquals(
+            [CheckoutLineItemsManager::REASON_CURRENCY_MISMATCH, CheckoutLineItemsManager::REASON_NO_PRICE],
+            $result['orderLineItemsSkippedReasons']
+        );
     }
 }

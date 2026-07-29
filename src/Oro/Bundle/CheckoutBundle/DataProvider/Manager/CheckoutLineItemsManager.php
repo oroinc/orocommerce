@@ -19,6 +19,15 @@ use Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
  */
 class CheckoutLineItemsManager
 {
+    /** The line item is accepted for the order. */
+    public const string REASON_SUPPORTED = 'supported';
+    /** The line item was skipped because its price currency differs from the active checkout currency. */
+    public const string REASON_CURRENCY_MISMATCH = 'currency_mismatch';
+    /** The line item was skipped because it has no price. */
+    public const string REASON_NO_PRICE = 'no_price';
+    /** The line item was skipped because its product inventory status is not supported for checkout. */
+    public const string REASON_UNSUPPORTED_STATUS = 'unsupported_inventory_status';
+
     /** @var iterable|CheckoutDataProviderInterface[] */
     protected iterable $providers;
     protected CheckoutLineItemsConverter $checkoutLineItemsConverter;
@@ -79,13 +88,8 @@ class CheckoutLineItemsManager
                 $lineItems = $this->checkoutLineItemsConverter->convert($provider->getData($checkout));
                 if (!$disablePriceFilter) {
                     $lineItems = $lineItems->filter(
-                        function ($lineItem) use ($currency, $supportedStatuses) {
-                            return $this->isLineItemHasCurrencyAndSupportedStatus(
-                                $lineItem,
-                                $currency,
-                                $supportedStatuses
-                            );
-                        }
+                        fn ($lineItem) => $this->getLineItemFilterReason($lineItem, $currency, $supportedStatuses)
+                            === self::REASON_SUPPORTED
                     );
                 }
 
@@ -133,27 +137,69 @@ class CheckoutLineItemsManager
      * @param object $lineItem
      * @param string $currency
      * @param array  $supportedStatuses
-     * @return bool
+     * @return string
      */
-    protected function isLineItemHasCurrencyAndSupportedStatus($lineItem, $currency, array $supportedStatuses)
+    public function getLineItemFilterReason($lineItem, $currency, array $supportedStatuses): string
     {
         if (!$lineItem instanceof ProductHolderInterface || !$lineItem instanceof PriceAwareInterface) {
-            return false;
+            return self::REASON_UNSUPPORTED_STATUS;
         }
-        $allowedProduct = true;
+
         $product = $lineItem->getProduct();
         if ($product) {
-            $allowedProduct = false;
-            if ($product->getInventoryStatus()) {
-                $statusId = $product->getInventoryStatus()->getId();
-                $allowedProduct = !empty($supportedStatuses[$statusId]);
+            $inventoryStatus = $product->getInventoryStatus();
+            if (!$inventoryStatus || empty($supportedStatuses[$inventoryStatus->getId()])) {
+                return self::REASON_UNSUPPORTED_STATUS;
             }
         }
 
         $lineItemPrice = $lineItem->getPrice();
+        if (!$lineItemPrice) {
+            return self::REASON_NO_PRICE;
+        }
 
-        return $allowedProduct
-            && (bool)$lineItemPrice
-            && $lineItemPrice->getCurrency() === $currency;
+        if ($lineItemPrice->getCurrency() !== $currency) {
+            return self::REASON_CURRENCY_MISMATCH;
+        }
+
+        return self::REASON_SUPPORTED;
+    }
+
+    /**
+     * Same as getData(), but also reports the reasons (REASON_* constants) the line items were skipped from
+     * the order under the active currency.
+     *
+     * @return array{items: Collection, skippedReasons: string[]}
+     */
+    public function getDataWithReason(
+        CheckoutInterface $checkout,
+        bool $disablePriceFilter = false,
+        string $configVisibilityPath = 'oro_order.frontend_product_visibility'
+    ): array {
+        $currency = $this->userCurrencyManager->getUserCurrency();
+        $supportedStatuses = $this->getSupportedStatuses($configVisibilityPath);
+        $items = new ArrayCollection();
+        $skippedReasons = [];
+        foreach ($this->providers as $provider) {
+            if ($provider->isEntitySupported($checkout)) {
+                foreach ($this->checkoutLineItemsConverter->convert($provider->getData($checkout)) as $lineItem) {
+                    if ($disablePriceFilter) {
+                        $items->add($lineItem);
+                        continue;
+                    }
+
+                    $reason = $this->getLineItemFilterReason($lineItem, $currency, $supportedStatuses);
+                    if ($reason === self::REASON_SUPPORTED) {
+                        $items->add($lineItem);
+                    } else {
+                        $skippedReasons[$reason] = true;
+                    }
+                }
+
+                break;
+            }
+        }
+
+        return ['items' => $items, 'skippedReasons' => array_keys($skippedReasons)];
     }
 }
