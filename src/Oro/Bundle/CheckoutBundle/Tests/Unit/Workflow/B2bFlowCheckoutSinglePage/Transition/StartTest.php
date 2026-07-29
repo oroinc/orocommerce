@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\B2bFlowCheckoutSinglePag
 use Oro\Bundle\CheckoutBundle\Action\DefaultPaymentMethodSetterInterface;
 use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Provider\GuestCustomerCreationConfigProvider;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CustomerUserActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckoutSinglePage\Transition\Start;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
@@ -18,6 +19,7 @@ class StartTest extends TestCase
     private DefaultShippingMethodSetterInterface&MockObject $defaultShippingMethodSetter;
     private DefaultPaymentMethodSetterInterface&MockObject $defaultPaymentMethodSetter;
     private TransitionServiceInterface&MockObject $baseTransition;
+    private GuestCustomerCreationConfigProvider&MockObject $guestCustomerCreationConfigProvider;
     private Start $start;
 
     #[\Override]
@@ -27,6 +29,7 @@ class StartTest extends TestCase
         $this->defaultShippingMethodSetter = $this->createMock(DefaultShippingMethodSetterInterface::class);
         $this->defaultPaymentMethodSetter = $this->createMock(DefaultPaymentMethodSetterInterface::class);
         $this->baseTransition = $this->createMock(TransitionServiceInterface::class);
+        $this->guestCustomerCreationConfigProvider = $this->createMock(GuestCustomerCreationConfigProvider::class);
 
         $this->start = new Start(
             $this->customerUserActions,
@@ -36,7 +39,74 @@ class StartTest extends TestCase
         );
     }
 
-    public function testExecute(): void
+    public function testExecuteCreatesGuestCustomerUserWhenCreationIsNotDeferredToOrder(): void
+    {
+        $this->start->setGuestCustomerCreationConfigProvider($this->guestCustomerCreationConfigProvider);
+
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $checkout = $this->createMock(Checkout::class);
+
+        $workflowItem->expects($this->once())
+            ->method('getEntity')
+            ->willReturn($checkout);
+
+        $this->baseTransition->expects($this->once())
+            ->method('execute')
+            ->with($workflowItem);
+
+        $this->guestCustomerCreationConfigProvider->expects($this->once())
+            ->method('isDeferredToOrderCreation')
+            ->willReturn(false);
+
+        $this->customerUserActions->expects($this->once())
+            ->method('createGuestCustomerUser')
+            ->with($checkout);
+
+        $this->defaultShippingMethodSetter->expects($this->once())
+            ->method('setDefaultShippingMethod')
+            ->with($checkout);
+
+        $this->defaultPaymentMethodSetter->expects($this->once())
+            ->method('setDefaultPaymentMethod')
+            ->with($checkout);
+
+        $this->start->execute($workflowItem);
+    }
+
+    public function testExecuteSkipsGuestCustomerUserCreationWhenCreationIsDeferredToOrder(): void
+    {
+        $this->start->setGuestCustomerCreationConfigProvider($this->guestCustomerCreationConfigProvider);
+
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $checkout = $this->createMock(Checkout::class);
+
+        $workflowItem->expects($this->once())
+            ->method('getEntity')
+            ->willReturn($checkout);
+
+        $this->baseTransition->expects($this->once())
+            ->method('execute')
+            ->with($workflowItem);
+
+        $this->guestCustomerCreationConfigProvider->expects($this->once())
+            ->method('isDeferredToOrderCreation')
+            ->willReturn(true);
+
+        $this->customerUserActions->expects($this->never())
+            ->method('createGuestCustomerUser');
+
+        $this->defaultShippingMethodSetter->expects($this->once())
+            ->method('setDefaultShippingMethod')
+            ->with($checkout);
+
+        $this->defaultPaymentMethodSetter->expects($this->once())
+            ->method('setDefaultPaymentMethod')
+            ->with($checkout);
+
+        $this->start->execute($workflowItem);
+    }
+
+    public function testExecuteCreatesGuestCustomerUserWhenConfigProviderIsNotInjected(): void
     {
         $workflowItem = $this->createMock(WorkflowItem::class);
         $checkout = $this->createMock(Checkout::class);
@@ -49,15 +119,8 @@ class StartTest extends TestCase
             ->method('execute')
             ->with($workflowItem);
 
-        $this->customerUserActions->expects($this->never())
-            ->method('createGuestCustomerUser');
-
-        $this->defaultShippingMethodSetter->expects($this->once())
-            ->method('setDefaultShippingMethod')
-            ->with($checkout);
-
-        $this->defaultPaymentMethodSetter->expects($this->once())
-            ->method('setDefaultPaymentMethod')
+        $this->customerUserActions->expects($this->once())
+            ->method('createGuestCustomerUser')
             ->with($checkout);
 
         $this->start->execute($workflowItem);

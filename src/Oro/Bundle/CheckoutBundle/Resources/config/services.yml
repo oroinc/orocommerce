@@ -1246,6 +1246,11 @@ services:
             - '@oro_config.manager'
             - '@oro_currency.config.currency'
 
+    oro_checkout.provider.guest_customer_creation_config:
+        class: Oro\Bundle\CheckoutBundle\Provider\GuestCustomerCreationConfigProvider
+        arguments:
+            - '@oro_config.manager'
+
     oro_checkout.checkout.sign_in_target_path_provider:
         class: Oro\Bundle\CheckoutBundle\Provider\SignInTargetPathProvider
         decorates: oro_customer.provider.sign_in.target_path

@@ -27,6 +27,10 @@ The current file describes significant changes in the code that may affect the u
 
 ### Added
 
+#### CheckoutBundle
+* Added `oro_checkout.defer_guest_customer_creation_to_order` configuration option to defer guest Customer/CustomerUser creation in Single Page Checkout to order placement instead of checkout start (default `false`).
+* Added the `oro:cron:checkout:clear-expired-guest-checkouts` console command to clear expired, not completed guest checkouts and their sources.
+
 #### OrderBundle
 * Added **Order Edit Draft Session** — the order edit page now can use a datagrid-based editing experience for line items instead of the previous embedded form collection. When editing an order, a draft copy is created in a separate draft session; changes are synced back to the original order on save. The feature is turned off in System Configuration by default.
   * `\Oro\Bundle\OrderBundle\Entity\Order` now implements `\Oro\Component\DraftSession\Entity\EntityDraftAwareInterface`; new fields: `draftSessionUuid` (GUID), `draftSource` (self-referencing ManyToOne), `drafts` (OneToMany).
