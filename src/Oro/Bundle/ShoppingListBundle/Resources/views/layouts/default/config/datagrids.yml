@@ -345,6 +345,9 @@ datagrids:
                 frontend_type: row_array
             units:
                 frontend_type: row_array
+            # Generic slot for extra line item details rendered as {label, value} pairs in the item cell.
+            lineItemDetails:
+                frontend_type: row_array
 
     frontend-customer-user-shopping-list-assign-grid:
         acl_resource: oro_shopping_list_frontend_assign
@@ -878,6 +881,9 @@ datagrids:
             action_configuration:
                 frontend_type: row_array
             validationMetadata:
+                frontend_type: row_array
+            # Generic slot for extra line item details rendered as {label, value} pairs in the item cell.
+            lineItemDetails:
                 frontend_type: row_array
         actions:
             delete:

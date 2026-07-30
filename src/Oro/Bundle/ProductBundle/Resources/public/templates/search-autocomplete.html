@@ -116,6 +116,15 @@ const inventoryStatusToLabelClass = function(inventoryStatus) {
                                 </div>
                                 <div class="search-autocomplete-product__status status-label <%- inventoryStatusToLabelClass(product.inventory_status) %>"><%- decodeHTMLEntities(product.inventory_status_label) %></div>
                             </div>
+                            <% if (product.details) { %>
+                                <% _.each(product.details, function(detail, detailKey) { %>
+                                <% let detailValue = _.isArray(detail.value) ? detail.value.join(', ') : detail.value; %>
+                                <div class="search-autocomplete-product__detail" data-detail="<%- detailKey %>">
+                                    <span class="search-autocomplete-product__detail-label"><%- detail.label %>:</span>
+                                    <span class="search-autocomplete-product__detail-value"><% _.each(highlightWords(inputString, detailValue), function (part) { %><% if (part.startsWith('<u class="search-autocomplete__highlight">')) { %><u class="search-autocomplete__highlight"><%- getValueFromTag(part) %></u><%} else {%><%- part %><%}%><% }); %></span>
+                                </div>
+                                <% }) %>
+                            <% } %>
                         </div>
                     </a>
                 </li>

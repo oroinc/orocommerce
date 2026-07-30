@@ -363,6 +363,9 @@ datagrids:
                 frontend_type: row_array
             units:
                 frontend_type: row_array
+            # Generic slot for extra line item details rendered as {label, value} pairs in the item cell.
+            lineItemDetails:
+                frontend_type: row_array
 
     frontend-single-page-checkout-line-items-grid:
         extends: frontend-checkout-line-items-grid

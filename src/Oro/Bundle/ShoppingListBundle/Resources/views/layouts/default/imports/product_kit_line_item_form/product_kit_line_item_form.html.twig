@@ -98,6 +98,7 @@
                                         {% endif %}
                                     </h3>
                                 </div>
+                                {{ block('_oro_product_kit_line_item_kitItemLineItems_entry_product_item_cell_details_name') }}
                                 {%- if product -%}
                                 <div class="product-kit-items-grid__line-item-sku">
                                     {{- product.skuUppercase -}}
@@ -173,3 +174,5 @@
     {% endif %}
     {{ block('radio_widget') }}
 {% endblock %}
+
+{% block _oro_product_kit_line_item_kitItemLineItems_entry_product_item_cell_details_name %}{% endblock %}

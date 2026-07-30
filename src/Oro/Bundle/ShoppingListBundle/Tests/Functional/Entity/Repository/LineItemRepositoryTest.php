@@ -469,6 +469,34 @@ class LineItemRepositoryTest extends WebTestCase
         self::assertCount(4, $lineItems);
     }
 
+    public function testGetItemsWithProductByShoppingListWithLimitRespectsLimitAndOrder(): void
+    {
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+        $repository = $this->getLineItemRepository();
+
+        $allItems = $repository->getItemsWithProductByShoppingListWithLimit($shoppingList, 1000);
+        self::assertGreaterThan(1, \count($allItems));
+
+        $limitedItems = $repository->getItemsWithProductByShoppingListWithLimit($shoppingList, 1);
+
+        self::assertCount(1, $limitedItems);
+        // Ordered by id ascending, so the single returned item must be the first of the full list.
+        self::assertSame($allItems[0]->getId(), $limitedItems[0]->getId());
+    }
+
+    public function testGetItemsWithProductByShoppingListWithLimitExcludesSavedForLaterItems(): void
+    {
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
+        $lineItem = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_2);
+        $savedForLaterLineItem = $this->getReference(LoadShoppingListLineItems::SAVED_FOR_LATER_LINE_ITEM_1);
+
+        $lineItems = $this->getLineItemRepository()
+            ->getItemsWithProductByShoppingListWithLimit($shoppingList, 1000);
+
+        self::assertContains($lineItem, $lineItems);
+        self::assertNotContains($savedForLaterLineItem, $lineItems);
+    }
+
     public function testDeleteNotAllowedLineItemsFromShoppingList(): void
     {
         /** @var ShoppingList $shoppingList */
