@@ -121,7 +121,7 @@ included:
             label: 'Subtotal Tax'
             amount: '0.0000'
             signedAmount: '0.0000'
-            currency: ''
+            currency: 'USD'
             visible: false
             data:
                 total:

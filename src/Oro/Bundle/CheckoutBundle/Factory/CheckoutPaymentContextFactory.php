@@ -6,6 +6,7 @@ use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingOriginProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\OrderBundle\Converter\OrderPaymentLineItemConverterInterface;
 use Oro\Bundle\PaymentBundle\Context\Builder\Factory\PaymentContextBuilderFactoryInterface;
 use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
@@ -24,6 +25,7 @@ class CheckoutPaymentContextFactory
     private OrderPaymentLineItemConverterInterface $paymentLineItemConverter;
     private CheckoutShippingOriginProviderInterface $shippingOriginProvider;
     private PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory;
+    private ?CustomerUserRelationsProvider $customerUserRelationsProvider = null;
 
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
@@ -85,12 +87,19 @@ class CheckoutPaymentContextFactory
         PaymentContextBuilderInterface $paymentContextBuilder,
         Checkout $checkout
     ): void {
-        if (null !== $checkout->getCustomer()) {
-            $paymentContextBuilder->setCustomer($checkout->getCustomer());
+        $customer = $checkout->getCustomer();
+        $customerUser = $checkout->getCustomerUser();
+
+        if (null === $customer && null !== $this->customerUserRelationsProvider) {
+            $customer = $this->customerUserRelationsProvider->getCustomerIncludingEmpty($customerUser);
         }
 
-        if (null !== $checkout->getCustomerUser()) {
-            $paymentContextBuilder->setCustomerUser($checkout->getCustomerUser());
+        if (null !== $customer) {
+            $paymentContextBuilder->setCustomer($customer);
+        }
+
+        if (null !== $customerUser) {
+            $paymentContextBuilder->setCustomerUser($customerUser);
         }
 
         $website = $checkout->getWebsite();
@@ -106,5 +115,10 @@ class CheckoutPaymentContextFactory
         $paymentContextBuilder->setCurrency($checkout->getCurrency());
         $subtotal = $this->checkoutSubtotalProvider->getSubtotal($checkout);
         $paymentContextBuilder->setSubTotal(Price::create($subtotal->getAmount(), $subtotal->getCurrency()));
+    }
+
+    public function setCustomerUserRelationsProvider(CustomerUserRelationsProvider $customerUserRelationsProvider): void
+    {
+        $this->customerUserRelationsProvider = $customerUserRelationsProvider;
     }
 }

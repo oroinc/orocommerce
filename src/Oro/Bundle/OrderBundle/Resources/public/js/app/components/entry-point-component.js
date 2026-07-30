@@ -126,8 +126,8 @@ const EntryPointComponent = BaseComponent.extend({
                 return false;
             }
 
-            if ($target.is(this.options.skipTriggerSelector)) {
-                // Skips when complies with skip trigger selector.
+            if (!$target.is(this.options.triggerSelector) || $target.is(this.options.skipTriggerSelector)) {
+                // Skips when not complies with trigger selector, or complies with skip trigger selector.
                 return false;
             }
 

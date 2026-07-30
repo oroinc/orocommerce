@@ -493,6 +493,26 @@ class DebugProductPricesPriceListRequestHandlerTest extends \PHPUnit\Framework\T
                 'currencies' => ['USD', 'EUR'],
                 'expected' => []
             ],
+            'false string with single currency' => [
+                'paramValue' => 'false',
+                'currencies' => ['USD'],
+                'expected' => ['USD']
+            ],
+            'false string with multiple currencies' => [
+                'paramValue' => 'false',
+                'currencies' => ['USD', 'GBP', 'EUR'],
+                'expected' => ['EUR', 'GBP', 'USD']
+            ],
+            'true string' => [
+                'paramValue' => 'true',
+                'currencies' => ['USD', 'EUR'],
+                'expected' => ['EUR', 'USD']
+            ],
+            'boolean false' => [
+                'paramValue' => false,
+                'currencies' => ['USD'],
+                'expected' => ['USD']
+            ],
         ];
     }
 

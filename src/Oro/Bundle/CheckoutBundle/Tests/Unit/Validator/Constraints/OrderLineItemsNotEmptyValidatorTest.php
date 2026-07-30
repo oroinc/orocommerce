@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Validator\Constraints\OrderLineItemsNotEmpty;
 use Oro\Bundle\CheckoutBundle\Validator\Constraints\OrderLineItemsNotEmptyValidator;
@@ -106,5 +107,158 @@ class OrderLineItemsNotEmptyValidatorTest extends ConstraintValidatorTestCase
         $this->validator->validate($checkout, new OrderLineItemsNotEmpty());
 
         $this->assertNoViolation();
+    }
+
+    public function testValidateWithCurrencyMismatch(): void
+    {
+        $checkout = $this->createMock(Checkout::class);
+
+        $this->orderLineItemsNotEmpty->expects(self::once())
+            ->method('execute')
+            ->with(self::identicalTo($checkout))
+            ->willReturn([
+                'orderLineItemsNotEmpty' => [],
+                'orderLineItemsNotEmptyForRfp' => ['some_rfp_item'],
+                'orderLineItemsSkippedReasons' => [CheckoutLineItemsManager::REASON_CURRENCY_MISMATCH],
+            ]);
+
+        $constraint = new OrderLineItemsNotEmpty();
+        $this->validator->validate($checkout, $constraint);
+
+        $this->buildViolation($constraint->notEmptyDifferentCurrencyMessage)
+            ->setCode(OrderLineItemsNotEmpty::DIFFERENT_CURRENCY_CODE)
+            ->assertRaised();
+    }
+
+    public function testValidateWithUnsupportedStatusAndEmptyRfp(): void
+    {
+        $checkout = $this->createMock(Checkout::class);
+
+        $this->orderLineItemsNotEmpty->expects(self::once())
+            ->method('execute')
+            ->with(self::identicalTo($checkout))
+            ->willReturn([
+                'orderLineItemsNotEmpty' => [],
+                'orderLineItemsNotEmptyForRfp' => [],
+                'orderLineItemsSkippedReasons' => [CheckoutLineItemsManager::REASON_UNSUPPORTED_STATUS],
+            ]);
+
+        $constraint = new OrderLineItemsNotEmpty();
+        $this->validator->validate($checkout, $constraint);
+
+        $this->buildViolation($constraint->notEmptyForRfpMessage)
+            ->setCode(OrderLineItemsNotEmpty::EMPTY_FOR_RFP_CODE)
+            ->assertRaised();
+    }
+
+    public function testValidateWithUnsupportedStatusAndRfp(): void
+    {
+        $checkout = $this->createMock(Checkout::class);
+
+        $this->orderLineItemsNotEmpty->expects(self::once())
+            ->method('execute')
+            ->with(self::identicalTo($checkout))
+            ->willReturn([
+                'orderLineItemsNotEmpty' => [],
+                'orderLineItemsNotEmptyForRfp' => ['some_rfp_item'],
+                'orderLineItemsSkippedReasons' => [CheckoutLineItemsManager::REASON_UNSUPPORTED_STATUS],
+            ]);
+
+        $constraint = new OrderLineItemsNotEmpty();
+        $this->validator->validate($checkout, $constraint);
+
+        $this->buildViolation($constraint->notEmptyMessage)
+            ->setCode(OrderLineItemsNotEmpty::EMPTY_CODE)
+            ->assertRaised();
+    }
+
+    public function testValidateWithNoPriceAndEmptyRfp(): void
+    {
+        $checkout = $this->createMock(Checkout::class);
+
+        $this->orderLineItemsNotEmpty->expects(self::once())
+            ->method('execute')
+            ->with(self::identicalTo($checkout))
+            ->willReturn([
+                'orderLineItemsNotEmpty' => [],
+                'orderLineItemsNotEmptyForRfp' => [],
+                'orderLineItemsSkippedReasons' => [CheckoutLineItemsManager::REASON_NO_PRICE],
+            ]);
+
+        $constraint = new OrderLineItemsNotEmpty();
+        $this->validator->validate($checkout, $constraint);
+
+        $this->buildViolation($constraint->notEmptyForRfpMessage)
+            ->setCode(OrderLineItemsNotEmpty::EMPTY_FOR_RFP_CODE)
+            ->assertRaised();
+    }
+
+    public function testValidateWithNoPriceAndRfp(): void
+    {
+        $checkout = $this->createMock(Checkout::class);
+
+        $this->orderLineItemsNotEmpty->expects(self::once())
+            ->method('execute')
+            ->with(self::identicalTo($checkout))
+            ->willReturn([
+                'orderLineItemsNotEmpty' => [],
+                'orderLineItemsNotEmptyForRfp' => ['some_rfp_item'],
+                'orderLineItemsSkippedReasons' => [CheckoutLineItemsManager::REASON_NO_PRICE],
+            ]);
+
+        $constraint = new OrderLineItemsNotEmpty();
+        $this->validator->validate($checkout, $constraint);
+
+        $this->buildViolation($constraint->notEmptyMessage)
+            ->setCode(OrderLineItemsNotEmpty::EMPTY_CODE)
+            ->assertRaised();
+    }
+
+    public function testValidateWithMultipleReasons(): void
+    {
+        $checkout = $this->createMock(Checkout::class);
+
+        $this->orderLineItemsNotEmpty->expects(self::once())
+            ->method('execute')
+            ->with(self::identicalTo($checkout))
+            ->willReturn([
+                'orderLineItemsNotEmpty' => [],
+                'orderLineItemsNotEmptyForRfp' => [],
+                'orderLineItemsSkippedReasons' => [
+                    CheckoutLineItemsManager::REASON_CURRENCY_MISMATCH,
+                    CheckoutLineItemsManager::REASON_UNSUPPORTED_STATUS,
+                    CheckoutLineItemsManager::REASON_NO_PRICE,
+                ],
+            ]);
+
+        $constraint = new OrderLineItemsNotEmpty();
+        $this->validator->validate($checkout, $constraint);
+
+        $this->buildViolation($constraint->notEmptyDifferentCurrencyMessage)
+            ->setCode(OrderLineItemsNotEmpty::DIFFERENT_CURRENCY_CODE)
+            ->buildNextViolation($constraint->notEmptyForRfpMessage)
+            ->setCode(OrderLineItemsNotEmpty::EMPTY_FOR_RFP_CODE)
+            ->assertRaised();
+    }
+
+    public function testValidateWithCurrencyMismatchDoesNotFallBackToRfp(): void
+    {
+        $checkout = $this->createMock(Checkout::class);
+
+        $this->orderLineItemsNotEmpty->expects(self::once())
+            ->method('execute')
+            ->with(self::identicalTo($checkout))
+            ->willReturn([
+                'orderLineItemsNotEmpty' => [],
+                'orderLineItemsNotEmptyForRfp' => [],
+                'orderLineItemsSkippedReasons' => [CheckoutLineItemsManager::REASON_CURRENCY_MISMATCH],
+            ]);
+
+        $constraint = new OrderLineItemsNotEmpty();
+        $this->validator->validate($checkout, $constraint);
+
+        $this->buildViolation($constraint->notEmptyDifferentCurrencyMessage)
+            ->setCode(OrderLineItemsNotEmpty::DIFFERENT_CURRENCY_CODE)
+            ->assertRaised();
     }
 }

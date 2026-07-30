@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Resolver;
 
+use Brick\Math\BigDecimal;
 use Oro\Bundle\TaxBundle\Matcher\MatcherInterface;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Model\TaxCode;
@@ -26,7 +27,17 @@ abstract class AbstractItemResolver implements ResolverInterface
         $taxRules = $this->matcher->match($taxable->getTaxationAddress(), $this->getTaxCodes($taxable));
 
         $this->unitResolver->resolveUnitPrice($result, $taxRules, $taxable->getPrice());
-        $this->rowTotalResolver->resolveRowTotal($result, $taxRules, $taxable->getPrice(), $taxable->getQuantity());
+
+        // When the row total is a final allocated amount (e.g. order-level discount), use it directly
+        // to avoid rounding a synthetic per-unit price before multiplying it back by quantity.
+        if ($taxable->getRowTotal() !== null) {
+            $rowAmount = $taxable->getRowTotal();
+            $quantity = BigDecimal::one();
+        } else {
+            $rowAmount = $taxable->getPrice();
+            $quantity = $taxable->getQuantity();
+        }
+        $this->rowTotalResolver->resolveRowTotal($result, $taxRules, $rowAmount, $quantity);
 
         $result->lockResult();
     }

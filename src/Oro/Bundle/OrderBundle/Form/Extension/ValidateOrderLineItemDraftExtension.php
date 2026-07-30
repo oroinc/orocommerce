@@ -105,14 +105,14 @@ class ValidateOrderLineItemDraftExtension extends AbstractTypeExtension
             return ['order_line_item_draft_dry_submit'];
         }
 
-        $validationGroups = new GroupSequence([Constraint::DEFAULT_GROUP]);
+        $validationGroups = [Constraint::DEFAULT_GROUP];
         /** @var OrderLineItem $orderLineItem */
         $orderLineItem = $form->getData();
 
         if ($this->entityStateChecker->isNewEntity($orderLineItem)) {
-            $validationGroups->groups[] = 'order_line_item_create';
+            $validationGroups[] = 'order_line_item_create';
         } elseif ($this->entityStateChecker->isChangedEntity($orderLineItem, ['product', 'checksum'])) {
-            $validationGroups->groups[] = 'order_line_item_update';
+            $validationGroups[] = 'order_line_item_update';
         }
 
         return $validationGroups;

@@ -57,6 +57,8 @@ oro:
             ship_until:
                 type:
                     message: 'This value is not a valid date.'
+        external_id:
+            unique: 'Value for field "External ID" must be unique'
         orderproductkititemlineitem:
             line_item:
                 changed: 'Line Item of the Product Kit Item Line Item cannot be changed once set.'

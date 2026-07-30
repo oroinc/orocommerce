@@ -13,6 +13,9 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
  */
 class OrderLineItemsNotEmpty implements OrderLineItemsNotEmptyInterface
 {
+    private const string ORDER_VISIBILITY = 'oro_order.frontend_product_visibility';
+    private const string RFP_VISIBILITY = 'oro_rfp.frontend_product_visibility';
+
     public function __construct(
         private ActionExecutor $actionExecutor
     ) {
@@ -21,44 +24,34 @@ class OrderLineItemsNotEmpty implements OrderLineItemsNotEmptyInterface
     #[\Override]
     public function execute(Checkout $checkout): array
     {
-        $orderLineItemsNotEmpty = false;
-        $getLineItemsResult = $this->actionExecutor->executeAction(
-            'get_order_line_items',
-            [
-                'checkout' => $checkout,
-                'disable_price_filter' => false,
-                'config_visibility_path' => 'oro_order.frontend_product_visibility',
-                'attribute' => null
-            ]
-        );
-        $orderLineItems = $getLineItemsResult['attribute'];
+        $order = $this->getOrderLineItemsData($checkout, self::ORDER_VISIBILITY);
+        $orderLineItems = $order['attribute'];
+        $orderLineItemsNotEmpty = count($orderLineItems) > 0;
 
-        $orderLineItemsForRfp = [];
-        $orderLineItemsNotEmptyForRfp = false;
-        if (count($orderLineItems) > 0) {
-            $orderLineItemsNotEmpty = true;
-            $orderLineItemsNotEmptyForRfp = true;
-        }
-
-        if (!$orderLineItemsNotEmptyForRfp && !$orderLineItemsNotEmpty) {
-            $getLineItemsResult = $this->actionExecutor->executeAction(
-                'get_order_line_items',
-                [
-                    'checkout' => $checkout,
-                    'disable_price_filter' => false,
-                    'config_visibility_path' => 'oro_rfp.frontend_product_visibility',
-                    'attribute' => null
-                ]
-            );
-            $orderLineItemsForRfp = $getLineItemsResult['attribute'];
-            $orderLineItemsNotEmptyForRfp = count($orderLineItemsForRfp) > 0;
-        }
+        $orderLineItemsForRfp = $orderLineItemsNotEmpty
+            ? []
+            : $this->getOrderLineItemsData($checkout, self::RFP_VISIBILITY)['attribute'];
 
         return [
             'orderLineItems' => $orderLineItems,
             'orderLineItemsNotEmpty' => $orderLineItemsNotEmpty,
             'orderLineItemsForRfp' => $orderLineItemsForRfp,
-            'orderLineItemsNotEmptyForRfp' => $orderLineItemsNotEmptyForRfp,
+            'orderLineItemsNotEmptyForRfp' => $orderLineItemsNotEmpty || count($orderLineItemsForRfp) > 0,
+            'orderLineItemsSkippedReasons' => $order['reasons_attribute'],
         ];
+    }
+
+    private function getOrderLineItemsData(Checkout $checkout, string $configVisibilityPath): mixed
+    {
+        return $this->actionExecutor->executeAction(
+            'get_order_line_items',
+            [
+                'checkout' => $checkout,
+                'disable_price_filter' => false,
+                'config_visibility_path' => $configVisibilityPath,
+                'attribute' => null,
+                'reasons_attribute' => null,
+            ]
+        );
     }
 }

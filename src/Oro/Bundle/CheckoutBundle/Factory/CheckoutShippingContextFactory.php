@@ -6,6 +6,7 @@ use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingOriginProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
@@ -22,6 +23,7 @@ class CheckoutShippingContextFactory
     private OrderShippingLineItemConverterInterface $shippingLineItemConverter;
     private CheckoutShippingOriginProviderInterface $shippingOriginProvider;
     private ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory;
+    private ?CustomerUserRelationsProvider $customerUserRelationsProvider = null;
 
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
@@ -35,6 +37,11 @@ class CheckoutShippingContextFactory
         $this->shippingLineItemConverter = $shippingLineItemConverter;
         $this->shippingOriginProvider = $shippingOriginProvider;
         $this->shippingContextBuilderFactory = $shippingContextBuilderFactory;
+    }
+
+    public function setCustomerUserRelationsProvider(CustomerUserRelationsProvider $customerUserRelationsProvider): void
+    {
+        $this->customerUserRelationsProvider = $customerUserRelationsProvider;
     }
 
     public function create(Checkout $checkout): ShippingContextInterface
@@ -78,12 +85,19 @@ class CheckoutShippingContextFactory
         ShippingContextBuilderInterface $shippingContextBuilder,
         Checkout $checkout
     ): void {
-        if (null !== $checkout->getCustomer()) {
-            $shippingContextBuilder->setCustomer($checkout->getCustomer());
+        $customer = $checkout->getCustomer();
+        $customerUser = $checkout->getCustomerUser();
+
+        if (null === $customer && null !== $this->customerUserRelationsProvider) {
+            $customer = $this->customerUserRelationsProvider->getCustomerIncludingEmpty($customerUser);
         }
 
-        if (null !== $checkout->getCustomerUser()) {
-            $shippingContextBuilder->setCustomerUser($checkout->getCustomerUser());
+        if (null !== $customer) {
+            $shippingContextBuilder->setCustomer($customer);
+        }
+
+        if (null !== $customerUser) {
+            $shippingContextBuilder->setCustomerUser($customerUser);
         }
 
         if (null !== $checkout->getWebsite()) {

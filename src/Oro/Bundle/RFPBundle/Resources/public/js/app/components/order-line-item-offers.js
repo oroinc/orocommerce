@@ -1,7 +1,6 @@
 import BaseComponent from 'oroui/js/app/components/base/component';
 import _ from 'underscore';
 import $ from 'jquery';
-import mediator from 'oroui/js/mediator';
 
 const OrderLineItemOffers = BaseComponent.extend({
     /**
@@ -53,8 +52,6 @@ const OrderLineItemOffers = BaseComponent.extend({
             .on('change', this.onProductChange.bind(this));
 
         this.objects = {};
-        // Init order with RFQ items
-        mediator.trigger('entry-point:order:trigger-delayed');
     },
 
     /**
@@ -62,24 +59,14 @@ const OrderLineItemOffers = BaseComponent.extend({
      */
     onRadioClick: function(e) {
         const $target = $(e.target);
-        let hasChanges = false;
-
-        // Disable entry point listeners and load data after all values are set.
-        // Listeners will be enabled by the entry point after AJAX request processed.
-        mediator.trigger('entry-point:listeners:off');
         // Fill corresponding inputs with values from data attributes of offer if value differs.
         _.each(['quantity', 'price', 'unit'], (function(field) {
             const data = $target.data(field).toString();
             const $el = this.findObject(this.options[field + 'Selector']);
             if (data.length > 0 && $el.val() !== data) {
                 $el.val(data).trigger('change');
-                hasChanges = true;
             }
         }.bind(this)));
-
-        if (hasChanges) {
-            mediator.trigger('entry-point:order:trigger');
-        }
     },
 
     onProductChange: function() {

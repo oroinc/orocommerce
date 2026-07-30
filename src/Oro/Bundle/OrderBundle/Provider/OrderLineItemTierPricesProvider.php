@@ -73,8 +73,13 @@ class OrderLineItemTierPricesProvider
             ->getProductPricesForLineItems($order, [$orderLineItem]);
         $productPriceCollection = new ProductPriceCollectionDTO(array_merge(...$productPricesByProduct));
 
-        $productPricesByProduct[$orderLineItem->getProduct()->getId()] = $this->productLineItemProductPriceProvider
+        $orderLineItemProductPrices = $this->productLineItemProductPriceProvider
             ->getProductLineItemProductPrices($orderLineItem, $productPriceCollection, $currency);
+        if (!$orderLineItemProductPrices) {
+            return [];
+        }
+
+        $productPricesByProduct[$orderLineItem->getProduct()->getId()] = $orderLineItemProductPrices;
 
         return $productPricesByProduct;
     }

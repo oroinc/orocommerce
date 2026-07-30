@@ -14,9 +14,12 @@ class OrderLineItemsNotEmpty extends Constraint
 {
     public const string EMPTY_CODE = 'order_line_items_empty';
     public const string EMPTY_FOR_RFP_CODE = 'order_line_items_empty_for_rfp';
+    public const string DIFFERENT_CURRENCY_CODE = 'order_line_items_different_currency';
 
     public string $notEmptyMessage = 'oro.checkout.validator.order_line_items_not_empty.allow_rfp.message';
     public string $notEmptyForRfpMessage = 'oro.checkout.validator.order_line_items_not_empty.not_allow_rfp.message';
+    public string $notEmptyDifferentCurrencyMessage =
+        'oro.checkout.validator.order_line_items_not_empty.different_currency.message';
 
     #[\Override]
     public function getTargets(): array|string

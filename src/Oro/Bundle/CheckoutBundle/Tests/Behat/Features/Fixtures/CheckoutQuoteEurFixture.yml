@@ -1,0 +1,125 @@
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locValueSecond:
+        string: 'Second Product'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precisionSecond:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    productSecond:
+        sku: 'SKU124'
+        type: 'simple'
+        primaryUnitPrecision: '@precisionSecond'
+        __calls:
+            - addName: ['@locValueSecond']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit'
+        status: 'enabled'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelationSku124ToPriceListDefault:
+        product: '@productSecond'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productSecondPrice:
+        pricelist: '@defaultPriceList'
+        product: '@productSecond'
+        productSku: 'SKU124'
+        quantity: 5
+        unit: '@item'
+        value: 3
+        currency: 'USD'
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote2:
+        currency: 'EUR'
+        customer: '@customer'
+        customerUser: '@amanda'
+        owner: '@admin'
+        organization: '@organization'
+        poNumber: 'PO2'
+        qid: '2'
+        website: '@website1'
+        shippingMethod: '<(@flatRateIntegration->getType()."_".@flatRateIntegration->getId())>'
+        shippingMethodType: 'primary'
+    quote3:
+        currency: 'USD'
+        customer: '@customer'
+        customerUser: '@amanda'
+        owner: '@admin'
+        organization: '@organization'
+        poNumber: 'PO3'
+        qid: '3'
+        website: '@website1'
+        shippingMethod: '<(@flatRateIntegration->getType()."_".@flatRateIntegration->getId())>'
+        shippingMethodType: 'primary'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quoteProduct2:
+        __calls:
+            - addQuoteProductOffer: [ '@quoteProductOffer2' ]
+        product: '@product'
+        quote: '@quote2'
+    quoteProduct3a:
+        __calls:
+            - addQuoteProductOffer: [ '@quoteProductOffer3a' ]
+        product: '@product'
+        quote: '@quote3'
+    quoteProduct3b:
+        __calls:
+            - addQuoteProductOffer: [ '@quoteProductOffer3b' ]
+        product: '@productSecond'
+        quote: '@quote3'
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    quoteProductPrice2:
+        value: 5
+        currency: EUR
+    quoteProductPrice3a:
+        value: 5
+        currency: USD
+    quoteProductPrice3b:
+        value: 3
+        currency: EUR
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quoteProductOffer2:
+        quote_product: '@quoteProduct2'
+        product_unit: '@item'
+        price: '@quoteProductPrice2'
+        quantity: 5
+        allow_increments: true
+    quoteProductOffer3a:
+        quote_product: '@quoteProduct3a'
+        product_unit: '@item'
+        price: '@quoteProductPrice3a'
+        quantity: 5
+        allow_increments: true
+    quoteProductOffer3b:
+        quote_product: '@quoteProduct3b'
+        product_unit: '@item'
+        price: '@quoteProductPrice3b'
+        quantity: 3
+        allow_increments: true
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    quoteProductRequest2:
+        quote_product: '@quoteProduct2'
+        product_unit: '@item'
+        price: '@quoteProductPrice2'
+        quantity: 5
+    quoteProductRequest3a:
+        quote_product: '@quoteProduct3a'
+        product_unit: '@item'
+        price: '@quoteProductPrice3a'
+        quantity: 5
+    quoteProductRequest3b:
+        quote_product: '@quoteProduct3b'
+        product_unit: '@item'
+        price: '@quoteProductPrice3b'
+        quantity: 3

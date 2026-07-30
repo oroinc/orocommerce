@@ -10,6 +10,7 @@ use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingOriginProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\OrderBundle\Converter\OrderPaymentLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
@@ -29,19 +30,21 @@ class CheckoutPaymentContextFactoryTest extends TestCase
 {
     use PaymentLineItemTrait;
 
-    private CheckoutLineItemsManager|MockObject $checkoutLineItemsManager;
+    private CheckoutLineItemsManager&MockObject $checkoutLineItemsManager;
 
-    private SubtotalProviderInterface|MockObject $checkoutSubtotalProvider;
+    private SubtotalProviderInterface&MockObject $checkoutSubtotalProvider;
 
-    private TotalProcessorProvider|MockObject $totalProcessorProvider;
+    private TotalProcessorProvider&MockObject $totalProcessorProvider;
 
-    private OrderPaymentLineItemConverterInterface|MockObject $paymentLineItemConverter;
+    private OrderPaymentLineItemConverterInterface&MockObject $paymentLineItemConverter;
 
-    private PaymentContextBuilderInterface|MockObject $contextBuilder;
+    private PaymentContextBuilderInterface&MockObject $contextBuilder;
 
-    private PaymentContextBuilderFactoryInterface|MockObject $paymentContextBuilderFactory;
+    private PaymentContextBuilderFactoryInterface&MockObject $paymentContextBuilderFactory;
 
-    private CheckoutShippingOriginProviderInterface|MockObject $shippingOriginProvider;
+    private CheckoutShippingOriginProviderInterface&MockObject $shippingOriginProvider;
+
+    private CustomerUserRelationsProvider&MockObject $customerUserRelationsProvider;
 
     private CheckoutPaymentContextFactory $factory;
 
@@ -55,6 +58,7 @@ class CheckoutPaymentContextFactoryTest extends TestCase
         $this->paymentLineItemConverter = $this->createMock(OrderPaymentLineItemConverterInterface::class);
         $this->paymentContextBuilderFactory = $this->createMock(PaymentContextBuilderFactoryInterface::class);
         $this->shippingOriginProvider = $this->createMock(CheckoutShippingOriginProviderInterface::class);
+        $this->customerUserRelationsProvider = $this->createMock(CustomerUserRelationsProvider::class);
 
         $this->factory = new CheckoutPaymentContextFactory(
             $this->checkoutLineItemsManager,
@@ -64,6 +68,7 @@ class CheckoutPaymentContextFactoryTest extends TestCase
             $this->shippingOriginProvider,
             $this->paymentContextBuilderFactory
         );
+        $this->factory->setCustomerUserRelationsProvider($this->customerUserRelationsProvider);
     }
 
     /**
@@ -202,6 +207,18 @@ class CheckoutPaymentContextFactoryTest extends TestCase
             ->setCustomerUser($customerUser)
             ->setWebsite($website);
 
+        $expectedCustomer = $customer;
+        if (null === $customer) {
+            $expectedCustomer = new Customer();
+            $this->customerUserRelationsProvider->expects(self::once())
+                ->method('getCustomerIncludingEmpty')
+                ->with($customerUser)
+                ->willReturn($expectedCustomer);
+        } else {
+            $this->customerUserRelationsProvider->expects(self::never())
+                ->method('getCustomerIncludingEmpty');
+        }
+
         $this->contextBuilder->expects($address ? $this->once() : $this->never())
             ->method('setShippingAddress')
             ->with($address);
@@ -221,9 +238,9 @@ class CheckoutPaymentContextFactoryTest extends TestCase
         $this->contextBuilder->expects($website ? $this->once() : $this->never())
             ->method('setWebsite')
             ->with($website);
-        $this->contextBuilder->expects($customer ? $this->once() : $this->never())
+        $this->contextBuilder->expects(self::once())
             ->method('setCustomer')
-            ->with($customer);
+            ->with($expectedCustomer);
         $this->contextBuilder->expects($customerUser ? $this->once() : $this->never())
             ->method('setCustomerUser')
             ->with($customerUser);

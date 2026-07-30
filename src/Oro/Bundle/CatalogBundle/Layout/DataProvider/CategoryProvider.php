@@ -109,8 +109,14 @@ class CategoryProvider
     protected function loadCategory(int $categoryId = 0): ?Category
     {
         if (!array_key_exists($categoryId, $this->categories)) {
+            $category = null;
+
             if ($categoryId) {
-                $this->categories[$categoryId] = $this->getCategoryRepository()->find($categoryId);
+                $category = $this->getCategoryRepository()->find($categoryId);
+            }
+
+            if ($category) {
+                $this->categories[$categoryId] = $category;
             } else {
                 $this->categories[$categoryId] = $this->masterCatalogRootProvider->getMasterCatalogRoot();
             }

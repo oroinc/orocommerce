@@ -144,12 +144,17 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
 
         $currencies = $request->get(self::PRICE_LIST_CURRENCY_KEY, $priceListCurrencies);
 
-        if (filter_var($currencies, FILTER_VALIDATE_BOOLEAN)) {
-            return $priceListCurrencies;
-        }
-
         if (null === $currencies) {
             return [];
+        }
+
+        // The sidebar sends a boolean-like value (e.g. "false") when no explicit currency selection was made,
+        // which happens on a single-currency setup where the currency selector is not rendered.
+        // Fall back to all price list currencies in this case.
+        $isBooleanLike = !\is_array($currencies)
+            && null !== filter_var($currencies, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        if ($isBooleanLike) {
+            $currencies = $priceListCurrencies;
         }
 
         $currencies = array_intersect($priceListCurrencies, (array)$currencies);

@@ -90,6 +90,7 @@ class OrderProductKitItemLineItemType extends AbstractType
                     'required' => $options['required'],
                     'useInputTypeNumberValueFormat' => true,
                     'empty_data' => $kitItem?->getMinimumQuantity() ?: 1.0,
+                    'invalid_message' => 'oro.order.orderproductkititemlineitem.quantity.invalid_decimal',
                 ]
             )
             ->add(

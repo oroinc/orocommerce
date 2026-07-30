@@ -3,14 +3,12 @@
 @fixture-OroCustomerBundle:CustomerUserFixture.yml
 
 Feature: Create product without edit brands permission
-  In order to manage products
-  As user
-  I need to be able to create product and select brands at create product form even if I have no access to edit brands
 
-  Scenario: Edit Edit permissions for Brand entity
+  Scenario: Edit permissions for Brand entity
     Given I login as administrator
-    Then I go to System / User Management / Roles
+    When I go to System / User Management / Roles
     And I click edit "Administrator" in grid
+    And I click "Account Management"
     And select following permissions:
       | Brand | Edit:None |
     And save and close form

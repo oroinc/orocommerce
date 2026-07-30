@@ -27,6 +27,7 @@ class Configuration implements ConfigurationInterface
                 'frontend_open_orders_separate_page' => ['type' => 'boolean', 'value' => false],
                 'guest_checkout' => ['type' => 'boolean', 'value' => false],
                 'single_page_checkout_increase_performance' => ['type' => 'boolean', 'value' => false],
+                'defer_guest_customer_creation_to_order' => ['type' => 'boolean', 'value' => false],
                 'registration_allowed' => ['type' => 'boolean', 'value' => true],
                 'default_guest_checkout_owner' => ['type' => 'string', 'value' => null],
                 'allow_checkout_without_email_confirmation' => ['type' => 'boolean', 'value' => false],

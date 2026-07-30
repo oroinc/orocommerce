@@ -53,14 +53,18 @@ final class OrderLineItemDraftCreateController extends AbstractController
 
         if ($form->isSubmitted()) {
             $responseData = ['success' => true];
+            $isDrySubmit = !empty($form->get('drySubmitTrigger')->getData());
+            $isValid = $form->isValid();
 
-            if ($form->get('drySubmitTrigger')->getData()) {
-                $form = $this->createForm(
-                    OrderLineItemDraftType::class,
-                    $orderLineItem,
-                    ['initial_validation' => false]
-                );
-            } elseif ($form->isValid()) {
+            if ($isDrySubmit) {
+                if ($isValid) {
+                    $form = $this->createForm(
+                        OrderLineItemDraftType::class,
+                        $orderLineItem,
+                        ['initial_validation' => false]
+                    );
+                }
+            } elseif ($isValid) {
                 $createdOrderLineItemDraft = $this->getOrderDraftManager()->saveToEntityDraft($orderLineItem);
                 assert($createdOrderLineItemDraft instanceof OrderLineItem);
 

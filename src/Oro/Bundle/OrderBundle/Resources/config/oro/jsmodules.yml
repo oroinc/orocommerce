@@ -35,5 +35,6 @@ dynamic-imports:
         - oro/order-line-item-draft-update-widget
         - oroorder/js/app/views/order-line-item-draft-create-view
         - oroorder/js/app/views/order-line-item-draft-update-view
+        - oroorder/js/app/views/order-kit-item-line-item-draft-form-view
         - oroorder/js/app/datagrid/order-line-items-grid-options-builder
         - oroorder/js/app/views/order-line-item-draft-discounts-taxes-view

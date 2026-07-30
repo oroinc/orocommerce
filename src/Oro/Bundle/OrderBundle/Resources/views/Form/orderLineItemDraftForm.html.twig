@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block _oro_order_line_item_draft_kitItemLineItems_entry_price_widget %}
-    <div class="multicurrency-fields-wrapper value-field input-append">
+    <div class="fields-row multicurrency-fields-wrapper value-field input-append">
         {{ form_widget(form.value, {
             'attr': {
                 'data-draft-update-field': ''
@@ -16,6 +16,16 @@
         {{ form_widget(form.currency) }}
         {{ form_widget(form.is_price_changed) }}
     </div>
+{% endblock %}
+
+{% block _oro_order_line_item_draft_kitItemLineItems_entry_price_value_widget %}
+    {{ form_widget(form, {
+        'attr': {
+            'data-draft-update-field': '',
+            'data-floating-error': true,
+        }
+    }) }}
+    {{ form_errors(form) }}
 {% endblock %}
 
 {% block _oro_order_line_item_draft_kitItemLineItems_widget %}
@@ -35,7 +45,7 @@
         data-layout="separate"
         {% if is_optional %}data-validation-optional-group{% endif %}
             {{ UI.renderPageComponentAttributes({
-                view: 'oroorder/js/app/views/kit-item-line-item-view',
+                view: 'oroorder/js/app/views/order-kit-item-line-item-draft-form-view',
                 options: {
                     minimumQuantity: minimum_quantity ?: 1.0,
                     maximumQuantity: maximum_quantity ?: null,
@@ -59,6 +69,7 @@
                     }
                 }) }}
                 {{ form_errors(form.product) }}
+                {{ form_errors(form) }}
             </div>
         </td>
         <td class="line-item-quantity-label">

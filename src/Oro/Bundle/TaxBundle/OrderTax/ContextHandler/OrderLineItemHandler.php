@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\OrderTax\ContextHandler;
 
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\OrderBundle\Entity\OrderHolderInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface;
@@ -21,10 +22,17 @@ class OrderLineItemHandler
      */
     protected array $taxCodes = [];
 
+    private ?CustomerUserRelationsProvider $customerUserRelationsProvider = null;
+
     public function __construct(
         private TaxationAddressProvider $addressProvider,
         private TaxCodeProvider $taxCodeProvider,
     ) {
+    }
+
+    public function setCustomerUserRelationsProvider(CustomerUserRelationsProvider $customerUserRelationsProvider): void
+    {
+        $this->customerUserRelationsProvider = $customerUserRelationsProvider;
     }
 
     public function onContextEvent(ContextEvent $contextEvent): void
@@ -92,15 +100,17 @@ class OrderLineItemHandler
         }
 
         $taxCode = null;
-        $customer = null;
+        $customer = $lineItem->getOrder()?->getCustomer();
 
-        if ($lineItem->getOrder() && $lineItem->getOrder()->getCustomer()) {
-            $customer = $lineItem->getOrder()->getCustomer();
+        if ($customer) {
             $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT, $customer);
         }
 
-        if (!$taxCode && $customer && $customer->getGroup()) {
-            $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT_GROUP, $customer->getGroup());
+        if (!$taxCode) {
+            $group = $customer ? $customer->getGroup() : $this->customerUserRelationsProvider?->getCustomerGroup();
+            if ($group) {
+                $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT_GROUP, $group);
+            }
         }
 
         $this->taxCodes[$cacheKey] = $taxCode;

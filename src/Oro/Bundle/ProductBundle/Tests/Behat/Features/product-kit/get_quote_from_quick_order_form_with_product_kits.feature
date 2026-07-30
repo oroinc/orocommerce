@@ -22,7 +22,7 @@ Feature: Get Quote from Quick order form with Product Kits
 
   Scenario: Check Request Quote page
     When I click on "Get Quote Button"
-    Then I should see "product-kit-01 - Product Kit 01 QTY: 3 piece Target Price $0.00 Listed Price: $123.4567" in the "RFQ Products List Line Item 1" element
+    Then I should see "product-kit-01 - Product Kit 01 QTY: 3 piece Target Price $0.00 Listed Price: N/A" in the "RFQ Products List Line Item 1" element
     And I should see "simple-product-01 - Simple Product 01 QTY: 2 piece Target Price $0.00 Listed Price: $1.2345" in the "RFQ Products List Line Item 2" element
 
   Scenario: Try to submit the Request
