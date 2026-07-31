@@ -1,0 +1,53 @@
+{% block _logo_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' logo'
+    }) %}
+    {% set attr_img = layout_attr_defaults(attr_img|default({}), {
+        'src': src,
+        '~class': ' logo-img',
+        'alt': 'oro_frontend.logo.alt.label'|trans,
+        'fetchpriority': fetchpriority|default('high')
+    }) %}
+    {% if width is defined and width is not null %}
+        {% set attr_img = layout_attr_defaults(attr_img, {
+            'width': width
+        }) %}
+    {% endif %}
+    {% if height is defined and height is not null %}
+        {% set attr_img = layout_attr_defaults(attr_img, {
+            'height': height
+        }) %}
+    {% endif %}
+    <a href="{{ returnUrl }}" {{ block('block_attributes') }} aria-label="{{ 'oro_frontend.logo.aria_label'|trans }}">
+        <picture>
+            <source srcset="{{ logo_small|default(src) }}" media="(max-width: 767px)">
+            <img {{ UI.attributes(attr_img) }}>
+        </picture>
+    </a>
+{% endblock %}
+
+{% block _checkout_simplified_header_actions_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' checkout-simplified-header__actions'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _checkout_simplified_header_secure_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' checkout-simplified-header__secure'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ renderIcon.icon({
+            name: 'shield-check',
+            extraClass: 'checkout-simplified-header__secure-icon'
+        }) }}
+        <span class="checkout-simplified-header__secure-label">
+            {{- 'oro.checkout.simplified_header.secure_checkout.label'|trans({}, translation_domain) -}}
+        </span>
+    </div>
+{% endblock %}

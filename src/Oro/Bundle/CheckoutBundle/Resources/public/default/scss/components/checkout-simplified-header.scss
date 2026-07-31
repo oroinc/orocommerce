@@ -1,0 +1,70 @@
+/* @theme: default; */
+
+.checkout-simplified-header {
+    &.page-header--standalone-main-menu {
+        padding-top: $checkout-simplified-header-standalone-main-menu-offset-top;
+    }
+
+    .page-header__inner {
+        padding: $checkout-simplified-header-inner-offset;
+    }
+
+    .middlebar {
+        display: $checkout-simplified-header-middlebar-display;
+        justify-content: $checkout-simplified-header-middlebar-justify-content;
+        gap: $checkout-simplified-header-gap;
+        min-height: $checkout-simplified-header-height;
+    }
+
+    .logo {
+        min-height: $checkout-simplified-header-logo-height;
+        max-height: $checkout-simplified-header-logo-height;
+        padding: $checkout-simplified-header-logo-inner-offset;
+    }
+
+    &__actions {
+        display: $checkout-simplified-header-actions-display;
+        align-items: $checkout-simplified-header-actions-align-items;
+        gap: $checkout-simplified-header-actions-gap;
+    }
+
+    &__secure {
+        display: $checkout-simplified-header-secure-display;
+        align-items: $checkout-simplified-header-secure-align-items;
+        gap: $checkout-simplified-header-secure-gap;
+        color: $checkout-simplified-header-secure-color;
+    }
+
+    &__secure-icon {
+        --theme-icon-size: #{$checkout-simplified-header-secure-icon-size};
+    }
+
+    &__secure-label {
+        width: $checkout-simplified-header-secure-label-width;
+        max-width: $checkout-simplified-header-secure-label-max-width;
+        overflow-wrap: $checkout-simplified-header-secure-label-overflow-wrap;
+        font-size: $checkout-simplified-header-secure-label-font-size;
+        font-weight: $checkout-simplified-header-secure-label-font-weight;
+        line-height: $checkout-simplified-header-secure-label-line-height;
+        letter-spacing: $checkout-simplified-header-secure-label-letter-spacing;
+        text-transform: $checkout-simplified-header-secure-label-text-transform;
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .checkout-simplified-header {
+        &__actions {
+            gap: $checkout-simplified-header-mobile-big-actions-gap;
+        }
+
+        &__secure-icon {
+            --theme-icon-size: #{$checkout-simplified-header-mobile-big-secure-icon-size};
+        }
+
+        &__secure-label {
+            font-size: $checkout-simplified-header-mobile-big-secure-label-font-size;
+            line-height: $checkout-simplified-header-mobile-big-secure-label-line-height;
+            letter-spacing: $checkout-simplified-header-mobile-big-secure-label-letter-spacing;
+        }
+    }
+}
