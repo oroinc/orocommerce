@@ -25,6 +25,7 @@ class OroCheckoutExtensionTest extends \PHPUnit\Framework\TestCase
                         'frontend_open_orders_separate_page' => ['value' => false, 'scope' => 'app'],
                         'guest_checkout' => ['value' => false, 'scope' => 'app'],
                         'single_page_checkout_increase_performance' => ['value' => false, 'scope' => 'app'],
+                        'defer_guest_customer_creation_to_order' => ['value' => false, 'scope' => 'app'],
                         'registration_allowed' => ['value' => true, 'scope' => 'app'],
                         'default_guest_checkout_owner' => ['value' => null, 'scope' => 'app'],
                         'allow_checkout_without_email_confirmation' => ['value' => false, 'scope' => 'app'],

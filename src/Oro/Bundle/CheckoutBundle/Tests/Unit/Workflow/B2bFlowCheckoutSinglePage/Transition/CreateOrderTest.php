@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\B2bFlowCheckoutSinglePag
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Provider\GuestCustomerCreationConfigProvider;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CustomerUserActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderActionsInterface;
@@ -34,6 +35,7 @@ class CreateOrderTest extends TestCase
     private CustomerUserActionsInterface|MockObject $customerUserActions;
     private WorkflowManager|MockObject $workflowManager;
     private ValidatorInterface|MockObject $validator;
+    private GuestCustomerCreationConfigProvider|MockObject $guestCustomerCreationConfigProvider;
 
     private CreateOrder $createOrder;
 
@@ -49,6 +51,7 @@ class CreateOrderTest extends TestCase
         $this->customerUserActions = $this->createMock(CustomerUserActionsInterface::class);
         $this->workflowManager = $this->createMock(WorkflowManager::class);
         $this->validator = $this->createMock(ValidatorInterface::class);
+        $this->guestCustomerCreationConfigProvider = $this->createMock(GuestCustomerCreationConfigProvider::class);
 
         $this->createOrder = new CreateOrder(
             $this->actionExecutor,
@@ -61,6 +64,7 @@ class CreateOrderTest extends TestCase
             $this->workflowManager
         );
         $this->createOrder->setValidator($this->validator);
+        $this->createOrder->setGuestCustomerCreationConfigProvider($this->guestCustomerCreationConfigProvider);
     }
 
     /**
@@ -249,6 +253,10 @@ class CreateOrderTest extends TestCase
             ->with($checkout)
             ->willReturn($order);
 
+        $this->guestCustomerCreationConfigProvider->expects(self::once())
+            ->method('isDeferredToOrderCreation')
+            ->willReturn(true);
+
         $this->customerUserActions->expects(self::once())
             ->method('createGuestCustomerUser')
             ->with($checkout, 'test@example.com', $billingAddress);
@@ -321,6 +329,10 @@ class CreateOrderTest extends TestCase
             ->method('placeOrder')
             ->with($checkout)
             ->willReturn($order);
+
+        $this->guestCustomerCreationConfigProvider->expects(self::once())
+            ->method('isDeferredToOrderCreation')
+            ->willReturn(true);
 
         $this->customerUserActions->expects(self::once())
             ->method('createGuestCustomerUser')
@@ -398,6 +410,10 @@ class CreateOrderTest extends TestCase
             ->with($checkout)
             ->willReturn($order);
 
+        $this->guestCustomerCreationConfigProvider->expects(self::once())
+            ->method('isDeferredToOrderCreation')
+            ->willReturn(true);
+
         $this->customerUserActions->expects(self::once())
             ->method('createGuestCustomerUser')
             ->with($checkout, 'test@example.com', $billingAddress);
@@ -473,6 +489,10 @@ class CreateOrderTest extends TestCase
             ->with($checkout)
             ->willReturn($order);
 
+        $this->guestCustomerCreationConfigProvider->expects(self::once())
+            ->method('isDeferredToOrderCreation')
+            ->willReturn(true);
+
         $this->customerUserActions->expects(self::once())
             ->method('createGuestCustomerUser')
             ->with($checkout, 'test@example.com', $billingAddress);
@@ -497,6 +517,88 @@ class CreateOrderTest extends TestCase
 
         self::assertNull($workflowResult->offsetGet('responseData'));
         self::assertNull($workflowResult->offsetGet('updateCheckoutState'));
+    }
+
+    public function testExecuteSkipsGuestCustomerUserCreationWhenCreationIsNotDeferredToOrder(): void
+    {
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $billingAddress = new OrderAddress();
+        $checkout = new Checkout();
+        $checkout->setBillingAddress($billingAddress);
+        $workflowData = new WorkflowData([
+            'customerConsents' => [],
+            'email' => 'test@example.com',
+            'additional_data' => 'data',
+            'payment_validate' => false,
+            'payment_save_for_later' => false
+        ]);
+        $workflowResult = new WorkflowResult();
+        $order = new Order();
+
+        $this->prepareWorkflowItem($workflowItem, $checkout, $workflowData, $workflowResult);
+
+        $this->orderActions->expects(self::once())
+            ->method('placeOrder')
+            ->with($checkout)
+            ->willReturn($order);
+
+        $this->guestCustomerCreationConfigProvider->expects(self::once())
+            ->method('isDeferredToOrderCreation')
+            ->willReturn(false);
+
+        $this->customerUserActions->expects(self::never())
+            ->method('createGuestCustomerUser');
+
+        $this->customerUserActions->expects(self::once())
+            ->method('updateGuestCustomerUser')
+            ->with($checkout, 'test@example.com', $billingAddress);
+
+        $this->createOrder->execute($workflowItem);
+    }
+
+    public function testExecuteSkipsGuestCustomerUserCreationWhenConfigProviderIsNotInjected(): void
+    {
+        $createOrder = new CreateOrder(
+            $this->actionExecutor,
+            $this->baseContinueTransition,
+            $this->orderActions,
+            $this->checkoutActions,
+            $this->updateShippingPrice,
+            $this->paymentMethodActions,
+            $this->customerUserActions,
+            $this->workflowManager
+        );
+        $createOrder->setValidator($this->validator);
+
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $billingAddress = new OrderAddress();
+        $checkout = new Checkout();
+        $checkout->setBillingAddress($billingAddress);
+        $workflowData = new WorkflowData([
+            'customerConsents' => [],
+            'email' => 'test@example.com',
+            'additional_data' => 'data',
+            'payment_validate' => false,
+            'payment_save_for_later' => false
+        ]);
+        $workflowResult = new WorkflowResult();
+        $order = new Order();
+
+        $this->prepareWorkflowItem($workflowItem, $checkout, $workflowData, $workflowResult);
+
+        $this->orderActions->expects(self::once())
+            ->method('placeOrder')
+            ->with($checkout)
+            ->willReturn($order);
+
+        $this->customerUserActions->expects(self::never())
+            ->method('createGuestCustomerUser');
+
+        $this->customerUserActions->expects(self::once())
+            ->method('updateGuestCustomerUser')
+            ->with($checkout, 'test@example.com', $billingAddress);
+
+        $createOrder->execute($workflowItem);
     }
 
     private function prepareWorkflowItem(

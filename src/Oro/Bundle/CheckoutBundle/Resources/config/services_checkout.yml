@@ -287,6 +287,8 @@ services:
             - '@oro_checkout.action.default_shipping_method_setter'
             - '@oro_checkout.action.default_payment_method_setter'
             - '@oro_checkout.workflow.b2b_flow_checkout_single_page.transition.base_state_aware'
+        calls:
+            - ['setGuestCustomerCreationConfigProvider', ['@oro_checkout.provider.guest_customer_creation_config']]
         tags:
             - { name: 'oro_workflow.transition_service' }
 
@@ -310,6 +312,8 @@ services:
             - '@oro_checkout.action_group.payment_method_actions'
             - '@oro_checkout.action_group.customer_user_actions'
             - '@oro_workflow.manager'
+        calls:
+            - ['setGuestCustomerCreationConfigProvider', ['@oro_checkout.provider.guest_customer_creation_config']]
         tags:
             - { name: 'oro_workflow.transition_service' }
 

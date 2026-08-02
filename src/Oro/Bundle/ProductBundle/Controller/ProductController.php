@@ -84,7 +84,7 @@ class ProductController extends AbstractController
             'gridName' => 'products-grid',
             'renderParams' => [
                 'enableFullScreenLayout' => 1,
-                'enableViews' => 0
+                'enableViews' => 1
             ],
             'renderParamsTypes' => [
                 'enableFullScreenLayout' => 'int',

@@ -19,9 +19,9 @@ use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
+use Oro\Bundle\ShoppingListBundle\LineItem\Factory\BatchUpdateLineItemModelsFactory;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Oro\Bundle\ShoppingListBundle\Model\LineItemModel;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -264,7 +264,10 @@ class AjaxLineItemController extends AbstractLineItemController
 
         $handler = $this->container->get(ShoppingListLineItemBatchUpdateHandler::class);
 
-        $errors = $handler->process($this->getLineItemModels($data['data']), $shoppingList);
+        $lineItemModels = $this->container->get(BatchUpdateLineItemModelsFactory::class)
+            ->createLineItemModels($data['data'], $shoppingList);
+
+        $errors = $handler->process($lineItemModels, $shoppingList);
         if ($errors) {
             return $this->json(['message' => implode(', ', $errors)], Response::HTTP_BAD_REQUEST);
         }
@@ -282,22 +285,6 @@ class AjaxLineItemController extends AbstractLineItemController
         }
 
         return $this->forward(GridController::class . '::getAction', ['gridName' => $gridName], $request->query->all());
-    }
-
-    private function getLineItemModels(array $rawLineItems): array
-    {
-        return array_filter(
-            array_map(
-                static function (array $item) {
-                    $quantity = (float)$item['quantity'];
-
-                    return $quantity > 0
-                        ? new LineItemModel((int)$item['id'], $quantity, (string)$item['unitCode'])
-                        : null;
-                },
-                $rawLineItems
-            )
-        );
     }
 
     protected function getParentProduct(Request $request): ?Product
@@ -324,6 +311,7 @@ class AjaxLineItemController extends AbstractLineItemController
                 AuthorizationCheckerInterface::class,
                 UpdateHandlerFacade::class,
                 ShoppingListLineItemBatchUpdateHandler::class,
+                BatchUpdateLineItemModelsFactory::class,
                 ManagerRegistry::class,
             ]
         );

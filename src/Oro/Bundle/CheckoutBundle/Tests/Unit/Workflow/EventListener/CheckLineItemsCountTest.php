@@ -254,9 +254,19 @@ class CheckLineItemsCountTest extends TestCase
 
         $this->expectLineItemsCheckCalled();
 
+        $flashBag = $this->createMock(FlashBagInterface::class);
+        $flashBag->expects(self::never())
+            ->method('add');
+        $this->expectFlashBagRequested($flashBag, $request);
+
         $checkout->expects(self::once())
             ->method('getLineItems')
             ->willReturn(new ArrayCollection([]));
+
+        $this->lineItemsManager->expects(self::once())
+            ->method('getDataWithReason')
+            ->with($checkout)
+            ->willReturn(['skippedReasons' => []]);
 
         $this->lineItemsManager->expects(self::once())
             ->method('getData')
@@ -295,6 +305,11 @@ class CheckLineItemsCountTest extends TestCase
             ->willReturn(new ArrayCollection([$this->createMock(CheckoutLineItem::class)]));
 
         $this->lineItemsManager->expects(self::once())
+            ->method('getDataWithReason')
+            ->with($checkout)
+            ->willReturn(['skippedReasons' => []]);
+
+        $this->lineItemsManager->expects(self::once())
             ->method('getData')
             ->with($checkout, true)
             ->willReturn(new ArrayCollection([]));
@@ -326,25 +341,17 @@ class CheckLineItemsCountTest extends TestCase
         $checkout->expects(self::never())
             ->method('getLineItems');
 
-        $this->lineItemsManager->expects(self::exactly(3))
+        $this->lineItemsManager->expects(self::once())
+            ->method('getDataWithReason')
+            ->with($checkout)
+            ->willReturn(['skippedReasons' => [CheckoutLineItemsManager::REASON_NO_PRICE]]);
+
+        $this->lineItemsManager->expects(self::once())
             ->method('getData')
-            ->withConsecutive(
-                [$checkout, true],
-                [$checkout],
-                [$checkout, true, 'oro_rfp.frontend_product_visibility'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                new ArrayCollection([
-                    $this->createMock(CheckoutLineItem::class),
-                    $this->createMock(CheckoutLineItem::class)
-                ]),
-                new ArrayCollection([
-                    $this->createMock(CheckoutLineItem::class)
-                ]),
-                new ArrayCollection([
-                    $this->createMock(CheckoutLineItem::class)
-                ])
-            );
+            ->with($checkout, true, 'oro_rfp.frontend_product_visibility')
+            ->willReturn(new ArrayCollection([
+                $this->createMock(CheckoutLineItem::class)
+            ]));
         $flashBag->expects(self::once())
             ->method('add')
             ->with('warning', 'oro.checkout.order.line_items.line_item_has_no_price_allow_rfp.message');
@@ -376,23 +383,15 @@ class CheckLineItemsCountTest extends TestCase
         $checkout->expects(self::never())
             ->method('getLineItems');
 
-        $this->lineItemsManager->expects(self::exactly(3))
+        $this->lineItemsManager->expects(self::once())
+            ->method('getDataWithReason')
+            ->with($checkout)
+            ->willReturn(['skippedReasons' => [CheckoutLineItemsManager::REASON_NO_PRICE]]);
+
+        $this->lineItemsManager->expects(self::once())
             ->method('getData')
-            ->withConsecutive(
-                [$checkout, true],
-                [$checkout],
-                [$checkout, true, 'oro_rfp.frontend_product_visibility'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                new ArrayCollection([
-                    $this->createMock(CheckoutLineItem::class),
-                    $this->createMock(CheckoutLineItem::class)
-                ]),
-                new ArrayCollection([
-                    $this->createMock(CheckoutLineItem::class)
-                ]),
-                new ArrayCollection([])
-            );
+            ->with($checkout, true, 'oro_rfp.frontend_product_visibility')
+            ->willReturn(new ArrayCollection([]));
         $flashBag->expects(self::once())
             ->method('add')
             ->with('warning', 'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message');
@@ -418,19 +417,194 @@ class CheckLineItemsCountTest extends TestCase
 
         $this->expectLineItemsCheckCalled();
 
+        $flashBag = $this->createMock(FlashBagInterface::class);
+        $flashBag->expects(self::never())
+            ->method('add');
+        $this->expectFlashBagRequested($flashBag, $request);
+
         $checkout->expects(self::once())
             ->method('getLineItems')
             ->willReturn(new ArrayCollection([$this->createMock(CheckoutLineItem::class)]));
 
-        $this->lineItemsManager->expects(self::exactly(2))
+        $this->lineItemsManager->expects(self::once())
+            ->method('getDataWithReason')
+            ->with($checkout)
+            ->willReturn(['skippedReasons' => []]);
+
+        $this->lineItemsManager->expects(self::once())
             ->method('getData')
+            ->with($checkout, true)
+            ->willReturn(new ArrayCollection([$this->createMock(CheckoutLineItem::class)]));
+
+        $this->listener->onCheckoutRequest($event);
+    }
+
+    public function testOnCheckoutRequestAddsCurrencyMismatchWarning(): void
+    {
+        $checkout = $this->createMock(Checkout::class);
+        $checkout->expects(self::once())
+            ->method('getId')
+            ->willReturn(1);
+        $request = $this->createMock(Request::class);
+        $request->expects(self::once())
+            ->method('isXmlHttpRequest')
+            ->willReturn(false);
+        $event = new CheckoutRequestEvent($request, $checkout);
+
+        $this->checkoutWorkflowHelper->expects(self::once())
+            ->method('getWorkflowItem')
+            ->willReturn($this->createMock(WorkflowItem::class));
+
+        $this->expectLineItemsCheckCalled();
+
+        $flashBag = $this->createMock(FlashBagInterface::class);
+        $this->expectFlashBagRequested($flashBag, $request);
+
+        $checkout->expects(self::never())
+            ->method('getLineItems');
+
+        $this->lineItemsManager->expects(self::once())
+            ->method('getDataWithReason')
+            ->with($checkout)
+            ->willReturn(['skippedReasons' => [CheckoutLineItemsManager::REASON_CURRENCY_MISMATCH]]);
+
+        $this->lineItemsManager->expects(self::never())
+            ->method('getData');
+
+        $flashBag->expects(self::once())
+            ->method('add')
+            ->with('warning', 'oro.checkout.order.line_items.different_currency.message');
+
+        $this->listener->onCheckoutRequest($event);
+    }
+
+    public function testOnCheckoutRequestAddsUnsupportedStatusWarningWithRfp(): void
+    {
+        $checkout = $this->createMock(Checkout::class);
+        $checkout->expects(self::once())
+            ->method('getId')
+            ->willReturn(1);
+        $request = $this->createMock(Request::class);
+        $request->expects(self::once())
+            ->method('isXmlHttpRequest')
+            ->willReturn(false);
+        $event = new CheckoutRequestEvent($request, $checkout);
+
+        $this->checkoutWorkflowHelper->expects(self::once())
+            ->method('getWorkflowItem')
+            ->willReturn($this->createMock(WorkflowItem::class));
+
+        $this->expectLineItemsCheckCalled();
+
+        $flashBag = $this->createMock(FlashBagInterface::class);
+        $this->expectFlashBagRequested($flashBag, $request);
+
+        $checkout->expects(self::never())
+            ->method('getLineItems');
+
+        $this->lineItemsManager->expects(self::once())
+            ->method('getDataWithReason')
+            ->with($checkout)
+            ->willReturn(['skippedReasons' => [CheckoutLineItemsManager::REASON_UNSUPPORTED_STATUS]]);
+
+        $this->lineItemsManager->expects(self::once())
+            ->method('getData')
+            ->with($checkout, true, 'oro_rfp.frontend_product_visibility')
+            ->willReturn(new ArrayCollection([
+                $this->createMock(CheckoutLineItem::class)
+            ]));
+
+        $flashBag->expects(self::once())
+            ->method('add')
+            ->with('warning', 'oro.checkout.order.line_items.line_item_has_no_price_allow_rfp.message');
+
+        $this->listener->onCheckoutRequest($event);
+    }
+
+    public function testOnCheckoutRequestAddsUnsupportedStatusWarningWithoutRfp(): void
+    {
+        $checkout = $this->createMock(Checkout::class);
+        $checkout->expects(self::once())
+            ->method('getId')
+            ->willReturn(1);
+        $request = $this->createMock(Request::class);
+        $request->expects(self::once())
+            ->method('isXmlHttpRequest')
+            ->willReturn(false);
+        $event = new CheckoutRequestEvent($request, $checkout);
+
+        $this->checkoutWorkflowHelper->expects(self::once())
+            ->method('getWorkflowItem')
+            ->willReturn($this->createMock(WorkflowItem::class));
+
+        $this->expectLineItemsCheckCalled();
+
+        $flashBag = $this->createMock(FlashBagInterface::class);
+        $this->expectFlashBagRequested($flashBag, $request);
+
+        $checkout->expects(self::never())
+            ->method('getLineItems');
+
+        $this->lineItemsManager->expects(self::once())
+            ->method('getDataWithReason')
+            ->with($checkout)
+            ->willReturn(['skippedReasons' => [CheckoutLineItemsManager::REASON_UNSUPPORTED_STATUS]]);
+
+        $this->lineItemsManager->expects(self::once())
+            ->method('getData')
+            ->with($checkout, true, 'oro_rfp.frontend_product_visibility')
+            ->willReturn(new ArrayCollection([]));
+
+        $flashBag->expects(self::once())
+            ->method('add')
+            ->with('warning', 'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message');
+
+        $this->listener->onCheckoutRequest($event);
+    }
+
+    public function testOnCheckoutRequestAddsMultipleWarnings(): void
+    {
+        $checkout = $this->createMock(Checkout::class);
+        $checkout->expects(self::once())
+            ->method('getId')
+            ->willReturn(1);
+        $request = $this->createMock(Request::class);
+        $request->expects(self::once())
+            ->method('isXmlHttpRequest')
+            ->willReturn(false);
+        $event = new CheckoutRequestEvent($request, $checkout);
+
+        $this->checkoutWorkflowHelper->expects(self::once())
+            ->method('getWorkflowItem')
+            ->willReturn($this->createMock(WorkflowItem::class));
+
+        $this->expectLineItemsCheckCalled();
+
+        $flashBag = $this->createMock(FlashBagInterface::class);
+        $this->expectFlashBagRequested($flashBag, $request);
+
+        $checkout->expects(self::never())
+            ->method('getLineItems');
+
+        $this->lineItemsManager->expects(self::once())
+            ->method('getDataWithReason')
+            ->with($checkout)
+            ->willReturn(['skippedReasons' => [
+                CheckoutLineItemsManager::REASON_CURRENCY_MISMATCH,
+                CheckoutLineItemsManager::REASON_UNSUPPORTED_STATUS,
+                CheckoutLineItemsManager::REASON_NO_PRICE,
+            ]]);
+
+        $this->lineItemsManager->expects(self::once())
+            ->method('getData')
+            ->with($checkout, true, 'oro_rfp.frontend_product_visibility')
+            ->willReturn(new ArrayCollection([]));
+
+        $flashBag->expects(self::exactly(2))
+            ->method('add')
             ->withConsecutive(
-                [$checkout, true],
-                [$checkout]
-            )
-            ->willReturnOnConsecutiveCalls(
-                new ArrayCollection([$this->createMock(CheckoutLineItem::class)]),
-                new ArrayCollection([$this->createMock(CheckoutLineItem::class)])
+                ['warning', 'oro.checkout.order.line_items.different_currency.message'],
+                ['warning', 'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'],
             );
 
         $this->listener->onCheckoutRequest($event);

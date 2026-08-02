@@ -399,6 +399,7 @@ oro:
             order_line_items_not_empty:
                 allow_rfp.message: No products can be added to this order. Please create an RFQ to request price.
                 not_allow_rfp.message: No products can be added to this order.
+                different_currency.message: No products were added to the checkout because they use a different currency. Checkout supports only one currency at a time. Switch to another currency and try again.
             has_applicable_payment_methods:
                 message: |
                     The selected payment method is not available.
@@ -439,6 +440,7 @@ oro:
 
         order.line_items.line_item_has_no_price_allow_rfp.message: Some products have not been added to this order. Please create an RFQ to request price.
         order.line_items.line_item_has_no_price_not_allow_rfp.message: Some products have not been added to this order.
+        order.line_items.different_currency.message: Some products were not added to the checkout because they use a different currency. Checkout supports only one currency at a time. Switch to another currency to purchase those items.
 
         feature:
             guest_checkout:

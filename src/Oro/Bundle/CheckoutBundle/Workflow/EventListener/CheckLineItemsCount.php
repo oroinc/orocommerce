@@ -41,27 +41,34 @@ class CheckLineItemsCount
 
     private function checkLineItemsCount(Checkout $checkout, Request $request): void
     {
-        $allOrderLineItemsCount = $this->lineItemsManager->getData($checkout, true)->count();
+        $flashBag = $request->getSession()->getFlashBag();
+        $reasons = $this->lineItemsManager->getDataWithReason($checkout)['skippedReasons'];
 
-        if ($allOrderLineItemsCount) {
-            $orderLineItemsCount = $this->lineItemsManager->getData($checkout)->count();
-            if ($allOrderLineItemsCount !== $orderLineItemsCount) {
-                $rfpOrderLineItems = $this->lineItemsManager
-                    ->getData($checkout, true, 'oro_rfp.frontend_product_visibility');
-                $message = $rfpOrderLineItems->isEmpty()
-                    ? 'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
-                    : 'oro.checkout.order.line_items.line_item_has_no_price_allow_rfp.message';
-                $request->getSession()->getFlashBag()->add('warning', $message);
-
-                return;
-            }
+        if (\in_array(CheckoutLineItemsManager::REASON_CURRENCY_MISMATCH, $reasons, true)) {
+            $flashBag->add('warning', 'oro.checkout.order.line_items.different_currency.message');
         }
 
-        if ($allOrderLineItemsCount !== $checkout->getLineItems()?->count()) {
-            $request->getSession()->getFlashBag()->add(
-                'warning',
-                'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
-            );
+        $noPrice = \in_array(CheckoutLineItemsManager::REASON_NO_PRICE, $reasons, true)
+            || \in_array(CheckoutLineItemsManager::REASON_UNSUPPORTED_STATUS, $reasons, true);
+
+        if ($noPrice) {
+            $rfpOrderLineItems = $this->lineItemsManager
+                ->getData($checkout, true, 'oro_rfp.frontend_product_visibility');
+            $flashBag->add('warning', $rfpOrderLineItems->isEmpty()
+                ? 'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
+                : 'oro.checkout.order.line_items.line_item_has_no_price_allow_rfp.message');
+        }
+
+        // Line items lost before filtering (e.g. removed during conversion) keep the generic warning.
+        if (!$reasons) {
+            $countAllData = $this->lineItemsManager->getData($checkout, true)->count();
+            $checkoutLineItemsCount = $checkout->getLineItems()?->count();
+            if ($countAllData !== $checkoutLineItemsCount) {
+                $flashBag->add(
+                    'warning',
+                    'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
+                );
+            }
         }
     }
 
