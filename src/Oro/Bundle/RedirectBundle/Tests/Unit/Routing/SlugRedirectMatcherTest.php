@@ -52,8 +52,8 @@ class SlugRedirectMatcherTest extends \PHPUnit\Framework\TestCase
             ->with('web_content')
             ->willReturn($scopeCriteria);
         $this->repository->expects($this->once())
-            ->method('findByUrl')
-            ->with($url, $scopeCriteria)
+            ->method('findByUrlAndOrganization')
+            ->with($url, $scopeCriteria, null)
             ->willReturn(null);
 
         $this->assertNull($this->redirectMatcher->match($url));
@@ -73,8 +73,8 @@ class SlugRedirectMatcherTest extends \PHPUnit\Framework\TestCase
         $redirect->setTo('/test-new');
         $redirect->setType(301);
         $this->repository->expects($this->once())
-            ->method('findByUrl')
-            ->with($url, $scopeCriteria)
+            ->method('findByUrlAndOrganization')
+            ->with($url, $scopeCriteria, null)
             ->willReturn($redirect);
 
         $this->assertEquals(
@@ -100,8 +100,8 @@ class SlugRedirectMatcherTest extends \PHPUnit\Framework\TestCase
         $redirect->setTo('/root-new');
         $redirect->setType(301);
         $this->repository->expects($this->once())
-            ->method('findByUrl')
-            ->with($url, $scopeCriteria)
+            ->method('findByUrlAndOrganization')
+            ->with($url, $scopeCriteria, null)
             ->willReturn($redirect);
 
         $this->assertEquals(
@@ -127,8 +127,8 @@ class SlugRedirectMatcherTest extends \PHPUnit\Framework\TestCase
         $redirect->setTo('/test-new');
         $redirect->setType(301);
         $this->repository->expects($this->once())
-            ->method('findByUrl')
-            ->with('/test', $scopeCriteria)
+            ->method('findByUrlAndOrganization')
+            ->with('/test', $scopeCriteria, null)
             ->willReturn($redirect);
 
         $this->assertEquals(
@@ -154,16 +154,16 @@ class SlugRedirectMatcherTest extends \PHPUnit\Framework\TestCase
         $contextRedirect->setTo('/context-new');
         $contextRedirect->setType(301);
         $this->repository->expects($this->once())
-            ->method('findByUrl')
-            ->with('/context', $scopeCriteria)
+            ->method('findByUrlAndOrganization')
+            ->with('/context', $scopeCriteria, null)
             ->willReturn($contextRedirect);
 
         $prototypeRedirect = new Redirect();
         $prototypeRedirect->setToPrototype('test-new');
         $prototypeRedirect->setType(301);
         $this->repository->expects($this->once())
-            ->method('findByPrototype')
-            ->with('test', $scopeCriteria)
+            ->method('findByPrototypeAndOrganization')
+            ->with('test', $scopeCriteria, null)
             ->willReturn($prototypeRedirect);
 
         $this->assertEquals(
@@ -186,16 +186,16 @@ class SlugRedirectMatcherTest extends \PHPUnit\Framework\TestCase
             ->willReturn($scopeCriteria);
 
         $this->repository->expects($this->once())
-            ->method('findByUrl')
-            ->with('/context', $scopeCriteria)
+            ->method('findByUrlAndOrganization')
+            ->with('/context', $scopeCriteria, null)
             ->willReturn(null);
 
         $prototypeRedirect = new Redirect();
         $prototypeRedirect->setToPrototype('test-new');
         $prototypeRedirect->setType(301);
         $this->repository->expects($this->once())
-            ->method('findByPrototype')
-            ->with('test', $scopeCriteria)
+            ->method('findByPrototypeAndOrganization')
+            ->with('test', $scopeCriteria, null)
             ->willReturn($prototypeRedirect);
 
         $this->assertEquals(
@@ -221,13 +221,13 @@ class SlugRedirectMatcherTest extends \PHPUnit\Framework\TestCase
         $contextRedirect->setTo('/context-new');
         $contextRedirect->setType(301);
         $this->repository->expects($this->once())
-            ->method('findByUrl')
-            ->with('/context', $scopeCriteria)
+            ->method('findByUrlAndOrganization')
+            ->with('/context', $scopeCriteria, null)
             ->willReturn($contextRedirect);
 
         $this->repository->expects($this->once())
-            ->method('findByPrototype')
-            ->with('test', $scopeCriteria)
+            ->method('findByPrototypeAndOrganization')
+            ->with('test', $scopeCriteria, null)
             ->willReturn(null);
 
         $this->assertEquals(
@@ -253,14 +253,14 @@ class SlugRedirectMatcherTest extends \PHPUnit\Framework\TestCase
         $redirect->setTo('/test-new');
         $redirect->setType(301);
         $this->repository->expects($this->exactly(2))
-            ->method('findByUrl')
+            ->method('findByUrlAndOrganization')
             ->willReturnMap([
-                ['/context', $scopeCriteria, null],
-                [$url, $scopeCriteria, $redirect]
+                ['/context', $scopeCriteria, null, null],
+                [$url, $scopeCriteria, null, $redirect]
             ]);
         $this->repository->expects($this->once())
-            ->method('findByPrototype')
-            ->with('test', $scopeCriteria)
+            ->method('findByPrototypeAndOrganization')
+            ->with('test', $scopeCriteria, null)
             ->willReturn(null);
 
         $this->assertEquals(

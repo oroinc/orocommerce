@@ -4,6 +4,8 @@ namespace Oro\Bundle\RedirectBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
@@ -20,6 +22,20 @@ class RedirectRepository extends EntityRepository
      */
     public function findByUrl($from, ScopeCriteria $scopeCriteria = null)
     {
+        return $this->findByUrlAndOrganization($from, $scopeCriteria);
+    }
+
+    /**
+     * @param string $from
+     * @param ScopeCriteria|null $scopeCriteria
+     * @param Organization|null $organization An organization the redirect should belong to
+     * @return null|Redirect
+     */
+    public function findByUrlAndOrganization(
+        $from,
+        ?ScopeCriteria $scopeCriteria = null,
+        ?Organization $organization = null
+    ) {
         $qb = $this->createQueryBuilder('redirect');
         $qb->leftJoin('redirect.scopes', 'scope', Join::WITH)
             ->where($qb->expr()->eq('redirect.fromHash', ':fromHash'))
@@ -28,6 +44,7 @@ class RedirectRepository extends EntityRepository
                 'fromHash' => md5($from),
                 'fromUrl' => $from
             ]);
+        $this->applyOrganizationRestriction($qb, $organization);
 
         if ($scopeCriteria) {
             $qb->addSelect('scope.id as matchedScopeId');
@@ -58,10 +75,25 @@ class RedirectRepository extends EntityRepository
      */
     public function findByPrototype($from, ScopeCriteria $scopeCriteria)
     {
+        return $this->findByPrototypeAndOrganization($from, $scopeCriteria);
+    }
+
+    /**
+     * @param string $from
+     * @param ScopeCriteria $scopeCriteria
+     * @param Organization|null $organization An organization the redirect should belong to
+     * @return null|Redirect
+     */
+    public function findByPrototypeAndOrganization(
+        $from,
+        ScopeCriteria $scopeCriteria,
+        ?Organization $organization = null
+    ) {
         $qb = $this->createQueryBuilder('redirect');
         $qb->leftJoin('redirect.scopes', 'scope', Join::WITH)
             ->where($qb->expr()->eq('redirect.fromPrototype', ':fromPrototype'))
             ->setParameter('fromPrototype', $from);
+        $this->applyOrganizationRestriction($qb, $organization);
 
         $qb->addSelect('scope.id as matchedScopeId');
         $scopeCriteria->applyToJoinWithPriority($qb, 'scope');
@@ -77,6 +109,20 @@ class RedirectRepository extends EntityRepository
         }
 
         return null;
+    }
+
+    private function applyOrganizationRestriction(QueryBuilder $qb, ?Organization $organization): void
+    {
+        if (null === $organization) {
+            return;
+        }
+
+        $qb->leftJoin('redirect.slug', 'redirectSlug')
+            ->andWhere($qb->expr()->orX(
+                $qb->expr()->isNull('redirect.slug'),
+                $qb->expr()->eq('redirectSlug.organization', ':organization')
+            ))
+            ->setParameter('organization', $organization);
     }
 
     public function updateRedirectsBySlug(Slug $slug)
