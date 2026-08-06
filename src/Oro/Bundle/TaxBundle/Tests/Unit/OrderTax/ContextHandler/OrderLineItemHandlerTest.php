@@ -5,6 +5,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\OrderTax\ContextHandler;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -86,9 +87,15 @@ class OrderLineItemHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->taxCodeProvider = $this->createMock(TaxCodeProvider::class);
 
+        $customerUserRelationsProvider = $this->createMock(CustomerUserRelationsProvider::class);
+        $customerUserRelationsProvider->expects(self::any())
+            ->method('getCustomerGroup')
+            ->willReturn(null);
+
         $this->handler = new OrderLineItemHandler(
             $addressProvider,
-            $this->taxCodeProvider
+            $this->taxCodeProvider,
+            $customerUserRelationsProvider
         );
     }
 
@@ -417,6 +424,88 @@ class OrderLineItemHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame($orderLineItem, $contextEvent->getMappingObject());
         $this->assertEquals($expectedContext, $contextEvent->getContext());
+    }
+
+    public function testOnContextEventNoCustomerFallsBackToAnonymousGroup(): void
+    {
+        $taxationAddress = (new OrderAddress())
+            ->setCountry(new Country(self::ORDER_ADDRESS_COUNTRY_CODE));
+        $this->address = $taxationAddress;
+        $this->isProductTaxCodeDigital = false;
+        $this->productTaxCode = null;
+
+        $orderLineItem = new OrderLineItem();
+        $orderLineItem->addOrder($this->order);
+
+        $anonymousGroup = new CustomerGroup();
+
+        $addressProvider = $this->createMock(TaxationAddressProvider::class);
+        $addressProvider->expects(self::any())
+            ->method('getTaxationAddress')
+            ->willReturn($taxationAddress);
+
+        $customerUserRelationsProvider = $this->createMock(CustomerUserRelationsProvider::class);
+        $customerUserRelationsProvider->expects(self::once())
+            ->method('getCustomerGroup')
+            ->with(null)
+            ->willReturn($anonymousGroup);
+
+        $taxCodeProvider = $this->createMock(TaxCodeProvider::class);
+        $taxCodeProvider->expects(self::atLeastOnce())
+            ->method('getTaxCode')
+            ->willReturnCallback(function ($type, $object) use ($anonymousGroup) {
+                if ($type === TaxCodeInterface::TYPE_ACCOUNT_GROUP && $object === $anonymousGroup) {
+                    return (new CustomerTaxCode())->setCode(self::ACCOUNT_GROUP_TAX_CODE);
+                }
+
+                return null;
+            });
+
+        $handler = new OrderLineItemHandler($addressProvider, $taxCodeProvider, $customerUserRelationsProvider);
+
+        $contextEvent = new ContextEvent($orderLineItem);
+        $handler->onContextEvent($contextEvent);
+
+        $this->assertEquals(
+            self::ACCOUNT_GROUP_TAX_CODE,
+            $contextEvent->getContext()->offsetGet(Taxable::ACCOUNT_TAX_CODE)
+        );
+    }
+
+    public function testOnContextEventNoCustomerAndNoAnonymousGroupConfigured(): void
+    {
+        $taxationAddress = (new OrderAddress())
+            ->setCountry(new Country(self::ORDER_ADDRESS_COUNTRY_CODE));
+
+        $orderLineItem = new OrderLineItem();
+        $orderLineItem->addOrder($this->order);
+
+        $addressProvider = $this->createMock(TaxationAddressProvider::class);
+        $addressProvider->expects(self::any())
+            ->method('getTaxationAddress')
+            ->willReturn($taxationAddress);
+
+        $customerUserRelationsProvider = $this->createMock(CustomerUserRelationsProvider::class);
+        $customerUserRelationsProvider->expects(self::once())
+            ->method('getCustomerGroup')
+            ->with(null)
+            ->willReturn(null);
+
+        $taxCodeProvider = $this->createMock(TaxCodeProvider::class);
+        $taxCodeProvider->expects(self::any())
+            ->method('getTaxCode')
+            ->willReturnCallback(function ($type) {
+                $this->assertNotSame(TaxCodeInterface::TYPE_ACCOUNT_GROUP, $type);
+
+                return null;
+            });
+
+        $handler = new OrderLineItemHandler($addressProvider, $taxCodeProvider, $customerUserRelationsProvider);
+
+        $contextEvent = new ContextEvent($orderLineItem);
+        $handler->onContextEvent($contextEvent);
+
+        $this->assertNull($contextEvent->getContext()->offsetGet(Taxable::ACCOUNT_TAX_CODE));
     }
 
     public function testChecksumIsUsedInLocalCache(): void

@@ -943,6 +943,9 @@ oro_behat_extension:
     Set As Default:
         selector: 'button[title="Set as Default"]'
 
+    Invalid Line Items Dialog Title:
+      selector: 'div.shopping-list-errors-modal .ui-dialog-title'
+
   suites:
     OroShoppingListBundle:
       contexts:

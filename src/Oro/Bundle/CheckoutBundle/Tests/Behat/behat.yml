@@ -569,6 +569,10 @@ oro_behat_extension:
           Validate Billing Addresses During Checkout: 'address_validation[oro_checkout___validate_billing_addresses__checkout][value]'
           Validate Billing Addresses During Checkout Use Default: 'address_validation[oro_checkout___validate_billing_addresses__checkout][use_parent_scope_value]'
 
+    Single Page Checkout Line Items Grid:
+      selector: 'div[data-page-component-name="frontend-single-page-checkout-line-items-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   pages:
     Checkout:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Page\CheckoutPage

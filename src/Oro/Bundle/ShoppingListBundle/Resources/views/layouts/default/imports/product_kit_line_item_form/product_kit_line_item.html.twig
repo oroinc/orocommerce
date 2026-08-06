@@ -81,7 +81,10 @@
     <div {{ block('block_attributes') }}>
         {{- product.sku -}}
     </div>
+    {{ block('__product_kit_line_item_form__header_product_details_name_widget') }}
 {% endblock %}
+
+{% block __product_kit_line_item_form__header_product_details_name_widget %}{% endblock %}
 
 {% block __product_kit_line_item_form__product_total_widget %}
     {% set attr = layout_attr_defaults(attr, {

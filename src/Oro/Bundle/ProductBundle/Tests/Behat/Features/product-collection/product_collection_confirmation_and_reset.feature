@@ -48,6 +48,8 @@ Feature: Product collection confirmation and reset
     And I click "Cancel" in modal window
     Then I should not see text matching "You have changes in the Filters section that have not been applied"
     And I click "Cancel"
+    Then I should see "Default Web Catalog"
+    And I click "Cancel"
     Then I should see "Web Catalogs"
 
   Scenario: Reset Product Collection after filters change

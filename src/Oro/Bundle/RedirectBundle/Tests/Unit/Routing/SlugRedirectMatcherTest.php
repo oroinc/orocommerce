@@ -256,8 +256,8 @@ class SlugRedirectMatcherTest extends \PHPUnit\Framework\TestCase
         $this->repository->expects($this->exactly(2))
             ->method('findByUrl')
             ->willReturnMap([
-                ['/context', $scopeCriteria, null],
-                [$url, $scopeCriteria, $redirect]
+                ['/context', $scopeCriteria, null, null],
+                [$url, $scopeCriteria, null, $redirect]
             ]);
         $this->repository->expects($this->once())
             ->method('findByPrototype')

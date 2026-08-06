@@ -105,6 +105,14 @@
                 </div>
             <% } %>
         <% } %>
+
+        <% if (obj.lineItemDetails) { %>
+            <% _.each(obj.lineItemDetails, function(lineItemDetail, lineItemDetailKey) { %>
+                <div class="grid-line-items__row-entry shift-mobile-row" data-line-item-detail="<%- lineItemDetailKey %>">
+                    <span><%- lineItemDetail.label %>: <%- _.isArray(lineItemDetail.value) ? lineItemDetail.value.join(', ') : lineItemDetail.value %></span>
+                </div>
+            <% }) %>
+        <% } %>
     </div>
 </div>
 

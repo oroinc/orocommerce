@@ -227,6 +227,25 @@ class LineItemRepository extends ServiceEntityRepository
     }
 
     /**
+     * Returns at most $limit line items (with their product) that belong to the given shopping list, ordered
+     * by id ascending - i.e. the same items, in the same order, the storefront shopping list widget renders.
+     *
+     * @return LineItem[]
+     */
+    public function getItemsWithProductByShoppingListWithLimit(ShoppingList $shoppingList, int $limit): array
+    {
+        $qb = $this->createQueryBuilder('li');
+        $qb->select('li, product')
+            ->join('li.product', 'product')
+            ->where($qb->expr()->eq('li.shoppingList', ':shoppingList'))
+            ->setParameter('shoppingList', $shoppingList->getId(), Types::INTEGER)
+            ->addOrderBy($qb->expr()->asc('li.id'))
+            ->setMaxResults($limit);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param ShoppingList $shoppingList
      * @param Product[] $products
      * @return array|LineItem[]

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Routing;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -12,16 +13,10 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
  */
 class SlugRedirectMatcher
 {
-    /** @var ManagerRegistry */
-    private $doctrine;
-
-    /** @var ScopeManager */
-    private $scopeManager;
-
-    public function __construct(ManagerRegistry $doctrine, ScopeManager $scopeManager)
-    {
-        $this->doctrine = $doctrine;
-        $this->scopeManager = $scopeManager;
+    public function __construct(
+        protected ManagerRegistry $doctrine,
+        protected ScopeManager $scopeManager
+    ) {
     }
 
     /**
@@ -51,35 +46,43 @@ class SlugRedirectMatcher
      *
      * @return Redirect|null
      */
-    private function getApplicableRedirect($url): ?Redirect
+    protected function getApplicableRedirect($url): ?Redirect
     {
         $scopeCriteria = $this->scopeManager->getCriteria('web_content');
+        $organization = $this->getOrganization();
         $delimiter = sprintf('/%s/', SluggableUrlGenerator::CONTEXT_DELIMITER);
         $repository = $this->getRedirectRepository();
         if (str_contains($url, $delimiter)) {
             [$contextUrl, $itemSlugPrototype] = explode($delimiter, $url);
-            $contextRedirect = $repository->findByUrl($contextUrl, $scopeCriteria);
-            $prototypeRedirect = $repository->findByPrototype($itemSlugPrototype, $scopeCriteria);
+            $contextRedirect = $repository->findByUrl($contextUrl, $scopeCriteria, $organization);
+            $prototypeRedirect = $repository->findByPrototype($itemSlugPrototype, $scopeCriteria, $organization);
             if (null !== $contextRedirect || null !== $prototypeRedirect) {
-                $contextRedirectUrl = $contextRedirect
-                    ? $contextRedirect->getTo()
-                    : $contextUrl;
-                $prototypeUrl = $prototypeRedirect
-                    ? $prototypeRedirect->getToPrototype()
-                    : $itemSlugPrototype;
-
-                $redirect = new Redirect();
-                $redirect->setTo($contextRedirectUrl . $delimiter . $prototypeUrl);
-                $redirect->setType(Redirect::MOVED_PERMANENTLY);
-
-                return $redirect;
+                return $this->createContextRedirect(
+                    $contextRedirect ? $contextRedirect->getTo() : $contextUrl,
+                    $prototypeRedirect ? $prototypeRedirect->getToPrototype() : $itemSlugPrototype,
+                    $delimiter
+                );
             }
         }
 
-        return $repository->findByUrl($url, $scopeCriteria);
+        return $repository->findByUrl($url, $scopeCriteria, $organization);
     }
 
-    private function getRedirectRepository(): RedirectRepository
+    protected function createContextRedirect(string $contextUrl, string $prototypeUrl, string $delimiter): Redirect
+    {
+        $redirect = new Redirect();
+        $redirect->setTo($contextUrl . $delimiter . $prototypeUrl);
+        $redirect->setType(Redirect::MOVED_PERMANENTLY);
+
+        return $redirect;
+    }
+
+    protected function getOrganization(): ?Organization
+    {
+        return null;
+    }
+
+    protected function getRedirectRepository(): RedirectRepository
     {
         return $this->doctrine
             ->getManagerForClass(Redirect::class)

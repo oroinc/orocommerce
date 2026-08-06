@@ -15,7 +15,7 @@ $product-price-value-line-height: 27px !default;
 $product-price-simple-value-font-size: null !default;
 $product-price-simple-value-color: null !default;
 $product-price-simple-listed-value-font-size: $base-font-size--s !default;
-$product-price-simple-listed-value-color: get-color('primary', 'normal') !default;
+$product-price-simple-listed-value-color: get-color('text', 'primary') !default;
 
 $product-price-simple-label-display: none !default;
 $product-price-unit-short-display: none !default;

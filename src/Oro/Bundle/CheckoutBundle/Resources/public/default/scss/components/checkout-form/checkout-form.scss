@@ -197,7 +197,7 @@
     &__shipping-methods-list {
         max-width: 434px;
 
-        --checkbox-group-shipping-method-color: #{get-color('primary', 'base')};
+        --checkbox-group-shipping-method-color: #{get-color('primary', 'main')};
 
         .checkbox-label {
             width: 100%;

@@ -1,4 +1,7 @@
 /* @theme: default; */
+
+@use 'sass:math';
+
 $responsive-shopping-list-layout-background: get-color('neutral', 'grey1') !default;
 $responsive-shopping-cell-desktop-offset: 27.5px !default;
 $responsive-shopping-action-cell-desktop-offset: spacing('sm') !default;
@@ -29,7 +32,7 @@ $responsive-shopping-page-sidebar: 280px !default;
 
 // Desktop
 $responsive-shopping-cell-line-size-desktop: $responsive-shopping-cell-desktop-offset
-    + ($base-font-size / 2) - 1 !default;
+    + (math.div($base-font-size, 2)) - 1 !default;
 
 $responsive-shopping-expand-btn-in-select-row-margin-left: spacing('xmd') !default;
 $responsive-shopping-expand-btn-in-select-row-margin-top: -6px !default;

@@ -122,6 +122,11 @@
         word-break: $search-autocomplete-product-sku-word-break;
     }
 
+    &__detail {
+        color: $search-autocomplete-product-sku-color;
+        word-break: $search-autocomplete-product-sku-word-break;
+    }
+
     &__price {
         font-weight: $search-autocomplete-product-price-font-weight;
         color: $search-autocomplete-product-price-color;
