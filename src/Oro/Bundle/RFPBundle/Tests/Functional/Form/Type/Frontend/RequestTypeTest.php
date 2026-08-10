@@ -31,6 +31,15 @@ class RequestTypeTest extends FrontendWebTestCase
         ]);
 
         $this->setCurrentWebsite('default');
+        self::getContainer()->get('oro_frontend.request.frontend_helper')->emulateFrontendRequest();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        self::getContainer()->get('oro_frontend.request.frontend_helper')->resetRequestEmulation();
+
+        parent::tearDown();
     }
 
     public function testCreateWhenNoData(): void
