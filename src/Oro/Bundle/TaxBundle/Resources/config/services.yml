@@ -210,8 +210,6 @@ services:
             - '@oro_tax.event.tax_event_dispatcher'
             - '@oro_tax.manager.tax_value_manager'
             - '@oro_tax.provider.taxation_settings_provider'
-            - '@oro_tax.taxation_provider.cache'
-            - '@oro.cache.generator.object_cache_key'
         calls:
             - [addTransformer, ['Oro\Bundle\OrderBundle\Entity\Order', '@oro_tax.transformer.tax_value']]
             - [addTransformer, ['Oro\Bundle\OrderBundle\Entity\OrderLineItem', '@oro_tax.transformer.tax_value']]
@@ -449,25 +447,30 @@ services:
             - '@oro_tax.factory.tax'
             - '@oro_tax.provider.taxation_settings_provider'
 
+    oro_tax.provider.tax_subtotal_composite:
+        class: 'Oro\Bundle\TaxBundle\Provider\TaxSubtotalProviderComposite'
+        arguments:
+            - '@oro_tax.provider.tax_provider_registry'
+            - '@oro_tax.factory.tax'
+            - '@oro_tax.provider.lineitem_tax_subtotal'
+            - '@oro_tax.provider.shipping_tax_subtotal'
+            - '@oro_tax.provider.tax_subtotal'
+        tags:
+            - { name: oro_pricing.subtotal_provider, alias: oro_tax.subtotal_tax, priority: 20 }
+
     oro_tax.provider.tax_subtotal:
         class: 'Oro\Bundle\TaxBundle\Provider\TaxSubtotalProvider'
         parent: oro_tax.provider.abstract_tax_subtotal
-        tags:
-            - { name: oro_pricing.subtotal_provider, alias: oro_tax.subtotal_tax, priority: 20 }
 
     oro_tax.provider.shipping_tax_subtotal:
         class: 'Oro\Bundle\TaxBundle\Provider\ShippingTaxSubtotalProvider'
         parent: oro_tax.provider.abstract_tax_subtotal
-        tags:
-            - { name: oro_pricing.subtotal_provider, alias: oro_tax.subtotal_shipping_tax, priority: 20 }
 
     oro_tax.provider.lineitem_tax_subtotal:
         class: 'Oro\Bundle\TaxBundle\Provider\LineItemTaxSubtotalProvider'
         parent: oro_tax.provider.abstract_tax_subtotal
         arguments:
             - '@oro_tax.manager.tax_manager'
-        tags:
-            - { name: oro_pricing.subtotal_provider, alias: oro_tax.subtotal_lineitem_tax, priority: 20 }
 
     oro_tax.address_matcher_registry:
         class: 'Oro\Bundle\TaxBundle\Matcher\AddressMatcherRegistry'

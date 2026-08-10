@@ -4,7 +4,6 @@ namespace Oro\Bundle\TaxBundle\Provider;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Factory\TaxFactory;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Model\Result;
@@ -15,6 +14,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class LineItemTaxSubtotalProvider extends AbstractTaxSubtotalProvider
 {
+    public const NAME = 'line_item_tax';
     public const SUBTOTAL_ORDER = 410;
 
     private TaxManager $taxManager;
@@ -32,21 +32,15 @@ class LineItemTaxSubtotalProvider extends AbstractTaxSubtotalProvider
     }
 
     #[\Override]
-    public function getCachedSubtotal($entity): Subtotal
+    public function getSubtotalByResult(Result $tax, object $entity): Subtotal
     {
-        $subtotal = $this->createSubtotal();
-        try {
-            $tax = $this->getProvider()->loadTax($entity);
-
-            if ($entity instanceof Order && !$tax->offsetExists(Result::ITEMS)) {
-                $this->loadTaxItems($tax, $entity);
-            }
-
-            $this->fillSubtotal($subtotal, $tax);
-        } catch (TaxationDisabledException $e) {
+        // Line item tax items are not stored with the loaded tax result and must be loaded on demand;
+        // the recalculated result already contains them, so the guard keeps both paths consistent.
+        if ($entity instanceof Order && !$tax->offsetExists(Result::ITEMS)) {
+            $this->loadTaxItems($tax, $entity);
         }
 
-        return $subtotal;
+        return parent::getSubtotalByResult($tax, $entity);
     }
 
     #[\Override]
@@ -55,6 +49,7 @@ class LineItemTaxSubtotalProvider extends AbstractTaxSubtotalProvider
         $subtotal = new Subtotal();
 
         $subtotal->setType(self::TYPE);
+        $subtotal->setName(self::NAME);
         $label = 'oro.tax.subtotals.lineitem_' . self::TYPE;
         $subtotal->setLabel($this->translator->trans($label));
         $subtotal->setVisible(false);
@@ -85,16 +80,15 @@ class LineItemTaxSubtotalProvider extends AbstractTaxSubtotalProvider
         return $subtotal;
     }
 
-    /**
-     * @throws TaxationDisabledException
-     */
     private function loadTaxItems($taxResult, $order): void
     {
         if ($order->getLineItems()) {
             $itemsResult = [];
+
             foreach ($order->getLineItems() as $lineItem) {
                 $itemsResult[] = $this->taxManager->loadTax($lineItem);
             }
+
             if ($itemsResult) {
                 $taxResult->offsetSet(Result::ITEMS, $itemsResult);
             }

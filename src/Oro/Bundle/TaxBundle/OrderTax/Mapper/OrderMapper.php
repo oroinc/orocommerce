@@ -63,20 +63,23 @@ class OrderMapper extends AbstractOrderMapper
         $this->preloadingManager->preloadInEntities(
             $lineItems,
             [
+                'orders' => [],
+                'freeFormTaxCode' => [],
                 'product' => [
                     'taxCode' => [],
+                ],
+                'kitItemLineItems' => [
+                    'product' => [
+                        'taxCode' => [],
+                    ],
                 ],
             ]
         );
 
         $storage = new \SplObjectStorage();
-
-        array_walk(
-            $lineItems,
-            function (OrderLineItem $item) use ($storage) {
-                $storage->attach($this->orderLineItemMapper->map($item));
-            }
-        );
+        foreach ($lineItems as $lineItem) {
+            $storage->offsetSet($this->orderLineItemMapper->map($lineItem));
+        }
 
         return $storage;
     }

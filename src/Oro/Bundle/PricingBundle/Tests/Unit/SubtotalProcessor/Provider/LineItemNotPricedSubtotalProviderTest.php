@@ -80,6 +80,7 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
 
         self::assertInstanceOf(Subtotal::class, $subtotal);
         self::assertEquals(LineItemNotPricedSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertSame(LineItemNotPricedSubtotalProvider::NAME, $subtotal->getName());
         self::assertEquals('test', $subtotal->getLabel());
         self::assertEquals(self::CURRENCY_USD, $subtotal->getCurrency());
         self::assertIsFloat($subtotal->getAmount());
@@ -107,6 +108,7 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
         $subtotal = $this->provider->getSubtotal($entity);
         self::assertInstanceOf(Subtotal::class, $subtotal);
         self::assertEquals(LineItemNotPricedSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertSame(LineItemNotPricedSubtotalProvider::NAME, $subtotal->getName());
         self::assertEquals('test', $subtotal->getLabel());
         self::assertEquals($entity->getCurrency(), $subtotal->getCurrency());
         self::assertIsFloat($subtotal->getAmount());

@@ -1,3 +1,8 @@
+parameters:
+    # Lowered in the test environment so functional tests can exercise both the automatic
+    # calculation of order line item taxes and discounts and the skip-when-threshold-exceeded path.
+    oro_order.draft_session.order_line_items_calc_taxes_discounts_threshold: 1
+
 services:
     oro_order.tests.entity_name_resolver.data_loader:
         class: Oro\Bundle\OrderBundle\Tests\Functional\Environment\TestEntityNameResolverDataLoader

@@ -1020,3 +1020,99 @@ services:
             - '@oro_rfp.resolver.shopping_list_to_request_quote_validation_group'
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_invalid_line_items_modal_button }
+
+    oro_shopping_list.draft_session.factory.order_line_item_from_shopping_list:
+        class: Oro\Bundle\ShoppingListBundle\DraftSession\Factory\OrderLineItemDraftFromShoppingListFactory
+        arguments:
+            - '@oro_order.draft_session.reference_resolver'
+            - '@oro_product.provider.default_product_unit_provider.chain'
+        tags:
+            - { name: oro_order.draft_session.factory }
+
+    oro_shopping_list.draft_session.factory.order_from_shopping_list:
+        class: Oro\Bundle\ShoppingListBundle\DraftSession\Factory\OrderDraftFromShoppingListFactory
+        arguments:
+            - '@oro_order.draft_session.reference_resolver'
+            - '@oro_website.manager'
+        tags:
+            - { name: oro_order.draft_session.factory }
+
+    oro_shopping_list.draft_session.provider.order_draft_from_shopping_list_repository:
+        class: Oro\Bundle\ShoppingListBundle\DraftSession\Provider\OrderDraftFromShoppingListRepository
+        tags:
+            - { name: oro_order.draft_session.repository.entity_draft, priority: 255 }
+
+    oro_shopping_list.event_listener.draft_session.set_order_address_on_order_draft_created:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\DraftSession\SetOrderAddressOnOrderDraftCreatedEventListener
+        arguments:
+            - '@oro_order.draft_session.reference_resolver'
+            - '@oro_order.manager.order_address'
+        tags:
+            -   name: kernel.event_listener
+                event: 'Oro\Component\DraftSession\Event\EntityDraftCreatedEvent'
+                method: onEntityDraftCreated
+                priority: 30
+
+    oro_shopping_list.event_listener.draft_session.sync_extended_fields_on_order_draft_created:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\DraftSession\SyncExtendedFieldsOnDraftCreatedEventListener
+        arguments:
+            - '@oro_order.draft_session.extended_fields_provider'
+            - '@oro_order.draft_session.extended_field_value_synchronizer'
+            - 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+        tags:
+            -   name: kernel.event_listener
+                event: 'Oro\Component\DraftSession\Event\EntityDraftCreatedEvent'
+                method: onEntityDraftCreated
+                priority: 20
+
+    oro_shopping_list.event_listener.draft_session.sync_line_items_on_order_draft_created:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\DraftSession\SyncLineItemsOnOrderDraftCreatedEventListener
+        arguments:
+            - '@oro_order.draft_session.factory'
+        tags:
+            -   name: kernel.event_listener
+                event: 'Oro\Component\DraftSession\Event\EntityDraftCreatedEvent'
+                method: onEntityDraftCreated
+                priority: 10
+
+    oro_shopping_list.event_listener.draft_session.sync_extended_fields_on_order_line_item_draft_created:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\DraftSession\SyncExtendedFieldsOnDraftCreatedEventListener
+        arguments:
+            - '@oro_order.draft_session.extended_fields_provider'
+            - '@oro_order.draft_session.extended_field_value_synchronizer'
+            - 'Oro\Bundle\ShoppingListBundle\Entity\LineItem'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
+        tags:
+            -   name: kernel.event_listener
+                event: 'Oro\Component\DraftSession\Event\EntityDraftCreatedEvent'
+                method: onEntityDraftCreated
+                priority: 10
+
+    oro_shopping_list.event_listener.draft_session.generate_checksum_on_order_line_item_draft_created:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\DraftSession\GenerateChecksumOnOrderLineItemDraftCreatedEventListener
+        arguments:
+            - '@oro_product.line_item_checksum_generator'
+        tags:
+            -   name: kernel.event_listener
+                event: 'Oro\Component\DraftSession\Event\EntityDraftCreatedEvent'
+                method: onEntityDraftCreated
+                priority: -10 # Must run after SetMatchedPricesOnOrderDraftCreatedEventListener (priority 0) so kit-item prices are included in the checksum.
+
+    oro_shopping_list.event_listener.draft_session.set_matched_prices_on_order_draft_created:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\DraftSession\SetMatchedPricesOnOrderDraftCreatedEventListener
+        arguments:
+            - '@oro_pricing.provider.product_line_item_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+        calls:
+            - [ setLogger, ['@logger'] ]
+        tags:
+            - { name: kernel.event_listener, event: 'Oro\Component\DraftSession\Event\EntityDraftCreatedEvent', method: onEntityDraftCreated, priority: 0 }
+            - { name: monolog.logger, channel: oro_shopping_list }
+
+    oro_shopping_list.operation.create_order_draft_from_shopping_list:
+        class: Oro\Bundle\ShoppingListBundle\Operation\CreateOrderDraftFromShoppingList
+        # Public because the service is used in oro_shoppinglist_createorder operation.
+        public: true
+        arguments:
+            - '@oro_order.draft_session.manager.order_draft'

@@ -21,6 +21,7 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
     use FeatureCheckerHolderTrait;
 
     public const TYPE = 'discount';
+    public const NAME = 'discount';
     public const ORDER_DISCOUNT_SUBTOTAL = 'order_discount_subtotal';
     public const SHIPPING_DISCOUNT_SUBTOTAL = 'shipping_discount_subtotal';
     public const ORDER_DISCOUNT_SUBTOTAL_SORT_ORDER = 100;
@@ -94,6 +95,7 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
         $subtotal = new Subtotal();
         $subtotal->setLabel($label);
         $subtotal->setType(self::TYPE);
+        $subtotal->setName(self::NAME);
         $subtotal->setVisible($amount > 0.0);
         $subtotal->setAmount($this->rounding->round($amount));
         $subtotal->setCurrency($currency);

@@ -24,7 +24,11 @@ class OrderTotalEventListener
     {
         $order = $event->getOrder();
 
-        $totals = $this->provider->getTotalFromOrderWithSubtotalsWithBaseCurrencyValues($order, false);
+        $totals = $this->provider->getTotalWithSubtotalsWithBaseCurrency(
+            order: $order,
+            isStatic: false,
+            recalculate: true
+        );
 
         $event->getData()->offsetSet(self::TOTALS_KEY, $totals);
     }

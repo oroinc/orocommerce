@@ -30,6 +30,12 @@ class OrderProductKitLineItemListener
 
     public function onOrderEvent(OrderEvent $event): void
     {
+        $form = $event->getForm();
+        if ($form->getConfig()->getOption('draft_session_sync')) {
+            // No need to render kit item line items when draft session sync is enabled.
+            return;
+        }
+
         $kitItemLineItems = $checksum = $disabledKitPrices = [];
         $lineItemsForm = $event->getForm()->has('lineItems')
             ? $event->getForm()->get('lineItems')->all()
