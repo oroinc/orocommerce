@@ -23,7 +23,69 @@ The current file describes significant changes in the code that may affect the u
 - [1.2.0](#120-2017-06-01)
 - [1.1.0](#110-2017-03-31)
 
-## UNRELEASED
+## 6.1.10
+
+### Added
+
+#### OrderBundle
+* Added `\Oro\Bundle\OrderBundle\EventListener\Order\OrderPreloadingEventListener` (service `oro_order.event_listener.order.order_preloading`) - preloads order line item product relations on the `oro_order.order` event to reduce the number of database queries during order form processing.
+* Added `\Oro\Bundle\OrderBundle\EventListener\DraftSession\PreloadOrderRelationsOnEntityFromDraftSyncBeforeEventListener` - preloads the order relations traversed by the draft synchronizers before an order is synchronized from its draft. The preloading configuration can be overridden via `setPreloadingConfig()`.
+* Added the `oro_order.draft_session.order_line_items_calc_taxes_discounts_threshold` container parameter (default `100`). When a draft order has more line items than this threshold, taxes and discounts are no longer calculated automatically on the draft line item edit page and must be requested explicitly through a separate request.
+* Added `\Oro\Bundle\OrderBundle\Provider\TotalProvider::getTotalWithSubtotalsWithBaseCurrency()` with an optional `$recalculate` argument that forces recalculation of the subtotals before building the totals instead of the deprecated `getTotalFromOrderWithSubtotalsWithBaseCurrencyValues`. Customizations calling the old method must be updated.
+
+#### PricingBundle
+* Added the `name` property to `\Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal` with `getName()` and `setName()` methods. The name is a machine identifier of the producing provider (for example `line_items_subtotal`, `order_discount`, `discount`) and is more specific than `type`. Built-in subtotal providers now set it through their new `NAME` constants.
+
+#### TaxBundle
+* Added `\Oro\Bundle\TaxBundle\Provider\TaxSubtotalProviderComposite` (service `oro_tax.provider.tax_subtotal_composite`) - now the single registered tax subtotal provider. It resolves the tax result once and builds the tax, shipping tax and line item tax subtotals from that one result, delegating to the existing tax subtotal providers, instead of resolving the tax result once per provider.
+* Added `\Oro\Bundle\TaxBundle\Manager\TaxManager::preloadTaxValues(string $entityClass, array $entityIds)` to preload tax values for many entities in a single query.
+* Added `\Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository::findManyByEntities()` - loads product tax codes for many products in a single query.
+
+#### PromotionBundle
+* Added `getMatchingProductIds(\Oro\Bundle\SegmentBundle\Entity\Segment $segment, array $lineItems, ?\Oro\Bundle\OrganizationBundle\Entity\Organization $promotionOrganization = null)` to `\Oro\Bundle\PromotionBundle\Provider\MatchingProductsProviderInterface` and its implementation. It returns matching product ids instead of loaded `\Oro\Bundle\ProductBundle\Entity\Product` entities. Any custom implementation or decorator of `MatchingProductsProviderInterface` must implement the new method.
+
+#### ShoppingListBundle
+* Added **Shopping-List-to-Order draft session integration** — the shopping list create order operation can now create an `Order` draft directly from a `ShoppingList`, using the draft session component. The draft is pre-populated with the shopping list's customer, currency, default billing and shipping addresses, line items, extended fields, and matched prices.
+  * Added `\Oro\Bundle\ShoppingListBundle\Operation\CreateOrderDraftFromShoppingList` (service `oro_shopping_list.operation.create_order_draft_from_shopping_list`) — creates an `Order` draft from a `ShoppingList` within a new draft session.
+  * Added `\Oro\Bundle\ShoppingListBundle\DraftSession\Factory\OrderDraftFromShoppingListFactory` — creates an `Order` draft from a `ShoppingList`, copying organization, customer, customer user, website (falling back to the default website), currency, customer notes, and source entity reference.
+  * Added `\Oro\Bundle\ShoppingListBundle\DraftSession\Factory\OrderLineItemDraftFromShoppingListFactory` — creates `OrderLineItem` drafts from `ShoppingList` `LineItem` entities, copying product, SKU, primary unit, quantity, comment, and kit item line items.
+  * Added `\Oro\Bundle\ShoppingListBundle\DraftSession\Provider\OrderDraftFromShoppingListRepository` — makes shopping lists always use factory-based draft creation.
+  * Added the `\Oro\Component\DraftSession\Event\EntityDraftCreatedEvent` listeners `\Oro\Bundle\ShoppingListBundle\EventListener\DraftSession\SyncLineItemsOnOrderDraftCreatedEventListener`, `SyncExtendedFieldsOnDraftCreatedEventListener`, `SetOrderAddressOnOrderDraftCreatedEventListener`, `SetMatchedPricesOnOrderDraftCreatedEventListener`, and `GenerateChecksumOnOrderLineItemDraftCreatedEventListener` that populate line items, extended fields, default billing/shipping addresses, matched prices, and line item checksums on the created order draft.
+
+### Changed
+
+#### OrderBundle
+* Changed `\Oro\Bundle\OrderBundle\Provider\TotalProvider`: removed the unused `getTotalWithSubtotalsWithBaseCurrencyValues()` method.
+* Changed `\Oro\Bundle\OrderBundle\EventListener\Order\RecalculateOrdersOnSave` to also add matching prices and fill totals for a standalone order on form processing, not only for sub-orders.
+* Changed `\Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem::updateFallbackFields()` to also copy the `sortOrder` from the referenced kit item, so order kit item line items keep the kit item ordering.
+* Changed `\Oro\Bundle\OrderBundle\Total\TotalHelper`: `fill()`, `fillSubtotals()`, `fillDiscounts()`, `fillTotal()` and `calculateTotal()` now accept an optional pre-calculated subtotals collection so the subtotal provider chain is computed once and reused for the subtotal, order-level discount and total. Customizations overriding these methods must account for the new optional argument.
+* Changed the order form event listeners `\Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber`, `\Oro\Bundle\OrderBundle\EventListener\Order\OrderLineItemTierPricesEventListener` and `\Oro\Bundle\OrderBundle\EventListener\Order\OrderProductKitLineItemListener` to skip their work when the order form is built with the `draft_session_sync` option enabled, so totals, tier prices and kit line items are not recomputed during draft session synchronization.
+* Changed `\Oro\Bundle\OrderBundle\DraftSession\Manager\OrderDraftManager` to implement `\Symfony\Contracts\Service\ResetInterface` and to cache entities already synchronized from a draft within the current draft session; the cache is cleared on service reset.
+
+#### TaxBundle
+* Changed `\Oro\Bundle\TaxBundle\Manager\TaxManager`: dropped the internal caching of the taxable representation.
+* Changed the tax subtotal provider registration: the `oro_pricing.subtotal_provider` tag was removed from `oro_tax.provider.tax_subtotal`, `oro_tax.provider.shipping_tax_subtotal` and `oro_tax.provider.lineitem_tax_subtotal` and moved to the new `oro_tax.provider.tax_subtotal_composite`. The `oro_tax.subtotal_shipping_tax` and `oro_tax.subtotal_lineitem_tax` subtotal aliases are no longer registered; the composite now provides all tax subtotals under the `oro_tax.subtotal_tax` alias. Customizations relying on the individual tax subtotal services being tagged must be updated.
+* Changed `\Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider::getBaseAddressExclusions()` to cache its result.
+
+#### PricingBundle
+* Changed `\Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider` to build the aggregation key from the subtotal name in addition to its type and label, so subtotals that share a type but have different names (for example an order discount and a promotion discount) are kept as separate totals instead of being merged.
+
+#### PromotionBundle
+* Changed `\Oro\Bundle\PromotionBundle\EventListener\OrderAppliedPromotionEventListener` to build the order form with the `draft_session_sync` option enabled and `\Oro\Bundle\PromotionBundle\EventListener\OrderLineItemAppliedDiscountsListener` to skip applied discount calculation when that option is enabled, avoiding redundant recalculation during draft session synchronization.
+* Changed `\Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService` to match rule owners by product ids via `getMatchingProductIds()` instead of loading `\Oro\Bundle\ProductBundle\Entity\Product` entities.
+
+#### ShoppingListBundle
+* Updated the shopping list create order operation to use the `oro_shopping_list.operation.create_order_draft_from_shopping_list` service to create an order draft and redirect using the draft session uuid, instead of pre-filling the order form via the product data storage.
+* `\Oro\Bundle\ShoppingListBundle\Entity\ShoppingList` and `\Oro\Bundle\ShoppingListBundle\Entity\LineItem` now implement `\Oro\Component\DraftSession\Entity\EntityDraftAwareInterface` (via `\Oro\Component\DraftSession\Entity\NoopEntityDraftAwareTrait`) to support use as draft source entities in the shopping-list-to-order draft flow.
+
+### Removed
+
+#### OrderBundle
+* Deprecated `\Oro\Bundle\OrderBundle\DraftSession\RecalculateTotalsOrderDraftSynchronizer` and its service `oro_order.draft_session.synchronizer.recalculate_totals`. Order totals are now recalculated through `\Oro\Bundle\OrderBundle\Total\TotalHelper` during order form processing instead of a dedicated draft synchronizer.
+* Deprecated `\Oro\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension` and its service `oro_order.form.type.extension.order_data_storage`. Orders are no longer pre-filled from the product data storage; use the draft-session order creation flow instead.
+* Deprecated `\Oro\Bundle\OrderBundle\Provider\TotalProvider::getTotalFromOrderWithSubtotalsWithBaseCurrencyValues()`, use `getTotalFromOrderWithSubtotalsWithBaseCurrencyValues` instead. Customizations calling the old method must be updated.
+
+## 6.1.9
 
 ### Added
 

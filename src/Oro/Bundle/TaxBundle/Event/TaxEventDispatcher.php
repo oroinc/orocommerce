@@ -13,6 +13,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * events in three phases: RESOLVE_BEFORE, RESOLVE, and RESOLVE_AFTER. Tax resolvers listen to these events
  * to calculate taxes, apply tax rules, and perform post-calculation adjustments.
  * It ensures that all registered resolvers have an opportunity to contribute to the final tax calculation result.
+ * It also dispatches {@see LoadTaxBeforeEvent} before the tax of an object is loaded.
  */
 class TaxEventDispatcher
 {
@@ -37,5 +38,14 @@ class TaxEventDispatcher
         $this->eventDispatcher->dispatch($event, ResolveTaxEvent::RESOLVE_AFTER);
 
         return $taxable->getResult();
+    }
+
+    /**
+     * Gives listeners a chance to preload the data required to load the tax of the given object
+     * and of its nested objects, e.g. tax values of order line items.
+     */
+    public function dispatchLoadTaxBefore(object $object): void
+    {
+        $this->eventDispatcher->dispatch(new LoadTaxBeforeEvent($object));
     }
 }

@@ -187,4 +187,57 @@ final class OrderDraftManagerTest extends TestCase
 
         $this->manager->deleteEntityDraft($order);
     }
+
+    public function testLoadFromEntityDraftCachesResultForSameEntityInstance(): void
+    {
+        $order = new Order();
+        $loadedOrder = new Order();
+
+        $this->entityDraftManager
+            ->expects(self::once())
+            ->method('loadFromEntityDraft')
+            ->with($order, 'explicit-uuid')
+            ->willReturn($loadedOrder);
+
+        self::assertSame($loadedOrder, $this->manager->loadFromEntityDraft($order, 'explicit-uuid'));
+        self::assertSame($loadedOrder, $this->manager->loadFromEntityDraft($order, 'explicit-uuid'));
+    }
+
+    public function testResetClearsLoadedFromDraftCache(): void
+    {
+        $order = new Order();
+        $loadedOrder = new Order();
+
+        $this->entityDraftManager
+            ->expects(self::exactly(2))
+            ->method('loadFromEntityDraft')
+            ->with($order, 'explicit-uuid')
+            ->willReturn($loadedOrder);
+
+        self::assertSame($loadedOrder, $this->manager->loadFromEntityDraft($order, 'explicit-uuid'));
+
+        $this->manager->reset();
+
+        self::assertSame($loadedOrder, $this->manager->loadFromEntityDraft($order, 'explicit-uuid'));
+    }
+
+    public function testLoadFromEntityDraftResolvesUuidViaProviderWhenNull(): void
+    {
+        $order = new Order();
+        $loadedOrder = new Order();
+        $resolvedUuid = 'resolved-draft-uuid';
+
+        $this->draftSessionUuidProvider
+            ->expects(self::once())
+            ->method('getDraftSessionUuid')
+            ->willReturn($resolvedUuid);
+
+        $this->entityDraftManager
+            ->expects(self::once())
+            ->method('loadFromEntityDraft')
+            ->with($order, $resolvedUuid)
+            ->willReturn($loadedOrder);
+
+        self::assertSame($loadedOrder, $this->manager->loadFromEntityDraft($order));
+    }
 }

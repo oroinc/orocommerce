@@ -200,7 +200,7 @@ class PrecalculateOrderTotalProcessorTest extends TestCase
         $order2 = self::getOrder(2, 2.1, 2.2);
         $order3 = self::getOrder(3, 3.1, null);
         $order3->setSerializedData(['another' => 1]);
-        $order4 = self::getOrder(1, 4.1, null);
+        $order4 = self::getOrder(4, 4.1, null);
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $this->doctrine->expects(self::once())
@@ -227,20 +227,21 @@ class PrecalculateOrderTotalProcessorTest extends TestCase
             ->willReturnSelf();
         $qb->expects(self::exactly(2))
             ->method('setParameter')
-            ->withConsecutive(['firstOrderId', 1], ['lastOrderId', 3])
+            ->withConsecutive(['firstOrderId', 1], ['lastOrderId', 4])
             ->willReturnSelf();
         $qb->expects(self::once())
             ->method('getQuery')
             ->willReturn($query);
         $query->expects(self::once())
             ->method('getResult')
-            ->willReturn([$order1, $order2, $order3]);
+            ->willReturn([$order1, $order2, $order3, $order4]);
 
-        $this->totalHelper->expects(self::exactly(2))
+        $this->totalHelper->expects(self::exactly(3))
             ->method('calculateTotal')
             ->willReturnMap([
                 [$order1, self::getOrderTotal(1.2)],
-                [$order3, self::getOrderTotal(3.2)]
+                [$order3, self::getOrderTotal(3.2)],
+                [$order4, self::getOrderTotal(4.1)]
             ]);
         $entityManager->expects(self::once())
             ->method('flush')
@@ -248,6 +249,7 @@ class PrecalculateOrderTotalProcessorTest extends TestCase
                 self::assertSame(['precalculatedTotal' => 1.2], $order1->getSerializedData(), 'ord1');
                 self::assertSame(['precalculatedTotal' => 2.2], $order2->getSerializedData(), 'ord2');
                 self::assertSame(['another' => 1, 'precalculatedTotal' => 3.2], $order3->getSerializedData(), 'ord3');
+                // the recalculated total equals the stored total, so nothing should be changed
                 self::assertSame([], $order4->getSerializedData(), 'ord4');
             });
 
@@ -270,7 +272,7 @@ class PrecalculateOrderTotalProcessorTest extends TestCase
             ]);
 
         $message = new Message();
-        $message->setBody(['firstOrderId' => 1, 'lastOrderId' => 3]);
+        $message->setBody(['firstOrderId' => 1, 'lastOrderId' => 4]);
 
         self::assertEquals(
             MessageProcessorInterface::ACK,

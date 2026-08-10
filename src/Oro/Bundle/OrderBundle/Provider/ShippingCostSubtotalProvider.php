@@ -15,8 +15,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
-    const TYPE = 'shipping_cost';
-    const SUBTOTAL_SORT_ORDER = 200;
+    public const TYPE = 'shipping_cost';
+    public const NAME = 'shipping_cost';
+    public const SUBTOTAL_SORT_ORDER = 200;
 
     /**
      * @var TranslatorInterface
@@ -52,6 +53,7 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
 
         $subtotal = new Subtotal();
         $subtotal->setType(self::TYPE);
+        $subtotal->setName(self::NAME);
         $subtotal->setSortOrder(self::SUBTOTAL_SORT_ORDER);
         $subtotal->setLabel($this->translator->trans('oro.order.subtotals.' . self::TYPE));
         $subtotal->setRemovable(false);

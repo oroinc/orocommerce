@@ -11,6 +11,8 @@ use Oro\Component\DraftSession\Synchronizer\EntityDraftSynchronizerInterface;
 
 /**
  * Recalculates the totals for the order when synchronized from draft.
+ *
+ * @bc-layer This class is retained for BC reasons.
  */
 class RecalculateTotalsOrderDraftSynchronizer implements EntityDraftSynchronizerInterface
 {
@@ -28,9 +30,7 @@ class RecalculateTotalsOrderDraftSynchronizer implements EntityDraftSynchronizer
     #[\Override]
     public function synchronizeFromDraft(EntityDraftAwareInterface $draft, EntityDraftAwareInterface $entity): void
     {
-        assert($entity instanceof Order);
-
-        $this->totalHelper->fill($entity);
+        // @bc-layer This method is retained for BC reasons.
     }
 
     #[\Override]

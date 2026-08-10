@@ -177,7 +177,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
         return $unit;
     }
 
-    private function isNewEntity(object $entity, string $entityClass): bool
+    protected function isNewEntity(object $entity, string $entityClass): bool
     {
         $identifierValues = $this->doctrine->getManagerForClass($entityClass)
             ->getClassMetadata($entityClass)

@@ -115,6 +115,9 @@ class DiscountSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         [$firstDiscountSubtotal, $secondDiscountSubtotal, $threadDiscountSubtotal] = $subtotal;
         self::assertInstanceOf(Subtotal::class, $firstDiscountSubtotal);
         self::assertEquals(DiscountSubtotalProvider::TYPE, $firstDiscountSubtotal->getType());
+        self::assertSame(DiscountSubtotalProvider::NAME, $firstDiscountSubtotal->getName());
+        self::assertSame(DiscountSubtotalProvider::NAME, $secondDiscountSubtotal->getName());
+        self::assertSame(DiscountSubtotalProvider::NAME, $threadDiscountSubtotal->getName());
         self::assertEquals($description . ' (' . self::SUBTOTAL_LABEL . ')', $firstDiscountSubtotal->getLabel());
         self::assertEquals(self::SUBTOTAL_LABEL, $secondDiscountSubtotal->getLabel());
         self::assertEquals($order->getCurrency(), $firstDiscountSubtotal->getCurrency());

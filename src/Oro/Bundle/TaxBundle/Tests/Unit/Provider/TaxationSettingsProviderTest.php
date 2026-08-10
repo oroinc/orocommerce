@@ -383,10 +383,22 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetBaseAddressExclusions()
     {
+        $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey(
+            TaxationSettingsProvider::class . '::getBaseAddressExclusions'
+        );
+
         $exclusionData = [
             ['data'],
             ['data'],
         ];
+
+        $this->cacheProvider->expects($this->once())
+            ->method('get')
+            ->with($cacheKey)
+            ->willReturnCallback(function ($cacheKey, $callback) {
+                $item = $this->createMock(ItemInterface::class);
+                return $callback($item);
+            });
 
         $this->configManager->expects($this->once())
             ->method('get')

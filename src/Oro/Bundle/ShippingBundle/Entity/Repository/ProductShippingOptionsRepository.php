@@ -27,25 +27,29 @@ class ProductShippingOptionsRepository extends ServiceEntityRepository
                     IDENTITY(o.dimensionsUnit) AS dimensionsUnit,
                     IDENTITY(o.weightUnit) AS weightUnit,
                     o.weightValue,
-                    u.code
+                    IDENTITY(o.productUnit) AS code,
+                    IDENTITY(o.product) AS product
                 FROM %s o
-                INNER JOIN o.productUnit u INDEX BY u.code
-                WHERE o.product = :productId AND o.productUnit IN (:productUnits)
+                WHERE o.product IN (:productIds)
             DQL,
             ProductShippingOptions::class
         );
 
         $unitsByCodeQuery = $this->getEntityManager()->createQuery($query);
+        $productIds = array_keys($unitsByProductIds);
+        $shippingOptionsData = $unitsByCodeQuery->execute(
+            ['productIds' => $productIds],
+            AbstractQuery::HYDRATE_ARRAY
+        );
 
-        foreach ($unitsByProductIds as $productId => $unitCodes) {
-            $shippingOptionsByCode = $unitsByCodeQuery->execute(
-                ['productId' => $productId, 'productUnits' => $unitCodes],
-                AbstractQuery::HYDRATE_ARRAY
-            );
-
-            if ($shippingOptionsByCode) {
-                $result[$productId] = $shippingOptionsByCode;
+        foreach ($shippingOptionsData as $shippingOptionsDatum) {
+            $productId = $shippingOptionsDatum['product'];
+            $unitCode = $shippingOptionsDatum['code'];
+            if (!isset($unitsByProductIds[$productId][$unitCode])) {
+                continue;
             }
+
+            $result[$productId][$unitCode] = $shippingOptionsDatum;
         }
 
         return $result;

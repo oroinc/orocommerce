@@ -20,6 +20,14 @@ class Subtotal
     protected $type;
 
     /**
+     * Machine name of the subtotal that identifies the producing provider,
+     * e.g. "line_items_subtotal", "order_discount", "discount". More specific than "type".
+     *
+     * @var string|null
+     */
+    protected $name;
+
+    /**
      * @var string
      */
     protected $label;
@@ -90,6 +98,18 @@ class Subtotal
     public function setType($type)
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }
