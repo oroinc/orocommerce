@@ -13,13 +13,14 @@ operations:
             icon: fa-briefcase
         actions:
             - '@call_service_method':
-                service: oro_shopping_list.service.product_data_storage
-                method: saveToStorage
-                method_parameters: [$.data]
+                  service: oro_shopping_list.operation.create_order_draft_from_shopping_list
+                  method: createOrderDraftFromShoppingList
+                  method_parameters: [ $.data ]
+                  attribute: $.orderDraft
             - '@redirect':
-                parameters:
-                    route: oro_order_create
-                    route_parameters: {'storage': true}
+                  parameters:
+                      route: oro_order_create
+                      route_parameters: { 'orderDraftSessionUuid': $.orderDraft.draftSessionUuid }
 
     oro_shoppinglist_frontend_products_add_to_shoppinglist_base:
         label: oro.shoppinglist.product.add_to_shopping_list.label

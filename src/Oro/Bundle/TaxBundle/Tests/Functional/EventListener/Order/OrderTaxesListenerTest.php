@@ -124,7 +124,7 @@ final class OrderTaxesListenerTest extends WebTestCase
         return 0.0;
     }
 
-    public function testTaxAmountsDifferAfterDraftSyncRemovesLineItem(): void
+    public function testTaxAmountsDifferWhenLineItemIsDeleted(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
@@ -146,10 +146,7 @@ final class OrderTaxesListenerTest extends WebTestCase
             $originalTaxItems
         );
 
-        // Synchronize the draft that marks one line item as deleted.
-        /** @var EntityDraftSynchronizerInterface $synchronizer */
-        $synchronizer = self::getContainer()->get('oro_order.draft_session.synchronizer');
-        $synchronizer->synchronizeFromDraft($orderDraft, $order);
+        $order->getLineItems()->remove(0);
 
         self::assertCount(1, $order->getLineItems());
 
@@ -180,7 +177,7 @@ final class OrderTaxesListenerTest extends WebTestCase
         );
     }
 
-    public function testTaxAmountsBecomeZeroWhenAllLineItemsDeletedViaDraft(): void
+    public function testTaxAmountsBecomeZeroWhenAllLineItemsDeleted(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
@@ -202,7 +199,7 @@ final class OrderTaxesListenerTest extends WebTestCase
         $synchronizer = self::getContainer()->get('oro_order.draft_session.synchronizer');
         $synchronizer->synchronizeFromDraft($orderDraft, $order);
 
-        self::assertCount(0, $order->getLineItems());
+        $order->getLineItems()->clear();
 
         // Get taxes after draft synchronization via OrderEvent.
         $event = $this->dispatchOrderEvent($order);

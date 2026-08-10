@@ -71,6 +71,7 @@ class ShippingCostSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         self::assertTrue($subtotal->isVisible());
         self::assertEquals($order->getCurrency(), $subtotal->getCurrency());
         self::assertSame($costAmount, $subtotal->getAmount());
+        self::assertSame(ShippingCostSubtotalProvider::NAME, $subtotal->getName());
     }
 
     public function testGetSubtotalWhenNoShippingCost(): void
@@ -87,6 +88,7 @@ class ShippingCostSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         self::assertFalse($subtotal->isVisible());
         self::assertEquals($order->getCurrency(), $subtotal->getCurrency());
         self::assertSame(0.0, $subtotal->getAmount());
+        self::assertSame(ShippingCostSubtotalProvider::NAME, $subtotal->getName());
     }
 
     public function testGetSubtotalDemandQuote(): void
@@ -109,5 +111,6 @@ class ShippingCostSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         self::assertTrue($subtotal->isVisible());
         self::assertEquals($currency, $subtotal->getCurrency());
         self::assertSame($costAmount, $subtotal->getAmount());
+        self::assertSame(ShippingCostSubtotalProvider::NAME, $subtotal->getName());
     }
 }

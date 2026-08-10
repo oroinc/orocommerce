@@ -31,25 +31,27 @@ class TotalProvider
     }
 
     /**
-     * Calculates and returns a total with subtotals
-     * and with values in base currency converted to an array.
-     */
-    public function getTotalWithSubtotalsWithBaseCurrencyValues(Order $order, bool $isStatic = true): array
-    {
-        $subtotals = $this->pricingTotal->getSubtotals($order);
-        $total = $this->pricingTotal->getTotalForSubtotals($order, $subtotals);
-
-        return $this->prepareTotals($order, $subtotals, $total, $isStatic);
-    }
-
-    /**
      * Get total from order and returns a total with subtotals
      * and with values in base currency converted to an array.
      */
-    public function getTotalFromOrderWithSubtotalsWithBaseCurrencyValues(Order $order, bool $isStatic = true): array
-    {
-        $subtotals = $this->pricingTotal->getSubtotals($order);
-        $total = $this->pricingTotal->getTotalFromOrder($order);
+    public function getTotalWithSubtotalsWithBaseCurrency(
+        Order $order,
+        bool $isStatic = true,
+        bool $recalculate = false
+    ): array {
+        try {
+            if ($recalculate) {
+                $this->pricingTotal->enableRecalculation();
+            }
+
+            $subtotals = $this->pricingTotal->getSubtotals($order);
+        } finally {
+            if ($recalculate) {
+                $this->pricingTotal->disableRecalculation();
+            }
+        }
+
+        $total = $this->pricingTotal->getTotalForSubtotals($order, $subtotals);
 
         return $this->prepareTotals($order, $subtotals, $total, $isStatic);
     }

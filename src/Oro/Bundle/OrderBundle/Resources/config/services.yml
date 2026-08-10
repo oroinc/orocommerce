@@ -169,6 +169,21 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onCustomerView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.shopping-list-view, method: onShoppingListView }
 
+    oro_order.event_listener.preload_order_line_item_tax_values:
+        class: 'Oro\Bundle\OrderBundle\EventListener\PreloadOrderLineItemTaxValuesListener'
+        arguments:
+            - '@oro_tax.manager.tax_manager'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\TaxBundle\Event\LoadTaxBeforeEvent, method: onLoadTaxBefore }
+
+    oro_order.event_listener.preload_order_on_before_form_submit:
+        class: 'Oro\Bundle\OrderBundle\EventListener\PreloadOrderOnBeforeFormSubmitListener'
+        arguments:
+            - '@oro_entity.manager.preloading_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_submit.oro_order_type, method: onBeforeFormSubmit }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_submit.oro_suborder_type, method: onBeforeFormSubmit }
+
     oro_order.event_listener.product_db_query_restriction:
         class: 'Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener'
         parent: oro_product.event_listener.abstract_product_db_query_restriction
@@ -735,6 +750,13 @@ services:
             - '@twig'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
+
+    oro_order.event_listener.order.order_preloading:
+        class: Oro\Bundle\OrderBundle\EventListener\Order\OrderPreloadingEventListener
+        arguments:
+            - '@oro_entity.manager.preloading_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent, priority: 10 }
 
     oro_order.provider.order_product_price:
         class: Oro\Bundle\OrderBundle\Provider\OrderProductPriceProvider

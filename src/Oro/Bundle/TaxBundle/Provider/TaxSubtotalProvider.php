@@ -12,6 +12,7 @@ use Oro\Bundle\TaxBundle\Model\Result;
 class TaxSubtotalProvider extends AbstractTaxSubtotalProvider
 {
     public const TYPE = 'tax';
+    public const NAME = 'tax';
     public const SUBTOTAL_ORDER = 500;
 
     #[\Override]
@@ -20,6 +21,7 @@ class TaxSubtotalProvider extends AbstractTaxSubtotalProvider
         $subtotal = new Subtotal();
 
         $subtotal->setType(self::TYPE);
+        $subtotal->setName(self::NAME);
         $label = 'oro.tax.subtotals.' . self::TYPE;
         $subtotal->setLabel($this->translator->trans($label));
         $subtotal->setVisible(false);

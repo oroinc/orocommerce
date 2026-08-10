@@ -29,6 +29,9 @@ parameters:
         - 'Oro\Bundle\EntityBundle\EventListener\ModifyCreatedAndUpdatedPropertiesListener'
         - 'Oro\Component\DraftSession\EventListener\ResetDraftSourceDoctrineListener'
 
+    # Maximum number of line items before automatic tax and discount calculations are disabled in edit mode.
+    oro_order.draft_session.order_line_items_calc_taxes_discounts_threshold: 100
+
 services:
 
     oro_order.draft_session.datagrid.order_line_items_draft_filter_extension:
@@ -115,6 +118,22 @@ services:
         tags:
             - { name: 'proxy', interface: 'Oro\Bundle\DataGridBundle\Event\BuildBeforeListenerInterface' }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-edit-grid, method: onBuildBefore }
+
+    oro_order.draft_session.datagrid.preload_order_line_items_listener:
+        class: 'Oro\Bundle\OrderBundle\Datagrid\DraftSession\PreloadOrderLineItemsDatagridListener'
+        arguments:
+            - '@doctrine'
+            - '@oro_entity.manager.preloading_manager'
+            - '@oro_order.draft_session.manager.draft_session_orm_filter_manager'
+        lazy: true
+        tags:
+            - { name: 'proxy', interface: 'Oro\Bundle\DataGridBundle\Event\OrmResultBeforeQueryListenerInterface' }
+            -   name: kernel.event_listener
+                event: oro_datagrid.orm_datasource.result.before_query.order-line-items-edit-grid
+                method: onResultBeforeQuery
+                # Must be executed before oro_order.draft_session.datagrid.order_line_item_draft_validation_listener
+                # to preload the order line items traversed during the order line items validation.
+                priority: 10
 
     oro_order.draft_session.datagrid.order_line_item_draft_validation_listener:
         class: 'Oro\Bundle\OrderBundle\Datagrid\DraftSession\OrderLineItemDraftValidationDatagridListener'
@@ -218,6 +237,15 @@ services:
         tags:
             - { name: form.type_extension }
 
+    oro_order.draft_session.event_listener.preload_order_relations_on_entity_from_draft_sync_before:
+        class: Oro\Bundle\OrderBundle\EventListener\DraftSession\PreloadOrderRelationsOnEntityFromDraftSyncBeforeEventListener
+        arguments:
+            - '@oro_entity.manager.preloading_manager'
+        tags:
+            -   name: kernel.event_listener
+                event: Oro\Component\DraftSession\Event\EntityFromDraftSyncBeforeEvent
+                method: onEntityFromDraftSyncBefore
+
     oro_order.draft_session.synchronizer.order:
         class: Oro\Bundle\OrderBundle\DraftSession\OrderDraftSynchronizer
         arguments:
@@ -273,13 +301,6 @@ services:
             - 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
         tags:
             - { name: oro_order.draft_session.synchronizer }
-
-    oro_order.draft_session.synchronizer.recalculate_totals:
-        class: Oro\Bundle\OrderBundle\DraftSession\RecalculateTotalsOrderDraftSynchronizer
-        arguments:
-            - '@oro_order.order.total.total_helper'
-        tags:
-            - { name: oro_order.draft_session.synchronizer, priority: -255 }
 
     oro_order.draft_session.synchronizer:
         class: Oro\Component\DraftSession\Synchronizer\EntityDraftSynchronizerChain

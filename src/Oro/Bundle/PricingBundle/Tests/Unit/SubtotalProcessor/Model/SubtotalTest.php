@@ -18,6 +18,10 @@ class SubtotalTest extends TestCase
             LineItemSubtotalProvider::TYPE,
             $subtotal->setType(LineItemSubtotalProvider::TYPE)->getType()
         );
+        self::assertSame(
+            LineItemSubtotalProvider::NAME,
+            $subtotal->setName(LineItemSubtotalProvider::NAME)->getName()
+        );
         self::assertEquals('Subtotal', $subtotal->setLabel('Subtotal')->getLabel());
         self::assertEquals('USD', $subtotal->setCurrency('USD')->getCurrency());
         self::assertEquals(999.99, $subtotal->setAmount(999.99)->getAmount());

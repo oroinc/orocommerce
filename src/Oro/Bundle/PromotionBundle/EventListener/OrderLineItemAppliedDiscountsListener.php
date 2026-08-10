@@ -33,6 +33,12 @@ class OrderLineItemAppliedDiscountsListener
             return;
         }
 
+        $form = $event->getForm();
+        if ($form->getConfig()->getOption('draft_session_sync')) {
+            // No need to calculate applied discounts when draft session sync is enabled.
+            return;
+        }
+
         $order = $event->getEntity();
         $isTaxationEnabled = $this->taxationSettingsProvider->isEnabled();
 

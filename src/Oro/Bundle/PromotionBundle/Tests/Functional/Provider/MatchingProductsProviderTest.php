@@ -108,6 +108,34 @@ class MatchingProductsProviderTest extends WebTestCase
         ])));
     }
 
+    public function testGetMatchingProductIdsWhenEmptyIntersection()
+    {
+        $segment = $this->getReference(LoadPromotionSegmentData::NOT_EMPTY_PROMOTION_SEGMENT);
+
+        $this->assertSame(
+            [],
+            $this->provider->getMatchingProductIds($segment, $this->createLineItems([
+                LoadProductData::PRODUCT_2,
+                LoadProductData::PRODUCT_4,
+                LoadProductData::PRODUCT_5
+            ]))
+        );
+    }
+
+    public function testGetMatchingProductIdsWithEmptySegmentSnapshot()
+    {
+        $segment = $this->getReference(LoadPromotionSegmentData::EMPTY_PROMOTION_SEGMENT);
+
+        $this->assertSame(
+            [],
+            $this->provider->getMatchingProductIds($segment, $this->createLineItems([
+                LoadProductData::PRODUCT_1,
+                LoadProductData::PRODUCT_2,
+                LoadProductData::PRODUCT_3
+            ]))
+        );
+    }
+
     /**
      * @param array $productReferences
      * @return array|DiscountLineItem[]

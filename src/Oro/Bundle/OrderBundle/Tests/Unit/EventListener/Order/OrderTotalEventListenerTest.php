@@ -36,8 +36,8 @@ class OrderTotalEventListenerTest extends \PHPUnit\Framework\TestCase
         $total = $this->getSubtotal('type', 'label', 100, 'USD', true);
 
         $this->totalProvider->expects($this->once())
-            ->method('getTotalFromOrderWithSubtotalsWithBaseCurrencyValues')
-            ->with($order)
+            ->method('getTotalWithSubtotalsWithBaseCurrency')
+            ->with($order, false, true)
             ->willReturn($total->toArray());
 
         $event = new OrderEvent($form, $order);

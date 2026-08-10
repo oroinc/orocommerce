@@ -173,9 +173,10 @@ final class OrderDraftSyncExtensionTest extends WebTestCase
         $form->setData($order);
 
         self::assertEquals(
-            'EXISTING_DRAFT_PO',
+            'MODIFIED_ORDER_PO',
             $order->getPoNumber(),
-            'Order should be synchronized from cached draft on subsequent setData calls'
+            'Subsequent setData calls reuse the cached synchronized order instance and do not '
+            . 're-apply the draft, so the in-memory modification is preserved'
         );
     }
 

@@ -90,17 +90,6 @@ services:
         tags:
             - { name: form.type }
 
-    oro_order.form.type.extension.order_data_storage:
-        class: 'Oro\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension'
-        arguments:
-            - '@request_stack'
-            - '@oro_product.storage.product_data_storage'
-            - '@form.property_accessor'
-            - '@doctrine'
-            - '@logger'
-        tags:
-            - { name: form.type_extension }
-
     oro_order.form.type.order_collection_table:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderCollectionTableType'
         tags:

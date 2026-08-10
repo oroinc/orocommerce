@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Total;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -36,43 +37,52 @@ class TotalHelper
 
     public function fill(Order $order): void
     {
-        $this->fillDiscounts($order);
-        $this->fillSubtotals($order);
-        $this->fillTotal($order);
+        if (!$order->getSubOrders()->isEmpty()) {
+            $this->fillDiscounts($order);
+            $this->fillSubtotals($order);
+            $this->fillTotal($order);
+
+            return;
+        }
+
+        // Calculate the whole subtotal-provider chain once and reuse the result for the order
+        // subtotal, the order-level discount and the total, instead of recomputing each part.
+        $subtotals = $this->totalProvider->enableRecalculation()->getSubtotals($order);
+
+        $this->fillDiscounts($order, $subtotals);
+        $this->fillSubtotals($order, $subtotals);
+        $this->fillTotal($order, $subtotals);
     }
 
-    public function fillSubtotals(Order $order): void
+    public function fillSubtotals(Order $order, ?ArrayCollection $subtotals = null): void
     {
         if (!$order->getSubOrders()->isEmpty()) {
             $subTotalAmount = 0;
             foreach ($order->getSubOrders() as $subOrder) {
                 $subTotalAmount += $subOrder->getSubtotal();
             }
-            $subtotalObject = MultiCurrency::create($subTotalAmount, $order->getCurrency());
-            $order->setSubtotalObject($subtotalObject);
-        } else {
-            $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
+            $order->setSubtotalObject(MultiCurrency::create($subTotalAmount, $order->getCurrency()));
 
-            $subtotalObject = MultiCurrency::create($subtotal->getAmount(), $subtotal->getCurrency());
-            $baseSubtotal = $this->rateConverter->getBaseCurrencyAmount($subtotalObject);
-            $subtotalObject->setBaseCurrencyValue($baseSubtotal);
+            return;
+        }
 
-            $order->setSubtotalObject($subtotalObject);
+        $subtotal = null !== $subtotals
+            ? $this->extractLineItemsSubtotal($order, $subtotals)
+            : $this->lineItemSubtotalProvider->getSubtotal($order);
 
-            if ($subtotal->getAmount() > 0) {
-                foreach ($order->getDiscounts() as $discount) {
-                    if ($discount->getType() === OrderDiscount::TYPE_AMOUNT) {
-                        $discount->setPercent($this->calculatePercent($subtotal, $discount));
-                    }
+        $order->setSubtotalObject($this->createBaseMultiCurrency($subtotal->getAmount(), $subtotal->getCurrency()));
+
+        if ($subtotal->getAmount() > 0) {
+            foreach ($order->getDiscounts() as $discount) {
+                if ($discount->getType() === OrderDiscount::TYPE_AMOUNT) {
+                    $discount->setPercent($this->calculatePercent($subtotal, $discount));
                 }
             }
         }
     }
 
-    public function fillDiscounts(Order $order): void
+    public function fillDiscounts(Order $order, ?ArrayCollection $subtotals = null): void
     {
-        $discountSubtotalAmount = new Price();
-
         if (!$order->getSubOrders()->isEmpty()) {
             $discountSubtotalAmount = new Price();
             foreach ($order->getSubOrders() as $subOrder) {
@@ -82,44 +92,84 @@ class TotalHelper
                     $discountSubtotalAmount->setValue($newAmount);
                 }
             }
-        } else {
-            $discountSubtotals = $this->discountSubtotalProvider->getSubtotal($order);
-            if (\count($discountSubtotals) > 0) {
-                foreach ($discountSubtotals as $discount) {
-                    $newAmount = $discount->getAmount() + (float)$discountSubtotalAmount->getValue();
-                    $discountSubtotalAmount->setValue($newAmount);
-                }
-            }
+            $order->setTotalDiscounts($discountSubtotalAmount);
+
+            return;
         }
 
-        $order->setTotalDiscounts($discountSubtotalAmount);
+        $discountSubtotals = null !== $subtotals
+            ? $subtotals->filter(
+                static fn (Subtotal $subtotal) => $subtotal->getName() === DiscountSubtotalProvider::NAME
+            )
+            : $this->discountSubtotalProvider->getSubtotal($order);
+
+        $order->setTotalDiscounts($this->sumDiscounts($discountSubtotals));
     }
 
-    public function fillTotal(Order $order): void
+    public function fillTotal(Order $order, ?ArrayCollection $subtotals = null): void
     {
-        $totalObject = $this->calculateTotal($order);
-        $order->setTotalObject($totalObject);
+        $order->setTotalObject($this->calculateTotal($order, $subtotals));
     }
 
-    public function calculateTotal(Order $order): MultiCurrency
+    public function calculateTotal(Order $order, ?ArrayCollection $subtotals = null): MultiCurrency
     {
         if (!$order->getSubOrders()->isEmpty()) {
             $totalAmount = 0;
-            $totalCurrency = $order->getCurrency();
             foreach ($order->getSubOrders() as $subOrder) {
                 $totalAmount += $subOrder->getTotal();
             }
-        } else {
-            $total = $this->totalProvider->enableRecalculation()->getTotal($order);
-            $totalAmount = $total->getAmount();
-            $totalCurrency = $total->getCurrency();
+
+            return $this->createBaseMultiCurrency($totalAmount, $order->getCurrency());
         }
 
-        $totalObject = MultiCurrency::create($totalAmount, $totalCurrency);
-        $baseTotal = $this->rateConverter->getBaseCurrencyAmount($totalObject);
-        $totalObject->setBaseCurrencyValue($baseTotal);
+        if (null !== $subtotals) {
+            $total = $this->totalProvider->getTotalForSubtotals($order, $subtotals);
+        } else {
+            try {
+                $total = $this->totalProvider->enableRecalculation()->getTotal($order);
+            } finally {
+                $this->totalProvider->disableRecalculation();
+            }
+        }
 
-        return $totalObject;
+        return $this->createBaseMultiCurrency($total->getAmount(), $total->getCurrency());
+    }
+
+    /**
+     * Finds the line items subtotal in the already calculated subtotals collection,
+     * falling back to a dedicated calculation when it is not present.
+     */
+    private function extractLineItemsSubtotal(Order $order, ArrayCollection $subtotals): Subtotal
+    {
+        foreach ($subtotals as $subtotal) {
+            if ($subtotal->getName() === LineItemSubtotalProvider::NAME) {
+                return $subtotal;
+            }
+        }
+
+        return $this->lineItemSubtotalProvider->getSubtotal($order);
+    }
+
+    /**
+     * @param iterable<Subtotal> $discountSubtotals
+     */
+    private function sumDiscounts(iterable $discountSubtotals): Price
+    {
+        $discountSubtotalAmount = new Price();
+        foreach ($discountSubtotals as $discountSubtotal) {
+            $newAmount = $discountSubtotal->getAmount() + (float)$discountSubtotalAmount->getValue();
+            $discountSubtotalAmount->setValue($newAmount);
+        }
+
+        return $discountSubtotalAmount;
+    }
+
+    private function createBaseMultiCurrency(float $amount, ?string $currency): MultiCurrency
+    {
+        $multiCurrency = MultiCurrency::create($amount, $currency);
+        $multiCurrency->setBaseCurrencyValue($this->rateConverter->getBaseCurrencyAmount($multiCurrency));
+
+        return $multiCurrency;
     }
 
     private function calculatePercent(Subtotal $subtotal, OrderDiscount $discount): float
