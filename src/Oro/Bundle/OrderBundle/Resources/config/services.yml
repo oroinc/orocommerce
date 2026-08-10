@@ -758,6 +758,7 @@ services:
                       - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_order_product_visibility_limited }
+            - { name: oro_customer.form.autocomplete.frontend_search_handler, alias: oro_order_product_visibility_limited }
 
     oro_order.validator.constraints.has_supported_inventory_status:
         class: Oro\Bundle\OrderBundle\Validator\Constraints\HasSupportedInventoryStatusValidator
