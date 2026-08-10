@@ -28,6 +28,12 @@ class OrderLineItemTierPricesEventListener
 
     public function onOrderEvent(OrderEvent $event): void
     {
+        $form = $event->getForm();
+        if ($form->getConfig()->getOption('draft_session_sync')) {
+            // No need to add line items tier prices when draft session sync is enabled.
+            return;
+        }
+
         $order = $event->getOrder();
         $currency = $order->getCurrency();
         $productPricesByProduct = $this->orderProductPriceProvider->getProductPrices($order);

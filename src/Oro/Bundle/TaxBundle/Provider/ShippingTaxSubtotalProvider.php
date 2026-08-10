@@ -10,6 +10,7 @@ use Oro\Bundle\TaxBundle\Model\Result;
  */
 class ShippingTaxSubtotalProvider extends AbstractTaxSubtotalProvider
 {
+    public const NAME = 'shipping_tax';
     public const SUBTOTAL_ORDER = 420;
 
     #[\Override]
@@ -18,6 +19,7 @@ class ShippingTaxSubtotalProvider extends AbstractTaxSubtotalProvider
         $subtotal = new Subtotal();
 
         $subtotal->setType(self::TYPE);
+        $subtotal->setName(self::NAME);
         $label = 'oro.tax.subtotals.shipping_' . self::TYPE;
         $subtotal->setLabel($this->translator->trans($label));
         $subtotal->setVisible(false);

@@ -366,6 +366,90 @@ class TotalProcessorProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testGetSubtotalsKeepsSeparateWhenSameTypeAndLabelButDifferentName(): void
+    {
+        $entity = new EntityStub();
+        $entity->setCurrency('USD');
+
+        $subtotalProvider1 = $this->createMock(LineItemSubtotalProvider::class);
+        $subtotalProvider2 = $this->createMock(LineItemSubtotalProvider::class);
+
+        $subtotal1 = new Subtotal();
+        $subtotal1->setCurrency('USD');
+        $subtotal1->setAmount(100.0);
+        $subtotal1->setType('discount');
+        $subtotal1->setName('order_discount');
+        $subtotal1->setLabel('Discount');
+        $subtotal1->setOperation(Subtotal::OPERATION_ADD);
+
+        $subtotal2 = new Subtotal();
+        $subtotal2->setCurrency('USD');
+        $subtotal2->setAmount(50.0);
+        $subtotal2->setType('discount');
+        $subtotal2->setName('promotion_discount');
+        $subtotal2->setLabel('Discount');
+        $subtotal2->setOperation(Subtotal::OPERATION_ADD);
+
+        $this->subtotalProviderRegistry->expects(self::once())
+            ->method('getSupportedProviders')
+            ->willReturn([$subtotalProvider1, $subtotalProvider2]);
+        $subtotalProvider1->expects(self::once())
+            ->method('getSubtotal')
+            ->willReturn($subtotal1);
+        $subtotalProvider2->expects(self::once())
+            ->method('getSubtotal')
+            ->willReturn($subtotal2);
+
+        $subtotals = $this->provider->enableRecalculation()->getSubtotals($entity);
+
+        self::assertCount(2, $subtotals);
+        self::assertSame('order_discount', $subtotals->get(0)->getName());
+        self::assertSame(100.0, $subtotals->get(0)->getAmount());
+        self::assertSame('promotion_discount', $subtotals->get(1)->getName());
+        self::assertSame(50.0, $subtotals->get(1)->getAmount());
+    }
+
+    public function testGetSubtotalsMergesWhenSameNameTypeAndLabel(): void
+    {
+        $entity = new EntityStub();
+        $entity->setCurrency('USD');
+
+        $subtotalProvider1 = $this->createMock(LineItemSubtotalProvider::class);
+        $subtotalProvider2 = $this->createMock(LineItemSubtotalProvider::class);
+
+        $subtotal1 = new Subtotal();
+        $subtotal1->setCurrency('USD');
+        $subtotal1->setAmount(100.0);
+        $subtotal1->setType('discount');
+        $subtotal1->setName('order_discount');
+        $subtotal1->setLabel('Discount');
+        $subtotal1->setOperation(Subtotal::OPERATION_ADD);
+
+        $subtotal2 = new Subtotal();
+        $subtotal2->setCurrency('USD');
+        $subtotal2->setAmount(50.0);
+        $subtotal2->setType('discount');
+        $subtotal2->setName('order_discount');
+        $subtotal2->setLabel('Discount');
+        $subtotal2->setOperation(Subtotal::OPERATION_ADD);
+
+        $this->subtotalProviderRegistry->expects(self::once())
+            ->method('getSupportedProviders')
+            ->willReturn([$subtotalProvider1, $subtotalProvider2]);
+        $subtotalProvider1->expects(self::once())
+            ->method('getSubtotal')
+            ->willReturn($subtotal1);
+        $subtotalProvider2->expects(self::once())
+            ->method('getSubtotal')
+            ->willReturn($subtotal2);
+
+        $subtotals = $this->provider->enableRecalculation()->getSubtotals($entity);
+
+        self::assertCount(1, $subtotals);
+        self::assertSame('order_discount', $subtotals->get(0)->getName());
+        self::assertSame(150.0, $subtotals->get(0)->getAmount());
+    }
+
     private function prepareSubtotals(
         object $entity,
         int $runCount = 1,

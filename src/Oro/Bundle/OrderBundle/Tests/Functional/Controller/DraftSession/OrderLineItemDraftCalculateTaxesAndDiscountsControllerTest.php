@@ -217,7 +217,15 @@ final class OrderLineItemDraftCalculateTaxesAndDiscountsControllerTest extends W
         $data = self::getJsonResponseContent($result, 200);
 
         self::assertArrayHasKey('lineItemTaxesHtml', $data);
-        self::assertEmpty($data['lineItemTaxesHtml'], 'Tax HTML should be empty when taxation is disabled');
+        // The taxes macro always renders a table, falling back to zero values, so when taxation is
+        // disabled the response contains the default "no taxes" markup (rendered with null taxes)
+        // rather than an empty string.
+        /** @var Environment $twig */
+        $twig = self::getContainer()->get('twig');
+        $expectedTaxesHtml = $twig->render('@OroOrder/Order/orderLineItemDraftTaxes.html.twig', [
+            'lineItemTaxes' => null,
+        ]);
+        self::assertEquals($expectedTaxesHtml, $data['lineItemTaxesHtml']);
 
         self::assertArrayHasKey('lineItemDiscountsHtml', $data);
         self::assertNotEmpty($data['lineItemDiscountsHtml']);
@@ -751,6 +759,12 @@ final class OrderLineItemDraftCalculateTaxesAndDiscountsControllerTest extends W
         self::assertEquals($expectedDiscountsHtml, $data['lineItemDiscountsHtml']);
 
         self::assertArrayHasKey('lineItemTaxesHtml', $data);
-        self::assertEmpty($data['lineItemTaxesHtml'], 'Tax HTML should be empty when taxation is disabled');
+        // The taxes macro always renders a table, falling back to zero values, so when taxation is
+        // disabled the response contains the default "no taxes" markup (rendered with null taxes)
+        // rather than an empty string.
+        $expectedTaxesHtml = $twig->render('@OroOrder/Order/orderLineItemDraftTaxes.html.twig', [
+            'lineItemTaxes' => null,
+        ]);
+        self::assertEquals($expectedTaxesHtml, $data['lineItemTaxesHtml']);
     }
 }

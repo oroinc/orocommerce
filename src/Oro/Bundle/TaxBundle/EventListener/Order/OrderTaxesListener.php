@@ -29,6 +29,12 @@ class OrderTaxesListener
 
     public function onOrderEvent(OrderEvent $event): void
     {
+        $form = $event->getForm();
+        if ($form->getConfig()->getOption('draft_session_sync')) {
+            // No need to add line items tax items when draft session sync is enabled.
+            return;
+        }
+
         if (!$this->taxationSettingsProvider->isEnabled()) {
             return;
         }

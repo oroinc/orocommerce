@@ -37,7 +37,8 @@ class OrderAppliedPromotionEventListener extends AbstractFormEventListener
 
             $form = $this->formFactory->create(
                 \get_class($orderForm->getConfig()->getType()->getInnerType()),
-                $event->getOrder()
+                $event->getOrder(),
+                ['draft_session_sync' => true]
             );
 
             $formView = $form->createView();

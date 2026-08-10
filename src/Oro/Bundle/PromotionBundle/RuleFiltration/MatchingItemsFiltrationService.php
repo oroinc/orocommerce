@@ -45,16 +45,18 @@ class MatchingItemsFiltrationService extends AbstractSkippableFiltrationService
                 continue;
             }
 
-            $matchingProducts = $this->matchingProductsProvider->getMatchingProducts(
-                $ruleOwner->getProductsSegment(),
-                $lineItems,
-                $ruleOwner instanceof Promotion ? $ruleOwner->getOrganization() : null
-            );
-            if (!$matchingProducts) {
+            $matchingProductIds = $this->getMatchingProductIds($ruleOwner, $lineItems);
+            if (!$matchingProductIds) {
                 continue;
             }
 
-            if (!$this->hasMatchedProductUnit($lineItems, $matchingProducts, $ruleOwner->getDiscountConfiguration())) {
+            if (
+                !$this->hasMatchedProductUnit(
+                    $lineItems,
+                    $matchingProductIds,
+                    $ruleOwner->getDiscountConfiguration()
+                )
+            ) {
                 continue;
             }
 
@@ -64,9 +66,38 @@ class MatchingItemsFiltrationService extends AbstractSkippableFiltrationService
         return $filteredRuleOwners;
     }
 
+    /**
+     * @param PromotionDataInterface $ruleOwner
+     * @param array<DiscountLineItem> $lineItems
+     *
+     * @return array<int>
+     */
+    private function getMatchingProductIds(PromotionDataInterface $ruleOwner, array $lineItems): array
+    {
+        $segment = $ruleOwner->getProductsSegment();
+        $organization = $ruleOwner instanceof Promotion ? $ruleOwner->getOrganization() : null;
+
+        if (!method_exists($this->matchingProductsProvider, 'getMatchingProductIds')) {
+            // @bc-layer For providers that do not implement getMatchingProductIds() yet
+            return array_map(
+                static fn (Product $product): ?int => $product->getId(),
+                $this->matchingProductsProvider->getMatchingProducts($segment, $lineItems, $organization)
+            );
+        }
+
+        return $this->matchingProductsProvider->getMatchingProductIds($segment, $lineItems, $organization);
+    }
+
+    /**
+     * @param array<DiscountLineItem> $lineItems
+     * @param array<int> $matchingProductIds
+     * @param DiscountConfiguration $discountConfiguration
+     *
+     * @return bool
+     */
     private function hasMatchedProductUnit(
         array $lineItems,
-        array $matchingProducts,
+        array $matchingProductIds,
         DiscountConfiguration $discountConfiguration
     ): bool {
         $discountOptions = $discountConfiguration->getOptions();
@@ -75,19 +106,16 @@ class MatchingItemsFiltrationService extends AbstractSkippableFiltrationService
             return true;
         }
 
-        $productIds = [];
-        /** @var Product $product */
-        foreach ($matchingProducts as $product) {
-            $productIds[$product->getId()] = true;
-        }
+        $productIds = array_fill_keys($matchingProductIds, true);
 
         $productUnitCode = $discountOptions[UnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE];
-        /** @var DiscountLineItem $lineItem */
+
         foreach ($lineItems as $lineItem) {
+            $discountLineItemProduct = $lineItem->getProduct();
             if (
-                $lineItem->getProduct()
-                && isset($productIds[$lineItem->getProduct()->getId()])
+                $discountLineItemProduct
                 && $lineItem->getProductUnitCode() === $productUnitCode
+                && isset($productIds[$discountLineItemProduct->getId()])
             ) {
                 return true;
             }
