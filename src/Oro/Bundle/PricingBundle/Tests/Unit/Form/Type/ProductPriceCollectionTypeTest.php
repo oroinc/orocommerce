@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FormBundle\Autocomplete\SearchRegistry;
+use Oro\Bundle\FormBundle\Form\DataTransformer\EntitySelectOrCreateDataTransformerFactory;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
@@ -25,6 +26,7 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Testing\Unit\Form\Extension\Stub\FormTypeValidatorExtensionStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -71,7 +73,11 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
                         $this->createMock(FeatureChecker::class),
                         $this->createMock(ConfigManager::class),
                         $this->doctrine,
-                        $searchRegistry
+                        $searchRegistry,
+                        new EntitySelectOrCreateDataTransformerFactory(
+                            $this->doctrine,
+                            $this->createMock(AclHelper::class)
+                        )
                     ),
                     ProductPriceUnitSelectorType::class => new ProductUnitSelectionTypeStub(
                         $this->prepareProductUnitSelectionChoices(['item', 'set'])

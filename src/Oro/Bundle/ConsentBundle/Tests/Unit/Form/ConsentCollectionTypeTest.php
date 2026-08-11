@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Form;
 
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Form\DataTransformer\ConsentCollectionTransformer;
@@ -17,14 +19,17 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\FormBundle\Autocomplete\SearchRegistry;
+use Oro\Bundle\FormBundle\Form\DataTransformer\EntitySelectOrCreateDataTransformerFactory;
 use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
 use Oro\Bundle\FormBundle\Form\Type\Select2Type;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
@@ -106,11 +111,9 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
         $repository->expects($this->any())
             ->method('find')
             ->willReturnCallback(function ($id) {
-                $consent = new Consent();
-                ReflectionUtil::setId($consent, $id);
-
-                return $consent;
+                return $this->getConsent($id);
             });
+        $aclHelper = $this->mockAclProtectedConsentLoading($repository);
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager->expects($this->any())
@@ -148,7 +151,8 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
                         $this->createMock(FeatureChecker::class),
                         $this->createMock(ConfigManager::class),
                         $doctrine,
-                        $searchRegistry
+                        $searchRegistry,
+                        new EntitySelectOrCreateDataTransformerFactory($doctrine, $aclHelper)
                     ),
                     new OroJquerySelect2HiddenType(
                         $doctrine,
@@ -164,6 +168,56 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
             ),
             new ValidatorExtension(Validation::createValidator())
         ];
+    }
+
+    private function getConsent(int $id): Consent
+    {
+        $consent = new Consent();
+        ReflectionUtil::setId($consent, $id);
+
+        return $consent;
+    }
+
+    /**
+     * The entity select or create inline form type loads entities through the ACL helper,
+     * so the repository must provide a query builder instead of being queried by "find".
+     */
+    private function mockAclProtectedConsentLoading(
+        EntityRepository&MockObject $repository
+    ): AclHelper&MockObject {
+        $consentId = null;
+
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $queryBuilder->expects($this->any())
+            ->method('where')
+            ->willReturnSelf();
+        $queryBuilder->expects($this->any())
+            ->method('setParameter')
+            ->willReturnCallback(function ($name, $value) use ($queryBuilder, &$consentId) {
+                $consentId = $value;
+
+                return $queryBuilder;
+            });
+
+        $repository->expects($this->any())
+            ->method('createQueryBuilder')
+            ->willReturn($queryBuilder);
+
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->any())
+            ->method('execute')
+            ->willReturnCallback(function () use (&$consentId) {
+                self::assertNotNull($consentId, 'The consent id is expected to be bound as a query parameter.');
+
+                return [$this->getConsent((int)$consentId)];
+            });
+
+        $aclHelper = $this->createMock(AclHelper::class);
+        $aclHelper->expects($this->any())
+            ->method('apply')
+            ->willReturn($query);
+
+        return $aclHelper;
     }
 
     public function testGetParent()
