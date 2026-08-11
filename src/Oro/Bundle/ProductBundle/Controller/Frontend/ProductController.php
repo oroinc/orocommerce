@@ -65,6 +65,12 @@ class ProductController extends AbstractController
     #[AclAncestor('oro_product_frontend_view')]
     public function autocompleteAction(Request $request): JsonResponse
     {
+        // Unlock the session to not block concurrent requests
+        $session = $request->getSession();
+        if ($session->isStarted()) {
+            $session->save();
+        }
+
         $searchString = trim($request->get('search'));
         $searchSessionId = trim($request->get('search_id'));
 
