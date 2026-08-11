@@ -58,8 +58,6 @@
                 {{ UI.renderProperty('oro.rule.stop_processing.label'|trans, entity.rule.stopProcessing ? 'oro.promotion.rule.stop_processing.yes'|trans : 'oro.promotion.rule.stop_processing.no'|trans) }}
                 {{ UI.renderHtmlProperty('oro.promotion.schedules.label'|trans, schedulesBlock) }}
                 {{ UI.renderProperty('oro.promotion.use_coupons.label'|trans, entity.useCoupons ? 'oro.promotion.use_coupons.yes'|trans : 'oro.promotion.use_coupons.no'|trans) }}
-            </div>
-            <div class="responsive-block">
                 {{ entityConfig.renderDynamicFields(entity) }}
             </div>
         </div>

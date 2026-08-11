@@ -49,4 +49,3 @@ Feature: Existing RFQ with Product Kits Validation - with Missing Kit Item
       | SKU               | Product                                                                                                 | Requested Quantity | Target Price |
       | simple-product-01 | Simple Product 01                                                                                       | 1 pc               | $2.00        |
       | product-kit-01    | Product Kit 01 Optional Item [piece x 2] Simple Product 03 Mandatory Item [piece x 3] Simple Product 02 | 1 pc               | $104.69      |
-

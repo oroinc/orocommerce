@@ -125,7 +125,7 @@
         <div class="row-oro">
             {% set prototype_name = form.vars.prototype_name %}
             <div class="grid-scrollable-container">
-                <table class="table">
+                <table class="table table-outlined">
                     <thead>
                         <tr>
                             <th>{{ 'oro.product.productunitprecision.unit.label'|trans }}</th>
@@ -212,7 +212,7 @@
 
         <div class="row-oro" data-page-component-module="oroproduct/js/app/components/product-image-type-radio-control-component">
             <div {{ block('widget_container_attributes') }}>
-                <table class="grid grid-main-container table-hover table table-bordered table-condensed">
+                <table class="grid grid-main-container table-hover table table-outlined">
                     <thead>
                         <tr>
                             <th class="file"><span>{{ 'oro.product.productimage.file.label'|trans }}</span></th>
@@ -344,7 +344,7 @@
                 }) }}>
                     {% set counterRequestMethod = tabCounterRequestMethod|default('POST') %}
                     <div class="oro-tabs__head">
-                        <ul class="nav nav-tabs" role="tablist">
+                        <ul class="nav nav-tabs nav-tabs--with-action" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <a id="{{ 'filtered_products' ~ uniqueId ~ scope ~ '-tab' }}"
                                    href="#{{ 'filtered_products' ~ uniqueId ~ scope }}"
@@ -393,7 +393,7 @@
                             <li class="nav-item pull-right">
                                 {# --Reset button start-- #}
                                 <div class="btn-group">
-                                    <a class="btn filter-reset">
+                                    <a class="btn filter-reset" href="#">
                                         {{ 'oro.product.content_variant.ui.reset'|trans }}
                                     </a>
                                 </div>

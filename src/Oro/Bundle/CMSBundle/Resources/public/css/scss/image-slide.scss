@@ -38,6 +38,11 @@
     &__field {
         width: 29%;
     }
+
+    .tooltip-icon {
+        display: inline;
+        margin-left: 8px;
+    }
 }
 
 .validation-error {

@@ -7,11 +7,19 @@
 
         .attribute-item {
             width: 25%;
+
+            &__description,
+            &__term {
+                line-height: 1.2;
+
+                .kit-item-product-link {
+                    padding: 4px 0;
+                }
+            }
         }
     }
 
     &__info {
-        padding-top: $product-kit-view-info-inner-offset;
         padding-bottom: $product-kit-view-info-inner-offset;
     }
 
@@ -23,6 +31,13 @@
         }
     }
 
+    &__subtitle {
+        font-weight: font-weight('semi-bold');
+        font-size: 14px;
+        letter-spacing: .2px;
+        margin-top: 16px;
+    }
+
     .content-variant-item-title {
         cursor: pointer;
     }
@@ -30,6 +45,7 @@
     .attribute-item {
         &__term {
             width: $product-kit-view-input-width;
+            text-align: right;
         }
     }
 
