@@ -13,6 +13,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Manager\QuoteDemandManager;
+use Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessProviderInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -21,6 +22,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class GuestQuoteSubmitToOrder extends AbstractOperationService
 {
+    private ?GuestQuoteAccessProviderInterface $guestQuoteAccessProvider = null;
+
     public function __construct(
         private OperationServiceInterface $baseQuoteSubmitToOrder,
         private FeatureChecker $featureChecker,
@@ -29,6 +32,12 @@ class GuestQuoteSubmitToOrder extends AbstractOperationService
         private TokenStorageInterface $tokenStorage,
         private UrlGeneratorInterface $urlGenerator
     ) {
+    }
+
+    public function setGuestQuoteAccessProvider(
+        ?GuestQuoteAccessProviderInterface $guestQuoteAccessProvider
+    ): void {
+        $this->guestQuoteAccessProvider = $guestQuoteAccessProvider;
     }
 
     public function isPreConditionAllowed(ActionData $data, Collection $errors = null): bool
@@ -43,6 +52,13 @@ class GuestQuoteSubmitToOrder extends AbstractOperationService
         }
 
         return $this->featureChecker->isFeatureEnabled('guest_checkout');
+    }
+
+    public function isConditionAllowed(ActionData $data, ?Collection $errors = null): bool
+    {
+        $quote = $data->getEntity();
+
+        return $quote instanceof Quote && (bool)$this->guestQuoteAccessProvider?->isGranted($quote);
     }
 
     public function execute(ActionData $data): void
