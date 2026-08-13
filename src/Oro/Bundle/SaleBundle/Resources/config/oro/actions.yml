@@ -183,6 +183,10 @@ operations:
                 - '@workflow_available_by_record_group':
                     group_name: b2b_checkout_flow
                     entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
+        conditions:
+            '@and':
+                - '@instanceof': [$.data, Oro\Bundle\SaleBundle\Entity\Quote]
+                - '@acl_granted': [VIEW, $.data]
         actions:
             - '@get_active_user': $.currentUser
             - '@find_entity':
@@ -238,6 +242,8 @@ operations:
                     - '@and':
                         - '@instanceof': [$.currentToken, Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken]
                         - '@feature_enabled': guest_checkout
+        conditions:
+            '@guest_quote_accessible': $.data
         actions:
             - '@tree':
                 conditions:
