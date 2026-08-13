@@ -7,6 +7,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteCompletedCheckoutsData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
@@ -62,6 +63,25 @@ class QuoteFrontendOperationsTest extends FrontendActionTestCase
 
         $this->assertArrayHasKey('messages', $data);
         $this->assertEquals(['Quote #sale.quote.1 is no longer available'], $data['messages']);
+    }
+
+    public function testSubmitOrdersFromQuoteOfAnotherCustomerNotAllowed()
+    {
+        /** @var Quote $quote */
+        $quote = $this->getReference(LoadQuoteData::QUOTE4);
+        $customerUser = $this->getReference(LoadCustomerUserData::LEVEL_1_EMAIL);
+
+        $this->executeOperation($quote, 'oro_sale_frontend_quote_submit_to_order', Response::HTTP_FORBIDDEN);
+
+        $data = json_decode($this->client->getResponse()->getContent(), true);
+
+        self::assertArrayHasKey('success', $data);
+        self::assertFalse($data['success']);
+
+        self::assertNull(
+            self::getContainer()->get('doctrine')->getRepository(QuoteDemand::class)
+                ->findOneBy(['quote' => $quote, 'customerUser' => $customerUser])
+        );
     }
 
     public function testCheckoutViewOrderOperation()
