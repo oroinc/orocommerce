@@ -14,6 +14,7 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\Repository\QuoteDemandRepository;
 use Oro\Bundle\SaleBundle\Manager\QuoteDemandManager;
+use Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessProviderInterface;
 use Oro\Bundle\SaleBundle\Workflow\Operation\GuestQuoteSubmitToOrder;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -32,6 +33,7 @@ class GuestQuoteSubmitToOrderTest extends TestCase
     private QuoteDemandManager|MockObject $quoteDemandManager;
     private TokenStorageInterface|MockObject $tokenStorage;
     private UrlGeneratorInterface|MockObject $urlGenerator;
+    private GuestQuoteAccessProviderInterface|MockObject $guestQuoteAccessProvider;
     private GuestQuoteSubmitToOrder $operation;
 
     protected function setUp(): void
@@ -42,6 +44,7 @@ class GuestQuoteSubmitToOrderTest extends TestCase
         $this->quoteDemandManager = $this->createMock(QuoteDemandManager::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $this->guestQuoteAccessProvider = $this->createMock(GuestQuoteAccessProviderInterface::class);
 
         $this->operation = new GuestQuoteSubmitToOrder(
             $this->baseQuoteSubmitToOrder,
@@ -51,6 +54,7 @@ class GuestQuoteSubmitToOrderTest extends TestCase
             $this->tokenStorage,
             $this->urlGenerator
         );
+        $this->operation->setGuestQuoteAccessProvider($this->guestQuoteAccessProvider);
     }
 
     public function testIsPreConditionAllowedWhenBaseServicePreConditionFails(): void
@@ -128,6 +132,62 @@ class GuestQuoteSubmitToOrderTest extends TestCase
             ->willReturn(true);
 
         $this->assertTrue($this->operation->isPreConditionAllowed($data, $errors));
+    }
+
+    public function testIsConditionAllowedWhenEntityIsNotQuote(): void
+    {
+        $data = new ActionData();
+        $errors = new ArrayCollection();
+
+        $this->guestQuoteAccessProvider->expects(self::never())
+            ->method('isGranted');
+
+        self::assertFalse($this->operation->isConditionAllowed($data, $errors));
+    }
+
+    public function testIsConditionAllowedWhenGuestQuoteAccessNotGranted(): void
+    {
+        $data = new ActionData();
+        $errors = new ArrayCollection();
+        $quote = $this->getEntity(Quote::class, ['id' => 1]);
+
+        $data->offsetSet('data', $quote);
+
+        $this->guestQuoteAccessProvider->expects(self::once())
+            ->method('isGranted')
+            ->with($quote)
+            ->willReturn(false);
+
+        self::assertFalse($this->operation->isConditionAllowed($data, $errors));
+    }
+
+    public function testIsConditionAllowedWhenGuestQuoteAccessGranted(): void
+    {
+        $data = new ActionData();
+        $errors = new ArrayCollection();
+        $quote = $this->getEntity(Quote::class, ['id' => 1]);
+
+        $data->offsetSet('data', $quote);
+
+        $this->guestQuoteAccessProvider->expects(self::once())
+            ->method('isGranted')
+            ->with($quote)
+            ->willReturn(true);
+
+        self::assertTrue($this->operation->isConditionAllowed($data, $errors));
+    }
+
+    public function testIsConditionAllowedWhenGuestQuoteAccessProviderIsNotSet(): void
+    {
+        $data = new ActionData();
+        $errors = new ArrayCollection();
+        $quote = $this->getEntity(Quote::class, ['id' => 1]);
+
+        $data->offsetSet('data', $quote);
+
+        $this->operation->setGuestQuoteAccessProvider(null);
+
+        self::assertFalse($this->operation->isConditionAllowed($data, $errors));
     }
 
     public function testExecuteWhenTokenIsNotAnonymousCustomerUserToken(): void
