@@ -312,6 +312,7 @@ services:
                       - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_rfp_product_visibility_limited }
+            - { name: oro_customer.form.autocomplete.frontend_search_handler, alias: oro_rfp_product_visibility_limited }
 
     oro_rfp.product_kit.checksum.request_product_kit_item_checksum_generator:
         class: Oro\Bundle\RFPBundle\ProductKit\Checksum\RequestProductKitItemChecksumGenerator

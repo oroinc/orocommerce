@@ -1,6 +1,6 @@
 {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
 <div class="shipping-cost-attribute-view">
-    <h5>{{ priceList.name }}</h5>
+    <h6 class="shipping-cost-attribute-view__title">{{ priceList.name }}</h6>
     {{ dataGrid.renderGrid('product-price-attributes-grid:' ~ priceList.id, {product_id: product.id, price_list_id: priceList.id}) }}
 </div>

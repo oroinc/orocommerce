@@ -148,6 +148,44 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
         static::assertEmpty($this->provider->getMatchingProducts(new Segment(), []));
     }
 
+    public function testGetMatchingProductIdsWhenEmptyLineItems()
+    {
+        $this->matchingProductsCache->expects($this->never())
+            ->method('get');
+        $this->segmentManager->expects($this->never())
+            ->method('getEntityQueryBuilder');
+
+        static::assertSame([], $this->provider->getMatchingProductIds(new Segment(), []));
+    }
+
+    public function testGetMatchingProductIdsFromCache()
+    {
+        $organization = new Organization();
+        $organization->setId(23);
+        /** @var Segment $segment */
+        $segment = $this->getEntity(Segment::class, ['definition' => 'some definition']);
+        $product = $this->getEntity(Product::class, ['id' => 123]);
+
+        $hash = md5('some definition_123_23') . '_ids';
+
+        $this->matchingProductsCache->expects($this->once())
+            ->method('get')
+            ->with($hash)
+            ->willReturn([123]);
+
+        $this->segmentManager->expects($this->never())
+            ->method('getEntityQueryBuilder');
+
+        static::assertSame(
+            [123],
+            $this->provider->getMatchingProductIds(
+                $segment,
+                [(new DiscountLineItem())->setProduct($product)],
+                $organization
+            )
+        );
+    }
+
     private function expectsQueryBuilderWithNoRootAlias(Segment $segment)
     {
         $queryBuilder = $this->createMock(QueryBuilder::class);

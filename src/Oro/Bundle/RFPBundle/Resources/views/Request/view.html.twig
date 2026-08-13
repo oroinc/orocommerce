@@ -24,13 +24,17 @@
         {{ oro_widget_render({
             'widgetType': 'block',
             'url': path('oro_rfp_request_info', {id: entity.id}),
-            'alias': 'request-info-widget'
+            'alias': 'request-info-widget',
+            'widgetContainerAttributes': {'class': 'responsive-with-extra-block no-border-for-last-item--medium'}
         }) }}
     {% endset %}
 
     {% set dataBlocks = [
         {
             'title': 'oro.rfp.sections.general'|trans,
+            'content_attr': {
+                'class': 'row-fluid-divider'
+            },
             'subblocks': [{'data' : [requestInfo]}]
         }
     ] %}

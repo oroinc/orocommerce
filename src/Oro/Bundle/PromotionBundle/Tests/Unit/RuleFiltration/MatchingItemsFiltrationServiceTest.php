@@ -13,6 +13,7 @@ use Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Component\Testing\ReflectionUtil;
 
 class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
@@ -93,7 +94,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             ->method('getFilteredRuleOwners');
 
         $this->matchingProductsProvider->expects(self::never())
-            ->method('getMatchingProducts');
+            ->method('getMatchingProductIds');
 
         $promotion = $this->getPromotion(new Segment());
         self::assertSame([], $this->filtrationService->getFilteredRuleOwners([$promotion], []));
@@ -113,7 +114,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             });
 
         $this->matchingProductsProvider->expects(self::never())
-            ->method('getMatchingProducts');
+            ->method('getMatchingProductIds');
 
         self::assertSame(
             [],
@@ -141,7 +142,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             });
 
         $this->matchingProductsProvider->expects(self::exactly(2))
-            ->method('getMatchingProducts')
+            ->method('getMatchingProductIds')
             ->withConsecutive(
                 [$firstPromotionSegment, $lineItems],
                 [$secondPromotionSegment, $lineItems]
@@ -163,6 +164,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         $promotion = $this->getPromotion($promotionSegment);
 
         $product = new Product();
+        ReflectionUtil::setId($product, 1);
         $lineItems = [$this->getDiscountLineItem($product, self::UNIT_CODE_ITEM)];
 
         $this->baseFiltrationService->expects(self::once())
@@ -172,9 +174,9 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             });
 
         $this->matchingProductsProvider->expects(self::once())
-            ->method('getMatchingProducts')
+            ->method('getMatchingProductIds')
             ->with($promotionSegment, $lineItems)
-            ->willReturn([$product]);
+            ->willReturn([$product->getId()]);
 
         self::assertEquals(
             [$promotion],
@@ -191,6 +193,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         $promotion = $this->getPromotion($promotionSegment, self::UNIT_CODE_SET);
 
         $product = new Product();
+        ReflectionUtil::setId($product, 1);
         $lineItems = [$this->getDiscountLineItem($product, self::UNIT_CODE_ITEM)];
 
         $this->baseFiltrationService->expects(self::once())
@@ -200,9 +203,9 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             });
 
         $this->matchingProductsProvider->expects(self::once())
-            ->method('getMatchingProducts')
+            ->method('getMatchingProductIds')
             ->with($promotionSegment, $lineItems)
-            ->willReturn([$product]);
+            ->willReturn([$product->getId()]);
 
         self::assertSame(
             [],
@@ -219,6 +222,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         $promotion = $this->getPromotion($promotionSegment, self::UNIT_CODE_ITEM);
 
         $product = new Product();
+        ReflectionUtil::setId($product, 1);
         $lineItems = [$this->getDiscountLineItem($product, self::UNIT_CODE_ITEM)];
 
         $this->baseFiltrationService->expects(self::once())
@@ -228,9 +232,9 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             });
 
         $this->matchingProductsProvider->expects(self::once())
-            ->method('getMatchingProducts')
+            ->method('getMatchingProductIds')
             ->with($promotionSegment, $lineItems)
-            ->willReturn([$product]);
+            ->willReturn([$product->getId()]);
 
         self::assertEquals(
             [$promotion],

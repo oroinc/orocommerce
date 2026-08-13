@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface as UnitCodeAwareInterface;
@@ -45,16 +44,22 @@ class MatchingItemsFiltrationService extends AbstractSkippableFiltrationService
                 continue;
             }
 
-            $matchingProducts = $this->matchingProductsProvider->getMatchingProducts(
+            $matchingProductIds = $this->matchingProductsProvider->getMatchingProductIds(
                 $ruleOwner->getProductsSegment(),
                 $lineItems,
                 $ruleOwner instanceof Promotion ? $ruleOwner->getOrganization() : null
             );
-            if (!$matchingProducts) {
+            if (!$matchingProductIds) {
                 continue;
             }
 
-            if (!$this->hasMatchedProductUnit($lineItems, $matchingProducts, $ruleOwner->getDiscountConfiguration())) {
+            if (
+                !$this->hasMatchedProductUnit(
+                    $lineItems,
+                    $matchingProductIds,
+                    $ruleOwner->getDiscountConfiguration()
+                )
+            ) {
                 continue;
             }
 
@@ -64,9 +69,16 @@ class MatchingItemsFiltrationService extends AbstractSkippableFiltrationService
         return $filteredRuleOwners;
     }
 
+    /**
+     * @param array<DiscountLineItem> $lineItems
+     * @param array<int> $matchingProductIds
+     * @param DiscountConfiguration $discountConfiguration
+     *
+     * @return bool
+     */
     private function hasMatchedProductUnit(
         array $lineItems,
-        array $matchingProducts,
+        array $matchingProductIds,
         DiscountConfiguration $discountConfiguration
     ): bool {
         $discountOptions = $discountConfiguration->getOptions();
@@ -75,19 +87,16 @@ class MatchingItemsFiltrationService extends AbstractSkippableFiltrationService
             return true;
         }
 
-        $productIds = [];
-        /** @var Product $product */
-        foreach ($matchingProducts as $product) {
-            $productIds[$product->getId()] = true;
-        }
+        $productIds = array_fill_keys($matchingProductIds, true);
 
         $productUnitCode = $discountOptions[UnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE];
-        /** @var DiscountLineItem $lineItem */
+
         foreach ($lineItems as $lineItem) {
+            $discountLineItemProduct = $lineItem->getProduct();
             if (
-                $lineItem->getProduct()
-                && isset($productIds[$lineItem->getProduct()->getId()])
+                $discountLineItemProduct
                 && $lineItem->getProductUnitCode() === $productUnitCode
+                && isset($productIds[$discountLineItemProduct->getId()])
             ) {
                 return true;
             }

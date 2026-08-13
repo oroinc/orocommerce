@@ -4,6 +4,7 @@
     display: inline-block;
 
     + .add-method {
-        vertical-align: bottom;
+        vertical-align: baseline;
+        margin-left: $content-padding-small;
     }
 }

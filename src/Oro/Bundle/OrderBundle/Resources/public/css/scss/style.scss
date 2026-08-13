@@ -18,7 +18,7 @@
 .totals-container .form-horizontal .control-group .controls .control-label {
     width: 120px;
     text-align: right;
-    color: $additional-lighten;
+    color: $additional-light;
 }
 /* stylelint-enable selector-max-compound-selectors */
 
@@ -185,16 +185,16 @@ td.order-discount-item-remove {
 }
 
 .oro-collection-table-heading {
-    margin-bottom: 20px;
+    margin-bottom: 12px;
 
     h5 {
-        font-family: Helvetica, Arial, sans-serif;
-        font-weight: font-weight('bold');
+        font-weight: font-weight('semi-bold');
         font-size: 14px;
+        line-height: 28px;
+        letter-spacing: .2px;
         text-transform: capitalize;
         display: inline;
         position: relative;
-        top: 3px;
     }
 
     a {
@@ -233,6 +233,7 @@ td.order-discount-item-remove {
         div.selector {
             width: 74px;
             min-width: 0;
+            margin-left: 8px;
         }
 
         input {

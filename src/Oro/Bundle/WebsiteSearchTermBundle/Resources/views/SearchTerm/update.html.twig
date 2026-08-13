@@ -103,7 +103,8 @@
         </div>
     {% endset %}
     {% set redirect_uri_form %}
-        <div data-page-component-module="orosale/js/app/components/dependent-field-component"
+        <div class="search-term-last-item-in-current-state"
+             data-page-component-module="orosale/js/app/components/dependent-field-component"
              data-page-component-options="{{ { selectors: { rowContainer: 'div' } }|json_encode }}"
              data-depend-on="search-term-action-type"
              data-show-if="redirect"
@@ -120,7 +121,8 @@
         </div>
     {% endset %}
     {% set redirect_301_form %}
-        <div data-page-component-module="orosale/js/app/components/dependent-field-component"
+        <div class="search-term-last-item-in-current-state"
+             data-page-component-module="orosale/js/app/components/dependent-field-component"
              data-page-component-options="{{ { selectors: { rowContainer: 'div' } }|json_encode }}"
              data-depend-on="search-term-action-type"
              data-show-if="redirect"

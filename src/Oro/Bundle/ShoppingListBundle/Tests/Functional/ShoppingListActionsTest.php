@@ -5,7 +5,6 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional;
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
@@ -40,7 +39,7 @@ class ShoppingListActionsTest extends ActionTestCase
         $this->assertArrayHasKey('redirectUrl', $data);
 
         $this->assertStringStartsWith(
-            $this->getUrl('oro_order_create', [ProductDataStorage::STORAGE_KEY => 1]),
+            $this->getUrl('oro_order_create'),
             $data['redirectUrl']
         );
 

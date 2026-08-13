@@ -518,6 +518,7 @@ services:
                     - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_visibility_limited }
+            - { name: oro_customer.form.autocomplete.frontend_search_handler, alias: oro_product_visibility_limited }
 
     oro_product.autocomplete.configurable_product_visibility_limited.search_handler:
         parent: oro_product.autocomplete.product_visibility_limited.search_handler
@@ -525,6 +526,7 @@ services:
             - [setNotAllowedProductTypes, [[]]]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_all_product_visibility_limited }
+            - { name: oro_customer.form.autocomplete.frontend_search_handler, alias: oro_all_product_visibility_limited }
 
     oro_product.autocomplete.product_families.search_handler:
         class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductFamilySearchHandler'
@@ -543,6 +545,7 @@ services:
             - '@oro_pricing.provider.formatted_product_price'
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_visibility_limited_with_prices }
+            - { name: oro_customer.form.autocomplete.frontend_search_handler, alias: oro_product_visibility_limited_with_prices }
 
     oro_product.product.manager:
         class: 'Oro\Bundle\ProductBundle\Entity\Manager\ProductManager'

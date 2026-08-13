@@ -51,6 +51,11 @@ class SubtotalSubscriber implements EventSubscriberInterface
     public function onPreSetDataEventListener(FormEvent $event): void
     {
         $form = $event->getForm();
+        if ($form->getConfig()->getOption('draft_session_sync')) {
+            // No need to fill totals when draft session sync is enabled.
+            return;
+        }
+
         $data = $event->getData();
         if ($data instanceof Order) {
             $this->fillTotals($form, $data);

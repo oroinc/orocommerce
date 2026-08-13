@@ -20,5 +20,5 @@
         UI.renderProperty('oro.promotion.discountconfiguration.options.discount_value.label'|trans, discountValue)
     ]|merge(data|default({})) %}
 
-    {{ UI.scrollSubblock(null, data) }}
+    {{ UI.scrollSubblock(null, data, false, true, 'responsive-block') }}
 {% endblock %}

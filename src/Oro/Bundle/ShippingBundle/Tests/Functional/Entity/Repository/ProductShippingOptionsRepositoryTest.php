@@ -38,20 +38,22 @@ class ProductShippingOptionsRepositoryTest extends WebTestCase
 
         $shippingOptionsArray = $this->repository->findIndexedByProductsAndUnits($unitsByProductIds);
 
-        $expectedShippingOpts = $this->getReference(LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1);
+        $productId = $product->getId();
 
+        // Only the shipping options of the passed units are returned.
         $this->assertEquals(
             [
-                $expectedShippingOpts->getProduct()->getId() => [
+                $productId => [
                     'liter' => [
-                        'dimensionsHeight' => 3,
-                        'dimensionsLength' => 1,
-                        'dimensionsWidth' => 2,
+                        'dimensionsHeight' => 3.0,
+                        'dimensionsLength' => 1.0,
+                        'dimensionsWidth' => 2.0,
                         'dimensionsUnit' => 'in',
                         'weightUnit' => 'kilo',
-                        'weightValue' => 42,
-                        'code' => 'liter'
-                    ]
+                        'weightValue' => 42.0,
+                        'code' => 'liter',
+                        'product' => $productId,
+                    ],
                 ]
             ],
             $shippingOptionsArray
@@ -79,6 +81,7 @@ class ProductShippingOptionsRepositoryTest extends WebTestCase
 
         $shippingOptionsArray = $this->repository->findIndexedByProductsAndUnits($unitsByProductIds);
 
+        // Neither product-1 nor product-2 has shipping options for the passed units.
         $this->assertEquals([], $shippingOptionsArray);
     }
 
@@ -112,6 +115,7 @@ class ProductShippingOptionsRepositoryTest extends WebTestCase
                     "weightUnit" => "pound",
                     "weightValue" => 5.0,
                     "code" => "bottle",
+                    "product" => $product1->getId(),
                 ],
                 "liter" => [
                     "dimensionsHeight" => 3.0,
@@ -121,6 +125,7 @@ class ProductShippingOptionsRepositoryTest extends WebTestCase
                     "weightUnit" => "kilo",
                     "weightValue" => 42.0,
                     "code" => "liter",
+                    "product" => $product1->getId(),
                 ]
             ]
         ], $shippingOptionsArray);

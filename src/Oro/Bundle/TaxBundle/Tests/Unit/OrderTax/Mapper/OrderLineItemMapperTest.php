@@ -122,6 +122,40 @@ class OrderLineItemMapperTest extends TestCase
         self::assertEquals(BigDecimal::of('300'), $items[1]->getPrice());
     }
 
+    public function testMapWithKitProductAndZeroPricedKitItem(): void
+    {
+        $kitItem1 = new OrderProductKitItemLineItem();
+        $kitItem1->setPrice(Price::create(0, 'USD'));
+        $kitItem1->setQuantity(2);
+        $kitItem2 = new OrderProductKitItemLineItem();
+        $kitItem2->setPrice(Price::create(300, 'USD'));
+        $kitItem2->setQuantity(1);
+
+        $productKit = $this->getEntity(Product::class, ['id' => 1]);
+        $productKit->setType(Product::TYPE_KIT);
+
+        $lineItem = $this->getEntity(OrderLineItem::class, ['id' => self::ITEM_ID]);
+        $lineItem
+            ->addOrder(new Order())
+            ->setProduct($productKit)
+            ->setPrice(Price::create(1300, 'USD'))
+            ->addKitItemLineItem($kitItem1)
+            ->addKitItemLineItem($kitItem2);
+
+        $taxable = $this->mapper->map($lineItem);
+
+        self::assertTrue($taxable->isKitTaxable());
+        self::assertEquals(BigDecimal::of('1000'), $taxable->getPrice());
+
+        $items = [];
+        foreach ($taxable->getItems() as $item) {
+            $items[] = $item;
+        }
+
+        self::assertEquals(BigDecimal::of('0'), $items[0]->getPrice());
+        self::assertEquals(BigDecimal::of('300'), $items[1]->getPrice());
+    }
+
     private function createLineItem(int $id, int $quantity, float $priceValue = 1): OrderLineItem
     {
         $lineItem = $this->getEntity(OrderLineItem::class, ['id' => $id]);

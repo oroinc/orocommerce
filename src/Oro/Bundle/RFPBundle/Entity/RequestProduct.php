@@ -15,6 +15,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
+use Oro\Component\DraftSession\Entity\NoopEntityDraftAwareTrait;
 
 /**
  * RFP Request Product entity.
@@ -35,6 +36,7 @@ class RequestProduct implements
     EntityDraftAwareInterface
 {
     use ExtendEntityTrait;
+    use NoopEntityDraftAwareTrait;
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
@@ -280,53 +282,6 @@ class RequestProduct implements
     {
         $this->kitItemLineItems->removeElement($productKitItemLineItem);
 
-        return $this;
-    }
-
-    /**
-     * No-op: RequestProduct entities are not draft-aware themselves; this interface is
-     * implemented only to satisfy the {@see EntityDraftFactoryInterface} type contract
-     * so that factory chain can accept a RequestProduct as the source entity.
-     */
-    #[\Override]
-    public function getDraftSessionUuid(): ?string
-    {
-        return null;
-    }
-
-    #[\Override]
-    public function setDraftSessionUuid(?string $draftSessionUuid): self
-    {
-        return $this;
-    }
-
-    #[\Override]
-    public function getDraftSource(): ?EntityDraftAwareInterface
-    {
-        return null;
-    }
-
-    #[\Override]
-    public function setDraftSource(?EntityDraftAwareInterface $draftSource): self
-    {
-        return $this;
-    }
-
-    #[\Override]
-    public function getDrafts(): Collection
-    {
-        return new ArrayCollection();
-    }
-
-    #[\Override]
-    public function addDraft(EntityDraftAwareInterface $draft): self
-    {
-        return $this;
-    }
-
-    #[\Override]
-    public function removeDraft(EntityDraftAwareInterface $draft): self
-    {
         return $this;
     }
 }

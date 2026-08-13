@@ -176,6 +176,7 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $subtotal = new Subtotal();
         $subtotal->setLabel($label);
         $subtotal->setType(SubtotalProvider::TYPE);
+        $subtotal->setName(SubtotalProvider::NAME);
         $subtotal->setVisible(true);
         $subtotal->setAmount($amount);
         $subtotal->setCurrency($currency);

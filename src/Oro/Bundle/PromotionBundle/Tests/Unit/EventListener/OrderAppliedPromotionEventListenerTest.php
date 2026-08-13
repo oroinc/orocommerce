@@ -108,7 +108,7 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($formView);
         $this->formFactory->expects(self::once())
             ->method('create')
-            ->with(FormStub::class, $order)
+            ->with(FormStub::class, $order, ['draft_session_sync' => true])
             ->willReturn($newForm);
 
         $appliedPromotionsView = 'Applied promotions html view';

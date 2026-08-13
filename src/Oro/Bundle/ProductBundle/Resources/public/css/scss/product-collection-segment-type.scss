@@ -2,4 +2,8 @@
 
 .product-collection-segment-action-buttons {
     margin-bottom: $content-padding-medium;
+
+    .btn-group:not(:first-child) {
+        margin-left: $content-padding-small;
+    }
 }

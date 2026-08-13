@@ -10,12 +10,14 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\FormBundle\Autocomplete\SearchRegistry;
+use Oro\Bundle\FormBundle\Form\DataTransformer\EntitySelectOrCreateDataTransformerFactory;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -61,7 +63,8 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
                         $this->createMock(FeatureChecker::class),
                         $this->createMock(ConfigManager::class),
                         $doctrine,
-                        $searchRegistry
+                        $searchRegistry,
+                        new EntitySelectOrCreateDataTransformerFactory($doctrine, $this->createMock(AclHelper::class))
                     ),
                     new OroJquerySelect2HiddenType(
                         $doctrine,

@@ -451,6 +451,7 @@ services:
             - '@oro_sale.manager.quote_demand_manager'
             - '@oro_security.token_accessor'
             - '@router'
+            - '@security.authorization_checker'
         tags:
             - { name: 'oro_operation_service' }
 
@@ -463,6 +464,7 @@ services:
             - '@oro_sale.manager.quote_demand_manager'
             - '@oro_security.token_accessor'
             - '@router'
+            - '@oro_sale.provider.guest_quote_access'
         tags:
             - { name: 'oro_operation_service' }
 

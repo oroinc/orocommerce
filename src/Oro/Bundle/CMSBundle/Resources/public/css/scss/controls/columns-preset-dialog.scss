@@ -43,8 +43,8 @@
 }
 
 .column-resizer-placeholder {
-    background-color: rgba($secondary, .2);
-    border: 3px dashed $secondary;
+    background-color: rgba($primary-main, .2);
+    border: 3px dashed $primary-main;
     border-left: none;
     position: absolute;
     top: -5px;
@@ -57,7 +57,7 @@
     align-items: center;
 
     > .span-number {
-        background-color: $secondary;
+        background-color: $primary-main;
         color: $primary-inverse;
         padding: 4px 8px;
         border-radius: 3px;
@@ -65,7 +65,7 @@
 
     &.cl {
         border-right: none;
-        border-left: 3px dashed $secondary;
+        border-left: 3px dashed $primary-main;
         left: auto;
         right: 0;
         margin-left: -5px;

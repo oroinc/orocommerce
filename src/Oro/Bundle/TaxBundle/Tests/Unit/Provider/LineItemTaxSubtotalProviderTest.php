@@ -1,123 +1,174 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
+use Oro\Bundle\TaxBundle\Factory\TaxFactory;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Provider\LineItemTaxSubtotalProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Oro\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class LineItemTaxSubtotalProviderTest extends TaxSubtotalProviderTest
+final class LineItemTaxSubtotalProviderTest extends TestCase
 {
+    private const SUBTOTAL_LABEL = 'Oro.tax.subtotals.lineitem_tax';
+
+    private TaxProviderInterface&MockObject $taxProvider;
+
+    private TaxFactory&MockObject $taxFactory;
+
+    private TaxationSettingsProvider&MockObject $taxSettingsProvider;
+
+    private TaxManager&MockObject $taxManager;
+
+    private LineItemTaxSubtotalProvider $provider;
+
     #[\Override]
     protected function setUp(): void
     {
-        parent::setUp();
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects(self::any())
+            ->method('trans')
+            ->willReturnCallback(static fn (string $id): string => ucfirst($id));
 
-        $taxManager = $this->createMock(TaxManager::class);
+        $this->taxProvider = $this->createMock(TaxProviderInterface::class);
+        $this->taxFactory = $this->createMock(TaxFactory::class);
+        $this->taxSettingsProvider = $this->createMock(TaxationSettingsProvider::class);
+        $this->taxManager = $this->createMock(TaxManager::class);
+
+        $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
+        $taxProviderRegistry->expects(self::any())
+            ->method('getEnabledProvider')
+            ->willReturn($this->taxProvider);
 
         $this->provider = new LineItemTaxSubtotalProvider(
-            $this->translator,
-            $this->taxProviderRegistry,
+            $translator,
+            $taxProviderRegistry,
             $this->taxFactory,
             $this->taxSettingsProvider,
-            $taxManager
+            $this->taxManager,
         );
     }
 
-    #[\Override]
     public function testGetSubtotal(): void
     {
-        $this->taxSettingsProvider->expects($this->once())
+        $this->taxSettingsProvider->expects(self::once())
             ->method('isProductPricesIncludeTax')
             ->willReturn(false);
 
-        $total = $this->createTotalResultElement(10, 'USD');
-        $tax = $this->createTaxResult($total);
-
-        $this->taxProvider->expects($this->once())
+        $this->taxProvider->expects(self::once())
             ->method('getTax')
-            ->willReturn($tax);
+            ->willReturn($this->createTaxResult('10', 'USD'));
 
         $subtotal = $this->provider->getSubtotal(new Order());
 
-        $this->assertSubtotal($subtotal, $total);
-        $this->assertEquals(Subtotal::OPERATION_ADD, $subtotal->getOperation());
+        $this->assertSubtotal($subtotal, 10.0, 'USD');
+        self::assertSame(Subtotal::OPERATION_ADD, $subtotal->getOperation());
     }
 
     public function testGetSubtotalProductPricesIncludeTax(): void
     {
-        $this->taxSettingsProvider->expects($this->once())
+        $this->taxSettingsProvider->expects(self::once())
             ->method('isProductPricesIncludeTax')
             ->willReturn(true);
 
-        $total = $this->createTotalResultElement(10, 'USD');
-        $tax = $this->createTaxResult($total);
-
-        $this->taxProvider->expects($this->once())
+        $this->taxProvider->expects(self::once())
             ->method('getTax')
-            ->willReturn($tax);
+            ->willReturn($this->createTaxResult('10', 'USD'));
 
         $subtotal = $this->provider->getSubtotal(new Order());
 
-        $this->assertSubtotal($subtotal, $total);
-        $this->assertEquals(Subtotal::OPERATION_IGNORE, $subtotal->getOperation());
+        $this->assertSubtotal($subtotal, 10.0, 'USD');
+        self::assertSame(Subtotal::OPERATION_IGNORE, $subtotal->getOperation());
     }
 
-    #[\Override]
     public function testGetCachedSubtotal(): void
     {
-        $this->taxSettingsProvider->expects($this->once())
+        $this->taxSettingsProvider->expects(self::once())
             ->method('isProductPricesIncludeTax')
             ->willReturn(false);
 
-        $total = $this->createTotalResultElement(10, 'USD');
-        $tax = $this->createTaxResult($total);
-
-        $this->taxProvider->expects($this->once())
+        $this->taxProvider->expects(self::once())
             ->method('loadTax')
-            ->willReturn($tax);
+            ->willReturn($this->createTaxResult('10', 'USD'));
+
+        // The result already carries ITEMS, so no on-demand loading is triggered.
+        $this->taxManager->expects(self::never())
+            ->method('loadTax');
 
         $subtotal = $this->provider->getCachedSubtotal(new Order());
 
-        $this->assertSubtotal($subtotal, $total);
-        $this->assertEquals(Subtotal::OPERATION_ADD, $subtotal->getOperation());
+        $this->assertSubtotal($subtotal, 10.0, 'USD');
+        self::assertSame(Subtotal::OPERATION_ADD, $subtotal->getOperation());
     }
 
-    #[\Override]
-    protected function createTotalResultElement($amount, $currency): ResultElement
+    public function testGetSubtotalByResultLoadsTaxItemsWhenMissing(): void
     {
-        $total = new ResultElement();
-        $total
-            ->setCurrency($currency)
-            ->offsetSet(ResultElement::TAX_AMOUNT, $amount);
+        $this->taxSettingsProvider->expects(self::once())
+            ->method('isProductPricesIncludeTax')
+            ->willReturn(false);
 
-        return $total;
-    }
-
-    #[\Override]
-    protected function createTaxResult(ResultElement $total): Result
-    {
-        $rowTax = new Result();
-        $rowTax->offsetSet(Result::ROW, $total);
+        $itemsTotal = new ResultElement();
+        $itemsTotal->setCurrency('USD')
+            ->offsetSet(ResultElement::TAX_AMOUNT, '10');
 
         $tax = new Result();
-        $tax->offsetSet(Result::ITEMS, [$rowTax]);
-        $tax->offsetSet(Result::TAXES, [$total]);
-        $tax->offsetSet(Result::ITEMS_TOTAL, $total);
+        $tax->offsetSet(Result::ITEMS_TOTAL, $itemsTotal);
 
-        return $tax;
+        $lineItem = new OrderLineItem();
+        $order = new Order();
+        $order->addLineItem($lineItem);
+
+        $lineItemTax = new Result();
+
+        $this->taxProvider->expects(self::never())
+            ->method('getTax');
+        $this->taxProvider->expects(self::never())
+            ->method('loadTax');
+        // ITEMS are absent for the order, so they are loaded on demand.
+        $this->taxManager->expects(self::once())
+            ->method('loadTax')
+            ->with($lineItem)
+            ->willReturn($lineItemTax);
+
+        $subtotal = $this->provider->getSubtotalByResult($tax, $order);
+
+        $this->assertSubtotal($subtotal, 10.0, 'USD');
+        self::assertSame([$lineItemTax], $tax->offsetGet(Result::ITEMS));
+    }
+
+    public function testGetSubtotalByResultSkipsTaxItemsWhenPresent(): void
+    {
+        $this->taxSettingsProvider->expects(self::once())
+            ->method('isProductPricesIncludeTax')
+            ->willReturn(false);
+
+        $this->taxManager->expects(self::never())
+            ->method('loadTax');
+
+        $subtotal = $this->provider->getSubtotalByResult($this->createTaxResult('10', 'USD'), new Order());
+
+        $this->assertSubtotal($subtotal, 10.0, 'USD');
     }
 
     public function testGetSubtotalUsesItemsTotalNotSumOfRoundedTaxes(): void
     {
-        $this->taxSettingsProvider->expects($this->once())
+        $this->taxSettingsProvider->expects(self::once())
             ->method('isProductPricesIncludeTax')
             ->willReturn(false);
 
@@ -129,49 +180,101 @@ class LineItemTaxSubtotalProviderTest extends TaxSubtotalProviderTest
          **/
 
         $itemsTotal = new ResultElement();
-        $itemsTotal->setCurrency('EUR')->offsetSet(ResultElement::TAX_AMOUNT, '0.68');
+        $itemsTotal->setCurrency('EUR')
+            ->offsetSet(ResultElement::TAX_AMOUNT, '0.68');
 
         $taxElement1 = new ResultElement();
-        $taxElement1->setCurrency('EUR')->offsetSet(ResultElement::TAX_AMOUNT, '0.35');
+        $taxElement1->setCurrency('EUR')
+            ->offsetSet(ResultElement::TAX_AMOUNT, '0.35');
 
         $taxElement2 = new ResultElement();
-        $taxElement2->setCurrency('EUR')->offsetSet(ResultElement::TAX_AMOUNT, '0.34');
+        $taxElement2->setCurrency('EUR')
+            ->offsetSet(ResultElement::TAX_AMOUNT, '0.34');
 
         $tax = new Result();
         $tax->offsetSet(Result::ITEMS_TOTAL, $itemsTotal);
         $tax->offsetSet(Result::TAXES, [$taxElement1, $taxElement2]);
+        $tax->offsetSet(Result::ITEMS, []);
 
-        $this->taxProvider->expects($this->once())
+        $this->taxProvider->expects(self::once())
             ->method('getTax')
             ->willReturn($tax);
 
         $subtotal = $this->provider->getSubtotal(new Order());
 
-        $this->assertEquals('0.68', $subtotal->getAmount());
-        $this->assertEquals('EUR', $subtotal->getCurrency());
+        self::assertSame(0.68, $subtotal->getAmount());
+        self::assertSame('EUR', $subtotal->getCurrency());
     }
 
-    #[\Override]
-    protected function getLabel(): string
+    public function testGetSubtotalWithException(): void
     {
-        return 'Oro.tax.subtotals.lineitem_' . TaxSubtotalProvider::TYPE;
+        $this->taxProvider->expects(self::once())
+            ->method('getTax')
+            ->willThrowException(new TaxationDisabledException());
+
+        $subtotal = $this->provider->getSubtotal(new Order());
+
+        self::assertInstanceOf(Subtotal::class, $subtotal);
+        self::assertSame(TaxSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertSame(self::SUBTOTAL_LABEL, $subtotal->getLabel());
+        self::assertFalse($subtotal->isVisible());
     }
 
-    #[\Override]
-    protected function getOrder(): int
+    public function testGetCachedSubtotalEmptyIfTaxationDisabled(): void
     {
-        return 410;
+        $this->taxProvider->expects(self::once())
+            ->method('loadTax')
+            ->willThrowException(new TaxationDisabledException());
+
+        $subtotal = $this->provider->getCachedSubtotal(new Order());
+
+        self::assertSame(0.0, $subtotal->getAmount());
     }
 
-    #[\Override]
-    protected function isVisible(): bool
+    public function testIsSupported(): void
     {
-        return false;
+        $this->taxFactory->expects(self::once())
+            ->method('supports')
+            ->willReturn(true);
+
+        self::assertTrue($this->provider->isSupported(new \stdClass()));
     }
 
-    #[\Override]
-    protected function isRemovable(): bool
+    public function testSupportsCachedSubtotal(): void
     {
-        return true;
+        $this->taxFactory->expects(self::once())
+            ->method('supports')
+            ->willReturn(true);
+
+        self::assertTrue($this->provider->supportsCachedSubtotal(new \stdClass()));
+    }
+
+    private function assertSubtotal(Subtotal $subtotal, float $expectedAmount, string $expectedCurrency): void
+    {
+        self::assertSame(TaxSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertSame(LineItemTaxSubtotalProvider::NAME, $subtotal->getName());
+        self::assertSame(self::SUBTOTAL_LABEL, $subtotal->getLabel());
+        self::assertSame($expectedCurrency, $subtotal->getCurrency());
+        self::assertSame($expectedAmount, $subtotal->getAmount());
+        self::assertSame(410, $subtotal->getSortOrder());
+        self::assertFalse($subtotal->isVisible());
+        self::assertTrue($subtotal->isRemovable());
+    }
+
+    private function createTaxResult(string $taxAmount, string $currency): Result
+    {
+        $itemsTotal = new ResultElement();
+        $itemsTotal->setCurrency($currency)
+            ->offsetSet(ResultElement::TAX_AMOUNT, $taxAmount);
+
+        $rowTax = new Result();
+        $rowTax->offsetSet(Result::ROW, $itemsTotal);
+
+        $tax = new Result();
+        $tax->offsetSet(Result::ITEMS, [$rowTax]);
+        $tax->offsetSet(Result::TAXES, [$itemsTotal]);
+        $tax->offsetSet(Result::ITEMS_TOTAL, $itemsTotal);
+
+        return $tax;
     }
 }

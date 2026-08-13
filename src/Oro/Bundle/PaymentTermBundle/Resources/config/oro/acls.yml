@@ -1,0 +1,6 @@
+acls:
+    oro_frontend_payment_term_view:
+        type: entity
+        class: Oro\Bundle\WebsiteBundle\Entity\Website
+        permission: VIEW
+        group_name: "commerce"

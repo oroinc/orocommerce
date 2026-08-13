@@ -14,8 +14,10 @@
             {{ UI.renderProperty('oro.shoppinglist.label.label'|trans, shopping_list.label) }}
             {{ UI.renderProperty('oro.shoppinglist.notes.label'|trans, shopping_list.notes) }}
         </div>
-        <div class="responsive-block">
-            {{ entityConfig.renderDynamicFields(shopping_list) }}
-        </div>
+        {% apply spaceless %}
+            <div class="responsive-block">
+                {{ entityConfig.renderDynamicFields(shopping_list) }}
+            </div>
+        {% endapply %}
     </div>
 </div>

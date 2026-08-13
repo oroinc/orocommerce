@@ -12,9 +12,11 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Manager\QuoteDemandManager;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * oro_sale_frontend_quote_submit_to_order operation logic.
@@ -27,7 +29,8 @@ class QuoteSubmitToOrder extends AbstractOperationService
         private ManagerRegistry $registry,
         private QuoteDemandManager $quoteDemandManager,
         private TokenStorageInterface $tokenStorage,
-        private UrlGeneratorInterface $urlGenerator
+        private UrlGeneratorInterface $urlGenerator,
+        private AuthorizationCheckerInterface $authorizationChecker
     ) {
     }
 
@@ -48,6 +51,14 @@ class QuoteSubmitToOrder extends AbstractOperationService
         }
 
         return true;
+    }
+
+    public function isConditionAllowed(ActionData $data, ?Collection $errors = null): bool
+    {
+        $quote = $data->getEntity();
+
+        return $quote instanceof Quote
+            && $this->authorizationChecker->isGranted(BasicPermission::VIEW, $quote);
     }
 
     public function execute(ActionData $data): void

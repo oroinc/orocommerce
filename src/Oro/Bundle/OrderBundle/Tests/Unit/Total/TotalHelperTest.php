@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Total;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -43,6 +45,102 @@ class TotalHelperTest extends \PHPUnit\Framework\TestCase
             $this->discountSubtotalProvider,
             $this->rateConverter
         );
+    }
+
+    public function testFill(): void
+    {
+        $order = new Order();
+        $discount = new OrderDiscount();
+        $discount->setType(OrderDiscount::TYPE_AMOUNT);
+        $discount->setAmount(4.2);
+        $order->addDiscount($discount);
+
+        $lineItemsSubtotal = new Subtotal();
+        $lineItemsSubtotal->setType(LineItemSubtotalProvider::TYPE);
+        $lineItemsSubtotal->setName(LineItemSubtotalProvider::NAME);
+        $lineItemsSubtotal->setAmount(42);
+
+        $discountSubtotal = new Subtotal();
+        $discountSubtotal->setType(DiscountSubtotalProvider::TYPE);
+        $discountSubtotal->setName(DiscountSubtotalProvider::NAME);
+        $discountSubtotal->setAmount(42);
+
+        $discountSubtotal2 = new Subtotal();
+        $discountSubtotal2->setType(DiscountSubtotalProvider::TYPE);
+        $discountSubtotal2->setName(DiscountSubtotalProvider::NAME);
+        $discountSubtotal2->setAmount(-40);
+
+        $total = new Subtotal();
+        $total->setType(TotalProcessorProvider::TYPE);
+        $total->setAmount(90);
+
+        $subtotals = new ArrayCollection([$lineItemsSubtotal, $discountSubtotal, $discountSubtotal2]);
+
+        $this->totalProvider->expects($this->once())
+            ->method('enableRecalculation')
+            ->willReturnSelf();
+        // The whole subtotal-provider chain must be calculated only once per fill().
+        $this->totalProvider->expects($this->once())
+            ->method('getSubtotals')
+            ->with($order)
+            ->willReturn($subtotals);
+        $this->totalProvider->expects($this->once())
+            ->method('getTotalForSubtotals')
+            ->with($order, $subtotals)
+            ->willReturn($total);
+        // Dedicated providers must not be called again - values are reused from getSubtotals().
+        $this->lineItemSubtotalProvider->expects($this->never())
+            ->method('getSubtotal');
+        $this->discountSubtotalProvider->expects($this->never())
+            ->method('getSubtotal');
+
+        $this->rateConverter->expects($this->any())
+            ->method('getBaseCurrencyAmount')
+            ->willReturnCallback(function (MultiCurrency $multiCurrency) {
+                return $multiCurrency->getValue();
+            });
+
+        $this->helper->fill($order);
+
+        $this->assertEquals(42, $order->getSubtotal());
+        $this->assertEquals(2, $order->getTotalDiscounts()->getValue());
+        $this->assertEquals(90, $order->getTotal());
+        // Percent of an amount-type discount is derived from the line items subtotal.
+        $this->assertEquals(10.0, $order->getDiscounts()[0]->getPercent());
+    }
+
+    public function testFillForOrderWithSuborders(): void
+    {
+        $order = new Order();
+        $subOrder1 = new Order();
+        $subOrder1->setSubtotal(42);
+        $subOrder1->setTotal(50);
+        $subOrder1->setTotalDiscounts((new Price())->setValue(3));
+        $subOrder2 = new Order();
+        $subOrder2->setSubtotal(55);
+        $subOrder2->setTotal(60);
+        $subOrder2->setTotalDiscounts((new Price())->setValue(4));
+
+        $order->addSubOrder($subOrder1);
+        $order->addSubOrder($subOrder2);
+
+        // Sub-order aggregation must not trigger the provider chain.
+        $this->totalProvider->expects($this->never())
+            ->method('getSubtotals');
+        $this->totalProvider->expects($this->never())
+            ->method('getTotalForSubtotals');
+
+        $this->rateConverter->expects($this->any())
+            ->method('getBaseCurrencyAmount')
+            ->willReturnCallback(function (MultiCurrency $multiCurrency) {
+                return $multiCurrency->getValue();
+            });
+
+        $this->helper->fill($order);
+
+        $this->assertEquals(97, $order->getSubtotal());
+        $this->assertEquals(7, $order->getTotalDiscounts()->getValue());
+        $this->assertEquals(110, $order->getTotal());
     }
 
     public function testFillSubtotals(): void

@@ -16,7 +16,7 @@
     }
 
     &__title {
-        margin-bottom: $create-draft-container-title-margin-bottom-base - $oro-datagrid-body-cell-inner-top;
+        margin-bottom: $create-draft-container-title-margin-bottom-base - $oro-datagrid-body-cell-inner-vertical;
         padding: $create-draft-container-title-padding;
 
         font-weight: font-weight('semi-bold');

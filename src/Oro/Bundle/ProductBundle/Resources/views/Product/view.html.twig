@@ -118,11 +118,10 @@
     {% set dataBlocks = {} %}
     {% if (generalDataBlock or additionalGeneralData) %}
         {% set subblocks = [] %}
-        {% set subblocks = subblocks|merge([{'data': generalDataBlock}]) %}
-        {% set subblocks = subblocks|merge([{'data': additionalGeneralData}]) %}
+        {% set subblocks = subblocks|merge([{'spanClass': 'responsive-block', 'data': generalDataBlock}]) %}
+        {% set subblocks = subblocks|merge([{'spanClass': 'responsive-block', 'data': additionalGeneralData}]) %}
         {% set dataBlocks = {'general': {'title': 'oro.product.sections.general'|trans,'subblocks': subblocks}} %}
     {% endif %}
-
 
     {% if is_granted('VIEW', entity, 'shortDescriptions') %}
         {% set dataBlocks = dataBlocks|merge({
@@ -130,6 +129,7 @@
                 'title': 'oro.product.short_descriptions.label'|trans,
                 'subblocks': [
                     {
+                        'spanClass': 'responsive-block',
                         'data' : {
                         'shortDescriptions': UI.renderCollapsibleWysiwygContentPreview(entity.defaultShortDescription, entity, 'defaultShortDescription', 'oro.product.simplified_preview.message'),
                     }
@@ -144,6 +144,7 @@
                 'title': 'oro.product.descriptions.label'|trans,
                 'subblocks': [
                     {
+                        'spanClass': 'responsive-block',
                         'data' : {
                         'descriptions': UI.renderCollapsibleWysiwygContentPreview(entity.defaultDescription, entity, 'defaultDescription', 'oro.product.simplified_preview.message'),
                     }
@@ -195,6 +196,7 @@
                 'title': 'oro.product.sections.images'|trans,
                 'priority': 100,
                 'subblocks': [{
+                    'spanClass': 'responsive-block',
                     'data': {'images': imagesData}
                 }]
             }
@@ -207,6 +209,7 @@
                 'title': 'oro.product.sections.inventory'|trans,
                 'priority': 1400,
                 'subblocks': [{
+                    'spanClass': 'responsive-block',
                     'title': '',
                     'data': {
                         'inventory_status': UI.renderHtmlProperty('oro.product.inventory_status.label'|trans, '<span class="product-inventory-status-' ~ entity.inventory_status.internalId ~'">' ~ entity.inventory_status|e ~ '</span>')
@@ -250,7 +253,7 @@
                 {{
                     relatedProductsDataGrid.renderGrid('products-related-products-view',
                     {'relatedItemsIds': relatedItemsIds},
-                    {cssClass: 'inner-grid'})
+                    {cssClass: 'inner-grid tab-content'})
                 }}
             {% else %}
                 <div id="products-related-products-view" class="tab-content">
@@ -270,7 +273,8 @@
     {% if upsellProductsEnabled and is_granted('oro_upsell_products_edit') %}
         {% set relatedItemsTabsItems = relatedItemsTabsItems|merge([{
             'id': 'products-upsell-products-view',
-            'label': 'oro.product.tabs.upsellProducts'|trans
+            'label': 'oro.product.tabs.upsellProducts'|trans,
+            'class': 'tab-content'
         }]) %}
 
         {% set relatedItemsIds = get_upsell_products_ids(entity) %}
@@ -279,7 +283,7 @@
                 {{
                     relatedProductsDataGrid.renderGrid('products-upsell-products-view',
                     {'relatedItemsIds': relatedItemsIds},
-                    {cssClass: 'inner-grid'})
+                    {cssClass: 'inner-grid tab-content'})
                 }}
             {% else %}
                 <div id="products-upsell-products-view" class="tab-content">
@@ -326,6 +330,7 @@
                 'headerLinkContent': headerLinkContent,
                 'priority': 1500,
                 'subblocks': [{
+                    'spanClass': 'responsive-block',
                     'data': [relatedItemsTabs]|merge(relatedItemsSubblocks)
                 }]
             }
@@ -351,6 +356,7 @@
                 'title': 'oro.product.sections.design'|trans,
                 'priority': 200,
                 'subblocks': [{
+                    'spanClass': 'responsive-block',
                     'data': {'pageTemplate': pageTemplatesData }
                 }]
             }

@@ -21,6 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class DiscountSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     public const TYPE = 'discount';
+    public const NAME = 'order_discount';
     public const SUBTOTAL_SORT_ORDER = 50;
 
     /** @var TranslatorInterface */
@@ -65,6 +66,7 @@ class DiscountSubtotalProvider extends AbstractSubtotalProvider implements Subto
             $subtotal = new Subtotal();
 
             $subtotal->setType(self::TYPE);
+            $subtotal->setName(self::NAME);
             $subtotal->setSortOrder(self::SUBTOTAL_SORT_ORDER);
             $description = $discount->getDescription();
             $title = $this->translator->trans('oro.order.subtotals.' . self::TYPE);

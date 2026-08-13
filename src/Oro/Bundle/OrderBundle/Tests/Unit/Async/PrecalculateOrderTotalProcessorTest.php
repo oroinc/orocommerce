@@ -239,8 +239,8 @@ class PrecalculateOrderTotalProcessorTest extends TestCase
         $this->totalHelper->expects(self::exactly(2))
             ->method('calculateTotal')
             ->willReturnMap([
-                [$order1, self::getOrderTotal(1.2)],
-                [$order3, self::getOrderTotal(3.2)]
+                [$order1, null, self::getOrderTotal(1.2)],
+                [$order3, null, self::getOrderTotal(3.2)]
             ]);
         $entityManager->expects(self::once())
             ->method('flush')

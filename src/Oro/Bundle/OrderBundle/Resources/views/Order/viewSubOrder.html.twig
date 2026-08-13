@@ -69,11 +69,29 @@
         }) }}
     {% endset %}
 
+    {% set websiteField %}
+        {% if entity.website is defined and entity.website %}
+            {{ UI.renderProperty('oro.order.website.label'|trans, entity.website.name) }}
+        {% endif %}
+    {% endset %}
+    {% set generalSectionAfterContent = placeholder('view_general_section_after', {'entity': entity}) ~ websiteField %}
+    {% set generalSectionAfter %}
+        {% if generalSectionAfterContent|trim is not empty %}
+            <div class="order-view-rest-info__wrapper">
+                <div class="form-horizontal">
+                    <div class="responsive-block">
+                        {{ generalSectionAfterContent|raw }}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endset %}
+
     {% set generalSectionBlocks = [
         {'data' : [
             placeholder('view_general_section_before', {'entity':  entity}),
             orderInformationWidget,
-            placeholder('view_general_section_after', {'entity':  entity})
+            generalSectionAfter
         ]}
     ] %}
 

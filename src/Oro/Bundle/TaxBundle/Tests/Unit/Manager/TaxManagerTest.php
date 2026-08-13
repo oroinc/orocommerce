@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Manager;
 
-use Oro\Bundle\CacheBundle\Generator\ObjectCacheKeyGenerator;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Event\TaxEventDispatcher;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
@@ -14,9 +13,6 @@ use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface;
-use PHPUnit\Framework\MockObject\Stub\ReturnCallback;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -33,14 +29,8 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|TaxValueManager */
     private $taxValueManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectCacheKeyGenerator */
-    private $objectCacheKeyGenerator;
-
     /** @var bool */
     private $taxationEnabled = true;
-
-    /** @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $cacheProvider;
 
     /** @var TaxManager */
     private $manager;
@@ -51,8 +41,6 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
         $this->factory = $this->createMock(TaxFactory::class);
         $this->eventDispatcher = $this->createMock(TaxEventDispatcher::class);
         $this->taxValueManager = $this->createMock(TaxValueManager::class);
-        $this->cacheProvider = $this->createMock(CacheInterface::class);
-        $this->objectCacheKeyGenerator = $this->createMock(ObjectCacheKeyGenerator::class);
 
         $settingsProvider = $this->createMock(TaxationSettingsProvider::class);
         $settingsProvider->expects($this->any())
@@ -65,9 +53,7 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
             $this->factory,
             $this->eventDispatcher,
             $this->taxValueManager,
-            $settingsProvider,
-            $this->cacheProvider,
-            $this->objectCacheKeyGenerator
+            $settingsProvider
         );
     }
 
@@ -84,7 +70,6 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->taxValueManager->expects($this->never())
             ->method($this->anything());
-        $this->configureCacheGetCalls();
 
         $this->manager->loadTax(new \stdClass());
     }
@@ -105,7 +90,6 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
             ->method('getTaxValue')
             ->with($taxable->getClassName(), $taxable->getIdentifier())
             ->willReturn(new TaxValue());
-        $this->configureCacheGetCalls();
 
         $this->manager->loadTax(new \stdClass());
     }
@@ -135,34 +119,56 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
             ->method('getTaxValue')
             ->with($taxable->getClassName(), $taxable->getIdentifier())
             ->willReturn($taxValue);
-        $this->configureCacheGetCalls();
 
         $result = $this->manager->loadTax(new \stdClass());
         $this->assertInstanceOf(Result::class, $result);
         $this->assertSame($taxResult, $result);
     }
 
-    private function configureCacheProviderExpectations(object $objectToTax): Taxable
+    public function testLoadTaxDispatchesLoadTaxBefore(): void
     {
-        $taxable = new Taxable();
+        $object = new \stdClass();
 
+        $taxable = new Taxable();
+        $taxable->setClassName('stdClass');
+        $taxable->setIdentifier(1);
         $this->factory->expects($this->once())
             ->method('create')
             ->willReturn($taxable);
-        $cacheKey = 'someCacheKey';
-        $this->objectCacheKeyGenerator->expects($this->any())
-            ->method('generate')
-            ->with($objectToTax, 'tax')
-            ->willReturn($cacheKey);
 
-        $saveCallback = function ($cacheKey, $callback) {
-            $item = $this->createMock(ItemInterface::class);
-            return $callback($item);
-        };
-        $this->cacheProvider->expects($this->exactly(2))
-            ->method('get')
-            ->with($cacheKey)
-            ->willReturnOnConsecutiveCalls(new ReturnCallback($saveCallback), $taxable);
+        $this->manager->addTransformer('stdClass', $this->createMock(TaxTransformerInterface::class));
+
+        $this->taxValueManager->expects($this->once())
+            ->method('getTaxValue')
+            ->with($taxable->getClassName(), $taxable->getIdentifier())
+            ->willReturn(new TaxValue());
+
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatchLoadTaxBefore')
+            ->with($object);
+
+        $this->manager->loadTax($object);
+    }
+
+    public function testLoadTaxDoesNotDispatchLoadTaxBeforeWhenTaxationDisabled(): void
+    {
+        $this->taxationEnabled = false;
+
+        $this->eventDispatcher->expects($this->never())
+            ->method('dispatchLoadTaxBefore');
+
+        $this->expectException(TaxationDisabledException::class);
+
+        $this->manager->loadTax(new \stdClass());
+    }
+
+    private function configureFactoryToCreateTaxable(): Taxable
+    {
+        $taxable = new Taxable();
+
+        $this->factory->expects($this->exactly(2))
+            ->method('create')
+            ->willReturn($taxable);
 
         return $taxable;
     }
@@ -170,7 +176,7 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetTaxNewResult()
     {
         $objectToTax = new \stdClass();
-        $taxable = $this->configureCacheProviderExpectations($objectToTax);
+        $taxable = $this->configureFactoryToCreateTaxable();
 
         $this->taxValueManager->expects($this->never())
             ->method($this->anything());
@@ -204,7 +210,7 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
         $taxValue->setResult($taxResult);
 
         $objectToTax = new \stdClass();
-        $taxable = $this->configureCacheProviderExpectations($objectToTax);
+        $taxable = $this->configureFactoryToCreateTaxable();
         $taxable->setResult($taxResult);
         $taxable->setClassName('stdClass');
         $taxable->setIdentifier(1);
@@ -284,7 +290,6 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
         $this->taxValueManager->expects($this->once())
             ->method('saveTaxValue')
             ->with($taxValue);
-        $this->configureCacheGetCalls();
 
         $this->assertEquals($taxValue->getResult(), $this->manager->saveTax($entity, false));
     }
@@ -324,7 +329,6 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
         $this->taxValueManager->expects($this->once())
             ->method('saveTaxValue')
             ->with($taxValue);
-        $this->configureCacheGetCalls();
 
         $this->assertEquals($taxValue->getResult(), $this->manager->saveTax($entity, false));
     }
@@ -344,7 +348,6 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
         $this->taxValueManager->expects($this->never())
             ->method('saveTaxValue')
             ->with($taxValue);
-        $this->configureCacheGetCalls();
 
         $this->assertFalse($this->manager->saveTax($entity, false));
     }
@@ -399,7 +402,6 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
         $this->taxValueManager->expects($this->exactly(2))
             ->method('saveTaxValue')
             ->with($taxValue);
-        $this->configureCacheGetCalls();
 
         $this->manager->saveTax($entity, true);
     }
@@ -419,7 +421,6 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
         $this->taxValueManager->expects($this->never())
             ->method('saveTaxValue')
             ->with($taxValue);
-        $this->configureCacheGetCalls();
 
         $this->assertFalse($this->manager->saveTax($entity));
     }
@@ -448,7 +449,6 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
             ->method('removeTaxValue')
             ->with($taxValue)
             ->willReturn(true);
-        $this->configureCacheGetCalls();
 
         $this->assertTrue($this->manager->removeTax($entity, false));
     }
@@ -473,7 +473,6 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->taxValueManager->expects($this->never())
             ->method('removeTaxValue');
-        $this->configureCacheGetCalls();
 
         $this->assertFalse($this->manager->removeTax($entity, false));
     }
@@ -514,7 +513,6 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
             ->method('removeTaxValue')
             ->withConsecutive([$itemTaxValue], [$taxValue])
             ->willReturn(true);
-        $this->configureCacheGetCalls();
 
         $this->assertTrue($this->manager->removeTax($entity, true));
     }
@@ -522,7 +520,7 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
     public function testCrateTaxValue()
     {
         $objectToTax = new \stdClass();
-        $taxable = $this->configureCacheProviderExpectations($objectToTax);
+        $taxable = $this->configureFactoryToCreateTaxable();
         $taxable->setClassName('stdClass');
         $taxable->setIdentifier(1);
 
@@ -554,21 +552,34 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($taxValue, $this->manager->createTaxValue($objectToTax));
     }
 
+    public function testPreloadTaxValues()
+    {
+        $entityClass = \stdClass::class;
+        $entityIds = [1, 2, 3];
+
+        $this->taxValueManager->expects($this->once())
+            ->method('preloadTaxValues')
+            ->with($entityClass, $entityIds);
+
+        $this->manager->preloadTaxValues($entityClass, $entityIds);
+    }
+
+    public function testPreloadTaxValuesWhenTaxationDisabled()
+    {
+        $this->expectException(TaxationDisabledException::class);
+        $this->taxationEnabled = false;
+
+        $this->taxValueManager->expects($this->never())
+            ->method('preloadTaxValues');
+
+        $this->manager->preloadTaxValues(\stdClass::class, [1, 2, 3]);
+    }
+
     public function testExceptionWhenTaxationDisabled()
     {
         $this->expectException(TaxationDisabledException::class);
         $this->taxationEnabled = false;
 
         $this->manager->getTax(new \stdClass());
-    }
-
-    private function configureCacheGetCalls(): void
-    {
-        $this->cacheProvider->expects(self::any())
-            ->method('get')
-            ->willReturnCallback(function ($cacheKey, $callback) {
-                $item = $this->createMock(ItemInterface::class);
-                return $callback($item);
-            });
     }
 }

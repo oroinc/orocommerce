@@ -52,7 +52,7 @@
         }
 
         &.selected {
-            background: $secondary;
+            background: $primary-main;
             color: $primary-inverse;
 
             .theme-icon {
@@ -60,7 +60,7 @@
             }
 
             &:hover {
-                box-shadow: 0 0 0 2px $secondary inset;
+                box-shadow: 0 0 0 2px $primary-main inset;
             }
         }
     }

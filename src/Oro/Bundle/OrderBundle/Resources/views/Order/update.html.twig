@@ -118,13 +118,12 @@
                 order_draft_id: oro_order_get_order_draft_id(entity)|default(0),
                 draft_session_uuid: draftSessionUuid
             } %}
-            {% set render_parameters = { cssClass: 'order-line-items-edit-grid' } %}
+            {% set render_parameters = { cssClass: 'order-line-items-edit-grid inner-grid' } %}
             {{ dataGrid.renderGrid('order-line-items-edit-grid', grid_parameters, render_parameters) }}
 
             {% set entityDataOptions = {entityData: orderData} %}
-            <div
-                    data-page-component-module="oroorder/js/app/components/data-load-component"
-                    data-page-component-options="{{ entityDataOptions|json_encode }}">
+            <div data-page-component-module="oroorder/js/app/components/data-load-component"
+                 data-page-component-options="{{ entityDataOptions|json_encode }}">
             </div>
         {% endset %}
     {% endif %}
@@ -135,7 +134,7 @@
         {% else %}
             <div data-page-component-module="oroui/js/app/components/view-component"
                  data-page-component-options="{{ {view: 'oroorder/js/app/views/currency-select-view'}|json_encode }}"
-                 class="control-group-container">
+                 class="control-group-container responsive-list-with-divider--medium">
                 {{ form_row(form.currency) }}
             </div>
         {% endif %}
@@ -167,6 +166,7 @@
     {% if isBillingAddressGranted %}
         {% set billingAddress %}
             <div
+                class="order-update-address-form"
                 data-content="address-form"
                 data-layout="separate"
                 data-page-component-module="oroui/js/app/components/view-component"
@@ -205,6 +205,7 @@
                     {% set idAddressBlock = null %}
                 {% endif %}
                 <div
+                        class="order-update-address-form"
                         data-content="address-form"
                         data-layout="separate"
                         data-page-component-module="oroui/js/app/components/view-component"
@@ -319,7 +320,7 @@
     }%}
 
     {% if draftSessionUuid %}
-        <div class="alert alert-info" role="alert" data-draft-session-notice>
+        <div class="alert alert--compact alert-info" role="alert" data-draft-session-notice>
             <span class="fa-info alert-icon" aria-hidden="true"></span>
             {{ 'oro.order.draft_session.informational_message'|trans }}
         </div>

@@ -14,6 +14,7 @@ use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
+use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormInterface;
 
 class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit\Framework\TestCase
@@ -174,6 +175,34 @@ class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit\Framework\TestC
                 'currency' => 'USD',
             ],
         ], $event->getData()->offsetGet('appliedDiscounts'));
+    }
+
+    public function testOnOrderEventDoesNothingWhenDraftSessionSyncEnabled(): void
+    {
+        $formConfig = $this->createMock(FormConfigInterface::class);
+        $formConfig->expects(self::once())
+            ->method('getOption')
+            ->with('draft_session_sync')
+            ->willReturn(true);
+
+        $form = $this->createMock(FormInterface::class);
+        $form->expects(self::once())
+            ->method('getConfig')
+            ->willReturn($formConfig);
+
+        $this->taxationSettingsProvider->expects(self::never())
+            ->method('isEnabled');
+        $this->appliedDiscountsProvider->expects(self::never())
+            ->method('getDiscountsAmountByLineItem');
+        $this->lineItemSubtotalProvider->expects(self::never())
+            ->method('getRowTotal');
+        $this->taxProvider->expects(self::never())
+            ->method('getTax');
+
+        $event = new OrderEvent($form, new Order());
+        $this->discountsListener->onOrderEvent($event);
+
+        self::assertFalse($event->getData()->offsetExists('appliedDiscounts'));
     }
 
     /**

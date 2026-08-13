@@ -12,6 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\FormBundle\Autocomplete\SearchRegistry;
+use Oro\Bundle\FormBundle\Form\DataTransformer\EntitySelectOrCreateDataTransformerFactory;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
@@ -21,6 +22,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductMiniBlockContentWidgetSettingsType
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\ProductBundle\Provider\ProductListBuilder;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -190,7 +192,8 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
                         $this->createMock(FeatureChecker::class),
                         $configManager,
                         $doctrine,
-                        $searchRegistry
+                        $searchRegistry,
+                        new EntitySelectOrCreateDataTransformerFactory($doctrine, $this->createMock(AclHelper::class))
                     ),
                     OroJquerySelect2HiddenType::class => new OroJquerySelect2HiddenType(
                         $doctrine,

@@ -29,6 +29,9 @@ class RecalculateOrdersOnSave
             return;
         }
 
+        $this->priceMatcher->addMatchingPrices($entity);
+        $this->totalHelper->fill($entity);
+
         $em = $this->doctrine->getManagerForClass(Order::class);
         if ($entity->getParent() !== null) {
             $parent = $entity->getParent();

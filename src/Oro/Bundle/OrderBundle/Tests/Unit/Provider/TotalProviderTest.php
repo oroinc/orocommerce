@@ -40,7 +40,7 @@ class TotalProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider subtotalsProvider
      */
-    public function testGetTotalFromOrderWithSubtotalsWithBaseCurrencyValues(
+    public function testGetTotalWithSubtotalsWithBaseCurrency(
         array $original,
         array $expectedResult
     ): void {
@@ -49,16 +49,21 @@ class TotalProviderTest extends \PHPUnit\Framework\TestCase
         $subtotals = $this->getSubTotalCollection($original);
 
         $this->processorProvider->expects(self::once())
-            ->method('getTotalFromOrder')
-            ->with($order)
-            ->willReturn($total);
-
-        $this->processorProvider->expects(self::once())
             ->method('getSubtotals')
             ->with($order)
             ->willReturn($subtotals);
 
-        $totals = $this->provider->getTotalFromOrderWithSubtotalsWithBaseCurrencyValues($order);
+        $this->processorProvider->expects(self::once())
+            ->method('getTotalForSubtotals')
+            ->with($order, $subtotals)
+            ->willReturn($total);
+
+        $this->processorProvider->expects(self::never())
+            ->method('enableRecalculation');
+        $this->processorProvider->expects(self::never())
+            ->method('disableRecalculation');
+
+        $totals = $this->provider->getTotalWithSubtotalsWithBaseCurrency($order);
         self::assertIsArray($totals);
         self::assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
         self::assertEquals(
@@ -75,23 +80,28 @@ class TotalProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider subtotalsProvider
      */
-    public function testGetTotalWithSubtotalsWithBaseCurrencyValues(array $original, array $expectedResult): void
-    {
+    public function testGetTotalWithSubtotalsWithBaseCurrencyEnablesRecalculation(
+        array $original,
+        array $expectedResult
+    ): void {
         $order = $this->prepareOrder($original);
         $total = $this->getTotal($original);
         $subtotals = $this->getSubTotalCollection($original);
 
         $this->processorProvider->expects(self::once())
-            ->method('getTotalForSubtotals')
-            ->with($order, $subtotals)
-            ->willReturn($total);
-
+            ->method('enableRecalculation');
         $this->processorProvider->expects(self::once())
             ->method('getSubtotals')
             ->with($order)
             ->willReturn($subtotals);
+        $this->processorProvider->expects(self::once())
+            ->method('disableRecalculation');
+        $this->processorProvider->expects(self::once())
+            ->method('getTotalForSubtotals')
+            ->with($order, $subtotals)
+            ->willReturn($total);
 
-        $totals = $this->provider->getTotalWithSubtotalsWithBaseCurrencyValues($order);
+        $totals = $this->provider->getTotalWithSubtotalsWithBaseCurrency($order, true, true);
         self::assertIsArray($totals);
         self::assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
         self::assertEquals(
@@ -103,6 +113,27 @@ class TotalProviderTest extends \PHPUnit\Framework\TestCase
             $totals[TotalProcessorProvider::SUBTOTALS],
             $expectedResult[TotalProcessorProvider::SUBTOTALS]
         );
+    }
+
+    public function testGetTotalFromOrderWithSubtotalsDisablesRecalculationWhenGetSubtotalsThrows(): void
+    {
+        $order = new Order();
+
+        $this->processorProvider->expects(self::once())
+            ->method('enableRecalculation');
+        $this->processorProvider->expects(self::once())
+            ->method('getSubtotals')
+            ->with($order)
+            ->willThrowException(new \RuntimeException('Failed to calculate subtotals'));
+        $this->processorProvider->expects(self::once())
+            ->method('disableRecalculation');
+        $this->processorProvider->expects(self::never())
+            ->method('getTotalForSubtotals');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Failed to calculate subtotals');
+
+        $this->provider->getTotalWithSubtotalsWithBaseCurrency($order, true, true);
     }
 
     public function subtotalsProvider(): array

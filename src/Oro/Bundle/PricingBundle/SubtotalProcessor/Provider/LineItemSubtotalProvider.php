@@ -22,6 +22,7 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
     SubtotalCacheAwareInterface
 {
     public const TYPE = 'subtotal';
+    public const NAME = 'line_items_subtotal';
     public const LABEL = 'oro.pricing.subtotals.subtotal.label';
 
     /** @var TranslatorInterface */
@@ -79,6 +80,7 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
         $subtotal = new Subtotal();
         $subtotal->setLabel($this->translator->trans(self::LABEL));
         $subtotal->setType(self::TYPE);
+        $subtotal->setName(self::NAME);
         $subtotal->setVisible($amount > 0);
         $subtotal->setAmount($amount);
         $subtotal->setCurrency($this->getBaseCurrency($entity));

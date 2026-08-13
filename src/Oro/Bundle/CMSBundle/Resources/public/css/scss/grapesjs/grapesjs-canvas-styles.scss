@@ -64,7 +64,7 @@ body {
     .gjs-selected,
     .gjs-comp-selected {
         // stylelint-disable-next-line declaration-no-important
-        outline: 3px solid $secondary !important;
+        outline: 3px solid $primary-main !important;
         outline-offset: 0;
     }
 

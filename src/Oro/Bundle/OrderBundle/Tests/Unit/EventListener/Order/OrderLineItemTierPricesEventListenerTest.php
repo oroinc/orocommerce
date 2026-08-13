@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormInterface;
 
 class OrderLineItemTierPricesEventListenerTest extends TestCase
@@ -207,5 +208,39 @@ class OrderLineItemTierPricesEventListenerTest extends TestCase
             ],
             $event->getData()->getArrayCopy()
         );
+    }
+
+    public function testOnOrderEventDoesNothingWhenDraftSessionSyncEnabled(): void
+    {
+        $formConfig = $this->createMock(FormConfigInterface::class);
+        $formConfig
+            ->expects(self::once())
+            ->method('getOption')
+            ->with('draft_session_sync')
+            ->willReturn(true);
+        $form = $this->createMock(FormInterface::class);
+        $form
+            ->expects(self::once())
+            ->method('getConfig')
+            ->willReturn($formConfig);
+
+        $lineItem = (new OrderLineItem())
+            ->setProduct((new ProductStub())->setId(42));
+        $order = (new Order())
+            ->addLineItem($lineItem)
+            ->setCurrency('USD');
+        $event = new OrderEvent($form, $order);
+
+        $this->orderProductPriceProvider
+            ->expects(self::never())
+            ->method('getProductPrices');
+
+        $this->productLineItemProductPriceProvider
+            ->expects(self::never())
+            ->method(self::anything());
+
+        $this->listener->onOrderEvent($event);
+
+        self::assertSame([], $event->getData()->getArrayCopy());
     }
 }

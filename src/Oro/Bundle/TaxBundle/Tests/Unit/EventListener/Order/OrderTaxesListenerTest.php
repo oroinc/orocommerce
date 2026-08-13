@@ -14,12 +14,16 @@ use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Form\FormInterface;
 
 class OrderTaxesListenerTest extends TestCase
 {
     private TaxProviderInterface|MockObject $taxProvider;
 
     private OrderEvent|MockObject $event;
+
+    private FormConfigInterface|MockObject $formConfig;
 
     private TaxationSettingsProvider|MockObject $taxationSettingsProvider;
 
@@ -31,6 +35,13 @@ class OrderTaxesListenerTest extends TestCase
         $this->taxProvider = $this->createMock(TaxProviderInterface::class);
         $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);
         $this->event = $this->createMock(OrderEvent::class);
+
+        $this->formConfig = $this->createMock(FormConfigInterface::class);
+        $form = $this->createMock(FormInterface::class);
+        $form->method('getConfig')
+            ->willReturn($this->formConfig);
+        $this->event->method('getForm')
+            ->willReturn($form);
 
         $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
         $taxProviderRegistry
@@ -74,12 +85,32 @@ class OrderTaxesListenerTest extends TestCase
     {
         $this->taxProvider->expects(self::never())
             ->method(self::anything());
-        $this->event->expects(self::never())
-            ->method(self::anything());
 
         $this->taxationSettingsProvider->expects(self::once())
             ->method('isEnabled')
             ->willReturn(false);
+
+        $this->event->expects(self::never())
+            ->method('getData');
+
+        $this->listener->onOrderEvent($this->event);
+    }
+
+    public function testOnOrderEventDoesNothingWhenDraftSessionSyncEnabled(): void
+    {
+        $this->formConfig->expects(self::once())
+            ->method('getOption')
+            ->with('draft_session_sync')
+            ->willReturn(true);
+
+        $this->taxationSettingsProvider->expects(self::never())
+            ->method('isEnabled');
+
+        $this->taxProvider->expects(self::never())
+            ->method(self::anything());
+
+        $this->event->expects(self::never())
+            ->method('getData');
 
         $this->listener->onOrderEvent($this->event);
     }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\EventListener;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
@@ -15,6 +16,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -72,6 +74,32 @@ class SubtotalSubscriberTest extends TestCase
         $this->subscriber->onPreSetDataEventListener($event);
     }
 
+    public function testOnPreSetDataEventListenerSkipsWhenDraftSessionSyncEnabled(): void
+    {
+        $formConfig = $this->createMock(FormConfigInterface::class);
+        $formConfig->expects(self::once())
+            ->method('getOption')
+            ->with('draft_session_sync')
+            ->willReturn(true);
+
+        $form = $this->createMock(FormInterface::class);
+        $form->expects(self::once())
+            ->method('getConfig')
+            ->willReturn($formConfig);
+
+        $event = $this->createMock(FormEvent::class);
+        $event->expects(self::once())
+            ->method('getForm')
+            ->willReturn($form);
+        $event->expects(self::never())
+            ->method('getData');
+
+        $this->totalProvider->expects(self::never())
+            ->method('getSubtotals');
+
+        $this->subscriber->onPreSetDataEventListener($event);
+    }
+
     public function testOnPreSetDataEventListenerOnOrderEmptyTotals(): void
     {
         $order = $this->prepareOrder();
@@ -95,22 +123,21 @@ class SubtotalSubscriberTest extends TestCase
             ->method('getData')
             ->willReturn($order);
 
-        $this->lineItemSubtotalProvider->expects(self::once())
-            ->method('getSubtotal')
-            ->willReturn(new Subtotal());
-
         $this->totalProvider->expects(self::once())
             ->method('enableRecalculation')
             ->willReturnSelf();
 
         $this->totalProvider->expects(self::once())
-            ->method('getTotal')
+            ->method('getSubtotals')
             ->with($order)
+            ->willReturn(new ArrayCollection());
+        $this->totalProvider->expects(self::once())
+            ->method('getTotalForSubtotals')
             ->willReturn(new Subtotal());
 
-        $this->discountSubtotalProvider->expects(self::once())
+        $this->lineItemSubtotalProvider->expects(self::once())
             ->method('getSubtotal')
-            ->willReturn([]);
+            ->willReturn(new Subtotal());
 
         $this->subscriber->onPreSetDataEventListener($event);
         self::assertEquals(0, $order->getTotal());
@@ -213,13 +240,12 @@ class SubtotalSubscriberTest extends TestCase
             ->willReturnSelf();
 
         $this->totalProvider->expects(self::any())
-            ->method('getTotal')
+            ->method('getSubtotals')
             ->with($order)
+            ->willReturn(new ArrayCollection());
+        $this->totalProvider->expects(self::any())
+            ->method('getTotalForSubtotals')
             ->willReturn(new Subtotal());
-
-        $this->discountSubtotalProvider->expects(self::any())
-            ->method('getSubtotal')
-            ->willReturn([]);
 
         $this->subscriber->onSubmitEventListener($event);
         self::assertEquals(0, $order->getTotal());
@@ -262,16 +288,19 @@ class SubtotalSubscriberTest extends TestCase
         $subtotal = new Subtotal();
         $subtotalAmount = 42;
         $subtotal->setType(LineItemSubtotalProvider::TYPE);
+        $subtotal->setName(LineItemSubtotalProvider::NAME);
         $subtotal->setAmount($subtotalAmount);
 
         $discountSubtotal = new Subtotal();
         $discountSubtotalAmount = 42;
         $discountSubtotal->setType(DiscountSubtotalProvider::TYPE);
+        $discountSubtotal->setName(DiscountSubtotalProvider::NAME);
         $discountSubtotal->setAmount($discountSubtotalAmount);
 
         $discountSubtotal2 = new Subtotal();
         $discountSubtotalAmount2 = -40;
         $discountSubtotal2->setType(DiscountSubtotalProvider::TYPE);
+        $discountSubtotal2->setName(DiscountSubtotalProvider::NAME);
         $discountSubtotal2->setAmount($discountSubtotalAmount2);
 
         $total = new Subtotal();
@@ -279,13 +308,7 @@ class SubtotalSubscriberTest extends TestCase
         $total->setType(TotalProcessorProvider::TYPE);
         $total->setAmount($totalAmount);
 
-        $this->lineItemSubtotalProvider->expects(self::any())
-            ->method('getSubtotal')
-            ->willReturn($subtotal);
-
-        $this->discountSubtotalProvider->expects(self::any())
-            ->method('getSubtotal')
-            ->willReturn([$discountSubtotal, $discountSubtotal2]);
+        $subtotals = new ArrayCollection([$subtotal, $discountSubtotal, $discountSubtotal2]);
 
         $this->priceMatcher->expects(self::any())
             ->method('addMatchingPrices');
@@ -295,7 +318,11 @@ class SubtotalSubscriberTest extends TestCase
             ->willReturnSelf();
 
         $this->totalProvider->expects(self::any())
-            ->method('getTotal')
+            ->method('getSubtotals')
+            ->willReturn($subtotals);
+
+        $this->totalProvider->expects(self::any())
+            ->method('getTotalForSubtotals')
             ->willReturn($total);
     }
 

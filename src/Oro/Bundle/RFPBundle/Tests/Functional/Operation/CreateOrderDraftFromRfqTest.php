@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Oro\Bundle\RFPBundle\Tests\Functional\DraftSession;
+namespace Oro\Bundle\RFPBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;

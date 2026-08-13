@@ -14,6 +14,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\Repository\QuoteDemandRepository;
 use Oro\Bundle\SaleBundle\Manager\QuoteDemandManager;
 use Oro\Bundle\SaleBundle\Workflow\Operation\QuoteSubmitToOrder;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -22,6 +23,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class QuoteSubmitToOrderTest extends TestCase
 {
@@ -33,6 +35,7 @@ class QuoteSubmitToOrderTest extends TestCase
     private QuoteDemandManager|MockObject $quoteDemandManager;
     private TokenStorageInterface|MockObject $tokenStorage;
     private UrlGeneratorInterface|MockObject $urlGenerator;
+    private AuthorizationCheckerInterface|MockObject $authorizationChecker;
     private QuoteSubmitToOrder $operation;
 
     protected function setUp(): void
@@ -43,6 +46,7 @@ class QuoteSubmitToOrderTest extends TestCase
         $this->quoteDemandManager = $this->createMock(QuoteDemandManager::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $this->operation = new QuoteSubmitToOrder(
             $this->workflowManager,
@@ -50,7 +54,8 @@ class QuoteSubmitToOrderTest extends TestCase
             $this->registry,
             $this->quoteDemandManager,
             $this->tokenStorage,
-            $this->urlGenerator
+            $this->urlGenerator,
+            $this->authorizationChecker
         );
     }
 
@@ -105,6 +110,49 @@ class QuoteSubmitToOrderTest extends TestCase
             ->willReturn($workflow);
 
         $this->assertTrue($this->operation->isPreConditionAllowed($data, $errors));
+    }
+
+    public function testIsConditionAllowedWhenEntityIsNotQuote(): void
+    {
+        $data = new ActionData();
+        $errors = new ArrayCollection();
+
+        $this->authorizationChecker->expects(self::never())
+            ->method('isGranted');
+
+        self::assertFalse($this->operation->isConditionAllowed($data, $errors));
+    }
+
+    public function testIsConditionAllowedWhenQuoteViewNotGranted(): void
+    {
+        $data = new ActionData();
+        $errors = new ArrayCollection();
+        $quote = $this->getEntity(Quote::class, ['id' => 1]);
+
+        $data->offsetSet('data', $quote);
+
+        $this->authorizationChecker->expects(self::once())
+            ->method('isGranted')
+            ->with(BasicPermission::VIEW, $quote)
+            ->willReturn(false);
+
+        self::assertFalse($this->operation->isConditionAllowed($data, $errors));
+    }
+
+    public function testIsConditionAllowedWhenQuoteViewGranted(): void
+    {
+        $data = new ActionData();
+        $errors = new ArrayCollection();
+        $quote = $this->getEntity(Quote::class, ['id' => 1]);
+
+        $data->offsetSet('data', $quote);
+
+        $this->authorizationChecker->expects(self::once())
+            ->method('isGranted')
+            ->with(BasicPermission::VIEW, $quote)
+            ->willReturn(true);
+
+        self::assertTrue($this->operation->isConditionAllowed($data, $errors));
     }
 
     public function testExecuteWhenQuoteDemandExists(): void

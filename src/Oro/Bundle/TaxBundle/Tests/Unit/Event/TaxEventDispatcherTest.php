@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Event;
 
+use Oro\Bundle\TaxBundle\Event\LoadTaxBeforeEvent;
 use Oro\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use Oro\Bundle\TaxBundle\Event\TaxEventDispatcher;
 use Oro\Bundle\TaxBundle\Model\Taxable;
@@ -25,5 +26,27 @@ class TaxEventDispatcherTest extends \PHPUnit\Framework\TestCase
             );
 
         $taxDispatcher->dispatch($taxable);
+    }
+
+    public function testDispatchLoadTaxBefore()
+    {
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $taxDispatcher = new TaxEventDispatcher($eventDispatcher);
+        $object = new \stdClass();
+
+        $dispatchedEvent = null;
+        $eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with($this->isInstanceOf(LoadTaxBeforeEvent::class))
+            ->willReturnCallback(function (LoadTaxBeforeEvent $event) use (&$dispatchedEvent) {
+                $dispatchedEvent = $event;
+
+                return $event;
+            });
+
+        $taxDispatcher->dispatchLoadTaxBefore($object);
+
+        $this->assertSame($object, $dispatchedEvent->getObject());
     }
 }

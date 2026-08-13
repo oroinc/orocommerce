@@ -155,7 +155,7 @@
 
     .grid-row-update {
         .action-cell {
-            padding-bottom: $oro-datagrid-body-cell-inner-bottom;
+            padding-bottom: $oro-datagrid-body-cell-inner-vertical;
         }
     }
 
@@ -169,7 +169,7 @@
         }
 
         .grid-body-cell {
-            padding-top: $oro-datagrid-body-cell-inner-top;
+            padding-top: $oro-datagrid-body-cell-inner-vertical;
         }
 
         &:has(.product-image) {
@@ -177,7 +177,7 @@
                 padding-top: $order-line-items-edit-grid-product-image-cell-padding-top;
 
                 &.grid-body-cell-product {
-                    padding-top: $oro-datagrid-body-cell-inner-top;
+                    padding-top: $oro-datagrid-body-cell-inner-vertical;
                 }
             }
         }
@@ -216,7 +216,7 @@
         }
 
         > .grid-body-cell-product {
-            padding-top: $oro-datagrid-body-cell-inner-top;
+            padding-top: $oro-datagrid-body-cell-inner-vertical;
         }
 
         > .action-cell {

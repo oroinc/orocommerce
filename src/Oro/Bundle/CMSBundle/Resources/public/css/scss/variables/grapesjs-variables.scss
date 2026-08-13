@@ -14,12 +14,12 @@ $secondaryColor: $text-primary;
 $tertiaryColor: $primary-830;
 $quaternaryColor: $primary-400;
 
-$colorWarn: $secondary;
+$colorWarn: $primary-main;
 $fontColor: $primary-400;
 $mainLhlColor: $primary-400;
-$colorBlue: $secondary;
+$colorBlue: $primary-main;
 
-$mainLhColor: $secondary;
+$mainLhColor: $primary-main;
 
 $button-bg-color-default: $primary-860;
 $button-color-default: $text-primary;
@@ -49,7 +49,7 @@ $fontSizeS: $base-font-size;
 
 $paddElClm: 3px 5px;
 
-$colorYell: $extra;
+$colorYell: $primary-accent;
 
 $grapesjs-content-editor-offset: 24px !default;
 $grapesjs-content-editor-fullscreen-offset: 8px !default;
