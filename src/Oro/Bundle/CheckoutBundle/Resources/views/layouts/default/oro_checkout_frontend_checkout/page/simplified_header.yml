@@ -1,0 +1,62 @@
+# TODO(BB-27563): replace `conditions: 'true'` with the guarded flag check
+#     conditions: 'context.has("<option>") && context["<option>"]'
+# Until then this strips the header from EVERY checkout: do not merge.
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/simplified_header.html.twig'
+
+        - '@remove':
+            id: top_nav_container
+        - '@remove':
+            id: middle_bar_center
+        - '@remove':
+            id: middle_bar_right
+        - '@remove':
+            id: header_row
+        - '@remove':
+            id: main_menu_trigger
+        - '@remove':
+            id: quick_access_button_container
+        - '@remove':
+            id: menus_sidebar_container
+        - '@remove':
+            id: menus_footer_sidebar_container
+
+        - '@appendOption':
+            id: page_header
+            optionName: attr.class
+            optionValue: 'checkout-simplified-header'
+
+        - '@addTree':
+            items:
+                checkout_simplified_header_actions:
+                    blockType: container
+                checkout_simplified_header_back_link:
+                    blockType: link
+                    options:
+                        path: &checkout_simplified_header_return_url '#'
+                        text: oro.checkout.simplified_header.back_to_shopping.label
+                checkout_simplified_header_secure:
+                    blockType: block
+            tree:
+                middle_bar:
+                    checkout_simplified_header_actions:
+                        checkout_simplified_header_back_link: ~
+                        checkout_simplified_header_secure: ~
+
+        - '@setOption':
+            id: logo
+            optionName: vars.returnUrl
+            optionValue: *checkout_simplified_header_return_url
+
+        - '@setOption':
+            id: logo
+            optionName: src
+            optionValue: '=data["asset"].getUrl("bundles/orocheckout/default/images/logo/demob2b-logo.svg")'
+        - '@setOption':
+            id: logo
+            optionName: vars.logo_small
+            optionValue: '=data["asset"].getUrl("bundles/orocheckout/default/images/logo/demob2b-logo-small.svg")'
+
+    conditions: 'context.has("is_in_session_transfer_mode") && context["is_in_session_transfer_mode"]'
