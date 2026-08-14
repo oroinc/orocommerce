@@ -59,4 +59,4 @@ layout:
             optionName: vars.logo_small
             optionValue: '=data["asset"].getUrl("bundles/orocheckout/default/images/logo/demob2b-logo-small.svg")'
 
-    conditions: 'true'
+    conditions: 'context.has("is_in_session_transfer_mode") && context["is_in_session_transfer_mode"]'
