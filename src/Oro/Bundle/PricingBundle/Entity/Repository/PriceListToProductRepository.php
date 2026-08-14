@@ -86,6 +86,29 @@ class PriceListToProductRepository extends EntityRepository
 
     /**
      * @param PriceList $priceList
+     * @param int[] $productIds
+     * @return int[]
+     */
+    public function getAssignedProductIdsAmong(PriceList $priceList, array $productIds): array
+    {
+        if (!$productIds) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('productToPriceList');
+
+        return $qb
+            ->select('IDENTITY(productToPriceList.product) as productId')
+            ->where($qb->expr()->eq('productToPriceList.priceList', ':priceList'))
+            ->andWhere($qb->expr()->in('productToPriceList.product', ':productIds'))
+            ->setParameter('priceList', $priceList)
+            ->setParameter('productIds', $productIds)
+            ->getQuery()
+            ->getSingleColumnResult();
+    }
+
+    /**
+     * @param PriceList $priceList
      * @param array|Product[] $products
      * @return QueryBuilder
      */
