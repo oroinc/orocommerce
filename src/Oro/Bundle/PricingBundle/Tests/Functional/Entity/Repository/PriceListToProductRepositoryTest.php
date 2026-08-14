@@ -186,6 +186,60 @@ class PriceListToProductRepositoryTest extends WebTestCase
         $this->assertCount(12, $this->repository->findAll());
     }
 
+    public function testGetAssignedProductIdsAmong(): void
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_2);
+
+        /** @var Product $product1 */
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var Product $product2 */
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+        /** @var Product $product3 */
+        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
+        /** @var Product $product5 */
+        $product5 = $this->getReference(LoadProductData::PRODUCT_5);
+
+        $productIds = [
+            $product1->getId(),
+            $product2->getId(),
+            $product3->getId(),
+            $product5->getId(),
+        ];
+
+        $actual = $this->repository->getAssignedProductIdsAmong($priceList, $productIds);
+
+        $expected = [
+            $product1->getId(),
+            $product2->getId(),
+            $product3->getId(),
+        ];
+
+        self::assertEqualsCanonicalizing($expected, $actual);
+    }
+
+    public function testGetAssignedProductIdsAmongWhenEmptyProductIds(): void
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_2);
+
+        self::assertSame([], $this->repository->getAssignedProductIdsAmong($priceList, []));
+    }
+
+    public function testGetAssignedProductIdsAmongWhenNoAssignedProducts(): void
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_2);
+
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_5);
+
+        self::assertSame(
+            [],
+            $this->repository->getAssignedProductIdsAmong($priceList, [$product->getId()])
+        );
+    }
+
     private function createRelation(PriceList $priceList, Product $product, bool $isManual): PriceListToProduct
     {
         $manualRelation = new PriceListToProduct();

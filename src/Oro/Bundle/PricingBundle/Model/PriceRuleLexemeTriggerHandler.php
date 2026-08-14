@@ -7,8 +7,10 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
@@ -113,7 +115,7 @@ class PriceRuleLexemeTriggerHandler
                 continue;
             }
 
-            if ($this->isPriceListShouldBeProcessed($priceList, $products)) {
+            if ($this->shouldMarkPriceListNotActual($lexeme, $priceList, $products)) {
                 $priceLists[$priceList->getId()] = $priceList;
             }
         }
@@ -123,5 +125,53 @@ class PriceRuleLexemeTriggerHandler
             $priceListRepository = $this->doctrine->getRepository(PriceList::class);
             $priceListRepository->updatePriceListsActuality($priceLists, false);
         }
+    }
+
+    /**
+     * @param PriceRuleLexeme $lexeme
+     * @param PriceList $priceList
+     * @param array|Product[] $products
+     */
+    private function shouldMarkPriceListNotActual(PriceRuleLexeme $lexeme, PriceList $priceList, array $products): bool
+    {
+        if (!$this->isPriceListShouldBeProcessed($priceList, $products)) {
+            return false;
+        }
+
+        if ($lexeme->getPriceRule() && $products) {
+            return $this->hasAssignedProductsForPriceList($priceList, $products);
+        }
+
+        return true;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array|Product[] $products
+     */
+    private function hasAssignedProductsForPriceList(PriceList $priceList, array $products): bool
+    {
+        $priceListOrganizationId = $priceList->getOrganization()?->getId();
+        $productIds = [];
+        foreach ($products as $product) {
+            if (null === $product) {
+                continue;
+            }
+
+            if (\is_object($product) && $priceListOrganizationId !== $product->getOrganization()->getId()) {
+                continue;
+            }
+
+            $productIds[] = $product instanceof Product ? $product->getId() : (int) $product;
+        }
+
+        if (!$productIds) {
+            return false;
+        }
+
+        /** @var PriceListToProductRepository $repository */
+        $repository = $this->doctrine->getRepository(PriceListToProduct::class);
+
+        return [] !== $repository->getAssignedProductIdsAmong($priceList, $productIds);
     }
 }
