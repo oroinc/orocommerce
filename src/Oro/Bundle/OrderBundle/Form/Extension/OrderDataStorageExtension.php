@@ -11,13 +11,48 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * The form type extension that pre-fill an order with requested products taken from the product data storage.
+ *
+ * @bc-layer This class is retained for BC reasons. It won't have any replacement.
  */
 class OrderDataStorageExtension extends AbstractProductDataStorageExtension
 {
     private ?DefaultProductUnitProviderInterface $defaultProductUnitProvider = null;
+
+    #[\Override]
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        if ($options['draft_session_sync']) {
+            // Skip when draft session sync is enabled.
+            return;
+        }
+
+        parent::buildForm($builder, $options);
+    }
+
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        if ($this->isStorageFull()) {
+            $resolver->setNormalizer('data', function (Options $options, $value) {
+                if ($options['draft_session_sync']) {
+                    // Skip when draft session sync is enabled.
+                    return $value;
+                }
+
+                if (is_a($value, $this->getEntityClass()) && $this->isNewEntity($value, $this->getEntityClass())) {
+                    $this->fillData($value);
+                }
+
+                return $value;
+            });
+        }
+    }
 
     public function setDefaultProductUnitProvider(DefaultProductUnitProviderInterface $provider): self
     {

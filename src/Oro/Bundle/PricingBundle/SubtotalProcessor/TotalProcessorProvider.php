@@ -147,9 +147,9 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
          */
         foreach ($providerTotals as $totalKey => $total) {
             if (is_numeric($totalKey)) {
-                // use label as the part of key to be sure that 2 totals with different label but the same type
-                // are shown separately.
-                $totalKey = md5($total->getType() . $total->getLabel());
+                // use name and label as the part of key to be sure that 2 totals with different name or label
+                // but the same type (e.g. order discount vs promotion discount) are kept separate.
+                $totalKey = md5($total->getName() . $total->getType() . $total->getLabel());
             }
 
             if (!array_key_exists($totalKey, $totals)) {

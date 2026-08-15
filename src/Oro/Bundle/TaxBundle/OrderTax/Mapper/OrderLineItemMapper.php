@@ -26,11 +26,9 @@ class OrderLineItemMapper extends AbstractOrderMapper
             // Need to define tax for each product from a set of products.
             foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
                 $kitItemTaxable = $this->createTaxable($kitItemLineItem);
-                if ($kitItemTaxable->getPrice()) {
-                    $kitItemPrice = BigDecimal::of($kitItemTaxable->getPrice())
-                        ->multipliedBy($kitItemTaxable->getQuantity());
-                    $kitPrice = BigDecimal::of($kitPrice)->minus($kitItemPrice);
-                }
+                $kitItemPrice = BigDecimal::of($kitItemTaxable->getPrice())
+                    ->multipliedBy($kitItemTaxable->getQuantity());
+                $kitPrice = BigDecimal::of($kitPrice)->minus($kitItemPrice);
 
                 $taxable->addItem($kitItemTaxable);
             }
@@ -45,15 +43,18 @@ class OrderLineItemMapper extends AbstractOrderMapper
 
     private function createTaxable(OrderHolderInterface $lineItem): Taxable
     {
+        $order = $lineItem->getOrder();
+        $price = $lineItem->getPrice();
+
         return (new Taxable())
             ->setIdentifier($lineItem->getId())
             ->setClassName($this->getObjectClass($lineItem))
             ->setQuantity($lineItem->getQuantity() ?? 0)
             ->setOrigin($this->addressProvider->getOriginAddress())
-            ->setDestination($this->getDestinationAddress($lineItem->getOrder()))
-            ->setTaxationAddress($this->getTaxationAddress($lineItem->getOrder()))
-            ->setPrice($lineItem->getPrice()?->getValue() ?? 0)
-            ->setCurrency($lineItem->getPrice()?->getCurrency())
+            ->setDestination($this->getDestinationAddress($order))
+            ->setTaxationAddress($this->getTaxationAddress($order))
+            ->setPrice($price?->getValue() ?? 0)
+            ->setCurrency($price?->getCurrency())
             ->setContext($this->getContext($lineItem));
     }
 

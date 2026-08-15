@@ -152,14 +152,18 @@ class TaxationSettingsProvider
 
     public function getBaseAddressExclusions(): array
     {
-        $exclusionsData = $this->configManager->get('oro_tax.use_as_base_exclusions');
+        $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey(__METHOD__);
 
-        $exclusions = [];
-        foreach ($exclusionsData as $exclusionData) {
-            $exclusions[] = $this->taxBaseExclusionFactory->create($exclusionData);
-        }
+        return $this->cacheProvider->get($cacheKey, function () {
+            $exclusionsData = $this->configManager->get('oro_tax.use_as_base_exclusions');
 
-        return $exclusions;
+            $exclusions = [];
+            foreach ($exclusionsData as $exclusionData) {
+                $exclusions[] = $this->taxBaseExclusionFactory->create($exclusionData);
+            }
+
+            return $exclusions;
+        });
     }
 
     public function getOrigin(): Address

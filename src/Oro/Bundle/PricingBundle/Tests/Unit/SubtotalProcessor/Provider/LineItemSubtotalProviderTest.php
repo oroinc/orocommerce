@@ -82,6 +82,7 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $subtotal = $this->provider->getSubtotal($entity);
         $this->assertInstanceOf(Subtotal::class, $subtotal);
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
+        $this->assertEquals(LineItemSubtotalProvider::NAME, $subtotal->getName());
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
         $this->assertIsFloat($subtotal->getAmount());
@@ -157,6 +158,7 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertInstanceOf(Subtotal::class, $subtotal);
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
+        $this->assertEquals(LineItemSubtotalProvider::NAME, $subtotal->getName());
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
         $this->assertIsFloat($subtotal->getAmount());

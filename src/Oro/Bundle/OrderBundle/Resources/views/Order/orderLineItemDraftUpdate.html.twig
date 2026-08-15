@@ -259,7 +259,7 @@
                                         data-page-component-view="oroorder/js/app/views/order-line-item-draft-discounts-taxes-view"
                                         data-page-component-options="{{ {
                                             'listenFieldsIds': listenFieldsIds,
-                                            'refreshOnOpen': isDrySubmit|default(false),
+                                            'refreshOnOpen': isDrySubmit|default(not lineItemTaxes|default({}) or not lineItemDiscounts|default({})),
                                             'updateRouteName': 'oro_order_line_item_draft_calculate_taxes_and_discounts',
                                             'updateRouteParams': {
                                                 orderId: orderId,

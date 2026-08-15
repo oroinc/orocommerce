@@ -95,6 +95,13 @@ final class OrderLineItemDraftMassUpdateController extends AbstractController
 
     private function addTaxesAndDiscounts(array &$data, OrderLineItem $orderLineItem): void
     {
+        $threshold = $this->getParameter('oro_order.draft_session.order_line_items_calc_taxes_discounts_threshold');
+        if ($orderLineItem->getOrder()->getLineItems()->count() > $threshold) {
+            // Skips automatic calculation of taxes and discounts when the threshold is reached as it is too expensive.
+            // Taxes and discounts can still be requested explicitly via a separate request.
+            return;
+        }
+
         /** @var OrderLineItemTaxesAndDiscountsProvider $taxesAndDiscountsProvider */
         $taxesAndDiscountsProvider = $this->container->get(OrderLineItemTaxesAndDiscountsProvider::class);
 

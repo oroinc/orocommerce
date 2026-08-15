@@ -20,6 +20,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     public const TYPE = 'subtotal';
+    public const NAME = 'line_items_not_priced_subtotal';
     public const LABEL = 'oro.pricing.subtotals.not_priced_subtotal.label';
 
     private TranslatorInterface $translator;
@@ -90,6 +91,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         $subtotal->setLabel($this->translator->trans(self::LABEL));
         $subtotal->setVisible(false);
         $subtotal->setType(self::TYPE);
+        $subtotal->setName(self::NAME);
         $subtotal->setRemovable(false);
 
         return $subtotal;
