@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Operation;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
@@ -18,8 +17,7 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    protected EntityManagerInterface $emProduct;
-    protected EntityManagerInterface $emFallback;
+    private ?bool $initialManageInventory;
 
     #[\Override]
     protected function setUp(): void
@@ -28,10 +26,6 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
             [],
             self::generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
-        $doctrine = self::getContainer()->get('doctrine');
-
-        $this->emProduct = $doctrine->getManagerForClass(Product::class);
-        $this->emFallback = $doctrine->getManagerForClass(EntityFieldFallbackValue::class);
 
         $this->loadFixtures($this->getFixtures());
 
@@ -48,6 +42,7 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
     protected function initConfigs(): void
     {
         $configManager = self::getConfigManager();
+        $this->initialManageInventory = $configManager->get('oro_inventory.manage_inventory');
         $configManager->set('oro_inventory.manage_inventory', true);
         $configManager->flush();
     }
@@ -55,7 +50,7 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
     protected function restoreConfigs(): void
     {
         $configManager = self::getConfigManager();
-        $configManager->set('oro_inventory.manage_inventory', false);
+        $configManager->set('oro_inventory.manage_inventory', $this->initialManageInventory);
         $configManager->flush();
     }
 
@@ -141,15 +136,17 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
     {
         $entityFallback = $this->createFallbackEntity($quantity);
         $product->setDecrementQuantity($entityFallback);
-        $this->emProduct->flush();
-        $this->emFallback->flush();
+        $doctrine = self::getContainer()->get('doctrine');
+        $doctrine->getManagerForClass(Product::class)->flush();
+        $doctrine->getManagerForClass(EntityFieldFallbackValue::class)->flush();
     }
 
     protected function createFallbackEntity(mixed $scalarValue): EntityFieldFallbackValue
     {
         $entityFallback = new EntityFieldFallbackValue();
         $entityFallback->setScalarValue($scalarValue);
-        $this->emFallback->persist($entityFallback);
+        $doctrine = self::getContainer()->get('doctrine');
+        $doctrine->getManagerForClass(EntityFieldFallbackValue::class)->persist($entityFallback);
 
         return $entityFallback;
     }
