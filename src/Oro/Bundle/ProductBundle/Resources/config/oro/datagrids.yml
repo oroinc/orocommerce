@@ -153,6 +153,11 @@ datagrids:
             bind_parameters:
                 types:
                     default: ['simple']
+        columns:
+            productName:
+                type: twig
+                frontend_type: html
+                template: '@OroProduct/Product/Datagrid/ProductsSelectGrid/productName.html.twig'
         filters:
             columns:
                 type:

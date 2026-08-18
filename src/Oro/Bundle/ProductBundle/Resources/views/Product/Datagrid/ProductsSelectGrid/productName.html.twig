@@ -1,0 +1,7 @@
+{{ record.getValue('productName') }}
+{%- for key, attribute in record.getValue('productAdditionalAttributes')|default([]) -%}
+    {%- set attributeValue = attribute.value is iterable ? attribute.value|join(', ') : attribute.value -%}
+    <div class="product-additional-attribute" data-attribute="{{ key }}">
+        {{ attribute.label|trans }}: <span class="product-additional-attribute__value">{{ attributeValue }}</span>
+    </div>
+{%- endfor -%}

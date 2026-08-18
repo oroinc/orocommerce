@@ -9,6 +9,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
+use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemDraftProductType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemDraftType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderPriceType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderProductKitItemLineItemCollectionType;
@@ -16,7 +17,6 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -98,7 +98,7 @@ final class OrderLineItemDraftTypeTest extends WebTestCase
 
         $form = self::createForm(OrderLineItemDraftType::class, $lineItem);
 
-        self::assertFormHasField($form, 'product', ProductSelectType::class, [
+        self::assertFormHasField($form, 'product', OrderLineItemDraftProductType::class, [
             'autocomplete_alias' => 'oro_order_product_visibility_limited',
             'grid_name' => 'products-select-grid',
             'grid_parameters' => ['types' => [Product::TYPE_SIMPLE, Product::TYPE_KIT]],

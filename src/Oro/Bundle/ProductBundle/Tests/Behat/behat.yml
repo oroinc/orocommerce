@@ -46,6 +46,17 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="products-select-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    SelectProductsGridFilters:
+      selector: 'div[data-page-component-name="products-select-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    SelectProductsGridToolbarActions:
+      selector: 'div[data-page-component-name="products-select-grid"] div.toolbar div.actions-panel'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    SelectProductsGridFiltersState:
+      selector: 'div[data-page-component-name="products-select-grid"] .filters-state'
+
     Products GridFiltersButton:
       selector: 'div[data-page-component-name="products-grid"] div.filter-container > button.select-filter-widget'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFiltersButton

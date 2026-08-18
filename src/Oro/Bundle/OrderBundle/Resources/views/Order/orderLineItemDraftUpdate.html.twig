@@ -119,9 +119,14 @@
                                 {% endif %}
                                 <div class="product-select-container">
                                     {%- if orderLineItem.isFreeForm -%}
-                                        {{ freeFormProductWidget|raw }}
+                                        <div class="order-line-items__product-name">
+                                            {{- freeFormProductWidget|raw -}}
+                                        </div>
                                     {%- else -%}
-                                        {{ productWidget|raw }}
+                                        <div class="order-line-items__product-name">
+                                            {{- productWidget|raw -}}
+                                        </div>
+                                        {% placeholder 'oro_order_line_item_draft_product_after' with { 'form': form.product } %}
                                     {%- endif -%}
                                 </div>
                             </div>

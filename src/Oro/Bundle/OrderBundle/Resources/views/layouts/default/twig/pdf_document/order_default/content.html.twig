@@ -213,6 +213,8 @@
                     <div class="order-grid order-grid--column order-grid--r-gap-0">
                         <div class="order-grid-item">
                             {% block order_line_items %}
+                                {# Additional product details contributed to the PDF document payload by listeners, keyed by product id. #}
+                                {% set productAdditionalAttributes = productAdditionalAttributes|default({}) %}
                                 <table class="order-table">
                                     <thead>
                                     <tr class="order-table-tr-head">
@@ -245,6 +247,19 @@
                                                             {% endif %}
                                                             {{ lineItem.productSku }} - {{ productName }}
                                                         </div>
+
+                                                        {% set lineItemProductId = lineItem.product.id|default(null) %}
+                                                        {% set lineItemProductAttributes = lineItemProductId ? productAdditionalAttributes[lineItemProductId]|default([]) : [] %}
+                                                        {% if lineItemProductAttributes is not empty %}
+                                                            <div class="product-additional-attributes">
+                                                                {% for attribute in lineItemProductAttributes %}
+                                                                    <div class="product-additional-attributes__item">
+                                                                        <span class="product-additional-attributes__item-label">{{ attribute.label|trans }}:</span>
+                                                                        <span class="product-additional-attributes__item-value">{{ attribute.value is iterable ? attribute.value|join(', ') : attribute.value }}</span>
+                                                                    </div>
+                                                                {% endfor %}
+                                                            </div>
+                                                        {% endif %}
 
                                                         {% if lineItem.product.isConfigurable ?? false %}
                                                             <div class="product-configurable-fields">

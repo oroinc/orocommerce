@@ -291,3 +291,17 @@
         margin-top: -28px;
     }
 }
+
+.product-additional-attribute {
+    color: $text-secondary;
+    font-size: $base-font-size--s;
+    overflow-wrap: anywhere;
+}
+
+.product-autocomplete {
+    &__detail {
+        color: $text-secondary;
+        font-size: $base-font-size--s;
+        overflow-wrap: anywhere;
+    }
+}
