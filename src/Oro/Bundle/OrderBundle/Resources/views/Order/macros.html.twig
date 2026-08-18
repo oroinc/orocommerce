@@ -74,9 +74,9 @@
             <tbody>
                 <tr>
                     <td>{{ 'oro.order.table_discounts.row_total'|trans }}</td>
-                    <td><strong class="font-medium">{{ lineItemDiscounts.rowTotalAfterDiscountIncludingTax|oro_format_currency({'currency': lineItemDiscounts.currency|default('')}) }}</strong></td>
-                    <td><strong class="font-medium">{{ lineItemDiscounts.rowTotalAfterDiscountExcludingTax|oro_format_currency({'currency': lineItemDiscounts.currency|default('')}) }}</strong></td>
-                    <td><strong class="font-medium">{{ lineItemDiscounts.appliedDiscountsAmount|oro_format_currency({'currency': lineItemDiscounts.currency|default('')}) }}</strong></td>
+                    <td data-role="row-total-after-discount-incl-tax"><strong class="font-medium">{{ lineItemDiscounts.rowTotalAfterDiscountIncludingTax|oro_format_currency({'currency': lineItemDiscounts.currency|default('')}) }}</strong></td>
+                    <td data-role="row-total-after-discount-excl-tax"><strong class="font-medium">{{ lineItemDiscounts.rowTotalAfterDiscountExcludingTax|oro_format_currency({'currency': lineItemDiscounts.currency|default('')}) }}</strong></td>
+                    <td data-role="row-total-discount-amount"><strong class="font-medium">{{ lineItemDiscounts.appliedDiscountsAmount|oro_format_currency({'currency': lineItemDiscounts.currency|default('')}) }}</strong></td>
                 </tr>
             </tbody>
         </table>
@@ -92,8 +92,8 @@
             <tbody>
                 <tr>
                     <td>{{ 'oro.order.table_discounts.row_total'|trans }}</td>
-                    <td><strong class="font-medium">{{ lineItemDiscounts.rowTotalAfterDiscount|oro_format_currency({'currency': lineItemDiscounts.currency|default('')}) }}</strong></td>
-                    <td><strong class="font-medium">{{ lineItemDiscounts.appliedDiscountsAmount|oro_format_currency({'currency': lineItemDiscounts.currency|default('')}) }}</strong></td>
+                    <td data-role="row-total-after-discount"><strong class="font-medium">{{ lineItemDiscounts.rowTotalAfterDiscount|oro_format_currency({'currency': lineItemDiscounts.currency|default('')}) }}</strong></td>
+                    <td data-role="row-total-discount-amount"><strong class="font-medium">{{ lineItemDiscounts.appliedDiscountsAmount|oro_format_currency({'currency': lineItemDiscounts.currency|default('')}) }}</strong></td>
                 </tr>
             </tbody>
         </table>
@@ -108,7 +108,7 @@
             <tbody>
                 <tr>
                     <td>{{ 'oro.order.table_discounts.applied_discounts'|trans }}</td>
-                    <td><strong class="font-medium">{{ (lineItemDiscounts.appliedDiscountsAmount|default(0))|oro_format_currency({'currency': lineItemDiscounts.currency|default('')}) }}</strong></td>
+                    <td data-role="row-total-discount-amount"><strong class="font-medium">{{ (lineItemDiscounts.appliedDiscountsAmount|default(0))|oro_format_currency({'currency': lineItemDiscounts.currency|default('')}) }}</strong></td>
                 </tr>
             </tbody>
         </table>
@@ -142,15 +142,15 @@
         <tbody>
             <tr>
                 <td>{{ 'oro.order.table_taxes.unit_price'|trans }}</td>
-                <td><strong class="font-medium">{{ lineItemTaxes.unit.includingTax|oro_format_currency({'currency': lineItemTaxes.unit.currency|default('')}) }}</strong></td>
-                <td><strong class="font-medium">{{ lineItemTaxes.unit.excludingTax|oro_format_currency({'currency': lineItemTaxes.unit.currency|default('')}) }}</strong></td>
-                <td><strong class="font-medium">{{ lineItemTaxes.unit.taxAmount|oro_format_currency({'currency': lineItemTaxes.unit.currency|default('')}) }}</strong></td>
+                <td data-role="unit-incl-tax"><strong class="font-medium">{{ lineItemTaxes.unit.includingTax|oro_format_currency({'currency': lineItemTaxes.unit.currency|default('')}) }}</strong></td>
+                <td data-role="unit-excl-tax"><strong class="font-medium">{{ lineItemTaxes.unit.excludingTax|oro_format_currency({'currency': lineItemTaxes.unit.currency|default('')}) }}</strong></td>
+                <td data-role="unit-tax-amount"><strong class="font-medium">{{ lineItemTaxes.unit.taxAmount|oro_format_currency({'currency': lineItemTaxes.unit.currency|default('')}) }}</strong></td>
             </tr>
             <tr>
                 <td>{{ 'oro.order.table_taxes.row_total'|trans }}</td>
-                <td><strong class="font-medium">{{ lineItemTaxes.row.includingTax|oro_format_currency({'currency': lineItemTaxes.row.currency|default('')}) }}</strong></td>
-                <td><strong class="font-medium">{{ lineItemTaxes.row.excludingTax|oro_format_currency({'currency': lineItemTaxes.row.currency|default('')}) }}</strong></td>
-                <td><strong class="font-medium">{{ lineItemTaxes.row.taxAmount|oro_format_currency({'currency': lineItemTaxes.row.currency|default('')}) }}</strong></td>
+                <td data-role="row-total-incl-tax"><strong class="font-medium">{{ lineItemTaxes.row.includingTax|oro_format_currency({'currency': lineItemTaxes.row.currency|default('')}) }}</strong></td>
+                <td data-role="row-total-excl-tax"><strong class="font-medium">{{ lineItemTaxes.row.excludingTax|oro_format_currency({'currency': lineItemTaxes.row.currency|default('')}) }}</strong></td>
+                <td data-role="row-total-tax-amount"><strong class="font-medium">{{ lineItemTaxes.row.taxAmount|oro_format_currency({'currency': lineItemTaxes.row.currency|default('')}) }}</strong></td>
             </tr>
         </tbody>
     </table>
@@ -168,10 +168,10 @@
             <tbody>
                 {%- for tax in lineItemTaxes.taxes -%}
                     <tr>
-                        <td>{{ tax.tax|default('') }}</td>
-                        <td>{{ tax.rate|oro_format_percent }}</td>
-                        <td>{{ tax.taxableAmount|oro_format_currency({'currency': tax.currency|default('')}) }}</td>
-                        <td><strong class="font-medium">{{ tax.taxAmount|oro_format_currency({'currency': tax.currency|default('')}) }}</strong></td>
+                        <td data-role="tax-code">{{ tax.tax|default('') }}</td>
+                        <td data-role="tax-rate">{{ tax.rate|oro_format_percent }}</td>
+                        <td data-role="taxable-amount">{{ tax.taxableAmount|oro_format_currency({'currency': tax.currency|default('')}) }}</td>
+                        <td data-role="tax-amount"><strong class="font-medium">{{ tax.taxAmount|oro_format_currency({'currency': tax.currency|default('')}) }}</strong></td>
                     </tr>
                 {%- endfor -%}
             </tbody>

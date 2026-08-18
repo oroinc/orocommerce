@@ -113,4 +113,13 @@ class CheckoutProductKitItemLineItemTest extends TestCase
         $entity->setCurrency('EUR');
         self::assertEquals(Price::create(34.5678, 'EUR'), $entity->getPrice());
     }
+
+    public function testValueIsNotCastToFloatWhenHydratedFromDatabase(): void
+    {
+        $entity = new CheckoutProductKitItemLineItem();
+        // Emulates Doctrine hydration: the "money" type provides the decimal column value as a string.
+        ReflectionUtil::setPropertyValue($entity, 'value', '15.4100');
+
+        self::assertSame('15.4100', ReflectionUtil::getPropertyValue($entity, 'value'));
+    }
 }

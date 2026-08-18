@@ -125,9 +125,16 @@ class OrderLineItem implements
     #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $productUnitCode = null;
 
+    /**
+     * The "?float" typehint is intentionally not specified: the "money" Doctrine type provides the decimal column
+     * value as a string, and a typed property would cast it to float, which may introduce equation and comparison
+     * inconsistencies.
+     *
+     * @var float|string|null
+     */
     #[ORM\Column(name: 'value', type: 'money', nullable: true)]
     #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
-    protected ?float $value = null;
+    protected $value = null;
 
     #[ORM\Column(name: 'currency', type: Types::STRING, nullable: true)]
     #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
