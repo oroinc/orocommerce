@@ -55,4 +55,22 @@ class ProductGridPagerTest extends WebTestCase
         static::assertStringContainsString('disable', $nextPageLink->attr('class'));
         $this->assertEquals('#', $nextPageLink->attr('href'));
     }
+
+    public function testPagerWithMalformedGridQueryParameter()
+    {
+        $this->client->request('GET', $this->getUrl('oro_product_frontend_product_index'), ['grid' => '1']);
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $nextPageLink = $this->client->getCrawler()->filter('.oro-pagination__next');
+        $currentPage = $this->client->getCrawler()->filter('.oro-pagination__page-to--active');
+
+        $this->assertEquals('1', $currentPage->text());
+        static::assertStringNotContainsString('disable', $nextPageLink->attr('class'));
+        $this->assertNotEquals('#', $nextPageLink->attr('href'));
+
+        $nextPageUrl = urldecode($nextPageLink->attr('href'));
+        static::assertStringContainsString('grid[frontend-product-search-grid]=i=2', $nextPageUrl);
+        static::assertStringNotContainsString('grid=1', $nextPageUrl);
+    }
 }
