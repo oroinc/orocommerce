@@ -25,9 +25,10 @@ parameters:
         - 'oro_order_line_item_draft_calculate_taxes_and_discounts'
         - 'oro_promotion_validate_coupon_applicability'
     oro_order.draft_session.isolator.event_listeners_isolator.whitelisted_listener_classes:
+        - 'Oro\Bundle\EntityBundle\EventListener\ORM\FixDecimalChangeSetListener'
+        - 'Oro\Bundle\CurrencyBundle\EventListener\ORM\FixMoneyChangeSetListener'
         - 'Oro\Bundle\OrganizationBundle\EventListener\RecordOwnerDataListener'
         - 'Oro\Bundle\EntityBundle\EventListener\ModifyCreatedAndUpdatedPropertiesListener'
-        - 'Oro\Component\DraftSession\EventListener\ResetDraftSourceDoctrineListener'
 
     # Maximum number of line items before automatic tax and discount calculations are disabled in edit mode.
     oro_order.draft_session.order_line_items_calc_taxes_discounts_threshold: 100
