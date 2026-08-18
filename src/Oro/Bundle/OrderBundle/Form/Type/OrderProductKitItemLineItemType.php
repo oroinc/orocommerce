@@ -100,6 +100,7 @@ class OrderProductKitItemLineItemType extends AbstractType
                     'required' => $options['required'],
                     'hide_currency' => true,
                     'default_currency' => $options['currency'],
+                    'by_reference' => false,
                 ]
             );
 

@@ -127,6 +127,7 @@ class OrderProductKitItemLineItemTypeTest extends FormIntegrationTestCase
         $this->assertFormOptionEqual(true, 'required', $form->get('price'));
         $this->assertFormOptionEqual(true, 'hide_currency', $form->get('price'));
         $this->assertFormOptionEqual('USD', 'default_currency', $form->get('price'));
+        $this->assertFormOptionEqual(false, 'by_reference', $form->get('price'));
 
         self::assertEquals(
             (new OrderProductKitItemLineItem())

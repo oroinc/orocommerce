@@ -444,4 +444,13 @@ class OrderLineItemTest extends TestCase
         $orderLineItem->setIsFreeForm(true);
         self::assertTrue($orderLineItem->isFreeForm(), 'isFreeForm should return the explicitly set value');
     }
+
+    public function testValueIsNotCastToFloatWhenHydratedFromDatabase(): void
+    {
+        $orderLineItem = new OrderLineItem();
+        // Emulates Doctrine hydration: the "money" type provides the decimal column value as a string.
+        ReflectionUtil::setPropertyValue($orderLineItem, 'value', '15.4100');
+
+        self::assertSame('15.4100', ReflectionUtil::getPropertyValue($orderLineItem, 'value'));
+    }
 }
