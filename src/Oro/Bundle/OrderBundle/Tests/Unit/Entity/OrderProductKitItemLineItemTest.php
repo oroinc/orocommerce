@@ -478,4 +478,13 @@ class OrderProductKitItemLineItemTest extends TestCase
 
         self::assertEquals($order, $entity->getOrder());
     }
+
+    public function testValueIsNotCastToFloatWhenHydratedFromDatabase(): void
+    {
+        $entity = new OrderProductKitItemLineItem();
+        // Emulates Doctrine hydration: the "money" type provides the decimal column value as a string.
+        ReflectionUtil::setPropertyValue($entity, 'value', '15.4100');
+
+        self::assertSame('15.4100', ReflectionUtil::getPropertyValue($entity, 'value'));
+    }
 }

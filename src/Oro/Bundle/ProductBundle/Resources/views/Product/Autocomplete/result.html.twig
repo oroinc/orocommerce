@@ -1,1 +1,10 @@
 <%= highlight(_.escape(sku)) %> - <%= highlight(_.escape(obj['defaultName.string'])) %>
+<%
+    _.each(obj.details || {}, function(detail, detailKey) {
+        var detailValue = _.isArray(detail.value) ? detail.value.join(', ') : detail.value;
+%>
+    <div class="product-autocomplete__detail" data-detail="<%- detailKey %>">
+        <span class="product-autocomplete__detail-label"><%- detail.label %>:</span>
+        <span class="product-autocomplete__detail-value"><%= highlight(_.escape(detailValue)) %></span>
+    </div>
+<% }) %>

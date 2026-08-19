@@ -506,13 +506,32 @@ final class OrderLineItemDraftCalculateTaxesAndDiscountsControllerTest extends W
             'Taxes HTML for line item 1 should change when tax rate changes'
         );
 
-        // Verify that discounts for line item 1 remain consistent
-        // (line item discounts are calculated per line item based on its own values, not affected by tax rate)
-        self::assertEquals(
-            $firstDiscountsHtml,
-            $secondDiscountsHtml,
-            'Discounts HTML for line item 1 should remain consistent when only tax rate changes'
+        self::assertStringContainsString(
+            '<td data-role="row-total-after-discount-incl-tax"><strong class="font-medium">$1,108.00',
+            $firstDiscountsHtml
         );
+        self::assertStringContainsString(
+            '<td data-role="row-total-after-discount-excl-tax"><strong class="font-medium">$900.00',
+            $firstDiscountsHtml
+        );
+        self::assertStringContainsString(
+            '<td data-role="row-total-discount-amount"><strong class="font-medium">$100.00',
+            $firstDiscountsHtml
+        );
+        self::assertStringContainsString(
+            '<td data-role="row-total-after-discount-incl-tax"><strong class="font-medium">$1,300.00',
+            $secondDiscountsHtml
+        );
+        self::assertStringContainsString(
+            '<td data-role="row-total-after-discount-excl-tax"><strong class="font-medium">$900.00',
+            $secondDiscountsHtml
+        );
+        self::assertStringContainsString(
+            '<td data-role="row-total-discount-amount"><strong class="font-medium">$100.00',
+            $secondDiscountsHtml
+        );
+
+        self::assertNotEquals($firstDiscountsHtml, $secondDiscountsHtml);
     }
 
     public function testReturnsNoDiscountsWhenPromotionsDisabled(): void

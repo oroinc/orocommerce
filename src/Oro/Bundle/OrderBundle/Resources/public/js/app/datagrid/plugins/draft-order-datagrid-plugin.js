@@ -32,6 +32,12 @@ const DraftOrderDatagridPlugin = BasePlugin.extend({
      */
     needsGridRefresh: false,
 
+    /**
+     * Tracks whether the customer has changed since the last entry-point:order:load:after event.
+     * @type {boolean}
+     */
+    needsDrySubmit: false,
+
     constructor: function DraftOrderDatagridPlugin(...args) {
         this.hasChanges = this.hasChanges.bind(this);
         this.onPriceAffectingFieldChange = this.onPriceAffectingFieldChange.bind(this);
@@ -75,14 +81,21 @@ const DraftOrderDatagridPlugin = BasePlugin.extend({
     disable() {
         $(document).off(this.eventNamespace());
         this.needsGridRefresh = false;
+        this.needsDrySubmit = false;
 
         DraftOrderDatagridPlugin.__super__.disable.call(this);
     },
 
     onCustomerChange({isCustomerChanged} = {}) {
-        if (isCustomerChanged) {
-            this.onPriceAffectingFieldChange();
+        if (!isCustomerChanged) {
+            return;
         }
+
+        // The line item draft forms that are open render data of the customer, so they are re-rendered even when
+        // there are no grid rows to refresh.
+        this.needsDrySubmit = true;
+
+        this.onPriceAffectingFieldChange();
     },
 
     onPriceAffectingFieldChange() {
@@ -98,15 +111,21 @@ const DraftOrderDatagridPlugin = BasePlugin.extend({
     },
 
     onEntryPointLoadAfter() {
-        if (!this.needsGridRefresh) {
-            return;
+        if (this.needsGridRefresh) {
+            this.needsGridRefresh = false;
+            // Refresh triggered by price-affecting field changes (customer/website/currency):
+            // keep rows that were being edited open and skip re-rendering them so the user's
+            // in-progress edits are preserved.
+            this._onDatagridRefresh({closeEditMode: false});
         }
 
-        this.needsGridRefresh = false;
-        // Refresh triggered by price-affecting field changes (customer/website/currency):
-        // keep rows that were being edited open and skip re-rendering them so the user's
-        // in-progress edits are preserved.
-        this._onDatagridRefresh({closeEditMode: false});
+        if (this.needsDrySubmit) {
+            this.needsDrySubmit = false;
+            // The rows that are being edited are skipped by the refresh above, so their forms are re-rendered by a
+            // dry submit instead: the entry point has synced the order draft with the changed customer by now, so
+            // the forms are rendered for the customer that is selected on the page, without losing the edits.
+            mediator.trigger('order-line-item-draft:dry-submit');
+        }
     },
 
     fullRefreshCollection(updatedIds) {

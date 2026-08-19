@@ -17,7 +17,34 @@
 
         flex-direction: row;
         flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+    &__product-name {
+        display: flex;
         align-items: center;
+        min-height: 44px;
+
+        > * {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+    }
+
+    &__product {
+        display: flex;
+        flex-direction: column;
+
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    &__attribute {
+        margin-top: 2px;
+
+        color: $text-secondary;
+        font-size: $base-font-size--s;
+        overflow-wrap: anywhere;
     }
 
     .product-image {

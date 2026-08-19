@@ -56,6 +56,15 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\OrderBundle\EventListener\Order\OrderPreloadingEventListener` (service `oro_order.event_listener.order.order_preloading`) - preloads order line item product relations on the `oro_order.order` event to reduce the number of database queries during order form processing.
 * Added `\Oro\Bundle\OrderBundle\EventListener\DraftSession\PreloadOrderRelationsOnEntityFromDraftSyncBeforeEventListener` - preloads the order relations traversed by the draft synchronizers before an order is synchronized from its draft. The preloading configuration can be overridden via `setPreloadingConfig()`.
 * Added the `oro_order.draft_session.order_line_items_calc_taxes_discounts_threshold` container parameter (default `100`). When a draft order has more line items than this threshold, taxes and discounts are no longer calculated automatically on the draft line item edit page and must be requested explicitly through a separate request.
+* Added **additional product attributes under the product name of an order line item** — a bundle can contribute extra product details to the order line items grids, the line item draft form, and the order PDF document without changing their templates.
+  * The product column templates of the `order-line-items-grid` and `order-line-items-edit-grid` datagrids render the `productAdditionalAttributes` record property, and the `order_default` PDF document content template the payload key of the same name, indexed by product id. Both hold `{label, value}` entries, where `value` may be a scalar or an array.
+  * Added `\Oro\Bundle\OrderBundle\Form\Type\OrderLineItemDraftProductType` — the product field of `OrderLineItemDraftType`, extracted into a separate form type so it can be extended on its own.
+  * Added the `oro_order_line_item_draft_product_after` placeholder, rendered under the product field of the order line item draft create and update forms.
+  * Added the `order-line-item-draft:dry-submit` mediator event that re-renders the open line item draft forms. It is triggered when the customer of the order changes, so form data that depends on the customer stays in sync.
+
+#### ProductBundle
+* Added rendering of additional product details in the back-office product autocomplete and in the `products-select-grid` datagrid, contributed as the `details` property of an autocomplete row and the `productAdditionalAttributes` record property of a grid row. Both hold `{label, value}` entries, where `value` may be a scalar or an array.
+  * Added `@OroProduct/Product/Datagrid/ProductsSelectGrid/productName.html.twig` — the product name column template of the `products-select-grid` datagrid.
 
 #### RFPBundle
 * Added **RFQ-to-Order draft session integration** — the `oro_rfp_request_create_order` action can now create an `Order` draft directly from a `Request For Quote`, using the draft session component. The draft is pre-populated with the RFQ's customer, currency, addresses, line items, and matched prices.

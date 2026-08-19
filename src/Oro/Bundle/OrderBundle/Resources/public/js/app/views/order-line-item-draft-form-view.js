@@ -38,10 +38,17 @@ const OrderLineItemDraftFormView = LineItemProductView.extend({
 
     listen: {
         'pricing:product-price:lock mediator': 'onLineItemProductPriceLock',
-        'pricing:product-price:unlock mediator': 'onLineItemProductPriceUnlock'
+        'pricing:product-price:unlock mediator': 'onLineItemProductPriceUnlock',
+        'order-line-item-draft:dry-submit mediator': 'onDrySubmitRequest'
     },
 
     UPDATE_DELAY: 250,
+
+    /**
+     * Value of the "drySubmitTrigger" field of a dry submit that is not caused by a field of the form. It is a
+     * property path of no field, so the server side keeps the values of all the fields as they are submitted.
+     */
+    EXTERNAL_DRY_SUBMIT_TRIGGER: 'customer',
 
     constructor: function OrderLineItemDraftFormView(options) {
         this.drySubmit = this.drySubmit.bind(this);
@@ -120,15 +127,21 @@ const OrderLineItemDraftFormView = LineItemProductView.extend({
         }
     },
 
-    drySubmit() {
-        if (!this.lastChangedFieldName) {
-            return;
+    /**
+     * @param {String} [drySubmitTrigger] Trigger of the dry submit, the last changed field is used when not given.
+     */
+    drySubmit(drySubmitTrigger) {
+        if (!drySubmitTrigger) {
+            if (!this.lastChangedFieldName) {
+                return;
+            }
+
+            drySubmitTrigger = this.getDrySubmitTriggerName(this.lastChangedFieldName);
         }
 
-        const fieldName = this.lastChangedFieldName;
         this.lastChangedFieldName = null;
 
-        this.getElement('drySubmitTrigger').val(this.getDrySubmitTriggerName(fieldName));
+        this.getElement('drySubmitTrigger').val(drySubmitTrigger);
 
         const validator = this.$form.data('validator');
 
@@ -143,6 +156,17 @@ const OrderLineItemDraftFormView = LineItemProductView.extend({
                 validator.cancelSubmit = false;
             }
         }
+    },
+
+    /**
+     * Re-renders the form for the data that has changed outside of it, e.g. for the customer of the order.
+     */
+    onDrySubmitRequest() {
+        clearTimeout(this.updateOutTimer);
+
+        // A field changed shortly before takes precedence: its dry submit re-renders the form as well, and the
+        // fields it depends on must be cleared.
+        this.drySubmit(this.lastChangedFieldName ? null : this.EXTERNAL_DRY_SUBMIT_TRIGGER);
     },
 
     onProductChanged() {

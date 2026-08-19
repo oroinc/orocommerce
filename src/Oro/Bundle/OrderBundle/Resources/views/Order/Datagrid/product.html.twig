@@ -3,6 +3,15 @@
     {{ record.getValue('freeFormProduct') }}
 {% else %}
     {{ record.getValue('productName') }}
+    {%- for key, attribute in record.getValue('productAdditionalAttributes')|default([]) -%}
+        {%- set attrValue = attribute.value -%}
+        {%- set attrValue = attrValue is iterable ? attrValue|join(', ') : attrValue -%}
+        <div class="order-line-items__attribute order-line-items__attribute--{{ key }}"
+             data-attribute="{{ key }}">
+            {{ attribute.label|trans }}:
+            <span class="order-line-items__attr-value">{{ attrValue }}</span>
+        </div>
+    {%- endfor -%}
 {% endif %}
 
 {% include '@OroOrder/Order/Datagrid/kitConfiguration.html.twig' %}
