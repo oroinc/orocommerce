@@ -35,6 +35,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
      */
     protected $owner;
 
+
     /**
      * @var string
      */
@@ -121,7 +122,15 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
      */
     protected function afterProcessEntity($entity)
     {
-        $this->populateOwner($entity);
+        if (!$this->populateOwner($entity)) {
+            $error = $this->translator->trans(
+                'oro.product.import.no_business_unit_error',
+                ['%organization%' => $entity->getOrganization()->getName()]
+            );
+            $this->processValidationErrors($entity, [$error]);
+
+            return null;
+        }
 
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
         $event->setContext($this->context);
@@ -154,13 +163,13 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
     protected function populateOwner(Product $entity)
     {
         if (false === $this->owner) {
-            return;
+            return true;
         }
 
         if ($this->owner) {
             $entity->setOwner($this->doctrineHelper->getEntityReference(BusinessUnit::class, $this->owner));
 
-            return;
+            return true;
         }
 
         /** @var User $user */
@@ -168,19 +177,23 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         if (!$user) {
             $this->owner = false;
 
-            return;
+            return true;
         }
 
         /** @var ArrayCollection $businesUnits */
         $businesUnits = $entity->getOrganization()?->getBusinessUnits();
 
-        if ($businesUnits && !$businesUnits->contains($user->getOwner())) {
+        if (!$businesUnits || $businesUnits->contains($user->getOwner())) {
+            $this->owner = $user->getOwner()->getId();
+        } elseif (!$businesUnits->isEmpty()) {
             $this->owner = $businesUnits->first()->getId();
         } else {
-            $this->owner = $user->getOwner()->getId();
+            return false;
         }
 
         $entity->setOwner($this->doctrineHelper->getEntityReference(BusinessUnit::class, $this->owner));
+
+        return true;
     }
 
     /**
