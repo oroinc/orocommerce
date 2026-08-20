@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\ORM\Event\OnClearEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\AttachmentBundle\Entity\File;
@@ -13,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Oro\Component\DoctrineUtils\ORM\ChangedEntityGeneratorTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -20,6 +22,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ProductImageListener
 {
+    use ChangedEntityGeneratorTrait;
+
     /**
      * @var int[]
      */
@@ -124,6 +128,30 @@ class ProductImageListener
         }
     }
 
+    public function onFlush(OnFlushEventArgs $event)
+    {
+        foreach ($this->getChangedEntities($event->getObjectManager()->getUnitOfWork()) as $entity) {
+            $this->scheduleReindexForChangedEntity($entity);
+        }
+    }
+
+    // Covers ProductImageType changes and ProductImage deletion, neither observed by postPersist/postUpdate above.
+    private function scheduleReindexForChangedEntity(object $entity)
+    {
+        if ($entity instanceof ProductImageType) {
+            $productImage = $entity->getProductImage();
+        } elseif ($entity instanceof ProductImage) {
+            $productImage = $entity;
+        } else {
+            return;
+        }
+
+        $productId = $productImage?->getProduct()?->getId();
+        if ($productId) {
+            $this->productIdsToReindex[$productId] = $productId;
+        }
+    }
+
     protected function dispatchEvent(ProductImage $productImage)
     {
         if ($productImage->getTypes()->isEmpty()) {
@@ -167,7 +195,8 @@ class ProductImageListener
 
     public function onClear(OnClearEventArgs $event)
     {
-        if (!$event->getEntityClass() || $event->getEntityClass() === ProductImage::class) {
+        $entityClass = $event->getEntityClass();
+        if (!$entityClass || in_array($entityClass, [ProductImage::class, ProductImageType::class], true)) {
             $this->updatedProductImageIds = [];
             $this->productIdsToReindex = [];
         }
