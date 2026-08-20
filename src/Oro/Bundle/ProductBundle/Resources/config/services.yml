@@ -961,6 +961,7 @@ services:
             - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductImage, event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductImage, event: postUpdate }
             - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\AttachmentBundle\Entity\File, event: postUpdate, method: filePostUpdate }
+            - { name: doctrine.event_listener, event: onFlush }
             - { name: doctrine.event_listener, event: postFlush }
             - { name: doctrine.event_listener, event: onClear }
 
@@ -1488,6 +1489,7 @@ services:
             - '@oro_product.provider.family_attribute_counts'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
+            - { name: kernel.reset, method: reset }
 
     oro_product.datagrid.event_listener.product_grid:
         class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\ProductGridEventListener'

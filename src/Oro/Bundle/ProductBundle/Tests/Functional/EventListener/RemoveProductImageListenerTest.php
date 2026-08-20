@@ -11,9 +11,13 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 
 class RemoveProductImageListenerTest extends WebTestCase
 {
+    use DefaultWebsiteIdTestTrait;
     use MessageQueueExtension;
 
     private EntityManagerInterface $entityManager;
@@ -27,6 +31,19 @@ class RemoveProductImageListenerTest extends WebTestCase
         $this->entityManager = self::getContainer()->get('doctrine')->getManagerForClass(ProductImage::class);
 
         $this->loadFixtures([LoadProductData::class]);
+    }
+
+    private function prepareProductReindexMessage(Product $product): array
+    {
+        return [
+            'class' => [Product::class],
+            'granulize' => true,
+            'context' => [
+                'entityIds' => [$product->getId()],
+                'websiteIds' => [self::getDefaultWebsiteId()],
+                AbstractIndexer::CONTEXT_FIELD_GROUPS => ['image'],
+            ],
+        ];
     }
 
     public function testRemoveProductImageWhenStoredExternally(): void
@@ -98,6 +115,13 @@ class RemoveProductImageListenerTest extends WebTestCase
                     ],
                 ],
             ]
+        );
+
+        // Must reindex before the file is physically removed, or the index 404s.
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 2);
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
+            $this->prepareProductReindexMessage($product)
         );
     }
 }

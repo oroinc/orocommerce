@@ -57,6 +57,12 @@ class FrontendProductGridEventListener
         $this->familyAttributeCountsProvider = $familyAttributeCountsProvider;
     }
 
+    public function reset(): void
+    {
+        $this->families = null;
+        $this->inProgress = false;
+    }
+
     public function onPreBuild(PreBuild $event): void
     {
         if ($this->inProgress) {
@@ -64,25 +70,26 @@ class FrontendProductGridEventListener
         }
 
         $this->inProgress = true;
+        try {
+            $attributes = $this->getAttributes($event->getConfig(), $event->getParameters());
+            foreach ($attributes as $attribute) {
+                $type = $this->getAttributeType($attribute);
+                if (!$type) {
+                    continue;
+                }
 
-        $attributes = $this->getAttributes($event->getConfig(), $event->getParameters());
-        foreach ($attributes as $attribute) {
-            $type = $this->getAttributeType($attribute);
-            if (!$type) {
-                continue;
-            }
+                $label = $this->configProvider->getAttributeLabel($attribute);
+                if ($type->isFilterable($attribute) && $this->configProvider->isAttributeFilterable($attribute)) {
+                    $this->addFilter($event->getConfig(), $attribute, $type, $label);
+                }
 
-            $label = $this->configProvider->getAttributeLabel($attribute);
-            if ($type->isFilterable($attribute) && $this->configProvider->isAttributeFilterable($attribute)) {
-                $this->addFilter($event->getConfig(), $attribute, $type, $label);
+                if ($type->isSortable($attribute) && $this->configProvider->isAttributeSortable($attribute)) {
+                    $this->addSorter($event->getConfig(), $attribute, $type, $label);
+                }
             }
-
-            if ($type->isSortable($attribute) && $this->configProvider->isAttributeSortable($attribute)) {
-                $this->addSorter($event->getConfig(), $attribute, $type, $label);
-            }
+        } finally {
+            $this->inProgress = false;
         }
-
-        $this->inProgress = false;
     }
 
     protected function addFilter(
@@ -204,12 +211,13 @@ class FrontendProductGridEventListener
             return $this->families;
         }
 
+        if ($this->datagridParametersHelper->isDatagridExtensionSkipped($parameterBag)) {
+            return [];
+        }
+
         $this->families = [];
         $configKey = Configuration::getConfigKeyByName(Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING);
-        if (
-            !$this->datagridParametersHelper->isDatagridExtensionSkipped($parameterBag)
-            && $this->configManager->get($configKey)
-        ) {
+        if ($this->configManager->get($configKey)) {
             $familyAttributes = $this->familyAttributeCountsProvider->getFamilyAttributeCounts($gridName);
             if (!empty($familyAttributes['familyAttributesCount'])) {
                 $this->families = array_keys($familyAttributes['familyAttributesCount']);
