@@ -109,6 +109,30 @@ class CustomerUserListenerTest extends \PHPUnit\Framework\TestCase
         self::assertSame('some_template', $event->getEmailTemplate());
     }
 
+    public function testOnCustomerUserEmailSendWhenNoRequest(): void
+    {
+        $requestStack = $this->createMock(RequestStack::class);
+        $requestStack->expects(self::any())
+            ->method('getMainRequest')
+            ->willReturn(null);
+        $listener = new CustomerUserListener(
+            $requestStack,
+            $this->checkoutManager,
+            $this->configManager,
+            $this->loginManager,
+            self::FIREWALL_NAME
+        );
+
+        $event = new CustomerUserEmailSendEvent(new CustomerUser(), Processor::CONFIRMATION_EMAIL_TEMPLATE_NAME, []);
+        $this->configManager->expects(self::never())
+            ->method('get');
+
+        $listener->onCustomerUserEmailSend($event);
+
+        self::assertSame(Processor::CONFIRMATION_EMAIL_TEMPLATE_NAME, $event->getEmailTemplate());
+        self::assertSame([], $event->getEmailTemplateParams());
+    }
+
     public function testOnCustomerUserEmailSendConfigDisabled(): void
     {
         $event = new CustomerUserEmailSendEvent(new CustomerUser(), 'some_template', []);
