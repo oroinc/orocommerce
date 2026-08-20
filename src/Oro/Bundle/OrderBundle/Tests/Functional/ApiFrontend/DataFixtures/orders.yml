@@ -494,6 +494,9 @@ Oro\Bundle\OrderBundle\Entity\Order:
         status: '@order_status.wait_for_approval'
         internal_status: '@order_internal_status.cancelled'
         shippingStatus: '@order_shipping_status.not_shipped'
+        __calls:
+            - addLineItem: ['@order1_line_item1']
+            - addLineItem: ['@order1_line_item2']
     order2:
         identifier: order2
         currency: 'EUR'
@@ -508,6 +511,8 @@ Oro\Bundle\OrderBundle\Entity\Order:
         website: '@website'
         owner: '@user'
         organization: '@organization'
+        __calls:
+            - addLineItem: ['@order2_line_item1']
     order3:
         identifier: order3
         currency: 'USD'
@@ -523,6 +528,9 @@ Oro\Bundle\OrderBundle\Entity\Order:
         billingAddress: '@order3_billing_address'
         shippingAddress: '@order3_shipping_address'
         status: '@order_status.open'
+        shipUntil: '<(new DateTime("2027-12-31T23:59:59Z"))>'
+        __calls:
+            - addLineItem: ['@order3_line_item1']
     order4:
         identifier: order4
         currency: 'USD'
@@ -538,6 +546,10 @@ Oro\Bundle\OrderBundle\Entity\Order:
         billingAddress: '@order4_billing_address'
         shippingAddress: '@order4_shipping_address'
         external: false
+        __calls:
+            - addLineItem: ['@product_kit_2_line_item.1']
+            - addLineItem: ['@product_kit_3_line_item.1']
+            - addLineItem: ['@product_kit_2_line_item.2']
     order5:
         identifier: order5
         currency: 'USD'
@@ -553,6 +565,8 @@ Oro\Bundle\OrderBundle\Entity\Order:
         billingAddress: '@order5_billing_address'
         shippingAddress: '@order5_shipping_address'
         external: true
+        __calls:
+            - addLineItem: ['@order5_product_kit_2_line_item.1']
     another_order:
         identifier: another_order
         currency: 'USD'
@@ -566,6 +580,8 @@ Oro\Bundle\OrderBundle\Entity\Order:
         organization: '@organization'
         billingAddress: '@another_order_billing_address'
         shippingAddress: '@another_order_shipping_address'
+        __calls:
+            - addLineItem: ['@another_order_line_item1']
     another_order2:
         identifier: another_order2
         currency: 'USD'
@@ -579,6 +595,8 @@ Oro\Bundle\OrderBundle\Entity\Order:
         organization: '@organization'
         billingAddress: '@another_order2_billing_address'
         shippingAddress: '@another_order2_shipping_address'
+        __calls:
+            - addLineItem: ['@another_order2_product_kit_2_line_item.1']
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     order1_line_item1:
@@ -593,8 +611,9 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         __calls:
             -   addOrder: [ '@order1' ]
     order1_line_item2:
-        productSku: 'SKU2'
+        productSku: 'PSKU2'
         productName: 'Product 2'
+        product: '@product2'
         quantity: 12
         productUnit: '@item'
         value: 30.5
@@ -602,8 +621,9 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         __calls:
             -   addOrder: [ '@order1' ]
     order2_line_item1:
-        productSku: 'SKU2'
+        productSku: 'PSKU2'
         productName: 'Product 2'
+        product: '@product2'
         quantity: 3
         productUnit: '@item'
         value: 10.4
@@ -611,8 +631,9 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         __calls:
             -   addOrder: [ '@order2' ]
     order3_line_item1:
-        productSku: 'SKU2'
+        productSku: 'PSKU2'
         productName: 'Product 2'
+        product: '@product2'
         quantity: 12
         productUnit: '@item'
         value: 30.5
