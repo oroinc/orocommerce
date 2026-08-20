@@ -21,7 +21,7 @@ data:
         type: orderlineitems
         id: '<toString(@order1_line_item2->id)>'
         attributes:
-            productSku: SKU2
+            productSku: PSKU2
             productName: 'Product 2'
             freeFormProduct: null
             quantity: 12

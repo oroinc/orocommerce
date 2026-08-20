@@ -279,6 +279,28 @@ class QuoteProductTest extends RestJsonApiTestCase
         );
     }
 
+    public function testTryToCreateWithoutProductButWithProductSku(): void
+    {
+        $data = $this->getRequestData('create_quote_product_min.yml');
+        unset($data['data']['relationships']['product']);
+        $data['data']['attributes']['productSku'] = 'product-2';
+        $response = $this->post(
+            ['entity' => 'quoteproducts'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'quote product constraint',
+                'detail' => 'Product cannot be empty.',
+                'source' => ['pointer' => '/data/relationships/product/data']
+            ],
+            $response
+        );
+    }
+
     public function testTryToCreateForQuoteMarkedAsDeleted(): void
     {
         $data = $this->getRequestData('create_quote_product_min.yml');

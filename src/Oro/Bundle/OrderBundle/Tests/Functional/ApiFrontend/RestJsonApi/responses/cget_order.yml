@@ -141,7 +141,7 @@ data:
             identifier: order3
             poNumber: PO3
             customerNotes: null
-            shipUntil: null
+            shipUntil: '2027-12-31'
             currency: USD
             subtotalValue: '123.4567'
             totalValue: '123.4567'

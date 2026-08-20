@@ -1487,6 +1487,7 @@ services:
             - '@oro_product.provider.family_attribute_counts'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
+            - { name: kernel.reset, method: reset }
 
     oro_product.datagrid.event_listener.product_grid:
         class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\ProductGridEventListener'
