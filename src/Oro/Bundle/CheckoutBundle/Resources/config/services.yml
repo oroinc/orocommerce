@@ -805,8 +805,11 @@ services:
         lazy: true
         arguments:
             - '@request_stack'
+        calls:
+            - [setPasswordResetRequestContext, ['@oro_customer.async.password_reset_request_context']]
         tags:
             - { name: kernel.event_listener, event: oro_customer.customer_user_email_send_event, method: onCustomerUserEmailSend }
+            - { name: kernel.event_listener, event: Oro\Bundle\CustomerBundle\Event\PasswordResetRequestContextCollectEvent, method: onPasswordResetRequestContextCollect }
 
     oro_checkout.manager:
         class: 'Oro\Bundle\CheckoutBundle\Manager\CheckoutManager'
