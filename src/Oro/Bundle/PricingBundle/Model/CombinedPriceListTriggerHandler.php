@@ -119,7 +119,7 @@ class CombinedPriceListTriggerHandler
             $websiteIds = $websiteId ? [$websiteId] : [];
             $batch = array_values($productIds);
             if (null === $this->collectVersion) {
-                $event = new ReindexationRequestEvent([Product::class], $websiteIds, $batch);
+                $event = new ReindexationRequestEvent([Product::class], $websiteIds, $batch, true, ['pricing']);
                 $this->eventDispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
             } else {
                 $this->websiteReindexRequestDataStorage->insertMultipleRequests(
