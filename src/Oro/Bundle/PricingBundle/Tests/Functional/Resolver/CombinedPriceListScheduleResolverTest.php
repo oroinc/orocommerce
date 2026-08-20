@@ -105,6 +105,11 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         $actualProducts = $messageBody['context']['entityIds'];
         sort($actualProducts);
         $this->assertEquals($expectedProducts, $actualProducts, 'Re-indexed products does not match expected');
+        $this->assertEquals(
+            ['pricing'],
+            $messageBody['context']['fieldGroups'],
+            'Combined price list switching must re-index price fields only'
+        );
     }
 
     public function cplSwitchingDataProvider(): array
