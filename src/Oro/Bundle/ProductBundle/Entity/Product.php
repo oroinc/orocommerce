@@ -147,6 +147,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
         'attribute' => ['has_attributes' => true],
         'slug' => ['source' => 'names'],
         'email' => ['available_in_template' => true],
+        'integration' => ['webhook_accessible' => true],
     ]
 )]
 class Product implements

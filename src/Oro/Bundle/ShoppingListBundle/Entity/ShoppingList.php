@@ -67,6 +67,7 @@ use Oro\Component\DraftSession\Entity\NoopEntityDraftAwareTrait;
         'dataaudit' => ['auditable' => true],
         'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'shopping'],
         'email' => ['available_in_template' => true],
+        'integration' => ['webhook_accessible' => true],
     ]
 )]
 class ShoppingList implements

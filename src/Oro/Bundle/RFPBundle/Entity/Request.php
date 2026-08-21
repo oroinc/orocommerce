@@ -71,6 +71,7 @@ use Oro\Component\DraftSession\Entity\NoopEntityDraftAwareTrait;
         'dataaudit' => ['auditable' => true],
         'grid' => ['default' => 'rfp-requests-grid', 'context' => 'rfp-requests-for-context-grid'],
         'email' => ['available_in_template' => true],
+        'integration' => ['webhook_accessible' => true],
     ]
 )]
 class Request implements
