@@ -3,9 +3,13 @@ const REGEXP_ID_VALUE = /\sid=\"([^"]*?)(?=\")/g;
 
 function getAllDuplicateIds(document) {
     const elements = [...document.querySelectorAll('[id]')];
-    const ids = elements.map(el => el.id);
+    const occurrences = Object.create(null);
 
-    return elements.filter(el => ids.filter(id => id === el.id).length > 1);
+    elements.forEach(({id}) => {
+        occurrences[id] = (occurrences[id] ?? 0) + 1;
+    });
+
+    return elements.filter(({id}) => occurrences[id] > 1);
 }
 
 /**
@@ -19,7 +23,12 @@ function getAllDuplicateIds(document) {
 
 function idCollision(parameters) {
     const {cache, htmlStringLine, htmlFragment} = parameters;
-    const ids = getAllDuplicateIds(htmlFragment);
+
+    if (cache.duplicateIds === void 0) {
+        cache.duplicateIds = getAllDuplicateIds(htmlFragment);
+    }
+
+    const ids = cache.duplicateIds;
     let matches = htmlStringLine.match(REGEXP_ID_VALUE);
 
     if (cache.collectIds === void 0) {
