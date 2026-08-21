@@ -38,7 +38,7 @@ Feature: Single Page Guest Checkout From Shopping List
 
   Scenario: Change default guest checkout user owner
     Given uncheck "Use default" for "Default guest checkout owner" field
-    And I fill form with:
+    And I fill "SystemConfigForm" with:
       | Default guest checkout owner | Charlie Sheen |
     When I save form
     Then I should see "Charlie Sheen"

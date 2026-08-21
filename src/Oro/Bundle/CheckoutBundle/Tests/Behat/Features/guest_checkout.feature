@@ -64,7 +64,7 @@ Feature: Guest Checkout
   Scenario: Change default guest checkout user owner
     Given I proceed as the Admin
     And uncheck "Use default" for "Default guest checkout owner" field
-    And I fill form with:
+    And I fill "SystemConfigForm" with:
       | Default guest checkout owner | Charlie Sheen |
     When I save form
     Then I should see "Charlie Sheen"
