@@ -92,6 +92,7 @@ use Oro\Component\DraftSession\Entity\EntityDraftAwareTrait;
         'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'orders'],
         'grid' => ['default' => 'orders-grid', 'context' => 'orders-for-context-grid'],
         'email' => ['available_in_template' => true],
+        'integration' => ['webhook_accessible' => true],
     ]
 )]
 class Order implements
