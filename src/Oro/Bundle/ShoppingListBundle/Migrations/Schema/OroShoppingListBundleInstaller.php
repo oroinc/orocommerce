@@ -17,7 +17,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_17';
+        return 'v1_18';
     }
 
     #[\Override]
