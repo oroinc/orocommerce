@@ -7,10 +7,7 @@ const ShoppinglistItemNotesEditModel = BaseModel.extend({
     },
 
     url() {
-        return routing.generate('oro_api_frontend_patch_entity_data', {
-            id: this.id,
-            className: 'Oro_Bundle_ShoppingListBundle_Entity_LineItem'
-        });
+        return routing.generate('oro_shopping_list_frontend_line_item_patch_notes', {id: this.id});
     },
 
     constructor: function ShoppinglistItemNotesEditModel(...args) {

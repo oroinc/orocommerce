@@ -3,9 +3,7 @@ import BaseModel from 'oroui/js/app/models/base/model';
 import mediator from 'oroui/js/mediator';
 
 const ShoppingListNotesEditableModel = BaseModel.extend({
-    route: 'oro_api_frontend_patch_entity_data',
-
-    urlRoot: null,
+    route: 'oro_shopping_list_frontend_patch_notes',
 
     defaults: {
         notes: ''
@@ -16,13 +14,16 @@ const ShoppingListNotesEditableModel = BaseModel.extend({
     },
 
     initialize: function(options) {
-        this.urlRoot = routing.generate(this.route, options.routingOptions);
         this.listenTo(mediator, `shopping-list-${this.id}-notes:update`, this.onShoppingListNotes);
         this.listenTo(this, 'sync',
             (...args) => mediator.trigger(`shopping-list-notes:sync`, ...args)
         );
 
         ShoppingListNotesEditableModel.__super__.initialize.call(this, options);
+    },
+
+    url() {
+        return routing.generate(this.route, {id: this.id});
     },
 
     isEmptyNotes() {

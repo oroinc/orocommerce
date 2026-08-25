@@ -15,7 +15,6 @@ const ShoppingListNotesEditableViewComponent = ViewComponent.extend({
     initialize(options) {
         options.model = new NotesModel({
             id: options.shoppingListId,
-            routingOptions: {...options.routingOptions},
             notes: options.notes
         });
 
