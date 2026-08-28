@@ -12,6 +12,12 @@ use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Writes product prices to the database during import.
+ *
+ * Handles persistence of product prices with support for disabling optional listeners
+ * and clearing import context to ensure proper price processing.
+ */
 class ProductPriceWriter extends PersistentBatchWriter
 {
     /**
@@ -54,13 +60,16 @@ class ProductPriceWriter extends PersistentBatchWriter
 
     protected function saveItems(array $items, EntityManager $em)
     {
-        $this->listenerManager->disableListeners($this->listeners);
-        foreach ($items as $item) {
-            $this->priceManager->persist($item);
+        try {
+            $this->listenerManager->disableListeners($this->listeners);
+            foreach ($items as $item) {
+                $this->priceManager->persist($item);
+            }
+            $this->priceManager->flush();
+            $em->flush();
+        } finally {
+            $this->listenerManager->enableListeners($this->listeners);
         }
-        $this->priceManager->flush();
-        $em->flush();
-        $this->listenerManager->enableListeners($this->listeners);
     }
 
     protected function clearContext()
