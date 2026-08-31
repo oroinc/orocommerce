@@ -16,6 +16,7 @@ use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
+use Oro\Bundle\ShoppingListBundle\Form\Type\LineItemNotesType;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
@@ -38,6 +39,39 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[CsrfProtection()]
 class AjaxLineItemController extends AbstractLineItemController
 {
+    #[Route(
+        path: '/{id}/notes',
+        name: 'oro_shopping_list_frontend_line_item_patch_notes',
+        requirements: ['id' => '\d+'],
+        methods: ['PATCH']
+    )]
+    #[AclAncestor('oro_shopping_list_frontend_update')]
+    public function patchNotesAction(Request $request, LineItem $lineItem): JsonResponse
+    {
+        if (!$this->isGranted('EDIT', $lineItem) || !$this->isGranted('EDIT', $lineItem->getAssociatedList())) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $data = json_decode($request->getContent(), true);
+        if (!is_array($data)) {
+            return $this->json(null, Response::HTTP_BAD_REQUEST);
+        }
+
+        $form = $this->createForm(LineItemNotesType::class, $lineItem, ['csrf_protection' => false]);
+        $form->submit($data, false);
+
+        if (!$form->isValid()) {
+            return $this->json(
+                ['message' => (string)$form->getErrors(true, false)],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        $this->container->get(ManagerRegistry::class)->getManagerForClass(LineItem::class)->flush();
+
+        return $this->json(['fields' => ['notes' => $lineItem->getNotes()]]);
+    }
+
     #[Route(
         path: '/add-product-from-view/{productId}',
         name: 'oro_shopping_list_frontend_add_product',

@@ -10,6 +10,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
@@ -33,6 +34,56 @@ class LineItemControllerTest extends WebTestCase
                 LoadShoppingListConfigurableLineItems::class,
             ]
         );
+    }
+
+    public function testPatchNotes(): void
+    {
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getReference('shopping_list_line_item.1');
+
+        $this->ajaxRequest(
+            'PATCH',
+            $this->getUrl('oro_shopping_list_frontend_line_item_patch_notes', ['id' => $lineItem->getId()]),
+            content: json_encode(['notes' => ' Updated line item notes '])
+        );
+
+        self::assertJsonResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_OK);
+        self::assertSame(
+            ['fields' => ['notes' => 'Updated line item notes']],
+            self::getJsonResponseContent($this->client->getResponse(), Response::HTTP_OK)
+        );
+
+        self::getContainer()->get('doctrine')->getManagerForClass(LineItem::class)->clear();
+        $updatedLineItem = self::getContainer()
+            ->get('doctrine')
+            ->getRepository(LineItem::class)
+            ->find($lineItem->getId());
+        self::assertSame('Updated line item notes', $updatedLineItem->getNotes());
+    }
+
+    public function testPatchNotesRejectsUnsupportedFields(): void
+    {
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getReference('shopping_list_line_item.1');
+
+        $this->ajaxRequest(
+            'PATCH',
+            $this->getUrl('oro_shopping_list_frontend_line_item_patch_notes', ['id' => $lineItem->getId()]),
+            content: json_encode(['quantity' => 10])
+        );
+
+        self::assertJsonResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_BAD_REQUEST);
+    }
+
+    public function testPatchNotesWhenNoLineItem(): void
+    {
+        $this->ajaxRequest(
+            'PATCH',
+            $this->getUrl('oro_shopping_list_frontend_line_item_patch_notes', ['id' => 99999999]),
+            content: json_encode(['notes' => 'Updated line item notes'])
+        );
+
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_NOT_FOUND);
     }
 
     public function testDelete(): void

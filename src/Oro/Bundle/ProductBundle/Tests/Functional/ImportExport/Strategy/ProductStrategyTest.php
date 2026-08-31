@@ -26,6 +26,7 @@ use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationT
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganizationWithoutBusinessUnits;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadSecondOrganizationWithBusinessUnit;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -48,6 +49,7 @@ class ProductStrategyTest extends WebTestCase
             LoadOrganization::class,
             LoadBusinessUnit::class,
             LoadSecondOrganizationWithBusinessUnit::class,
+            LoadOrganizationWithoutBusinessUnits::class,
             LoadProductKitData::class,
             LoadProductKitForAdditionalOrganizationData::class
         ]);
@@ -331,6 +333,8 @@ class ProductStrategyTest extends WebTestCase
 
         $product = $this->strategy->process($newProduct);
 
+        self::assertNotNull($product);
+        self::assertEquals([], $context->getErrors());
         self::assertFalse($product->getOwner() === $user->getOwner());
         self::assertEquals($secondOrganization->getBusinessUnits()->first(), $product->getOwner());
     }
@@ -366,8 +370,93 @@ class ProductStrategyTest extends WebTestCase
 
         $product = $this->strategy->process($newProduct);
 
+        self::assertNotNull($product);
+        self::assertEquals([], $context->getErrors());
         self::assertTrue($product->getOwner() === $user->getOwner());
         self::assertEquals($userOrganization->getBusinessUnits()->first(), $product->getOwner());
+    }
+
+    public function testProcessWhenProductOrganizationHasNoBusinessUnits(): void
+    {
+        $context = new Context(['incremented_read' => true]);
+        $context->setValue('read_offset', 1);
+        $context->setValue('itemData', []);
+
+        $this->strategy->setImportExportContext($context);
+
+        $newProduct = $this->createProduct(
+            'PR-V3',
+            $this->createAttributeFamily('default_family'),
+            $this->getReference(LoadProductUnits::BOX),
+            $this->getInventoryStatus()
+        );
+
+        $user = $this->getReference(LoadUser::USER);
+        $organization = $this->getReference(LoadOrganizationWithoutBusinessUnits::ORGANIZATION_WITHOUT_BUSINESS_UNITS);
+
+        $tokenAccessor = self::getContainer()->get('oro_security.token_accessor');
+        $tokenAccessor->setToken(
+            new UsernamePasswordOrganizationToken(
+                $user,
+                'main',
+                $user->getOrganization()
+            )
+        );
+        $this->strategy->setTokenAccessor($tokenAccessor);
+        $newProduct->setOrganization($organization);
+
+        $product = $this->strategy->process($newProduct);
+
+        self::assertNull($product);
+        self::assertEquals(
+            [
+                'Error in row #1. The product owner cannot be determined: '
+                . 'the "organization_without_business_units" organization has no business units.'
+            ],
+            $context->getErrors()
+        );
+        self::assertEquals(1, $context->getErrorEntriesCount());
+    }
+
+    public function testProcessAfterFailedRowKeepsProcessingValidRows(): void
+    {
+        $context = new Context(['incremented_read' => true]);
+        $context->setValue('read_offset', 1);
+        $context->setValue('itemData', []);
+
+        $this->strategy->setImportExportContext($context);
+
+        $user = $this->getReference(LoadUser::USER);
+        $attributeFamily = $this->createAttributeFamily('default_family');
+        $unit = $this->getReference(LoadProductUnits::BOX);
+        $inventoryStatus = $this->getInventoryStatus();
+
+        $tokenAccessor = self::getContainer()->get('oro_security.token_accessor');
+        $tokenAccessor->setToken(
+            new UsernamePasswordOrganizationToken(
+                $user,
+                'main',
+                $user->getOrganization()
+            )
+        );
+        $this->strategy->setTokenAccessor($tokenAccessor);
+
+        $invalidProduct = $this->createProduct('PR-V4', $attributeFamily, $unit, $inventoryStatus);
+        $invalidProduct->setOrganization(
+            $this->getReference(LoadOrganizationWithoutBusinessUnits::ORGANIZATION_WITHOUT_BUSINESS_UNITS)
+        );
+
+        self::assertNull($this->strategy->process($invalidProduct));
+        self::assertCount(1, $context->getErrors());
+
+        $validProduct = $this->createProduct('PR-V5', $attributeFamily, $unit, $inventoryStatus);
+        $validProduct->setOrganization($user->getOrganization());
+
+        $product = $this->strategy->process($validProduct);
+
+        self::assertInstanceOf(Product::class, $product);
+        self::assertTrue($product->getOwner() === $user->getOwner());
+        self::assertCount(1, $context->getErrors());
     }
 
     public function testProcessAfterEventMarksProductInvalid()

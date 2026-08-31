@@ -39,6 +39,54 @@ class LineItemControllerAclTest extends WebTestCase
         ]);
     }
 
+    public function testPatchNotes(): void
+    {
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getReference('shopping_list_line_item.1');
+
+        $this->ajaxRequest(
+            'PATCH',
+            $this->getUrl('oro_shopping_list_frontend_line_item_patch_notes', ['id' => $lineItem->getId()]),
+            content: json_encode(['notes' => 'Updated line item notes'])
+        );
+
+        self::assertJsonResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_OK);
+    }
+
+    public function testPatchNotesAccessDenied(): void
+    {
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getReference('shopping_list_line_item.1');
+
+        $this->ajaxRequest(
+            'PATCH',
+            $this->getUrl('oro_shopping_list_frontend_line_item_patch_notes', ['id' => $lineItem->getId()]),
+            server: $this->generateBasicAuthHeader(
+                LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL
+            ),
+            content: json_encode(['notes' => 'Updated line item notes'])
+        );
+
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_FORBIDDEN);
+    }
+
+    public function testPatchNotesAccessDeniedByLineItemAcl(): void
+    {
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getReference('shopping_list_line_item.1');
+        $role = $lineItem->getCustomerUser()->getUserRoles()[0];
+        $this->updateRolePermission($role->getRole(), LineItem::class, AccessLevel::NONE_LEVEL, 'EDIT');
+
+        $this->ajaxRequest(
+            'PATCH',
+            $this->getUrl('oro_shopping_list_frontend_line_item_patch_notes', ['id' => $lineItem->getId()]),
+            content: json_encode(['notes' => 'Updated line item notes'])
+        );
+
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_FORBIDDEN);
+    }
+
     public function testDelete()
     {
         /* @var LineItem $lineItem */

@@ -93,6 +93,9 @@ The current file describes significant changes in the code that may affect the u
   * Added `\Oro\Bundle\ShoppingListBundle\DraftSession\Provider\OrderDraftFromShoppingListRepository` — makes shopping lists always use factory-based draft creation.
   * Added the `\Oro\Component\DraftSession\Event\EntityDraftCreatedEvent` listeners `\Oro\Bundle\ShoppingListBundle\EventListener\DraftSession\SyncLineItemsOnOrderDraftCreatedEventListener`, `SyncExtendedFieldsOnDraftCreatedEventListener`, `SetOrderAddressOnOrderDraftCreatedEventListener`, `SetMatchedPricesOnOrderDraftCreatedEventListener`, and `GenerateChecksumOnOrderLineItemDraftCreatedEventListener` that populate line items, extended fields, default billing/shipping addresses, matched prices, and line item checksums on the created order draft.
 
+#### SaleBundle
+* Added `\Oro\Bundle\SaleBundle\Api\Processor\UpdateQuoteProductProduct` to set non-free-form quote products by SKU when the product relation is not explicitly submitted.
+
 ### Changed
 
 #### CMSBundle

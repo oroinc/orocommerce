@@ -9,12 +9,15 @@ use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
+use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListNotesType;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -25,6 +28,40 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ShoppingListController extends AbstractController
 {
+    #[Route(
+        path: '/{id}/notes',
+        name: 'oro_shopping_list_frontend_patch_notes',
+        requirements: ['id' => '\d+'],
+        methods: ['PATCH']
+    )]
+    #[AclAncestor('oro_shopping_list_frontend_update')]
+    #[CsrfProtection]
+    public function patchNotesAction(Request $request, ShoppingList $shoppingList): JsonResponse
+    {
+        if (!$this->isGranted('EDIT', $shoppingList)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $data = json_decode($request->getContent(), true);
+        if (!is_array($data)) {
+            return $this->json(null, Response::HTTP_BAD_REQUEST);
+        }
+
+        $form = $this->createForm(ShoppingListNotesType::class, $shoppingList, ['csrf_protection' => false]);
+        $form->submit($data, false);
+
+        if (!$form->isValid()) {
+            return $this->json(
+                ['message' => (string)$form->getErrors(true, false)],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        $this->container->get(ManagerRegistry::class)->getManagerForClass(ShoppingList::class)->flush();
+
+        return $this->json(['fields' => ['notes' => $shoppingList->getNotes()]]);
+    }
+
     #[Route(
         path: '/{id}',
         name: 'oro_shopping_list_frontend_view',

@@ -128,6 +128,7 @@ use Symfony\Component\Validator\Constraints\All;
         ],
         'slug' => ['source' => 'titles'],
         'email' => ['available_in_template' => true],
+        'integration' => ['webhook_accessible' => true],
     ]
 )]
 class Category implements

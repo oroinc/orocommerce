@@ -59,13 +59,16 @@ class ProductPriceWriter extends PersistentBatchWriter
     #[\Override]
     protected function saveItems(array $items, EntityManager $em)
     {
-        $this->listenerManager->disableListeners($this->listeners);
-        foreach ($items as $item) {
-            $this->priceManager->persist($item);
+        try {
+            $this->listenerManager->disableListeners($this->listeners);
+            foreach ($items as $item) {
+                $this->priceManager->persist($item);
+            }
+            $this->priceManager->flush();
+            $em->flush();
+        } finally {
+            $this->listenerManager->enableListeners($this->listeners);
         }
-        $this->priceManager->flush();
-        $em->flush();
-        $this->listenerManager->enableListeners($this->listeners);
     }
 
     protected function clearContext()

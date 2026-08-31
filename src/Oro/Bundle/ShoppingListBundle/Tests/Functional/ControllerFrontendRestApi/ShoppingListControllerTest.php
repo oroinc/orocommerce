@@ -8,6 +8,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListUserACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class ShoppingListControllerTest extends WebTestCase
 {
@@ -22,6 +23,46 @@ class ShoppingListControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([LoadShoppingListACLData::class]);
+    }
+
+    /**
+     * @dataProvider ACLProvider
+     */
+    public function testPatchNotes(string $resource, string $user, int $status): void
+    {
+        $this->loginUser($user);
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference($resource);
+        $expectedStatus = $status === Response::HTTP_NO_CONTENT ? Response::HTTP_OK : $status;
+
+        $this->ajaxRequest(
+            'PATCH',
+            $this->getUrl('oro_shopping_list_frontend_patch_notes', ['id' => $shoppingList->getId()]),
+            content: json_encode(['notes' => ' Updated shopping list notes '])
+        );
+
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), $expectedStatus);
+        if ($expectedStatus === Response::HTTP_OK) {
+            self::assertSame(
+                ['fields' => ['notes' => 'Updated shopping list notes']],
+                self::getJsonResponseContent($this->client->getResponse(), Response::HTTP_OK)
+            );
+        }
+    }
+
+    public function testPatchNotesRejectsUnsupportedFields(): void
+    {
+        $this->loginUser(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP);
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL);
+
+        $this->ajaxRequest(
+            'PATCH',
+            $this->getUrl('oro_shopping_list_frontend_patch_notes', ['id' => $shoppingList->getId()]),
+            content: json_encode(['label' => 'Changed label'])
+        );
+
+        self::assertJsonResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_BAD_REQUEST);
     }
 
     /**

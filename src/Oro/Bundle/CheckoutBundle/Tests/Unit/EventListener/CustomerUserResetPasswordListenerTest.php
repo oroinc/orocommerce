@@ -33,6 +33,21 @@ class CustomerUserResetPasswordListenerTest extends \PHPUnit\Framework\TestCase
         self::assertEquals('some_template', $event->getEmailTemplate());
     }
 
+    public function testOnCustomerUserEmailSendWhenNoRequest(): void
+    {
+        $this->requestStack->expects(self::any())
+            ->method('getMainRequest')
+            ->willReturn(null);
+        $event = new CustomerUserEmailSendEvent(
+            new CustomerUser(),
+            Processor::RESET_PASSWORD_EMAIL_TEMPLATE_NAME,
+            []
+        );
+        $this->listener->onCustomerUserEmailSend($event);
+        self::assertEquals(Processor::RESET_PASSWORD_EMAIL_TEMPLATE_NAME, $event->getEmailTemplate());
+        self::assertEquals([], $event->getEmailTemplateParams());
+    }
+
     public function testOnCustomerUserEmailSendWrongTemplate(): void
     {
         $this->requestStack->expects(self::any())

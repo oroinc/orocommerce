@@ -9,11 +9,11 @@ Feature: Order External ID can be set via back-office edit UI
     And I go to Sales/Orders
     Then I shouldn't see "External ID" column in grid
     And I should not see "External ID" filter in grid
-    When I click edit SimpleOrder in grid
+    When I click view SimpleOrder in grid
     Then I should not see "External ID"
-    When I go to Sales/Orders
-    And I click view SimpleOrder in grid
+    When I click "Edit"
     Then I should not see "External ID"
+    And I click "Cancel"
 
   Scenario: Enable External ID field on Order edit for
     Given I go to System/ Entities/ Entity Management

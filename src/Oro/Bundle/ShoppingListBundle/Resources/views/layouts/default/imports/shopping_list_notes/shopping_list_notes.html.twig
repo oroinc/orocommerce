@@ -6,9 +6,6 @@
             view: 'oroshoppinglist/js/app/views/shoppinglist-notes-editable-view',
             shoppingListId: shoppingList.id,
             shoppingListLabel: shoppingList.label,
-            routingOptions: {
-                className: oro_class_name(shoppingList, true),
-            },
             notes: shoppingList.notes|default('')
         }|json_encode
     }) %}

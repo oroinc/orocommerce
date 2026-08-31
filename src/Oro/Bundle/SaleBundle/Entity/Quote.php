@@ -76,6 +76,7 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
         'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes'],
         'dataaudit' => ['auditable' => true],
         'email' => ['available_in_template' => true],
+        'integration' => ['webhook_accessible' => true],
     ]
 )]
 class Quote implements

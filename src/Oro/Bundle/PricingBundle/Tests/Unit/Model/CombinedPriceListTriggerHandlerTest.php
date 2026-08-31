@@ -188,12 +188,73 @@ class CombinedPriceListTriggerHandlerTest extends TestCase
             ->willReturn($productIds);
 
         $this->websiteReindexRequestDataStorage->expects($this->exactly(count($expectedEvents)))
-            ->method('insertMultipleRequests');
+            ->method('insertMultipleRequests')
+            ->with(100, $website ? [$website->getId()] : [], $productIds);
 
         $this->triggerHandler->startCollect(100);
         $this->triggerHandler->massProcess([$combinedPriceList], $website);
         $this->triggerHandler->commit();
         $this->assertEmpty($this->events);
+    }
+
+    public function testProcessRequestsPricingFieldGroupOnly(): void
+    {
+        $combinedPriceList = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
+
+        $this->repository->expects($this->once())
+            ->method('getProductIdsByPriceLists')
+            ->willReturn([1, 2]);
+
+        $this->triggerHandler->process($combinedPriceList);
+
+        $event = $this->getDispatchedReindexationEvent();
+        $this->assertSame(['pricing'], $event->getFieldGroups());
+        $this->assertSame([Product::class], $event->getClassesNames());
+        $this->assertSame([], $event->getWebsitesIds());
+        $this->assertSame([1, 2], $event->getIds());
+        $this->assertTrue($event->isScheduled());
+    }
+
+    public function testProcessByProductWithoutCollectSessionRequestsPricingFieldGroupOnly(): void
+    {
+        $combinedPriceList = $this->getEntity(CombinedPriceList::class, ['id' => 1001]);
+        $website = $this->getEntity(Website::class, ['id' => 3003]);
+
+        $this->repository->expects($this->never())
+            ->method('getProductIdsByPriceLists');
+
+        $this->triggerHandler->processByProduct($combinedPriceList, [2002], $website);
+
+        $event = $this->getDispatchedReindexationEvent();
+        $this->assertSame(['pricing'], $event->getFieldGroups());
+        $this->assertSame([3003], $event->getWebsitesIds());
+        $this->assertSame([2002], $event->getIds());
+    }
+
+    public function testMassProcessWithoutCollectSessionRequestsPricingFieldGroupOnly(): void
+    {
+        $combinedPriceList = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
+
+        $this->repository->expects($this->once())
+            ->method('getProductIdsByPriceLists')
+            ->willReturn([1, 2]);
+        $this->websiteReindexRequestDataStorage->expects($this->never())
+            ->method('insertMultipleRequests');
+
+        $this->triggerHandler->massProcess([$combinedPriceList]);
+
+        $event = $this->getDispatchedReindexationEvent();
+        $this->assertSame(['pricing'], $event->getFieldGroups());
+        $this->assertSame([], $event->getWebsitesIds());
+        $this->assertSame([1, 2], $event->getIds());
+    }
+
+    private function getDispatchedReindexationEvent(int $index = 0): ReindexationRequestEvent
+    {
+        $this->assertArrayHasKey(ReindexationRequestEvent::EVENT_NAME, $this->events);
+        $this->assertArrayHasKey($index, $this->events[ReindexationRequestEvent::EVENT_NAME]);
+
+        return $this->events[ReindexationRequestEvent::EVENT_NAME][$index];
     }
 
     public function processDataProvider(): array
@@ -204,7 +265,7 @@ class CombinedPriceListTriggerHandlerTest extends TestCase
                 'productIds' => [1, 2],
                 'events' => [
                     ReindexationRequestEvent::EVENT_NAME =>
-                        [new ReindexationRequestEvent([Product::class], [], [1, 2])]
+                        [new ReindexationRequestEvent([Product::class], [], [1, 2], true, ['pricing'])]
                 ],
                 'website' => null,
             ],
@@ -213,7 +274,7 @@ class CombinedPriceListTriggerHandlerTest extends TestCase
                 'productIds' => [1, 2],
                 'events' => [
                     ReindexationRequestEvent::EVENT_NAME =>
-                        [new ReindexationRequestEvent([Product::class], [1], [1, 2])]
+                        [new ReindexationRequestEvent([Product::class], [1], [1, 2], true, ['pricing'])]
                 ],
                 'website' => ['id' => 1],
             ],
@@ -252,7 +313,7 @@ class CombinedPriceListTriggerHandlerTest extends TestCase
                 'cpl' => ['id' => 1001],
                 'events' => [
                     ReindexationRequestEvent::EVENT_NAME => [
-                        new ReindexationRequestEvent([Product::class], [3003], [2002])
+                        new ReindexationRequestEvent([Product::class], [3003], [2002], true, ['pricing'])
                     ]
                 ],
                 'products' => [2002],
@@ -262,7 +323,7 @@ class CombinedPriceListTriggerHandlerTest extends TestCase
                 'cpl' => ['id' => 1001],
                 'events' => [
                     ReindexationRequestEvent::EVENT_NAME => [
-                        new ReindexationRequestEvent([Product::class], [], [2002])
+                        new ReindexationRequestEvent([Product::class], [], [2002], true, ['pricing'])
                     ]
                 ],
                 'products' => [2002],
@@ -272,7 +333,7 @@ class CombinedPriceListTriggerHandlerTest extends TestCase
                 'cpl' => ['id' => 1001],
                 'events' => [
                     ReindexationRequestEvent::EVENT_NAME => [
-                        new ReindexationRequestEvent([Product::class], [3003], [4004, 5005])
+                        new ReindexationRequestEvent([Product::class], [3003], [4004, 5005], true, ['pricing'])
                     ]
                 ],
                 'products' => [],
@@ -308,8 +369,8 @@ class CombinedPriceListTriggerHandlerTest extends TestCase
         $this->assertEquals(
             [
                 ReindexationRequestEvent::EVENT_NAME => [
-                    new ReindexationRequestEvent([Product::class], [], $cpl1ProductIds),
-                    new ReindexationRequestEvent([Product::class], [$website1Id], [3])
+                    new ReindexationRequestEvent([Product::class], [], $cpl1ProductIds, true, ['pricing']),
+                    new ReindexationRequestEvent([Product::class], [$website1Id], [3], true, ['pricing'])
                 ]
             ],
             $this->events
