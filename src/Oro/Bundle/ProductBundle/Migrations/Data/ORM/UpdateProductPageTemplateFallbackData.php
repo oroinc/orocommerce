@@ -17,7 +17,7 @@ final class UpdateProductPageTemplateFallbackData extends AbstractFixture implem
 {
     use ContainerAwareTrait;
 
-    private const MAX_PRODUCTS_FOR_SYNC_FIX = 15000;
+    private const MAX_PRODUCTS_FOR_SYNC_FIX = 100000;
     private const CHUNK_SIZE = 1000;
 
     #[\Override]

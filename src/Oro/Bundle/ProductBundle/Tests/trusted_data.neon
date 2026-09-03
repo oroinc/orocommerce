@@ -27,3 +27,6 @@ trusted_data:
         Oro\Bundle\ProductBundle\Api\Processor\ExpandProductCollectionContentVariant:
             addContentVariantFieldsToProductSearchQueryAndConfig:
                 searchFieldName: true
+    safe_methods:
+        Oro\Bundle\ProductBundle\Manager\ProductFallbackUpdateManager:
+            getPopulateFallbackSql: true
