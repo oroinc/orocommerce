@@ -232,7 +232,7 @@ services:
         arguments:
             - '@oro_pricing.product_price_criteria_factory'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
-            - '@oro_pricing.provider.product_price'
+            - '@oro_pricing.provider.product_price.unrestricted'
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend', class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: -20 }
 
@@ -241,7 +241,7 @@ services:
         arguments:
             - '@oro_pricing.product_price_criteria_factory'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
-            - '@oro_pricing.provider.product_price'
+            - '@oro_pricing.provider.product_price.unrestricted'
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend', class: Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem, priority: -20 }
 
