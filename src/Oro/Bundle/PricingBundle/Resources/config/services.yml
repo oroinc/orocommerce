@@ -121,6 +121,15 @@ services:
             - '@oro_pricing.provider.product_price_by_matching_criteria'
             - '@oro_pricing.provider.product_price.cache'
 
+    oro_pricing.provider.product_price.acl_aware:
+      class: Oro\Bundle\PricingBundle\Provider\AclAwareProductPriceProvider
+      decorates: oro_pricing.provider.product_price
+      decoration_inner_name: oro_pricing.provider.product_price.unrestricted
+      arguments:
+        - '@oro_pricing.provider.product_price.unrestricted'
+        - '@security.authorization_checker'
+        - '@security.token_storage'
+
     Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface:
         alias: 'oro_pricing.provider.product_price'
 
@@ -1748,7 +1757,7 @@ services:
     oro_pricing.provider.product_line_item_price:
         class: Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProvider
         arguments:
-            - '@oro_pricing.provider.product_price'
+            - '@oro_pricing.provider.product_price.unrestricted'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
             - '@oro_pricing.model.product_price_scope_criteria_request_handler'
             - '@oro_pricing.product_price_criteria_factory'
