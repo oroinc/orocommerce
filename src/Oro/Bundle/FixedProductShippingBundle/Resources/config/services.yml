@@ -42,7 +42,7 @@ services:
             - '@doctrine'
         calls:
             - [ setPriceScopeCriteriaFactory, [ '@oro_pricing.model.product_price_scope_criteria_factory' ] ]
-            - [ setProductPriceProvider, [ '@oro_pricing.provider.product_price' ] ]
+            - [ setProductPriceProvider, [ '@oro_pricing.provider.product_price.unrestricted' ] ]
 
     oro_fixed_product_shipping.handler.shipping_cost_attribute_delete_handler:
         class: Oro\Bundle\FixedProductShippingBundle\Handler\ShippingCostAttributeDeleteHandler
