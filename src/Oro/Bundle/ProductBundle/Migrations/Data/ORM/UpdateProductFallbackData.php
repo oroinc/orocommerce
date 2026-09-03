@@ -17,7 +17,7 @@ final class UpdateProductFallbackData extends AbstractFixture implements Contain
 {
     use ContainerAwareTrait;
 
-    private const int MAX_PRODUCTS_FOR_SYNC_FIX = 15000;
+    private const int MAX_PRODUCTS_FOR_SYNC_FIX = 100000;
     private const int CHUNK_SIZE = 1000;
 
     #[\Override]
