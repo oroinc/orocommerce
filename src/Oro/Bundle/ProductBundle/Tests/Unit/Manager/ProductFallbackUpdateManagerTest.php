@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Manager;
 
-use Doctrine\ORM\AbstractQuery;
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Expr;
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Manager\ProductFallbackPopulator;
 use Oro\Bundle\ProductBundle\Manager\ProductFallbackUpdateManager;
 use Oro\Bundle\ProductBundle\Provider\ProductFallbackChunkProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -21,12 +19,15 @@ use Psr\Log\LoggerInterface;
 
 final class ProductFallbackUpdateManagerTest extends TestCase
 {
+    private const string SEQUENCE = 'public.oro_entity_fallback_value_id_seq';
+    private const string QUOTED_SEQUENCE = "'public.oro_entity_fallback_value_id_seq'";
+
     private ManagerRegistry&MockObject $doctrine;
     private ProductFallbackChunkProvider&MockObject $chunkProvider;
-    private ProductFallbackPopulator&MockObject $populator;
     private LoggerInterface&MockObject $logger;
-    private OptionalListenerManager&MockObject $listenerManager;
     private EntityManagerInterface&MockObject $em;
+    private Connection&MockObject $connection;
+    private ClassMetadata&MockObject $productMetadata;
     private ProductFallbackUpdateManager $manager;
 
     #[\Override]
@@ -34,177 +35,301 @@ final class ProductFallbackUpdateManagerTest extends TestCase
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->chunkProvider = $this->createMock(ProductFallbackChunkProvider::class);
-        $this->populator = $this->createMock(ProductFallbackPopulator::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->listenerManager = $this->createMock(OptionalListenerManager::class);
         $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->connection = $this->createMock(Connection::class);
+        $this->productMetadata = $this->createMock(ClassMetadata::class);
 
         $this->manager = new ProductFallbackUpdateManager(
             $this->doctrine,
             $this->chunkProvider,
-            $this->populator,
-            $this->logger,
-            $this->listenerManager
+            $this->logger
         );
     }
 
-    public function testProcessChunkWithEmptyArrayReturnsZeroWithoutTouchingEntityManagerOrListeners(): void
+    public function testProcessChunkWithEmptyArrayReturnsZeroWithoutResolvingEntityManager(): void
     {
         $this->doctrine->expects(self::never())
             ->method('getManagerForClass');
-        $this->listenerManager->expects(self::never())
-            ->method('disableListeners');
-        $this->listenerManager->expects(self::never())
-            ->method('enableListeners');
-        $this->em->expects(self::never())
-            ->method('clear');
 
         self::assertSame(0, $this->manager->processChunk([]));
     }
 
-    public function testProcessChunkPersistsAndFlushesUpdatedProductsThenClearsEntityManager(): void
+    public function testProcessChunkReturnsZeroWithoutStatementWhenNoFallbackFieldIsMapped(): void
     {
-        $productA = new Product();
-        $productB = new Product();
-        $this->expectGetProducts([1, 2], [$productA, $productB]);
+        $this->expectEntityManager();
+        $this->chunkProvider->expects(self::once())
+            ->method('getFieldsByFallbackId')
+            ->willReturn([]);
 
-        $this->populator->expects(self::exactly(2))
-            ->method('populate')
-            ->willReturnMap([
-                [$productA, true],
-                [$productB, true],
-            ]);
+        $this->connection->expects(self::never())
+            ->method('executeStatement');
 
-        $this->em->expects(self::exactly(2))
-            ->method('persist')
-            ->with(self::logicalOr($productA, $productB));
+        self::assertSame(0, $this->manager->processChunk([1, 2]));
+    }
 
-        $this->em->expects(self::once())
-            ->method('flush');
+    public function testProcessChunkPopulatesEveryMappedFieldWithASingleStatement(): void
+    {
+        $this->expectEntityManager();
+        $this->expectFallbackFields([
+            'themeConfiguration' => ['pageTemplate' => 'pagetemplate_id'],
+            'category' => ['manageInventory' => 'manageinventory_id'],
+        ]);
+        $this->expectSequence(self::SEQUENCE);
+
+        $expectedSql = 'WITH pairs AS MATERIALIZED ('
+            . ' SELECT p.id AS product_id,'
+            . ' CASE WHEN p.pagetemplate_id IS NULL'
+            . ' THEN nextval(' . self::QUOTED_SEQUENCE . '::regclass) END AS fallback_0,'
+            . ' CASE WHEN p.manageinventory_id IS NULL'
+            . ' THEN nextval(' . self::QUOTED_SEQUENCE . '::regclass) END AS fallback_1'
+            . ' FROM oro_product p WHERE p.id IN (:ids)'
+            . '), inserted AS ('
+            . ' INSERT INTO oro_entity_fallback_value (id, fallback, array_value)'
+            . ' SELECT pairs.fallback_0, :fallback_0_fallback, :arrayValue'
+            . ' FROM pairs WHERE pairs.fallback_0 IS NOT NULL'
+            . ' UNION ALL'
+            . ' SELECT pairs.fallback_1, :fallback_1_fallback, :arrayValue'
+            . ' FROM pairs WHERE pairs.fallback_1 IS NOT NULL'
+            . ')'
+            . ' UPDATE oro_product p SET'
+            . ' pagetemplate_id = COALESCE(p.pagetemplate_id, pairs.fallback_0),'
+            . ' manageinventory_id = COALESCE(p.manageinventory_id, pairs.fallback_1)'
+            . ' FROM pairs WHERE p.id = pairs.product_id'
+            . ' AND (pairs.fallback_0 IS NOT NULL OR pairs.fallback_1 IS NOT NULL)';
+
+        $this->connection->expects(self::once())
+            ->method('executeStatement')
+            ->with(
+                $expectedSql,
+                [
+                    'ids' => [1, 2],
+                    'arrayValue' => null,
+                    'fallback_0_fallback' => 'themeConfiguration',
+                    'fallback_1_fallback' => 'category',
+                ],
+                ['ids' => ArrayParameterType::INTEGER, 'arrayValue' => 'array']
+            )
+            ->willReturn(2);
+
         $this->logger->expects(self::once())
-            ->method('info');
+            ->method('info')
+            ->with(
+                'Product fallback chunk processed successfully',
+                ['updated_count' => 2, 'chunk_size' => 2]
+            );
         $this->logger->expects(self::never())
             ->method('error');
-
-        $this->em->expects(self::once())
-            ->method('clear');
-
-        $this->listenerManager->expects(self::once())
-            ->method('disableListeners')
-            ->with([]);
-        $this->listenerManager->expects(self::once())
-            ->method('enableListeners')
-            ->with([]);
 
         self::assertSame(2, $this->manager->processChunk([1, 2]));
     }
 
-    public function testProcessChunkDoesNotFlushWhenNoProductsNeedUpdateButStillClearsEntityManager(): void
+    public function testProcessChunkSkipsAFieldThatIsNotAnAssociationOfProduct(): void
     {
-        $product = new Product();
-        $this->expectGetProducts([1], [$product]);
+        $this->expectEntityManager();
+        $this->expectFallbackFields([
+            'category' => ['manageInventory' => 'manageinventory_id', 'notAnAssociation' => null],
+        ]);
+        $this->expectSequence(self::SEQUENCE);
 
-        $this->populator->expects(self::once())
-            ->method('populate')
-            ->with($product)
-            ->willReturn(false);
+        $this->connection->expects(self::once())
+            ->method('executeStatement')
+            ->willReturnCallback(function (string $sql, array $parameters) {
+                self::assertStringContainsString('manageinventory_id', $sql);
+                self::assertStringNotContainsString('notAnAssociation', $sql);
+                self::assertStringNotContainsString('fallback_1', $sql);
+                self::assertArrayNotHasKey('fallback_1_fallback', $parameters);
 
-        $this->em->expects(self::never())
-            ->method('persist');
-        $this->em->expects(self::never())
-            ->method('flush');
+                return 1;
+            });
 
-        $this->em->expects(self::once())
-            ->method('clear');
-        $this->listenerManager->expects(self::once())
-            ->method('enableListeners')
-            ->with([]);
+        self::assertSame(1, $this->manager->processChunk([1]));
+    }
+
+    public function testProcessChunkDoesNotLogSuccessWhenNoProductWasUpdated(): void
+    {
+        $this->expectEntityManager();
+        $this->expectFallbackFields(['category' => ['manageInventory' => 'manageinventory_id']]);
+        $this->expectSequence(self::SEQUENCE);
+
+        $this->connection->expects(self::once())
+            ->method('executeStatement')
+            ->willReturn(0);
+
+        $this->logger->expects(self::never())
+            ->method('info');
 
         self::assertSame(0, $this->manager->processChunk([1]));
     }
 
-    public function testProcessChunkLogsAndRethrowsWhenFlushFailsAndStillClearsEntityManager(): void
+    public function testProcessChunkFailsWhenTheFallbackValueIdentifierHasNoSequence(): void
     {
-        $product = new Product();
-        $this->expectGetProducts([1], [$product]);
+        $this->expectEntityManager();
+        $this->expectFallbackFields(['category' => ['manageInventory' => 'manageinventory_id']]);
+        $this->expectSequence(null);
 
-        $this->populator->expects(self::once())
-            ->method('populate')
-            ->willReturn(true);
+        $this->connection->expects(self::never())
+            ->method('executeStatement');
 
-        $flushException = new \RuntimeException('flush failed');
-        $this->em->expects(self::once())
-            ->method('flush')
-            ->willThrowException($flushException);
-
-        $this->logger->expects(self::once())
-            ->method('error')
-            ->with('Failed to flush product fallback changes', self::arrayHasKey('exception'));
-        $this->logger->expects(self::never())
-            ->method('info');
-
-        // Even though flush() failed, the identity map must still be cleared and listeners re-enabled.
-        $this->em->expects(self::once())
-            ->method('clear');
-        $this->listenerManager->expects(self::once())
-            ->method('enableListeners')
-            ->with([]);
-
-        $this->expectExceptionObject($flushException);
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(
+            'The identifier of "oro_entity_fallback_value"."id" is not backed by a sequence.'
+        );
 
         $this->manager->processChunk([1]);
     }
 
-    /**
-     * @param int[] $productIds
-     * @param Product[] $products
-     */
-    private function expectGetProducts(array $productIds, array $products): void
+    public function testProcessChunkLogsAndRethrowsWhenTheStatementFails(): void
     {
-        // processChunk() resolves the EntityManager itself and again inside getProducts().
-        $this->doctrine->expects(self::exactly(2))
+        $this->expectEntityManager();
+        $this->expectFallbackFields(['category' => ['manageInventory' => 'manageinventory_id']]);
+        $this->expectSequence(self::SEQUENCE);
+
+        $failure = new \RuntimeException('statement failed');
+        $this->connection->expects(self::once())
+            ->method('executeStatement')
+            ->willThrowException($failure);
+
+        $this->logger->expects(self::once())
+            ->method('error')
+            ->with('Failed to populate product fallback values', self::arrayHasKey('exception'));
+        $this->logger->expects(self::never())
+            ->method('info');
+
+        $this->expectExceptionObject($failure);
+
+        $this->manager->processChunk([1]);
+    }
+
+    public function testGetProductIdChunksRejectsANonPositiveChunkSize(): void
+    {
+        $this->chunkProvider->expects(self::never())
+            ->method('getProductIdChunks');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Chunk size must be a positive integer.');
+
+        iterator_to_array($this->manager->getProductIdChunks(0));
+    }
+
+    public function testGetProductIdChunksYieldsTheChunksOfTheProvider(): void
+    {
+        $this->chunkProvider->expects(self::once())
+            ->method('getProductIdChunks')
+            ->with(2)
+            ->willReturn(new \ArrayIterator([[1, 2], [3]]));
+
+        self::assertSame([[1, 2], [3]], iterator_to_array($this->manager->getProductIdChunks(2)));
+    }
+
+    public function testGetPendingProductCountIsDelegatedToTheProvider(): void
+    {
+        $this->chunkProvider->expects(self::once())
+            ->method('getPendingProductCount')
+            ->willReturn(7);
+
+        self::assertSame(7, $this->manager->getPendingProductCount());
+    }
+
+    /**
+     * @dataProvider hasPendingProductsDataProvider
+     */
+    public function testHasPendingProducts(int $pendingCount, bool $expected): void
+    {
+        $this->chunkProvider->expects(self::once())
+            ->method('getPendingProductCount')
+            ->willReturn($pendingCount);
+
+        self::assertSame($expected, $this->manager->hasPendingProducts());
+    }
+
+    public static function hasPendingProductsDataProvider(): array
+    {
+        return [
+            'no pending products' => ['pendingCount' => 0, 'expected' => false],
+            'pending products' => ['pendingCount' => 1, 'expected' => true],
+        ];
+    }
+
+    private function expectEntityManager(): void
+    {
+        $fallbackMetadata = $this->createMock(ClassMetadata::class);
+        $fallbackMetadata->expects(self::any())
+            ->method('getTableName')
+            ->willReturn('oro_entity_fallback_value');
+        $fallbackMetadata->expects(self::any())
+            ->method('getSingleIdentifierColumnName')
+            ->willReturn('id');
+        $fallbackMetadata->expects(self::any())
+            ->method('getColumnName')
+            ->willReturnMap([
+                [EntityFieldFallbackValue::FALLBACK_PARENT_FIELD, 'fallback'],
+                [EntityFieldFallbackValue::FALLBACK_ARRAY_FIELD, 'array_value'],
+            ]);
+        $fallbackMetadata->expects(self::any())
+            ->method('getTypeOfField')
+            ->with(EntityFieldFallbackValue::FALLBACK_ARRAY_FIELD)
+            ->willReturn('array');
+
+        $this->productMetadata->expects(self::any())
+            ->method('getTableName')
+            ->willReturn('oro_product');
+
+        $this->em->expects(self::any())
+            ->method('getClassMetadata')
+            ->willReturnCallback(fn (string $className): ClassMetadata => match ($className) {
+                Product::class => $this->productMetadata,
+                EntityFieldFallbackValue::class => $fallbackMetadata,
+            });
+        $this->em->expects(self::any())
+            ->method('getConnection')
+            ->willReturn($this->connection);
+
+        $this->doctrine->expects(self::any())
             ->method('getManagerForClass')
             ->with(Product::class)
             ->willReturn($this->em);
+    }
 
-        $query = $this->createMock(AbstractQuery::class);
-        $query->expects(self::once())
-            ->method('getResult')
-            ->willReturn($products);
+    /**
+     * @param array<string, array<string, string|null>> $fieldsByFallbackId
+     *        fallback id => [field name => join column, or null when the field is not an association]
+     */
+    private function expectFallbackFields(array $fieldsByFallbackId): void
+    {
+        $joinColumns = [];
+        $provided = [];
+        foreach ($fieldsByFallbackId as $fallbackId => $fields) {
+            $provided[$fallbackId] = array_keys($fields);
+            foreach ($fields as $fieldName => $joinColumn) {
+                $joinColumns[$fieldName] = $joinColumn;
+            }
+        }
 
-        $qb = $this->createMock(QueryBuilder::class);
-        $exprFunc = $this->createMock(Expr\Func::class);
+        $this->chunkProvider->expects(self::once())
+            ->method('getFieldsByFallbackId')
+            ->willReturn($provided);
 
-        $expr = $this->createMock(Expr::class);
-        $expr->expects(self::once())
-            ->method('in')
-            ->with('p.id', ':ids')
-            ->willReturn($exprFunc);
+        $this->productMetadata->expects(self::any())
+            ->method('hasAssociation')
+            ->willReturnCallback(static fn (string $field): bool => ($joinColumns[$field] ?? null) !== null);
+        $this->productMetadata->expects(self::any())
+            ->method('getSingleAssociationJoinColumnName')
+            ->willReturnCallback(static fn (string $field): string => $joinColumns[$field]);
+    }
 
-        $qb->expects(self::once())
-            ->method('expr')
-            ->willReturn($expr);
-        $qb->expects(self::once())
-            ->method('where')
-            ->with($exprFunc)
-            ->willReturnSelf();
-        $qb->expects(self::once())
-            ->method('setParameter')
-            ->with('ids', $productIds)
-            ->willReturnSelf();
-        $qb->expects(self::once())
-            ->method('getQuery')
-            ->willReturn($query);
+    private function expectSequence(?string $sequence): void
+    {
+        $this->connection->expects(self::once())
+            ->method('fetchOne')
+            ->with('SELECT pg_get_serial_sequence(?, ?)', ['oro_entity_fallback_value', 'id'])
+            ->willReturn($sequence);
 
-        $repo = $this->createMock(EntityRepository::class);
-        $repo->expects(self::once())
-            ->method('createQueryBuilder')
-            ->with('p')
-            ->willReturn($qb);
-
-        $this->em->expects(self::once())
-            ->method('getRepository')
-            ->with(Product::class)
-            ->willReturn($repo);
+        if (null !== $sequence) {
+            $this->connection->expects(self::once())
+                ->method('quote')
+                ->with($sequence)
+                ->willReturn("'" . $sequence . "'");
+        }
     }
 }

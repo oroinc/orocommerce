@@ -2537,22 +2537,12 @@ services:
             - '@doctrine'
             - '@oro_product.provider.fallback_field'
 
-    oro_product.manager.fallback_populator:
-        class: Oro\Bundle\ProductBundle\Manager\ProductFallbackPopulator
-        arguments:
-            - '@property_accessor'
-            - '@oro_product.provider.fallback_field'
-
     oro_product.manager.fallback_update:
         class: Oro\Bundle\ProductBundle\Manager\ProductFallbackUpdateManager
         arguments:
             - '@doctrine'
             - '@oro_product.provider.fallback_chunk'
-            - '@oro_product.manager.fallback_populator'
             - '@logger'
-            - '@oro_platform.optional_listeners.manager'
-        calls:
-            - [disableListener, ['oro_dataaudit.listener.send_changed_entities_to_message_queue']]
         tags:
             - { name: monolog.logger, channel: oro_product }
 
@@ -2583,6 +2573,7 @@ services:
         arguments:
             - '@oro_product.manager.fallback_update'
             - '@oro_product.notification_alert.fallback_update_provider'
+            - '@event_dispatcher'
         calls:
             - [ 'setLogger', [ '@logger' ] ]
         tags:

@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Oro\Bundle\ProductBundle\Async;
 
 use Oro\Bundle\ProductBundle\Async\Topic\ProductFallbackFinalizeTopic;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Manager\ProductFallbackUpdateManager;
 use Oro\Bundle\ProductBundle\NotificationAlert\ProductFallbackUpdateNotificationAlertProvider;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -14,9 +16,10 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Finalizes product fallback updates by resolving notification alerts when processing is complete.
+ * Requests the reindexation and resolves notification alerts once the fallback update is complete.
  */
 class ProductFallbackFinalizeProcessor implements
     MessageProcessorInterface,
@@ -27,7 +30,8 @@ class ProductFallbackFinalizeProcessor implements
 
     public function __construct(
         private ProductFallbackUpdateManager $updateManager,
-        private ProductFallbackUpdateNotificationAlertProvider $alertProvider
+        private ProductFallbackUpdateNotificationAlertProvider $alertProvider,
+        private EventDispatcherInterface $eventDispatcher
     ) {
         $this->logger = new NullLogger();
     }
@@ -46,6 +50,14 @@ class ProductFallbackFinalizeProcessor implements
                 return self::ACK;
             }
 
+            // Plain queries fire no Doctrine listener, and this path runs after the platform update has already
+            // reindexed. No field group is set: the fallback fields are extensible, so a scoped request would
+            // silently miss a field added later.
+            $this->eventDispatcher->dispatch(
+                new ReindexationRequestEvent([Product::class]),
+                ReindexationRequestEvent::EVENT_NAME
+            );
+
             $this->alertProvider->resolveCommandReminders();
 
             $this->logger->notice('Finished fixing product entity field fallback values');
@@ -54,9 +66,10 @@ class ProductFallbackFinalizeProcessor implements
         } catch (\Throwable $exception) {
             $this->logger->error(
                 'Failed to finalize product fallback updates. '
-                . 'The processor was unable to resolve notification alerts '
+                . 'The processor was unable to request the reindexation or to resolve notification alerts '
                 . 'after completing the update of product fallback fields. '
-                . 'The notification alert may remain active in the system until manually resolved. '
+                . 'The storefront index may stay outdated and the notification alert may remain active '
+                . 'in the system until manually resolved. '
                 . 'To retry, run the command: bin/console oro:platform:post-upgrade-tasks --task=product_fallback',
                 ['exception' => $exception]
             );

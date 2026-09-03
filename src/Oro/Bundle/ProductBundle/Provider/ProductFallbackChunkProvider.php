@@ -25,6 +25,14 @@ class ProductFallbackChunkProvider
     }
 
     /**
+     * @return array<string, string[]> fallback id => field names
+     */
+    public function getFieldsByFallbackId(): array
+    {
+        return $this->fieldProvider->getFieldsByFallbackId();
+    }
+
+    /**
      * @return iterable<int[]>
      */
     public function getProductIdChunks(int $chunkSize): iterable
