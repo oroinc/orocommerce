@@ -18,6 +18,13 @@ features:
             - 'Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote'
             - 'Extend\Entity\EV_Rfp_Customer_Status'
             - 'Extend\Entity\EV_Rfp_Internal_Status'
+        datagrids:
+            - 'base-rfq-grid'
+            - 'customer-user-view-rfq-grid'
+            - 'customer-view-rfq-grid'
+            - 'rfp-request-additional-notes-grid'
+            - 'rfp-requests-for-context-grid'
+            - 'rfp-requests-grid'
         api_resources:
             - 'Oro\Bundle\RFPBundle\Entity\Request'
             - 'Oro\Bundle\RFPBundle\Entity\RequestProduct'
@@ -43,6 +50,10 @@ features:
             - 'oro_rfp_frontend_request_a_quote'
             - 'oro_rfp_frontend_request_create'
             - 'oro_rfp_frontend_request_edit'
+        datagrids:
+            - 'frontend-customer-dashboard-requests-for-quote-grid'
+            - 'frontend-request-line-items-grid'
+            - 'frontend-requests-grid'
         routes:
             - 'oro_rfp_frontend_request_view'
             - 'oro_rfp_frontend_request_index'

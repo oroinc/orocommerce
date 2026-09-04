@@ -11,5 +11,7 @@ features:
             - 'oro_website_search_term_index'
         entities:
             - 'Oro\Bundle\WebsiteSearchTermBundle\Entity\SearchTerm'
+        datagrids:
+            - 'website-search-terms'
         navigation_items:
             - 'application_menu.marketing_tab.oro_website_search_tab.oro_website_search_search_term'

@@ -10,6 +10,8 @@ features:
         toggle: oro_catalog.all_products_page_enabled
         routes:
             - oro_catalog_frontend_product_allproducts
+        datagrids:
+            - frontend-catalog-allproducts-grid
 
     manage_master_catalog:
         label: oro.catalog.feature.master_catalog.manage.label

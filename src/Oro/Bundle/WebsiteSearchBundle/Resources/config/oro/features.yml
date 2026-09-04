@@ -11,6 +11,9 @@ features:
         entities:
             - 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory'
             - 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport'
+        datagrids:
+            - 'oro-website-search-result-history-grid'
+            - 'website-search-results-report'
         api_resources:
             - 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory'
             - 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport'
