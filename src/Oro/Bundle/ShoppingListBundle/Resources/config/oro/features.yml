@@ -54,3 +54,7 @@ features:
         description: oro.shoppinglist.feature.saved_for_later.description
         toggle: oro_shopping_list.saved_for_later_enabled
         strategy: affirmative
+        datagrids:
+            - frontend-customer-user-shopping-list-saved-for-later-edit-grid
+            - frontend-customer-user-shopping-list-saved-for-later-grid
+            - shopping-list-saved-for-later-line-items-grid
