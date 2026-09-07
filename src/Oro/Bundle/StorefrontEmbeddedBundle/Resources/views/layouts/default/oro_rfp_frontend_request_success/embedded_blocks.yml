@@ -1,0 +1,16 @@
+layout:
+    conditions: 'context["embedded"]'
+    actions:
+        - '@add':
+            id: embedded_rfp_request_success
+            parentId: page_main_content
+            blockType: container
+
+        - '@setOption':
+            id: page_content
+            optionName: vars.sidebarExpanded
+            optionValue: false
+
+        - '@move':
+            id: page_content
+            parentId: embedded_rfp_request_success

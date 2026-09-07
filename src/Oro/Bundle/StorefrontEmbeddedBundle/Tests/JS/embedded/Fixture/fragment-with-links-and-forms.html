@@ -1,0 +1,28 @@
+<div class="fragment-root">
+    <a class="internal-link" href="/customer/order/view/44">Order</a>
+    <a class="download-link" href="/customer/order/pdf-document/44/download" download>Download</a>
+    <a class="blank-target-link" href="/customer/order/view/44" target="_blank">Order</a>
+    <a class="self-target-link" href="/customer/order/view/44" target="_self">Order</a>
+    <a class="external-link" href="http://other.example/pricing">Pricing</a>
+    <a class="hash-link" href="#">Toggle</a>
+    <a class="noscript" href="/customer/order/view/44">Order</a>
+    <a class="data-href-link" href="" data-href="/customer/order/view/44">Order</a>
+
+    <form class="get-form" action="/customer/order/" method="get">
+        <input name="search" value="lamp">
+    </form>
+
+    <form class="post-form" action="/customer/rfp/create" method="post">
+        <input name="poNumber" value="42">
+    </form>
+
+    <form class="form-without-action" method="get">
+        <input name="search" value="lamp">
+    </form>
+
+    <form class="prevent-submit-form" action="/customer/order/" method="get" data-prevent-submit></form>
+
+    <form class="nohash-form" action="/customer/order/" method="get" data-nohash="true"></form>
+
+    <form class="external-post-form" action="http://other.example/pay" method="post"></form>
+</div>

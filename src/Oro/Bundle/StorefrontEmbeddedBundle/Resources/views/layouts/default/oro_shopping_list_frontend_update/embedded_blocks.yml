@@ -1,0 +1,15 @@
+layout:
+    conditions: 'context["embedded"]'
+    actions:
+        - '@add':
+            id: embedded_shopping_list
+            parentId: page_content
+            blockType: container
+
+        - '@move':
+            id: container
+            parentId: embedded_shopping_list
+
+        - '@move':
+            id: no_shopping_lists
+            parentId: embedded_shopping_list

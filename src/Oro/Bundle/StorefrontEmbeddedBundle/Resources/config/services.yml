@@ -1,0 +1,87 @@
+services:
+    Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker:
+        arguments:
+            - '@request_stack'
+
+    Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedRequestFileUrlProvider:
+        decorates: oro_attachment.provider.file_url
+        decoration_priority: -300
+        arguments:
+            - '@.inner'
+            - '@Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker'
+
+    Oro\Bundle\StorefrontEmbeddedBundle\Twig\EmbeddedRequestExtension:
+        arguments:
+            - '@Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker'
+        tags:
+            - { name: twig.extension }
+
+    Oro\Bundle\StorefrontEmbeddedBundle\Asset\EmbeddedRequestAssetPackages:
+        decorates: assets.packages
+        decoration_priority: 100
+        arguments:
+            - '@.inner'
+            - '@request_stack'
+            - '@Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker'
+
+    Oro\Bundle\StorefrontEmbeddedBundle\EventListener\EmbeddedRequestVaryListener:
+        arguments:
+            - '@oro_frontend.request.frontend_helper'
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
+    Oro\Bundle\StorefrontEmbeddedBundle\Tools\EmbeddedRequestUrlHelper:
+        decorates: oro_ui.tools.url_helper
+        arguments:
+            - '@.inner'
+            - '@Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker'
+
+    Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedThemeAssetsProvider:
+        arguments:
+            - '@oro_website.website.provider'
+            - '@oro_theme.provider.theme_configuration'
+            - '@oro_config.global'
+            - '%kernel.project_dir%/public'
+
+    Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedRuntimeBootProvider:
+        arguments:
+            - '@oro_layout.data_provider.theme'
+            - '@oro_layout.current_theme_provider'
+            - '@router'
+            - '@assets.packages'
+            - '@Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker'
+            - '@oro_asset.subresource_integrity_provider'
+            - '@oro_featuretoggle.checker.feature_checker'
+            - '%oro_storefront_embedded.proxied_routes%'
+            - '%oro_storefront_embedded.file_routes%'
+
+    Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedRequestImagineUrlProvider:
+        decorates: oro_attachment.imagine.provider.url
+        decoration_priority: -200
+        arguments:
+            - '@.inner'
+            - '@Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker'
+
+    Oro\Bundle\StorefrontEmbeddedBundle\Layout\Extension\EmbeddedContextConfigurator:
+        arguments:
+            - '@request_stack'
+            - '%oro_storefront_embedded.blocks%'
+        tags:
+            - { name: layout.context_configurator }
+
+    Oro\Bundle\StorefrontEmbeddedBundle\Extension\EmbeddedRequestCurrentLocalizationExtension:
+        arguments:
+            - '@request_stack'
+            - '@Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker'
+            - '@oro_locale.manager.localization'
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_locale.extension.current_localization }
+
+    Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedRequestCurrentCurrencyProvider:
+        arguments:
+            - '@request_stack'
+            - '@Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker'
+            - '@oro_pricing.user_currency_manager'
+        tags:
+            - { name: oro_pricing.current_currency_provider }

@@ -16,10 +16,13 @@
         }
     }
 
+    &.sticky {
+        background-color: $product-action-aria-sticky-mode-background-color;
+    }
+
     &.in-sticky {
         display: $product-action-aria-sticky-mode-display;
         z-index: $product-action-aria-sticky-mode-z-index;
-        background-color: $product-action-aria-sticky-mode-background-color;
 
         .product-action {
             display: block;

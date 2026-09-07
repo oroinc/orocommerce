@@ -1,0 +1,10 @@
+placeholders:
+    placeholders:
+        js_modules_config:
+            items:
+                embedded_js_modules_config:
+                    order: 300
+
+    items:
+        embedded_js_modules_config:
+            template: '@@OroStorefrontEmbedded/embedded_js_modules_config.html.twig'

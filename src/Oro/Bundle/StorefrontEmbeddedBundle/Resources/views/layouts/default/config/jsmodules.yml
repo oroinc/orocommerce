@@ -1,0 +1,5 @@
+entry:
+    embedded_app:
+        - orostorefrontembedded/js/embedded-app
+configs:
+    orostorefrontembedded/js/embedded/embedded-fragment-view: {}

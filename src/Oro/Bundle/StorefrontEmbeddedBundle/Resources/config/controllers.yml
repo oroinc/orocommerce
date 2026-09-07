@@ -1,0 +1,31 @@
+services:
+    _defaults:
+        public: true
+
+    Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend\EmbeddedFragmentController:
+        arguments:
+            $classAuthorizationChecker: '@oro_security.class_authorization_checker'
+            $controllerClassProvider: '@oro_ui.controller_class_provider'
+            $runtimeBootProvider: '@Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedRuntimeBootProvider'
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend\EmbeddedSessionController:
+        arguments:
+            - '@Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface'
+            - '@oro_oauth2_server.league.authorization_validator'
+            - '@oro_oauth2_server.client_manager'
+            - '@oro_customer.security.provider'
+            - '@oro_customer.security.login_manager'
+            - '@security.token_storage'
+            - '@oro_customer.authentication.customer_visitor_cookie_factory'
+        tags:
+            - { name: controller.service_arguments }
+
+    Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend\EmbeddedThemeAssetsController:
+        arguments:
+            - '@Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedThemeAssetsProvider'
+        tags:
+            - { name: controller.service_arguments }

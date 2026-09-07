@@ -1,0 +1,13 @@
+oro_storefront_embedded:
+    file_routes:
+        any_block:
+            - oro_frontend_attachment_get_file
+            - oro_frontend_pdf_generator_pdf_document_file
+        embedded_order_view:
+            - oro_order_frontend_pdf_document_download
+
+    proxied_routes:
+        embedded_shopping_list:
+            - oro_pricing_frontend_price_by_customer
+        embedded_shopping_list_view:
+            - oro_pricing_frontend_price_by_customer
