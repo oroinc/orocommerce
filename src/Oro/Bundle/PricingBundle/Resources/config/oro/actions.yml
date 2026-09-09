@@ -190,6 +190,10 @@ operations:
         order: 10
         button_options:
             icon: fa-files-o
+        preconditions:
+            '@and':
+                - '@not_blank': $.data
+                - '@acl_granted': ['VIEW', $.data]
         actions:
             - '@format_string':
                 attribute: $.newName
