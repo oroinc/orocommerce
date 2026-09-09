@@ -131,6 +131,7 @@ services:
            - '@oro_config.manager'
            - '@doctrine'
            - '@oro_security.acl_helper'
+           - '@oro_product.product.manager'
        calls:
            - setNotAllowedProductTypes:
                -
