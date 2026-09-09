@@ -132,6 +132,7 @@ services:
            - '@doctrine'
            - '@oro_security.acl_helper'
        calls:
+           - [ setProductManager, [ '@oro_product.product.manager' ] ]
            - setNotAllowedProductTypes:
                -
                    - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
