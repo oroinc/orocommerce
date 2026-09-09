@@ -317,7 +317,7 @@ api:
                                 shortDescription: shortDescriptions_LOCALIZATION_ID
                                 productType: type
                                 isVariant: is_variant
-                                inventoryStatus: inventory_status
+                                inventoryStatus: inv_status
                                 minimalPrice: minimal_price.CPL_ID_CURRENCY
                                 minimalPrice_(?<UNIT>\w+): minimal_price.CPL_ID_CURRENCY_{UNIT}
                                 product: system_entity_id
@@ -337,7 +337,7 @@ api:
                                 shortDescription: shortDescriptions_LOCALIZATION_ID
                                 productType: type
                                 isVariant: is_variant
-                                inventoryStatus: inventory_status
+                                inventoryStatus: inv_status
                                 minimalPrice: minimal_price.CPL_ID_CURRENCY
                                 minimalPrice_(?<UNIT>\w+): minimal_price.CPL_ID_CURRENCY_{UNIT}
                                 product: system_entity_id

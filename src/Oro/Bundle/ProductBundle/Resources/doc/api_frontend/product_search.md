@@ -101,7 +101,7 @@ Operators for numeric and date values:
 The list of fields that can be used in the search query:
 
 **allText**, **id**, **sku**, **skuUppercase**, **name**, **shortDescription**, **productType**, **isVariant**, **newArrival**,
-**inventory_status**, **minimalPrice**, **minimalPrice_{unit}**, **orderedAt**, **product**, **productFamily**, **category**,
+**inventoryStatus**, **minimalPrice**, **minimalPrice_{unit}**, **orderedAt**, **product**, **productFamily**, **category**,
 **productCollection**, **brand**.
 
 The **allText** is a particular field that can be used to do an overall full-text search. The value of this field usually
@@ -133,7 +133,7 @@ uppercased first character, e.g., the result name for `productType count` will b
 The list of fields for which the aggregated data can be requested:
 
 **id**, **sku**, **skuUppercase**, **name**, **shortDescription**, **productType**, **isVariant**, **newArrival**,
-**inventory_status**, **minimalPrice**, **minimalPrice_{unit}**, **orderedAt**, **product**, **productFamily**, **category**,
+**inventoryStatus**, **minimalPrice**, **minimalPrice_{unit}**, **orderedAt**, **product**, **productFamily**, **category**,
 **productCollection**, **brand**.
 
 Also, any filterable product attribute can be used.

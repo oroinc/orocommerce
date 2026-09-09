@@ -197,6 +197,30 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
         );
     }
 
+    public function testCountByInventoryStatus(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            [
+                'filter' => ['aggregations' => 'inventoryStatus count'],
+                'fields' => ['productsearch' => 'sku']
+            ]
+        );
+        $this->assertResponseContains(
+            [
+                'meta' => [
+                    'aggregatedData' => [
+                        'inventoryStatusCount' => [
+                            ['value' => 'in_stock', 'count' => 5],
+                            ['value' => 'out_of_stock', 'count' => 1]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
     public function testCountByInteger()
     {
         $response = $this->cget(
