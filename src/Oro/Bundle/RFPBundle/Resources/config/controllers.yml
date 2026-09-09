@@ -20,3 +20,4 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_rfp.provider.product_availability, key: Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider }
