@@ -33,6 +33,10 @@ operations:
         order: 10
         button_options:
             icon: fa-files-o
+        preconditions:
+            '@and':
+                - '@not_blank': $.data
+                - '@acl_granted': ['VIEW', $.data]
         actions:
             - '@run_action_group':
                 results:
@@ -250,6 +254,9 @@ action_groups:
         parameters:
             promotion:
                 type: 'Oro\Bundle\PromotionBundle\Entity\Promotion'
+        acl_resource: oro_promotion_create
+        conditions:
+            '@acl_granted': ['VIEW', $.promotion]
         actions:
             - '@run_action_group':
                 action_group: oro_promotion_duplicate_fields

@@ -272,7 +272,8 @@ class OrderController extends AbstractController implements FeatureCheckerAwareI
     #[AclAncestor('oro_order_view')]
     public function reorderAction(Order $oldOrder, Request $request): array|RedirectResponse
     {
-        if (!$this->isGranted('oro_order_create') || !$oldOrder->getSubOrders()->isEmpty()) {
+        if (!$this->isGranted('VIEW', $oldOrder) || !$this->isGranted('oro_order_create')
+            || !$oldOrder->getSubOrders()->isEmpty()) {
             throw $this->createAccessDeniedException();
         }
 
