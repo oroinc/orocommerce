@@ -10,6 +10,10 @@ operations:
         order: 10
         button_options:
             icon: fa-files-o
+        preconditions:
+            '@and':
+                - '@not_blank': $.data
+                - '@acl_granted': ['VIEW', $.data]
         actions:
             - '@run_action_group':
                 results:
@@ -131,6 +135,8 @@ action_groups:
             data:
                 type: Oro\Bundle\ProductBundle\Entity\Product
         acl_resource: oro_product_create
+        conditions:
+            '@acl_granted': ['VIEW', $.data]
         actions:
             - '@call_service_method':
                 service: oro_product.service.duplicator
