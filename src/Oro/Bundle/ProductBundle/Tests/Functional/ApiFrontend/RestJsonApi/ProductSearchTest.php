@@ -443,6 +443,20 @@ final class ProductSearchTest extends WebCatalogTreeTestCase
         );
     }
 
+    public function testFilterByInventoryStatus(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'productsearch'],
+            ['filter' => ['searchQuery' => 'inventoryStatus = "out_of_stock"']]
+        );
+
+        $this->assertResponseContains(
+            ['data' => [['type' => 'productsearch', 'id' => '<toString(@product3->id)>']]],
+            $response,
+            true
+        );
+    }
+
     public function testFilterBySeveralSkusWithInOperator(): void
     {
         $response = $this->cget(
