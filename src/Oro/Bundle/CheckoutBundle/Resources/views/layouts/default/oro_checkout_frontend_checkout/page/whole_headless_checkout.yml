@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/simplified_header.html.twig'
+            themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/headless/checkout.html.twig'
 
         - '@remove':
             id: top_nav_container
@@ -32,7 +32,7 @@ layout:
                 checkout_simplified_header_back_link:
                     blockType: link
                     options:
-                        path: &checkout_simplified_header_return_url '#'
+                        path: &checkout_simplified_header_return_url 'http://localhost:3000'
                         text: oro.checkout.simplified_header.back_to_shopping.label
                 checkout_simplified_header_secure:
                     blockType: block
@@ -47,10 +47,16 @@ layout:
             optionName: vars.returnUrl
             optionValue: *checkout_simplified_header_return_url
 
+        -  '@appendOption':
+               id: success_order
+               optionName: vars.returnUrl
+               optionValue: *checkout_simplified_header_return_url
+
         - '@setOption':
             id: logo
             optionName: src
             optionValue: '=data["asset"].getUrl("bundles/orocheckout/default/images/logo/demob2b-logo.svg")'
+
         - '@setOption':
             id: logo
             optionName: vars.logo_small
