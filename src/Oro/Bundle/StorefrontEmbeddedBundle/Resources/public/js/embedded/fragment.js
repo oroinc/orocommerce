@@ -5,6 +5,7 @@ import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
 import EmbeddedFragmentView from './embedded-fragment-view';
 import {setActiveFragment, clearActiveFragment, getActiveFragment} from './active-fragment';
 import {createMessagesContainer, showFlashMessages, showMessagesIn} from './flash-messages';
+import {unlockHostScroll} from './host-scroll';
 import {
     BLOCK_ATTRIBUTE,
     PARAMS_ATTRIBUTE,
@@ -45,6 +46,10 @@ export function createFragment(containerEl, navigate = null) {
 
         async start() {
             const components = await this.manager.init();
+
+            if (this.disposed) {
+                return components;
+            }
 
             this.initControls();
 
@@ -90,15 +95,23 @@ export function createFragment(containerEl, navigate = null) {
         },
 
         dispose() {
+            if (this.disposed) {
+                return;
+            }
+
             this.disposed = true;
             this.manager.dispose();
             this.disposeControls();
             interactions.dispose();
             this.loadingMask.dispose();
             interactionTracking.abort();
-            overlayRoot.remove();
             clearActiveFragment(this);
             showMessagesIn(getActiveFragment()?.messagesContainer);
+            overlayRoot.remove();
+
+            if (!getActiveFragment()) {
+                unlockHostScroll();
+            }
         }
     };
 

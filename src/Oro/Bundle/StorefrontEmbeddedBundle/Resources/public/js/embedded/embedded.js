@@ -12,6 +12,7 @@ import {installDatepickerEmbeddedExtend} from './patches/datepicker-embedded-ext
 import {installFullscreenPopupEmbeddedExtend} from './patches/fullscreen-popup-embedded-extend';
 import {installLoadingMaskEmbeddedExtend} from './patches/loading-mask-embedded-extend';
 import {installPrintPageEmbeddedExtend} from './patches/print-page-embedded-extend';
+import {installBodyScrollLockerEmbeddedExtend} from './patches/body-scroll-locker-embedded-extend';
 import {registerEmbeddedHandlers} from './embedded-handlers';
 import {getPublicPath} from './host';
 
@@ -54,6 +55,7 @@ async function boot() {
 }
 
 function patchRuntimeBeforeAppModules() {
+    installBodyScrollLockerEmbeddedExtend();
     installRequestProxy();
     installViewportEmbeddedExtend();
 }

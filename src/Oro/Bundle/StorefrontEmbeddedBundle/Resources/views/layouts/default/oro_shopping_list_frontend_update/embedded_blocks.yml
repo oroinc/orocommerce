@@ -13,3 +13,8 @@ layout:
         - '@move':
             id: no_shopping_lists
             parentId: embedded_shopping_list
+
+        - '@move':
+            id: shoppinglist_collection
+            parentId: embedded_shopping_list
+            prepend: false

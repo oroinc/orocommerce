@@ -1,0 +1,7 @@
+layout:
+    conditions: 'context.has("embedded") && context["embedded"]'
+    actions:
+        - '@setOption':
+            id: customer_dashboard_datagrid_collapse_body
+            optionName: attr.data-state-id
+            optionValue: '=context["content_widget"].getName()'

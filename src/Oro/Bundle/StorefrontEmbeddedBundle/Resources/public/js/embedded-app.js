@@ -4,15 +4,29 @@ import {configureRuntime} from './embedded/host';
 import {announceFragmentRendered} from './embedded/render-completion';
 import {showFlashMessages} from './embedded/flash-messages';
 
+function isAborted({signal}) {
+    return signal?.aborted === true;
+}
+
 async function init(containerEl, options = {}) {
     configureRuntime(options);
 
     await bootEmbeddedApp();
 
+    if (isAborted(options)) {
+        return {components: [], dispose: () => {}};
+    }
+
     const fragment = createFragment(containerEl, options.navigate);
 
     try {
         const components = await fragment.start();
+
+        if (isAborted(options)) {
+            fragment.dispose();
+
+            return {components, dispose: () => fragment.dispose()};
+        }
 
         await announceFragmentRendered(components);
 

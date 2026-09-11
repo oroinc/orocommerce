@@ -399,7 +399,7 @@ const ProductAddToShoppingListView = BaseView.extend(_.extend({}, ElementsHelper
     _setEditLineItem: function(lineItemId, setLastLineItem) {
         this.editLineItem = null;
 
-        if (!this.model || !this.shoppingListCollection.length) {
+        if (!this.model || !this.shoppingListCollection?.length) {
             return;
         }
 
@@ -492,7 +492,7 @@ const ProductAddToShoppingListView = BaseView.extend(_.extend({}, ElementsHelper
 
     _onUnitChanged: function() {
         this._setEditLineItem();
-        if (this.rendered) {
+        if (this.rendered && this.shoppingListCollection) {
             this._onCollectionChange();
         }
     },

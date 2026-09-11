@@ -10,6 +10,7 @@ export const EMBEDDED_MARKER_ATTRIBUTE = 'data-oro-embedded-fragment';
 export const RELOCATION_TARGET_ATTRIBUTE = 'data-oro-embedded-fragment-relocation-target';
 
 export const OVERLAY_ROOT_CLASS = 'oro-embedded-fragment-overlay-root';
+export const SCROLL_LOCK_CLASS = 'oro-embedded-fragment-scroll-locked';
 export const MESSAGES_CONTAINER_CLASS = 'notification-flash-container';
 
 export const BACKDROP_Z_INDEX = 1040;

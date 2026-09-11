@@ -137,6 +137,29 @@ describe('orostorefrontembedded/js/embedded/embedded-handlers', () => {
 
             expect(fragment.navigate).not.toHaveBeenCalled();
         });
+
+        it('reloads the active fragment when the url is the page already open', () => {
+            mediator.execute('redirectTo', {url: window.location.pathname + window.location.search});
+
+            expect(fragment.reload).toHaveBeenCalled();
+            expect(fragment.navigate).not.toHaveBeenCalled();
+        });
+
+        it('reloads the active fragment for an absolute Oro url of the page already open', () => {
+            mediator.execute('redirectTo', {url: ORO + window.location.pathname + window.location.search});
+
+            expect(fragment.reload).toHaveBeenCalled();
+            expect(fragment.navigate).not.toHaveBeenCalled();
+        });
+
+        it('opens the page already open in a new tab, instead of reloading the fragment', () => {
+            const here = window.location.pathname + window.location.search;
+
+            mediator.execute('redirectTo', {url: here}, {target: '_blank'});
+
+            expect(fragment.navigate).toHaveBeenCalledWith(here, {newTab: true});
+            expect(fragment.reload).not.toHaveBeenCalled();
+        });
     });
 
     it('reloads the active fragment', () => {
