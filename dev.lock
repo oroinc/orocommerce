@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1301e2e4589a09cda72e08fd53be97cb",
+    "content-hash": "1ee6ce92102b23be2402e23b3be82e05",
     "packages": [
         {
             "name": "ass/xmlsecurity",
@@ -5450,7 +5450,7 @@
             "dist": {
                 "type": "path",
                 "url": "../platform",
-                "reference": "35a440a8cf4068b35c56d653f5c686735bb67506"
+                "reference": "bb180eb214acb5b9d5bce4b4dae300dddaa7a6e9"
             },
             "require": {
                 "ass/xmlsecurity": "1.1.1",
@@ -5592,7 +5592,7 @@
                 "phpmd/phpmd": "~2.15.0",
                 "phpunit/phpunit": "~9.6.33",
                 "sebastian/phpcpd": "~6.0.3",
-                "squizlabs/php_codesniffer": "~3.10.1",
+                "squizlabs/php_codesniffer": "~3.13.6",
                 "symfony/browser-kit": "~6.4.0",
                 "symfony/css-selector": "~6.4.0",
                 "symfony/debug-bundle": "~6.4.0",
@@ -17369,16 +17369,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.10.3",
+            "version": "3.13.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCSStandards/PHP_CodeSniffer.git",
-                "reference": "62d32998e820bddc40f99f8251958aed187a5c9c"
+                "reference": "4c378e1a528ea066890fc2397cbdd2f94eb2fc91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/62d32998e820bddc40f99f8251958aed187a5c9c",
-                "reference": "62d32998e820bddc40f99f8251958aed187a5c9c",
+                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/4c378e1a528ea066890fc2397cbdd2f94eb2fc91",
+                "reference": "4c378e1a528ea066890fc2397cbdd2f94eb2fc91",
                 "shasum": ""
             },
             "require": {
@@ -17395,11 +17395,6 @@
                 "bin/phpcs"
             ],
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.x-dev"
-                }
-            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
@@ -17443,9 +17438,13 @@
                 {
                     "url": "https://opencollective.com/php_codesniffer",
                     "type": "open_collective"
+                },
+                {
+                    "url": "https://thanks.dev/u/gh/phpcsstandards",
+                    "type": "thanks_dev"
                 }
             ],
-            "time": "2024-09-18T10:38:58+00:00"
+            "time": "2026-08-06T00:17:32+00:00"
         },
         {
             "name": "symfony/browser-kit",
@@ -18140,12 +18139,12 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "oro/platform": 20,
-        "oro/platform-serialised-fields": 20,
         "oro/calendar-bundle": 20,
-        "oro/marketing": 20,
+        "oro/conversation": 20,
         "oro/customer-portal": 20,
-        "oro/conversation": 20
+        "oro/marketing": 20,
+        "oro/platform": 20,
+        "oro/platform-serialised-fields": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
@@ -18153,6 +18152,6 @@
         "ext-xmlwriter": "*",
         "ext-zlib": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }
