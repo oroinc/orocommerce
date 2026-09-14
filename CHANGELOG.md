@@ -24,6 +24,26 @@ The current file describes significant changes in the code that may affect the u
 - [1.2.0](#120-2017-06-01)
 - [1.1.0](#110-2017-03-31)
 
+## 7.0.5
+
+### Added
+
+#### RedirectBundle
+* Added `\Oro\Bundle\RedirectBundle\Generator\BatchCanonicalUrlGeneratorInterface` and its implementation `\Oro\Bundle\RedirectBundle\Generator\BatchCanonicalUrlGenerator` (service `oro_redirect.generator.batch_canonical_url`) — resolves canonical URLs for a set of entities of one sluggable class in a number of queries that does not depend on the number of entities.
+* Added `\Oro\Bundle\RedirectBundle\Api\Processor\ComputeCanonicalUrlField` — computes the `canonicalUrl` storefront API field.
+
+#### WebCatalogBundle
+* Added `\Oro\Bundle\WebCatalogBundle\Event\RestrictContentVariantByEntitiesEvent` (`oro_web_catalog.restrict_content_variant_by_entities`) — the set-based counterpart of `\Oro\Bundle\WebCatalogBundle\Event\RestrictContentVariantByEntityEvent`. **A customization that listens only on `oro_web_catalog.restrict_content_variant_by_entity` is not consulted by the batched resolution and stops applying to the canonical URLs the storefront API returns.**
+* Added `\Oro\Bundle\WebCatalogBundle\Generator\BatchCanonicalUrlGenerator` (service `oro_web_catalog.generator.batch_canonical_url_generator`) — decorates `oro_redirect.generator.batch_canonical_url` with the web catalog based canonical URLs.
+
+#### SEOBundle
+* Added the `canonicalUrl` field to the `products`, `mastercatalogcategories` and `landingpages` storefront API resources. The value is an absolute URL, unlike the relative `url` field beside it. The field is returned by default, so an existing client sees a new attribute in the response, and resolving it costs one additional query unless the client narrows the response with `fields[]`.
+
+### Changed
+
+#### RedirectBundle
+* Changed `\Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator::getLocalization()` from private to public.
+
 ## 7.0.4
 
 ### Added

@@ -1006,4 +1006,19 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
+
+    public function testGetCanonicalUrl(): void
+    {
+        $response = $this->get(['entity' => 'products', 'id' => '<toString(@product1->id)>']);
+
+        // the storefront generator is the reference, the API must not advertise a different canonical URL
+        $expectedUrl = self::getContainer()->get('oro_redirect.generator.canonical_url')
+            ->getUrl($this->getReference('product1'));
+        self::assertNotEmpty($expectedUrl);
+
+        $this->assertResponseContains(
+            ['data' => ['attributes' => ['canonicalUrl' => $expectedUrl]]],
+            $response
+        );
+    }
 }
