@@ -213,7 +213,7 @@ datagrids:
                     id: relatedEntityId
         actions:
             view:
-                acl_resource: oro_customer_group_view
+                acl_resource: oro_customer_customer_group_view
 
     base-price-list-select-relations-grid:
         acl_resource:       oro_pricing_price_list_update
