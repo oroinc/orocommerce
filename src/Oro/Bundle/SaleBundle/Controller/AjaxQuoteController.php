@@ -36,7 +36,7 @@ class AjaxQuoteController extends AbstractController
      * @return JsonResponse
      */
     #[Route(path: '/related-data', name: 'oro_quote_related_data', methods: ['GET'])]
-    #[AclAncestor('oro_quote_update')]
+    #[AclAncestor('oro_sale_quote_update')]
     public function getRelatedDataAction()
     {
         $quote = new Quote();
@@ -80,7 +80,7 @@ class AjaxQuoteController extends AbstractController
      * @return JsonResponse
      */
     #[Route(path: '/entry-point/{id}', name: 'oro_quote_entry_point', defaults: ['id' => 0], methods: ['POST'])]
-    #[AclAncestor('oro_quote_update')]
+    #[AclAncestor('oro_sale_quote_update')]
     #[CsrfProtection()]
     public function entryPointAction(Request $request, ?Quote $quote = null)
     {

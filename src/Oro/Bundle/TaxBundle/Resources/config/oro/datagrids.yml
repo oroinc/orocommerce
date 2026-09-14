@@ -377,7 +377,7 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye
-                acl_resource:  oro_customer_group_view
+                acl_resource:  oro_customer_customer_group_view
                 rowAction:     true
 
     tax-customer-grid:

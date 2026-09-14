@@ -60,7 +60,7 @@ datagrids:
 
     inventory-grid:
         extended_entity_name: 'Oro\Bundle\InventoryBundle\Entity\InventoryLevel'
-        acl_resource: oro_product_inventory_view
+        acl_resource: oro_inventory_level_view
         source:
             type: orm
             query:
