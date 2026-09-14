@@ -188,6 +188,12 @@ services:
             - '@oro_website.resolver.website_system_url_resolver'
             - '@oro_locale.provider.current_localization'
 
+    oro_redirect.generator.batch_canonical_url:
+        class: Oro\Bundle\RedirectBundle\Generator\BatchCanonicalUrlGenerator
+        arguments:
+            - '@oro_redirect.generator.canonical_url'
+            - '@oro_entity.doctrine_helper'
+
     oro_redirect.canonical_url_configs.cache:
         parent: oro.cache.adapter.array
         tags:

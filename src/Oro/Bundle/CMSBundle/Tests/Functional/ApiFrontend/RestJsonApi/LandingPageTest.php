@@ -80,6 +80,33 @@ class LandingPageTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_landing_page.yml', $response);
     }
 
+    public function testCanonicalUrlIsNotReturnedWhenItIsNotRequested(): void
+    {
+        $response = $this->get(
+            ['entity' => 'landingpages', 'id' => '<toString(@page1->id)>'],
+            ['fields' => ['landingpages' => 'title']]
+        );
+
+        // the field is not in the response, so it was not computed and cost no query
+        $content = self::jsonToArray($response->getContent());
+        self::assertArrayNotHasKey('canonicalUrl', $content['data']['attributes']);
+    }
+
+    public function testGetCanonicalUrl(): void
+    {
+        $response = $this->get(['entity' => 'landingpages', 'id' => '<toString(@page1->id)>']);
+
+        // the storefront generator is the reference, the API must not advertise a different canonical URL
+        $expectedUrl = self::getContainer()->get('oro_redirect.generator.canonical_url')
+            ->getUrl($this->getReference('page1'));
+        self::assertNotEmpty($expectedUrl);
+
+        $this->assertResponseContains(
+            ['data' => ['attributes' => ['canonicalUrl' => $expectedUrl]]],
+            $response
+        );
+    }
+
     public function testGetForAnotherLocalization(): void
     {
         $this->getReferenceRepository()->setReference('current_localization', $this->getCurrentLocalization());

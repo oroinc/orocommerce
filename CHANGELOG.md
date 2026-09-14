@@ -96,6 +96,17 @@ The current file describes significant changes in the code that may affect the u
 #### SaleBundle
 * Added `\Oro\Bundle\SaleBundle\Api\Processor\UpdateQuoteProductProduct` to set non-free-form quote products by SKU when the product relation is not explicitly submitted.
 
+#### RedirectBundle
+* Added `\Oro\Bundle\RedirectBundle\Generator\BatchCanonicalUrlGeneratorInterface` and its implementation `\Oro\Bundle\RedirectBundle\Generator\BatchCanonicalUrlGenerator` (service `oro_redirect.generator.batch_canonical_url`) — resolves canonical URLs for a set of entities of one sluggable class in a number of queries that does not depend on the number of entities.
+* Added `\Oro\Bundle\RedirectBundle\Api\Processor\ComputeCanonicalUrlField` — computes the `canonicalUrl` storefront API field.
+
+#### WebCatalogBundle
+* Added `\Oro\Bundle\WebCatalogBundle\Event\RestrictContentVariantByEntitiesEvent` (`oro_web_catalog.restrict_content_variant_by_entities`) — the set-based counterpart of `\Oro\Bundle\WebCatalogBundle\Event\RestrictContentVariantByEntityEvent`. **A customization that listens only on `oro_web_catalog.restrict_content_variant_by_entity` is not consulted by the batched resolution and stops applying to the canonical URLs the storefront API returns.**
+* Added `\Oro\Bundle\WebCatalogBundle\Generator\BatchCanonicalUrlGenerator` (service `oro_web_catalog.generator.batch_canonical_url_generator`) — decorates `oro_redirect.generator.batch_canonical_url` with the web catalog based canonical URLs.
+
+#### SEOBundle
+* Added the `canonicalUrl` field to the `products`, `mastercatalogcategories` and `landingpages` storefront API resources. The value is an absolute URL, unlike the relative `url` field beside it.
+
 ### Changed
 
 #### CMSBundle
@@ -134,6 +145,9 @@ The current file describes significant changes in the code that may affect the u
 #### ShoppingListBundle
 * Updated the shopping list create order operation to use the `oro_shopping_list.operation.create_order_draft_from_shopping_list` service to create an order draft and redirect using the draft session uuid, instead of pre-filling the order form via the product data storage.
 * `\Oro\Bundle\ShoppingListBundle\Entity\ShoppingList` and `\Oro\Bundle\ShoppingListBundle\Entity\LineItem` now implement `\Oro\Component\DraftSession\Entity\EntityDraftAwareInterface` (via `\Oro\Component\DraftSession\Entity\NoopEntityDraftAwareTrait`) to support use as draft source entities in the shopping-list-to-order draft flow.
+
+#### RedirectBundle
+* Changed `\Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator::getLocalization()` from private to public.
 
 ### Removed
 

@@ -247,7 +247,7 @@ class CanonicalUrlGenerator
         return (bool)$this->getCachedConfigValue(Configuration::USE_LOCALIZED_CANONICAL);
     }
 
-    private function getLocalization(): ?Localization
+    public function getLocalization(): ?Localization
     {
         if ($this->isLocalizedCanonicalUrlsEnabled()) {
             return $this->localizationProvider->getCurrentLocalization();

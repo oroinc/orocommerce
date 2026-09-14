@@ -1900,6 +1900,7 @@ services:
         class: Oro\Bundle\ProductBundle\EventListener\RestrictContentVariantByProductEventListener
         tags:
             - { name: kernel.event_listener, event: oro_web_catalog.restrict_content_variant_by_entity, method: applyRestriction }
+            - { name: kernel.event_listener, event: oro_web_catalog.restrict_content_variant_by_entities, method: applyRestrictionForEntities }
 
     oro_product.event_listener.remove_product_image:
         class: Oro\Bundle\ProductBundle\EventListener\RemoveProductImageListener

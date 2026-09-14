@@ -229,6 +229,7 @@ services:
             - '@request_stack'
         tags:
             - { name: kernel.event_listener, event: oro_web_catalog.restrict_content_variant_by_entity, method: applyRestriction }
+            - { name: kernel.event_listener, event: oro_web_catalog.restrict_content_variant_by_entities, method: applyRestrictionForEntities }
 
     oro_catalog.event_listener.category_content_variant_index:
         class: 'Oro\Bundle\CatalogBundle\EventListener\CategoryContentVariantIndexListener'

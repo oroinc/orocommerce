@@ -1,4 +1,8 @@
 services:
+    oro_web_catalog.tests.alias.generator.batch_canonical_url:
+        alias: oro_redirect.generator.batch_canonical_url
+        public: true
+
     oro_web_catalog.tests.entity_name_resolver.data_loader:
         class: Oro\Bundle\WebCatalogBundle\Tests\Functional\Environment\TestEntityNameResolverDataLoader
         decorates: oro_entity.tests.entity_name_resolver.data_loader
