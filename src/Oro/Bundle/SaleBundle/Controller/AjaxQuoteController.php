@@ -30,7 +30,7 @@ class AjaxQuoteController extends AbstractController
      * Get order related data
      *
      * @Route("/related-data", name="oro_quote_related_data", methods={"GET"})
-     * @AclAncestor("oro_quote_update")
+     * @AclAncestor("oro_sale_quote_update")
      *
      * @return JsonResponse
      */
@@ -72,7 +72,7 @@ class AjaxQuoteController extends AbstractController
 
     /**
      * @Route("/entry-point/{id}", name="oro_quote_entry_point", defaults={"id" = 0}, methods={"POST"})
-     * @AclAncestor("oro_quote_update")
+     * @AclAncestor("oro_sale_quote_update")
      * @CsrfProtection()
      *
      * @param Request    $request
