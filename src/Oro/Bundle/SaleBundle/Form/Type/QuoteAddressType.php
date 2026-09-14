@@ -146,13 +146,11 @@ class QuoteAddressType extends AbstractType
                 continue;
             }
 
-            if (!$isManualEditGranted || !$isNewAddress) {
-                FormUtils::replaceFieldOptionsRecursive(
-                    $event->getForm(),
-                    $child->getName(),
-                    ['disabled' => true]
-                );
-            }
+            FormUtils::replaceFieldOptionsRecursive(
+                $event->getForm(),
+                $child->getName(),
+                ['disabled' => !$isManualEditGranted || !$isNewAddress]
+            );
         }
     }
 
