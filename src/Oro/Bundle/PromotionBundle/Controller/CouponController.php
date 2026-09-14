@@ -100,7 +100,7 @@ class CouponController extends AbstractController
 
     /**
      * @Route("/coupon-mass-edit-widget", name="oro_promotion_coupon_mass_edit_widget")
-     * @AclAncestor("oro_promotion_coupon_edit")
+     * @AclAncestor("oro_promotion_coupon_update")
      * @Template("@OroPromotion/Coupon/widget/mass_update.html.twig")
      *
      * @param Request $request
