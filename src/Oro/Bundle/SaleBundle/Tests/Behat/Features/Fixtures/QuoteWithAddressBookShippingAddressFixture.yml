@@ -1,0 +1,37 @@
+include:
+    - '@OroSaleBundle:QuoteProductFixture.yml'
+
+Oro\Bundle\SaleBundle\Entity\QuoteAddress:
+    quoteAddressBookShipping:
+        customerUserAddress: '@amandaAddress1'
+        country: '@united_states'
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quoteWithAddressBookShipping:
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@amanda'
+        poNumber: 'POAddrBook'
+        qid: 'QuoteAddrBook'
+        website: '@website1'
+        shippingAddress: '@quoteAddressBookShipping'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quoteProductAddrBook:
+        __calls:
+            - addQuoteProductOffer: [ '@quoteProductOfferAddrBook' ]
+        product: '@product1'
+        quote: '@quoteWithAddressBookShipping'
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    quoteProductPriceAddrBook:
+        value: 100
+        currency: USD
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quoteProductOfferAddrBook:
+        quote_product: '@quoteProductAddrBook'
+        product_unit: '@item'
+        price: '@quoteProductPriceAddrBook'
+        quantity: 10
+        allow_increments: true

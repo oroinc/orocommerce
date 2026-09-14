@@ -1,0 +1,10 @@
+services:
+    oro_seo.api.compute_canonical_url:
+        class: Oro\Bundle\RedirectBundle\Api\Processor\ComputeCanonicalUrlField
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_redirect.generator.batch_canonical_url'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ProductBundle\Entity\Product }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\CatalogBundle\Entity\Category }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\CMSBundle\Entity\Page }

@@ -12,6 +12,8 @@ features:
         entities:
             - Oro\Bundle\ConsentBundle\Entity\Consent
             - Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance
+        datagrids:
+            - consents-grid
         configuration:
             - oro_consent.enabled_consents
             - oro_consent.consent_contact_reason

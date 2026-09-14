@@ -8,6 +8,7 @@ use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler;
 use Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider;
 use Oro\Bundle\RFPBundle\Model\RequestManager;
+use Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\SecurityBundle\Util\SameSiteUrlHelper;
@@ -172,6 +173,12 @@ class RequestController extends AbstractController
         if (count($productLineItems) === 0) {
             return;
         }
+
+        $filteredProducts = $this->filterAllowedProductLineItems($filteredProducts);
+        if (count($filteredProducts) === 0) {
+            return;
+        }
+
         $this->container->get(RequestManager::class)
             ->addProductLineItemsToRequest($rfpRequest, $filteredProducts);
     }
@@ -187,6 +194,22 @@ class RequestController extends AbstractController
         }
     }
 
+    private function filterAllowedProductLineItems(array $productLineItems): array
+    {
+        $allowedProductIds = $this->container
+            ->get(ProductRFPAvailabilityProvider::class)
+            ->getAllowedProductIds(array_keys($productLineItems));
+
+        $filteredProductLineItems = [];
+        foreach ($productLineItems as $productId => $items) {
+            if (in_array($productId, $allowedProductIds, true)) {
+                $filteredProductLineItems[$productId] = $items;
+            }
+        }
+
+        return $filteredProductLineItems;
+    }
+
     #[\Override]
     public static function getSubscribedServices(): array
     {
@@ -200,6 +223,7 @@ class RequestController extends AbstractController
                 WebsiteManager::class,
                 RequestManager::class,
                 SameSiteUrlHelper::class,
+                ProductRFPAvailabilityProvider::class,
             ]
         );
     }

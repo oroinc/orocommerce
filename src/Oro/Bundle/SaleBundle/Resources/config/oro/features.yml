@@ -51,6 +51,10 @@ features:
             - oro_sale_quote_frontend_index
             - oro_sale_quote_frontend_choice
             - oro_sale_quote_frontend_subtotals
+        datagrids:
+            - base-frontend-quotes-line-items-grid
+            - frontend-quotes-grid
+            - frontend-quotes-line-items-grid
 
     guest_quote:
         label: oro.sale.feature.guest_quote.label
@@ -59,6 +63,8 @@ features:
         strategy: affirmative
         routes:
             - oro_sale_quote_frontend_view_guest
+        datagrids:
+            - guest-frontend-quotes-line-items-grid
         operations:
             - oro_sale_frontend_guest_quote_submit_to_order
 

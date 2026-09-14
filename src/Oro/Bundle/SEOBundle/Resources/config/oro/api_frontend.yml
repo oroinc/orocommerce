@@ -3,6 +3,9 @@ api:
         Oro\Bundle\CatalogBundle\Entity\Category:
             documentation_resource: '@OroSEOBundle/Resources/doc/api_frontend/category.md'
             fields:
+                canonicalUrl:
+                    data_type: string
+                    property_path: _
                 metaTitle:
                     data_type: localizedFallbackValue:metaTitles
                 metaDescription:
@@ -17,6 +20,9 @@ api:
         Oro\Bundle\ProductBundle\Entity\Product:
             documentation_resource: '@OroSEOBundle/Resources/doc/api_frontend/product.md'
             fields:
+                canonicalUrl:
+                    data_type: string
+                    property_path: _
                 metaTitle:
                     data_type: localizedFallbackValue:metaTitles
                 metaDescription:
@@ -45,6 +51,9 @@ api:
         Oro\Bundle\CMSBundle\Entity\Page:
             documentation_resource: '@OroSEOBundle/Resources/doc/api_frontend/page.md'
             fields:
+                canonicalUrl:
+                    data_type: string
+                    property_path: _
                 metaTitle:
                     data_type: localizedFallbackValue:metaTitles
                 metaDescription:

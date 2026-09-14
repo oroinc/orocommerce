@@ -427,7 +427,7 @@ services:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteProductPricesProvider'
         public: true
         arguments:
-            - '@oro_pricing.provider.product_price'
+            - '@oro_pricing.provider.product_price.unrestricted'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
             - '@oro_pricing.provider.product_line_item_product_price'
             - '@oro_pricing.user_currency_manager'
@@ -436,6 +436,7 @@ services:
         class: Oro\Bundle\SaleBundle\EventListener\QuoteProductTierPricesQuoteEventListener
         arguments:
             - '@oro_sale.provider.quote_product_prices'
+            - '@security.authorization_checker'
         tags:
             - { name: kernel.event_listener, event: oro_sale.quote, method: onQuoteEvent }
 

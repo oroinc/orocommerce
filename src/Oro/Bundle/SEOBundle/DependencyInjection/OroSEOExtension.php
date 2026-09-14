@@ -21,6 +21,7 @@ class OroSEOExtension extends Extension
         $loader->load('mq_topics.yml');
         $loader->load('commands.yml');
         $loader->load('block_types.yml');
+        $loader->load('services_api.yml');
         if (extension_loaded('zlib')) {
             $loader->load('sitemap_gzip.yml');
         }

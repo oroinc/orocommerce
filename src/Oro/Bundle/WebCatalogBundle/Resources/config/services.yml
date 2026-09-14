@@ -240,6 +240,15 @@ services:
         tags:
             - { name: oro_featuretogle.feature, feature: web_catalog_based_canonical_urls }
 
+    oro_web_catalog.generator.batch_canonical_url_generator:
+        class: Oro\Bundle\WebCatalogBundle\Generator\BatchCanonicalUrlGenerator
+        decorates: oro_redirect.generator.batch_canonical_url
+        arguments:
+            - '@.inner'
+            - '@oro_web_catalog.content_node_provider'
+        tags:
+            - { name: oro_featuretogle.feature, feature: web_catalog_based_canonical_urls }
+
     oro_web_catalog.generator.slug_generator:
         class: Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator
         arguments:

@@ -12,6 +12,7 @@ use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebCatalogBundle\Event\RestrictContentVariantByEntitiesEvent;
 use Oro\Bundle\WebCatalogBundle\Event\RestrictContentVariantByEntityEvent;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Oro\Component\Website\WebsiteInterface;
@@ -26,6 +27,7 @@ class ContentNodeProvider
     public const ENTITY_ALIAS_PLACEHOLDER = '_entity_alias_';
 
     private const SCOPE_TYPE = 'web_content';
+    private const string OWNER_ID_ALIAS = 'ownerId';
 
     private DoctrineHelper $doctrineHelper;
     private ScopeManager $scopeManager;
@@ -245,6 +247,62 @@ class ContentNodeProvider
             ->setMaxResults(1);
 
         return $relationQueryBuilder->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * Gets the identifier of the first content variant matching each of the given entities of one class.
+     *
+     * @param int[] $ids
+     *
+     * @return array [entity id => content variant id, ...] the entities without a variant are not returned
+     */
+    public function getFirstMatchingVariantIdsForEntities(
+        string $entityClass,
+        array $ids,
+        ?WebsiteInterface $website = null
+    ): array {
+        if (!$ids) {
+            return [];
+        }
+
+        $webCatalog = $this->webCatalogProvider->getWebCatalog($website);
+        if (!$webCatalog) {
+            return [];
+        }
+
+        $em = $this->getEntityManager();
+        $relationQueryBuilder = $this->getContentVariantQueryBuilder($em, $webCatalog);
+        // the node identifier is not needed here, a listener adds the owner identifier to the select
+        $relationQueryBuilder->select('variant.id AS variantId');
+
+        $event = new RestrictContentVariantByEntitiesEvent(
+            $relationQueryBuilder,
+            $entityClass,
+            $ids,
+            'variant',
+            self::OWNER_ID_ALIAS
+        );
+        $this->eventDispatcher->dispatch($event, RestrictContentVariantByEntitiesEvent::NAME);
+        if (!$event->isRestricted()) {
+            // no listener knows how a content variant points at the given entity class,
+            // the query builder is not restricted and would match all content variants of the web catalog
+            return [];
+        }
+
+        $relationQueryBuilder->leftJoin('variant.scopes', 'scopes', Join::WITH);
+        $this->scopeManager->getCriteria(self::SCOPE_TYPE)
+            ->applyToJoinWithPriority($relationQueryBuilder, 'scopes');
+
+        $config = $this->treeListener->getConfiguration($em, ContentNode::class);
+        $relationQueryBuilder->addOrderBy(QueryBuilderUtil::getField('node', $config['level']), 'ASC');
+
+        $variantIds = [];
+        foreach ($relationQueryBuilder->getQuery()->getArrayResult() as $row) {
+            // the rows are ordered by the scope priority and then by the node level, so the first row wins
+            $variantIds[$row[self::OWNER_ID_ALIAS]] ??= $row['variantId'];
+        }
+
+        return $variantIds;
     }
 
     /**

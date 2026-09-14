@@ -19,6 +19,11 @@ features:
             - oro_segment_edit_inside_promotion
         entities:
             - Oro\Bundle\PromotionBundle\Entity\Promotion
+        datagrids:
+            - promotion-for-coupons-select-grid
+            - promotion-grid
+            - promotion-products-collection-grid
+            - promotion-select-grid
         api_resources:
             - Oro\Bundle\PromotionBundle\Entity\Promotion
         navigation_items:
@@ -51,4 +56,3 @@ features:
             - Oro\Bundle\PromotionBundle\Entity\Coupon
         navigation_items:
             - application_menu.marketing_tab.promotions.coupon_list
-

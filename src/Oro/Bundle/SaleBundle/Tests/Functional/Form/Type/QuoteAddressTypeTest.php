@@ -27,6 +27,8 @@ use Symfony\Component\Form\FormInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ *
+ * @dbIsolationPerTest
  */
 final class QuoteAddressTypeTest extends WebTestCase
 {
@@ -269,6 +271,65 @@ final class QuoteAddressTypeTest extends WebTestCase
 
         /** @var FormInterface $child */
         foreach ($form->get('quoteAddress') as $child) {
+            self::assertFalse(
+                $child->getConfig()->getOption('disabled'),
+                $child->getName() . ' is expected not to be disabled'
+            );
+        }
+    }
+
+    public function testSubmitWithManuallyEnteredAddressDataWhenCustomerUserAddressInitialData(): void
+    {
+        /** @var QuoteAddressManager $quoteAddressManager */
+        $quoteAddressManager = self::getContainer()->get('oro_sale.manager.quote_address');
+        /** @var CustomerUserAddress $customerUserAddress */
+        $customerUserAddress = $this->getReference('sale.grzegorz.brzeczyszczykiewicz@example.com.address_1');
+        /** @var QuoteAddress $quoteAddress */
+        $quoteAddress = $quoteAddressManager->updateFromAbstract($customerUserAddress);
+
+        $form = self::createForm(FormType::class, ['quoteAddress' => $quoteAddress], ['validation_groups' => false]);
+        $quote = $this->getReference(LoadQuoteData::QUOTE3);
+        $form->add(
+            'quoteAddress',
+            QuoteAddressType::class,
+            ['quote' => $quote, 'address_type' => QuoteAddressProvider::ADDRESS_TYPE_SHIPPING]
+        );
+
+        // Initial data comes from the address book, so PRE_SET_DATA disables the fields; switching to
+        // "Enter manually" must re-enable them on PRE_SUBMIT, or the typed values below get dropped.
+        $form->submit([
+            'quoteAddress' => [
+                'customerAddress' => QuoteAddressSelectType::ENTER_MANUALLY,
+                'street' => 'New Manual Street 123',
+                'city' => 'New Manual City',
+                'postalCode' => '90210',
+                'country' => $customerUserAddress->getCountryIso2(),
+                'region' => $customerUserAddress->getRegion()->getCombinedCode(),
+                'organization' => 'New Manual Organization',
+                'phone' => '5551234567',
+            ],
+        ]);
+
+        self::assertTrue($form->isValid(), (string)$form->getErrors(true));
+        self::assertTrue($form->isSynchronized());
+
+        /** @var QuoteAddress $actualAddress */
+        $actualAddress = $form->getData()['quoteAddress'];
+
+        self::assertSame('New Manual Street 123', $actualAddress->getStreet());
+        self::assertSame('New Manual City', $actualAddress->getCity());
+        self::assertSame('90210', $actualAddress->getPostalCode());
+        self::assertSame('New Manual Organization', $actualAddress->getOrganization());
+        self::assertSame('5551234567', $actualAddress->getPhone());
+        self::assertNull($actualAddress->getCustomerAddress());
+        self::assertNull($actualAddress->getCustomerUserAddress());
+
+        /** @var FormInterface $child */
+        foreach ($form->get('quoteAddress') as $child) {
+            if (in_array($child->getName(), ['customerAddress', 'validatedAt'], true)) {
+                continue;
+            }
+
             self::assertFalse(
                 $child->getConfig()->getOption('disabled'),
                 $child->getName() . ' is expected not to be disabled'
