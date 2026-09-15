@@ -74,6 +74,16 @@ class ProductTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_product_filter_by_sku.yml', $response);
     }
 
+    public function testGetListFilterBySeveralSkusThatShouldBeCaseInsensitive(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'products'],
+            ['filter' => ['sku' => 'PSku1,PSku2,PSku3']]
+        );
+
+        $this->assertResponseContains('cget_product_filter_by_sku.yml', $response);
+    }
+
     public function testGetListFilterBySeveralInventoryStatuses(): void
     {
         $response = $this->cget(

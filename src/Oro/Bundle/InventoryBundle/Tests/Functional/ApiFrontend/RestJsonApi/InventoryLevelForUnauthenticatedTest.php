@@ -1,17 +1,22 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Functional\ApiFrontend\RestJsonApi;
+declare(strict_types=1);
+
+namespace Oro\Bundle\InventoryBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class ProductKitItemForUnauthenticatedTest extends FrontendRestJsonApiTestCase
+/**
+ * @group CommunityEdition
+ */
+class InventoryLevelForUnauthenticatedTest extends FrontendRestJsonApiTestCase
 {
     public function testOptionsForList(): void
     {
         $response = $this->options(
             $this->getListRouteName(),
-            ['entity' => 'productkititems']
+            ['entity' => 'inventorylevels']
         );
         self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }
@@ -20,7 +25,7 @@ class ProductKitItemForUnauthenticatedTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->options(
             $this->getItemRouteName(),
-            ['entity' => 'productkititems', 'id' => '1']
+            ['entity' => 'inventorylevels', 'id' => '1']
         );
         self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }
@@ -28,7 +33,7 @@ class ProductKitItemForUnauthenticatedTest extends FrontendRestJsonApiTestCase
     public function testTryToGetList(): void
     {
         $response = $this->cget(
-            ['entity' => 'productkititems'],
+            ['entity' => 'inventorylevels'],
             [],
             [],
             false
@@ -36,10 +41,10 @@ class ProductKitItemForUnauthenticatedTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testGet(): void
+    public function testTryToGet(): void
     {
         $response = $this->get(
-            ['entity' => 'productkititems', 'id' => '1'],
+            ['entity' => 'inventorylevels', 'id' => '1'],
             [],
             [],
             false
@@ -50,8 +55,16 @@ class ProductKitItemForUnauthenticatedTest extends FrontendRestJsonApiTestCase
     public function testTryToUpdate(): void
     {
         $response = $this->patch(
-            ['entity' => 'productkititems', 'id' => '1'],
-            [],
+            ['entity' => 'inventorylevels', 'id' => '1'],
+            [
+                'data' => [
+                    'type' => 'inventorylevels',
+                    'id' => '1',
+                    'attributes' => [
+                        'quantity' => 17
+                    ]
+                ]
+            ],
             [],
             false
         );
@@ -61,8 +74,15 @@ class ProductKitItemForUnauthenticatedTest extends FrontendRestJsonApiTestCase
     public function testTryToCreate(): void
     {
         $response = $this->post(
-            ['entity' => 'productkititems'],
-            [],
+            ['entity' => 'inventorylevels'],
+            [
+                'data' => [
+                    'type' => 'inventorylevels',
+                    'attributes' => [
+                        'quantity' => 17
+                    ]
+                ]
+            ],
             [],
             false
         );
@@ -72,7 +92,7 @@ class ProductKitItemForUnauthenticatedTest extends FrontendRestJsonApiTestCase
     public function testTryToDelete(): void
     {
         $response = $this->delete(
-            ['entity' => 'productkititems', 'id' => '1'],
+            ['entity' => 'inventorylevels', 'id' => '1'],
             [],
             [],
             false
@@ -83,7 +103,7 @@ class ProductKitItemForUnauthenticatedTest extends FrontendRestJsonApiTestCase
     public function testTryToDeleteList(): void
     {
         $response = $this->cdelete(
-            ['entity' => 'productkititems'],
+            ['entity' => 'inventorylevels'],
             ['filter' => ['id' => '1']],
             [],
             false
