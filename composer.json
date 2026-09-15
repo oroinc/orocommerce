@@ -54,7 +54,6 @@
     "prefer-stable": true,
     "extra": {
         "npm": {
-            "@oroinc/commerce-ui": "0.1.0",
             "grapesjs": "0.22.14",
             "grapesjs-parser-postcss": "1.0.3",
             "grapesjs-plugin-export": "1.0.12",
