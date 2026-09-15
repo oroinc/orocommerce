@@ -15,8 +15,8 @@ Feature: Restriction by non-autenticated customer group
     And I click on "Show Variants Dropdown"
     And I click "Add System Page"
     And I fill "Content Node Form" with:
-      | Titles                           | Contact Us Node                                   |
-      | System Page Route                | Oro Contactus Bridge Contact Us Page (Contact Us) |
+      | Titles            | Order History Node                       |
+      | System Page Route | Oro Order Frontend Index |
     And I click "Add System Page"
     And I fill "Content Node Form" with:
       | Titles                           | Welcome Node                                 |
@@ -29,7 +29,7 @@ Feature: Restriction by non-autenticated customer group
     When I am on homepage
     Then I should see a "ProductFrontendGrid" element
 
-  Scenario: Authenticated user sees contact us page
+  Scenario: Authenticated user sees order history page
     When I login as AmandaRCole@example.org buyer
     Then I should not see "FEATURED CATEGORIES"
-    And I should see "CONTACT US"
+    And I should see "Order History"

@@ -15,8 +15,22 @@ system_configuration:
                 label: oro.consent.system_configuration.fields.consent.feature_enabled.label
         oro_consent.enabled_consents:
             data_type: array
+            priority: 10
             type: Oro\Bundle\ConsentBundle\Form\Type\ConsentCollectionType
             options:
                 required: false
                 label: oro.consent.system_configuration.fields.consent.enabled_consents.label
                 tooltip: oro.consent.system_configuration.fields.consent.enabled_consents.tooltip
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    customer:
+                        children:
+                            customer_user_interactions:
+                                children:
+                                    consents:
+                                        children:
+                                            - oro_consent.consent_feature_enabled
+                                            - oro_consent.enabled_consents

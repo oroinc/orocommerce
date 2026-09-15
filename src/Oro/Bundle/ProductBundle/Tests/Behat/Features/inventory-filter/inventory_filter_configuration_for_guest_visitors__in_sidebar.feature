@@ -1,3 +1,4 @@
+@skip-base
 @regression
 @feature-BB-24183
 @fixture-OroProductBundle:inventory_filter.yml

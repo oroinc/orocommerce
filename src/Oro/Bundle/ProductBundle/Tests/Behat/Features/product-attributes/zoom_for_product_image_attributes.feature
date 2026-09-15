@@ -1,3 +1,4 @@
+@skip-base
 @ticket-BB-20220
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 

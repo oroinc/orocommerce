@@ -1,3 +1,4 @@
+@skip-base
 @feature-BB-25440
 @regression
 

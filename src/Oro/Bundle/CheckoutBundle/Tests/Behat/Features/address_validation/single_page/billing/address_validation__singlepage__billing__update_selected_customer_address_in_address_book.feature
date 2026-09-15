@@ -39,7 +39,7 @@ Feature: Address Validation - Single-Page - Billing - Update Selected Customer A
     When I open page with shopping list List 1
     And I click "Create Order"
     And I click on "Billing Address Select"
-    And I select "ORO, customer avenue, 10115 Berlin, Germany" from "Billing Address"
+    And I select "ORO, customer avenue, NEW YORK NY US 10001" from "Billing Address"
     Then I should see "Confirm Your Address"
     When I click "Address Validation Result Form First Suggested Address Radio Storefront"
     Then I should see "Update Address"
@@ -47,4 +47,4 @@ Feature: Address Validation - Single-Page - Billing - Update Selected Customer A
     And I click on "Use Selected Address Button"
     And I click on "Billing Address Select"
     Then I should see "ORO, 801 SCENIC HWY, HAINES CITY 1 FL US 33844"
-    And I should not see "ORO, customer avenue, 10115 Berlin, Germany"
+    And I should not see "ORO, customer avenue, NEW YORK NY US 10001"

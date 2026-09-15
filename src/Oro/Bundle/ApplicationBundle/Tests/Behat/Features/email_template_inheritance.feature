@@ -44,8 +44,8 @@ Feature: Email Template Inheritance
     And I signed in as AmandaRCole@example.org on the store frontend
     And Buyer is on "List 1" shopping list
     When I press "Create Order"
-    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
-    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
+    And I select "ORO, Fifth avenue, NEW YORK NY US 10001" on the "Billing Information" checkout step and press Continue
+    And I select "ORO, Fifth avenue, NEW YORK NY US 10001" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I click "Expand Checkout Footer"
@@ -64,8 +64,8 @@ Feature: Email Template Inheritance
     And I select "German Localization" localization
     And Buyer is on "List 1" shopping list
     When I press "Create Order"
-    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
-    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
+    And I select "ORO, Fifth avenue, NEW YORK NY US 10001" on the "Billing Information" checkout step and press Continue
+    And I select "ORO, Fifth avenue, NEW YORK NY US 10001" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I press "Submit Order"

@@ -34,6 +34,31 @@ oro_behat_extension:
         - '@OroSaleBundle/Tests/Behat/Features'
 
   elements:
+    All Quotes Grid:
+      selector: 'div[data-page-component-name="quotes-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    CurrencyPopover:
+      selector: '.action-cell button[data-toggle="popover"]'
+
+    Unit Price:
+      selector: '[name="oro_sale_quote[quoteProducts][0][quoteProductOffers][0][price][value]"]'
+
+    Quote Line Items:
+      selector: '.quote-lineitems'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Product:
+            type: 'css'
+            locator: '.quote-lineitem-product-select .select2-offscreen[type="text"]'
+          Unit Price: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][price][value]'
+          Quantity: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][quantity]'
+
+    Quote View Grid:
+      selector: '.oro-grid-table'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\FrontendTableGrid
+
     Quote Frontend Page:
       class: Oro\Bundle\SaleBundle\Tests\Behat\Element\QuoteFrontendPage
       selector: '.page-content'

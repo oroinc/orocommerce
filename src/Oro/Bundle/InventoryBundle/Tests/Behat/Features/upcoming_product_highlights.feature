@@ -100,8 +100,8 @@ Feature: Upcoming product highlights
     And I should see notification "This product will be available on 12/1/2040" for "SKU2" line item "ShoppingListLineItem"
     And I should see "Coming Soon" for "SKU2" line item "ShoppingListLineItem"
     When I click "Create Order"
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
+    And I select "Fifth avenue, NEW YORK NY US 10001" on the "Billing Information" checkout step and press Continue
+    And I select "Fifth avenue, NEW YORK NY US 10001" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I should see "Coming Soon" for "SKU1" line item "Checkout Line Item"
@@ -123,8 +123,8 @@ Feature: Upcoming product highlights
   Scenario: Check that upcoming products with unknown availability date is correctly handled during checkout process
     Given I open page with shopping list List 2
     When I click "Create Order"
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
+    And I select "Fifth avenue, NEW YORK NY US 10001" on the "Billing Information" checkout step and press Continue
+    And I select "Fifth avenue, NEW YORK NY US 10001" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I should see "Coming Soon" for "SKU1" line item "Checkout Line Item"

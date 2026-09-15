@@ -10,13 +10,13 @@ Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination:
     paymentMethodsConfigsRuleDestination:
-        country: '@germany'
-        region: '@berlin'
+        country: '@united_states'
+        region: '@new_york'
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode:
     postalCode1:
         destination: '@paymentMethodsConfigsRuleDestination'
-        name: '10111'
+        name: '10011'
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
     paymentMethodsConfigsRuleForPaymentTerm60:

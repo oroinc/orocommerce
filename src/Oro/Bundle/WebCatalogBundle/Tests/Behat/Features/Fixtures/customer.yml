@@ -3,7 +3,6 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
         name: 'Company A'
         organization: '@organization'
         owner: '@admin'
-        vatId: 'VAT ID 1'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     amanda:

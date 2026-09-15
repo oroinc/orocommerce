@@ -40,7 +40,7 @@ Feature: Address Validation - Single-Page - Billing - Dialog Displayed With No C
     When I open page with shopping list List 1
     And I click "Create Order"
     And I click on "Billing Address Select"
-    And I select "ORO, customer avenue, 10115 Berlin, Germany" from "Billing Address"
+    And I select "ORO, customer avenue, NEW YORK NY US 10001" from "Billing Address"
     Then I should see "Confirm Your Address - Primary Address"
     When I click "Address Validation Result Form First Suggested Address Radio Storefront"
     Then I should not see "Update Address"

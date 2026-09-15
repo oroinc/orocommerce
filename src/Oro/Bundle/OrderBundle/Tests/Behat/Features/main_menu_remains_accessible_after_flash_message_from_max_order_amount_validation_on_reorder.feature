@@ -1,3 +1,4 @@
+@skip-base
 @ticket-BB-25230
 @regression
 @fixture-OroOrderBundle:MainMenuAfterReorderMaxAmountFixture.yml
