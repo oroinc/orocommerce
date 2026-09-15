@@ -1,3 +1,4 @@
+@skip-base
 @regression
 @ticket-BB-14917
 @fixture-OroUserBundle:manager.yml

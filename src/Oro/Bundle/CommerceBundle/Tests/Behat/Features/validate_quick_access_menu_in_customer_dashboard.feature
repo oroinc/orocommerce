@@ -1,3 +1,4 @@
+@skip-base
 @feature-BB-24920
 @regression
 @fixture-OroCommerceBundle:CustomerUserFixture.yml

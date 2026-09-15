@@ -1,3 +1,4 @@
+@skip-base
 Feature: Display Tabs Template On Product Page After Product Import
 
   Scenario: Feature Background

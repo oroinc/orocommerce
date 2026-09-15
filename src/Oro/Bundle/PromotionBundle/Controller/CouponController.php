@@ -88,7 +88,7 @@ class CouponController extends AbstractController
      */
     #[Route(path: '/coupon-mass-edit-widget', name: 'oro_promotion_coupon_mass_edit_widget')]
     #[Template('@OroPromotion/Coupon/widget/mass_update.html.twig')]
-    #[AclAncestor('oro_promotion_coupon_edit')]
+    #[AclAncestor('oro_promotion_coupon_update')]
     public function massUpdateWidgetAction(Request $request)
     {
         $responseData = [

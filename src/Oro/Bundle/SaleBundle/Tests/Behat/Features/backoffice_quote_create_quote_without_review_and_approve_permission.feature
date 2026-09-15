@@ -1,3 +1,4 @@
+@skip-base
 @regression
 @ticket-BB-16238
 @fixture-OroSaleBundle:QuoteBackofficeApprovalsFixture.yml

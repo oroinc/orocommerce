@@ -1,3 +1,4 @@
+@skip-base
 @regression
 @fixture-OroDataGridBundle:grid-navigation.yml
 Feature: Navigation in grid

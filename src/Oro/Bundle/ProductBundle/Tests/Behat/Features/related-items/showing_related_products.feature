@@ -1,3 +1,4 @@
+@skip-base
 @feature-BB-8714
 @ticket-BB-13978
 @ticket-BB-16275

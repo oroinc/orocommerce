@@ -32,8 +32,8 @@ Feature: Single Page Checkout From Shopping List With Wrong Order Confirmation T
     And I login as AmandaRCole@example.org buyer
     When I open page with shopping list List 1
     And I click "Create Order"
-    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Billing Address"
-    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Shipping Address"
+    And I select "ORO, Fifth avenue, NEW YORK NY US 10001" from "Billing Address"
+    And I select "ORO, Fifth avenue, NEW YORK NY US 10001" from "Shipping Address"
     And I check "Flat Rate" on the checkout page
     And I check "Payment Terms" on the checkout page
     And I check "Delete this shopping list after ordering" on the checkout page

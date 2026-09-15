@@ -1,5 +1,17 @@
 oro_behat_extension:
   elements:
+    Calculate Shipping:
+      selector: '[data-role="possible_shipping_methods_btn"]'
+
+    Shipping Address:
+      selector: '[data-name="field__customer-address"]'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
+
+    Order History Menu:
+      selector:
+        type: xpath
+        locator: '//ul[contains(@class,"primary-menu")]/li/a[text()="Order History"]'
+
     BackendOrder:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrder
       selector: 'div.layout-content'

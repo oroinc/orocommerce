@@ -76,6 +76,10 @@ api:
                 fields:
                     sku:
                         allow_array: true
+                        operators: [ '=', '!=', '~', '^' ]
+                        property_path: skuUppercase
+                        options:
+                            value_transformer: mb_strtoupper
             actions:
                 create:
                     fields:

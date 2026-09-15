@@ -27,7 +27,7 @@ Feature: Address Validation - Multi-Step - Shipping - Address Book Customer User
     And I click "Create Order"
     And I click "Continue"
     And I click on "Multistep Shipping Address Select"
-    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Shipping Address"
+    And I select "ORO, Fifth avenue, NEW YORK NY US 10001" from "Shipping Address"
     And I click "Continue"
     Then I should see "Confirm Your Address"
     When I click "Address Validation Result Form First Suggested Address Radio Storefront"

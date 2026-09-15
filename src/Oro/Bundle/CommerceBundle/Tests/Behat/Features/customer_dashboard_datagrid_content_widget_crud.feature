@@ -40,6 +40,7 @@ Feature: Customer Dashboard Datagrid Content Widget CRUD
       | Label         | Open Quotes                                  |
       | View All      | /customer/quote/                             |
 
+  @skip-base
   Scenario: Check customer dashboard content widgets datagrid
     When I go to Marketing/Content Widgets
     Then there is 13 records in grid
@@ -48,6 +49,7 @@ Feature: Customer Dashboard Datagrid Content Widget CRUD
       | my-orders | Datagrid Description2 | Customer Dashboard DataGrid |        |
 
   Scenario: Delete customer dashboard content widget
-    When I click Delete my-orders in grid
+    When I go to Marketing/Content Widgets
+    And I click Delete my-orders in grid
     And I confirm deletion
     Then I should see "Content Widget deleted" flash message

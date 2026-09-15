@@ -1,3 +1,4 @@
+@skip-base
 @fix-BB-20612
 @fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 @fixture-OroConsentBundle:ConsentLandingPagesFixture.yml

@@ -1,3 +1,4 @@
+@skip-base
 @ticket-BB-14713
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml

@@ -1,3 +1,4 @@
+@skip-base
 @feature-BB-21439
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 

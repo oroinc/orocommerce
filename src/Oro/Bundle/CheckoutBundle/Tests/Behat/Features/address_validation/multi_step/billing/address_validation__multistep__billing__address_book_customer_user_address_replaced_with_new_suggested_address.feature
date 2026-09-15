@@ -31,7 +31,7 @@ Feature: Address Validation - Multi-Step - Billing - Address Book Customer User 
     When I open page with shopping list List 1
     And I click "Create Order"
     And I click on "Multistep Billing Address Select"
-    And I select "ORO, Fourth avenue, 10111 Berlin, Germany" from "Billing Address"
+    And I select "ORO, Fourth avenue, NEW YORK NY US 10011" from "Billing Address"
     Then I should see "Confirm Your Address - label"
     When I click "Address Validation Result Form First Suggested Address Radio Storefront"
     And I click on "Use Selected Address Button"

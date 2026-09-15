@@ -31,7 +31,7 @@ Feature: Content Variant restrictions
     And I fill "Content Node Form" with:
       | Titles            | Contact Us Node                                   |
       | Url Slug          | contact-us-node                                   |
-      | System Page Route | Oro Contactus Bridge Contact Us Page (Contact Us) |
+      | System Page Route | Oro Product Frontend Product Index                |
     And I click on "Show Variants Dropdown"
     And I click "Add Product Page"
     And I fill "Content Node Form" with:

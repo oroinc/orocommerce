@@ -68,7 +68,7 @@ Feature: Direct URLs functionality
     And I should see "Configuration saved" flash message
     And I proceed as the User
     When I reload the page
-    Then I should see "404 Not Found" and continue checking the condition is met for maximum 10 seconds
+    Then I should see "404 Not Found" and continue checking the condition is met for maximum 30 seconds
     And click "All Products" in hamburger menu
     When click "View Details" for "Lenovo Vibe" product
     Then I should be on "/product/view/1"

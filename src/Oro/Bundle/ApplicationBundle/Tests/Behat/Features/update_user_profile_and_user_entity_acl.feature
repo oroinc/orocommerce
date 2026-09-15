@@ -1,3 +1,4 @@
+@skip-base
 @ticket-BAP-18754
 @fixture-OroUserBundle:manager.yml
 

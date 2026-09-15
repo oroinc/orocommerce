@@ -218,7 +218,7 @@ datagrids:
             edit:
                 type:            massedit
                 handler:         oro_promotion.mass_action.coupon_edit_mass_action_handler
-                acl_resource:    oro_promotion_coupon_edit
+                acl_resource:    oro_promotion_coupon_update
                 route:           oro_promotion_coupon_mass_edit_widget
                 label:           oro.ui.edit
                 icon:            edit
@@ -326,7 +326,7 @@ datagrids:
             edit:
                 type:            massedit
                 handler:         oro_promotion.mass_action.coupon_edit_mass_action_handler
-                acl_resource:    oro_promotion_coupon_edit
+                acl_resource:    oro_promotion_coupon_update
                 route:           oro_promotion_coupon_mass_edit_widget
                 label:           oro.ui.edit
                 icon:            edit
@@ -341,7 +341,7 @@ datagrids:
             unassign:
                 type:            ajax
                 handler:         oro_promotion.mass_action.assigned_coupon_unassign_mass_action_handler
-                acl_resource:    oro_promotion_coupon_edit
+                acl_resource:    oro_promotion_coupon_update
                 label:           oro.promotion.ui.unassign_coupon.label
                 icon:            times
                 data_identifier: coupon.id

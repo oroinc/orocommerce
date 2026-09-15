@@ -1,4 +1,15 @@
 services:
+    oro_inventory.api.inventory_level_product_query_modifier:
+        class: Oro\Bundle\InventoryBundle\Api\InventoryLevelProductQueryModifier
+        arguments:
+            - '@oro_entity.orm.entity_class_resolver'
+            - '@oro_api.entity_serializer.query_modifier_registry'
+        tags:
+            # Increase the priority of this query modifier to avoid parameter name conflicts with the main query.
+            # Such conflicts can occur because this query modifier invokes a chain of query modifiers
+            # for a product-related subquery, and the subquery parameters are moved to the main query.
+            - { name: oro.api.query_modifier, requestType: frontend, priority: 250 }
+
     oro_inventory.api.compute_product_low_inventory:
         class: Oro\Bundle\InventoryBundle\Api\Processor\ComputeProductLowInventory
         arguments:

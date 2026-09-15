@@ -11,6 +11,7 @@ Feature: Search Term - with target System Page
   Scenario: Check validation errors
     Given I proceed as the Admin
     And I login as administrator
+    And I set configuration property "oro_catalog.all_products_page_enabled" to "1"
     When I go to Marketing / Search / Search Terms
     And click "Create Search Term"
     And I fill "Search Term Form" with:
@@ -23,8 +24,8 @@ Feature: Search Term - with target System Page
 
   Scenario: Create Search Term (301 Redirect - false)
     When I fill "Search Term Form" with:
-      | System Page  | Oro Contactus Bridge Contact Us Page (Contact Us) |
-      | 301 Redirect | false                                             |
+      | System Page  | Oro Catalog Frontend Product Allproducts (All products page) |
+      | 301 Redirect | false                                                        |
     And I save and close form
     Then I should see "Search Term has been saved" flash message
     And should see Search Term with:
@@ -32,7 +33,7 @@ Feature: Search Term - with target System Page
       | Action       | Redirect to a different page |
       | Target Type  | System Page                  |
       | 301 Redirect | No                           |
-      | System Page  | Contact Us                   |
+      | System Page  | All products page            |
     And I should see "Owner: Main"
     And should see a "Search Term Restrictions section" element
     And I should see "LOCALIZATION WEBSITE CUSTOMER GROUP CUSTOMER Any Any Any Any Run Original Search" in the "Search Term Restrictions section" element
@@ -40,35 +41,36 @@ Feature: Search Term - with target System Page
   Scenario: Check the search term record in datagrid
     When I go to Marketing / Search / Search Terms
     Then I should see following grid:
-      | Phrases     | Action                              | Restrictions                                                 |
-      | search_term | Redirect to system page: Contact Us | CUSTOMER CUSTOMER GROUP WEBSITE LOCALIZATION Any Any Any Any |
+      | Phrases     | Action                                     | Restrictions                                                 |
+      | search_term | Redirect to system page: All products page | CUSTOMER CUSTOMER GROUP WEBSITE LOCALIZATION Any Any Any Any |
     And I set alias "main" for the current browser tab
-    When I click "Contact Us"
+    When I click "All products page"
     Then a new browser tab is opened and I switch to it
-    And Page title equals to "Contact Us"
-    And I should see "Preferred contact method"
-    And the url should match "/contact-us"
+    And Page title equals to "All products page"
+    And I should see "All Products"
+    And the url should match "/catalog/allproducts"
     And I switch to the browser tab "main"
 
-  Scenario: Unauthorized user will be forwarded to the Contact Us page
+  Scenario: Unauthorized user will be forwarded to the All Products page
     Given I proceed as the Buyer
     When I am on the homepage
     And I type "search_term" in "search"
     And I click "Search Button"
-    Then Page title equals to "Contact Us"
-    And I should see "Preferred contact method"
+    Then Page title equals to "All products page"
+    And I should see "All Products"
     And the url should match "/product/search"
 
-  Scenario: Authorized user will be forwarded to the Contact Us page
+  Scenario: Authorized user will be forwarded to the All Products page
     When I signed in as AmandaRCole@example.org on the store frontend
     And I type "search_term" in "search"
     And I click "Search Button"
-    Then Page title equals to "Contact Us"
-    And I should see "Preferred contact method"
+    Then Page title equals to "All products page"
+    And I should see "All Products"
     And the url should match "/product/search"
 
   Scenario: Update the Search Term (301 Redirect - true)
     Given I proceed as the Admin
+    And I switch to the browser tab "main"
     When I click edit "search_term" in grid
     And I fill "Search Term Form" with:
       | 301 Redirect | true |
@@ -77,20 +79,20 @@ Feature: Search Term - with target System Page
     And should see Search Term with:
       | 301 Redirect | Yes |
 
-  Scenario: Authorized user will be redirected to the Contact Us page
+  Scenario: Authorized user will be redirected to the All Products page
     Given I proceed as the Buyer
     When I reload the page
     And I type "search_term" in "search"
     And I click "Search Button"
-    Then Page title equals to "Contact Us"
-    And I should see "Preferred contact method"
-    And the url should match "/contact-us"
+    Then Page title equals to "All products page"
+    And I should see "All Products"
+    And the url should match "/catalog/allproducts"
 
-  Scenario: Unauthorized user will be redirected to the Contact Us page
+  Scenario: Unauthorized user will be redirected to the All Products page
     When I click "Account Dropdown"
     And click "Sign Out"
     And I type "search_term" in "search"
     And I click "Search Button"
-    Then Page title equals to "Contact Us"
-    And I should see "Preferred contact method"
-    And the url should match "/contact-us"
+    Then Page title equals to "All products page"
+    And I should see "All Products"
+    And the url should match "/catalog/allproducts"

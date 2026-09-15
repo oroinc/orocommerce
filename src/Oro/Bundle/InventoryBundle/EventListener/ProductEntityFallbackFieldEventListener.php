@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
@@ -35,12 +36,38 @@ class ProductEntityFallbackFieldEventListener
 
     public function prePersist(Product $product, LifecycleEventArgs $args): void
     {
+        $entityManager = $args->getObjectManager();
+
         foreach (self::FALLBACK_FIELDS as $fieldName) {
             if (!$this->propertyAccessor->getValue($product, $fieldName)) {
                 $fallback = new EntityFieldFallbackValue();
                 $fallback->setFallback(CategoryFallbackProvider::FALLBACK_ID);
                 $this->propertyAccessor->setValue($product, $fieldName, $fallback);
+                $this->scheduleForCurrentFlush(
+                    $entityManager instanceof EntityManagerInterface ? $entityManager : null,
+                    $fallback
+                );
             }
         }
+    }
+
+    /**
+     * An entity created inside prePersist is not part of the flush that triggered the callback, so it would be
+     * written by the next flush -- which also makes the data audit report one more set of changes. Registering it
+     * with the current unit of work keeps the whole product creation in a single flush.
+     */
+    private function scheduleForCurrentFlush(
+        ?EntityManagerInterface $entityManager,
+        EntityFieldFallbackValue $fallback
+    ): void {
+        if (null === $entityManager) {
+            return;
+        }
+
+        $entityManager->persist($fallback);
+        $entityManager->getUnitOfWork()->computeChangeSet(
+            $entityManager->getClassMetadata(EntityFieldFallbackValue::class),
+            $fallback
+        );
     }
 }

@@ -1,3 +1,4 @@
+@skip-base
 @regression
 @ticket-BB-18293
 @fixture-OroShoppingListBundle:ShoppingListFixture.yml

@@ -32,9 +32,9 @@ Feature: Address Validation - Single-Page - Shipping - Update Selected Customer 
     When I open page with shopping list List 1
     And I click "Create Order"
     And I click on "Shipping Address Select"
-    And I select "ORO, customer avenue, 10115 Berlin, Germany" from "Shipping Address"
+    And I select "ORO, customer avenue, NEW YORK NY US 10001" from "Shipping Address"
     And I close ui dialog
-    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Shipping Address"
+    And I select "ORO, Fifth avenue, NEW YORK NY US 10001" from "Shipping Address"
     Then I should see "Confirm Your Address"
     When I click "Address Validation Result Form First Suggested Address Radio Storefront"
     Then I should see "Update Address"
@@ -42,4 +42,4 @@ Feature: Address Validation - Single-Page - Shipping - Update Selected Customer 
     And I click on "Use Selected Address Button"
     And I click on "Shipping Address Select"
     Then I should see "ORO, 801 SCENIC HWY, HAINES CITY 1 FL US 33844"
-    And I should not see "ORO, Fifth avenue, 10115 Berlin, Germany"
+    And I should not see "ORO, Fifth avenue, NEW YORK NY US 10001"

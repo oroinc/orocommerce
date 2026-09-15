@@ -187,7 +187,7 @@ datagrids:
                 link: update_link
             delete:
                 type: delete
-                acl_resource: oro_website_search_term_delete
+                acl_resource: oro_website_search_term_acl_delete
                 label: oro.grid.action.delete
                 icon: trash-o
                 link: delete_link

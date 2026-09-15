@@ -237,9 +237,6 @@ api:
                 productUnitCode:
                     form_options:
                         mapped: false
-                productUnitPrecision:
-                    form_options:
-                        mapped: false
                 kitItemId:
                     form_options:
                         mapped: false

@@ -31,8 +31,8 @@ Feature: Default Checkout From Shopping List With Wrong Order Confirmation Templ
     And I login as AmandaRCole@example.org buyer
     When I open page with shopping list List 1
     And I click "Create Order"
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
+    And I select "Fifth avenue, NEW YORK NY US 10001" on the "Billing Information" checkout step and press Continue
+    And I select "Fifth avenue, NEW YORK NY US 10001" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I check "Delete this shopping list after ordering" on the "Order Review" checkout step and press Submit Order

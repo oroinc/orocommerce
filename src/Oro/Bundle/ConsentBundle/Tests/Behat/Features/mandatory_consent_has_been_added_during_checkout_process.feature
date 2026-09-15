@@ -123,8 +123,8 @@ Feature: Mandatory Consent has been added during Checkout process
   Scenario: Finish checkout
     When I check "Email Newsletters"
     And I click "Continue"
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
+    And I select "Fifth avenue, NEW YORK NY US 10001" on the "Billing Information" checkout step and press Continue
+    And I select "Fifth avenue, NEW YORK NY US 10001" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And on the "Payment" checkout step I press Continue
     And I click "Submit Order"
