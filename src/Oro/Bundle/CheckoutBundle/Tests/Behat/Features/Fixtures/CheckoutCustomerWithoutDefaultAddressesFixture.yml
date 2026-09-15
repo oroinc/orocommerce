@@ -3,7 +3,6 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
         name: 'Company A'
         organization: '@organization'
         owner: '@admin'
-        vatId: 'VATID'
         payment_term_7c4f1e8e: '@paymentTerm'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
@@ -55,24 +54,24 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     address1:
-        country: '@germany'
-        region: '@berlin'
+        country: '@united_states'
+        region: '@new_york'
         label: 'Primary address'
         street: 'Fifth avenue'
-        city: 'Berlin'
-        postalCode: '10115'
+        city: 'New York'
+        postalCode: '10001'
         frontendOwner: '@customer_user_2'
         owner: '@admin'
         systemOrganization: '@organization'
         primary: true
         organization: 'ORO'
     address2:
-        country: '@germany'
-        region: '@berlin'
+        country: '@united_states'
+        region: '@new_york'
         label: 'label'
         street: 'Fourth avenue'
-        city: 'Berlin'
-        postalCode: '10111'
+        city: 'New York'
+        postalCode: '10011'
         organization: 'ORO'
         frontendOwner: '@customer_user_3'
         owner: '@admin'

@@ -1,5 +1,8 @@
 oro_behat_extension:
   elements:
+    ShoppingList Owner:
+      selector: '.shopping-list-owner a'
+
     ShoppingList:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingList
       selector: '.responsive-shopping-list-layout'

@@ -27,7 +27,7 @@ Feature: Address Validation - Single-Page - Shipping - Address Book Customer Use
     When I open page with shopping list List 1
     And I click "Create Order"
     And I click on "Shipping Address Select"
-    And I select "ORO, customer avenue, 10115 Berlin, Germany" from "Shipping Address"
+    And I select "ORO, customer avenue, NEW YORK NY US 10001" from "Shipping Address"
     Then I should see "Confirm Your Address - Primary address"
     When I click "Address Validation Result Form First Suggested Address Radio Storefront"
     And I click on "Use Selected Address Button"

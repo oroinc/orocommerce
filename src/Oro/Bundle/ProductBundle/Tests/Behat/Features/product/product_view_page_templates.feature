@@ -1,3 +1,4 @@
+@skip-base
 @regression
 @ticket-BB-9302
 @ticket-BB-10781

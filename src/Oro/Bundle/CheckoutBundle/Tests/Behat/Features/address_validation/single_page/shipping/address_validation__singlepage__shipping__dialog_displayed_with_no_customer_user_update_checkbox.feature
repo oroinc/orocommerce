@@ -33,7 +33,7 @@ Feature: Address Validation - Single-Page - Shipping - Dialog Displayed With No 
     When I open page with shopping list List 1
     And I click "Create Order"
     And I click on "Shipping Address Select"
-    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Shipping Address"
+    And I select "ORO, Fifth avenue, NEW YORK NY US 10001" from "Shipping Address"
     And I click "Submit Order"
     Then I should see "Confirm Your Address"
     When I click "Address Validation Result Form First Suggested Address Radio Storefront"

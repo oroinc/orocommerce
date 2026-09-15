@@ -53,6 +53,7 @@ Feature: Responsive Product Filters On Products Catalog
     Then should see filter hints in frontend grid:
       | SKU: is equal to "SKU1" |
 
+  @skip-base
   Scenario: Responsive transformation from dropdown to fullscreen views if filters in sidebar
     Given I proceed as the admin
     And I login as administrator

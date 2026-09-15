@@ -1,3 +1,4 @@
+@skip-base
 @regression
 @fixture-OroUserBundle:user.yml
 

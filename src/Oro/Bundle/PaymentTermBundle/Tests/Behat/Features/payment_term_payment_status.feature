@@ -43,8 +43,8 @@ Feature: Payment Term payment status
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
     And I click "Create Order"
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
+    And I select "Fifth avenue, NEW YORK NY US 10001" on the "Billing Information" checkout step and press Continue
+    And I select "Fifth avenue, NEW YORK NY US 10001" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Term" on the "Payment" checkout step and press Continue
     And I fill "Checkout Order Review Form" with:

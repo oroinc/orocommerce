@@ -136,8 +136,8 @@ Feature: Product view page for configurable product
   Scenario: Create order with configurable product and check product view pages for product variants
     Given I open page with shopping list "Shopping List"
     When I click "Create Order"
-    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
-    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
+    And I select "ORO, Fifth avenue, NEW YORK NY US 10001" on the "Billing Information" checkout step and press Continue
+    And I select "ORO, Fifth avenue, NEW YORK NY US 10001" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And "Order Review" checkout step "Order Summary Products Grid" contains products

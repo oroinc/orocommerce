@@ -28,8 +28,8 @@ Feature: Default Checkout From Quote Quantity Errors
 
     When I click "Accept and Submit to Order"
     And I click "Checkout"
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
+    And I select "Fifth avenue, NEW YORK NY US 10001" on the "Billing Information" checkout step and press Continue
+    And I select "Fifth avenue, NEW YORK NY US 10001" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     Then I should see "There is not enough quantity for this product"

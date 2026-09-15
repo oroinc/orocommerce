@@ -384,6 +384,38 @@ class ProductImageListenerTest extends WebTestCase
         self::assertMessageSentWithPriority(WebsiteSearchReindexTopic::getName(), MessagePriority::LOW);
     }
 
+    /**
+     * Asserts that every given product was reported as inserted to the data audit topic.
+     *
+     * @param Product[] $products
+     */
+    private static function assertAuditReportsInsertOf(array $products): void
+    {
+        $insertedProductIds = [];
+        foreach (self::getTopicSentMessages(AuditChangedEntitiesTopic::getName()) as $sentMessage) {
+            $body = $sentMessage['message'] ?? [];
+            foreach ($body['entities_inserted'] ?? [] as $entity) {
+                if (($entity['entity_class'] ?? null) === Product::class) {
+                    $insertedProductIds[] = $entity['entity_id'];
+                }
+            }
+        }
+
+        foreach ($products as $product) {
+            self::assertContains(
+                $product->getId(),
+                $insertedProductIds,
+                sprintf(
+                    'Failed asserting that product #%s was reported as inserted to the "%s" topic.'
+                    . ' Reported products: %s',
+                    $product->getId(),
+                    AuditChangedEntitiesTopic::getName(),
+                    $insertedProductIds ? implode(', ', $insertedProductIds) : 'none'
+                )
+            );
+        }
+    }
+
     public function testDuplicateProductImage(): void
     {
         $duplicator = self::getContainer()->get('oro_product.service.duplicator');
@@ -402,7 +434,10 @@ class ProductImageListenerTest extends WebTestCase
         self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 2);
         self::assertMessagesCount(IndexEntitiesByIdTopic::getName(), 4);
         self::assertMessagesCount(GenerateDirectUrlForEntitiesTopic::getName(), 2);
-        self::assertMessagesCount(AuditChangedEntitiesTopic::getName(), 2);
+        // Both duplicated products must be reported to the data audit. The number of messages is not
+        // asserted on purpose: it depends on how many flushes the duplication takes and on which
+        // entities are auditable in the current application, neither of which this test is about.
+        self::assertAuditReportsInsertOf([$productCopy3, $productCopy8]);
 
         self::assertMessageSent(
             ResizeProductImageTopic::getName(),

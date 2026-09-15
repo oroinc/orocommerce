@@ -59,10 +59,10 @@ Feature: Default Checkout From Shopping List
     And I click "Check Out" on row "List 1" in grid "OpenOrdersGrid"
 
   Scenario: Process checkout
-    When I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
+    When I select "Fifth avenue, NEW YORK NY US 10001" on the "Billing Information" checkout step and press Continue
     Then Checkout "Order Summary Products Grid" should contain products:
       | Product1`"'&йёщ®&reg;> | 10 | items |
-    When I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
+    When I select "Fifth avenue, NEW YORK NY US 10001" on the "Shipping Information" checkout step and press Continue
     Then Checkout "Order Summary Products Grid" should contain products:
       | Product1`"'&йёщ®&reg;> | 10 | items |
     When I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
