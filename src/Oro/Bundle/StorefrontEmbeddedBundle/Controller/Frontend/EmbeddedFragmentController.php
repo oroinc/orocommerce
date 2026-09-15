@@ -32,6 +32,7 @@ use Symfony\Component\Routing\RouterInterface;
 class EmbeddedFragmentController extends AbstractController
 {
     private const string CONFIG_SCRIPTS_BLOCK_ID = 'layout_js_modules_config';
+    private const string TITLE_BLOCK_ID = 'title';
     private const string LAYOUT_BLOCK_IDS_PARAM = 'layout_block_ids';
     private const string PATH_HEADER = 'X-Oro-Embedded-Path';
     private const string FLASH_MESSAGES_KEY = 'flashMessages';
@@ -108,7 +109,17 @@ class EmbeddedFragmentController extends AbstractController
 
     private function blockIdsToRender(Request $request, string $block): array
     {
-        return $this->isFragmentReload($request) ? [$block] : [$block, self::CONFIG_SCRIPTS_BLOCK_ID];
+        $blockIds = [$block];
+
+        if (!$this->isFragmentReload($request)) {
+            $blockIds[] = self::CONFIG_SCRIPTS_BLOCK_ID;
+        }
+
+        if ($request->isMethod('GET')) {
+            $blockIds[] = self::TITLE_BLOCK_ID;
+        }
+
+        return $blockIds;
     }
 
     private function isFragmentReload(Request $request): bool
@@ -171,6 +182,7 @@ class EmbeddedFragmentController extends AbstractController
             return;
         }
 
+        $payload[self::TITLE_BLOCK_ID] = $this->pageTitleOf($payload);
         $payload[self::FLASH_MESSAGES_KEY] = $this->takeFlashMessages($request);
 
         if (!$this->isFragmentReload($request)) {
@@ -178,6 +190,13 @@ class EmbeddedFragmentController extends AbstractController
         }
 
         $response->setContent(json_encode($payload));
+    }
+
+    private function pageTitleOf(array $payload): string
+    {
+        $renderedTitleBlock = (string) ($payload[self::TITLE_BLOCK_ID] ?? '');
+
+        return trim(html_entity_decode(strip_tags($renderedTitleBlock), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
     }
 
     /**

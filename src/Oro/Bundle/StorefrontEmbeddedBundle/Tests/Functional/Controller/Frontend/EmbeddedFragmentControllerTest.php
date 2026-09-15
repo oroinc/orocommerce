@@ -21,6 +21,7 @@ class EmbeddedFragmentControllerTest extends WebTestCase
     private const string SHOPPING_LISTS_BLOCK = 'embedded_shopping_lists';
     private const string SHOPPING_LIST_VIEW_BLOCK = 'embedded_shopping_list_view';
     private const string CONFIG_SCRIPTS_BLOCK = 'layout_js_modules_config';
+    private const string TITLE_KEY = 'title';
     private const string PAGE_BLOCK_THAT_ALWAYS_EXISTS = 'page_main_content';
     private const string SHOPPING_LISTS_GRID_NAME = 'frontend-customer-user-shopping-lists-grid';
     private const string EMBEDDED_PATH_HEADER = 'X-Oro-Embedded-Path';
@@ -127,6 +128,26 @@ class EmbeddedFragmentControllerTest extends WebTestCase
             $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]),
             $response->headers->get(self::EMBEDDED_PATH_HEADER)
         );
+    }
+
+    public function testCarriesThePageTitleTheTargetPageItselfRenders(): void
+    {
+        $shoppingList = $this->getShoppingList(LoadShoppingLists::SHOPPING_LIST_1);
+        $routeParameters = ['id' => $shoppingList->getId()];
+
+        $content = self::getJsonResponseContent(
+            $this->requestFragment(self::SHOPPING_LIST_VIEW_BLOCK, $routeParameters),
+            Response::HTTP_OK
+        );
+
+        $page = $this->client->request(
+            'GET',
+            $this->getUrl('oro_shopping_list_frontend_view', $routeParameters)
+        );
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_OK);
+
+        self::assertStringContainsString($shoppingList->getLabel(), $content[self::TITLE_KEY]);
+        self::assertSame($page->filter('title')->text(), $content[self::TITLE_KEY]);
     }
 
     public function testFallsBackToTargetRouteDefaultWhenOptionalRouteParameterIsOmitted(): void
