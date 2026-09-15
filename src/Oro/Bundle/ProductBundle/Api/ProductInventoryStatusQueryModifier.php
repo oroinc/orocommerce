@@ -38,19 +38,14 @@ class ProductInventoryStatusQueryModifier implements QueryModifierInterface
             return;
         }
 
-        $isSupported = false;
         /** @var Expr\From $from */
         foreach ($qb->getDQLPart('from') as $from) {
             if (Product::class === $this->entityClassResolver->getEntityClass($from->getFrom())) {
-                $isSupported = true;
-                break;
+                $this->modifier->modifyByInventoryStatus(
+                    $qb,
+                    $this->configManager->get('oro_product.general_frontend_product_visibility')
+                );
             }
-        }
-        if ($isSupported) {
-            $this->modifier->modifyByInventoryStatus(
-                $qb,
-                $this->configManager->get('oro_product.general_frontend_product_visibility')
-            );
         }
     }
 }

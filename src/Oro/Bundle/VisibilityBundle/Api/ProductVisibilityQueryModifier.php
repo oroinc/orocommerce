@@ -34,16 +34,11 @@ class ProductVisibilityQueryModifier implements QueryModifierInterface
             return;
         }
 
-        $isSupported = false;
         /** @var Expr\From $from */
         foreach ($qb->getDQLPart('from') as $from) {
             if (Product::class === $this->entityClassResolver->getEntityClass($from->getFrom())) {
-                $isSupported = true;
-                break;
+                $this->modifier->modify($qb);
             }
-        }
-        if ($isSupported) {
-            $this->modifier->modify($qb);
         }
     }
 }

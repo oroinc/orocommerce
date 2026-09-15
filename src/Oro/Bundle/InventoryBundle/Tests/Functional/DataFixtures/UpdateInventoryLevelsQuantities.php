@@ -7,8 +7,9 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Symfony\Component\Yaml\Yaml;
 
 class UpdateInventoryLevelsQuantities extends AbstractFixture implements DependentFixtureInterface
 {
@@ -25,69 +26,54 @@ class UpdateInventoryLevelsQuantities extends AbstractFixture implements Depende
     {
         /** @var InventoryLevelRepository $inventoryRepository */
         $inventoryRepository = $manager->getRepository(InventoryLevel::class);
-
-        $productInventoryData = $this->getInventoryLevelUpdateData();
-        foreach ($productInventoryData as $productKey => $data) {
+        $inventoryLevelData = $this->getInventoryLevelData();
+        foreach ($inventoryLevelData as $productReference => $data) {
+            /** @var Product $product */
+            $product = $this->getReference($productReference);
             foreach ($data as $item) {
-                if (isset($item['isPrimary'])) {
-                    $item['unit'] = $this->getReference($productKey)->getPrimaryUnitPrecision()->getProductUnitCode();
+                $isPrimary = $item['isPrimary'] ?? false;
+                $productUnitCode = $isPrimary
+                    ? $product->getPrimaryUnitPrecision()->getProductUnitCode()
+                    : $item['unit'];
+
+                /** @var ProductUnit $productUnit */
+                $productUnit = $this->getReference('product_unit.' . $productUnitCode);
+                $inventoryLevel = $inventoryRepository->getLevelByProductAndProductUnit($product, $productUnit);
+                if (null === $inventoryLevel) {
+                    throw new \RuntimeException(\sprintf(
+                        'The inventory level was not found. Product: %s. Unit: %s.',
+                        $productReference,
+                        $productUnitCode
+                    ));
                 }
-
-                $inventoryLevel = $inventoryRepository->getLevelByProductAndProductUnit(
-                    $this->getReference($productKey),
-                    $this->getReference('product_unit.' . $item['unit'])
-                );
-
-                if (!$inventoryLevel) {
-                    continue;
-                }
-
                 $inventoryLevel->setQuantity($item['quantity']);
-
                 $manager->persist($inventoryLevel);
-                $this->addReference($item['reference'], $inventoryLevel);
+                $inventoryLevelReference = \sprintf(
+                    'inventory_level.product_unit_precision.%s.%s',
+                    $productReference,
+                    $isPrimary ? 'primary_unit' : $productUnitCode
+                );
+                $this->addReference($inventoryLevelReference, $inventoryLevel);
             }
         }
 
         $manager->flush();
     }
 
-    /**
-     * Group data in array with product sku as key and inventory data as value
-     *
-     * @param array $data Array containing inventory data fixtures for update
-     * @return array
-     */
-    protected function getProductInventory($data)
+    protected function getInventoryLevelData(): array
     {
-        $productInventory = [];
-
-        foreach ($data as $ref => $inventoryData) {
-            $productKey = $inventoryData['product'];
-            if (!isset($productKey) || empty($productKey)) {
-                continue;
-            }
-
-            if (!isset($productInventory[$productKey])) {
-                $productInventory[$productKey] = [];
-            }
-
-            $inventoryData['reference'] = $ref;
-            $productInventory[$productKey][] = $inventoryData;
-        }
-
-        return $productInventory;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getInventoryLevelUpdateData()
-    {
-        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'inventory_level.yml';
-
-        $data = Yaml::parse(file_get_contents($filePath));
-
-        return $this->getProductInventory($data);
+        return [
+            'product-1' => [
+                ['unit' => 'liter', 'quantity' => 10],
+                ['unit' => 'bottle', 'quantity' => 99],
+                ['isPrimary' => true, 'quantity' => 10]
+            ],
+            'product-2' => [
+                ['unit' => 'liter', 'quantity' => 12.345],
+                ['unit' => 'milliliter', 'quantity' => 10],
+                ['unit' => 'bottle', 'quantity' => 98],
+                ['unit' => 'box', 'quantity' => 42]
+            ]
+        ];
     }
 }
