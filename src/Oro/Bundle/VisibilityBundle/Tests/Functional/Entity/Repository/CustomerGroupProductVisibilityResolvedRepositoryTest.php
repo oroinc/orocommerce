@@ -43,6 +43,7 @@ class CustomerGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
 
         $this->assertEquals(spl_object_hash($expectedEntity), spl_object_hash($actualEntity));
     }
+
     public function testDeleteByProduct()
     {
         /** @var Product $product */

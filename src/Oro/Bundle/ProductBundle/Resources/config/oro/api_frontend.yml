@@ -192,6 +192,8 @@ api:
                     property_path: unitPrecisions
                     exclude: true
                     max_results: -1
+                primaryUnitPrecision:
+                    exclude: true
                 url:
                     data_type: string
                     property_path: _
@@ -206,6 +208,10 @@ api:
                 fields:
                     sku:
                         allow_array: true
+                        operators: [ '=', '!=', '~', '^' ]
+                        property_path: skuUppercase
+                        options:
+                            value_transformer: mb_strtoupper
                     inventoryStatus:
                         allow_array: true
                     variants: # processed by Oro\Bundle\ProductBundle\Api\Processor\HandleVariantsFilter
@@ -461,9 +467,6 @@ api:
                 update: false
                 delete: false
                 delete_list: false
-            fields:
-                productUnitPrecision:
-                    exclude: true
             subresources:
                 kitItem:
                     actions:

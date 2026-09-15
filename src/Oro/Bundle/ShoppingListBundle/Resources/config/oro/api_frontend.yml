@@ -38,6 +38,12 @@ api:
                     property_path: _
                     form_options:
                         mapped: false
+            filters:
+                fields:
+                    name:
+                        operators: [ '=', '!=', '~', '^' ]
+                        options:
+                            case_insensitive: true
             actions:
                 update:
                     fields:

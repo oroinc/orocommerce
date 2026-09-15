@@ -80,11 +80,23 @@ class ProductTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetListFilteredByProduct(): void
+    public function testGetListFilteredBySku(): void
     {
         $response = $this->cget(
             ['entity' => 'products'],
             ['filter' => ['sku' => '@product-1->sku']],
+            ['HTTP_X-Include' => 'totalCount']
+        );
+
+        $this->assertResponseContains('cget_filter_by_product.yml', $response);
+        self::assertEquals(1, $response->headers->get('X-Include-Total-Count'));
+    }
+
+    public function testGetListFilteredBySkuThatShouldBeCaseInsensitive(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'products'],
+            ['filter' => ['sku' => 'Product-1']],
             ['HTTP_X-Include' => 'totalCount']
         );
 

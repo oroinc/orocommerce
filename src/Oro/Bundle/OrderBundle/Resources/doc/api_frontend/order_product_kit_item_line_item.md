@@ -89,14 +89,6 @@ is the same as in the created order.**
 
 **The read-only field. A passed value will be ignored.**
 
-### productUnitPrecision
-
-#### create
-
-{@inheritdoc}
-
-**The read-only field. A passed value will be ignored.**
-
 ### quantity
 
 #### create

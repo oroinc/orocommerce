@@ -1,0 +1,4 @@
+oro_customer:
+    frontend_api:
+        non_authenticated_visitors_api_resources:
+            - Oro\Bundle\InventoryBundle\Entity\InventoryLevel

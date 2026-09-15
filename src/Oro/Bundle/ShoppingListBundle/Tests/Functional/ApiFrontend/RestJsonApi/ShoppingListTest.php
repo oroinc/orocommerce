@@ -177,6 +177,90 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertEquals(3, $response->headers->get('X-Include-Total-Count'));
     }
 
+    public function testGetListFilteredByShoppingListName(): void
+    {
+        // clear the entity manager to be sure that "compute prices" API processors work correctly
+        $this->getEntityManager()->clear();
+
+        $response = $this->cget(
+            ['entity' => 'shoppinglists'],
+            ['filter[name]' => 'Shopping List 2'],
+            ['HTTP_X-Include' => 'totalCount']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type' => 'shoppinglists',
+                        'id' => '<toString(@shopping_list2->id)>',
+                        'attributes' => [
+                            'name' => 'Shopping List 2'
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+        self::assertEquals(1, $response->headers->get('X-Include-Total-Count'));
+    }
+
+    public function testGetListFilteredByShoppingListNameThatShouldBeCaseInsensitive(): void
+    {
+        // clear the entity manager to be sure that "compute prices" API processors work correctly
+        $this->getEntityManager()->clear();
+
+        $response = $this->cget(
+            ['entity' => 'shoppinglists'],
+            ['filter[name]' => 'shopping LIST 2'],
+            ['HTTP_X-Include' => 'totalCount']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type' => 'shoppinglists',
+                        'id' => '<toString(@shopping_list2->id)>',
+                        'attributes' => [
+                            'name' => 'Shopping List 2'
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+        self::assertEquals(1, $response->headers->get('X-Include-Total-Count'));
+    }
+
+    public function testGetListFilteredByShoppingListNameThatShouldBeCaseInsensitiveSupportContainsOperator(): void
+    {
+        // clear the entity manager to be sure that "compute prices" API processors work correctly
+        $this->getEntityManager()->clear();
+
+        $response = $this->cget(
+            ['entity' => 'shoppinglists'],
+            ['filter[name][contains]' => 'list 2'],
+            ['HTTP_X-Include' => 'totalCount']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type' => 'shoppinglists',
+                        'id' => '<toString(@shopping_list2->id)>',
+                        'attributes' => [
+                            'name' => 'Shopping List 2'
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+        self::assertEquals(1, $response->headers->get('X-Include-Total-Count'));
+    }
+
     public function testGetListWithItemsAndKits(): void
     {
         // clear the entity manager to be sure that "compute prices" API processors work correctly
