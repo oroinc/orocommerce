@@ -17,6 +17,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ImageSliderExtensionTest extends TestCase
 {
@@ -43,7 +44,7 @@ class ImageSliderExtensionTest extends TestCase
         $imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
         $imagePlaceholderProvider->expects(self::any())
             ->method('getPath')
-            ->with('original', self::anything())
+            ->with('original', self::anything(), UrlGeneratorInterface::ABSOLUTE_PATH)
             ->willReturn(self::PLACEHOLDER);
 
         $apiUrlResolver = $this->createMock(ApiUrlResolver::class);

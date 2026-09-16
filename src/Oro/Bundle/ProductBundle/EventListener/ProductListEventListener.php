@@ -91,7 +91,11 @@ class ProductListEventListener
                 ? $this->urlHelper->getAbsoluteUrl($path)
                 : $this->urlHelper->getAbsolutePath($path);
         } else {
-            $imageUrl = $this->imagePlaceholderProvider->getPath($placeholderFilter, $format);
+            $imageUrl = $this->imagePlaceholderProvider->getPath(
+                $placeholderFilter,
+                $format,
+                $this->apiUrlResolver->getEffectiveReferenceType()
+            );
         }
 
         return $imageUrl;
