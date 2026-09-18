@@ -17,7 +17,7 @@
                 name: localization.name,
                 title: localization.titles|localized_value,
                 formattingCode: localization.formattingCode|lower,
-                selected: localization == selected_localization,
+                selected: localization.id == selected_localization.id,
             }]), [])
         }
     }) %}
