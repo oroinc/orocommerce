@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\ApiFrontendForVisitor\RestJsonApi;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -38,15 +37,6 @@ class ShoppingListForAnonymousVisitorTest extends FrontendRestJsonApiTestCase
         $configManager = self::getConfigManager();
         $configManager->set('oro_shopping_list.availability_for_guests', $status);
         $configManager->flush();
-    }
-
-    private function getLastVisitorId(): int
-    {
-        return $this->getEntityManager()->createQueryBuilder()
-            ->select('MAX(v.id) AS lastVisitorId')
-            ->from(CustomerVisitor::class, 'v')
-            ->getQuery()
-            ->getSingleScalarResult();
     }
 
     public function testGetList(): void
@@ -112,7 +102,7 @@ class ShoppingListForAnonymousVisitorTest extends FrontendRestJsonApiTestCase
 
     public function testAddToCartForDefaultShoppingList(): void
     {
-        $lastVisitorId = $this->getLastVisitorId();
+        $visitorId = $this->getVisitor()->getId();
 
         $response = $this->postSubresource(
             ['entity' => 'shoppinglists', 'id' => 'default', 'association' => 'items'],
@@ -131,13 +121,12 @@ class ShoppingListForAnonymousVisitorTest extends FrontendRestJsonApiTestCase
         );
         self::assertCount(1, $shoppingList->getLineItems());
 
-        $createdVisitorId = $this->getLastVisitorId();
-        self::assertNotEquals($lastVisitorId, $createdVisitorId);
+        self::assertEquals($visitorId, $shoppingList->getVisitor()->getId());
     }
 
     public function testCreateAndThenUpdateAndGetAndDeleteTheCreatedShoppingList(): void
     {
-        $lastVisitorId = $this->getLastVisitorId();
+        $visitorId = $this->getVisitor()->getId();
 
         // create shopping list
         $response = $this->post(
@@ -150,9 +139,8 @@ class ShoppingListForAnonymousVisitorTest extends FrontendRestJsonApiTestCase
         self::assertEquals('New Shopping List', $shoppingList->getLabel());
         self::assertCount(1, $shoppingList->getLineItems());
 
-        // check that a visitor is saved into the database
-        $createdVisitorId = $this->getLastVisitorId();
-        self::assertNotEquals($lastVisitorId, $createdVisitorId);
+        // check that the persisted visitor is used
+        self::assertEquals($visitorId, $shoppingList->getVisitor()->getId());
 
         // update the created shopping list
         $data = [

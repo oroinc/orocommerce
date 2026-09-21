@@ -2607,3 +2607,19 @@ services:
         tags:
             - { name: oro.post_upgrade_task }
 
+    oro_product.cache.product_page_request_provider:
+        class: Oro\Bundle\ProductBundle\Provider\ProductPageRequestProvider
+        parent: oro_platform.cache.provider.page_request_provider.abstract
+        arguments:
+            $doctrine: '@doctrine'
+            $productTypeProvider: '@oro_product.provider.product_type_provider'
+        tags:
+            - { name: warmup_page_request_provider }
+
+    oro_product.cache.product_search_page_request_provider:
+        class: Oro\Bundle\ProductBundle\Provider\ProductSearchPageRequestProvider
+        parent: oro_platform.cache.provider.page_request_provider.abstract
+        arguments:
+            $doctrine: '@doctrine'
+        tags:
+            - { name: warmup_page_request_provider }
