@@ -152,6 +152,7 @@ services:
             - '@doctrine'
         calls:
             - ['setLogger', ['@logger']]
+            - ['setTokenStorage', ['@security.token_storage']]
 
     oro_seo.sitemap.sitemap_url_dumper:
         class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper

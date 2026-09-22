@@ -4,12 +4,14 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Filesystem;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\GaufretteBundle\FileManager;
+use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationAwareTokenInterface;
 use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class PublicSitemapFilesystemAdapterTest extends \PHPUnit\Framework\TestCase
 {
@@ -28,6 +30,9 @@ class PublicSitemapFilesystemAdapterTest extends \PHPUnit\Framework\TestCase
     /** @var LoggerInterface|MockObject */
     private $logger;
 
+    /** @var TokenStorageInterface|MockObject */
+    private $tokenStorage;
+
     /** @var PublicSitemapFilesystemAdapter */
     private $adapter;
 
@@ -38,6 +43,7 @@ class PublicSitemapFilesystemAdapterTest extends \PHPUnit\Framework\TestCase
         $this->robotsTxtFileManager = $this->createMock(RobotsTxtFileManager::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
 
         $this->adapter = new PublicSitemapFilesystemAdapter(
             $this->fileManager,
@@ -46,6 +52,7 @@ class PublicSitemapFilesystemAdapterTest extends \PHPUnit\Framework\TestCase
             $this->doctrine
         );
         $this->adapter->setLogger($this->logger);
+        $this->adapter->setTokenStorage($this->tokenStorage);
     }
 
     public function testMoveSitemaps()
@@ -53,6 +60,9 @@ class PublicSitemapFilesystemAdapterTest extends \PHPUnit\Framework\TestCase
         $websiteIds = [1];
         $website = new Website();
 
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn(null);
         $this->fileManager->expects($this->once())
             ->method('deleteAllFiles');
         $this->tmpDataFileManager->expects($this->once())
@@ -106,6 +116,9 @@ class PublicSitemapFilesystemAdapterTest extends \PHPUnit\Framework\TestCase
         $websiteIds = [1];
         $website = new Website();
 
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn(null);
         $this->fileManager->expects($this->once())
             ->method('deleteAllFiles');
         $this->tmpDataFileManager->expects($this->once())
@@ -172,6 +185,47 @@ class PublicSitemapFilesystemAdapterTest extends \PHPUnit\Framework\TestCase
             ->method('getFileNameByWebsite')
             ->with($website)
             ->willReturn('robotsFileName.txt');
+
+        $this->adapter->moveSitemaps($websiteIds);
+    }
+
+    public function testMoveSitemapsWhenInOrganization()
+    {
+        $websiteIds = [1, 2];
+        $website1 = new Website();
+        $website2 = new Website();
+
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn($this->createMock(OrganizationAwareTokenInterface::class));
+
+        $this->fileManager->expects($this->exactly(2))
+            ->method('deleteAllFiles')
+            ->withConsecutive([1], [2]);
+
+        $this->tmpDataFileManager->expects($this->exactly(2))
+            ->method('findFiles')
+            ->withConsecutive([1 . DIRECTORY_SEPARATOR], [2 . DIRECTORY_SEPARATOR])
+            ->willReturn([]);
+
+        $this->tmpDataFileManager->expects($this->exactly(2))
+            ->method('getFileContent')
+            ->withConsecutive(['robotsFileName1.txt', false], ['robotsFileName2.txt', false])
+            ->willReturn(null);
+
+        $repo = $this->createMock(WebsiteRepository::class);
+        $repo->expects($this->exactly(2))
+            ->method('find')
+            ->willReturnOnConsecutiveCalls($website1, $website2);
+        $this->doctrine->expects($this->exactly(2))
+            ->method('getRepository')
+            ->with(Website::class)
+            ->willReturn($repo);
+
+        $this->robotsTxtFileManager->expects($this->exactly(2))
+            ->method('getFileNameByWebsite')
+            ->withConsecutive([$website1], [$website2])
+            ->willReturnOnConsecutiveCalls('robotsFileName1.txt', 'robotsFileName2.txt');
 
         $this->adapter->moveSitemaps($websiteIds);
     }
