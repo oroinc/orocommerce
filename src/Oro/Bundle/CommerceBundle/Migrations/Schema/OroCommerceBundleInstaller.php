@@ -22,7 +22,7 @@ class OroCommerceBundleInstaller implements Installation, ContainerAwareInterfac
      */
     public function getMigrationVersion()
     {
-        return 'v4_1_0_1';
+        return 'v5_1_17_0';
     }
 
     /**
