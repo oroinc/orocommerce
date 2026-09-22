@@ -437,3 +437,11 @@ services:
         class: Oro\Bundle\CatalogBundle\Utils\SortOrderDialogTargetStorage
         arguments:
             - '@request_stack'
+
+    oro_catalog.cache.category_page_request_provider:
+        class: Oro\Bundle\CatalogBundle\Provider\CategoryPageRequestProvider
+        parent: oro_platform.cache.provider.page_request_provider.abstract
+        arguments:
+            $doctrine: '@doctrine'
+        tags:
+            - { name: warmup_page_request_provider }
