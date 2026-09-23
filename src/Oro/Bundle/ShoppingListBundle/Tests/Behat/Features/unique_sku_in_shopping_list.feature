@@ -1,4 +1,3 @@
-@regression
 @fixture-OroShoppingListBundle:unique_sku_in_shopping_list.yml
 Feature: Unique SKU in shopping list
 

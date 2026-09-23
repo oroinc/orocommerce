@@ -1,4 +1,3 @@
-@regression
 @ticket-BB-22948
 @ticket-BB-19805
 @ticket-BB-19761
@@ -38,9 +37,9 @@ Feature: Price List Rules for Custom Attributes
       | black |
       | white |
     And I save form
+    Then I should see "Attribute was successfully saved" flash message
     And I remember element "Product Color Attribute White" value as "field.color.white"
     And I remember element "Product Attribute Name" value as "field.color"
-    Then I should see "Attribute was successfully saved" flash message
 
   Scenario: Open category entity management
     Given I go to System / Entities / Entity Management

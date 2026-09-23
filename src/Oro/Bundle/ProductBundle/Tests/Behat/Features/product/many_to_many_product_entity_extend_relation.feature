@@ -1,4 +1,3 @@
-@regression
 @ticket-BAP-19152
 
 Feature: Many to many product entity extend relation

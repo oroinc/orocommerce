@@ -1,4 +1,3 @@
-@regression
 @ticket-BB-17371
 @fixture-OroPricingBundle:ProductPricesFieldsConflict.yml
 

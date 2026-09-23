@@ -1,4 +1,3 @@
-@regression
 @fixture-OroCatalogBundle:category_products_sort_order_drag_n_drop.yml
 
 Feature: Category products sort order grid not have additional columns in popup

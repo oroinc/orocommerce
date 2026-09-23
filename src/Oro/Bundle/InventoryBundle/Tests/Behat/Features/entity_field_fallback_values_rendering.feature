@@ -1,4 +1,3 @@
-@regression
 @ticket-BAP-20123
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml

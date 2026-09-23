@@ -1,4 +1,3 @@
-@regression
 @ticket-BB-18879
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 Feature: Product attributes order

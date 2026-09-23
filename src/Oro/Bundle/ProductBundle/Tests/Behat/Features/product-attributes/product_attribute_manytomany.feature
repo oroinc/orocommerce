@@ -1,4 +1,3 @@
-@regression
 @ticket-BB-9989
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 Feature: Product attribute many-to-many
