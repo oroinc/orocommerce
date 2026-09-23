@@ -19,7 +19,7 @@ class OroCommerceBundleInstaller implements Installation, ContainerAwareInterfac
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v6_1_0_1';
+        return 'v7_0_3_0';
     }
 
     #[\Override]
