@@ -197,6 +197,10 @@ api:
         Oro\Bundle\PricingBundle\Entity\ProductPrice:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/product_price.md'
             disable_meta_properties: [ title ]
+            # the "oro_pricing_price_list_uidx" unique index is not detected automatically
+            # because its columns do not match the property paths of the association fields
+            upsert:
+                add: [ [ priceList, product, quantity, unit, currency ] ]
             fields:
                 id:
                     data_type: string
