@@ -1,5 +1,4 @@
 @skip-base
-@regression
 @ticket-BB-19825
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml

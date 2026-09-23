@@ -1,4 +1,3 @@
-@regression
 @ticket-BB-18779
 
 Feature: Add wysiwyg field to the existing entity
