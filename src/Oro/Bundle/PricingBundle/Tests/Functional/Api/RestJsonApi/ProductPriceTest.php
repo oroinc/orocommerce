@@ -3,12 +3,14 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadApiProductPricesWithRules;
@@ -433,6 +435,254 @@ class ProductPriceTest extends RestJsonApiTestCase
                 'title' => 'unique entity constraint',
                 'detail' => 'Product has duplication of product prices.'
                     . ' Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.'
+            ],
+            $response
+        );
+    }
+
+    public function testCreateWithUpsertWhenProductPriceDoesNotExist(): void
+    {
+        $priceList = $this->getPriceList('price_list_3');
+
+        $data = $this->getRequestData('product_price/create.yml');
+        $data['data']['meta'] = ['upsert' => ['priceList', 'product', 'quantity', 'unit', 'currency']];
+        $response = $this->post(['entity' => 'productprices'], $data);
+
+        $priceListId = $priceList->getId();
+        $productPrice = $this->findProductPrice($priceListId);
+        self::assertNotNull($productPrice);
+
+        self::assertEquals(
+            $this->getProductPriceApiId($productPrice, $productPrice->getPriceList()),
+            $this->getResourceId($response)
+        );
+
+        $this->assertProductPriceStoredInTable($productPrice, $priceList);
+
+        $this->assertMessagesSentForCreateRequest($priceListId);
+    }
+
+    public function testCreateWithUpsertWhenProductPriceExists(): void
+    {
+        $existingProductPrice = $this->getProductPrice('product_price_with_rule_1');
+        $existingProductPriceId = $existingProductPrice->getId();
+        $priceList = $this->getPriceList('price_list_1');
+        $data = [
+            'data' => [
+                'type' => 'productprices',
+                'meta' => ['upsert' => ['priceList', 'product', 'quantity', 'unit', 'currency']],
+                'attributes' => [
+                    'quantity' => 5,
+                    'value' => '150.0000',
+                    'currency' => 'USD'
+                ],
+                'relationships' => [
+                    'priceList' => [
+                        'data' => ['type' => 'pricelists', 'id' => (string)$priceList->getId()]
+                    ],
+                    'product' => [
+                        'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
+                    ],
+                    'unit' => [
+                        'data' => ['type' => 'productunits', 'id' => '<toString(@product_unit.liter->code)>']
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->post(['entity' => 'productprices'], $data, [], false);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_OK);
+
+        self::assertEquals(
+            $this->getProductPriceApiId($existingProductPrice, $priceList),
+            $this->getResourceId($response)
+        );
+
+        $updatedProductPrice = $this->findProductPriceByUniqueKey(
+            5,
+            'USD',
+            $priceList,
+            $this->getProduct('product-1'),
+            $this->getProductUnit('product_unit.liter')
+        );
+        self::assertNotNull($updatedProductPrice);
+        self::assertSame($existingProductPriceId, $updatedProductPrice->getId());
+        self::assertEquals(150, $updatedProductPrice->getPrice()->getValue());
+        self::assertNull($updatedProductPrice->getPriceRule());
+
+        $this->assertProductPriceStoredInTable($updatedProductPrice, $priceList);
+    }
+
+    public function testCreateWithUpsertWhenProductPriceExistsAndShardingIsEnabled(): void
+    {
+        $shardManager = $this->getShardManager();
+        $shardManager->setEnableSharding(true);
+        try {
+            $priceList = new PriceList();
+            $priceList->setName('Sharded Price List For Upsert');
+            $priceList->setCurrencies(['USD']);
+            $priceList->setOrganization($this->getReference('organization'));
+            $entityManager = self::getContainer()->get('doctrine')->getManagerForClass(PriceList::class);
+            $entityManager->persist($priceList);
+            $entityManager->flush();
+
+            $product = $this->getProduct('product-1');
+            $unit = $this->getProductUnit('product_unit.liter');
+
+            $existingProductPrice = new ProductPrice();
+            $existingProductPrice
+                ->setPriceList($priceList)
+                ->setProduct($product)
+                ->setUnit($unit)
+                ->setQuantity(5)
+                ->setPrice(Price::create(100, 'USD'));
+
+            /** @var PriceManager $priceManager */
+            $priceManager = self::getContainer()->get('oro_pricing.manager.price_manager');
+            $priceManager->persist($existingProductPrice);
+            $priceManager->flush();
+            $existingProductPriceId = $existingProductPrice->getId();
+
+            // Confirms the fixture price actually landed in the price list's shard, not the base table,
+            // so the assertions below genuinely exercise the sharded lookup this ticket is about.
+            $this->assertProductPriceStoredInTable($existingProductPrice, $priceList);
+
+            $data = [
+                'data' => [
+                    'type' => 'productprices',
+                    'meta' => ['upsert' => ['priceList', 'product', 'quantity', 'unit', 'currency']],
+                    'attributes' => [
+                        'quantity' => 5,
+                        'value' => '150.0000',
+                        'currency' => 'USD'
+                    ],
+                    'relationships' => [
+                        'priceList' => [
+                            'data' => ['type' => 'pricelists', 'id' => (string)$priceList->getId()]
+                        ],
+                        'product' => [
+                            'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
+                        ],
+                        'unit' => [
+                            'data' => ['type' => 'productunits', 'id' => '<toString(@product_unit.liter->code)>']
+                        ]
+                    ]
+                ]
+            ];
+            $response = $this->post(['entity' => 'productprices'], $data, [], false);
+            self::assertResponseStatusCodeEquals($response, Response::HTTP_OK);
+
+            self::assertEquals(
+                $this->getProductPriceApiId($existingProductPrice, $priceList),
+                $this->getResourceId($response)
+            );
+
+            $updatedProductPrice = $this->findProductPriceByUniqueKey(5, 'USD', $priceList, $product, $unit);
+            self::assertNotNull($updatedProductPrice);
+            self::assertSame($existingProductPriceId, $updatedProductPrice->getId());
+            self::assertEquals(150, $updatedProductPrice->getPrice()->getValue());
+
+            $this->assertProductPriceStoredInTable($updatedProductPrice, $priceList);
+        } finally {
+            $shardManager->setEnableSharding(false);
+        }
+    }
+
+    public function testCreateWithUpsertDisambiguatesByPriceList(): void
+    {
+        $priceList1 = $this->getPriceList('price_list_1');
+        $priceList2 = $this->getPriceList('price_list_2');
+
+        $existingProductPrice = $this->getProductPrice('product_price_with_rule_1');
+        $existingProductPriceId = $existingProductPrice->getId();
+
+        $product = $this->getProduct('product-1');
+        $unit = $this->getProductUnit('product_unit.liter');
+
+        // Same (product, quantity, unit, currency) tuple as product_price_with_rule_1, but under
+        // a different price list; the upsert below must not match this row instead.
+        $otherPriceListProductPrice = new ProductPrice();
+        $otherPriceListProductPrice
+            ->setPriceList($priceList2)
+            ->setProduct($product)
+            ->setUnit($unit)
+            ->setQuantity(5)
+            ->setPrice(Price::create(99, 'USD'));
+
+        /** @var PriceManager $priceManager */
+        $priceManager = self::getContainer()->get('oro_pricing.manager.price_manager');
+        $priceManager->persist($otherPriceListProductPrice);
+        $priceManager->flush();
+        $otherPriceListProductPriceId = $otherPriceListProductPrice->getId();
+
+        $data = [
+            'data' => [
+                'type' => 'productprices',
+                'meta' => ['upsert' => ['priceList', 'product', 'quantity', 'unit', 'currency']],
+                'attributes' => [
+                    'quantity' => 5,
+                    'value' => '150.0000',
+                    'currency' => 'USD'
+                ],
+                'relationships' => [
+                    'priceList' => [
+                        'data' => ['type' => 'pricelists', 'id' => (string)$priceList1->getId()]
+                    ],
+                    'product' => [
+                        'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
+                    ],
+                    'unit' => [
+                        'data' => ['type' => 'productunits', 'id' => '<toString(@product_unit.liter->code)>']
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->post(['entity' => 'productprices'], $data, [], false);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_OK);
+
+        self::assertEquals(
+            $this->getProductPriceApiId($existingProductPrice, $priceList1),
+            $this->getResourceId($response)
+        );
+
+        $updatedProductPrice = $this->findProductPriceByUniqueKey(5, 'USD', $priceList1, $product, $unit);
+        self::assertNotNull($updatedProductPrice);
+        self::assertSame($existingProductPriceId, $updatedProductPrice->getId());
+        self::assertEquals(150, $updatedProductPrice->getPrice()->getValue());
+
+        // The identical tuple under price_list_2 must remain untouched by the upsert above.
+        $otherPriceListProductPriceAfter = $this->findProductPriceByUniqueKey(5, 'USD', $priceList2, $product, $unit);
+        self::assertNotNull($otherPriceListProductPriceAfter);
+        self::assertSame($otherPriceListProductPriceId, $otherPriceListProductPriceAfter->getId());
+        self::assertEquals(99, $otherPriceListProductPriceAfter->getPrice()->getValue());
+    }
+
+    public function testTryToCreateWithUpsertByIdentifier(): void
+    {
+        $data = $this->getRequestData('product_price/create.yml');
+        $data['data']['meta'] = ['upsert' => true];
+        $response = $this->post(['entity' => 'productprices'], $data, [], false);
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'value constraint',
+                'detail' => 'The upsert operation cannot use the entity identifier to find an entity.',
+                'source' => ['pointer' => '/meta/upsert']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateWithUpsertByNotAllowedFields(): void
+    {
+        $data = $this->getRequestData('product_price/create.yml');
+        $data['data']['meta'] = ['upsert' => ['product', 'quantity']];
+        $response = $this->post(['entity' => 'productprices'], $data, [], false);
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'value constraint',
+                'detail' => 'The upsert operation cannot use these fields to find an entity.',
+                'source' => ['pointer' => '/meta/upsert']
             ],
             $response
         );
@@ -1044,5 +1294,22 @@ class ProductPriceTest extends RestJsonApiTestCase
                 ]
             ]
         );
+    }
+
+    /**
+     * Confirms, via a raw query against the physical table name, that the row lives in the table this price
+     * list's shard hints resolve to (the base table when sharding is disabled) — independent of any hint
+     * mechanism the code under test itself relies on.
+     */
+    private function assertProductPriceStoredInTable(ProductPrice $productPrice, PriceList $priceList): void
+    {
+        $table = $this->getShardManager()->getEnabledShardName(ProductPrice::class, ['priceList' => $priceList]);
+        $connection = self::getContainer()->get('doctrine')->getConnection();
+
+        $count = $connection->fetchOne(
+            sprintf('SELECT COUNT(*) FROM %s WHERE id = ?', $table),
+            [$productPrice->getId()]
+        );
+        self::assertSame(1, (int)$count);
     }
 }

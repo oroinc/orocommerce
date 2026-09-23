@@ -254,6 +254,15 @@ services:
             - { name: oro.api.processor, action: update, group: load_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
             - { name: oro.api.processor, action: delete, group: load_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice }
 
+    oro_pricing.api.add_shard_hints_for_upsert_operation:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\AddShardHintsForUpsertOperation
+        arguments:
+            - '@oro_pricing.shard_manager'
+            - '@oro_api.value_normalizer'
+        tags:
+            # should be executed before oro_api.create.load_upsert_entity
+            - { name: oro.api.processor, action: create, group: load_data, requestType: 'json_api&!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: 10 }
+
     oro_pricing.api.disable_product_price_persist:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\DisableProductPricePersist
         arguments:
