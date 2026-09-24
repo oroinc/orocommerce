@@ -66,3 +66,13 @@ services:
             - '@doctrine'
         tags:
             - { name: oro_locale.extension.current_localization, priority: -5 }
+
+    oro_frontend_localization.event_listener.localized_slug_redirect:
+        class: Oro\Bundle\FrontendLocalizationBundle\EventListener\LocalizedSlugRedirectListener
+        arguments:
+            - '@oro_redirect.routing.slug_redirect_matcher'
+            - '@oro_locale.helper.localized_slug_redirect'
+            - '@oro_frontend_localization.manager.user_localization'
+        tags:
+            # after the firewall (priority 8) so the customer user is known, before the guest access listener (5)
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 6 }
