@@ -21,7 +21,14 @@ The current file describes significant changes in the code that may affect the u
 - [1.2.0](#120-2017-06-01)
 - [1.1.0](#110-2017-03-31)
 
-## UNRELEASED
+## 5.1.19
+
+### Changed
+
+#### CheckoutBundle
+* Changed the shipped `checkout_customer_user_reset_password` email template so it reads the `confirmationToken` email template parameter instead of `entity.confirmationToken`. The confirmation token is not an email template variable anymore (see `\Oro\Bundle\UserBundle\Mailer\Processor::CONFIRMATION_TOKEN_TEMPLATE_PARAM`). `\Oro\Bundle\CheckoutBundle\Migrations\Data\ORM\LoadEmailTemplates` applies the new content to an installation that has not customised it.
+
+## 5.1.18
 
 ### Added
 
