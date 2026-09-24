@@ -158,6 +158,13 @@ Previously known as GOD Object
 #### SaleBundle
 * Removed `oro_sale_accept_quote` as it is not used anywhere.
 
+## 6.0.12
+
+### Changed
+
+#### CheckoutBundle
+* Changed the shipped `checkout_customer_user_reset_password` email template so it reads the `confirmationToken` email template parameter instead of `entity.confirmationToken`. `\Oro\Bundle\CheckoutBundle\Migrations\Data\ORM\LoadEmailTemplates` applies the new content to an installation that has not customised it.
+
 ## 6.0.0 (2024-03-30)
 [Show detailed list of changes](incompatibilities-6-0.md)
 
