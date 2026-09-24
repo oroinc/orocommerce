@@ -146,6 +146,9 @@ The current file describes significant changes in the code that may affect the u
 * Updated the shopping list create order operation to use the `oro_shopping_list.operation.create_order_draft_from_shopping_list` service to create an order draft and redirect using the draft session uuid, instead of pre-filling the order form via the product data storage.
 * `\Oro\Bundle\ShoppingListBundle\Entity\ShoppingList` and `\Oro\Bundle\ShoppingListBundle\Entity\LineItem` now implement `\Oro\Component\DraftSession\Entity\EntityDraftAwareInterface` (via `\Oro\Component\DraftSession\Entity\NoopEntityDraftAwareTrait`) to support use as draft source entities in the shopping-list-to-order draft flow.
 
+#### CheckoutBundle
+* Changed the `checkout_customer_user_reset_password` email template to render the password reset link from the `confirmationToken` template parameter, which the sending code now passes explicitly.
+
 #### RedirectBundle
 * Changed `\Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator::getLocalization()` from private to public.
 
