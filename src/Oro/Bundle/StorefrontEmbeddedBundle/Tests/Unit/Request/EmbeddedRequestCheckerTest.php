@@ -50,21 +50,21 @@ class EmbeddedRequestCheckerTest extends TestCase
     {
         $this->requestStack->push($this->createEmbeddedRequest('/__oro'));
 
-        self::assertSame('/__oro', $this->checker->proxyPrefix());
+        self::assertSame('/__oro', $this->checker->getProxyPrefix());
     }
 
     public function testDropsTheTrailingSlashOfTheProxyPrefix(): void
     {
         $this->requestStack->push($this->createEmbeddedRequest('/__oro/'));
 
-        self::assertSame('/__oro', $this->checker->proxyPrefix());
+        self::assertSame('/__oro', $this->checker->getProxyPrefix());
     }
 
     public function testHasNoProxyPrefixWhenTheHostNamedNone(): void
     {
         $this->requestStack->push($this->createEmbeddedRequest());
 
-        self::assertSame('', $this->checker->proxyPrefix());
+        self::assertSame('', $this->checker->getProxyPrefix());
     }
 
     /**
@@ -74,7 +74,7 @@ class EmbeddedRequestCheckerTest extends TestCase
     {
         $this->requestStack->push($this->createEmbeddedRequest($header));
 
-        self::assertSame('', $this->checker->proxyPrefix());
+        self::assertSame('', $this->checker->getProxyPrefix());
     }
 
     public function notAProxyPrefixDataProvider(): array
@@ -92,21 +92,21 @@ class EmbeddedRequestCheckerTest extends TestCase
     {
         $this->requestStack->push($this->createEmbeddedRequestServingAssetRoots('/build,/bundles'));
 
-        self::assertSame(['/build', '/bundles'], $this->checker->assetRootsServedByHost());
+        self::assertSame(['/build', '/bundles'], $this->checker->getAssetRootsServedByHost());
     }
 
     public function testReadsAssetRootsAroundWhichTheHostLeftSpaceOrASlash(): void
     {
         $this->requestStack->push($this->createEmbeddedRequestServingAssetRoots('/build/, /bundles'));
 
-        self::assertSame(['/build', '/bundles'], $this->checker->assetRootsServedByHost());
+        self::assertSame(['/build', '/bundles'], $this->checker->getAssetRootsServedByHost());
     }
 
     public function testServesNoAssetRootsWhenTheHostNamedNone(): void
     {
         $this->requestStack->push($this->createEmbeddedRequest());
 
-        self::assertSame([], $this->checker->assetRootsServedByHost());
+        self::assertSame([], $this->checker->getAssetRootsServedByHost());
     }
 
     public function testDropsAnAssetRootThatWouldSendTheBrowserSomewhereElse(): void
@@ -115,7 +115,7 @@ class EmbeddedRequestCheckerTest extends TestCase
             $this->createEmbeddedRequestServingAssetRoots('http://evil.example,//evil.example,build,/,/bu ild,/build')
         );
 
-        self::assertSame(['/build'], $this->checker->assetRootsServedByHost());
+        self::assertSame(['/build'], $this->checker->getAssetRootsServedByHost());
     }
 
     public function testKnowsWhichPathsTheHostSaidItServes(): void

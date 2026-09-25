@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Tools;
 
 use Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker;
 use Oro\Bundle\UIBundle\Tools\UrlHelper;
 
 /**
- * Turns the root-relative paths the storefront reads from its search index — product images above all — into
+ * Turns the root-relative paths the storefront reads from its search index (product images above all) into
  * absolute Oro urls while rendering for an embedded host, which cannot serve Oro's paths from its own origin.
  *
  * Extends UrlHelper only to satisfy strict type-hints; every method is delegated.

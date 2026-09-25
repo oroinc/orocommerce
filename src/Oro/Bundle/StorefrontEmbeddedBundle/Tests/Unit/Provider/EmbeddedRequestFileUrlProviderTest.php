@@ -77,8 +77,10 @@ class EmbeddedRequestFileUrlProviderTest extends TestCase
 
     public function testKeepsTheReferenceTypeTheCallerAskedFor(): void
     {
-        $this->embeddedRequestChecker->expects(self::never())
-            ->method('isEmbeddedRequest');
+        $this->embeddedRequestChecker->expects(self::once())
+            ->method('resolveReferenceType')
+            ->with(UrlGeneratorInterface::NETWORK_PATH)
+            ->willReturn(UrlGeneratorInterface::NETWORK_PATH);
 
         $this->innerFileUrlProvider->expects(self::once())
             ->method('getFilteredImageUrl')
@@ -94,7 +96,7 @@ class EmbeddedRequestFileUrlProviderTest extends TestCase
     public function testLeavesFileDownloadsToTheDecoratedProvider(): void
     {
         $this->embeddedRequestChecker->expects(self::never())
-            ->method('isEmbeddedRequest');
+            ->method('resolveReferenceType');
 
         $this->innerFileUrlProvider->expects(self::once())
             ->method('getFileUrl')
@@ -110,7 +112,10 @@ class EmbeddedRequestFileUrlProviderTest extends TestCase
     private function embedded(bool $isEmbeddedRequest): void
     {
         $this->embeddedRequestChecker->expects(self::once())
-            ->method('isEmbeddedRequest')
-            ->willReturn($isEmbeddedRequest);
+            ->method('resolveReferenceType')
+            ->with(UrlGeneratorInterface::ABSOLUTE_PATH)
+            ->willReturn(
+                $isEmbeddedRequest ? UrlGeneratorInterface::ABSOLUTE_URL : UrlGeneratorInterface::ABSOLUTE_PATH
+            );
     }
 }

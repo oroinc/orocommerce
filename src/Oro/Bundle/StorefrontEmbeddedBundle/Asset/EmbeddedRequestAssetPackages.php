@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Asset;
 
 use Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker;
@@ -18,12 +20,17 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class EmbeddedRequestAssetPackages extends Packages
 {
-    private const array ORO_OWN_PATHS = ['/build/', '/bundles/'];
+    private const string PATH_SEPARATOR = '/';
+    private const string PROTOCOL_RELATIVE_PREFIX = '//';
 
+    /**
+     * @param string[] $oroOwnPaths root-relative prefixes of the asset urls Oro serves itself
+     */
     public function __construct(
         private readonly Packages $innerPackages,
         private readonly RequestStack $requestStack,
         private readonly EmbeddedRequestChecker $embeddedRequestChecker,
+        private readonly array $oroOwnPaths = ['/build/', '/bundles/'],
     ) {
     }
 
@@ -36,7 +43,7 @@ class EmbeddedRequestAssetPackages extends Packages
             return $url;
         }
 
-        return $this->oroOrigin() . $url;
+        return $this->getOroOrigin() . $url;
     }
 
     #[\Override]
@@ -65,11 +72,11 @@ class EmbeddedRequestAssetPackages extends Packages
 
     private function belongsToOro(string $url): bool
     {
-        if (!str_starts_with($url, '/') || str_starts_with($url, '//')) {
+        if (!str_starts_with($url, self::PATH_SEPARATOR) || str_starts_with($url, self::PROTOCOL_RELATIVE_PREFIX)) {
             return false;
         }
 
-        foreach (self::ORO_OWN_PATHS as $path) {
+        foreach ($this->oroOwnPaths as $path) {
             if (str_starts_with($url, $path)) {
                 return $this->embeddedRequestChecker->isEmbeddedRequest();
             }
@@ -78,7 +85,7 @@ class EmbeddedRequestAssetPackages extends Packages
         return false;
     }
 
-    private function oroOrigin(): string
+    private function getOroOrigin(): string
     {
         return $this->requestStack->getMainRequest()?->getSchemeAndHttpHost() ?? '';
     }

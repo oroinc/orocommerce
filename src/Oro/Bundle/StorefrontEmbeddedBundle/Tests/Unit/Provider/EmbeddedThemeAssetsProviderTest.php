@@ -10,6 +10,8 @@ use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Component\Testing\TempDirExtension;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Asset\Packages;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class EmbeddedThemeAssetsProviderTest extends TestCase
 {
@@ -18,6 +20,7 @@ class EmbeddedThemeAssetsProviderTest extends TestCase
     private WebsiteProviderInterface&MockObject $websiteProvider;
     private ThemeConfigurationProvider&MockObject $themeConfigurationProvider;
     private ConfigManager&MockObject $configManager;
+    private Packages&MockObject $assetPackages;
     private string $publicDirectory;
 
     #[\Override]
@@ -26,6 +29,7 @@ class EmbeddedThemeAssetsProviderTest extends TestCase
         $this->websiteProvider = $this->createMock(WebsiteProviderInterface::class);
         $this->themeConfigurationProvider = $this->createMock(ThemeConfigurationProvider::class);
         $this->configManager = $this->createMock(ConfigManager::class);
+        $this->assetPackages = $this->createMock(Packages::class);
         $this->publicDirectory = $this->getTempDir('embedded_theme_assets');
     }
 
@@ -128,6 +132,8 @@ class EmbeddedThemeAssetsProviderTest extends TestCase
             $this->websiteProvider,
             $this->themeConfigurationProvider,
             $this->configManager,
+            $this->assetPackages,
+            new ArrayAdapter(),
             $this->publicDirectory
         );
     }

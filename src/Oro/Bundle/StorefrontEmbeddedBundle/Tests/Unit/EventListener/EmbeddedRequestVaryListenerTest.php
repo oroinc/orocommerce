@@ -4,6 +4,7 @@ namespace Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\StorefrontEmbeddedBundle\EventListener\EmbeddedRequestVaryListener;
+use Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +21,10 @@ class EmbeddedRequestVaryListenerTest extends TestCase
     protected function setUp(): void
     {
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
-        $this->listener = new EmbeddedRequestVaryListener($this->frontendHelper);
+        $this->listener = new EmbeddedRequestVaryListener(
+            $this->frontendHelper,
+            $this->createMock(EmbeddedRequestChecker::class)
+        );
     }
 
     public function testTellsCachesThatAStorefrontPageDependsOnTheEmbeddedHeaders(): void

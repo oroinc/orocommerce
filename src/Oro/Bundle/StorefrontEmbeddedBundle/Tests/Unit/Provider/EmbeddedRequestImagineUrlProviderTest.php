@@ -31,9 +31,7 @@ class EmbeddedRequestImagineUrlProviderTest extends TestCase
 
     public function testAsksForAnAbsoluteUrlOnAnEmbeddedRequest(): void
     {
-        $this->embeddedRequestChecker->expects(self::once())
-            ->method('isEmbeddedRequest')
-            ->willReturn(true);
+        $this->referenceTypeResolvedTo(UrlGeneratorInterface::ABSOLUTE_PATH, UrlGeneratorInterface::ABSOLUTE_URL);
 
         $this->innerImagineUrlProvider->expects(self::once())
             ->method('getFilteredImageUrl')
@@ -53,9 +51,7 @@ class EmbeddedRequestImagineUrlProviderTest extends TestCase
 
     public function testLeavesThePathAloneOnOroOwnPages(): void
     {
-        $this->embeddedRequestChecker->expects(self::once())
-            ->method('isEmbeddedRequest')
-            ->willReturn(false);
+        $this->referenceTypeResolvedTo(UrlGeneratorInterface::ABSOLUTE_PATH, UrlGeneratorInterface::ABSOLUTE_PATH);
 
         $this->innerImagineUrlProvider->expects(self::once())
             ->method('getFilteredImageUrl')
@@ -75,8 +71,7 @@ class EmbeddedRequestImagineUrlProviderTest extends TestCase
 
     public function testKeepsTheReferenceTypeTheCallerAskedFor(): void
     {
-        $this->embeddedRequestChecker->expects(self::never())
-            ->method('isEmbeddedRequest');
+        $this->referenceTypeResolvedTo(UrlGeneratorInterface::ABSOLUTE_URL, UrlGeneratorInterface::ABSOLUTE_URL);
 
         $this->innerImagineUrlProvider->expects(self::once())
             ->method('getFilteredImageUrl')
@@ -87,5 +82,13 @@ class EmbeddedRequestImagineUrlProviderTest extends TestCase
             'http://oro.loc/media/cache/resolve/product_large/' . self::PLACEHOLDER,
             $this->provider->getFilteredImageUrl(self::PLACEHOLDER, 'product_large')
         );
+    }
+
+    private function referenceTypeResolvedTo(int $askedReferenceType, int $resolvedReferenceType): void
+    {
+        $this->embeddedRequestChecker->expects(self::once())
+            ->method('resolveReferenceType')
+            ->with($askedReferenceType)
+            ->willReturn($resolvedReferenceType);
     }
 }

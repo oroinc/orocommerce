@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend;
 
 use Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedThemeAssetsProvider;
@@ -13,13 +15,17 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class EmbeddedThemeAssetsController
 {
+    public const string ROUTE_NAME = 'oro_storefront_embedded_theme_assets';
+
+    private const string FILES_KEY = 'files';
+
     public function __construct(private readonly EmbeddedThemeAssetsProvider $themeAssetsProvider)
     {
     }
 
-    #[Route(path: '/theme-assets', name: 'oro_storefront_embedded_theme_assets', methods: ['GET'])]
+    #[Route(path: '/theme-assets', name: self::ROUTE_NAME, methods: ['GET'])]
     public function themeAssetsAction(): JsonResponse
     {
-        return new JsonResponse(['files' => $this->themeAssetsProvider->getFiles()]);
+        return new JsonResponse([self::FILES_KEY => $this->themeAssetsProvider->getFiles()]);
     }
 }

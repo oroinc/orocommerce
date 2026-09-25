@@ -177,6 +177,13 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_checkout_single_page_transition }
 
+    oro_checkout.layout.data_provider.session_transfer_checkout_url:
+        class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\SessionTransferCheckoutUrlProvider'
+        arguments:
+            - '@oro_oauth2_server.provider.session_transfer_return_url_provider'
+        tags:
+            - { name: layout.data_provider, alias: session_transfer_checkout_url }
+
     oro_checkout.model.action.get_order_line_items:
         class: 'Oro\Bundle\CheckoutBundle\Model\Action\GetOrderLineItems'
         arguments:

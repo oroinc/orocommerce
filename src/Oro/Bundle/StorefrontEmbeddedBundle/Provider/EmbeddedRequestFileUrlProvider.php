@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Provider;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
@@ -42,7 +44,7 @@ class EmbeddedRequestFileUrlProvider implements FileUrlProviderInterface
             $width,
             $height,
             $format,
-            $this->embeddedReferenceType($referenceType)
+            $this->embeddedRequestChecker->resolveReferenceType($referenceType)
         );
     }
 
@@ -57,18 +59,7 @@ class EmbeddedRequestFileUrlProvider implements FileUrlProviderInterface
             $file,
             $filterName,
             $format,
-            $this->embeddedReferenceType($referenceType)
+            $this->embeddedRequestChecker->resolveReferenceType($referenceType)
         );
-    }
-
-    private function embeddedReferenceType(int $referenceType): int
-    {
-        if ($referenceType !== UrlGeneratorInterface::ABSOLUTE_PATH) {
-            return $referenceType;
-        }
-
-        return $this->embeddedRequestChecker->isEmbeddedRequest()
-            ? UrlGeneratorInterface::ABSOLUTE_URL
-            : $referenceType;
     }
 }

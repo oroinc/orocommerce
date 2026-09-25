@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\StorefrontEmbeddedBundle\DependencyInjection\Compiler;
 
-use Oro\Bundle\StorefrontEmbeddedBundle\Asset\EmbeddedRequestAssetPackages;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -13,13 +14,17 @@ use Symfony\Component\DependencyInjection\Reference;
  * and is replaced in the markup by the name the file is sent to the PDF engine under. Prefixing it with Oro's origin
  * for an embedded host turns that read into an HTTP request, whose stream cannot be rewound, and the PDF engine then
  * receives an empty document.
+ *
+ * The plain packages are the inner service of the embedded decorator, which must therefore stay the innermost
+ * decorator of `assets.packages` (see its decoration priority in services.yml). The argument is bound by name, so
+ * a reordered constructor of the collector fails at compile time instead of at PDF rendering time.
  */
 class PdfTemplateAssetPackagesPass implements CompilerPassInterface
 {
     private const string PDF_TEMPLATE_ASSETS_COLLECTOR =
         'oro_pdf_generator.pdf_template_renderer.twig.pdf_template_assets_collector';
-
-    private const string PLAIN_ASSET_PACKAGES = EmbeddedRequestAssetPackages::class . '.inner';
+    private const string PACKAGES_ARGUMENT = '$packages';
+    private const string PLAIN_ASSET_PACKAGES = 'oro_storefront_embedded.asset.embedded_request_asset_packages.inner';
 
     #[\Override]
     public function process(ContainerBuilder $container): void
@@ -29,6 +34,6 @@ class PdfTemplateAssetPackagesPass implements CompilerPassInterface
         }
 
         $container->getDefinition(self::PDF_TEMPLATE_ASSETS_COLLECTOR)
-            ->replaceArgument(0, new Reference(self::PLAIN_ASSET_PACKAGES));
+            ->setArgument(self::PACKAGES_ARGUMENT, new Reference(self::PLAIN_ASSET_PACKAGES));
     }
 }

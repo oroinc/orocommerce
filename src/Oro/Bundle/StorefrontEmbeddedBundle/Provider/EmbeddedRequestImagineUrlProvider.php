@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Provider;
 
 use Oro\Bundle\AttachmentBundle\Imagine\Provider\ImagineUrlProviderInterface;
@@ -7,7 +9,7 @@ use Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Serves filtered urls of images shipped with the theme — image placeholders above all — as absolute Oro urls
+ * Serves filtered urls of images shipped with the theme (image placeholders above all) as absolute Oro urls
  * while rendering for an embedded host, the same way EmbeddedRequestFileUrlProvider serves attachments.
  */
 class EmbeddedRequestImagineUrlProvider implements ImagineUrlProviderInterface
@@ -29,18 +31,7 @@ class EmbeddedRequestImagineUrlProvider implements ImagineUrlProviderInterface
             $path,
             $filterName,
             $format,
-            $this->embeddedReferenceType($referenceType)
+            $this->embeddedRequestChecker->resolveReferenceType($referenceType)
         );
-    }
-
-    private function embeddedReferenceType(int $referenceType): int
-    {
-        if ($referenceType !== UrlGeneratorInterface::ABSOLUTE_PATH) {
-            return $referenceType;
-        }
-
-        return $this->embeddedRequestChecker->isEmbeddedRequest()
-            ? UrlGeneratorInterface::ABSOLUTE_URL
-            : $referenceType;
     }
 }

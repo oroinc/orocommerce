@@ -107,6 +107,14 @@ The current file describes significant changes in the code that may affect the u
 #### SEOBundle
 * Added the `canonicalUrl` field to the `products`, `mastercatalogcategories` and `landingpages` storefront API resources. The value is an absolute URL, unlike the relative `url` field beside it.
 
+#### StorefrontEmbeddedBundle
+* Added **Storefront Embedded Fragments** - a headless storefront application can embed real OroCommerce storefront pages (shopping lists, account pages, orders, quotes, RFQs, invoices) as JSON fragments rendered with the caller's own session, and open a storefront session from an OAuth2 access token.
+    * New storefront endpoints: `/embedded/fragment/{block}` (renders a curated storefront page as a JSON fragment and forwards its form submits), `/embedded/session` (opens a storefront session, or issues a customer visitor cookie, from a Bearer access token), `/embedded/theme-assets` (lists the built theme files a host may serve as its own static files).
+    * A bundle makes one of its own storefront pages embeddable by adding an `embedded_blocks.yml` layout update and a `blocks` entry to its own `Resources/config/oro/storefront_embedded.yml`; see `\Oro\Bundle\StorefrontEmbeddedBundle\DependencyInjection\StorefrontEmbeddedConfiguration` for the full schema.
+
+#### CheckoutBundle
+* Added a simplified checkout header, shown only when the checkout session was opened through an OAuth2 Session Transfer (see OAuth2ServerBundle): it hides the storefront navigation and adds a link back to the application that started the transfer. The return URL comes from the new `oro_oauth2_server.session_transfer.return_url` configuration option.
+
 ### Changed
 
 #### CMSBundle

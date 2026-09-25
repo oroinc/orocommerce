@@ -58,7 +58,7 @@
         <div class="checkout__success__order">
             <p>{{ 'oro.checkout.workflow.success.order_number.label'|trans }} {{ order.id }}
                 {% if is_granted('VIEW', order) %}
-                    (<a href="{{ returnUrl|trim('/', 'right') }}/customer/order/view/{{ order.id }}">{{ 'oro.checkout.workflow.success.click_to_review.label'|trans }}</a>)
+                    (<a href="{{ orderViewUrl }}">{{ 'oro.checkout.workflow.success.click_to_review.label'|trans }}</a>)
                 {% endif %}
             </p>
             <p>{{ 'oro.checkout.workflow.success.receive_email.label'|trans }}</p>

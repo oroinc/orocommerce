@@ -3,23 +3,14 @@
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend\EmbeddedFragmentController;
-use Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend\EmbeddedSessionController;
 use Oro\Bundle\StorefrontEmbeddedBundle\DependencyInjection\OroStorefrontEmbeddedExtension;
-use Oro\Bundle\StorefrontEmbeddedBundle\Extension\EmbeddedRequestCurrentLocalizationExtension;
-use Oro\Bundle\StorefrontEmbeddedBundle\Layout\Extension\EmbeddedContextConfigurator;
 use Oro\Bundle\StorefrontEmbeddedBundle\OroStorefrontEmbeddedBundle;
-use Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedRequestCurrentCurrencyProvider;
 use Oro\Component\Config\CumulativeResourceManager;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Config\Resource\DirectoryResource;
-use Symfony\Component\Config\Resource\FileResource;
-use Symfony\Component\Config\Resource\ResourceInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class OroStorefrontEmbeddedExtensionTest extends TestCase
 {
-    private const string LAYOUTS_DIR = 'StorefrontEmbeddedBundle/Resources/views/layouts';
-
     private ContainerBuilder $container;
 
     #[\Override]
@@ -43,7 +34,7 @@ class OroStorefrontEmbeddedExtensionTest extends TestCase
         CumulativeResourceManager::getInstance()->clear();
     }
 
-    public function testSetsBlocksParameterToEveryBlockDeclaredByLayoutUpdates(): void
+    public function testSetsBlocksParameterToEveryBlockDeclaredByStorefrontEmbeddedConfig(): void
     {
         self::assertEquals(
             [
@@ -134,78 +125,39 @@ class OroStorefrontEmbeddedExtensionTest extends TestCase
     {
         return [
             'layout context configurator' => [
-                EmbeddedContextConfigurator::class,
+                'oro_storefront_embedded.layout.extension.embedded_context_configurator',
                 'layout.context_configurator'
             ],
             'current localization extension' => [
-                EmbeddedRequestCurrentLocalizationExtension::class,
+                'oro_storefront_embedded.extension.embedded_request_current_localization',
                 'oro_locale.extension.current_localization'
             ],
             'current currency provider' => [
-                EmbeddedRequestCurrentCurrencyProvider::class,
+                'oro_storefront_embedded.provider.embedded_request_current_currency',
                 'oro_pricing.current_currency_provider'
+            ],
+            'vary listener' => [
+                'oro_storefront_embedded.event_listener.embedded_request_vary',
+                'kernel.event_listener'
+            ],
+            'guest access allowed urls provider' => [
+                'oro_storefront_embedded.guest_access.embedded_guest_access_allowed_urls_provider',
+                'oro_frontend.guest_access_urls_provider'
             ],
             'fragment controller' => [
                 EmbeddedFragmentController::class,
                 'container.service_subscriber'
-            ],
-            'session controller' => [
-                EmbeddedSessionController::class,
-                'controller.service_arguments'
             ]
         ];
     }
 
-    public function testPassesDiscoveredBlocksToLayoutContextConfigurator(): void
+    public function testPassesConfiguredBlocksToLayoutContextConfigurator(): void
     {
         self::assertSame(
             '%oro_storefront_embedded.blocks%',
-            $this->container->getDefinition(EmbeddedContextConfigurator::class)->getArgument(1)
+            $this->container
+                ->getDefinition('oro_storefront_embedded.layout.extension.embedded_context_configurator')
+                ->getArgument(1)
         );
-    }
-
-    public function testTracksEmbeddedBlocksLayoutUpdatesAsContainerResourcesToRebuildTheBlocksParameter(): void
-    {
-        $container = self::containerRecordingResourcesSymfonyDropsInsideVendor();
-        $container->setParameter('kernel.environment', 'prod');
-
-        (new OroStorefrontEmbeddedExtension())->load([], $container);
-
-        $registeredLayoutPatterns = [];
-        $registeredFiles = [];
-        foreach ($container->addedResources as $resource) {
-            if ($resource instanceof DirectoryResource && str_ends_with($resource->getResource(), self::LAYOUTS_DIR)) {
-                $registeredLayoutPatterns[$resource->getResource()] = $resource->getPattern();
-            } elseif ($resource instanceof FileResource) {
-                $registeredFiles[$resource->getResource()] = true;
-            }
-        }
-
-        self::assertCount(1, $registeredLayoutPatterns);
-
-        $layoutsDir = array_key_first($registeredLayoutPatterns);
-        self::assertSame('/embedded_blocks.yml$/', $registeredLayoutPatterns[$layoutsDir]);
-
-        $embeddedBlocksFiles = glob($layoutsDir . '/*/*/embedded_blocks.yml');
-        self::assertNotEmpty($embeddedBlocksFiles);
-        foreach ($embeddedBlocksFiles as $embeddedBlocksFile) {
-            self::assertArrayHasKey($embeddedBlocksFile, $registeredFiles);
-        }
-    }
-
-    private static function containerRecordingResourcesSymfonyDropsInsideVendor(): ContainerBuilder
-    {
-        return new class () extends ContainerBuilder {
-            /** @var ResourceInterface[] */
-            public array $addedResources = [];
-
-            #[\Override]
-            public function addResource(ResourceInterface $resource): static
-            {
-                $this->addedResources[] = $resource;
-
-                return parent::addResource($resource);
-            }
-        };
     }
 }

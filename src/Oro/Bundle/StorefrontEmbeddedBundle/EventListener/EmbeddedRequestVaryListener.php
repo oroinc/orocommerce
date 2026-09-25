@@ -1,20 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\StorefrontEmbeddedBundle\EventListener;
 
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\NavigationBundle\Event\ResponseHashnavListener;
 use Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
 /**
  * Tells caches that a storefront response depends on the headers an embedded host sends, so a shared cache in
- * front of Oro cannot hand a page rendered for a host — absolute asset urls, urls behind the host's proxy prefix,
- * paths left alone for the roots the host serves — to a visitor browsing Oro directly, or the other way round.
+ * front of Oro cannot hand a page rendered for a host (absolute asset urls, urls behind the host's proxy prefix,
+ * paths left alone for the roots the host serves) to a visitor browsing Oro directly, or the other way round.
+ * A fragment response additionally depends on the localization, the currency and the reload marker the host
+ * sends with the fragment request.
  */
 class EmbeddedRequestVaryListener
 {
-    public function __construct(private readonly FrontendHelper $frontendHelper)
-    {
+    public function __construct(
+        private readonly FrontendHelper $frontendHelper,
+        private readonly EmbeddedRequestChecker $embeddedRequestChecker,
+    ) {
     }
 
     public function onKernelResponse(ResponseEvent $event): void
@@ -23,13 +30,17 @@ class EmbeddedRequestVaryListener
             return;
         }
 
-        $event->getResponse()->setVary(
-            [
-                EmbeddedRequestChecker::EMBEDDED_HEADER,
-                EmbeddedRequestChecker::PROXY_PREFIX_HEADER,
-                EmbeddedRequestChecker::ASSET_ROOTS_HEADER,
-            ],
-            false
-        );
+        $vary = [
+            EmbeddedRequestChecker::EMBEDDED_HEADER,
+            EmbeddedRequestChecker::PROXY_PREFIX_HEADER,
+            EmbeddedRequestChecker::ASSET_ROOTS_HEADER,
+        ];
+        if ($this->embeddedRequestChecker->rendersFragment()) {
+            $vary[] = EmbeddedRequestChecker::LOCALIZATION_ID_HEADER;
+            $vary[] = EmbeddedRequestChecker::CURRENCY_HEADER;
+            $vary[] = ResponseHashnavListener::HASH_NAVIGATION_HEADER;
+        }
+
+        $event->getResponse()->setVary($vary, false);
     }
 }

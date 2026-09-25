@@ -25,7 +25,6 @@ class EmbeddedRequestCurrentCurrencyProviderTest extends TestCase
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
 
         $this->provider = new EmbeddedRequestCurrentCurrencyProvider(
-            $this->requestStack,
             new EmbeddedRequestChecker($this->requestStack),
             $this->userCurrencyManager
         );

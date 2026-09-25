@@ -3,29 +3,20 @@ services:
         public: true
 
     Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend\EmbeddedFragmentController:
-        arguments:
-            $classAuthorizationChecker: '@oro_security.class_authorization_checker'
-            $controllerClassProvider: '@oro_ui.controller_class_provider'
-            $runtimeBootProvider: '@Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedRuntimeBootProvider'
         calls:
             - [setContainer, ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_storefront_embedded.fragment.embedded_fragment_target_resolver, key: Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentTargetResolver }
+            - { name: container.service_subscriber, id: oro_storefront_embedded.fragment.embedded_fragment_access_checker, key: Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentAccessChecker }
+            - { name: container.service_subscriber, id: oro_storefront_embedded.fragment.embedded_fragment_renderer, key: Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentRenderer }
+            - { name: container.service_subscriber, id: oro_storefront_embedded.fragment.embedded_fragment_response_decorator, key: Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentResponseDecorator }
 
     Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend\EmbeddedSessionController:
         arguments:
-            - '@Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface'
-            - '@oro_oauth2_server.league.authorization_validator'
-            - '@oro_oauth2_server.client_manager'
-            - '@oro_customer.security.provider'
-            - '@oro_customer.security.login_manager'
-            - '@security.token_storage'
-            - '@oro_customer.authentication.customer_visitor_cookie_factory'
-        tags:
-            - { name: controller.service_arguments }
+            - '@oro_storefront_embedded.security.storefront_access_token_resolver'
+            - '@oro_storefront_embedded.security.embedded_session_opener'
 
     Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend\EmbeddedThemeAssetsController:
         arguments:
-            - '@Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedThemeAssetsProvider'
-        tags:
-            - { name: controller.service_arguments }
+            - '@oro_storefront_embedded.provider.embedded_theme_assets'

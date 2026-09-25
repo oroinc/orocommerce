@@ -29,7 +29,6 @@ class EmbeddedRequestCurrentLocalizationExtensionTest extends TestCase
         $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->extension = new EmbeddedRequestCurrentLocalizationExtension(
-            $this->requestStack,
             new EmbeddedRequestChecker($this->requestStack),
             $this->localizationManager,
             $this->configManager

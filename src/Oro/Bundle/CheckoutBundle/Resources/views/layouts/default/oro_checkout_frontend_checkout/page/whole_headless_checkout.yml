@@ -32,7 +32,7 @@ layout:
                 checkout_simplified_header_back_link:
                     blockType: link
                     options:
-                        path: &checkout_simplified_header_return_url 'http://localhost:3000'
+                        path: '=data["session_transfer_checkout_url"].getReturnUrl()'
                         text: oro.checkout.simplified_header.back_to_shopping.label
                 checkout_simplified_header_secure:
                     blockType: block
@@ -45,12 +45,17 @@ layout:
         - '@setOption':
             id: logo
             optionName: vars.returnUrl
-            optionValue: *checkout_simplified_header_return_url
+            optionValue: '=data["session_transfer_checkout_url"].getReturnUrl()'
 
-        -  '@appendOption':
-               id: success_order
-               optionName: vars.returnUrl
-               optionValue: *checkout_simplified_header_return_url
+        - '@setOption':
+            id: success_order
+            optionName: vars.returnUrl
+            optionValue: '=data["session_transfer_checkout_url"].getReturnUrl()'
+
+        - '@setOption':
+            id: success_order
+            optionName: vars.orderViewUrl
+            optionValue: '=data["session_transfer_checkout_url"].getOrderViewUrl(data["workflowItem"].getData().get("order"))'
 
         - '@setOption':
             id: logo
@@ -62,4 +67,4 @@ layout:
             optionName: vars.logo_small
             optionValue: '=data["asset"].getUrl("bundles/orocheckout/default/images/logo/demob2b-logo-small.svg")'
 
-    conditions: 'context.has("is_in_session_transfer_mode") && context["is_in_session_transfer_mode"]'
+    conditions: 'context["is_in_session_transfer_mode"]'
