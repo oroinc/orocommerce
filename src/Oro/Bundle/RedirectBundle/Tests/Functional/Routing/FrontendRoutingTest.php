@@ -69,7 +69,12 @@ class FrontendRoutingTest extends WebTestCase
         /** @var Slug $slug */
         $slug = $this->getReference(LoadSlugsData::SLUG_URL_USER);
 
-        $this->client->request('GET', $this->getSlugTargetUrl($slug));
+        // Resolve the URL before any request: SluggableUrlGenerator stores the "enable_direct_url"
+        // value at the first generation, and since symfony/security-http 6.4.44 authentication
+        // generates URLs too. Toggling the option later in getSlugTargetUrl() has no effect.
+        $slugTargetUrl = $this->getSlugTargetUrl($slug);
+
+        $this->client->request('GET', $slugTargetUrl);
         self::assertResponseStatusCodeEquals($this->client->getResponse(), 401);
 
         $this->client->request('GET', LoadSlugsData::SLUG_URL_USER);
@@ -81,7 +86,7 @@ class FrontendRoutingTest extends WebTestCase
         );
         $this->client->followRedirects(true);
 
-        $crawler = $this->client->request('GET', $this->getSlugTargetUrl($slug));
+        $crawler = $this->client->request('GET', $slugTargetUrl);
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
         $pageTitle = $crawler->filter('title')->first()->html();
 
