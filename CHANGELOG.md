@@ -41,6 +41,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Changed
 
+#### CheckoutBundle
+* Changed the shipped `checkout_customer_user_reset_password` email template so it reads the `confirmationToken` email template parameter instead of `entity.confirmationToken`. `\Oro\Bundle\CheckoutBundle\Migrations\Data\ORM\LoadEmailTemplates` applies the new content to an installation that has not customised it.
+
 #### RedirectBundle
 * Changed `\Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator::getLocalization()` from private to public.
 
