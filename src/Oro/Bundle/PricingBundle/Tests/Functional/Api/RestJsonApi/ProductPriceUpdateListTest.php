@@ -157,6 +157,83 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    public function testUpsertEntities(): void
+    {
+        $priceList1 = $this->getReference('price_list_1');
+        $productPrice1Id = $this->getReference(LoadProductPricesWithRules::PRODUCT_PRICE_1)->getId();
+        $upsertFields = ['priceList', 'product', 'quantity', 'unit', 'currency'];
+        $data = [
+            'data' => [
+                [
+                    'meta' => ['upsert' => $upsertFields],
+                    'type' => 'productprices',
+                    'attributes' => [
+                        'quantity' => 5,
+                        'value' => '150.0000',
+                        'currency' => 'USD'
+                    ],
+                    'relationships' => [
+                        'priceList' => [
+                            'data' => ['type' => 'pricelists', 'id' => (string)$priceList1->getId()]
+                        ],
+                        'product' => [
+                            'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
+                        ],
+                        'unit' => [
+                            'data' => ['type' => 'productunits', 'id' => '<toString(@product_unit.liter->code)>']
+                        ]
+                    ]
+                ],
+                [
+                    'meta' => ['upsert' => $upsertFields],
+                    'type' => 'productprices',
+                    'attributes' => [
+                        'quantity' => 10,
+                        'value' => '20.0000',
+                        'currency' => 'EUR'
+                    ],
+                    'relationships' => [
+                        'priceList' => [
+                            'data' => ['type' => 'pricelists', 'id' => (string)$priceList1->getId()]
+                        ],
+                        'product' => [
+                            'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
+                        ],
+                        'unit' => [
+                            'data' => ['type' => 'productunits', 'id' => '<toString(@product_unit.bottle->code)>']
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $this->processUpdateList(ProductPrice::class, $data);
+
+        $updatedProductPrice = $this->findProductPriceByUniqueKey(
+            5,
+            'USD',
+            $priceList1,
+            $this->getReference('product-1'),
+            $this->getReference('product_unit.liter')
+        );
+        self::assertNotNull($updatedProductPrice);
+        self::assertSame($productPrice1Id, $updatedProductPrice->getId());
+        self::assertEquals(150, $updatedProductPrice->getPrice()->getValue());
+
+        $newProductPrice = $this->findProductPriceByUniqueKey(
+            10,
+            'EUR',
+            $priceList1,
+            $this->getReference('product-1'),
+            $this->getReference('product_unit.bottle')
+        );
+        self::assertNotNull($newProductPrice);
+        self::assertNotSame($productPrice1Id, $newProductPrice->getId());
+        self::assertEquals(20, $newProductPrice->getPrice()->getValue());
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testCreateEntitiesWithIncludes(): void
     {
         $data = [

@@ -1,4 +1,3 @@
-@regression
 @behat-test-env
 @ticket-BB-9989
 @ticket-BB-7152

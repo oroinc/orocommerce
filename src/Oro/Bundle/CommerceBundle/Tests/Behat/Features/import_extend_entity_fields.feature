@@ -1,5 +1,4 @@
 @skip-base
-@regression
 @ticket-BAP-16397
 @ticket-BB-14555
 
