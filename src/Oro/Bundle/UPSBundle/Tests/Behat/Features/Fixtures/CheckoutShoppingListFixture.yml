@@ -13,6 +13,13 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         owner: '@admin'
         organization: '@organization'
         website: '@website1'
+    shoppinglist3:
+        label: 'List 3'
+        customer: '@customer'
+        customerUser: '@amanda'
+        owner: '@admin'
+        organization: '@organization'
+        website: '@website1'
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     lineitem1:
@@ -39,10 +46,33 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         shoppingList: '@shoppinglist2'
         owner: '@admin'
         organization: '@organization'
+    lineitem4:
+        product: '@product2'
+        quantity: '2'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist3'
+        owner: '@admin'
+        organization: '@organization'
+    lineitem5:
+        product: '@productKit'
+        quantity: '3'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist3'
+        owner: '@admin'
+        organization: '@organization'
 
 Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
     product_kit_item_line_item1:
         lineItem: '@lineitem3'
+        kitItem: '@product_kit_item1'
+        product: '@product2'
+        quantity: 2
+        unit: '@item'
+        sortOrder: 2
+    product_kit_item_line_item2:
+        lineItem: '@lineitem5'
         kitItem: '@product_kit_item1'
         product: '@product2'
         quantity: 2
@@ -59,6 +89,12 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
     shoppingListTotal2:
         __construct: ['@shoppinglist2','USD']
         shoppingList: '@shoppinglist2'
+        currency: 'USD'
+        subtotalValue: '51.75'
+        valid: true
+    shoppingListTotal3:
+        __construct: ['@shoppinglist3','USD']
+        shoppingList: '@shoppinglist3'
         currency: 'USD'
         subtotalValue: '51.75'
         valid: true

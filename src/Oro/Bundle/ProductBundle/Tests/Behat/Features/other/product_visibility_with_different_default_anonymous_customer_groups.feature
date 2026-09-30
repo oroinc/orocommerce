@@ -118,6 +118,7 @@ Feature: Product visibility with different default anonymous customer groups
       | Non-Authenticated Visitors Customer Group | Partners |
     And submit form
     Then I should see "Configuration saved" flash message
+    And I run Symfony "oro:website-search:reindex" command in "prod" environment
 
   # This is possible because all guests users belong to the Partners customer group, which has no restrictions on the
   # visibility of categories and products

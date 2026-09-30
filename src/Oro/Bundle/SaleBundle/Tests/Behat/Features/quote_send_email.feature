@@ -18,6 +18,7 @@ Feature: Quote Send Email
     And I click "Remove Email To Field"
     And I type "Amanda" in "Email To Field"
     And Email To Field field should have "Amanda" value
+    And I should see an "Email To Suggestions" element
     And I press "ArrowDown" key on "Email To Field" element
     And I press "ArrowDown" key on "Email To Field" element
     And I press "Enter" key on "Email To Field" element

@@ -92,6 +92,13 @@ function dragAndDrop(sourcePath, destinationPath, sourceContextNodePath, destina
     const destinationContextNode = findByXpath(destinationContextNodePath || sourceContextNodePath || '/');
     const destinationNode = findByXpath(destinationPath, destinationContextNode);
 
+    // GrapesJs finds the drop target with document.elementFromPoint(), which returns null outside the viewport.
+    // A drop on a destination below the visible area then fails without an error, for example on an empty grid
+    // cell that full height images push down.
+    if (destinationNode.scrollIntoView) {
+        destinationNode.scrollIntoView({block: 'center', inline: 'center'});
+    }
+
     const event = createDragEvent(EVENT_TYPES.DRAG_START, null, sourceNode);
 
     const dispatcher = createDispatcher();

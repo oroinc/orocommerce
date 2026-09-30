@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-24255
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroFlatRateShippingBundle:FlatRate2Integration.yml

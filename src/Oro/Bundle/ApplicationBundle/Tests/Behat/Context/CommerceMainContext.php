@@ -269,7 +269,9 @@ JS;
     public function iShouldSeeTextInBreadcrumbs(string $text): void
     {
         $breadcrumbContainer = $this->elementFactory->createElement('Frontstore Breadcrumb Container');
-        $actualText = $breadcrumbContainer->getText();
+        // CSS renders the breadcrumb separator, so it is not in the element text, and the whitespace around it
+        // depends on the driver. Thus each run of whitespace becomes one space.
+        $actualText = preg_replace('/\s+/', ' ', $breadcrumbContainer->getText());
         $normalizedText = preg_replace('/\s?\//', '', $text);
 
         self::assertTrue(

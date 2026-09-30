@@ -652,6 +652,21 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      */
     public function shouldSeeForProduct($elementNameOrText, $SKU)
     {
+        // The price block renders again over ajax after a quantity change, so one read can come before the update.
+        // Find the card again on every attempt, because the new render detaches the previous node.
+        $found = $this->spin(function () use ($elementNameOrText, $SKU) {
+            $item = $this->findProductItem($SKU);
+
+            return $this->isElementVisible($elementNameOrText, $item)
+                || false !== stripos($item->getText(), $elementNameOrText)
+                ? true
+                : null;
+        }, 5);
+
+        if ($found) {
+            return;
+        }
+
         $productItem = $this->findProductItem($SKU);
 
         if ($this->isElementVisible($elementNameOrText, $productItem)) {
