@@ -2,26 +2,33 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\EventListener\CustomerUserListener;
 use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
+use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Event\CustomerUserEmailSendEvent;
 use Oro\Bundle\CustomerBundle\Mailer\Processor;
+use Oro\Bundle\CustomerBundle\Security\Firewall\AnonymousCustomerUserAuthenticationListener;
 use Oro\Bundle\CustomerBundle\Security\LoginManager;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class CustomerUserListenerTest extends \PHPUnit\Framework\TestCase
+class CustomerUserListenerTest extends TestCase
 {
     private const FIREWALL_NAME = 'test_firewall';
 
     private Request $request;
-    private LoginManager|\PHPUnit\Framework\MockObject\MockObject $loginManager;
-    private CheckoutManager|\PHPUnit\Framework\MockObject\MockObject $checkoutManager;
-    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
+    private LoginManager&MockObject $loginManager;
+    private CheckoutManager&MockObject $checkoutManager;
+    private ConfigManager&MockObject $configManager;
     private CustomerUserListener $listener;
 
     protected function setUp(): void
@@ -89,14 +96,77 @@ class CustomerUserListenerTest extends \PHPUnit\Framework\TestCase
         $event = new AfterFormProcessEvent($form, $customerUser);
         $this->request->request->add(['_checkout_registration' => 1]);
         $this->request->request->add(['_checkout_id' => 777]);
+        $this->request->cookies->set(
+            AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
+            base64_encode(json_encode('visitor_session_1', JSON_THROW_ON_ERROR))
+        );
         $this->loginManager->expects(self::never())
             ->method('logInUser');
+
+        $shoppingList = new ShoppingListStub();
+        $shoppingList->addVisitor((new CustomerVisitor())->setSessionId('visitor_session_1'));
+
+        $this->checkoutManager->expects(self::once())
+            ->method('getCheckoutById')
+            ->with(777)
+            ->willReturn(
+                (new Checkout())->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList))
+            );
 
         $this->checkoutManager->expects(self::once())
             ->method('assignRegisteredCustomerUserToCheckout')
             ->with($customerUser, 777);
 
         $this->listener->afterFlush($event);
+    }
+
+    /**
+     * @dataProvider notOwnCheckoutDataProvider
+     */
+    public function testAfterFlushCheckoutOfAnotherVisitorIsNotReassigned(
+        ?Checkout $checkout,
+        ?string $visitorCookie
+    ): void {
+        $customerUser = new CustomerUser();
+        $customerUser->setConfirmed(false);
+        $form = $this->createMock(FormInterface::class);
+        $event = new AfterFormProcessEvent($form, $customerUser);
+        $this->request->request->add(['_checkout_registration' => 1]);
+        $this->request->request->add(['_checkout_id' => 777]);
+        if (null !== $visitorCookie) {
+            $this->request->cookies->set(
+                AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
+                base64_encode(json_encode($visitorCookie, JSON_THROW_ON_ERROR))
+            );
+        }
+
+        $this->checkoutManager->expects(self::once())
+            ->method('getCheckoutById')
+            ->with(777)
+            ->willReturn($checkout);
+
+        $this->checkoutManager->expects(self::never())
+            ->method('assignRegisteredCustomerUserToCheckout');
+
+        $this->listener->afterFlush($event);
+    }
+
+    public function notOwnCheckoutDataProvider(): array
+    {
+        $shoppingListOfVisitor1 = new ShoppingListStub();
+        $shoppingListOfVisitor1->addVisitor((new CustomerVisitor())->setSessionId('visitor_session_1'));
+        $checkoutOfVisitor1 = (new Checkout())
+            ->setSource((new CheckoutSourceStub())->setShoppingList($shoppingListOfVisitor1));
+
+        $checkoutWithoutVisitor = (new Checkout())
+            ->setSource((new CheckoutSourceStub())->setShoppingList(new ShoppingListStub()));
+
+        return [
+            'checkout of another visitor' => [$checkoutOfVisitor1, 'visitor_session_2'],
+            'checkout without a visitor' => [$checkoutWithoutVisitor, 'visitor_session_1'],
+            'request without a visitor' => [$checkoutOfVisitor1, null],
+            'checkout not found' => [null, 'visitor_session_1'],
+        ];
     }
 
     public function testOnCustomerUserEmailSendNoRequestParams(): void

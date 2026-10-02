@@ -6,6 +6,7 @@ use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Event\CustomerUserEmailSendEvent;
 use Oro\Bundle\CustomerBundle\Mailer\Processor;
+use Oro\Bundle\CustomerBundle\Security\Firewall\AnonymousCustomerUserAuthenticationListener;
 use Oro\Bundle\CustomerBundle\Security\LoginManager;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -73,10 +74,42 @@ class CustomerUserListener
             }
 
             $checkoutId = $this->getFromRequest('_checkout_id');
-            if ($checkoutId) {
+            if ($checkoutId && $this->isCheckoutOfCurrentVisitor($checkoutId)) {
                 $this->checkoutManager->assignRegisteredCustomerUserToCheckout($customerUser, $checkoutId);
             }
         }
+    }
+
+    /**
+     * Only a checkout of the visitor who is registering may be claimed by the new account.
+     */
+    private function isCheckoutOfCurrentVisitor($checkoutId): bool
+    {
+        $checkout = $this->checkoutManager->getCheckoutById($checkoutId);
+        $visitorSessionId = $checkout?->getVisitor()?->getSessionId();
+
+        return $visitorSessionId && $visitorSessionId === $this->getVisitorSessionId();
+    }
+
+    private function getVisitorSessionId(): ?string
+    {
+        $cookieValue = $this->requestStack->getMainRequest()
+            ?->cookies->get(AnonymousCustomerUserAuthenticationListener::COOKIE_NAME);
+        if (!$cookieValue) {
+            return null;
+        }
+
+        try {
+            $sessionId = json_decode(base64_decode($cookieValue), null, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException) {
+            return null;
+        }
+        if (\is_array($sessionId) && isset($sessionId[1])) {
+            // BC compatibility: get sessionId from old format of the cookie value
+            $sessionId = $sessionId[1];
+        }
+
+        return \is_string($sessionId) && $sessionId ? $sessionId : null;
     }
 
     /**
