@@ -46,7 +46,11 @@ class LoginOnCheckoutOrderLimitListener
         }
 
         $checkout = $this->checkoutManager->getCheckoutById($checkoutId);
-        $sourceEntity = $checkout?->getSource()?->getEntity();
+        if (!$this->isCheckoutOwnedByUser($checkout, $event->getAuthenticatedToken()->getUser())) {
+            return;
+        }
+
+        $sourceEntity = $checkout->getSource()?->getEntity();
         if (!$sourceEntity) {
             return;
         }
@@ -66,6 +70,16 @@ class LoginOnCheckoutOrderLimitListener
 
             $this->removeUnusedCheckout($checkout);
         }
+    }
+
+    /**
+     * InteractiveLoginEvent is dispatched before this event, so a checkout this login may act on
+     * already belongs to the authenticating customer user.
+     */
+    private function isCheckoutOwnedByUser(?Checkout $checkout, CustomerUser $customerUser): bool
+    {
+        return null !== $checkout
+            && $checkout->getCustomerUser()?->getId() === $customerUser->getId();
     }
 
     private function isApplicable(LoginSuccessEvent $event): bool

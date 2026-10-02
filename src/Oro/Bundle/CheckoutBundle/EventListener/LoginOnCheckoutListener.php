@@ -10,11 +10,13 @@ use Oro\Bundle\CheckoutBundle\Provider\CheckoutIdByTargetPathRequestProvider;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartShoppingListCheckoutInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Security\AnonymousCustomerUserAuthenticator;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Event\ShoppingListPostMergeEvent;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Authenticator\InteractiveAuthenticatorInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
@@ -76,7 +78,14 @@ class LoginOnCheckoutListener
 
         $checkoutId = $this->getGuestCheckoutId($event);
         $checkout = $checkoutId ? $this->checkoutManager->getCheckoutById($checkoutId) : null;
-        if (!$checkout) {
+        if (!$checkout || !$this->isCheckoutAdoptable($checkout, $user, $event->getRequest())) {
+            if ($checkoutId) {
+                $this->logger->warning(
+                    'Wrong checkout id passed during login from checkout.',
+                    ['checkoutId' => $checkoutId]
+                );
+            }
+
             return;
         }
 
@@ -145,6 +154,60 @@ class LoginOnCheckoutListener
         }
 
         return $sourceEntity;
+    }
+
+    /**
+     * A checkout the authenticating customer user already owns is continued as is; any other checkout is
+     * adopted only when it is a guest checkout of the current visitor.
+     */
+    private function isCheckoutAdoptable(Checkout $checkout, CustomerUser $customerUser, Request $request): bool
+    {
+        $checkoutCustomerUser = $checkout->getCustomerUser();
+        if (null === $checkoutCustomerUser) {
+            if (null !== $checkout->getCustomer()) {
+                return false;
+            }
+        } elseif (
+            null !== $checkoutCustomerUser->getId()
+            && $checkoutCustomerUser->getId() === $customerUser->getId()
+        ) {
+            return true;
+        } elseif (!$checkoutCustomerUser->isGuest()) {
+            return false;
+        }
+
+        $visitorSessionId = $checkout->getVisitor()?->getSessionId();
+
+        return $visitorSessionId && $visitorSessionId === $this->getVisitorSessionId($request);
+    }
+
+    private function getVisitorSessionId(Request $request): ?string
+    {
+        return $this->getVisitorSessionIdFromCookie($request)
+            ?? $this->getVisitorSessionIdFromAttributes($request);
+    }
+
+    private function getVisitorSessionIdFromCookie(Request $request): ?string
+    {
+        $cookieValue = $request->cookies->get(AnonymousCustomerUserAuthenticator::COOKIE_NAME);
+        if (!$cookieValue) {
+            return null;
+        }
+
+        try {
+            $sessionId = json_decode(base64_decode($cookieValue), null, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException) {
+            return null;
+        }
+
+        return \is_string($sessionId) && $sessionId ? $sessionId : null;
+    }
+
+    private function getVisitorSessionIdFromAttributes(Request $request): ?string
+    {
+        $sessionId = $request->attributes->get('visitor_session_id');
+
+        return \is_string($sessionId) && $sessionId ? $sessionId : null;
     }
 
     private function getGuestCheckoutId(Event $event): ?int

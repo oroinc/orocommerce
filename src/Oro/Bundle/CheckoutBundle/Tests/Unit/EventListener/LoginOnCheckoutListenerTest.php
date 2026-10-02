@@ -12,8 +12,12 @@ use Oro\Bundle\CheckoutBundle\Provider\CheckoutIdByTargetPathRequestProvider;
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartShoppingListCheckoutInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\CustomerBundle\Security\AnonymousCustomerUserAuthenticator;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -104,6 +108,9 @@ final class LoginOnCheckoutListenerTest extends TestCase
             ->with('oro_checkout.guest_checkout')
             ->willReturn(false);
 
+        $this->logger->expects(self::never())
+            ->method('warning');
+
         $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
     }
 
@@ -131,6 +138,9 @@ final class LoginOnCheckoutListenerTest extends TestCase
 
         $this->checkoutManager->expects(self::never())
             ->method('getCheckoutById');
+
+        $this->logger->expects(self::never())
+            ->method('warning');
 
         $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
     }
@@ -164,6 +174,10 @@ final class LoginOnCheckoutListenerTest extends TestCase
         $this->checkoutManager->expects(self::never())
             ->method('updateCheckoutCustomerUser');
 
+        $this->logger->expects(self::once())
+            ->method('warning')
+            ->with('Wrong checkout id passed during login from checkout.', ['checkoutId' => 1]);
+
         $this->request->request->add(['_checkout_id' => 1]);
 
         $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
@@ -172,8 +186,14 @@ final class LoginOnCheckoutListenerTest extends TestCase
     public function testOnInteractiveLogin(): void
     {
         $customerUser = new CustomerUser();
-        $checkout = new Checkout();
+        $shoppingList = new ShoppingListStub();
+        $shoppingList->addVisitor((new CustomerVisitor())->setSessionId('visitor_session_1'));
+        $checkout = (new Checkout())->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
         ReflectionUtil::setId($checkout, 1);
+        $this->request->cookies->set(
+            AnonymousCustomerUserAuthenticator::COOKIE_NAME,
+            base64_encode(json_encode('visitor_session_1', JSON_THROW_ON_ERROR))
+        );
 
         $this->token->expects(self::once())
             ->method('getUser')
@@ -201,6 +221,9 @@ final class LoginOnCheckoutListenerTest extends TestCase
             ->method('updateCheckoutCustomerUser')
             ->with($checkout, $customerUser);
 
+        $this->logger->expects(self::never())
+            ->method('warning');
+
         $this->request->request->add(['_checkout_id' => 1]);
 
         $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
@@ -209,6 +232,454 @@ final class LoginOnCheckoutListenerTest extends TestCase
             $checkout->getId(),
             ReflectionUtil::getPropertyValue($this->listener, 'guestCheckoutId')
         );
+    }
+
+    public function testOnInteractiveLoginAdoptsGuestCustomerUserCheckout(): void
+    {
+        $customerUser = new CustomerUser();
+        $shoppingList = new ShoppingListStub();
+        $shoppingList->addVisitor((new CustomerVisitor())->setSessionId('visitor_session_1'));
+        $checkout = (new Checkout())->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
+        ReflectionUtil::setId($checkout, 1);
+        $checkout->setCustomerUser((new CustomerUser())->setIsGuest(true));
+        $this->request->cookies->set(
+            AnonymousCustomerUserAuthenticator::COOKIE_NAME,
+            base64_encode(json_encode('visitor_session_1', JSON_THROW_ON_ERROR))
+        );
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $this->checkoutManager->expects(self::once())
+            ->method('reassignCustomerUser')
+            ->with($customerUser);
+
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_checkout.guest_checkout')
+            ->willReturn(true);
+
+        $this->request->request->add(['_checkout_id' => 1]);
+
+        $this->checkoutIdByTargetPathRequestProvider->expects(self::never())
+            ->method('getCheckoutId');
+
+        $this->checkoutManager->expects(self::once())
+            ->method('getCheckoutById')
+            ->with(1)
+            ->willReturn($checkout);
+
+        $this->checkoutManager->expects(self::once())
+            ->method('updateCheckoutCustomerUser')
+            ->with($checkout, $customerUser);
+
+        $this->logger->expects(self::never())
+            ->method('warning');
+
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
+
+        self::assertEquals(1, ReflectionUtil::getPropertyValue($this->listener, 'guestCheckoutId'));
+    }
+
+    public function testOnInteractiveLoginContinuesCheckoutOfTheAuthenticatingCustomerUser(): void
+    {
+        $customerUser = new CustomerUser();
+        ReflectionUtil::setId($customerUser, 42);
+        $ownCustomerUser = new CustomerUser();
+        ReflectionUtil::setId($ownCustomerUser, 42);
+
+        $shoppingList = new ShoppingListStub();
+        $checkout = (new Checkout())->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
+        ReflectionUtil::setId($checkout, 1);
+        $checkout->setCustomerUser($ownCustomerUser);
+
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $this->checkoutManager->expects(self::once())
+            ->method('reassignCustomerUser')
+            ->with($customerUser);
+
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_checkout.guest_checkout')
+            ->willReturn(true);
+
+        $this->request->request->add(['_checkout_id' => 1]);
+
+        $this->checkoutIdByTargetPathRequestProvider->expects(self::never())
+            ->method('getCheckoutId');
+
+        $this->checkoutManager->expects(self::once())
+            ->method('getCheckoutById')
+            ->with(1)
+            ->willReturn($checkout);
+
+        $this->checkoutManager->expects(self::once())
+            ->method('updateCheckoutCustomerUser')
+            ->with($checkout, $customerUser);
+
+        $this->logger->expects(self::never())
+            ->method('warning');
+
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
+
+        self::assertEquals(1, ReflectionUtil::getPropertyValue($this->listener, 'guestCheckoutId'));
+    }
+
+    public function testOnInteractiveLoginRejectsCheckoutOfAnotherCustomerUser(): void
+    {
+        $customerUser = new CustomerUser();
+        $shoppingList = new ShoppingListStub();
+        $shoppingList->addVisitor((new CustomerVisitor())->setSessionId('visitor_session_1'));
+        $checkout = (new Checkout())->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
+        ReflectionUtil::setId($checkout, 1);
+        $checkout->setCustomerUser((new CustomerUser())->setCustomer(new Customer()));
+        $this->request->cookies->set(
+            AnonymousCustomerUserAuthenticator::COOKIE_NAME,
+            base64_encode(json_encode('visitor_session_1', JSON_THROW_ON_ERROR))
+        );
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $this->checkoutManager->expects(self::once())
+            ->method('reassignCustomerUser')
+            ->with($customerUser);
+
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_checkout.guest_checkout')
+            ->willReturn(true);
+
+        $this->request->request->add(['_checkout_id' => 1]);
+
+        $this->checkoutIdByTargetPathRequestProvider->expects(self::never())
+            ->method('getCheckoutId');
+
+        $this->checkoutManager->expects(self::once())
+            ->method('getCheckoutById')
+            ->with(1)
+            ->willReturn($checkout);
+
+        $this->checkoutManager->expects(self::never())
+            ->method('updateCheckoutCustomerUser');
+
+        $this->logger->expects(self::once())
+            ->method('warning')
+            ->with('Wrong checkout id passed during login from checkout.', ['checkoutId' => 1]);
+
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
+
+        self::assertNull(ReflectionUtil::getPropertyValue($this->listener, 'guestCheckoutId'));
+    }
+
+    public function testOnInteractiveLoginRejectsOwnerlessCheckoutWithCustomer(): void
+    {
+        $customerUser = new CustomerUser();
+        $shoppingList = new ShoppingListStub();
+        $shoppingList->addVisitor((new CustomerVisitor())->setSessionId('visitor_session_1'));
+        $checkout = (new Checkout())->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
+        ReflectionUtil::setId($checkout, 1);
+        $checkout->setCustomer(new Customer());
+        $this->request->cookies->set(
+            AnonymousCustomerUserAuthenticator::COOKIE_NAME,
+            base64_encode(json_encode('visitor_session_1', JSON_THROW_ON_ERROR))
+        );
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $this->checkoutManager->expects(self::once())
+            ->method('reassignCustomerUser')
+            ->with($customerUser);
+
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_checkout.guest_checkout')
+            ->willReturn(true);
+
+        $this->request->request->add(['_checkout_id' => 1]);
+
+        $this->checkoutIdByTargetPathRequestProvider->expects(self::never())
+            ->method('getCheckoutId');
+
+        $this->checkoutManager->expects(self::once())
+            ->method('getCheckoutById')
+            ->with(1)
+            ->willReturn($checkout);
+
+        $this->checkoutManager->expects(self::never())
+            ->method('updateCheckoutCustomerUser');
+
+        $this->logger->expects(self::once())
+            ->method('warning')
+            ->with('Wrong checkout id passed during login from checkout.', ['checkoutId' => 1]);
+
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
+
+        self::assertNull(ReflectionUtil::getPropertyValue($this->listener, 'guestCheckoutId'));
+    }
+
+    public function testOnInteractiveLoginRejectsCheckoutOfAnotherVisitor(): void
+    {
+        $customerUser = new CustomerUser();
+        $shoppingList = new ShoppingListStub();
+        $shoppingList->addVisitor((new CustomerVisitor())->setSessionId('visitor_session_1'));
+        $checkout = (new Checkout())->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
+        ReflectionUtil::setId($checkout, 1);
+        $this->request->cookies->set(
+            AnonymousCustomerUserAuthenticator::COOKIE_NAME,
+            base64_encode(json_encode('visitor_session_2', JSON_THROW_ON_ERROR))
+        );
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $this->checkoutManager->expects(self::once())
+            ->method('reassignCustomerUser')
+            ->with($customerUser);
+
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_checkout.guest_checkout')
+            ->willReturn(true);
+
+        $this->request->request->add(['_checkout_id' => 1]);
+
+        $this->checkoutIdByTargetPathRequestProvider->expects(self::never())
+            ->method('getCheckoutId');
+
+        $this->checkoutManager->expects(self::once())
+            ->method('getCheckoutById')
+            ->with(1)
+            ->willReturn($checkout);
+
+        $this->checkoutManager->expects(self::never())
+            ->method('updateCheckoutCustomerUser');
+
+        $this->logger->expects(self::once())
+            ->method('warning')
+            ->with('Wrong checkout id passed during login from checkout.', ['checkoutId' => 1]);
+
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
+
+        self::assertNull(ReflectionUtil::getPropertyValue($this->listener, 'guestCheckoutId'));
+    }
+
+    public function testOnInteractiveLoginRejectsCheckoutWithoutVisitor(): void
+    {
+        $customerUser = new CustomerUser();
+        $shoppingList = new ShoppingListStub();
+        $checkout = (new Checkout())->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
+        ReflectionUtil::setId($checkout, 1);
+        $this->request->cookies->set(
+            AnonymousCustomerUserAuthenticator::COOKIE_NAME,
+            base64_encode(json_encode('visitor_session_1', JSON_THROW_ON_ERROR))
+        );
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $this->checkoutManager->expects(self::once())
+            ->method('reassignCustomerUser')
+            ->with($customerUser);
+
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_checkout.guest_checkout')
+            ->willReturn(true);
+
+        $this->request->request->add(['_checkout_id' => 1]);
+
+        $this->checkoutIdByTargetPathRequestProvider->expects(self::never())
+            ->method('getCheckoutId');
+
+        $this->checkoutManager->expects(self::once())
+            ->method('getCheckoutById')
+            ->with(1)
+            ->willReturn($checkout);
+
+        $this->checkoutManager->expects(self::never())
+            ->method('updateCheckoutCustomerUser');
+
+        $this->logger->expects(self::once())
+            ->method('warning')
+            ->with('Wrong checkout id passed during login from checkout.', ['checkoutId' => 1]);
+
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
+
+        self::assertNull(ReflectionUtil::getPropertyValue($this->listener, 'guestCheckoutId'));
+    }
+
+    public function testOnInteractiveLoginRejectsCheckoutIdTakenFromTargetPath(): void
+    {
+        $customerUser = new CustomerUser();
+        $shoppingList = new ShoppingListStub();
+        $shoppingList->addVisitor((new CustomerVisitor())->setSessionId('visitor_session_1'));
+        $checkout = (new Checkout())->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
+        ReflectionUtil::setId($checkout, 1);
+        $this->request->cookies->set(
+            AnonymousCustomerUserAuthenticator::COOKIE_NAME,
+            base64_encode(json_encode('visitor_session_2', JSON_THROW_ON_ERROR))
+        );
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $this->checkoutManager->expects(self::once())
+            ->method('reassignCustomerUser')
+            ->with($customerUser);
+
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_checkout.guest_checkout')
+            ->willReturn(true);
+
+        $this->checkoutIdByTargetPathRequestProvider->expects(self::once())
+            ->method('getCheckoutId')
+            ->with($this->request)
+            ->willReturn(1);
+
+        $this->checkoutManager->expects(self::once())
+            ->method('getCheckoutById')
+            ->with(1)
+            ->willReturn($checkout);
+
+        $this->checkoutManager->expects(self::never())
+            ->method('updateCheckoutCustomerUser');
+
+        $this->logger->expects(self::once())
+            ->method('warning')
+            ->with('Wrong checkout id passed during login from checkout.', ['checkoutId' => 1]);
+
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
+
+        self::assertNull(ReflectionUtil::getPropertyValue($this->listener, 'guestCheckoutId'));
+    }
+
+    /**
+     * @dataProvider visitorSessionIdDataProvider
+     */
+    public function testOnInteractiveLoginVisitorSessionIdSource(
+        ?string $cookieValue,
+        mixed $requestAttribute,
+        bool $adopted
+    ): void {
+        $customerUser = new CustomerUser();
+        $shoppingList = new ShoppingListStub();
+        $shoppingList->addVisitor((new CustomerVisitor())->setSessionId('visitor_session_1'));
+        $checkout = (new Checkout())->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
+        ReflectionUtil::setId($checkout, 1);
+
+        if (null !== $cookieValue) {
+            $this->request->cookies->set(AnonymousCustomerUserAuthenticator::COOKIE_NAME, $cookieValue);
+        }
+        if (null !== $requestAttribute) {
+            $this->request->attributes->set('visitor_session_id', $requestAttribute);
+        }
+
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $this->checkoutManager->expects(self::once())
+            ->method('reassignCustomerUser')
+            ->with($customerUser);
+
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_checkout.guest_checkout')
+            ->willReturn(true);
+
+        $this->request->request->add(['_checkout_id' => 1]);
+
+        $this->checkoutIdByTargetPathRequestProvider->expects(self::never())
+            ->method('getCheckoutId');
+
+        $this->checkoutManager->expects(self::once())
+            ->method('getCheckoutById')
+            ->with(1)
+            ->willReturn($checkout);
+
+        $this->checkoutManager->expects($adopted ? self::once() : self::never())
+            ->method('updateCheckoutCustomerUser')
+            ->with($checkout, $customerUser);
+
+        $this->logger->expects($adopted ? self::never() : self::once())
+            ->method('warning');
+
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
+    }
+
+    public static function visitorSessionIdDataProvider(): array
+    {
+        $encode = static fn (mixed $value): string => base64_encode(json_encode($value, JSON_THROW_ON_ERROR));
+
+        return [
+            'cookie carries the visitor session id' => [$encode('visitor_session_1'), null, true],
+            'malformed cookie falls back to the request attribute' => ['not-a-cookie', 'visitor_session_1', true],
+            'non string cookie value falls back to the request attribute' => [$encode(123), 'visitor_session_1', true],
+            'empty cookie value falls back to the request attribute' => [$encode(''), 'visitor_session_1', true],
+            'request attribute only' => [null, 'visitor_session_1', true],
+            'non string request attribute' => [null, 123, false],
+            'no visitor identity at all' => [null, null, false],
+        ];
+    }
+
+    public function testOnCheckoutLoginKeepsCheckoutRejectedOnInteractiveLogin(): void
+    {
+        $customerUser = new CustomerUser();
+        $shoppingList = new ShoppingListStub();
+        $shoppingList->addVisitor((new CustomerVisitor())->setSessionId('visitor_session_1'));
+        $checkout = (new Checkout())->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
+        ReflectionUtil::setId($checkout, 1);
+        $checkout->setCustomerUser((new CustomerUser())->setCustomer(new Customer()));
+        $this->request->cookies->set(
+            AnonymousCustomerUserAuthenticator::COOKIE_NAME,
+            base64_encode(json_encode('visitor_session_1', JSON_THROW_ON_ERROR))
+        );
+        $this->request->request->add(['_checkout_id' => 1]);
+
+        $this->token->expects(self::exactly(2))
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $this->configManager->expects(self::exactly(2))
+            ->method('get')
+            ->with('oro_checkout.guest_checkout')
+            ->willReturn(true);
+
+        $this->authenticator->expects(self::once())
+            ->method('isInteractive')
+            ->willReturn(true);
+
+        $this->checkoutManager->expects(self::exactly(2))
+            ->method('getCheckoutById')
+            ->with(1)
+            ->willReturn($checkout);
+
+        $this->checkoutManager->expects(self::never())
+            ->method('updateCheckoutCustomerUser');
+
+        $this->registry->expects(self::never())
+            ->method('getManager');
+
+        $this->startShoppingListCheckout->expects(self::never())
+            ->method('execute');
+
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
+        $this->listener->onCheckoutLogin(new LoginSuccessEvent(
+            $this->authenticator,
+            $this->createMock(Passport::class),
+            $this->token,
+            $this->request,
+            null,
+            'test'
+        ));
+
+        self::assertNull(ReflectionUtil::getPropertyValue($this->listener, 'guestCheckoutId'));
     }
 
     public function testOnCheckoutLoginGuestCheckoutDisabled(): void
