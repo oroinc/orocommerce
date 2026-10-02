@@ -113,18 +113,21 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
             }
 
             $origShoppingList = $entity->getAssociatedList();
-            if ($origShoppingList->getId() === $shoppingList->getId() || !$this->isEditAllowed($origShoppingList)) {
+            $isSavedForLater = $entity->isSavedForLaterList();
+            if ((!$isSavedForLater && $origShoppingList->getId() === $shoppingList->getId())
+                || !$this->isEditAllowed($origShoppingList)
+            ) {
                 continue;
             }
 
+            $origShoppingList->removeAssociatedListLineItem($entity);
+            $affectedShoppingLists[$origShoppingList->getId()] = $origShoppingList;
+
             /** After a line item is moved, it must no longer be marked as ‘saved for later’ */
-            if ($entity->isSavedForLaterList()) {
-                $entity->setShoppingList($entity->getSavedForLaterList());
-                $entity->removeSavedForLaterList();
+            if ($isSavedForLater) {
+                $entity->setShoppingList($origShoppingList);
             }
 
-            $origShoppingList->removeLineItem($entity);
-            $affectedShoppingLists[$origShoppingList->getId()] = $origShoppingList;
             $this->shoppingListManager->addLineItem($entity, $shoppingList, false);
 
             $updated++;

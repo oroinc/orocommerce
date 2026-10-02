@@ -165,14 +165,28 @@ Feature: Shopping list Save for later in Storefront for simple products
       | CC36 | Product 36              | In Stock     | 1 piece        | $31.00 | $31.00   |
       | CC37 | Product 37 Note 37 text | In Stock     | 18 piece       | $31.00 | $558.00  |
 
-#  Try to move items to the same list — no items should move
+#  Move items to the same list — they move back in, grid updates with no reload
     When I click "Move to" link from mass action dropdown in "Frontend Shopping List Saved For Later Line Items Grid"
     And I click "Filter Toggle" in "UiDialog" element
     And I filter Name as is equal to "Shopping List 1" in "Shopping List Action Move Grid"
     And I click "Show (1)"
     And I click "Shopping List Action Move Radio"
     And I click "Shopping List Action Submit"
-    Then I should see "No items were moved." flash message and I close it
+    Then I should see "2 items have been moved successfully." flash message and I close it
+    And I should see no records in "Frontend Shopping List Saved For Later Line Items Grid" table
+    And I should see following "Frontend Shopping List Edit Grid" grid containing rows:
+      | SKU  | Product                 | Availability | Qty Update All | Price  | Subtotal |
+      | CC36 | Product 36              | In Stock     | 1 piece        | $31.00 | $31.00   |
+      | CC37 | Product 37 Note 37 text | In Stock     | 18 piece       | $31.00 | $558.00  |
+    And I should see "Summary 2 Items"
+
+#  Save for later again, to feed the cross-list move below
+    When I click "Save For Later" on row "CC36" in grid "Frontend Shopping List Edit Grid"
+    Then I should see "Are you sure you want to save this product for later?"
+    And I click "Yes, Save" in confirmation dialogue
+    When I click "Save For Later" on row "CC37" in grid "Frontend Shopping List Edit Grid"
+    Then I should see "Are you sure you want to save this product for later?"
+    And I click "Yes, Save" in confirmation dialogue
     And I should see following "Frontend Shopping List Saved For Later Line Items Grid" grid:
       | SKU  | Product                 | Availability | Qty Update All | Price  | Subtotal |
       | CC36 | Product 36              | In Stock     | 1 piece        | $31.00 | $31.00   |

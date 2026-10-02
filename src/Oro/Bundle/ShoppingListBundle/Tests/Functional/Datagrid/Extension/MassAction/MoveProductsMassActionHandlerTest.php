@@ -78,26 +78,25 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         self::assertEquals(['count' => 1], $result->getOptions());
     }
 
-    public function testHandleWhenSavedForLater(): void
+    public function testHandleWhenSavedForLaterMovedToSameShoppingList(): void
     {
-        $sourceShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
-        $targetShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
+        $lineItem = $this->getReference(LoadShoppingListLineItems::SAVED_FOR_LATER_LINE_ITEM_1);
 
-        $datagrid = self::getContainer()
-            ->get('oro_datagrid.datagrid.manager')
-            ->getDatagrid(
-                'frontend-customer-user-shopping-list-saved-for-later-edit-grid',
-                [
-                    'shopping_list_id' => $sourceShoppingList->getId(),
-                ]
-            );
+        $datagrid = $this->getDatagrid(
+            $shoppingList,
+            'frontend-customer-user-shopping-list-saved-for-later-edit-grid'
+        );
+
+        self::assertTrue($shoppingList->getSavedForLaterLineItems()->contains($lineItem));
 
         $result = $this->handler->handle(
             new MassActionHandlerArgs(
                 $this->getMoveProductsMassAction(),
                 $datagrid,
-                new IterableResult($this->getQuery($sourceShoppingList)),
-                ['shopping_list_id' => $targetShoppingList->getId()]
+                $this->getIterableResultFromDatagrid($datagrid, new SelectedItems([$lineItem->getId()], true)),
+                ['values' => $lineItem->getId(), 'shopping_list_id' => $shoppingList->getId()]
             )
         );
 
@@ -105,6 +104,87 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         self::assertTrue($result->isSuccessful());
         self::assertEquals('One entity has been moved successfully.', $result->getMessage());
         self::assertEquals(['count' => 1], $result->getOptions());
+        self::assertFalse($shoppingList->getSavedForLaterLineItems()->contains($lineItem));
+        self::assertTrue($shoppingList->getLineItems()->contains($lineItem));
+
+        $doctrine = self::getContainer()->get('doctrine');
+        $doctrine->getManagerForClass(LineItem::class)->clear();
+
+        /** @var LineItem $reloadedLineItem */
+        $reloadedLineItem = $doctrine->getRepository(LineItem::class)->find($lineItem->getId());
+        self::assertNull($reloadedLineItem->getSavedForLaterList());
+        self::assertNotNull($reloadedLineItem->getShoppingList());
+        self::assertEquals($shoppingList->getId(), $reloadedLineItem->getShoppingList()->getId());
+    }
+
+    /**
+     * Moving to a different list must also detach the item from the source list's
+     * in-memory savedForLaterLineItems collection.
+     */
+    public function testHandleWhenSavedForLaterMovedToAnotherShoppingList(): void
+    {
+        /** @var ShoppingList $sourceShoppingList */
+        $sourceShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
+        /** @var ShoppingList $targetShoppingList */
+        $targetShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
+        $lineItem = $this->getReference(LoadShoppingListLineItems::SAVED_FOR_LATER_LINE_ITEM_1);
+
+        $datagrid = $this->getDatagrid(
+            $sourceShoppingList,
+            'frontend-customer-user-shopping-list-saved-for-later-edit-grid'
+        );
+
+        self::assertTrue($sourceShoppingList->getSavedForLaterLineItems()->contains($lineItem));
+
+        $result = $this->handler->handle(
+            new MassActionHandlerArgs(
+                $this->getMoveProductsMassAction(),
+                $datagrid,
+                $this->getIterableResultFromDatagrid($datagrid, new SelectedItems([$lineItem->getId()], true)),
+                ['values' => $lineItem->getId(), 'shopping_list_id' => $targetShoppingList->getId()]
+            )
+        );
+
+        self::assertInstanceOf(MassActionResponse::class, $result);
+        self::assertTrue($result->isSuccessful());
+        self::assertEquals('One entity has been moved successfully.', $result->getMessage());
+        self::assertEquals(['count' => 1], $result->getOptions());
+
+        self::assertFalse($sourceShoppingList->getSavedForLaterLineItems()->contains($lineItem));
+
+        $doctrine = self::getContainer()->get('doctrine');
+        $doctrine->getManagerForClass(LineItem::class)->clear();
+
+        /** @var LineItem $reloadedLineItem */
+        $reloadedLineItem = $doctrine->getRepository(LineItem::class)->find($lineItem->getId());
+        self::assertNull($reloadedLineItem->getSavedForLaterList());
+        self::assertEquals($targetShoppingList->getId(), $reloadedLineItem->getShoppingList()->getId());
+    }
+
+    /**
+     * A regular (non-saved-for-later) item moved to its own list must still be skipped.
+     */
+    public function testHandleWhenNotSavedForLaterAndSameShoppingList(): void
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
+        $lineItem = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_2);
+
+        $datagrid = $this->getDatagrid($shoppingList);
+
+        $result = $this->handler->handle(
+            new MassActionHandlerArgs(
+                $this->getMoveProductsMassAction(),
+                $datagrid,
+                $this->getIterableResultFromDatagrid($datagrid, new SelectedItems([$lineItem->getId()], true)),
+                ['values' => $lineItem->getId(), 'shopping_list_id' => $shoppingList->getId()]
+            )
+        );
+
+        self::assertInstanceOf(MassActionResponse::class, $result);
+        self::assertFalse($result->isSuccessful());
+        self::assertEquals('No items were moved.', $result->getMessage());
+        self::assertEquals(['count' => 0], $result->getOptions());
     }
 
     /**
@@ -133,6 +213,7 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         self::assertEquals(['count' => 1], $result->getOptions());
 
         self::assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
+        self::assertFalse($sourceShoppingList->getLineItems()->contains($lineItem));
     }
 
     public function handleWhenSingleItemDataProvider(): array
@@ -172,6 +253,7 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         $lineItem = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_10);
 
         self::assertEquals($targetShoppingList->getId(), $lineItem->getShoppingList()->getId());
+        self::assertFalse($sourceShoppingList->getLineItems()->contains($lineItem));
     }
 
     private function getCustomerUser(): CustomerUser
@@ -192,12 +274,14 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         );
     }
 
-    private function getDatagrid(ShoppingList $shoppingList): DatagridInterface
-    {
+    private function getDatagrid(
+        ShoppingList $shoppingList,
+        string $gridName = 'frontend-customer-user-shopping-list-edit-grid'
+    ): DatagridInterface {
         return self::getContainer()
             ->get('oro_datagrid.datagrid.manager')
             ->getDatagrid(
-                'frontend-customer-user-shopping-list-edit-grid',
+                $gridName,
                 [
                     'shopping_list_id' => $shoppingList->getId(),
                 ]
