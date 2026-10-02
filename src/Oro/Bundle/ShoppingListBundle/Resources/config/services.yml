@@ -464,7 +464,8 @@ services:
         tags:
             - { name: twig.extension }
 
-    # should be executed before oro_checkout.event_listener.login_on_checkout listener
+    # runs after the onInteractiveLogin listener of oro_checkout.event_listener.login_on_checkout,
+    # which reads Checkout::getVisitor() through the source this listener detaches, and before its onCheckoutLogin
     oro_shopping_list.event_listener.interactive_login:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\InteractiveLoginListener'
         arguments:
