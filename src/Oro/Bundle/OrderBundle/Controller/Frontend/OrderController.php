@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Controller\Frontend;
 
-use Exception;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Helper\CheckoutCompareHelper;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
@@ -10,6 +9,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -100,11 +100,15 @@ class OrderController extends AbstractController
      * @AclAncestor("oro_order_frontend_view")
      * @param Checkout $checkout
      * @return RedirectResponse
-     * @throws Exception
      */
     public function checkoutAction(Checkout $checkout): RedirectResponse
     {
-        $this->get('oro_checkout.helper.check_compare')->compare($checkout);
+        $this->denyAccessUnlessGranted('EDIT', $checkout);
+
+        $sourceEntity = $checkout->getSourceEntity();
+        if ($sourceEntity instanceof ShoppingList && $this->isGranted('CHECKOUT_CREATE', $sourceEntity)) {
+            $this->get('oro_checkout.helper.check_compare')->compare($checkout);
+        }
 
         return $this->redirectToRoute('oro_checkout_frontend_checkout', ['id' => $checkout->getId()]);
     }
