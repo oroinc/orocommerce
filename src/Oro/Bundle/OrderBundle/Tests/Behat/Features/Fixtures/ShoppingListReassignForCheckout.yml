@@ -1,0 +1,64 @@
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    ruth:
+        email: 'RuthWMaxwell@example.org'
+        username: 'RuthWMaxwell@example.org'
+        password: <userPassword(@ruth->username)>
+        firstName: 'Ruth'
+        lastName: 'Maxwell'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer1'
+        organization: '@organization'
+        userRoles: ['@front_admin']
+        owner: '@admin'
+        website: '@website1'
+    john:
+        email: 'john@example.org'
+        username: 'john@example.org'
+        password: <userPassword(@john->username)>
+        firstName: 'John'
+        lastName: 'Doe'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer1'
+        organization: '@organization'
+        userRoles: ['@buyer']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision2:
+        unit: '@item'
+        precision: '1'
+        sell: true
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locvalue2:
+        string: Product2
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product2:
+        attributeFamily: '@defaultProductFamily'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'AA2'
+        primaryUnitPrecision: '@precision2'
+        __calls:
+            - addName: ['@locvalue2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceToProductRelation2:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice2:
+        pricelist: '@defaultPriceList'
+        product: '@product2'
+        productSku: 'AA2'
+        quantity: 1
+        unit: '@item'
+        value: 15
+        currency: 'USD'
