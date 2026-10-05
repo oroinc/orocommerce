@@ -206,8 +206,10 @@ Feature: Validate unique variant field values when changing simple products
     And I go to Products / Product Attributes
     And I click on Color in grid
     And set Options with:
-      | Label |
-      | Green |
+      | Label  |
+      | Green  |
+      | Red    |
+      | Yellow |
     And I save form
     Then I should see "Attribute was successfully saved" flash message
     And I go to Products / Products

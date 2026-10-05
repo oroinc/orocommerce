@@ -86,7 +86,7 @@ Feature: UPS shipping cost calculation
 
   Scenario: Check UPS shipping for checkout when product kit has no valid shipping options
     Given I proceed as the Buyer
-    And I open page with shopping list List 2
+    And I open page with shopping list List 3
     And I scroll to top
     When I click "Create Order"
     Then Buyer is on enter billing information checkout step

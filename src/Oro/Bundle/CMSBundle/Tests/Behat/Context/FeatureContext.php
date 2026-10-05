@@ -10,6 +10,7 @@ use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygCodeTypeBlockEditor;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
+use Oro\Bundle\TestFrameworkBundle\Behat\Driver\OroPlaywrightDriver;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
@@ -558,7 +559,35 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
                 )
             );
 
+        // drag-and-drop.js dispatches its events with setTimeout, so executeScript returns before the drop is done.
+        // Wait until the dragged node is in the destination. Resolve both xpaths on every attempt, because GrapesJS
+        // builds the node again instead of moving it. The check expects a container as the destination: every call
+        // site drops into a grid column.
+        $moved = $this->spin(function () use ($blockElement, $destinationElement) {
+            $source = $this->createElement($blockElement);
+            $target = $this->createElement($destinationElement);
+
+            if (!$source->isIsset() || !$target->isIsset()) {
+                return false;
+            }
+
+            return true === $this->getSession()->getDriver()->evaluateScript(sprintf(
+                'return (function (s, d) {'
+                . ' const src = document.evaluate(s, document, null, 9, null).singleNodeValue;'
+                . ' const dst = document.evaluate(d, document, null, 9, null).singleNodeValue;'
+                . ' return !!src && !!dst && src !== dst && dst.contains(src);'
+                . ' })(%s, %s)',
+                json_encode($source->getXPath()),
+                json_encode($target->getXPath())
+            ));
+        }, 5);
+
         $this->getDriver()->switchToWindow();
+
+        self::assertTrue(
+            (bool)$moved,
+            sprintf('"%s" was not moved into "%s" in the editor canvas', $blockElement, $destinationElement)
+        );
     }
 
     /**
@@ -824,7 +853,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         $button->click();
 
-        $this->getDriver()->getWebDriverSession()->accept_alert();
+        $driver = $this->getDriver();
+        if ($driver instanceof OroPlaywrightDriver) {
+            $driver->acceptAlert();
+        } else {
+            $driver->getWebDriverSession()->accept_alert();
+        }
     }
 
     /**

@@ -85,6 +85,10 @@ const MoveProductsMassAction = MassAction.extend({
         });
         this.datagrid.resetSelectionState();
 
+        if (data.successful && this.datagrid.collection.options?.savedForLaterGrid) {
+            mediator.trigger('products:removed-from-saved-for-later', {gridName: this.datagrid.name, data: data});
+        }
+
         data.successMessageOptions = {namespace: 'shopping_list'};
 
         this._showAjaxSuccessMessage(data);

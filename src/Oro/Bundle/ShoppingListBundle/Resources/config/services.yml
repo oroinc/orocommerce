@@ -448,7 +448,8 @@ services:
             - { name: container.service_subscriber, id: oro_shopping_list.provider.shopping_list_url, key: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider }
             - { name: container.service_subscriber, id: oro_action.layout.data_provider.button_provider, key: Oro\Bundle\ActionBundle\Layout\DataProvider\LayoutButtonProvider }
 
-    # should be executed before oro_checkout.event_listener.login_on_checkout listener
+    # runs after the onInteractiveLogin listener of oro_checkout.event_listener.login_on_checkout,
+    # which reads Checkout::getVisitor() through the source this listener detaches
     oro_shopping_list.event_listener.interactive_login:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\InteractiveLoginListener'
         arguments:

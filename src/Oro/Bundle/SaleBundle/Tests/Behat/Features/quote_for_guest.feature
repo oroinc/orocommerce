@@ -134,7 +134,7 @@ Feature: Quote for guest
     Then I should see "QUOTE #QUOTE_1"
     And I should see "Accept and Submit to Order"
     And I should see an "Page Sidebar" element
-    And I should see an "Breadcrumbs" element
+    And I should not see an "Breadcrumbs" element
 
     When I click "Accept and Submit to Order"
     Then First Product Quantity on Quote field should has 10 value

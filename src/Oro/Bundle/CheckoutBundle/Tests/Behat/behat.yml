@@ -34,6 +34,11 @@ oro_behat_extension:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
   elements:
+    Order Products Collapsed Header:
+      selector:
+        type: xpath
+        locator: '//a[contains(@class, "collapse__header") and contains(@class, "collapsed")][.//*[contains(@class, "collapse__toggle")][contains(., "Order products")]]'
+
     Checkout Captcha Field:
       selector: '[name="oro_workflow_transition[captcha]"]'
 
