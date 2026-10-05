@@ -96,8 +96,10 @@ class OrderController extends AbstractController
     #[AclAncestor('oro_order_frontend_view')]
     public function checkoutAction(Checkout $checkout): RedirectResponse
     {
+        $this->denyAccessUnlessGranted('EDIT', $checkout);
+
         $shoppingList = $checkout->getSourceEntity();
-        if ($shoppingList instanceof ShoppingList) {
+        if ($shoppingList instanceof ShoppingList && $this->isGranted('CHECKOUT_CREATE', $shoppingList)) {
             $startResult = $this->container->get(StartShoppingListCheckout::class)->execute($shoppingList);
             $checkout = $startResult['checkout'];
         }
