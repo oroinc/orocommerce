@@ -1,5 +1,4 @@
 @ticket-BB-18228
-@regression
 
 Feature: Product Attribute Multiple Files with DAM
   In order to create product with attribute Multiple Files

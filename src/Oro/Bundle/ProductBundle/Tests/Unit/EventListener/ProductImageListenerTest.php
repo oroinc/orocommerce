@@ -5,7 +5,10 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\OnClearEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
+use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
@@ -390,5 +393,158 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
             );
 
         $this->listener->postFlush(new PostFlushEventArgs($this->productImageEntityManager));
+    }
+
+    /**
+     * @dataProvider changedProductEntityDataProvider
+     */
+    public function testOnFlushSchedulesReindexForChangedEntity(
+        array $insertions,
+        array $updates,
+        array $deletions,
+        int $productId
+    ): void {
+        $entityManager = $this->getFlushEntityManager($insertions, $updates, $deletions);
+        $this->expectReindexDispatch([$productId => $productId]);
+
+        $this->listener->onFlush(new OnFlushEventArgs($entityManager));
+        $this->listener->postFlush(new PostFlushEventArgs($entityManager));
+    }
+
+    public static function changedProductEntityDataProvider(): array
+    {
+        $insertedType = new ProductImageType(ProductImageType::TYPE_MAIN);
+        $insertedType->setProductImage(self::productImageForProduct(201));
+
+        $updatedType = new ProductImageType(ProductImageType::TYPE_MAIN);
+        $updatedType->setProductImage(self::productImageForProduct(202));
+
+        $deletedType = new ProductImageType(ProductImageType::TYPE_MAIN);
+        $deletedType->setProductImage(self::productImageForProduct(203));
+
+        $dedupProductImage = self::productImageForProduct(206);
+        $dedupMainType = new ProductImageType(ProductImageType::TYPE_MAIN);
+        $dedupMainType->setProductImage($dedupProductImage);
+        $dedupListingType = new ProductImageType(ProductImageType::TYPE_LISTING);
+        $dedupListingType->setProductImage($dedupProductImage);
+
+        return [
+            'inserted ProductImageType' => [[$insertedType], [], [], 201],
+            'updated ProductImageType' => [[], [$updatedType], [], 202],
+            'deleted ProductImageType' => [[], [], [$deletedType], 203],
+            'deleted ProductImage' => [[], [], [self::productImageForProduct(204)], 204],
+            // Insertion without types.
+            'inserted ProductImage without types' => [[self::productImageForProduct(205)], [], [], 205],
+            // Two types of the same product image in one flush must still yield a single id.
+            'deduplicates several changes to the same product' => [[$dedupMainType, $dedupListingType], [], [], 206],
+        ];
+    }
+
+    public function testOnFlushIgnoresUnrelatedEntities(): void
+    {
+        $entityManager = $this->getFlushEntityManager(
+            insertions: [new \stdClass(), new Product()],
+            updates: [new File()],
+            deletions: [new \stdClass()]
+        );
+
+        $this->eventDispatcher->expects(self::never())
+            ->method('dispatch');
+
+        $this->listener->onFlush(new OnFlushEventArgs($entityManager));
+        $this->listener->postFlush(new PostFlushEventArgs($entityManager));
+    }
+
+    /**
+     * @dataProvider entitiesWithoutResolvableProductIdDataProvider
+     */
+    public function testOnFlushIgnoresEntityWithoutResolvableProductId(object $entity): void
+    {
+        $entityManager = $this->getFlushEntityManager(insertions: [$entity]);
+
+        $this->eventDispatcher->expects(self::never())
+            ->method('dispatch');
+
+        $this->listener->onFlush(new OnFlushEventArgs($entityManager));
+        $this->listener->postFlush(new PostFlushEventArgs($entityManager));
+    }
+
+    public function entitiesWithoutResolvableProductIdDataProvider(): array
+    {
+        $productImageWithoutProduct = new StubProductImage();
+
+        $productImageWithUnsavedProduct = new StubProductImage();
+        $productImageWithUnsavedProduct->setProduct(new ProductStub());
+
+        return [
+            'ProductImageType without parent ProductImage' => [new ProductImageType(ProductImageType::TYPE_MAIN)],
+            'ProductImage without Product' => [$productImageWithoutProduct],
+            'ProductImage whose Product has no id yet' => [$productImageWithUnsavedProduct],
+        ];
+    }
+
+    public function testOnClearResetsBufferForProductImageType(): void
+    {
+        $type = new ProductImageType(ProductImageType::TYPE_MAIN);
+        $type->setProductImage($this->productImageForProduct(207));
+
+        $entityManager = $this->getFlushEntityManager(insertions: [$type]);
+        $this->listener->onFlush(new OnFlushEventArgs($entityManager));
+
+        $onClearArgs = $this->createMock(OnClearEventArgs::class);
+        $onClearArgs->expects(self::once())
+            ->method('getEntityClass')
+            ->willReturn(ProductImageType::class);
+        $this->listener->onClear($onClearArgs);
+
+        $this->eventDispatcher->expects(self::never())
+            ->method('dispatch');
+
+        $this->listener->postFlush(new PostFlushEventArgs($entityManager));
+    }
+
+    private static function productImageForProduct(int $productId): StubProductImage
+    {
+        $product = new ProductStub();
+        $product->setId($productId);
+
+        $productImage = new StubProductImage();
+        $productImage->setProduct($product);
+
+        return $productImage;
+    }
+
+    private function expectReindexDispatch(array $productIds): void
+    {
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(
+                new ReindexationRequestEvent([Product::class], [], $productIds, true, ['image']),
+                ReindexationRequestEvent::EVENT_NAME
+            );
+    }
+
+    private function getFlushEntityManager(
+        array $insertions = [],
+        array $updates = [],
+        array $deletions = []
+    ): EntityManagerInterface {
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork->expects(self::any())
+            ->method('getScheduledEntityInsertions')
+            ->willReturn($insertions);
+        $unitOfWork->expects(self::any())
+            ->method('getScheduledEntityUpdates')
+            ->willReturn($updates);
+        $unitOfWork->expects(self::any())
+            ->method('getScheduledEntityDeletions')
+            ->willReturn($deletions);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects(self::any())
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+
+        return $entityManager;
     }
 }

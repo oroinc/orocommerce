@@ -229,6 +229,7 @@ services:
             - '@request_stack'
         tags:
             - { name: kernel.event_listener, event: oro_web_catalog.restrict_content_variant_by_entity, method: applyRestriction }
+            - { name: kernel.event_listener, event: oro_web_catalog.restrict_content_variant_by_entities, method: applyRestrictionForEntities }
 
     oro_catalog.event_listener.category_content_variant_index:
         class: 'Oro\Bundle\CatalogBundle\EventListener\CategoryContentVariantIndexListener'
@@ -436,3 +437,11 @@ services:
         class: Oro\Bundle\CatalogBundle\Utils\SortOrderDialogTargetStorage
         arguments:
             - '@request_stack'
+
+    oro_catalog.cache.category_page_request_provider:
+        class: Oro\Bundle\CatalogBundle\Provider\CategoryPageRequestProvider
+        parent: oro_platform.cache.provider.page_request_provider.abstract
+        arguments:
+            $doctrine: '@doctrine'
+        tags:
+            - { name: warmup_page_request_provider }

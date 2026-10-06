@@ -192,6 +192,8 @@ api:
                     property_path: unitPrecisions
                     exclude: true
                     max_results: -1
+                primaryUnitPrecision:
+                    exclude: true
                 url:
                     data_type: string
                     property_path: _
@@ -206,6 +208,10 @@ api:
                 fields:
                     sku:
                         allow_array: true
+                        operators: [ '=', '!=', '~', '^' ]
+                        property_path: skuUppercase
+                        options:
+                            value_transformer: mb_strtoupper
                     inventoryStatus:
                         allow_array: true
                     variants: # processed by Oro\Bundle\ProductBundle\Api\Processor\HandleVariantsFilter
@@ -317,7 +323,7 @@ api:
                                 shortDescription: shortDescriptions_LOCALIZATION_ID
                                 productType: type
                                 isVariant: is_variant
-                                inventoryStatus: inventory_status
+                                inventoryStatus: inv_status
                                 minimalPrice: minimal_price.CPL_ID_CURRENCY
                                 minimalPrice_(?<UNIT>\w+): minimal_price.CPL_ID_CURRENCY_{UNIT}
                                 product: system_entity_id
@@ -337,7 +343,7 @@ api:
                                 shortDescription: shortDescriptions_LOCALIZATION_ID
                                 productType: type
                                 isVariant: is_variant
-                                inventoryStatus: inventory_status
+                                inventoryStatus: inv_status
                                 minimalPrice: minimal_price.CPL_ID_CURRENCY
                                 minimalPrice_(?<UNIT>\w+): minimal_price.CPL_ID_CURRENCY_{UNIT}
                                 product: system_entity_id
@@ -461,9 +467,6 @@ api:
                 update: false
                 delete: false
                 delete_list: false
-            fields:
-                productUnitPrecision:
-                    exclude: true
             subresources:
                 kitItem:
                     actions:

@@ -217,7 +217,15 @@ final class OrderLineItemDraftCalculateTaxesAndDiscountsControllerTest extends W
         $data = self::getJsonResponseContent($result, 200);
 
         self::assertArrayHasKey('lineItemTaxesHtml', $data);
-        self::assertEmpty($data['lineItemTaxesHtml'], 'Tax HTML should be empty when taxation is disabled');
+        // The taxes macro always renders a table, falling back to zero values, so when taxation is
+        // disabled the response contains the default "no taxes" markup (rendered with null taxes)
+        // rather than an empty string.
+        /** @var Environment $twig */
+        $twig = self::getContainer()->get('twig');
+        $expectedTaxesHtml = $twig->render('@OroOrder/Order/orderLineItemDraftTaxes.html.twig', [
+            'lineItemTaxes' => null,
+        ]);
+        self::assertEquals($expectedTaxesHtml, $data['lineItemTaxesHtml']);
 
         self::assertArrayHasKey('lineItemDiscountsHtml', $data);
         self::assertNotEmpty($data['lineItemDiscountsHtml']);
@@ -498,13 +506,32 @@ final class OrderLineItemDraftCalculateTaxesAndDiscountsControllerTest extends W
             'Taxes HTML for line item 1 should change when tax rate changes'
         );
 
-        // Verify that discounts for line item 1 remain consistent
-        // (line item discounts are calculated per line item based on its own values, not affected by tax rate)
-        self::assertEquals(
-            $firstDiscountsHtml,
-            $secondDiscountsHtml,
-            'Discounts HTML for line item 1 should remain consistent when only tax rate changes'
+        self::assertStringContainsString(
+            '<td data-role="row-total-after-discount-incl-tax"><strong class="font-medium">$1,108.00',
+            $firstDiscountsHtml
         );
+        self::assertStringContainsString(
+            '<td data-role="row-total-after-discount-excl-tax"><strong class="font-medium">$900.00',
+            $firstDiscountsHtml
+        );
+        self::assertStringContainsString(
+            '<td data-role="row-total-discount-amount"><strong class="font-medium">$100.00',
+            $firstDiscountsHtml
+        );
+        self::assertStringContainsString(
+            '<td data-role="row-total-after-discount-incl-tax"><strong class="font-medium">$1,300.00',
+            $secondDiscountsHtml
+        );
+        self::assertStringContainsString(
+            '<td data-role="row-total-after-discount-excl-tax"><strong class="font-medium">$900.00',
+            $secondDiscountsHtml
+        );
+        self::assertStringContainsString(
+            '<td data-role="row-total-discount-amount"><strong class="font-medium">$100.00',
+            $secondDiscountsHtml
+        );
+
+        self::assertNotEquals($firstDiscountsHtml, $secondDiscountsHtml);
     }
 
     public function testReturnsNoDiscountsWhenPromotionsDisabled(): void
@@ -751,6 +778,12 @@ final class OrderLineItemDraftCalculateTaxesAndDiscountsControllerTest extends W
         self::assertEquals($expectedDiscountsHtml, $data['lineItemDiscountsHtml']);
 
         self::assertArrayHasKey('lineItemTaxesHtml', $data);
-        self::assertEmpty($data['lineItemTaxesHtml'], 'Tax HTML should be empty when taxation is disabled');
+        // The taxes macro always renders a table, falling back to zero values, so when taxation is
+        // disabled the response contains the default "no taxes" markup (rendered with null taxes)
+        // rather than an empty string.
+        $expectedTaxesHtml = $twig->render('@OroOrder/Order/orderLineItemDraftTaxes.html.twig', [
+            'lineItemTaxes' => null,
+        ]);
+        self::assertEquals($expectedTaxesHtml, $data['lineItemTaxesHtml']);
     }
 }

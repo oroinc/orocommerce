@@ -25,6 +25,8 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
+use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
+use Oro\Component\DraftSession\Entity\NoopEntityDraftAwareTrait;
 
 /**
  * Represents a line item in a shopping list.
@@ -62,10 +64,12 @@ class LineItem implements
     ProductLineItemChecksumAwareInterface,
     ProductKitItemLineItemsAwareInterface,
     ProductLineItemsHolderAwareInterface,
-    ExtendEntityInterface
+    ExtendEntityInterface,
+    EntityDraftAwareInterface
 {
     use UserAwareTrait;
     use ExtendEntityTrait;
+    use NoopEntityDraftAwareTrait;
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]

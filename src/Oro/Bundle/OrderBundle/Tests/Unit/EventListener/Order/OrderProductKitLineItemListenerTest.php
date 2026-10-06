@@ -11,6 +11,7 @@ use Oro\Bundle\OrderBundle\EventListener\Order\OrderProductKitLineItemListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Twig\Environment;
@@ -197,5 +198,36 @@ class OrderProductKitLineItemListenerTest extends TestCase
             ),
             $event->getData()
         );
+    }
+
+    public function testOnOrderEventDoesNothingWhenDraftSessionSyncEnabled(): void
+    {
+        $formConfig = $this->createMock(FormConfigInterface::class);
+        $formConfig
+            ->expects(self::once())
+            ->method('getOption')
+            ->with('draft_session_sync')
+            ->willReturn(true);
+        $form = $this->createMock(FormInterface::class);
+        $form
+            ->expects(self::once())
+            ->method('getConfig')
+            ->willReturn($formConfig);
+        $form
+            ->expects(self::never())
+            ->method('has');
+        $form
+            ->expects(self::never())
+            ->method('get');
+        $order = new Order();
+        $event = new OrderEvent($form, $order);
+
+        $this->twig
+            ->expects(self::never())
+            ->method('render');
+
+        $this->listener->onOrderEvent($event);
+
+        self::assertEquals(new \ArrayObject(), $event->getData());
     }
 }

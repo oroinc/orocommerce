@@ -71,7 +71,18 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
             ->method('preloadInEntities')
             ->with(
                 $order->getLineItems()->toArray(),
-                ['product' => ['taxCode' => []]]
+                [
+                    'orders' => [],
+                    'freeFormTaxCode' => [],
+                    'product' => [
+                        'taxCode' => [],
+                    ],
+                    'kitItemLineItems' => [
+                        'product' => [
+                            'taxCode' => [],
+                        ],
+                    ],
+                ]
             );
 
         $taxable = $this->mapper->map($order);

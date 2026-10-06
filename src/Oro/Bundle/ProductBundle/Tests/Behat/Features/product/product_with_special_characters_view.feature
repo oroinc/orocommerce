@@ -1,3 +1,4 @@
+@skip-base
 @ticket-BB-16275
 @fixture-OroProductBundle:product_with_special_characters_view.yml
 

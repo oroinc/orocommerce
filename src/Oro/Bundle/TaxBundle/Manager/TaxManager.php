@@ -45,6 +45,8 @@ class TaxManager
     {
         $this->throwExceptionIfTaxationDisabled();
 
+        $this->eventDispatcher->dispatchLoadTaxBefore($object);
+
         $taxable = $this->getCachedTaxable($object);
 
         return $this->getTaxTransformer($taxable->getClassName())->transform(
@@ -144,6 +146,13 @@ class TaxManager
         return $this->taxValueManager->getTaxValue($taxable->getClassName(), $taxable->getIdentifier());
     }
 
+    public function preloadTaxValues(string $entityClass, array $entityIds): void
+    {
+        $this->throwExceptionIfTaxationDisabled();
+
+        $this->taxValueManager->preloadTaxValues($entityClass, $entityIds);
+    }
+
     protected function removeTaxValue(string $className, string|int $entityId): bool
     {
         $taxValue = $this->taxValueManager->findTaxValue($className, $entityId);
@@ -193,13 +202,17 @@ class TaxManager
 
     /**
      * Returns cached taxation entity representation to reduce calls to TaxFactory which executes heavy mapping logic
+     *
+     * @bc-layer This method is retained for BC reasons.
      */
     protected function getCachedTaxable(object $object): Taxable
     {
-        $cacheKey = $this->objectCacheKeyGenerator->generate($object, 'tax');
-        return clone $this->cacheProvider->get($cacheKey, function () use ($object) {
-            return $this->taxFactory->create($object);
-        });
+        return $this->createTaxable($object);
+    }
+
+    private function createTaxable(object $object): Taxable
+    {
+        return $this->taxFactory->create($object);
     }
 
     /**

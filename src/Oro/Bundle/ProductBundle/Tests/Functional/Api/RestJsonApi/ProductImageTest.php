@@ -5,9 +5,14 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\RestJsonApi;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\AttachmentBundle\Tests\Functional\WebpConfigurationTrait;
 use Oro\Bundle\AttachmentBundle\Tools\WebpConfiguration;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
+use Oro\Bundle\ProductBundle\Async\Topic\ResizeProductImageTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -15,7 +20,23 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProductImageTest extends RestJsonApiTestCase
 {
+    use DefaultWebsiteIdTestTrait;
+    use MessageQueueExtension;
     use WebpConfigurationTrait;
+
+    private const ONE_PIXEL_JPEG_BASE64 = '/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBw'
+        . 'YHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYM'
+        . 'CAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA'
+        . 'z/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL'
+        . '/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0f'
+        . 'AkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1'
+        . 'dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1N'
+        . 'XW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQF'
+        . 'BgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRob'
+        . 'HBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVm'
+        . 'Z2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExc'
+        . 'bHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+f+iiigD/'
+        . '2Q==';
 
     #[\Override]
     protected function setUp(): void
@@ -219,12 +240,80 @@ class ProductImageTest extends RestJsonApiTestCase
 
     public function testDeleteAction(): void
     {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
         $productImageId = $this->getProductImage(LoadProductData::PRODUCT_1)->getId();
 
         $this->delete(['entity' => 'productimages', 'id' => (string)$productImageId]);
 
         self::assertNull(
             $this->getEntityManager()->find(ProductImage::class, $productImageId)
+        );
+
+        // Deletion is an orphan removal too; the product must still be reindexed.
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
+            [
+                'class' => [Product::class],
+                'granulize' => true,
+                'context' => [
+                    'entityIds' => [$product->getId()],
+                    'websiteIds' => [self::getDefaultWebsiteId()],
+                    AbstractIndexer::CONTEXT_FIELD_GROUPS => ['image'],
+                ],
+            ]
+        );
+    }
+
+    public function testCreateProductImageWithoutTypes(): void
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_2);
+
+        $this->post(
+            ['entity' => 'productimages'],
+            [
+                'data' => [
+                    'type' => 'productimages',
+                    'relationships' => [
+                        'product' => [
+                            'data' => ['type' => 'products', 'id' => (string)$product->getId()],
+                        ],
+                        'image' => [
+                            'data' => ['type' => 'files', 'id' => 'new-file-1'],
+                        ],
+                    ],
+                ],
+                'included' => [
+                    [
+                        'type' => 'files',
+                        'id' => 'new-file-1',
+                        'attributes' => [
+                            'mimeType' => 'image/jpeg',
+                            'originalFilename' => 'bb-27671.jpg',
+                            'fileSize' => 631,
+                            'content' => self::ONE_PIXEL_JPEG_BASE64,
+                        ],
+                    ],
+                ],
+            ]
+        );
+
+        // No resize without types, but the product is still reindexed.
+        self::assertEmptyMessages(ResizeProductImageTopic::getName());
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
+            [
+                'class' => [Product::class],
+                'granulize' => true,
+                'context' => [
+                    'entityIds' => [$product->getId()],
+                    'websiteIds' => [self::getDefaultWebsiteId()],
+                    AbstractIndexer::CONTEXT_FIELD_GROUPS => ['image'],
+                ],
+            ]
         );
     }
 }

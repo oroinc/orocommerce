@@ -33,7 +33,7 @@ Feature: Address Validation - Multi-Step - Shipping - Dialog Displayed With No C
     And I click "Create Order"
     And I click "Continue"
     And I click on "Multistep Shipping Address Select"
-    And I select "ORO, customer avenue, 10115 Berlin, Germany" from "Shipping Address"
+    And I select "ORO, customer avenue, NEW YORK NY US 10001" from "Shipping Address"
     Then I should see "Confirm Your Address"
     When I click "Address Validation Result Form First Suggested Address Radio Storefront"
     Then I should not see "Update Address"

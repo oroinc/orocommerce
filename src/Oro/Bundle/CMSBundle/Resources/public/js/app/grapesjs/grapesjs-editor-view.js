@@ -562,6 +562,7 @@ const GrapesjsEditorView = BaseView.extend({
         this.listenTo(this.builder, 'component:deselected', this.componentDeselected.bind(this));
         this.listenTo(this.builder, 'component:remove:before', this.componentBeforeRemove.bind(this));
         this.listenTo(this.builder, 'component:remove', this.componentRemove.bind(this));
+        this.listenTo(this.builder, 'component:drag:start', this.disposeToolbarTooltips.bind(this));
         this.listenTo(this.builder, 'canvas:tools:update', this.updateCanvasToolbar.bind(this));
         this.listenTo(this.builder, 'rteToolbarPosUpdate', this.updateRtePosition.bind(this));
         this.listenTo(this.state, 'change', this.updatePropertyField.bind(this));
@@ -633,6 +634,7 @@ const GrapesjsEditorView = BaseView.extend({
 
         if (this.builder) {
             this.builder.editor.view.$el.find('.gjs-toolbar').off('mouseover');
+            this.disposeToolbarTooltips();
         }
     },
 
@@ -717,6 +719,21 @@ const GrapesjsEditorView = BaseView.extend({
         return $(this.builder.editor.view.$el.find('.gjs-toolbar .gjs-toolbar-item'));
     },
 
+    /**
+     * Hide and dispose any Bootstrap tooltip currently attached to a toolbar item.
+     * Called before the toolbar is hidden/re-rendered (component drag, deselect, teardown)
+     * so a tooltip instance never outlives the DOM element it was bound to.
+     */
+    disposeToolbarTooltips() {
+        this.getToolbarItems().each(function() {
+            const tooltip = $(this).data('bs.tooltip');
+
+            if (tooltip) {
+                tooltip.dispose();
+            }
+        });
+    },
+
     componentBeforeRemove(model) {
         model.trigger('model:remove:before', model);
     },
@@ -746,13 +763,7 @@ const GrapesjsEditorView = BaseView.extend({
 
     componentDeselected(model) {
         this.builder.editor.view.$el.find('.gjs-toolbar').off('mouseover');
-        this.getToolbarItems().each(function() {
-            const tooltip = $(this).data('bs.tooltip');
-
-            if (tooltip) {
-                tooltip.dispose();
-            }
-        });
+        this.disposeToolbarTooltips();
 
         model.trigger('model:deselected', model);
         this.togglePrivateClasses(model, false);

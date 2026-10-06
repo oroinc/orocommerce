@@ -5,6 +5,7 @@ namespace Oro\Bundle\RFPBundle\Provider;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
@@ -18,12 +19,18 @@ class ProductRFPAvailabilityProvider
     private AclHelper $aclHelper;
     private ?array $allowedInventoryStatuses = null;
     private array $notAllowedProductTypes = [];
+    private ProductManager $productManager;
 
-    public function __construct(ConfigManager $configManager, ManagerRegistry $doctrine, AclHelper $aclHelper)
-    {
+    public function __construct(
+        ConfigManager $configManager,
+        ManagerRegistry $doctrine,
+        AclHelper $aclHelper,
+        ProductManager $productManager
+    ) {
         $this->configManager = $configManager;
         $this->doctrine = $doctrine;
         $this->aclHelper = $aclHelper;
+        $this->productManager = $productManager;
     }
 
     public function setNotAllowedProductTypes(array $notAllowedProductTypes): void
@@ -66,6 +73,37 @@ class ProductRFPAvailabilityProvider
         }
 
         return false;
+    }
+
+    public function getAllowedProductIds(array $productIds): array
+    {
+        if (!$productIds) {
+            return [];
+        }
+
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrine->getManagerForClass(Product::class);
+
+        $queryBuilder = $em
+            ->getRepository(Product::class)
+            ->getProductsQueryBuilder($productIds);
+
+        $queryBuilder->select('p.id');
+
+        $this->productManager->restrictQueryBuilder(
+            $queryBuilder,
+            ['scope' => 'rfp']
+        );
+
+        if ($this->notAllowedProductTypes) {
+            $queryBuilder
+                ->andWhere('p.type NOT IN (:notAllowedProductTypes)')
+                ->setParameter('notAllowedProductTypes', $this->notAllowedProductTypes);
+        }
+
+        $allowedProductIds = $this->aclHelper->apply($queryBuilder)->getArrayResult();
+
+        return array_column($allowedProductIds, 'id');
     }
 
     private function getAllowedInventoryStatuses(): array

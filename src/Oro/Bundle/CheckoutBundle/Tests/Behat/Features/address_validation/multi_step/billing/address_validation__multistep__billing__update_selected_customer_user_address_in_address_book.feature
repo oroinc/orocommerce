@@ -36,7 +36,7 @@ Feature: Address Validation - Multi-Step - Billing - Update Selected Customer Us
     When I open page with shopping list List 1
     And I click "Create Order"
     And I click on "Multistep Billing Address Select"
-    And I select "ORO, Fourth avenue, 10111 Berlin, Germany" from "Billing Address"
+    And I select "ORO, Fourth avenue, NEW YORK NY US 10011" from "Billing Address"
     Then I should see "Confirm Your Address"
     When I click "Address Validation Result Form First Suggested Address Radio Storefront"
     Then I should see "Update Address"
@@ -44,4 +44,4 @@ Feature: Address Validation - Multi-Step - Billing - Update Selected Customer Us
     And I click on "Use Selected Address Button"
     And I click on "Multistep Billing Address Select"
     Then I should see "ORO, 801 SCENIC HWY, HAINES CITY 1 FL US 33844"
-    And I should not see "ORO, Fourth avenue, 10111 Berlin, Germany"
+    And I should not see "ORO, Fourth avenue, NEW YORK NY US 10011"

@@ -12,15 +12,19 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Manager\QuoteDemandManager;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * oro_sale_frontend_quote_submit_to_order operation logic.
  */
 class QuoteSubmitToOrder extends AbstractOperationService
 {
+    private ?AuthorizationCheckerInterface $authorizationChecker = null;
+
     public function __construct(
         private WorkflowManager $workflowManager,
         private ActionExecutor $actionExecutor,
@@ -29,6 +33,11 @@ class QuoteSubmitToOrder extends AbstractOperationService
         private TokenStorageInterface $tokenStorage,
         private UrlGeneratorInterface $urlGenerator
     ) {
+    }
+
+    public function setAuthorizationChecker(?AuthorizationCheckerInterface $authorizationChecker): void
+    {
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     public function isPreConditionAllowed(ActionData $data, ?Collection $errors = null): bool
@@ -48,6 +57,14 @@ class QuoteSubmitToOrder extends AbstractOperationService
         }
 
         return true;
+    }
+
+    public function isConditionAllowed(ActionData $data, ?Collection $errors = null): bool
+    {
+        $quote = $data->getEntity();
+
+        return $quote instanceof Quote
+            && (bool)$this->authorizationChecker?->isGranted(BasicPermission::VIEW, $quote);
     }
 
     public function execute(ActionData $data): void

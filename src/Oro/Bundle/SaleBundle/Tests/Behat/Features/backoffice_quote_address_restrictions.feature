@@ -52,20 +52,20 @@ Feature: Backoffice Quote address restrictions
     Then I should see "Quote Shipping Address Select" with options:
       | Value                                       | Type   |
       | Customer Address Book                       | Group  |
-      | ORO, Fifth avenue C1, 10115 Berlin, Germany | Option |
+      | ORO, Fifth avenue C1, NEW YORK NY US 10001 | Option |
     When I fill "Quote Form" with:
-      | Shipping Address | ORO, Fifth avenue C1, 10115 Berlin, Germany |
+      | Shipping Address | ORO, Fifth avenue C1, NEW YORK NY US 10001 |
     And I fill "Quote Form" with:
       | Customer User | Acme_User_1 |
     Then Quote Shipping Address Select field is empty
     And I should see "Quote Shipping Address Select" with options:
       | Value                                        | Type   |
       | Customer Address Book                        | Group  |
-      | ORO, Fifth avenue C1, 10115 Berlin, Germany  | Option |
+      | ORO, Fifth avenue C1, NEW YORK NY US 10001  | Option |
       | User Address Book                            | Group  |
-      | ORO, Fifth avenue CU1, 10115 Berlin, Germany | Option |
+      | ORO, Fifth avenue CU1, NEW YORK NY US 10001 | Option |
     When I fill "Quote Form" with:
-      | Shipping Address | ORO, Fifth avenue CU1, 10115 Berlin, Germany |
+      | Shipping Address | ORO, Fifth avenue CU1, NEW YORK NY US 10001 |
     And I fill "Quote Form" with:
       | Customer | Acme_2 |
     Then Quote Shipping Address Select field is empty

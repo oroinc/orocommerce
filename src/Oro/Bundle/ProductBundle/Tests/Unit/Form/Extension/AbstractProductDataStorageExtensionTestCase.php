@@ -69,7 +69,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends TestCase
         $builder->expects(self::never())
             ->method('addEventListener');
 
-        $this->getExtension()->buildForm($builder, []);
+        $this->getExtension()->buildForm($builder, $this->getBuildFormOptions());
     }
 
     public function testBuildFormExistingEntity(): void
@@ -88,7 +88,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends TestCase
         $this->storage->expects(self::never())
             ->method('remove');
 
-        $this->getExtension()->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), $this->getBuildFormOptions());
     }
 
     public function testBuildFormNoData(): void
@@ -100,7 +100,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends TestCase
         $this->expectsGetStorageFromRequest();
         $this->expectsGetDataFromStorage($data);
 
-        $this->getExtension()->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), $this->getBuildFormOptions());
     }
 
     public function testBuildFormWithWrongPropertiesInData(): void
@@ -125,7 +125,12 @@ abstract class AbstractProductDataStorageExtensionTestCase extends TestCase
                 })
             );
 
-        $this->getExtension()->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), $this->getBuildFormOptions());
+    }
+
+    protected function getBuildFormOptions(): array
+    {
+        return [];
     }
 
     protected function expectsGetStorageFromRequest(): void

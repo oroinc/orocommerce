@@ -17,7 +17,7 @@
             'params' : {'id': '$id'}
         }) %}
     {% endif %}
-    {% if is_granted('oro_product_visibility_edit') %}
+    {% if is_granted('oro_product_update') %}
         {% set html = html ~ UI.saveAndStayButton({
             'route' : 'oro_product_visibility_edit',
             'params': {'id': '$id'}

@@ -134,7 +134,8 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
                         $this->getReference(LoadProductData::PRODUCT_2)->getId(),
                         $this->getReference(LoadProductData::PRODUCT_3)->getId()
                     ],
-                    'websiteIds' => $this->getWebsiteIds()
+                    'websiteIds' => $this->getWebsiteIds(),
+                    'fieldGroups' => ['pricing']
                 ],
                 'granulize' => true,
             ]

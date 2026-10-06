@@ -103,6 +103,110 @@ class ProductImageListenerTest extends WebTestCase
             ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage)
         );
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
+            $this->prepareProductsReindexMessage([$product], ['image'])
+        );
+    }
+
+    public function testCreateProductImageWithoutTypes(): void
+    {
+        $product = $this->getProduct(LoadProductData::PRODUCT_1);
+        $productImage = new ProductImage();
+        $productImage->setProduct($product);
+        $this->em->persist($productImage);
+
+        $this->em->flush();
+
+        // No resize without types, but the product is still reindexed.
+        self::assertEmptyMessages(ResizeProductImageTopic::getName());
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
+            $this->prepareProductsReindexMessage([$product], ['image'])
+        );
+    }
+
+    public function testAddProductImageTypeWithoutTouchingProductImage(): void
+    {
+        // The API writes only the owning side; the parent ProductImage stays clean.
+        $product = $this->getProduct(LoadProductData::PRODUCT_1);
+        $productImage = new ProductImage();
+        $productImage->setProduct($product);
+        $this->em->persist($productImage);
+        $this->em->flush();
+
+        $type = new ProductImageType(ProductImageType::TYPE_MAIN);
+        $type->setProductImage($productImage);
+        $this->em->persist($type);
+        $this->em->flush();
+
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 2);
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
+            $this->prepareProductsReindexMessage([$product], ['image'])
+        );
+    }
+
+    public function testUpdateProductImageTypeValueWithoutTouchingProductImage(): void
+    {
+        $product = $this->getProduct(LoadProductData::PRODUCT_1);
+        $productImage = new ProductImage();
+        $productImage->setProduct($product);
+        $this->em->persist($productImage);
+
+        $type = new ProductImageType(ProductImageType::TYPE_MAIN);
+        $type->setProductImage($productImage);
+        $this->em->persist($type);
+        $this->em->flush();
+
+        $type->setType(ProductImageType::TYPE_LISTING);
+        $this->em->flush();
+
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 2);
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
+            $this->prepareProductsReindexMessage([$product], ['image'])
+        );
+    }
+
+    public function testRemoveProductImageTypeOnlyWithoutTouchingProductImage(): void
+    {
+        $product = $this->getProduct(LoadProductData::PRODUCT_1);
+        $productImage = new ProductImage();
+        $productImage->setProduct($product);
+        $this->em->persist($productImage);
+
+        $type = new ProductImageType(ProductImageType::TYPE_MAIN);
+        $type->setProductImage($productImage);
+        $this->em->persist($type);
+        $this->em->flush();
+
+        $this->em->remove($type);
+        $this->em->flush();
+
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 2);
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
+            $this->prepareProductsReindexMessage([$product], ['image'])
+        );
+    }
+
+    public function testRemoveProductImage(): void
+    {
+        // Orphan removal, as when PATCH /products/{id} rewrites the images collection.
+        $product = $this->getProduct(LoadProductData::PRODUCT_1);
+        $productImage = $this->getProductImage($product);
+
+        $this->em->remove($productImage);
+        $this->em->flush();
+
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
+            $this->prepareProductsReindexMessage([$product], ['image'])
+        );
     }
 
     public function testCreateProductImagesForSeveralProducts(): void
@@ -164,9 +268,13 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->em->flush();
 
-        /* nothing sent if product image have no types */
+        /* no resize without types, but the products are still reindexed */
         self::assertEmptyMessages(ResizeProductImageTopic::getName());
-        self::assertEmptyMessages(WebsiteSearchReindexTopic::getName());
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
+            $this->prepareProductsReindexMessage([$product1, $product2], ['image'])
+        );
 
         /* message sent if product image has been updated */
         $productImage1->addType(ProductImageType::TYPE_MAIN);
@@ -180,7 +288,7 @@ class ProductImageListenerTest extends WebTestCase
         $this->em->flush();
 
         self::assertMessagesCount(ResizeProductImageTopic::getName(), 2);
-        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 2);
 
         self::assertMessageSent(
             ResizeProductImageTopic::getName(),
@@ -276,6 +384,38 @@ class ProductImageListenerTest extends WebTestCase
         self::assertMessageSentWithPriority(WebsiteSearchReindexTopic::getName(), MessagePriority::LOW);
     }
 
+    /**
+     * Asserts that every given product was reported as inserted to the data audit topic.
+     *
+     * @param Product[] $products
+     */
+    private static function assertAuditReportsInsertOf(array $products): void
+    {
+        $insertedProductIds = [];
+        foreach (self::getTopicSentMessages(AuditChangedEntitiesTopic::getName()) as $sentMessage) {
+            $body = $sentMessage['message'] ?? [];
+            foreach ($body['entities_inserted'] ?? [] as $entity) {
+                if (($entity['entity_class'] ?? null) === Product::class) {
+                    $insertedProductIds[] = $entity['entity_id'];
+                }
+            }
+        }
+
+        foreach ($products as $product) {
+            self::assertContains(
+                $product->getId(),
+                $insertedProductIds,
+                sprintf(
+                    'Failed asserting that product #%s was reported as inserted to the "%s" topic.'
+                    . ' Reported products: %s',
+                    $product->getId(),
+                    AuditChangedEntitiesTopic::getName(),
+                    $insertedProductIds ? implode(', ', $insertedProductIds) : 'none'
+                )
+            );
+        }
+    }
+
     public function testDuplicateProductImage(): void
     {
         $duplicator = self::getContainer()->get('oro_product.service.duplicator');
@@ -294,7 +434,10 @@ class ProductImageListenerTest extends WebTestCase
         self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 2);
         self::assertMessagesCount(IndexEntitiesByIdTopic::getName(), 4);
         self::assertMessagesCount(GenerateDirectUrlForEntitiesTopic::getName(), 2);
-        self::assertMessagesCount(AuditChangedEntitiesTopic::getName(), 2);
+        // Both duplicated products must be reported to the data audit. The number of messages is not
+        // asserted on purpose: it depends on how many flushes the duplication takes and on which
+        // entities are auditable in the current application, neither of which this test is about.
+        self::assertAuditReportsInsertOf([$productCopy3, $productCopy8]);
 
         self::assertMessageSent(
             ResizeProductImageTopic::getName(),

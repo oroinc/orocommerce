@@ -39,7 +39,7 @@ class OroRFPBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v7_0_1_0';
+        return 'v7_0_1_1';
     }
 
     #[\Override]

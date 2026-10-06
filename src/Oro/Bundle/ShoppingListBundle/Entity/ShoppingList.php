@@ -28,6 +28,8 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteBasedCurrencyAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use Oro\Component\DraftSession\Entity\EntityDraftAwareInterface;
+use Oro\Component\DraftSession\Entity\NoopEntityDraftAwareTrait;
 
 /**
  * Shopping List entity
@@ -65,6 +67,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
         'dataaudit' => ['auditable' => true],
         'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'shopping'],
         'email' => ['available_in_template' => true],
+        'integration' => ['webhook_accessible' => true],
     ]
 )]
 class ShoppingList implements
@@ -76,12 +79,14 @@ class ShoppingList implements
     CheckoutSourceEntityInterface,
     \JsonSerializable,
     ProductLineItemsHolderInterface,
-    ExtendEntityInterface
+    ExtendEntityInterface,
+    EntityDraftAwareInterface
 {
     use DatesAwareTrait;
     use AuditableFrontendCustomerUserAwareTrait;
     use UserAwareTrait;
     use ExtendEntityTrait;
+    use NoopEntityDraftAwareTrait;
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]

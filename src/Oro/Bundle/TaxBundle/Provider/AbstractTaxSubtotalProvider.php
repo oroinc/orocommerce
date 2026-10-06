@@ -28,28 +28,45 @@ abstract class AbstractTaxSubtotalProvider implements SubtotalProviderInterface,
     #[\Override]
     public function getSubtotal($entity)
     {
-        $subtotal = $this->createSubtotal();
-
         try {
             $tax = $this->getProvider()->getTax($entity);
-            $this->fillSubtotal($subtotal, $tax, $entity);
         } catch (TaxationDisabledException $e) {
+            return $this->createSubtotal();
         }
 
-        return $subtotal;
+        return $this->getSubtotalByResult($tax, $entity);
     }
 
     #[\Override]
     public function getCachedSubtotal($entity)
     {
-        $subtotal = $this->createSubtotal();
         try {
             $tax = $this->getProvider()->loadTax($entity);
-            $this->fillSubtotal($subtotal, $tax, $entity);
         } catch (TaxationDisabledException $e) {
+            return $this->createSubtotal();
         }
 
+        return $this->getSubtotalByResult($tax, $entity);
+    }
+
+    /**
+     * Builds the subtotal from an already resolved tax result, without requesting it again.
+     * Allows an orchestrating provider to share a single tax result between several subtotals.
+     */
+    public function getSubtotalByResult(Result $tax, object $entity): Subtotal
+    {
+        $subtotal = $this->createSubtotal();
+        $this->fillSubtotal($subtotal, $tax, $entity);
+
         return $subtotal;
+    }
+
+    /**
+     * Returns an empty subtotal, e.g. when taxation is disabled.
+     */
+    public function createEmptySubtotal(): Subtotal
+    {
+        return $this->createSubtotal();
     }
 
     abstract protected function createSubtotal(): Subtotal;

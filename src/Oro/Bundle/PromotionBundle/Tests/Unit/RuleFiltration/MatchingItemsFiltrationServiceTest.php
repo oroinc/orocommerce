@@ -10,9 +10,11 @@ use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProviderInterface;
 use Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Stub\MatchingProductsProviderWithProductIdsStub;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Component\Testing\ReflectionUtil;
 
 class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
@@ -22,7 +24,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
     /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $baseFiltrationService;
 
-    /** @var MatchingProductsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var MatchingProductsProviderWithProductIdsStub|\PHPUnit\Framework\MockObject\MockObject */
     private $matchingProductsProvider;
 
     /** @var MatchingItemsFiltrationService */
@@ -32,7 +34,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->baseFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);
-        $this->matchingProductsProvider = $this->createMock(MatchingProductsProviderInterface::class);
+        $this->matchingProductsProvider = $this->createMock(MatchingProductsProviderWithProductIdsStub::class);
 
         $this->filtrationService = new MatchingItemsFiltrationService(
             $this->baseFiltrationService,
@@ -93,7 +95,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             ->method('getFilteredRuleOwners');
 
         $this->matchingProductsProvider->expects(self::never())
-            ->method('getMatchingProducts');
+            ->method('getMatchingProductIds');
 
         $promotion = $this->getPromotion(new Segment());
         self::assertSame([], $this->filtrationService->getFilteredRuleOwners([$promotion], []));
@@ -113,7 +115,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             });
 
         $this->matchingProductsProvider->expects(self::never())
-            ->method('getMatchingProducts');
+            ->method('getMatchingProductIds');
 
         self::assertSame(
             [],
@@ -141,7 +143,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             });
 
         $this->matchingProductsProvider->expects(self::exactly(2))
-            ->method('getMatchingProducts')
+            ->method('getMatchingProductIds')
             ->withConsecutive(
                 [$firstPromotionSegment, $lineItems],
                 [$secondPromotionSegment, $lineItems]
@@ -163,6 +165,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         $promotion = $this->getPromotion($promotionSegment);
 
         $product = new Product();
+        ReflectionUtil::setId($product, 1);
         $lineItems = [$this->getDiscountLineItem($product, self::UNIT_CODE_ITEM)];
 
         $this->baseFiltrationService->expects(self::once())
@@ -172,9 +175,9 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             });
 
         $this->matchingProductsProvider->expects(self::once())
-            ->method('getMatchingProducts')
+            ->method('getMatchingProductIds')
             ->with($promotionSegment, $lineItems)
-            ->willReturn([$product]);
+            ->willReturn([$product->getId()]);
 
         self::assertEquals(
             [$promotion],
@@ -191,6 +194,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         $promotion = $this->getPromotion($promotionSegment, self::UNIT_CODE_SET);
 
         $product = new Product();
+        ReflectionUtil::setId($product, 1);
         $lineItems = [$this->getDiscountLineItem($product, self::UNIT_CODE_ITEM)];
 
         $this->baseFiltrationService->expects(self::once())
@@ -200,9 +204,9 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             });
 
         $this->matchingProductsProvider->expects(self::once())
-            ->method('getMatchingProducts')
+            ->method('getMatchingProductIds')
             ->with($promotionSegment, $lineItems)
-            ->willReturn([$product]);
+            ->willReturn([$product->getId()]);
 
         self::assertSame(
             [],
@@ -219,6 +223,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         $promotion = $this->getPromotion($promotionSegment, self::UNIT_CODE_ITEM);
 
         $product = new Product();
+        ReflectionUtil::setId($product, 1);
         $lineItems = [$this->getDiscountLineItem($product, self::UNIT_CODE_ITEM)];
 
         $this->baseFiltrationService->expects(self::once())
@@ -228,13 +233,118 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             });
 
         $this->matchingProductsProvider->expects(self::once())
+            ->method('getMatchingProductIds')
+            ->with($promotionSegment, $lineItems)
+            ->willReturn([$product->getId()]);
+
+        self::assertEquals(
+            [$promotion],
+            $this->filtrationService->getFilteredRuleOwners(
+                [$promotion],
+                [ContextDataConverterInterface::LINE_ITEMS => $lineItems]
+            )
+        );
+    }
+
+    public function testGetFilteredRuleOwnersWhenProviderDoesNotSupportMatchingProductIds(): void
+    {
+        $promotionSegment = new Segment();
+        $promotion = $this->getPromotion($promotionSegment, self::UNIT_CODE_ITEM);
+
+        $product = new Product();
+        ReflectionUtil::setId($product, 1);
+        $lineItems = [$this->getDiscountLineItem($product, self::UNIT_CODE_ITEM)];
+
+        $matchingProductsProvider = $this->createMock(MatchingProductsProviderInterface::class);
+        $filtrationService = new MatchingItemsFiltrationService(
+            $this->baseFiltrationService,
+            $matchingProductsProvider
+        );
+
+        $this->baseFiltrationService->expects(self::once())
+            ->method('getFilteredRuleOwners')
+            ->willReturnCallback(function ($ruleOwners) {
+                return $ruleOwners;
+            });
+
+        $matchingProductsProvider->expects(self::once())
             ->method('getMatchingProducts')
             ->with($promotionSegment, $lineItems)
             ->willReturn([$product]);
 
         self::assertEquals(
             [$promotion],
-            $this->filtrationService->getFilteredRuleOwners(
+            $filtrationService->getFilteredRuleOwners(
+                [$promotion],
+                [ContextDataConverterInterface::LINE_ITEMS => $lineItems]
+            )
+        );
+    }
+
+    public function testGetFilteredRuleOwnersWhenProviderDoesNotSupportMatchingProductIdsAndNoProductsMatched(): void
+    {
+        $promotionSegment = new Segment();
+        $promotion = $this->getPromotion($promotionSegment);
+
+        $product = new Product();
+        ReflectionUtil::setId($product, 1);
+        $lineItems = [$this->getDiscountLineItem($product, self::UNIT_CODE_ITEM)];
+
+        $matchingProductsProvider = $this->createMock(MatchingProductsProviderInterface::class);
+        $filtrationService = new MatchingItemsFiltrationService(
+            $this->baseFiltrationService,
+            $matchingProductsProvider
+        );
+
+        $this->baseFiltrationService->expects(self::once())
+            ->method('getFilteredRuleOwners')
+            ->willReturnCallback(function ($ruleOwners) {
+                return $ruleOwners;
+            });
+
+        $matchingProductsProvider->expects(self::once())
+            ->method('getMatchingProducts')
+            ->with($promotionSegment, $lineItems)
+            ->willReturn([]);
+
+        self::assertSame(
+            [],
+            $filtrationService->getFilteredRuleOwners(
+                [$promotion],
+                [ContextDataConverterInterface::LINE_ITEMS => $lineItems]
+            )
+        );
+    }
+
+    public function testGetFilteredRuleOwnersWhenProviderDoesNotSupportMatchingProductIdsAndUnitsDiffer(): void
+    {
+        $promotionSegment = new Segment();
+        $promotion = $this->getPromotion($promotionSegment, self::UNIT_CODE_SET);
+
+        $product = new Product();
+        ReflectionUtil::setId($product, 1);
+        $lineItems = [$this->getDiscountLineItem($product, self::UNIT_CODE_ITEM)];
+
+        $matchingProductsProvider = $this->createMock(MatchingProductsProviderInterface::class);
+        $filtrationService = new MatchingItemsFiltrationService(
+            $this->baseFiltrationService,
+            $matchingProductsProvider
+        );
+
+        $this->baseFiltrationService->expects(self::once())
+            ->method('getFilteredRuleOwners')
+            ->willReturnCallback(function ($ruleOwners) {
+                return $ruleOwners;
+            });
+
+        $matchingProductsProvider->expects(self::once())
+            ->method('getMatchingProducts')
+            ->with($promotionSegment, $lineItems)
+            ->willReturn([$product]);
+
+        self::assertSame(
+            [],
+            $filtrationService->getFilteredRuleOwners(
                 [$promotion],
                 [ContextDataConverterInterface::LINE_ITEMS => $lineItems]
             )

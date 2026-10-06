@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Routing;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -51,15 +52,20 @@ class SlugRedirectMatcher
      *
      * @return Redirect|null
      */
-    private function getApplicableRedirect($url): ?Redirect
+    protected function getApplicableRedirect($url): ?Redirect
     {
         $scopeCriteria = $this->scopeManager->getCriteria('web_content');
+        $organization = $this->getOrganization();
         $delimiter = sprintf('/%s/', SluggableUrlGenerator::CONTEXT_DELIMITER);
         $repository = $this->getRedirectRepository();
         if (str_contains($url, $delimiter)) {
             [$contextUrl, $itemSlugPrototype] = explode($delimiter, $url);
-            $contextRedirect = $repository->findByUrl($contextUrl, $scopeCriteria);
-            $prototypeRedirect = $repository->findByPrototype($itemSlugPrototype, $scopeCriteria);
+            $contextRedirect = $repository->findByUrlAndOrganization($contextUrl, $scopeCriteria, $organization);
+            $prototypeRedirect = $repository->findByPrototypeAndOrganization(
+                $itemSlugPrototype,
+                $scopeCriteria,
+                $organization
+            );
             if (null !== $contextRedirect || null !== $prototypeRedirect) {
                 $contextRedirectUrl = $contextRedirect
                     ? $contextRedirect->getTo()
@@ -76,10 +82,18 @@ class SlugRedirectMatcher
             }
         }
 
-        return $repository->findByUrl($url, $scopeCriteria);
+        return $repository->findByUrlAndOrganization($url, $scopeCriteria, $organization);
     }
 
-    private function getRedirectRepository(): RedirectRepository
+    /**
+     * A redirect belongs to no organization unless an application restricts it to one.
+     */
+    protected function getOrganization(): ?Organization
+    {
+        return null;
+    }
+
+    protected function getRedirectRepository(): RedirectRepository
     {
         return $this->doctrine
             ->getManagerForClass(Redirect::class)

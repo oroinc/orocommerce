@@ -93,6 +93,11 @@ final class OrderLineItemDraftMassUpdateControllerTest extends WebTestCase
         self::assertEquals($lineItem2->getId(), $data['lineItems'][1]['lineItemId']);
         self::assertArrayHasKey('html', $data['lineItems'][1]);
         self::assertStringContainsString('oro_order_line_item_draft', $data['lineItems'][1]['html']);
+
+        // The order has more line items than the test threshold (1), so the automatic calculation of
+        // taxes and discounts is skipped and the client is instructed to refresh them on open.
+        self::assertStringContainsString('refreshOnOpen&quot;:true', $data['lineItems'][0]['html']);
+        self::assertStringContainsString('refreshOnOpen&quot;:true', $data['lineItems'][1]['html']);
     }
 
     public function testWithSingleLineItem(): void
@@ -129,6 +134,10 @@ final class OrderLineItemDraftMassUpdateControllerTest extends WebTestCase
         self::assertTrue($data['success']);
         self::assertCount(1, $data['lineItems']);
         self::assertEquals($lineItem->getId(), $data['lineItems'][0]['lineItemId']);
+
+        // The order does not exceed the test threshold (1), so taxes and discounts are precalculated
+        // and no refresh-on-open is requested.
+        self::assertStringContainsString('refreshOnOpen&quot;:false', $data['lineItems'][0]['html']);
     }
 
     public function testReturns404WithNonExistentLineItem(): void

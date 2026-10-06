@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\ProductBundle\Tests\Unit\DataGrid\EventListener;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -43,65 +45,36 @@ use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
+final class FrontendProductGridEventListenerTest extends TestCase
 {
     use EntityTrait;
 
-    private const LABEL = 'oro.test.label';
-    private const LIMIT_FILTERS_SORTERS = 'oro_product.limit_filters_sorters_on_product_listing';
-    private const DATAGRID_NAME = 'test_name';
+    private const string LABEL = 'oro.test.label';
+    private const string LIMIT_FILTERS_SORTERS = 'oro_product.limit_filters_sorters_on_product_listing';
+    private const string DATAGRID_NAME = 'test_name';
 
-    /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $attributeManager;
-
-    /** @var AttributeTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $attributeTypeRegistry;
-
-    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $extendConfigProvider;
-
-    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $attributeConfigProvider;
-
-    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $productRepository;
-
-    /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject */
-    private $metadata;
-
-    /** @var AttributeFamilyRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $attributeFamilyRepository;
-
-    /** @var DatagridConfiguration|\PHPUnit\Framework\MockObject\MockObject */
-    private $datagridConfig;
-
-    /** @var SearchQueryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $searchQuery;
-
-    /** @var DatagridInterface */
-    private $datagrid;
-
-    /** @var DatagridStateProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $filtersStateProvider;
-
-    /** @var DatagridStateProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $sortersStateProvider;
-
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
-
-    /** @var DatagridParametersHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $datagridParametersHelper;
-
-    /** @var FamilyAttributeCountsProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $familyAttributeCountsProvider;
-
-    /** @var FrontendProductGridEventListener */
-    private $listener;
+    private AttributeManager&MockObject $attributeManager;
+    private AttributeTypeRegistry&MockObject $attributeTypeRegistry;
+    private ConfigProvider&MockObject $extendConfigProvider;
+    private ConfigProvider&MockObject $attributeConfigProvider;
+    private ProductRepository&MockObject $productRepository;
+    private ClassMetadata&MockObject $metadata;
+    private AttributeFamilyRepository&MockObject $attributeFamilyRepository;
+    private DatagridConfiguration $datagridConfig;
+    private SearchQueryInterface&MockObject $searchQuery;
+    private DatagridInterface $datagrid;
+    private DatagridStateProviderInterface&MockObject $filtersStateProvider;
+    private DatagridStateProviderInterface&MockObject $sortersStateProvider;
+    private ConfigManager&MockObject $configManager;
+    private DatagridParametersHelper&MockObject $datagridParametersHelper;
+    private FamilyAttributeCountsProvider&MockObject $familyAttributeCountsProvider;
+    private FrontendProductGridEventListener $listener;
 
     #[\Override]
     protected function setUp(): void
@@ -110,7 +83,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->attributeTypeRegistry = $this->createMock(AttributeTypeRegistry::class);
 
         $entityConfigProvider = $this->createMock(ConfigProvider::class);
-        $entityConfigProvider->expects($this->any())
+        $entityConfigProvider->expects(self::any())
             ->method('getConfig')
             ->willReturn($this->getConfig(['label' => self::LABEL]));
 
@@ -118,7 +91,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->attributeConfigProvider = $this->createMock(ConfigProvider::class);
 
         $configManager = $this->createMock(EntityConfigManager::class);
-        $configManager->expects($this->any())
+        $configManager->expects(self::any())
             ->method('getProvider')
             ->willReturnMap([
                 ['entity', $entityConfigProvider],
@@ -129,17 +102,17 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->productRepository = $this->createMock(ProductRepository::class);
 
         $this->metadata = $this->createMock(ClassMetadata::class);
-        $this->metadata->expects($this->any())
+        $this->metadata->expects(self::any())
             ->method('getAssociationMapping')
             ->willReturn(['targetEntity' => TestEnumValue::class]);
 
         $this->attributeFamilyRepository = $this->createMock(AttributeFamilyRepository::class);
 
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $doctrineHelper->expects($this->any())
+        $doctrineHelper->expects(self::any())
             ->method('getEntityMetadata')
             ->willReturn($this->metadata);
-        $doctrineHelper->expects($this->any())
+        $doctrineHelper->expects(self::any())
             ->method('getEntityRepository')
             ->with(AttributeFamily::class)
             ->willReturn($this->attributeFamilyRepository);
@@ -182,37 +155,37 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
     ) {
         $attributes = $attribute && false === $limitFiltersSorters ? [$attribute] : [];
 
-        $this->attributeManager->expects($this->any())
+        $this->attributeManager->expects(self::any())
             ->method('getSortableOrFilterableAttributesByClass')
             ->willReturn($attributes);
 
-        $this->attributeTypeRegistry->expects($this->any())
+        $this->attributeTypeRegistry->expects(self::any())
             ->method('getAttributeType')
             ->with($attribute)
             ->willReturn($attributeType);
 
-        $this->extendConfigProvider->expects($this->any())
+        $this->extendConfigProvider->expects(self::any())
             ->method('getConfig')
             ->willReturn($extendConfig);
-        $this->attributeConfigProvider->expects($this->any())
+        $this->attributeConfigProvider->expects(self::any())
             ->method('getConfig')
             ->willReturn($attributeConfig);
 
-        $this->metadata->expects($this->any())
+        $this->metadata->expects(self::any())
             ->method('hasAssociation')
             ->willReturn($hasAssociation);
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with(self::LIMIT_FILTERS_SORTERS)
             ->willReturn($limitFiltersSorters);
 
         // Checks search query is executed not more than once.
-        $this->familyAttributeCountsProvider->expects($this->atMost(1))
+        $this->familyAttributeCountsProvider->expects(self::atMost(1))
             ->method('getFamilyAttributeCounts')
             ->willReturn($aggregatedData);
 
-        $this->datagridParametersHelper->expects($this->atLeastOnce())
+        $this->datagridParametersHelper->expects(self::atLeastOnce())
             ->method('isDatagridExtensionSkipped')
             ->willReturn(false);
 
@@ -220,13 +193,91 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener->onPreBuild($event);
 
-        $this->assertEquals(array_merge(['name' => self::DATAGRID_NAME], $expected), $this->datagridConfig->toArray());
+        self::assertEquals(array_merge(['name' => self::DATAGRID_NAME], $expected), $this->datagridConfig->toArray());
 
         $event = new PreBuild($this->datagridConfig, $this->datagrid->getParameters());
 
         $this->listener->onPreBuild($event);
 
-        $this->assertEquals(array_merge(['name' => self::DATAGRID_NAME], $expected), $this->datagridConfig->toArray());
+        self::assertEquals(array_merge(['name' => self::DATAGRID_NAME], $expected), $this->datagridConfig->toArray());
+    }
+
+    public function testOnPreBuildDoesNotMemoizeFamiliesForSkippedBuild(): void
+    {
+        $this->datagridParametersHelper->expects(self::exactly(2))
+            ->method('isDatagridExtensionSkipped')
+            ->willReturnOnConsecutiveCalls(true, false);
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with(self::LIMIT_FILTERS_SORTERS)
+            ->willReturn(true);
+        $this->familyAttributeCountsProvider->expects(self::once())
+            ->method('getFamilyAttributeCounts')
+            ->with(self::DATAGRID_NAME)
+            ->willReturn(['familyAttributesCount' => [7 => 2]]);
+
+        $families = [];
+        $this->attributeManager->expects(self::exactly(2))
+            ->method('getSortableOrFilterableAttributesByClass')
+            ->with(Product::class)
+            ->willReturnCallback(static function (string $class, array $familyIds) use (&$families) {
+                $families[] = $familyIds;
+
+                return [];
+            });
+
+        $event = new PreBuild($this->datagridConfig, $this->datagrid->getParameters());
+        $this->listener->onPreBuild($event);
+        $this->listener->onPreBuild($event);
+
+        self::assertSame([[], [7]], $families);
+    }
+
+    public function testOnPreBuildReturnsMemoizedFamiliesForSkippedBuild(): void
+    {
+        $this->datagridParametersHelper->expects(self::once())
+            ->method('isDatagridExtensionSkipped')
+            ->willReturn(false);
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with(self::LIMIT_FILTERS_SORTERS)
+            ->willReturn(true);
+        $this->familyAttributeCountsProvider->expects(self::once())
+            ->method('getFamilyAttributeCounts')
+            ->with(self::DATAGRID_NAME)
+            ->willReturn(['familyAttributesCount' => [7 => 2]]);
+        $this->attributeManager->expects(self::exactly(2))
+            ->method('getSortableOrFilterableAttributesByClass')
+            ->with(Product::class, [7])
+            ->willReturn([]);
+
+        $event = new PreBuild($this->datagridConfig, $this->datagrid->getParameters());
+        $this->listener->onPreBuild($event);
+        $this->listener->onPreBuild($event);
+    }
+
+    public function testReset(): void
+    {
+        $this->datagridParametersHelper->expects(self::exactly(2))
+            ->method('isDatagridExtensionSkipped')
+            ->willReturn(false);
+        $this->configManager->expects(self::exactly(2))
+            ->method('get')
+            ->with(self::LIMIT_FILTERS_SORTERS)
+            ->willReturn(true);
+        $this->familyAttributeCountsProvider->expects(self::exactly(2))
+            ->method('getFamilyAttributeCounts')
+            ->with(self::DATAGRID_NAME)
+            ->willReturn(['familyAttributesCount' => [7 => 2]]);
+        $this->attributeManager->expects(self::exactly(2))
+            ->method('getSortableOrFilterableAttributesByClass')
+            ->with(Product::class, [7])
+            ->willReturn([]);
+
+        $event = new PreBuild($this->datagridConfig, $this->datagrid->getParameters());
+        $this->listener->onPreBuild($event);
+        $this->listener->reset();
+        $this->listener->onPreBuild($event);
     }
 
     /**
@@ -271,7 +322,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         );
 
         $entityNameResolver = $this->createMock(EntityNameResolver::class);
-        $entityNameResolver->expects($this->any())
+        $entityNameResolver->expects(self::any())
             ->method('getName')
             ->willReturnCallback(function ($entity, $format, $locale) {
                 return (string)$entity . '_' . $locale;

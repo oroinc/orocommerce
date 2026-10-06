@@ -1,3 +1,4 @@
+@skip-base
 @regression
 @ticket-BAP-18931
 @ticket-BAP-20488

@@ -997,4 +997,4 @@ datagrids:
                 label: oro.grid.action.delete
                 icon: trash
                 link: oro_order_line_item_draft_delete
-                acl_resource: oro_order_line_item_delete
+                acl_resource: oro_order_update
