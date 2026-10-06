@@ -142,6 +142,10 @@ services:
     oro_rfp.provider.product_availability:
        class: Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider
        public: false
+       calls:
+         - [ setDoctrine, [ '@doctrine' ] ]
+         - [ setProductManager, [ '@oro_product.product.manager' ] ]
+         - [ setAclHelper, [ '@oro_security.acl_helper' ] ]
 
     oro_rfp.acl.voter.frontend_request:
         class: Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter

@@ -4,6 +4,13 @@ services:
         tags:
             - { name: oro_action.condition, alias: quote_acceptable }
 
+    oro_sale.condition.guest_quote_accessible:
+        class: Oro\Bundle\SaleBundle\Model\Condition\GuestQuoteAccessible
+        arguments:
+            - '@oro_sale.provider.guest_quote_access'
+        tags:
+            - { name: oro_action.condition, alias: guest_quote_accessible }
+
     oro_sale.provider.quote_product_price:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider'
         public: true

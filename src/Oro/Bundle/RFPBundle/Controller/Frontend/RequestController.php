@@ -8,6 +8,7 @@ use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler;
 use Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider;
 use Oro\Bundle\RFPBundle\Model\RequestManager;
+use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Util\SameSiteUrlHelper;
@@ -249,6 +250,12 @@ class RequestController extends AbstractController
         if (count($productLineItems) === 0) {
             return;
         }
+
+        $filteredProducts = $this->filterAllowedProductLineItems($filteredProducts);
+        if (count($filteredProducts) === 0) {
+            return;
+        }
+
         $this->get(RequestManager::class)
             ->addProductLineItemsToRequest($rfpRequest, $filteredProducts);
     }
@@ -262,6 +269,21 @@ class RequestController extends AbstractController
         if ($status && $status->getId() === RFPRequest::INTERNAL_STATUS_DELETED) {
             throw $this->createNotFoundException();
         }
+    }
+
+    private function filterAllowedProductLineItems(array $productLineItems)
+    {
+        $allowedProductIds = $this->get(ProductAvailabilityProvider::class)
+            ->getAllowedProductIds(array_keys($productLineItems));
+
+        $filteredProductLineItems = [];
+        foreach ($productLineItems as $productId => $items) {
+            if (in_array($productId, $allowedProductIds, true)) {
+                $filteredProductLineItems[$productId] = $items;
+            }
+        }
+
+        return $filteredProductLineItems;
     }
 
     /**
@@ -279,6 +301,7 @@ class RequestController extends AbstractController
                 WebsiteManager::class,
                 RequestManager::class,
                 SameSiteUrlHelper::class,
+                ProductAvailabilityProvider::class,
             ]
         );
     }
