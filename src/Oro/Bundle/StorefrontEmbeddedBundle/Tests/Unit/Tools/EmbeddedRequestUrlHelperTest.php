@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\Tools;
 
 use Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker;
@@ -8,10 +10,8 @@ use Oro\Bundle\UIBundle\Tools\UrlHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class EmbeddedRequestUrlHelperTest extends TestCase
+final class EmbeddedRequestUrlHelperTest extends TestCase
 {
-    private const string IMAGE_PATH = '/media/cache/attachment/filter/product_large/1/cup.jpg';
-
     private UrlHelper&MockObject $innerUrlHelper;
     private EmbeddedRequestChecker&MockObject $embeddedRequestChecker;
     private EmbeddedRequestUrlHelper $urlHelper;
@@ -25,82 +25,100 @@ class EmbeddedRequestUrlHelperTest extends TestCase
         $this->urlHelper = new EmbeddedRequestUrlHelper($this->innerUrlHelper, $this->embeddedRequestChecker);
     }
 
-    public function testTurnsAnIndexedImagePathIntoAnOroUrlOnAnEmbeddedRequest(): void
+    public function testKeepsTheSubFolderOfTheDeploymentOnAnEmbeddedFragmentRequest(): void
     {
-        $this->embedded(true);
+        $this->embeddedRequestChecker
+            ->expects(self::once())
+            ->method('isEmbeddedRequest')
+            ->willReturn(true);
 
-        $this->innerUrlHelper->expects(self::once())
+        $this->innerUrlHelper
+            ->expects(self::once())
             ->method('getAbsolutePath')
-            ->with(self::IMAGE_PATH)
-            ->willReturn(self::IMAGE_PATH);
-        $this->innerUrlHelper->expects(self::once())
+            ->with('/media/cache/attachment/filter/product_large/1/cup.jpg')
+            ->willReturn('/shop/media/cache/attachment/filter/product_large/1/cup.jpg');
+        $this->innerUrlHelper
+            ->expects(self::once())
             ->method('getAbsoluteUrl')
-            ->with(self::IMAGE_PATH)
-            ->willReturn('http://oro.loc' . self::IMAGE_PATH);
-
-        self::assertSame('http://oro.loc' . self::IMAGE_PATH, $this->urlHelper->getAbsolutePath(self::IMAGE_PATH));
-    }
-
-    public function testKeepsTheSubFolderOfTheDeploymentOnAnEmbeddedRequest(): void
-    {
-        $this->embedded(true);
-
-        $this->innerUrlHelper->expects(self::once())
-            ->method('getAbsolutePath')
-            ->with(self::IMAGE_PATH)
-            ->willReturn('/shop' . self::IMAGE_PATH);
-        $this->innerUrlHelper->expects(self::once())
-            ->method('getAbsoluteUrl')
-            ->with('/shop' . self::IMAGE_PATH)
-            ->willReturn('http://oro.loc/shop' . self::IMAGE_PATH);
+            ->with('/shop/media/cache/attachment/filter/product_large/1/cup.jpg')
+            ->willReturn('http://oro.loc/shop/media/cache/attachment/filter/product_large/1/cup.jpg');
 
         self::assertSame(
-            'http://oro.loc/shop' . self::IMAGE_PATH,
-            $this->urlHelper->getAbsolutePath(self::IMAGE_PATH)
+            'http://oro.loc/shop/media/cache/attachment/filter/product_large/1/cup.jpg',
+            $this->urlHelper->getAbsolutePath('/media/cache/attachment/filter/product_large/1/cup.jpg')
         );
     }
 
-    public function testKeepsThePathOnOroOwnPages(): void
+    public function testKeepsThePathOutsideAnEmbeddedFragmentRequest(): void
     {
-        $this->embedded(false);
+        $this->embeddedRequestChecker
+            ->expects(self::once())
+            ->method('isEmbeddedRequest')
+            ->willReturn(false);
 
-        $this->innerUrlHelper->expects(self::once())
+        $this->innerUrlHelper
+            ->expects(self::once())
             ->method('getAbsolutePath')
-            ->with(self::IMAGE_PATH)
-            ->willReturn(self::IMAGE_PATH);
-        $this->innerUrlHelper->expects(self::never())
+            ->with('/media/cache/attachment/filter/product_large/1/cup.jpg')
+            ->willReturn('/media/cache/attachment/filter/product_large/1/cup.jpg');
+        $this->innerUrlHelper
+            ->expects(self::never())
             ->method('getAbsoluteUrl');
 
-        self::assertSame(self::IMAGE_PATH, $this->urlHelper->getAbsolutePath(self::IMAGE_PATH));
+        self::assertSame(
+            '/media/cache/attachment/filter/product_large/1/cup.jpg',
+            $this->urlHelper->getAbsolutePath('/media/cache/attachment/filter/product_large/1/cup.jpg')
+        );
     }
 
-    public function testDelegatesEverythingElse(): void
+    public function testGetAbsoluteUrlDelegatesToTheInnerHelper(): void
     {
-        $this->embeddedRequestChecker->expects(self::never())
+        $this->embeddedRequestChecker
+            ->expects(self::never())
             ->method('isEmbeddedRequest');
 
-        $this->innerUrlHelper->expects(self::once())
+        $this->innerUrlHelper
+            ->expects(self::once())
             ->method('getAbsoluteUrl')
-            ->with(self::IMAGE_PATH)
-            ->willReturn('http://oro.loc' . self::IMAGE_PATH);
-        $this->innerUrlHelper->expects(self::once())
+            ->with('/media/cache/attachment/filter/product_large/1/cup.jpg')
+            ->willReturn('http://oro.loc/media/cache/attachment/filter/product_large/1/cup.jpg');
+
+        self::assertSame(
+            'http://oro.loc/media/cache/attachment/filter/product_large/1/cup.jpg',
+            $this->urlHelper->getAbsoluteUrl('/media/cache/attachment/filter/product_large/1/cup.jpg')
+        );
+    }
+
+    public function testGetRelativePathDelegatesToTheInnerHelper(): void
+    {
+        $this->embeddedRequestChecker
+            ->expects(self::never())
+            ->method('isEmbeddedRequest');
+
+        $this->innerUrlHelper
+            ->expects(self::once())
             ->method('getRelativePath')
-            ->with(self::IMAGE_PATH)
+            ->with('/media/cache/attachment/filter/product_large/1/cup.jpg')
             ->willReturn('cup.jpg');
-        $this->innerUrlHelper->expects(self::once())
+
+        self::assertSame(
+            'cup.jpg',
+            $this->urlHelper->getRelativePath('/media/cache/attachment/filter/product_large/1/cup.jpg')
+        );
+    }
+
+    public function testIsLocalUrlDelegatesToTheInnerHelper(): void
+    {
+        $this->embeddedRequestChecker
+            ->expects(self::never())
+            ->method('isEmbeddedRequest');
+
+        $this->innerUrlHelper
+            ->expects(self::once())
             ->method('isLocalUrl')
             ->with('http://oro.loc/')
             ->willReturn(false);
 
-        self::assertSame('http://oro.loc' . self::IMAGE_PATH, $this->urlHelper->getAbsoluteUrl(self::IMAGE_PATH));
-        self::assertSame('cup.jpg', $this->urlHelper->getRelativePath(self::IMAGE_PATH));
         self::assertFalse($this->urlHelper->isLocalUrl('http://oro.loc/'));
-    }
-
-    private function embedded(bool $isEmbeddedRequest): void
-    {
-        $this->embeddedRequestChecker->expects(self::once())
-            ->method('isEmbeddedRequest')
-            ->willReturn($isEmbeddedRequest);
     }
 }

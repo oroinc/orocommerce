@@ -1,4 +1,4 @@
-import {getOroBaseUrl, getProxyPrefix} from '../host';
+import {getOroBaseUrl, getProxyPrefix, toProxiedPath} from '../host';
 
 const LAYOUT_BLOCK_IDS_PARAM = 'layout_block_ids';
 
@@ -15,6 +15,15 @@ export function toInternalPath(url) {
     }
 
     return withoutOroBasePath(target.href.slice(target.origin.length), oroBaseUrl.pathname);
+}
+
+/**
+ * Points an Oro url to the host proxy, so the browser reads it from the host origin.
+ */
+export function toProxiedOroUrl(url) {
+    const path = getProxyPrefix() && typeof url === 'string' ? toInternalPath(url) : null;
+
+    return path ? toProxiedPath(path) : url;
 }
 
 function isInternalPath(url) {

@@ -17,7 +17,6 @@ describe('orostorefrontembedded/js/embedded/embedded-handlers', () => {
         configureRuntime({
             proxyPrefix: '/__oro',
             oroBaseUrl: ORO,
-            filePaths: ['/pdf-document/download/'],
             updateQueryParams
         });
         registerEmbeddedHandlers();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\Layout\Extension;
 
 use Oro\Bundle\LayoutBundle\Layout\Extension\ActionContextConfigurator;
@@ -9,12 +11,8 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class EmbeddedContextConfiguratorTest extends TestCase
+final class EmbeddedContextConfiguratorTest extends TestCase
 {
-    private const string PROFILE_ROUTE = 'oro_customer_frontend_customer_user_profile';
-    private const string SHOPPING_LIST_ROUTE = 'oro_shopping_list_frontend_update';
-    private const string FRAGMENT_ROUTE = 'oro_storefront_embedded_fragment';
-
     private RequestStack $requestStack;
     private EmbeddedContextConfigurator $configurator;
 
@@ -25,21 +23,10 @@ class EmbeddedContextConfiguratorTest extends TestCase
         $this->configurator = new EmbeddedContextConfigurator(
             $this->requestStack,
             [
-                'embedded_shopping_list' => self::SHOPPING_LIST_ROUTE,
-                'embedded_profile' => self::PROFILE_ROUTE
+                'embedded_shopping_list' => 'oro_shopping_list_frontend_update',
+                'embedded_profile' => 'oro_customer_frontend_customer_user_profile'
             ]
         );
-    }
-
-    private function pushRequest(string $route, array $attributes = []): void
-    {
-        $request = Request::create('');
-        $request->attributes->set('_route', $route);
-        foreach ($attributes as $name => $value) {
-            $request->attributes->set($name, $value);
-        }
-
-        $this->requestStack->push($request);
     }
 
     public function testEmbeddedOptionIsNotDefinedWithoutCurrentRequest(): void
@@ -54,10 +41,10 @@ class EmbeddedContextConfiguratorTest extends TestCase
 
     public function testEmbeddedOptionIsNotDefinedOnNotEmbeddableRouteEvenWithEmbeddedFragmentAttribute(): void
     {
-        $this->pushRequest(
-            'oro_product_frontend_product_view',
-            [EmbeddedContextConfigurator::REQUEST_ATTRIBUTE => true]
-        );
+        $request = Request::create('');
+        $request->attributes->set('_route', 'oro_product_frontend_product_view');
+        $request->attributes->set(EmbeddedContextConfigurator::REQUEST_ATTRIBUTE, true);
+        $this->requestStack->push($request);
         $context = new LayoutContext();
 
         $this->configurator->configureContext($context);
@@ -68,19 +55,23 @@ class EmbeddedContextConfiguratorTest extends TestCase
 
     public function testEmbeddedOptionDefaultsToFalseWithoutEmbeddedFragmentAttribute(): void
     {
-        $this->pushRequest(self::PROFILE_ROUTE);
+        $request = Request::create('');
+        $request->attributes->set('_route', 'oro_customer_frontend_customer_user_profile');
+        $this->requestStack->push($request);
         $context = new LayoutContext();
 
         $this->configurator->configureContext($context);
         $context->resolve();
 
-        self::assertTrue($context->has('embedded'));
         self::assertFalse($context->get('embedded'));
     }
 
     public function testEmbeddedOptionDefaultsToTrueWithEmbeddedFragmentAttribute(): void
     {
-        $this->pushRequest(self::PROFILE_ROUTE, [EmbeddedContextConfigurator::REQUEST_ATTRIBUTE => true]);
+        $request = Request::create('');
+        $request->attributes->set('_route', 'oro_customer_frontend_customer_user_profile');
+        $request->attributes->set(EmbeddedContextConfigurator::REQUEST_ATTRIBUTE, true);
+        $this->requestStack->push($request);
         $context = new LayoutContext();
 
         $this->configurator->configureContext($context);
@@ -91,9 +82,11 @@ class EmbeddedContextConfiguratorTest extends TestCase
 
     public function testEmbeddedOptionIsDefinedWhenAnotherRouteRendersTheLayoutOfAnEmbeddableRoute(): void
     {
-        $this->pushRequest('oro_order_frontend_print');
+        $request = Request::create('');
+        $request->attributes->set('_route', 'oro_order_frontend_print');
+        $this->requestStack->push($request);
         $context = new LayoutContext();
-        $context->set('action', self::PROFILE_ROUTE);
+        $context->set('action', 'oro_customer_frontend_customer_user_profile');
 
         $this->configurator->configureContext($context);
         (new ActionContextConfigurator())->configureContext($context);
@@ -104,8 +97,13 @@ class EmbeddedContextConfiguratorTest extends TestCase
 
     public function testEmbeddedOptionIsResolvedFromForwardedSubRequestAndNotFromMainRequest(): void
     {
-        $this->pushRequest(self::FRAGMENT_ROUTE);
-        $this->pushRequest(self::SHOPPING_LIST_ROUTE, [EmbeddedContextConfigurator::REQUEST_ATTRIBUTE => true]);
+        $mainRequest = Request::create('');
+        $mainRequest->attributes->set('_route', 'oro_storefront_embedded_fragment');
+        $this->requestStack->push($mainRequest);
+        $subRequest = Request::create('');
+        $subRequest->attributes->set('_route', 'oro_shopping_list_frontend_update');
+        $subRequest->attributes->set(EmbeddedContextConfigurator::REQUEST_ATTRIBUTE, true);
+        $this->requestStack->push($subRequest);
         $context = new LayoutContext();
 
         $this->configurator->configureContext($context);

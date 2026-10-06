@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\AttachmentBundle\Imagine\Provider\ImagineUrlProviderInterface;
@@ -9,10 +11,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class EmbeddedRequestImagineUrlProviderTest extends TestCase
+final class EmbeddedRequestImagineUrlProviderTest extends TestCase
 {
-    private const string PLACEHOLDER = 'bundles/oroproduct/images/no_image.png';
-
     private ImagineUrlProviderInterface&MockObject $innerImagineUrlProvider;
     private EmbeddedRequestChecker&MockObject $embeddedRequestChecker;
     private EmbeddedRequestImagineUrlProvider $provider;
@@ -29,19 +29,23 @@ class EmbeddedRequestImagineUrlProviderTest extends TestCase
         );
     }
 
-    public function testAsksForAnAbsoluteUrlOnAnEmbeddedRequest(): void
+    public function testAsksForAnAbsoluteUrlOnAnEmbeddedFragmentRequest(): void
     {
-        $this->referenceTypeResolvedTo(UrlGeneratorInterface::ABSOLUTE_PATH, UrlGeneratorInterface::ABSOLUTE_URL);
+        $this->embeddedRequestChecker
+            ->expects(self::once())
+            ->method('isEmbeddedRequest')
+            ->willReturn(true);
 
-        $this->innerImagineUrlProvider->expects(self::once())
+        $this->innerImagineUrlProvider
+            ->expects(self::once())
             ->method('getFilteredImageUrl')
-            ->with(self::PLACEHOLDER, 'product_large', '', UrlGeneratorInterface::ABSOLUTE_URL)
-            ->willReturn('http://oro.loc/media/cache/resolve/product_large/' . self::PLACEHOLDER);
+            ->with('bundles/oroproduct/images/no_image.png', 'product_large', '', UrlGeneratorInterface::ABSOLUTE_URL)
+            ->willReturn('http://oro.loc/media/cache/resolve/product_large/bundles/oroproduct/images/no_image.png');
 
         self::assertSame(
-            'http://oro.loc/media/cache/resolve/product_large/' . self::PLACEHOLDER,
+            'http://oro.loc/media/cache/resolve/product_large/bundles/oroproduct/images/no_image.png',
             $this->provider->getFilteredImageUrl(
-                self::PLACEHOLDER,
+                'bundles/oroproduct/images/no_image.png',
                 'product_large',
                 '',
                 UrlGeneratorInterface::ABSOLUTE_PATH
@@ -49,19 +53,23 @@ class EmbeddedRequestImagineUrlProviderTest extends TestCase
         );
     }
 
-    public function testLeavesThePathAloneOnOroOwnPages(): void
+    public function testLeavesThePathAloneOutsideAnEmbeddedFragmentRequest(): void
     {
-        $this->referenceTypeResolvedTo(UrlGeneratorInterface::ABSOLUTE_PATH, UrlGeneratorInterface::ABSOLUTE_PATH);
+        $this->embeddedRequestChecker
+            ->expects(self::once())
+            ->method('isEmbeddedRequest')
+            ->willReturn(false);
 
-        $this->innerImagineUrlProvider->expects(self::once())
+        $this->innerImagineUrlProvider
+            ->expects(self::once())
             ->method('getFilteredImageUrl')
-            ->with(self::PLACEHOLDER, 'product_large', '', UrlGeneratorInterface::ABSOLUTE_PATH)
-            ->willReturn('/media/cache/resolve/product_large/' . self::PLACEHOLDER);
+            ->with('bundles/oroproduct/images/no_image.png', 'product_large', '', UrlGeneratorInterface::ABSOLUTE_PATH)
+            ->willReturn('/media/cache/resolve/product_large/bundles/oroproduct/images/no_image.png');
 
         self::assertSame(
-            '/media/cache/resolve/product_large/' . self::PLACEHOLDER,
+            '/media/cache/resolve/product_large/bundles/oroproduct/images/no_image.png',
             $this->provider->getFilteredImageUrl(
-                self::PLACEHOLDER,
+                'bundles/oroproduct/images/no_image.png',
                 'product_large',
                 '',
                 UrlGeneratorInterface::ABSOLUTE_PATH
@@ -69,26 +77,21 @@ class EmbeddedRequestImagineUrlProviderTest extends TestCase
         );
     }
 
-    public function testKeepsTheReferenceTypeTheCallerAskedFor(): void
+    public function testKeepsAnAbsoluteUrlWithoutCheckingTheRequest(): void
     {
-        $this->referenceTypeResolvedTo(UrlGeneratorInterface::ABSOLUTE_URL, UrlGeneratorInterface::ABSOLUTE_URL);
+        $this->embeddedRequestChecker
+            ->expects(self::never())
+            ->method('isEmbeddedRequest');
 
-        $this->innerImagineUrlProvider->expects(self::once())
+        $this->innerImagineUrlProvider
+            ->expects(self::once())
             ->method('getFilteredImageUrl')
-            ->with(self::PLACEHOLDER, 'product_large', '', UrlGeneratorInterface::ABSOLUTE_URL)
-            ->willReturn('http://oro.loc/media/cache/resolve/product_large/' . self::PLACEHOLDER);
+            ->with('bundles/oroproduct/images/no_image.png', 'product_large', '', UrlGeneratorInterface::ABSOLUTE_URL)
+            ->willReturn('http://oro.loc/media/cache/resolve/product_large/bundles/oroproduct/images/no_image.png');
 
         self::assertSame(
-            'http://oro.loc/media/cache/resolve/product_large/' . self::PLACEHOLDER,
-            $this->provider->getFilteredImageUrl(self::PLACEHOLDER, 'product_large')
+            'http://oro.loc/media/cache/resolve/product_large/bundles/oroproduct/images/no_image.png',
+            $this->provider->getFilteredImageUrl('bundles/oroproduct/images/no_image.png', 'product_large')
         );
-    }
-
-    private function referenceTypeResolvedTo(int $askedReferenceType, int $resolvedReferenceType): void
-    {
-        $this->embeddedRequestChecker->expects(self::once())
-            ->method('resolveReferenceType')
-            ->with($askedReferenceType)
-            ->willReturn($resolvedReferenceType);
     }
 }

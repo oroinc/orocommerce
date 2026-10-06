@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\DependencyInjection;
 
+// phpcs:disable
 use Oro\Bundle\StorefrontEmbeddedBundle\DependencyInjection\StorefrontEmbeddedConfiguration;
 use Oro\Bundle\StorefrontEmbeddedBundle\DependencyInjection\StorefrontEmbeddedConfigurationLoader;
-use Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\Stub\StorefrontEmbeddedTestBundleFour\StorefrontEmbeddedTestBundleFour;
 use Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\Stub\StorefrontEmbeddedTestBundleOne\StorefrontEmbeddedTestBundleOne;
 use Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\Stub\StorefrontEmbeddedTestBundleThree\StorefrontEmbeddedTestBundleThree;
 use Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\Stub\StorefrontEmbeddedTestBundleTwo\StorefrontEmbeddedTestBundleTwo;
 use Oro\Component\Config\CumulativeResourceManager;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+
+// phpcs:enable
 
 final class StorefrontEmbeddedConfigurationLoaderTest extends TestCase
 {
@@ -30,7 +32,7 @@ final class StorefrontEmbeddedConfigurationLoaderTest extends TestCase
         CumulativeResourceManager::getInstance()->clear();
     }
 
-    public function testLoadMergesAndDeduplicatesRoutesTwoBundlesContributeForTheSameBlock(): void
+    public function testLoadMergesTheBlockIdTwoBundlesMapToTheSameRoute(): void
     {
         $bundleOne = new StorefrontEmbeddedTestBundleOne();
         $bundleTwo = new StorefrontEmbeddedTestBundleTwo();
@@ -46,26 +48,21 @@ final class StorefrontEmbeddedConfigurationLoaderTest extends TestCase
 
         $config = $this->loader->load($container);
 
-        self::assertSame(['embedded_shared_block' => 'oro_test_shared_route'], $config[StorefrontEmbeddedConfiguration::BLOCKS]);
         self::assertSame(
-            ['embedded_shared_block' => ['oro_test_proxy_route_a', 'oro_test_proxy_route_b']],
-            $config[StorefrontEmbeddedConfiguration::PROXIED_ROUTES]
-        );
-        self::assertSame(
-            ['any_block' => ['oro_test_file_route_a', 'oro_test_file_route_b']],
-            $config[StorefrontEmbeddedConfiguration::FILE_ROUTES]
+            ['embedded_shared_block' => 'oro_test_shared_route'],
+            $config[StorefrontEmbeddedConfiguration::BLOCKS]
         );
     }
 
     public function testLoadThrowsLogicExceptionWhenTwoBundlesMapTheSameBlockIdToDifferentRoutes(): void
     {
+        $bundleOne = new StorefrontEmbeddedTestBundleOne();
         $bundleThree = new StorefrontEmbeddedTestBundleThree();
-        $bundleFour = new StorefrontEmbeddedTestBundleFour();
         CumulativeResourceManager::getInstance()
             ->clear()
             ->setBundles([
+                $bundleOne->getName() => get_class($bundleOne),
                 $bundleThree->getName() => get_class($bundleThree),
-                $bundleFour->getName() => get_class($bundleFour),
             ]);
 
         $container = new ContainerBuilder();
@@ -73,7 +70,7 @@ final class StorefrontEmbeddedConfigurationLoaderTest extends TestCase
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessageMatches(
-            '/(?=.*embedded_conflicting_block)(?=.*oro_test_conflict_route_one)(?=.*oro_test_conflict_route_two)/s'
+            '/(?=.*embedded_shared_block)(?=.*oro_test_shared_route)(?=.*oro_test_conflict_route)/s'
         );
 
         $this->loader->load($container);

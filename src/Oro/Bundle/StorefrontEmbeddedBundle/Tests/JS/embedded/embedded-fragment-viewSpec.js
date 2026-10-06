@@ -35,8 +35,7 @@ describe('orostorefrontembedded/js/embedded/embedded-fragment-view', () => {
         configureRuntime({
             isAnotherPage: url => url === ANOTHER_PAGE,
             oroBaseUrl: window.location.origin,
-            proxyPrefix: '/__oro',
-            filePaths: ['/customer/order/pdf-document/']
+            proxyPrefix: '/__oro'
         });
 
         fragment = {

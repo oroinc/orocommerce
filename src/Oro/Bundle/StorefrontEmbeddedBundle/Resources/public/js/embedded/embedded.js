@@ -14,7 +14,7 @@ import {installLoadingMaskEmbeddedExtend} from './patches/loading-mask-embedded-
 import {installPrintPageEmbeddedExtend} from './patches/print-page-embedded-extend';
 import {installBodyScrollLockerEmbeddedExtend} from './patches/body-scroll-locker-embedded-extend';
 import {registerEmbeddedHandlers} from './embedded-handlers';
-import {getPublicPath} from './host';
+import {proxyLoaderResources} from './loader-resources';
 
 let bootPromise = null;
 let runtimePatched = false;
@@ -31,10 +31,10 @@ export function bootEmbeddedApp() {
 }
 
 async function boot() {
-    setWebpackPublicPath(getPublicPath());
     installSchedulerYieldFallback();
 
     await exposeModuleLoader();
+    proxyLoaderResources();
     await Promise.all([
         import('oronavigation/js/routes-loader'),
         import('orotranslation/js/translation-loader')
@@ -73,13 +73,6 @@ function patchRuntimeAfterAppModules() {
     installFullscreenPopupEmbeddedExtend();
     installDomRelocationEmbeddedExtend();
     startDomRelocation();
-}
-
-function setWebpackPublicPath(path) {
-    if (path) {
-        // eslint-disable-next-line no-undef, camelcase
-        __webpack_public_path__ = path;
-    }
 }
 
 function installSchedulerYieldFallback() {

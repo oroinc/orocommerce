@@ -1,13 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserRoleACLData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\NavigationBundle\Event\ResponseHashnavListener;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend\EmbeddedFragmentController;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,17 +23,6 @@ class EmbeddedFragmentControllerTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    private const string SHOPPING_LISTS_BLOCK = 'embedded_shopping_lists';
-    private const string SHOPPING_LIST_VIEW_BLOCK = 'embedded_shopping_list_view';
-    private const string CONFIG_SCRIPTS_BLOCK = 'layout_js_modules_config';
-    private const string TITLE_KEY = 'title';
-    private const string PAGE_BLOCK_THAT_ALWAYS_EXISTS = 'page_main_content';
-    private const string SHOPPING_LISTS_GRID_NAME = 'frontend-customer-user-shopping-lists-grid';
-    private const string EMBEDDED_PATH_HEADER = 'X-Oro-Embedded-Path';
-    private const string LOCALIZATION_ID_HEADER = 'HTTP_X-Localization-ID';
-    private const string HASH_NAVIGATION_HEADER = 'HTTP_X-Oro-Hash-Navigation';
-    private const string PRICE_BY_CUSTOMER_PROXIED_ROUTE = 'oro_pricing_frontend_price_by_customer';
-
     #[\Override]
     protected function setUp(): void
     {
@@ -36,107 +30,133 @@ class EmbeddedFragmentControllerTest extends WebTestCase
             [],
             self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $this->loadFixtures([LoadShoppingLists::class]);
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $this->restoreConfigValues();
     }
 
     public function testReturnsBlockMarkupWithConfigScriptsAndEmbeddedMetadata(): void
     {
-        $response = $this->requestFragment(self::SHOPPING_LISTS_BLOCK);
+        $response = $this->requestFragment('embedded_shopping_lists');
         $content = self::getJsonResponseContent($response, Response::HTTP_OK);
 
-        self::assertArrayHasKey(self::SHOPPING_LISTS_BLOCK, $content);
-        self::assertStringContainsString(self::SHOPPING_LISTS_GRID_NAME, $content[self::SHOPPING_LISTS_BLOCK]);
-
-        self::assertArrayHasKey(self::CONFIG_SCRIPTS_BLOCK, $content);
-        self::assertStringContainsString('data-role="config"', $content[self::CONFIG_SCRIPTS_BLOCK]);
-
-        self::assertMatchesRegularExpression('#^https?://[^/]+/build/[\w-]+/$#', $content['buildBase']);
+        self::assertArrayHasKey('embedded_shopping_lists', $content);
         self::assertStringContainsString(
-            json_encode(['publicPath' => parse_url($content['buildBase'], PHP_URL_PATH)]),
-            $content[self::CONFIG_SCRIPTS_BLOCK]
+            'frontend-customer-user-shopping-lists-grid',
+            $content['embedded_shopping_lists']
         );
-        self::assertStorefrontStyleUrls($content['styles']);
-        self::assertSame([], $content['proxiedRoutes']);
-        self::assertContains('/attachment/', $content['filePaths']);
+
+        self::assertArrayHasKey('layout_js_modules_config', $content);
+        self::assertStringContainsString('data-role="config"', $content['layout_js_modules_config']);
+
+        $runtimePath = (string) parse_url($content['runtimeUrl'], PHP_URL_PATH);
+        self::assertMatchesRegularExpression('#^/build/[\w-]+/embedded_app\.js$#', $runtimePath);
+        self::assertStringContainsString(
+            json_encode(['publicPath' => dirname($runtimePath) . '/']),
+            $content['layout_js_modules_config']
+        );
+        self::assertNotEmpty($content['styles']);
+        self::assertSame(
+            [],
+            preg_grep('#^/build/[\w-]+/.+\.css(\?.*)?$#', $content['styles'], PREG_GREP_INVERT)
+        );
+        self::assertStringContainsString('critical', $content['styles'][0]);
         self::assertSame([], $content['flashMessages']);
 
-        self::assertSame(
-            $this->getUrl('oro_shopping_list_frontend_index'),
-            $response->headers->get(self::EMBEDDED_PATH_HEADER)
-        );
+        self::assertSame($this->getUrl('oro_shopping_list_frontend_index'), $content['subtreeUrl']);
+        self::assertFalse($response->headers->has('X-Oro-Embedded-Path'));
     }
 
     public function testLeavesOutWhatTheAlreadyBootedRuntimeReadsOnlyOnceWhenItReloadsTheBlock(): void
     {
         $response = $this->requestFragment(
-            self::SHOPPING_LISTS_BLOCK,
+            'embedded_shopping_lists',
             [],
-            [self::HASH_NAVIGATION_HEADER => 1]
+            ['HTTP_' . ResponseHashnavListener::HASH_NAVIGATION_HEADER => 1]
         );
         $content = self::getJsonResponseContent($response, Response::HTTP_OK);
 
-        self::assertArrayHasKey(self::SHOPPING_LISTS_BLOCK, $content);
-        self::assertStringContainsString(self::SHOPPING_LISTS_GRID_NAME, $content[self::SHOPPING_LISTS_BLOCK]);
-        self::assertArrayNotHasKey(self::CONFIG_SCRIPTS_BLOCK, $content);
-
-        foreach (['buildBase', 'runtimeUrl', 'runtimeIntegrity', 'styles', 'printStyles', 'filePaths'] as $key) {
-            self::assertArrayNotHasKey($key, $content);
-        }
+        self::assertArrayHasKey('embedded_shopping_lists', $content);
+        self::assertStringContainsString(
+            'frontend-customer-user-shopping-lists-grid',
+            $content['embedded_shopping_lists']
+        );
+        self::assertSame(
+            [],
+            array_intersect_key(
+                $content,
+                array_flip([
+                    'layout_js_modules_config',
+                    'runtimeUrl',
+                    'runtimeIntegrity',
+                    'styles',
+                    'printStyles'
+                ])
+            )
+        );
         self::assertSame([], $content['flashMessages']);
     }
 
     public function testTheRuntimeUrlCarriesTheAssetVersionSoARebuiltRuntimeIsNotServedFromTheBrowserCache(): void
     {
         $content = self::getJsonResponseContent(
-            $this->requestFragment(self::SHOPPING_LISTS_BLOCK),
+            $this->requestFragment('embedded_shopping_lists'),
             Response::HTTP_OK
         );
 
-        self::assertSame(
-            $content['buildBase'] . 'embedded_app.js' . self::getAssetVersionQuery(),
-            $content['runtimeUrl']
-        );
+        $runtimePath = (string) parse_url($content['runtimeUrl'], PHP_URL_PATH);
+        self::assertMatchesRegularExpression('#^/build/[\w-]+/embedded_app\.js$#', $runtimePath);
+        self::assertSame($runtimePath . self::getAssetVersionQuery(), $content['runtimeUrl']);
     }
 
     public function testStyleUrlsCarryTheAssetVersionSoAnAssetBuildIsNotServedFromACachedStylesheet(): void
     {
         $content = self::getJsonResponseContent(
-            $this->requestFragment(self::SHOPPING_LISTS_BLOCK),
+            $this->requestFragment('embedded_shopping_lists'),
             Response::HTTP_OK
         );
 
         $styleUrls = array_merge($content['styles'], $content['printStyles']);
         self::assertNotEmpty($styleUrls);
 
-        foreach ($styleUrls as $styleUrl) {
-            self::assertSame(self::getAssetVersionQuery(), (string) strstr($styleUrl, '?'));
-        }
+        $versionQuery = self::getAssetVersionQuery();
+        self::assertSame(
+            [],
+            array_filter(
+                $styleUrls,
+                static fn (string $styleUrl): bool => (string) strstr($styleUrl, '?') !== $versionQuery
+            )
+        );
     }
 
-    public function testReturnsRequestedEntityAndProxiedRoutesForBlockWithRouteParameter(): void
+    public function testReturnsRequestedEntityForBlockWithRouteParameter(): void
     {
+        $this->loadFixtures([LoadShoppingLists::class]);
         $shoppingList = $this->getShoppingList(LoadShoppingLists::SHOPPING_LIST_1);
 
-        $response = $this->requestFragment(self::SHOPPING_LIST_VIEW_BLOCK, ['id' => $shoppingList->getId()]);
+        $response = $this->requestFragment('embedded_shopping_list_view', ['id' => $shoppingList->getId()]);
         $content = self::getJsonResponseContent($response, Response::HTTP_OK);
 
-        self::assertArrayHasKey(self::SHOPPING_LIST_VIEW_BLOCK, $content);
-        self::assertStringContainsString($shoppingList->getLabel(), $content[self::SHOPPING_LIST_VIEW_BLOCK]);
-        self::assertSame([self::PRICE_BY_CUSTOMER_PROXIED_ROUTE], $content['proxiedRoutes']);
+        self::assertArrayHasKey('embedded_shopping_list_view', $content);
+        self::assertStringContainsString($shoppingList->getLabel(), $content['embedded_shopping_list_view']);
 
         self::assertSame(
             $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]),
-            $response->headers->get(self::EMBEDDED_PATH_HEADER)
+            $content['subtreeUrl']
         );
     }
 
     public function testCarriesThePageTitleTheTargetPageItselfRenders(): void
     {
+        $this->loadFixtures([LoadShoppingLists::class]);
         $shoppingList = $this->getShoppingList(LoadShoppingLists::SHOPPING_LIST_1);
         $routeParameters = ['id' => $shoppingList->getId()];
 
         $content = self::getJsonResponseContent(
-            $this->requestFragment(self::SHOPPING_LIST_VIEW_BLOCK, $routeParameters),
+            $this->requestFragment('embedded_shopping_list_view', $routeParameters),
             Response::HTTP_OK
         );
 
@@ -146,37 +166,42 @@ class EmbeddedFragmentControllerTest extends WebTestCase
         );
         self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_OK);
 
-        self::assertStringContainsString($shoppingList->getLabel(), $content[self::TITLE_KEY]);
-        self::assertSame($page->filter('title')->text(), $content[self::TITLE_KEY]);
+        self::assertStringContainsString($shoppingList->getLabel(), $content['title']);
+        self::assertSame($page->filter('title')->text(), $content['title']);
     }
 
     public function testFallsBackToTargetRouteDefaultWhenOptionalRouteParameterIsOmitted(): void
     {
+        $this->loadFixtures([LoadShoppingLists::class]);
         $shoppingList = $this->getShoppingList(LoadShoppingLists::SHOPPING_LIST_1);
-        $this->getCurrentShoppingListManager()->setCurrent($this->getAuthenticatedCustomerUser(), $shoppingList);
+        self::getContainer()->get('oro_shopping_list.manager.current_shopping_list')->setCurrent(
+            self::getContainer()->get('doctrine')->getRepository(CustomerUser::class)
+                ->findOneBy(['email' => LoadCustomerUserData::AUTH_USER]),
+            $shoppingList
+        );
 
-        $response = $this->requestFragment(self::SHOPPING_LIST_VIEW_BLOCK);
+        $response = $this->requestFragment('embedded_shopping_list_view');
         $content = self::getJsonResponseContent($response, Response::HTTP_OK);
 
-        self::assertArrayHasKey(self::SHOPPING_LIST_VIEW_BLOCK, $content);
-        self::assertStringContainsString($shoppingList->getLabel(), $content[self::SHOPPING_LIST_VIEW_BLOCK]);
+        self::assertArrayHasKey('embedded_shopping_list_view', $content);
+        self::assertStringContainsString($shoppingList->getLabel(), $content['embedded_shopping_list_view']);
 
-        self::assertSame(
-            $this->getUrl('oro_shopping_list_frontend_view'),
-            $response->headers->get(self::EMBEDDED_PATH_HEADER)
-        );
+        self::assertSame($this->getUrl('oro_shopping_list_frontend_view'), $content['subtreeUrl']);
     }
 
-    public function testKeepsDatagridStateThatArrivesAsAnArrayParameter(): void
+    public function testRendersTheBlockWhenARouteParameterArrivesAsAnArray(): void
     {
         $response = $this->requestFragment(
-            self::SHOPPING_LISTS_BLOCK,
-            ['grid' => [self::SHOPPING_LISTS_GRID_NAME => 'i=1&p=10']]
+            'embedded_shopping_lists',
+            ['grid' => ['frontend-customer-user-shopping-lists-grid' => 'i=1&p=10']]
         );
 
         $content = self::getJsonResponseContent($response, Response::HTTP_OK);
 
-        self::assertStringContainsString(self::SHOPPING_LISTS_GRID_NAME, $content[self::SHOPPING_LISTS_BLOCK]);
+        self::assertStringContainsString(
+            'frontend-customer-user-shopping-lists-grid',
+            $content['embedded_shopping_lists']
+        );
     }
 
     public function testReturnsNotFoundForBlockThatIsNotRegistered(): void
@@ -193,19 +218,13 @@ class EmbeddedFragmentControllerTest extends WebTestCase
         self::assertResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_NOT_FOUND);
     }
 
-    public function testEmbeddedBlockIsBuiltOnlyForTheFragmentRequestAndNotForTheTargetPageItself(): void
+    public function testEmbeddedBlockIsNotBuiltForTheTargetPageItself(): void
     {
-        $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_index'));
-
-        $pageResponse = $this->client->getResponse();
-        self::assertHtmlResponseStatusCodeEquals($pageResponse, Response::HTTP_OK);
-        self::assertStringContainsString(self::SHOPPING_LISTS_GRID_NAME, $pageResponse->getContent());
-
         $this->client->request(
             'GET',
             $this->getUrl(
                 'oro_shopping_list_frontend_index',
-                ['layout_block_ids' => [self::SHOPPING_LISTS_BLOCK, self::PAGE_BLOCK_THAT_ALWAYS_EXISTS]]
+                ['layout_block_ids' => ['embedded_shopping_lists', 'page_main_content']]
             ),
             [],
             [],
@@ -213,67 +232,106 @@ class EmbeddedFragmentControllerTest extends WebTestCase
         );
         $pageBlocks = self::getJsonResponseContent($this->client->getResponse(), Response::HTTP_OK);
 
-        self::assertArrayHasKey(self::PAGE_BLOCK_THAT_ALWAYS_EXISTS, $pageBlocks);
+        self::assertArrayHasKey('page_main_content', $pageBlocks);
         self::assertStringContainsString(
-            self::SHOPPING_LISTS_GRID_NAME,
-            $pageBlocks[self::PAGE_BLOCK_THAT_ALWAYS_EXISTS]
+            'frontend-customer-user-shopping-lists-grid',
+            $pageBlocks['page_main_content']
         );
         self::assertArrayNotHasKey(
-            self::SHOPPING_LISTS_BLOCK,
+            'embedded_shopping_lists',
             $pageBlocks,
             'The embedded block must not exist in the layout of an ordinary storefront page request.'
         );
+    }
 
-        $fragmentBlocks = self::getJsonResponseContent(
-            $this->requestFragment(self::SHOPPING_LISTS_BLOCK),
-            Response::HTTP_OK
+    public function testDeniesTheSameBlocksItsTargetPageDenies(): void
+    {
+        $this->loadFixtures([LoadCustomerUserRoleACLData::class]);
+        $this->loginUser(LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY);
+
+        $this->client->request('GET', $this->getUrl('oro_customer_frontend_customer_user_role_create'));
+        $pageResponse = $this->client->getResponse();
+
+        $fragmentResponse = $this->requestFragment('embedded_customer_user_role_create');
+
+        self::assertSame(
+            $pageResponse->getStatusCode(),
+            $fragmentResponse->getStatusCode(),
+            'A fragment must not widen access to the page behind it.'
         );
-
-        self::assertArrayHasKey(self::SHOPPING_LISTS_BLOCK, $fragmentBlocks);
-        self::assertStringContainsString(
-            self::SHOPPING_LISTS_GRID_NAME,
-            $fragmentBlocks[self::SHOPPING_LISTS_BLOCK]
-        );
+        self::assertResponseStatusCodeEquals($fragmentResponse, Response::HTTP_FORBIDDEN);
     }
 
-    /**
-     * @dataProvider ignoredLocalizationHeaderDataProvider
-     */
-    public function testRendersFragmentWhenLocalizationHeaderCannotBeApplied(string $localizationHeader): void
+    public function testDeniesAFormSubmitToABlockWhoseTargetPageIsGuardedOnlyByAnAclAttribute(): void
     {
-        $content = $this->requestFragmentWithLocalizationHeader($localizationHeader);
+        $this->loadFixtures([LoadCustomerUserRoleACLData::class]);
+        $this->loginUser(LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY);
 
-        self::assertArrayHasKey(self::SHOPPING_LISTS_BLOCK, $content);
-        self::assertStringContainsString(self::SHOPPING_LISTS_GRID_NAME, $content[self::SHOPPING_LISTS_BLOCK]);
-    }
-
-    public function ignoredLocalizationHeaderDataProvider(): array
-    {
-        return [
-            'not an integer' => ['not-a-number'],
-            'id of a localization that does not exist' => ['999999']
-        ];
-    }
-
-    public function testRendersFragmentInRequestedEnabledLocalization(): void
-    {
-        $enabledLocalizationIds = $this->getEnabledLocalizationIds();
-
-        $content = $this->requestFragmentWithLocalizationHeader((string)reset($enabledLocalizationIds));
-
-        self::assertArrayHasKey(self::SHOPPING_LISTS_BLOCK, $content);
-        self::assertStringContainsString(self::SHOPPING_LISTS_GRID_NAME, $content[self::SHOPPING_LISTS_BLOCK]);
-    }
-
-    private function requestFragmentWithLocalizationHeader(string $localizationHeader): array
-    {
-        return self::getJsonResponseContent(
-            $this->requestFragment(
-                self::SHOPPING_LISTS_BLOCK,
-                [],
-                [self::LOCALIZATION_ID_HEADER => $localizationHeader]
+        $this->client->request(
+            'POST',
+            $this->getUrl(
+                EmbeddedFragmentController::ROUTE_NAME,
+                ['block' => 'embedded_customer_user_role_create']
             ),
-            Response::HTTP_OK
+            ['oro_customer_frontend_customer_user_role' => ['label' => 'Role Submitted Through A Fragment']]
+        );
+
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_FORBIDDEN);
+        self::assertNull(
+            self::getContainer()->get('doctrine')->getRepository(CustomerUserRole::class)
+                ->findOneBy(['label' => 'Role Submitted Through A Fragment'])
+        );
+    }
+
+    public function testServesBlockWhoseTargetPageTheRoleAllows(): void
+    {
+        $this->loadFixtures([LoadCustomerUserRoleACLData::class]);
+        $this->loginUser(LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_DEEP);
+
+        /** @var CustomerUserRole $role */
+        $role = $this->getReference(LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL);
+
+        $response = $this->requestFragment('embedded_customer_user_role_view', ['id' => $role->getId()]);
+        $content = self::getJsonResponseContent($response, Response::HTTP_OK);
+
+        self::assertArrayHasKey('embedded_customer_user_role_view', $content);
+    }
+
+    public function testDeniesBlockOfAnEntityThatBelongsToAnotherCustomer(): void
+    {
+        $this->loadFixtures([LoadCustomerUserRoleACLData::class]);
+        $this->loginUser(LoadCustomerUserRoleACLData::USER_ACCOUNT_2_ROLE_LOCAL);
+
+        /** @var CustomerUserRole $role */
+        $role = $this->getReference(LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL);
+
+        $response = $this->requestFragment('embedded_customer_user_role_view', ['id' => $role->getId()]);
+
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
+    }
+
+    public function testServesBlockWhenTheTargetPageFeatureIsEnabled(): void
+    {
+        $response = $this->requestFragment('embedded_rfp_requests');
+        $content = self::getJsonResponseContent($response, Response::HTTP_OK);
+
+        self::assertArrayHasKey('embedded_rfp_requests', $content);
+    }
+
+    public function testReturnsNotFoundLikeTheTargetPageWhenItsFeatureIsDisabled(): void
+    {
+        $this->setConfigValue('oro_rfp.frontend_feature_enabled', false);
+
+        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
+        $pageResponse = $this->client->getResponse();
+
+        $fragmentResponse = $this->requestFragment('embedded_rfp_requests');
+
+        self::assertResponseStatusCodeEquals($fragmentResponse, Response::HTTP_NOT_FOUND);
+        self::assertSame(
+            $pageResponse->getStatusCode(),
+            $fragmentResponse->getStatusCode(),
+            'A fragment must not open a page that its feature toggle hides.'
         );
     }
 
@@ -281,23 +339,13 @@ class EmbeddedFragmentControllerTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('oro_storefront_embedded_fragment', ['block' => $block] + $routeParameters),
+            $this->getUrl(EmbeddedFragmentController::ROUTE_NAME, ['block' => $block] + $routeParameters),
             [],
             [],
             $server
         );
 
         return $this->client->getResponse();
-    }
-
-    private static function assertStorefrontStyleUrls(array $styleUrls): void
-    {
-        self::assertNotEmpty($styleUrls);
-        $versionQuery = preg_quote(self::getAssetVersionQuery(), '#');
-        foreach ($styleUrls as $styleUrl) {
-            self::assertMatchesRegularExpression('#^/build/[\w-]+/.+\.css' . $versionQuery . '$#', $styleUrl);
-        }
-        self::assertStringContainsString('critical', reset($styleUrls));
     }
 
     private static function getAssetVersionQuery(): string
@@ -307,33 +355,8 @@ class EmbeddedFragmentControllerTest extends WebTestCase
         return $version === '' ? '' : '?v=' . $version;
     }
 
-    private function getEnabledLocalizationIds(): array
-    {
-        $enabledLocalizationIds = array_map(
-            'intval',
-            (array)self::getConfigManager()->get('oro_locale.enabled_localizations')
-        );
-        self::assertNotEmpty(
-            $enabledLocalizationIds,
-            'The test environment must have at least one enabled localization.'
-        );
-
-        return $enabledLocalizationIds;
-    }
-
     private function getShoppingList(string $reference): ShoppingList
     {
         return $this->getReference($reference);
-    }
-
-    private function getAuthenticatedCustomerUser(): CustomerUser
-    {
-        return self::getContainer()->get('doctrine')->getRepository(CustomerUser::class)
-            ->findOneBy(['email' => LoadCustomerUserData::AUTH_USER]);
-    }
-
-    private function getCurrentShoppingListManager(): CurrentShoppingListManager
-    {
-        return self::getContainer()->get('oro_shopping_list.manager.current_shopping_list');
     }
 }

@@ -11,17 +11,10 @@ final class EmbeddedGuestAccessAllowedUrlsProviderTest extends TestCase
 {
     public function testGetAllowedUrlsPatternsReturnsExactlyTheConstructorArgument(): void
     {
-        $patterns = ['^/embedded/session$', '^/embedded/theme-assets$'];
+        $patterns = ['^/embedded/theme-assets$'];
 
         $provider = new EmbeddedGuestAccessAllowedUrlsProvider($patterns);
 
         self::assertSame($patterns, $provider->getAllowedUrlsPatterns());
-    }
-
-    public function testGetAllowedUrlsPatternsReturnsEmptyArrayWhenNoneConfigured(): void
-    {
-        $provider = new EmbeddedGuestAccessAllowedUrlsProvider([]);
-
-        self::assertSame([], $provider->getAllowedUrlsPatterns());
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
@@ -12,7 +14,7 @@ use Oro\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * A storefront OAuth application with the authorization code grant, the one a guest visitor token is issued for.
+ * A storefront OAuth application with the authorization code grant and the session transfer enabled.
  */
 class LoadStorefrontAuthorizationCodeClient extends AbstractFixture implements
     ContainerAwareInterface,
@@ -21,7 +23,6 @@ class LoadStorefrontAuthorizationCodeClient extends AbstractFixture implements
     public const string OAUTH_CLIENT_ID = 'RvQaZ8H1nXbyPk0tLuWc5jEdMoSgY7Tf';
     public const string OAUTH_CLIENT_SECRET = 'k29Xn4TzQb7pLdYw1RsHcMv6JeUgA0FoNiZxB3rSyKtOqPlD5hCu8WmVnEjT2aXG';
     public const string OAUTH_CLIENT_REDIRECT_URI = 'http://test.com';
-    public const string OAUTH_CLIENT_REFERENCE = 'StorefrontEmbeddedAuthorizationCodeClient';
 
     private ClientManager $clientManager;
 
@@ -48,9 +49,8 @@ class LoadStorefrontAuthorizationCodeClient extends AbstractFixture implements
         $client->setPlainSecret(self::OAUTH_CLIENT_SECRET);
         $client->setRedirectUris([self::OAUTH_CLIENT_REDIRECT_URI]);
         $client->setFrontend(true);
+        $client->setSessionTransferAllowed(true);
 
         $this->clientManager->updateClient($client);
-
-        $this->setReference(self::OAUTH_CLIENT_REFERENCE, $client);
     }
 }

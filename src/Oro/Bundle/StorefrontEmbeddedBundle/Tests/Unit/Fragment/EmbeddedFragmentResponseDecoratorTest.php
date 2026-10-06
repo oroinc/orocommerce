@@ -21,9 +21,6 @@ final class EmbeddedFragmentResponseDecoratorTest extends TestCase
 {
     use LoggerAwareTraitTestTrait;
 
-    private const string BLOCK = 'embedded_profile';
-    private const string ROUTE_NAME = 'oro_customer_frontend_customer_user_profile';
-
     private EmbeddedRuntimeBootProvider&MockObject $runtimeBootProvider;
 
     private EmbeddedRequestChecker&MockObject $embeddedRequestChecker;
@@ -43,119 +40,191 @@ final class EmbeddedFragmentResponseDecoratorTest extends TestCase
         $this->setUpLoggerMock($this->decorator);
     }
 
-    public function testDecorateSetsThePathHeaderOnEveryResponse(): void
-    {
-        $response = new JsonResponse(['foo' => 'bar']);
-
-        $this->decorator->decorate(Request::create('/', 'GET'), $response, $this->createTarget());
-
-        self::assertSame('/customer/profile', $response->headers->get(EmbeddedFragmentResponseDecorator::PATH_HEADER));
-    }
-
-    public function testDecorateSetsThePathHeaderOnAPostResponseWithoutTouchingTheBody(): void
+    public function testDecorateNeitherSetsThePathHeaderNorTouchesTheBodyOfAPostResponse(): void
     {
         $response = new Response('unchanged body');
 
-        $this->embeddedRequestChecker->expects(self::never())
-            ->method('isFragmentReload');
-        $this->runtimeBootProvider->expects(self::never())
+        $this->embeddedRequestChecker
+
+            ->expects(self::never())
+            ->method('isEmbeddedRequestReload');
+        $this->runtimeBootProvider
+            ->expects(self::never())
             ->method('getBootMetadata');
 
-        $this->decorator->decorate(Request::create('/', 'POST'), $response, $this->createTarget());
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            [],
+            []
+        );
+
+        $this->decorator->decorate(Request::create('/', Request::METHOD_POST), $response, $target);
 
         self::assertSame('unchanged body', $response->getContent());
-        self::assertSame('/customer/profile', $response->headers->get(EmbeddedFragmentResponseDecorator::PATH_HEADER));
+        self::assertFalse($response->headers->has('X-Oro-Embedded-Path'));
     }
 
-    public function testDecorateAddsFlashMessagesAndBootMetadataOnTheFirstGetRender(): void
+    public function testDecorateAddsFlashMessagesSubtreeUrlAndBootMetadataOnTheFirstGetRender(): void
     {
         $response = new JsonResponse(['foo' => 'bar']);
-        $request = Request::create('/', 'GET');
+        $request = Request::create('/', Request::METHOD_GET);
         $session = new Session(new MockArraySessionStorage());
         $session->getFlashBag()->add('success', 'Saved.');
         $request->setSession($session);
 
-        $this->embeddedRequestChecker->method('isFragmentReload')
-            ->willReturn(false);
-        $this->runtimeBootProvider->expects(self::once())
-            ->method('getBootMetadata')
-            ->with($request, self::BLOCK)
-            ->willReturn(['buildBase' => '/build/theme/']);
+        $this->embeddedRequestChecker
 
-        $this->decorator->decorate($request, $response, $this->createTarget());
+            ->method('isEmbeddedRequestReload')
+            ->willReturn(false);
+        $this->runtimeBootProvider
+            ->expects(self::once())
+            ->method('getBootMetadata')
+            ->willReturn(['runtimeUrl' => '/build/theme/embedded_app.js']);
+
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            [],
+            []
+        );
+
+        $this->decorator->decorate($request, $response, $target);
 
         $payload = json_decode((string) $response->getContent(), true);
         self::assertSame('bar', $payload['foo']);
-        self::assertSame(['success' => ['Saved.']], $payload[EmbeddedFragmentResponseDecorator::FLASH_MESSAGES_KEY]);
-        self::assertSame('/build/theme/', $payload['buildBase']);
+        self::assertSame(['success' => ['Saved.']], $payload['flashMessages']);
+        self::assertSame('/customer/profile', $payload['subtreeUrl']);
+        self::assertSame('/build/theme/embedded_app.js', $payload['runtimeUrl']);
     }
 
-    public function testDecorateDoesNotMergeBootMetadataOnAFragmentReload(): void
+    public function testDecorateAddsSubtreeUrlButDoesNotMergeBootMetadataOnAHashNavigationReload(): void
     {
         $response = new JsonResponse(['foo' => 'bar']);
-        $request = Request::create('/', 'GET');
+        $request = Request::create('/', Request::METHOD_GET);
 
-        $this->embeddedRequestChecker->method('isFragmentReload')
+        $this->embeddedRequestChecker
+
+            ->method('isEmbeddedRequestReload')
             ->willReturn(true);
-        $this->runtimeBootProvider->expects(self::never())
+        $this->runtimeBootProvider
+            ->expects(self::never())
             ->method('getBootMetadata');
 
-        $this->decorator->decorate($request, $response, $this->createTarget());
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            [],
+            []
+        );
+
+        $this->decorator->decorate($request, $response, $target);
 
         $payload = json_decode((string) $response->getContent(), true);
-        self::assertArrayNotHasKey('buildBase', $payload);
+        self::assertSame('/customer/profile', $payload['subtreeUrl']);
+        self::assertArrayNotHasKey('runtimeUrl', $payload);
     }
 
     public function testDecorateReplacesTheRenderedTitleBlockWithItsPlainText(): void
     {
         $response = new JsonResponse(['title' => "  <title>Shopping List &amp; Co &quot;A&quot;</title>\n"]);
 
-        $this->embeddedRequestChecker->method('isFragmentReload')
+        $this->embeddedRequestChecker
+
+            ->method('isEmbeddedRequestReload')
             ->willReturn(true);
 
-        $this->decorator->decorate(Request::create('/', 'GET'), $response, $this->createTarget());
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            [],
+            []
+        );
+
+        $this->decorator->decorate(Request::create('/', Request::METHOD_GET), $response, $target);
 
         $payload = json_decode((string) $response->getContent(), true);
-        self::assertSame('Shopping List & Co "A"', $payload[EmbeddedFragmentResponseDecorator::TITLE_KEY]);
+        self::assertSame('Shopping List & Co "A"', $payload['title']);
     }
 
     public function testDecorateSetsAnEmptyTitleWhenTheTitleBlockWasNotRendered(): void
     {
         $response = new JsonResponse(['foo' => 'bar']);
 
-        $this->embeddedRequestChecker->method('isFragmentReload')
+        $this->embeddedRequestChecker
+
+            ->method('isEmbeddedRequestReload')
             ->willReturn(true);
 
-        $this->decorator->decorate(Request::create('/', 'GET'), $response, $this->createTarget());
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            [],
+            []
+        );
+
+        $this->decorator->decorate(Request::create('/', Request::METHOD_GET), $response, $target);
 
         $payload = json_decode((string) $response->getContent(), true);
-        self::assertSame('', $payload[EmbeddedFragmentResponseDecorator::TITLE_KEY]);
+        self::assertSame('', $payload['title']);
     }
 
     public function testDecorateReturnsEmptyFlashMessagesWhenTheRequestHasNoSession(): void
     {
         $response = new JsonResponse(['foo' => 'bar']);
-        $request = Request::create('/', 'GET');
+        $request = Request::create('/', Request::METHOD_GET);
 
-        $this->embeddedRequestChecker->method('isFragmentReload')
+        $this->embeddedRequestChecker
+
+            ->method('isEmbeddedRequestReload')
             ->willReturn(true);
 
-        $this->decorator->decorate($request, $response, $this->createTarget());
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            [],
+            []
+        );
+
+        $this->decorator->decorate($request, $response, $target);
 
         $payload = json_decode((string) $response->getContent(), true);
-        self::assertSame([], $payload[EmbeddedFragmentResponseDecorator::FLASH_MESSAGES_KEY]);
+        self::assertSame([], $payload['flashMessages']);
     }
 
     public function testDecorateLogsAndDoesNotThrowWhenTheBodyIsNotLayoutJson(): void
     {
         $response = new Response('<html>not json</html>');
-        $request = Request::create('/', 'GET');
+        $request = Request::create('/', Request::METHOD_GET);
 
-        $this->embeddedRequestChecker->expects(self::never())
-            ->method('isFragmentReload');
+        $this->embeddedRequestChecker
+
+            ->expects(self::never())
+            ->method('isEmbeddedRequestReload');
         $this->assertLoggerDebugMethodCalled();
 
-        $this->decorator->decorate($request, $response, $this->createTarget());
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            [],
+            []
+        );
+
+        $this->decorator->decorate($request, $response, $target);
 
         self::assertSame('<html>not json</html>', $response->getContent());
     }
@@ -163,29 +232,28 @@ final class EmbeddedFragmentResponseDecoratorTest extends TestCase
     public function testDecorateEscapesHtmlSensitiveCharactersWhenReplacingAPlainResponseBody(): void
     {
         $response = new Response(json_encode(['label' => '<script>alert(1)</script>']));
-        $request = Request::create('/', 'GET');
+        $request = Request::create('/', Request::METHOD_GET);
 
-        $this->embeddedRequestChecker->method('isFragmentReload')
+        $this->embeddedRequestChecker
+
+            ->method('isEmbeddedRequestReload')
             ->willReturn(true);
 
-        $this->decorator->decorate($request, $response, $this->createTarget());
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            [],
+            []
+        );
+
+        $this->decorator->decorate($request, $response, $target);
 
         $content = (string) $response->getContent();
         self::assertStringNotContainsString('<script>', $content);
 
         $payload = json_decode($content, true);
         self::assertSame('<script>alert(1)</script>', $payload['label']);
-    }
-
-    private function createTarget(): EmbeddedFragmentTarget
-    {
-        return new EmbeddedFragmentTarget(
-            self::BLOCK,
-            self::ROUTE_NAME,
-            'https://storefront.example.test/customer/profile',
-            '/customer/profile',
-            [],
-            []
-        );
     }
 }

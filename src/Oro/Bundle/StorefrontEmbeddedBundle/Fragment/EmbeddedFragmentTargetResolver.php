@@ -22,9 +22,6 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class EmbeddedFragmentTargetResolver
 {
-    private const string ROUTE_ATTRIBUTE = '_route';
-    private const string INTERNAL_PARAMETER_PREFIX = '_';
-
     /**
      * @param array<string, string> $embeddedBlocks embedded block id => route name of the page the block lives on
      */
@@ -45,7 +42,7 @@ class EmbeddedFragmentTargetResolver
         $url = $this->generateUrl($block, $routeName, $routeParameters);
         $path = $this->withoutBaseUrl((string) parse_url($url, PHP_URL_PATH));
         $attributes = $this->matchPath($block, $path);
-        if (($attributes[self::ROUTE_ATTRIBUTE] ?? null) !== $routeName) {
+        if (($attributes['_route'] ?? null) !== $routeName) {
             throw new NotFoundHttpException(
                 sprintf('The url of embedded block "%s" is served by another route.', $block)
             );
@@ -74,7 +71,7 @@ class EmbeddedFragmentTargetResolver
         return array_filter(
             $queryParameters,
             static fn (string|int $name): bool => !\is_string($name)
-                || !str_starts_with($name, self::INTERNAL_PARAMETER_PREFIX),
+                || !str_starts_with($name, '_'),
             ARRAY_FILTER_USE_KEY
         );
     }

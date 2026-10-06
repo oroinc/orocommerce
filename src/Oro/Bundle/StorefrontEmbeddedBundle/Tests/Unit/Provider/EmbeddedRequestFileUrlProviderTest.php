@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
@@ -10,7 +12,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class EmbeddedRequestFileUrlProviderTest extends TestCase
+final class EmbeddedRequestFileUrlProviderTest extends TestCase
 {
     private FileUrlProviderInterface&MockObject $innerFileUrlProvider;
     private EmbeddedRequestChecker&MockObject $embeddedRequestChecker;
@@ -30,11 +32,15 @@ class EmbeddedRequestFileUrlProviderTest extends TestCase
         );
     }
 
-    public function testAsksForAnAbsoluteFilteredImageUrlOnAnEmbeddedRequest(): void
+    public function testAsksForAnAbsoluteFilteredImageUrlOnAnEmbeddedFragmentRequest(): void
     {
-        $this->embedded(true);
+        $this->embeddedRequestChecker
+            ->expects(self::once())
+            ->method('isEmbeddedRequest')
+            ->willReturn(true);
 
-        $this->innerFileUrlProvider->expects(self::once())
+        $this->innerFileUrlProvider
+            ->expects(self::once())
             ->method('getFilteredImageUrl')
             ->with($this->file, 'product_large', 'webp', UrlGeneratorInterface::ABSOLUTE_URL)
             ->willReturn('http://oro.loc/media/cache/attachment/filter/product_large/1/cup.jpg.webp');
@@ -45,11 +51,15 @@ class EmbeddedRequestFileUrlProviderTest extends TestCase
         );
     }
 
-    public function testAsksForAnAbsoluteResizedImageUrlOnAnEmbeddedRequest(): void
+    public function testAsksForAnAbsoluteResizedImageUrlOnAnEmbeddedFragmentRequest(): void
     {
-        $this->embedded(true);
+        $this->embeddedRequestChecker
+            ->expects(self::once())
+            ->method('isEmbeddedRequest')
+            ->willReturn(true);
 
-        $this->innerFileUrlProvider->expects(self::once())
+        $this->innerFileUrlProvider
+            ->expects(self::once())
             ->method('getResizedImageUrl')
             ->with($this->file, 100, 80, '', UrlGeneratorInterface::ABSOLUTE_URL)
             ->willReturn('http://oro.loc/media/cache/attachment/resize/1/100/80/cup.jpg');
@@ -60,11 +70,15 @@ class EmbeddedRequestFileUrlProviderTest extends TestCase
         );
     }
 
-    public function testLeavesImageUrlsAsPathsOnOroOwnPages(): void
+    public function testLeavesFilteredImageUrlsAsPathsOutsideAnEmbeddedFragmentRequest(): void
     {
-        $this->embedded(false);
+        $this->embeddedRequestChecker
+            ->expects(self::once())
+            ->method('isEmbeddedRequest')
+            ->willReturn(false);
 
-        $this->innerFileUrlProvider->expects(self::once())
+        $this->innerFileUrlProvider
+            ->expects(self::once())
             ->method('getFilteredImageUrl')
             ->with($this->file, 'product_large', '', UrlGeneratorInterface::ABSOLUTE_PATH)
             ->willReturn('/media/cache/attachment/filter/product_large/1/cup.jpg');
@@ -75,14 +89,14 @@ class EmbeddedRequestFileUrlProviderTest extends TestCase
         );
     }
 
-    public function testKeepsTheReferenceTypeTheCallerAskedFor(): void
+    public function testKeepsANetworkPathWithoutCheckingTheRequest(): void
     {
-        $this->embeddedRequestChecker->expects(self::once())
-            ->method('resolveReferenceType')
-            ->with(UrlGeneratorInterface::NETWORK_PATH)
-            ->willReturn(UrlGeneratorInterface::NETWORK_PATH);
+        $this->embeddedRequestChecker
+            ->expects(self::never())
+            ->method('isEmbeddedRequest');
 
-        $this->innerFileUrlProvider->expects(self::once())
+        $this->innerFileUrlProvider
+            ->expects(self::once())
             ->method('getFilteredImageUrl')
             ->with($this->file, 'product_large', '', UrlGeneratorInterface::NETWORK_PATH)
             ->willReturn('//oro.loc/media/cache/attachment/filter/product_large/1/cup.jpg');
@@ -95,10 +109,12 @@ class EmbeddedRequestFileUrlProviderTest extends TestCase
 
     public function testLeavesFileDownloadsToTheDecoratedProvider(): void
     {
-        $this->embeddedRequestChecker->expects(self::never())
-            ->method('resolveReferenceType');
+        $this->embeddedRequestChecker
+            ->expects(self::never())
+            ->method('isEmbeddedRequest');
 
-        $this->innerFileUrlProvider->expects(self::once())
+        $this->innerFileUrlProvider
+            ->expects(self::once())
             ->method('getFileUrl')
             ->with($this->file, FileUrlProviderInterface::FILE_ACTION_DOWNLOAD, UrlGeneratorInterface::ABSOLUTE_PATH)
             ->willReturn('/attachment/download/1/invoice.pdf');
@@ -107,15 +123,5 @@ class EmbeddedRequestFileUrlProviderTest extends TestCase
             '/attachment/download/1/invoice.pdf',
             $this->provider->getFileUrl($this->file, FileUrlProviderInterface::FILE_ACTION_DOWNLOAD)
         );
-    }
-
-    private function embedded(bool $isEmbeddedRequest): void
-    {
-        $this->embeddedRequestChecker->expects(self::once())
-            ->method('resolveReferenceType')
-            ->with(UrlGeneratorInterface::ABSOLUTE_PATH)
-            ->willReturn(
-                $isEmbeddedRequest ? UrlGeneratorInterface::ABSOLUTE_URL : UrlGeneratorInterface::ABSOLUTE_PATH
-            );
     }
 }

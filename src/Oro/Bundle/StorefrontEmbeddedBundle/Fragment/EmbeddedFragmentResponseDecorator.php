@@ -15,19 +15,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 
 /**
- * Completes the response of an embedded fragment for the consumer: names the target page path in a header and,
- * on a GET, adds the plain-text page title, the session flash messages and, on the first render of a fragment,
- * the metadata the embedded runtime needs to boot to the layout JSON body.
+ * Completes the response of an embedded fragment with the data that the consumer needs.
  */
 class EmbeddedFragmentResponseDecorator implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
-
-    public const string PATH_HEADER = 'X-Oro-Embedded-Path';
-    public const string FLASH_MESSAGES_KEY = 'flashMessages';
-    public const string TITLE_KEY = 'title';
-
-    private const string CONTENT_TYPE_HEADER = 'Content-Type';
 
     public function __construct(
         private readonly EmbeddedRuntimeBootProvider $runtimeBootProvider,
@@ -38,38 +30,40 @@ class EmbeddedFragmentResponseDecorator implements LoggerAwareInterface
 
     public function decorate(Request $request, Response $response, EmbeddedFragmentTarget $target): void
     {
-        $response->headers->set(self::PATH_HEADER, $target->path);
-
         if ($request->isMethod(Request::METHOD_GET)) {
-            $this->addEmbeddedMetadataToBody($request, $response, $target->block);
+            $this->addEmbeddedMetadataToBody($request, $response, $target);
         }
     }
 
-    private function addEmbeddedMetadataToBody(Request $request, Response $response, string $block): void
-    {
+    private function addEmbeddedMetadataToBody(
+        Request $request,
+        Response $response,
+        EmbeddedFragmentTarget $target
+    ): void {
         $payload = json_decode((string) $response->getContent(), true);
         if (!\is_array($payload)) {
             $this->logger->debug('Embedded fragment body was not layout JSON, metadata was not added.', [
-                'block' => $block,
+                'block' => $target->block,
                 'status_code' => $response->getStatusCode(),
-                'content_type' => $response->headers->get(self::CONTENT_TYPE_HEADER),
+                'content_type' => $response->headers->get('Content-Type'),
             ]);
 
             return;
         }
 
-        $payload[self::TITLE_KEY] = $this->resolvePageTitle($payload);
-        $payload[self::FLASH_MESSAGES_KEY] = $this->takeFlashMessages($request);
+        $payload['title'] = $this->resolvePageTitle($payload);
+        $payload['flashMessages'] = $this->takeFlashMessages($request);
+        $payload['subtreeUrl'] = $target->path;
 
-        if (!$this->embeddedRequestChecker->isFragmentReload()) {
-            $payload = array_merge($payload, $this->runtimeBootProvider->getBootMetadata($request, $block));
+        if (!$this->embeddedRequestChecker->isEmbeddedRequestReload()) {
+            $payload = array_merge($payload, $this->runtimeBootProvider->getBootMetadata());
         }
 
         $this->replaceBody($response, $payload);
     }
 
     /**
-     * Keeps the escaping of the layout JsonResponse, whose hex-escaped markup is safe to inline into a script.
+     * Keeps the hex escaping of the layout JsonResponse, which makes the markup safe to inline in a script.
      *
      * @param array<string, mixed> $payload
      */
@@ -91,7 +85,7 @@ class EmbeddedFragmentResponseDecorator implements LoggerAwareInterface
      */
     private function resolvePageTitle(array $payload): string
     {
-        $renderedTitleBlock = (string) ($payload[self::TITLE_KEY] ?? '');
+        $renderedTitleBlock = (string) ($payload['title'] ?? '');
 
         return trim(html_entity_decode(strip_tags($renderedTitleBlock), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
     }

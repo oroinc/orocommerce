@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\Fragment;
 
+use Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend\EmbeddedFragmentController;
 use Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentRenderer;
 use Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentTarget;
 use Oro\Bundle\StorefrontEmbeddedBundle\Layout\Extension\EmbeddedContextConfigurator;
@@ -16,9 +17,6 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 final class EmbeddedFragmentRendererTest extends TestCase
 {
-    private const string BLOCK = 'embedded_profile';
-    private const string ROUTE_NAME = 'oro_customer_frontend_customer_user_profile';
-
     private HttpKernelInterface&MockObject $httpKernel;
 
     private EmbeddedRequestChecker&MockObject $embeddedRequestChecker;
@@ -36,106 +34,168 @@ final class EmbeddedFragmentRendererTest extends TestCase
 
     public function testRenderIncludesTheConfigScriptsAndTitleBlocksOnTheFirstGetRender(): void
     {
-        $this->embeddedRequestChecker->method('isFragmentReload')
+        $this->embeddedRequestChecker
+            ->method('isEmbeddedRequestReload')
             ->willReturn(false);
 
         $capturedRequest = null;
-        $this->httpKernel->method('handle')
+        $this->httpKernel
+            ->method('handle')
             ->willReturnCallback(function (Request $request) use (&$capturedRequest): Response {
                 $capturedRequest = $request;
 
                 return new Response();
             });
 
-        $this->renderer->render(Request::create('/embedded/fragment/embedded_profile'), $this->createTarget());
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            ['_route' => 'oro_customer_frontend_customer_user_profile'],
+            []
+        );
+
+        $this->renderer->render(Request::create('/embedded/fragment/embedded_profile'), $target);
 
         self::assertSame(
-            [self::BLOCK, 'layout_js_modules_config', 'title'],
+            ['embedded_profile', 'layout_js_modules_config', 'title'],
             $capturedRequest->query->all()['layout_block_ids']
         );
     }
 
-    public function testRenderRequestsTheTargetAndTitleBlocksOnAGetFragmentReload(): void
+    public function testRenderRequestsTheTargetAndTitleBlocksOnAGetHashNavigationReload(): void
     {
-        $this->embeddedRequestChecker->method('isFragmentReload')
+        $this->embeddedRequestChecker
+            ->method('isEmbeddedRequestReload')
             ->willReturn(true);
 
         $capturedRequest = null;
-        $this->httpKernel->method('handle')
+        $this->httpKernel
+            ->method('handle')
             ->willReturnCallback(function (Request $request) use (&$capturedRequest): Response {
                 $capturedRequest = $request;
 
                 return new Response();
             });
 
-        $this->renderer->render(Request::create('/embedded/fragment/embedded_profile'), $this->createTarget());
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            ['_route' => 'oro_customer_frontend_customer_user_profile'],
+            []
+        );
 
-        self::assertSame([self::BLOCK, 'title'], $capturedRequest->query->all()['layout_block_ids']);
+        $this->renderer->render(Request::create('/embedded/fragment/embedded_profile'), $target);
+
+        self::assertSame(['embedded_profile', 'title'], $capturedRequest->query->all()['layout_block_ids']);
     }
 
-    public function testRenderRequestsOnlyTheTargetBlockOnAPostFragmentReload(): void
+    public function testRenderRequestsOnlyTheTargetBlockOnAPostHashNavigationReload(): void
     {
-        $this->embeddedRequestChecker->method('isFragmentReload')
+        $this->embeddedRequestChecker
+            ->method('isEmbeddedRequestReload')
             ->willReturn(true);
 
         $capturedRequest = null;
-        $this->httpKernel->method('handle')
+        $this->httpKernel
+            ->method('handle')
             ->willReturnCallback(function (Request $request) use (&$capturedRequest): Response {
                 $capturedRequest = $request;
 
                 return new Response();
             });
+
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            ['_route' => 'oro_customer_frontend_customer_user_profile'],
+            []
+        );
 
         $this->renderer->render(
             Request::create('/embedded/fragment/embedded_profile', Request::METHOD_POST),
-            $this->createTarget()
+            $target
         );
 
-        self::assertSame([self::BLOCK], $capturedRequest->query->all()['layout_block_ids']);
+        self::assertSame(['embedded_profile'], $capturedRequest->query->all()['layout_block_ids']);
     }
 
     public function testRenderReturnsExactlyWhatTheKernelReturned(): void
     {
-        $this->embeddedRequestChecker->method('isFragmentReload')
+        $this->embeddedRequestChecker
+            ->method('isEmbeddedRequestReload')
             ->willReturn(false);
         $response = new Response('rendered block');
-        $this->httpKernel->method('handle')
+        $this->httpKernel
+            ->method('handle')
             ->willReturn($response);
 
-        $result = $this->renderer->render(Request::create('/'), $this->createTarget());
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            ['_route' => 'oro_customer_frontend_customer_user_profile'],
+            []
+        );
+
+        $result = $this->renderer->render(Request::create('/'), $target);
 
         self::assertSame($response, $result);
     }
 
     public function testRenderHandlesTheSubRequestAsASubRequestWithExceptionCatchingDisabled(): void
     {
-        $this->embeddedRequestChecker->method('isFragmentReload')
+        $this->embeddedRequestChecker
+            ->method('isEmbeddedRequestReload')
             ->willReturn(false);
 
-        $this->httpKernel->expects(self::once())
+        $response = new Response();
+        $this->httpKernel
+            ->expects(self::once())
             ->method('handle')
             ->with(self::isInstanceOf(Request::class), HttpKernelInterface::SUB_REQUEST, false)
-            ->willReturn(new Response());
+            ->willReturn($response);
 
-        $this->renderer->render(Request::create('/'), $this->createTarget());
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            ['_route' => 'oro_customer_frontend_customer_user_profile'],
+            []
+        );
+
+        self::assertSame($response, $this->renderer->render(Request::create('/'), $target));
     }
 
     public function testRenderSetsRouteParamsFromTargetAttributesWithoutRouteOrController(): void
     {
-        $this->embeddedRequestChecker->method('isFragmentReload')
+        $this->embeddedRequestChecker
+            ->method('isEmbeddedRequestReload')
             ->willReturn(false);
 
         $target = new EmbeddedFragmentTarget(
-            self::BLOCK,
-            self::ROUTE_NAME,
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
             'https://storefront.example.test/customer/profile',
             '/customer/profile',
-            ['_route' => self::ROUTE_NAME, '_controller' => 'App\\Controller::action', 'id' => 42],
+            [
+                '_route' => 'oro_customer_frontend_customer_user_profile',
+                '_controller' => 'App\\Controller::action',
+                'id' => 42
+            ],
             []
         );
 
         $capturedRequest = null;
-        $this->httpKernel->method('handle')
+        $this->httpKernel
+            ->method('handle')
             ->willReturnCallback(function (Request $request) use (&$capturedRequest): Response {
                 $capturedRequest = $request;
 
@@ -149,20 +209,22 @@ final class EmbeddedFragmentRendererTest extends TestCase
 
     public function testRenderMarksTheSubRequestAsAnEmbeddedFragmentAndCarriesTheMatchedAttributes(): void
     {
-        $this->embeddedRequestChecker->method('isFragmentReload')
+        $this->embeddedRequestChecker
+            ->method('isEmbeddedRequestReload')
             ->willReturn(false);
 
         $target = new EmbeddedFragmentTarget(
-            self::BLOCK,
-            self::ROUTE_NAME,
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
             'https://storefront.example.test/customer/profile',
             '/customer/profile',
-            ['_route' => self::ROUTE_NAME, 'id' => 42],
+            ['_route' => 'oro_customer_frontend_customer_user_profile', 'id' => 42],
             []
         );
 
         $capturedRequest = null;
-        $this->httpKernel->method('handle')
+        $this->httpKernel
+            ->method('handle')
             ->willReturnCallback(function (Request $request) use (&$capturedRequest): Response {
                 $capturedRequest = $request;
 
@@ -171,19 +233,164 @@ final class EmbeddedFragmentRendererTest extends TestCase
 
         $this->renderer->render(Request::create('/'), $target);
 
-        self::assertSame(self::ROUTE_NAME, $capturedRequest->attributes->get('_route'));
+        self::assertSame('oro_customer_frontend_customer_user_profile', $capturedRequest->attributes->get('_route'));
         self::assertSame(42, $capturedRequest->attributes->get('id'));
         self::assertTrue($capturedRequest->attributes->get(EmbeddedContextConfigurator::REQUEST_ATTRIBUTE));
     }
 
-    public function testRenderSetsRequestUriAndQueryStringServerParametersFromTheTargetUrl(): void
+    /**
+     * @dataProvider renderTakesTheControllerOnlyFromTheTargetAttributesProvider
+     *
+     * @param array<string, string> $targetAttributes
+     */
+    public function testRenderTakesTheControllerOnlyFromTheTargetAttributes(
+        array $targetAttributes,
+        bool $expectedHasController,
+        ?string $expectedController
+    ): void {
+        $this->embeddedRequestChecker
+            ->method('isEmbeddedRequestReload')
+            ->willReturn(false);
+
+        $mainRequest = Request::create('/embedded/fragment/embedded_profile');
+        $mainRequest->attributes->add([
+            '_route' => EmbeddedFragmentController::ROUTE_NAME,
+            '_controller' => EmbeddedFragmentController::class . '::fragmentAction',
+            EmbeddedFragmentController::BLOCK_ATTRIBUTE => 'embedded_profile',
+            '_locale' => 'en',
+        ]);
+
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            $targetAttributes,
+            []
+        );
+
+        $capturedRequest = null;
+        $this->httpKernel
+            ->method('handle')
+            ->willReturnCallback(function (Request $request) use (&$capturedRequest): Response {
+                $capturedRequest = $request;
+
+                return new Response();
+            });
+
+        $this->renderer->render($mainRequest, $target);
+
+        self::assertSame($expectedHasController, $capturedRequest->attributes->has('_controller'));
+        self::assertSame($expectedController, $capturedRequest->attributes->get('_controller'));
+        self::assertSame(
+            'embedded_profile',
+            $capturedRequest->attributes->get(EmbeddedFragmentController::BLOCK_ATTRIBUTE)
+        );
+        self::assertSame('en', $capturedRequest->attributes->get('_locale'));
+        self::assertSame(
+            EmbeddedFragmentController::class . '::fragmentAction',
+            $mainRequest->attributes->get('_controller')
+        );
+    }
+
+    /**
+     * @return iterable<string, array{
+     *     targetAttributes: array<string, string>,
+     *     expectedHasController: bool,
+     *     expectedController: string|null
+     * }>
+     */
+    public static function renderTakesTheControllerOnlyFromTheTargetAttributesProvider(): iterable
     {
-        $this->embeddedRequestChecker->method('isFragmentReload')
+        yield 'target without a controller' => [
+            'targetAttributes' => ['_route' => 'oro_customer_frontend_customer_user_profile'],
+            'expectedHasController' => false,
+            'expectedController' => null,
+        ];
+        yield 'target with a controller' => [
+            'targetAttributes' => [
+                '_route' => 'oro_customer_frontend_customer_user_profile',
+                '_controller' => 'App\\Controller::action'
+            ],
+            'expectedHasController' => true,
+            'expectedController' => 'App\\Controller::action',
+        ];
+    }
+
+    public function testRenderMarksTheSubRequestEvenWhenTheTargetAttributesCarryTheMarkerOff(): void
+    {
+        $this->embeddedRequestChecker
+            ->method('isEmbeddedRequestReload')
             ->willReturn(false);
 
         $target = new EmbeddedFragmentTarget(
-            self::BLOCK,
-            self::ROUTE_NAME,
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            [
+                '_route' => 'oro_customer_frontend_customer_user_profile',
+                EmbeddedContextConfigurator::REQUEST_ATTRIBUTE => false
+            ],
+            []
+        );
+
+        $capturedRequest = null;
+        $this->httpKernel
+            ->method('handle')
+            ->willReturnCallback(function (Request $request) use (&$capturedRequest): Response {
+                $capturedRequest = $request;
+
+                return new Response();
+            });
+
+        $this->renderer->render(Request::create('/embedded/fragment/embedded_profile'), $target);
+
+        self::assertTrue($capturedRequest->attributes->get(EmbeddedContextConfigurator::REQUEST_ATTRIBUTE));
+    }
+
+    public function testRenderMarksTheSubRequestEvenWhenTheMainRequestCarriesTheMarkerOff(): void
+    {
+        $this->embeddedRequestChecker
+            ->method('isEmbeddedRequestReload')
+            ->willReturn(false);
+
+        $mainRequest = Request::create('/embedded/fragment/embedded_profile');
+        $mainRequest->attributes->set(EmbeddedContextConfigurator::REQUEST_ATTRIBUTE, false);
+
+        $capturedRequest = null;
+        $this->httpKernel
+            ->method('handle')
+            ->willReturnCallback(function (Request $request) use (&$capturedRequest): Response {
+                $capturedRequest = $request;
+
+                return new Response();
+            });
+
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
+            'https://storefront.example.test/customer/profile',
+            '/customer/profile',
+            ['_route' => 'oro_customer_frontend_customer_user_profile'],
+            []
+        );
+
+        $this->renderer->render($mainRequest, $target);
+
+        self::assertTrue($capturedRequest->attributes->get(EmbeddedContextConfigurator::REQUEST_ATTRIBUTE));
+        self::assertFalse($mainRequest->attributes->get(EmbeddedContextConfigurator::REQUEST_ATTRIBUTE));
+    }
+
+    public function testRenderSetsRequestUriAndQueryStringServerParametersFromTheTargetUrl(): void
+    {
+        $this->embeddedRequestChecker
+            ->method('isEmbeddedRequestReload')
+            ->willReturn(false);
+
+        $target = new EmbeddedFragmentTarget(
+            'embedded_profile',
+            'oro_customer_frontend_customer_user_profile',
             'https://storefront.example.test/customer/profile?tab=orders',
             '/customer/profile',
             [],
@@ -191,7 +398,8 @@ final class EmbeddedFragmentRendererTest extends TestCase
         );
 
         $capturedRequest = null;
-        $this->httpKernel->method('handle')
+        $this->httpKernel
+            ->method('handle')
             ->willReturnCallback(function (Request $request) use (&$capturedRequest): Response {
                 $capturedRequest = $request;
 
@@ -205,17 +413,5 @@ final class EmbeddedFragmentRendererTest extends TestCase
             $capturedRequest->server->get('REQUEST_URI')
         );
         self::assertSame('tab=orders', $capturedRequest->server->get('QUERY_STRING'));
-    }
-
-    private function createTarget(): EmbeddedFragmentTarget
-    {
-        return new EmbeddedFragmentTarget(
-            self::BLOCK,
-            self::ROUTE_NAME,
-            'https://storefront.example.test/customer/profile',
-            '/customer/profile',
-            ['_route' => self::ROUTE_NAME],
-            []
-        );
     }
 }

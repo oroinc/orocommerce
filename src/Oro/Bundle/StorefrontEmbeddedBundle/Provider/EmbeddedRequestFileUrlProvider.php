@@ -10,9 +10,7 @@ use Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Serves image urls to an embedded host as absolute Oro urls, so the browser loads them from Oro and the host
- * does not have to relay Oro's media cache. Same reference-type switch the storefront API makes for its own
- * consumers, driven by the embedded request instead of the API one.
+ * Serves image URLs to an embedded host as absolute URLs.
  */
 class EmbeddedRequestFileUrlProvider implements FileUrlProviderInterface
 {
@@ -44,7 +42,7 @@ class EmbeddedRequestFileUrlProvider implements FileUrlProviderInterface
             $width,
             $height,
             $format,
-            $this->embeddedRequestChecker->resolveReferenceType($referenceType)
+            $this->resolveReferenceType($referenceType)
         );
     }
 
@@ -59,7 +57,19 @@ class EmbeddedRequestFileUrlProvider implements FileUrlProviderInterface
             $file,
             $filterName,
             $format,
-            $this->embeddedRequestChecker->resolveReferenceType($referenceType)
+            $this->resolveReferenceType($referenceType)
         );
+    }
+
+    private function resolveReferenceType(int $referenceType): int
+    {
+        if (
+            $referenceType !== UrlGeneratorInterface::ABSOLUTE_PATH ||
+            !$this->embeddedRequestChecker->isEmbeddedRequest()
+        ) {
+            return $referenceType;
+        }
+
+        return UrlGeneratorInterface::ABSOLUTE_URL;
     }
 }

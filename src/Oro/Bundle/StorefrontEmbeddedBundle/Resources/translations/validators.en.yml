@@ -1,0 +1,3 @@
+oro:
+  storefront_embedded:
+    embedded_preferences.empty.message: Give a localization, a currency, or both.

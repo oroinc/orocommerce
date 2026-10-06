@@ -16,15 +16,11 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  * from. An embedded block id has to name one route across all bundles, which is checked before the merge because
  * the merge itself would let the last bundle win silently.
  */
-class StorefrontEmbeddedConfigurationLoader
+final class StorefrontEmbeddedConfigurationLoader
 {
-    public const string CONFIG_FILE = 'Resources/config/oro/storefront_embedded.yml';
-
     /**
      * @return array{
-     *     blocks: array<string, string>,
-     *     proxied_routes: array<string, string[]>,
-     *     file_routes: array<string, string[]>
+     *     blocks: array<string, string>
      * }
      */
     public function load(ContainerBuilder $container): array
@@ -33,19 +29,13 @@ class StorefrontEmbeddedConfigurationLoader
         $this->assertBlockIdsAreUnique($configs);
 
         $config = CumulativeConfigProcessorUtil::processConfiguration(
-            self::CONFIG_FILE,
+            'Resources/config/oro/storefront_embedded.yml',
             new StorefrontEmbeddedConfiguration(),
             $configs
         );
 
         return [
             StorefrontEmbeddedConfiguration::BLOCKS => $config[StorefrontEmbeddedConfiguration::BLOCKS],
-            StorefrontEmbeddedConfiguration::PROXIED_ROUTES => $this->uniqueRoutesPerBlock(
-                $config[StorefrontEmbeddedConfiguration::PROXIED_ROUTES]
-            ),
-            StorefrontEmbeddedConfiguration::FILE_ROUTES => $this->uniqueRoutesPerBlock(
-                $config[StorefrontEmbeddedConfiguration::FILE_ROUTES]
-            ),
         ];
     }
 
@@ -56,7 +46,7 @@ class StorefrontEmbeddedConfigurationLoader
     {
         $configLoader = CumulativeConfigLoaderFactory::create(
             StorefrontEmbeddedConfiguration::ROOT_NODE,
-            self::CONFIG_FILE
+            'Resources/config/oro/storefront_embedded.yml'
         );
 
         return array_map(
@@ -88,18 +78,5 @@ class StorefrontEmbeddedConfigurationLoader
                 $blocks[$blockId] = $routeName;
             }
         }
-    }
-
-    /**
-     * @param array<string, string[]> $routesPerBlock
-     *
-     * @return array<string, string[]>
-     */
-    private function uniqueRoutesPerBlock(array $routesPerBlock): array
-    {
-        return array_map(
-            static fn (array $routes): array => array_values(array_unique($routes)),
-            $routesPerBlock
-        );
     }
 }

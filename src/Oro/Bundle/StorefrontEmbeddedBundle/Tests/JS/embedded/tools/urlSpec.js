@@ -1,5 +1,11 @@
 import {configureRuntime} from 'orostorefrontembedded/js/embedded/host';
-import {isCurrentPath, toHostPath, toInternalPath, withQuery} from 'orostorefrontembedded/js/embedded/tools/url';
+import {
+    isCurrentPath,
+    toHostPath,
+    toInternalPath,
+    toProxiedOroUrl,
+    withQuery
+} from 'orostorefrontembedded/js/embedded/tools/url';
 
 describe('orostorefrontembedded/js/embedded/tools/url', () => {
     const ORO = 'http://oro.loc';
@@ -32,6 +38,52 @@ describe('orostorefrontembedded/js/embedded/tools/url', () => {
             configureRuntime({oroBaseUrl: `${ORO}/shop`});
 
             expect(toInternalPath(`${ORO}/shop/customer/order/`)).toBe('/customer/order/');
+        });
+    });
+
+    describe('toProxiedOroUrl', () => {
+        beforeEach(() => configureRuntime({oroBaseUrl: ORO, proxyPrefix: '/__oro'}));
+
+        it('points an absolute Oro url at the host proxy', () => {
+            expect(toProxiedOroUrl(`${ORO}/media/js/frontend_routes.json?v=1`))
+                .toBe('/__oro/media/js/frontend_routes.json?v=1');
+        });
+
+        it('points an Oro path at the host proxy', () => {
+            expect(toProxiedOroUrl('/media/js/translation/en.json')).toBe('/__oro/media/js/translation/en.json');
+        });
+
+        it('drops the base path of an Oro installed under a sub-path before it adds the prefix', () => {
+            configureRuntime({oroBaseUrl: `${ORO}/shop`});
+
+            expect(toProxiedOroUrl(`${ORO}/shop/media/js/frontend_routes.json`))
+                .toBe('/__oro/media/js/frontend_routes.json');
+        });
+
+        it('does not prefix a url that already goes through the host proxy', () => {
+            expect(toProxiedOroUrl('/__oro/media/js/frontend_routes.json'))
+                .toBe('/__oro/media/js/frontend_routes.json');
+        });
+
+        it('keeps a url of another origin', () => {
+            expect(toProxiedOroUrl('https://cdn.example/media/js/frontend_routes.json'))
+                .toBe('https://cdn.example/media/js/frontend_routes.json');
+        });
+
+        it('keeps a protocol-relative url, which is another origin', () => {
+            expect(toProxiedOroUrl('//cdn.example/media/js/frontend_routes.json'))
+                .toBe('//cdn.example/media/js/frontend_routes.json');
+        });
+
+        it('keeps the url when the host names no proxy prefix', () => {
+            configureRuntime({proxyPrefix: ''});
+
+            expect(toProxiedOroUrl(`${ORO}/media/js/frontend_routes.json`))
+                .toBe(`${ORO}/media/js/frontend_routes.json`);
+        });
+
+        it('keeps a value that is not a url', () => {
+            expect(toProxiedOroUrl(undefined)).toBeUndefined();
         });
     });
 

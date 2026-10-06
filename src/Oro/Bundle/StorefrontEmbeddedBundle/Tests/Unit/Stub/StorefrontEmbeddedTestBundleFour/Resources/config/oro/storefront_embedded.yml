@@ -1,3 +1,0 @@
-oro_storefront_embedded:
-    blocks:
-        embedded_conflicting_block: oro_test_conflict_route_two

@@ -18,24 +18,19 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class EmbeddedContextConfigurator implements ContextConfiguratorInterface
 {
     public const string REQUEST_ATTRIBUTE = '_embedded_fragment';
-    public const string CONTEXT_OPTION = 'embedded';
-
-    private const string ROUTE_ATTRIBUTE = '_route';
-    private const string ACTION_CONTEXT_KEY = 'action';
 
     /**
      * @var string[]
      */
-    private readonly array $routes;
+    private ?array $routes = null;
 
     /**
      * @param array<string, string> $embeddedBlocks embedded block id => route name
      */
     public function __construct(
         private readonly RequestStack $requestStack,
-        array $embeddedBlocks,
+        private readonly array $embeddedBlocks,
     ) {
-        $this->routes = array_values(array_unique($embeddedBlocks));
     }
 
     #[\Override]
@@ -47,18 +42,23 @@ class EmbeddedContextConfigurator implements ContextConfiguratorInterface
         }
 
         $context->getResolver()
-            ->define(self::CONTEXT_OPTION)
+            ->define('embedded')
             ->allowedTypes('bool')
-            ->default((bool) $request->attributes->get(self::REQUEST_ATTRIBUTE, false));
+            ->default((bool)$request->attributes->get(self::REQUEST_ATTRIBUTE, false));
     }
 
     private function rendersEmbeddableRoute(Request $request, ContextInterface $context): bool
     {
         $renderedRoutes = array_filter([
-            $request->attributes->get(self::ROUTE_ATTRIBUTE),
-            $context->getOr(self::ACTION_CONTEXT_KEY),
+            $request->attributes->get('_route'),
+            $context->getOr('action'),
         ]);
 
-        return (bool) array_intersect($renderedRoutes, $this->routes);
+        return (bool)array_intersect($renderedRoutes, $this->getRoutes());
+    }
+
+    private function getRoutes(): array
+    {
+        return $this->routes ??= array_values(array_unique($this->embeddedBlocks));
     }
 }

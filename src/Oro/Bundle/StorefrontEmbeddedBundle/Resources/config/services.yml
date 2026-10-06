@@ -1,5 +1,4 @@
 parameters:
-    oro_storefront_embedded.oro_own_asset_paths: ['/build/', '/bundles/']
     oro_storefront_embedded.theme_build_path: '/build'
     oro_storefront_embedded.theme_assets_excluded_patterns: ['*.map', '*.scss', '*.scss.js']
 
@@ -9,23 +8,11 @@ services:
         arguments:
             - '@request_stack'
 
-    # Required by EmbeddedRequestExtension (service subscriber)
-    Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker:
-        alias: oro_storefront_embedded.request.embedded_request_checker
-
-    oro_storefront_embedded.twig.embedded_request_extension:
-        class: Oro\Bundle\StorefrontEmbeddedBundle\Twig\EmbeddedRequestExtension
-        arguments:
-            - '@oro_platform.twig.service_locator'
-        tags:
-            - { name: twig.extension }
-            - { name: container.service_subscriber, id: oro_storefront_embedded.request.embedded_request_checker, key: Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker }
-
     oro_storefront_embedded.provider.embedded_request_file_url:
         class: Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedRequestFileUrlProvider
         decorates: oro_attachment.provider.file_url
-        # Outermost decorator (oro_frontend 500, oro_multiwebsite 250, external_url_provider -250): the
-        # reference type must be upgraded to absolute before the inner providers build the url.
+        # Outermost decorator (oro_frontend 500, oro_multiwebsite 250, external_url_provider -250), so the reference
+        # type is absolute before the inner providers build the url.
         decoration_priority: -300
         arguments:
             - '@.inner'
@@ -34,25 +21,11 @@ services:
     oro_storefront_embedded.provider.embedded_request_imagine_url:
         class: Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedRequestImagineUrlProvider
         decorates: oro_attachment.imagine.provider.url
-        # Outside oro_attachment.imagine.provider.url.webp_aware (-100), which must see the final reference type.
+        # Runs outside oro_attachment.imagine.provider.url.webp_aware (-100), which must get the final reference type.
         decoration_priority: -200
         arguments:
             - '@.inner'
             - '@oro_storefront_embedded.request.embedded_request_checker'
-
-    oro_storefront_embedded.asset.embedded_request_asset_packages:
-        class: Oro\Bundle\StorefrontEmbeddedBundle\Asset\EmbeddedRequestAssetPackages
-        decorates: assets.packages
-        # Inside oro_api.asset.api_absolute_url_asset_packages (default 0): on a request that is both API and
-        # embedded this decorator produces the absolute url first and the API decorator leaves it as is.
-        # It must stay the innermost decorator of assets.packages: PdfTemplateAssetPackagesPass hands its
-        # ".inner" service, the plain packages, to the PDF template renderer.
-        decoration_priority: 100
-        arguments:
-            - '@.inner'
-            - '@request_stack'
-            - '@oro_storefront_embedded.request.embedded_request_checker'
-            - '%oro_storefront_embedded.oro_own_asset_paths%'
 
     oro_storefront_embedded.tools.embedded_request_url_helper:
         class: Oro\Bundle\StorefrontEmbeddedBundle\Tools\EmbeddedRequestUrlHelper
@@ -69,6 +42,32 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
 
+    oro_storefront_embedded.event_listener.embedded_fragment_access:
+        class: Oro\Bundle\StorefrontEmbeddedBundle\EventListener\EmbeddedFragmentAccessListener
+        arguments:
+            - '@oro_security.class_authorization_checker'
+        tags:
+            # Priority -2: runs after oro_security.listener.controller (-1), which sets _oro_access_checked.
+            - { name: kernel.event_listener, event: kernel.controller_arguments, method: onKernelControllerArguments, priority: -2 }
+
+    oro_storefront_embedded.event_listener.embedded_fragment_csrf_protection:
+        class: Oro\Bundle\StorefrontEmbeddedBundle\EventListener\EmbeddedFragmentCsrfProtectionListener
+        arguments:
+            - '@oro_security.csrf_request_manager'
+        tags:
+            # Priority -10: runs after oro_platform.event_listener.controller.controller_listener (0), which sets
+            # _csrf_protection.
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -10 }
+
+    oro_storefront_embedded.event_listener.embedded_fragment_feature_toggle:
+        class: Oro\Bundle\StorefrontEmbeddedBundle\EventListener\EmbeddedFragmentFeatureToggleListener
+        arguments:
+            - '@oro_featuretoggle.checker.feature_checker'
+        tags:
+            # Priority 1: runs before oro_featuretoggle.event_listener.request (0), which stops propagation with an
+            # empty response.
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 1 }
+
     oro_storefront_embedded.layout.extension.embedded_context_configurator:
         class: Oro\Bundle\StorefrontEmbeddedBundle\Layout\Extension\EmbeddedContextConfigurator
         arguments:
@@ -77,39 +76,11 @@ services:
         tags:
             - { name: layout.context_configurator }
 
-    oro_storefront_embedded.extension.embedded_request_current_localization:
-        class: Oro\Bundle\StorefrontEmbeddedBundle\Extension\EmbeddedRequestCurrentLocalizationExtension
-        arguments:
-            - '@oro_storefront_embedded.request.embedded_request_checker'
-            - '@oro_locale.manager.localization'
-            - '@oro_config.manager'
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            # Must be asked before oro_frontend_localization.extension.current_localization (-10): on a
-            # fragment request the X-Localization-ID header overrides the customer user's saved localization.
-            - { name: oro_locale.extension.current_localization, priority: 10 }
-            - { name: monolog.logger, channel: oro_storefront_embedded }
-
-    oro_storefront_embedded.provider.embedded_request_current_currency:
-        class: Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedRequestCurrentCurrencyProvider
-        arguments:
-            - '@oro_storefront_embedded.request.embedded_request_checker'
-            - '@oro_pricing.user_currency_manager'
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            # Must be asked before the storefront providers of oro_pricing.provider.current_currency: on a
-            # fragment request the X-Currency header overrides the stored user currency.
-            - { name: oro_pricing.current_currency_provider, priority: 10 }
-            - { name: monolog.logger, channel: oro_storefront_embedded }
-
     oro_storefront_embedded.guest_access.embedded_guest_access_allowed_urls_provider:
         class: Oro\Bundle\StorefrontEmbeddedBundle\GuestAccess\EmbeddedGuestAccessAllowedUrlsProvider
         arguments:
-            # The session bootstrap turns a token into a session, so it runs before any session exists;
-            # the theme assets list names public static files only. Fragment urls stay closed.
-            - ['^/embedded/session$', '^/embedded/theme-assets$']
+            # Only the theme assets list is open to guests, because it names only public static files.
+            - ['^/embedded/theme-assets$']
         tags:
             - { name: oro_frontend.guest_access_urls_provider }
 
@@ -121,9 +92,7 @@ services:
     oro_storefront_embedded.provider.embedded_theme_assets:
         class: Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedThemeAssetsProvider
         arguments:
-            - '@oro_website.website.provider'
-            - '@oro_theme.provider.theme_configuration'
-            - '@oro_config.website'
+            - '@oro_layout.current_theme_provider'
             - '@assets.packages'
             - '@oro_storefront_embedded.cache.theme_assets'
             - '%kernel.project_dir%/public'
@@ -134,26 +103,9 @@ services:
         tags:
             - { name: monolog.logger, channel: oro_storefront_embedded }
 
-    oro_storefront_embedded.provider.embedded_route_paths:
-        class: Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedRoutePathsProvider
-        parent: oro.static_config_provider.abstract
-        arguments:
-            - '%kernel.cache_dir%/oro/embedded_route_paths.php'
-            - '%kernel.debug%'
-            - '@router'
-            - '%oro_storefront_embedded.proxied_routes%'
-            - '%oro_storefront_embedded.file_routes%'
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: oro_storefront_embedded }
-
-    oro_storefront_embedded.provider.embedded_route_paths.warmer:
-        class: Oro\Component\Config\Cache\ConfigCacheWarmer
-        arguments:
-            - '@oro_storefront_embedded.provider.embedded_route_paths'
-        tags:
-            - { name: kernel.cache_warmer }
+    # Required by EmbeddedThemeAssetsController (service subscriber)
+    Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedThemeAssetsProvider:
+        alias: oro_storefront_embedded.provider.embedded_theme_assets
 
     oro_storefront_embedded.provider.embedded_runtime_boot:
         class: Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedRuntimeBootProvider
@@ -161,10 +113,8 @@ services:
             - '@oro_layout.data_provider.theme'
             - '@oro_layout.current_theme_provider'
             - '@assets.packages'
-            - '@oro_storefront_embedded.request.embedded_request_checker'
             - '@oro_asset.subresource_integrity_provider'
             - '@oro_featuretoggle.checker.feature_checker'
-            - '@oro_storefront_embedded.provider.embedded_route_paths'
 
     oro_storefront_embedded.fragment.embedded_fragment_target_resolver:
         class: Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentTargetResolver
@@ -172,19 +122,19 @@ services:
             - '@router'
             - '%oro_storefront_embedded.blocks%'
 
-    oro_storefront_embedded.fragment.embedded_fragment_access_checker:
-        class: Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentAccessChecker
-        arguments:
-            - '@oro_featuretoggle.checker.feature_checker'
-            - '@oro_ui.controller_class_provider'
-            - '@oro_security.class_authorization_checker'
-            - '@oro_security.csrf_request_manager'
+    # Required by EmbeddedFragmentController (service subscriber)
+    Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentTargetResolver:
+        alias: oro_storefront_embedded.fragment.embedded_fragment_target_resolver
 
     oro_storefront_embedded.fragment.embedded_fragment_renderer:
         class: Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentRenderer
         arguments:
             - '@http_kernel'
             - '@oro_storefront_embedded.request.embedded_request_checker'
+
+    # Required by EmbeddedFragmentController (service subscriber)
+    Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentRenderer:
+        alias: oro_storefront_embedded.fragment.embedded_fragment_renderer
 
     oro_storefront_embedded.fragment.embedded_fragment_response_decorator:
         class: Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentResponseDecorator
@@ -196,26 +146,26 @@ services:
         tags:
             - { name: monolog.logger, channel: oro_storefront_embedded }
 
-    oro_storefront_embedded.security.storefront_access_token_resolver:
-        class: Oro\Bundle\StorefrontEmbeddedBundle\Security\StorefrontAccessTokenResolver
-        arguments:
-            - '@Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface'
-            - '@oro_oauth2_server.league.authorization_validator'
-            - '@oro_oauth2_server.client_manager'
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: oro_storefront_embedded }
+    # Required by EmbeddedFragmentController (service subscriber)
+    Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentResponseDecorator:
+        alias: oro_storefront_embedded.fragment.embedded_fragment_response_decorator
 
-    oro_storefront_embedded.security.embedded_session_opener:
-        class: Oro\Bundle\StorefrontEmbeddedBundle\Security\EmbeddedSessionOpener
+    oro_storefront_embedded.form.type.embedded_preferences:
+        class: Oro\Bundle\StorefrontEmbeddedBundle\Form\Type\EmbeddedPreferencesType
         arguments:
-            - '@oro_website.manager'
-            - '@oro_customer.security.provider'
-            - '@security.user_checker'
-            - '@oro_customer.security.login_manager'
-            - '@oro_customer.authentication.customer_visitor_cookie_factory'
-        calls:
-            - [setLogger, ['@logger']]
+            - '@doctrine'
+            - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_pricing.user_currency_manager'
         tags:
-            - { name: monolog.logger, channel: oro_storefront_embedded }
+            - { name: form.type }
+
+    oro_storefront_embedded.form.handler.embedded_preferences:
+        class: Oro\Bundle\StorefrontEmbeddedBundle\Form\Handler\EmbeddedPreferencesHandler
+        arguments:
+            - '@doctrine'
+            - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_pricing.user_currency_manager'
+
+    # Required by EmbeddedPreferencesController (service subscriber)
+    Oro\Bundle\StorefrontEmbeddedBundle\Form\Handler\EmbeddedPreferencesHandler:
+        alias: oro_storefront_embedded.form.handler.embedded_preferences

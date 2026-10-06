@@ -8,8 +8,8 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * Ships Resources/config/oro/storefront_embedded.yml declaring the same embedded block (and route) as
- * StorefrontEmbeddedTestBundleOne, so StorefrontEmbeddedConfigurationLoaderTest can prove that the proxied and
- * file routes two bundles contribute for that block are merged and deduplicated.
+ * StorefrontEmbeddedTestBundleOne, so StorefrontEmbeddedConfigurationLoaderTest can prove that two bundles may
+ * map one block to the same route.
  */
 class StorefrontEmbeddedTestBundleTwo extends Bundle
 {

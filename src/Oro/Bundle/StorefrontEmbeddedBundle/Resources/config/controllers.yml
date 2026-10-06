@@ -7,16 +7,21 @@ services:
             - [setContainer, ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
-            - { name: container.service_subscriber, id: oro_storefront_embedded.fragment.embedded_fragment_target_resolver, key: Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentTargetResolver }
-            - { name: container.service_subscriber, id: oro_storefront_embedded.fragment.embedded_fragment_access_checker, key: Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentAccessChecker }
-            - { name: container.service_subscriber, id: oro_storefront_embedded.fragment.embedded_fragment_renderer, key: Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentRenderer }
-            - { name: container.service_subscriber, id: oro_storefront_embedded.fragment.embedded_fragment_response_decorator, key: Oro\Bundle\StorefrontEmbeddedBundle\Fragment\EmbeddedFragmentResponseDecorator }
+
+    Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend\EmbeddedPreferencesController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
 
     Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend\EmbeddedSessionController:
-        arguments:
-            - '@oro_storefront_embedded.security.storefront_access_token_resolver'
-            - '@oro_storefront_embedded.security.embedded_session_opener'
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
 
     Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend\EmbeddedThemeAssetsController:
-        arguments:
-            - '@oro_storefront_embedded.provider.embedded_theme_assets'
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

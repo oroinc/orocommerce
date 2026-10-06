@@ -1,5 +1,7 @@
 export const EMBEDDED_FRAGMENT_ENDPOINT = '/embedded/fragment';
 
+export const FILE_PATH_PREFIXES = ['/attachment/', '/pdf-document/', '/customer/order/pdf-document/'];
+
 export const HASH_NAVIGATION_HEADER = 'X-Oro-Hash-Navigation';
 
 export const BLOCK_ATTRIBUTE = 'data-oro-embedded-fragment-block';

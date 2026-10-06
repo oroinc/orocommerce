@@ -1,7 +1,6 @@
 import {
     combineRouteUrl,
     configureRuntime,
-    isProxiedRoute,
     navigateFragmentTo,
     toProxiedPath
 } from 'orostorefrontembedded/js/embedded/host';
@@ -52,26 +51,11 @@ describe('orostorefrontembedded/js/embedded/host', () => {
         });
     });
 
-    describe('isProxiedRoute', () => {
-        it('returns true only for the configured routes', () => {
-            configureRuntime({proxiedRoutes: ['oro_spec_price_by_customer']});
-
-            expect(isProxiedRoute('oro_spec_price_by_customer')).toBe(true);
-            expect(isProxiedRoute('oro_spec_route_nobody_reported')).toBe(false);
-        });
-    });
-
     describe('navigateFragmentTo', () => {
-        const ORO_FILE_PATHS = [
-            '/attachment/download/',
-            '/pdf-document/download/',
-            '/customer/order/pdf-document/'
-        ];
-
         let fragment;
 
         beforeEach(() => {
-            configureRuntime({proxyPrefix: '/__oro', filePaths: ORO_FILE_PATHS});
+            configureRuntime({proxyPrefix: '/__oro'});
             spyOn(window, 'open');
             fragment = {navigate: jasmine.createSpy('navigate')};
         });

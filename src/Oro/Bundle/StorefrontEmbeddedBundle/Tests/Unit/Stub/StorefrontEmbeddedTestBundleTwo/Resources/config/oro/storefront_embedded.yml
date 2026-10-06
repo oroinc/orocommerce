@@ -1,11 +1,3 @@
 oro_storefront_embedded:
     blocks:
         embedded_shared_block: oro_test_shared_route
-    proxied_routes:
-        embedded_shared_block:
-            - oro_test_proxy_route_a
-            - oro_test_proxy_route_b
-    file_routes:
-        any_block:
-            - oro_test_file_route_a
-            - oro_test_file_route_b

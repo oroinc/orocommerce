@@ -11,15 +11,13 @@ use Symfony\Component\Config\Definition\Processor;
 
 final class StorefrontEmbeddedConfigurationTest extends TestCase
 {
-    public function testProcessConfigurationDefaultsToEmptyArraysWhenNothingIsConfigured(): void
+    public function testProcessConfigurationDefaultsToNoBlocksWhenNothingIsConfigured(): void
     {
         $processed = (new Processor())->processConfiguration(new StorefrontEmbeddedConfiguration(), []);
 
         self::assertSame(
             [
                 StorefrontEmbeddedConfiguration::BLOCKS => [],
-                StorefrontEmbeddedConfiguration::PROXIED_ROUTES => [],
-                StorefrontEmbeddedConfiguration::FILE_ROUTES => [],
             ],
             $processed
         );
@@ -30,8 +28,6 @@ final class StorefrontEmbeddedConfigurationTest extends TestCase
         $config = [
             StorefrontEmbeddedConfiguration::ROOT_NODE => [
                 StorefrontEmbeddedConfiguration::BLOCKS => ['embedded_foo' => 'oro_test_foo_route'],
-                StorefrontEmbeddedConfiguration::PROXIED_ROUTES => ['embedded_foo' => ['oro_test_price_route']],
-                StorefrontEmbeddedConfiguration::FILE_ROUTES => ['any_block' => ['oro_test_file_route']],
             ],
         ];
 
@@ -40,8 +36,6 @@ final class StorefrontEmbeddedConfigurationTest extends TestCase
         self::assertSame(
             [
                 StorefrontEmbeddedConfiguration::BLOCKS => ['embedded_foo' => 'oro_test_foo_route'],
-                StorefrontEmbeddedConfiguration::PROXIED_ROUTES => ['embedded_foo' => ['oro_test_price_route']],
-                StorefrontEmbeddedConfiguration::FILE_ROUTES => ['any_block' => ['oro_test_file_route']],
             ],
             $processed
         );
@@ -70,6 +64,9 @@ final class StorefrontEmbeddedConfigurationTest extends TestCase
         ];
 
         $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage(
+            'The path "oro_storefront_embedded.blocks.embedded_foo" cannot contain an empty value, but got "".'
+        );
 
         (new Processor())->processConfiguration(new StorefrontEmbeddedConfiguration(), $config);
     }
