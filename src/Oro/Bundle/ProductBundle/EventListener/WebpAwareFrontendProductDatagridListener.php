@@ -8,7 +8,7 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
-use Oro\Bundle\UIBundle\Tools\UrlHelper;
+use Oro\Bundle\UIBundle\Tools\UrlHelperInterface;
 
 /**
  * Adds imageWebp column.
@@ -23,13 +23,13 @@ class WebpAwareFrontendProductDatagridListener
 
     private WebpConfiguration $webpConfiguration;
 
-    private UrlHelper $urlHelper;
+    private UrlHelperInterface $urlHelper;
 
     public function __construct(
         DataGridThemeHelper $themeHelper,
         ImagePlaceholderProviderInterface $imagePlaceholderProvider,
         WebpConfiguration $webpConfiguration,
-        UrlHelper $urlHelper
+        UrlHelperInterface $urlHelper
     ) {
         $this->themeHelper = $themeHelper;
         $this->imagePlaceholderProvider = $imagePlaceholderProvider;

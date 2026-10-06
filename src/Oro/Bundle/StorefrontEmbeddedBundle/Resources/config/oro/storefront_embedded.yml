@@ -1,7 +1,11 @@
 oro_storefront_embedded:
-    # embedded block id => storefront route that renders the page the block lives on; the block itself is added
-    # to that page by the layout update Resources/views/layouts/<theme>/<route>/embedded_blocks.yml
-    blocks:
+    fragments:
+        # The short form:
+        #   <embedded_fragment_name>: <storefront_route_name>
+        # By default, the fragment renders the layout block with the same id.
+        #
+        # The expanded form:
+        #   <embedded_fragment_name>: { route_name: <route>, layout_block_ids: [ <block_id>, ... ] }
         embedded_invoices: oro_commerce_invoice_frontend_index
         embedded_invoice_view: oro_commerce_invoice_frontend_view
         embedded_customer_address_create: oro_customer_frontend_customer_address_create

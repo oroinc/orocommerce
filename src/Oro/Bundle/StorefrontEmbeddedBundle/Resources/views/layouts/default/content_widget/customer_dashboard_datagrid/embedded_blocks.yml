@@ -1,5 +1,5 @@
 layout:
-    conditions: 'context.has("embedded") && context["embedded"]'
+    conditions: 'context["is_embedded_fragment"]'
     actions:
         - '@setOption':
             id: customer_dashboard_datagrid_collapse_body

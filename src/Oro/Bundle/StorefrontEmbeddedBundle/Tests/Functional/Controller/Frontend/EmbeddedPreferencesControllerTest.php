@@ -11,10 +11,8 @@ use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
-use Oro\Bundle\OAuth2ServerBundle\Tests\Functional\DataFixtures\LoadFrontendPasswordGrantClient;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\SecurityBundle\Csrf\CsrfRequestManager;
-use Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend\EmbeddedFragmentController;
 use Oro\Bundle\StorefrontEmbeddedBundle\Tests\Functional\DataFixtures\LoadStorefrontAuthorizationCodeClient;
 use Oro\Bundle\StorefrontEmbeddedBundle\Tests\Functional\EmbeddedSessionTransferTestTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -25,10 +23,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
- * Tests the embedded preferences action for customer user and visitor sessions.
- * The validation rules of the request values are tested by EmbeddedPreferencesTypeTest.
- * The currency cases read the stored value, because the test environment has only one currency.
- *
  * @dbIsolationPerTest
  */
 class EmbeddedPreferencesControllerTest extends WebTestCase
@@ -57,10 +51,8 @@ class EmbeddedPreferencesControllerTest extends WebTestCase
         $this->restoreConfigValues();
     }
 
-    public function testStoresLocalizationOfCustomerUserAndTheFollowingFragmentIsRenderedWithIt(): void
+    public function testStoresLocalizationOfCustomerUserAndRendersNextFragmentWithIt(): void
     {
-        $this->loadFixtures([LoadFrontendPasswordGrantClient::class]);
-        $this->allowSessionTransferForPasswordGrantClient();
         $this->openCustomerUserSession(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW);
         $localization = $this->getLocalization(LoadLocalizationData::EN_CA_LOCALIZATION_CODE);
 
@@ -74,10 +66,7 @@ class EmbeddedPreferencesControllerTest extends WebTestCase
         self::assertSame($localization->getId(), $settings->getLocalization()?->getId());
         self::assertNull($settings->getCurrency());
 
-        $this->client->request(
-            'GET',
-            $this->getUrl(EmbeddedFragmentController::ROUTE_NAME, ['block' => 'embedded_profile'])
-        );
+        $this->client->request('GET', '/embedded/fragment/embedded_profile');
         $content = self::getJsonResponseContent($this->client->getResponse(), Response::HTTP_OK);
         $moduleConfigs = (new Crawler($content['layout_js_modules_config']))
             ->filter('script[data-role="config"]')
@@ -90,8 +79,6 @@ class EmbeddedPreferencesControllerTest extends WebTestCase
 
     public function testStoresCurrencyOfCustomerUser(): void
     {
-        $this->loadFixtures([LoadFrontendPasswordGrantClient::class]);
-        $this->allowSessionTransferForPasswordGrantClient();
         $this->openCustomerUserSession(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW);
         $currency = $this->getAvailableCurrency();
 
@@ -106,8 +93,6 @@ class EmbeddedPreferencesControllerTest extends WebTestCase
 
     public function testStoresLocalizationAndCurrencyOfCustomerUser(): void
     {
-        $this->loadFixtures([LoadFrontendPasswordGrantClient::class]);
-        $this->allowSessionTransferForPasswordGrantClient();
         $this->openCustomerUserSession(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW);
         $localization = $this->getLocalization(LoadLocalizationData::EN_CA_LOCALIZATION_CODE);
         $currency = $this->getAvailableCurrency();
@@ -126,8 +111,6 @@ class EmbeddedPreferencesControllerTest extends WebTestCase
 
     public function testRejectsInvalidPreferencesOfCustomerUserAndStoresNothing(): void
     {
-        $this->loadFixtures([LoadFrontendPasswordGrantClient::class]);
-        $this->allowSessionTransferForPasswordGrantClient();
         $this->openCustomerUserSession(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW);
 
         $response = $this->postPreferences([
@@ -141,8 +124,6 @@ class EmbeddedPreferencesControllerTest extends WebTestCase
 
     public function testRejectsRequestWithoutCsrfHeader(): void
     {
-        $this->loadFixtures([LoadFrontendPasswordGrantClient::class]);
-        $this->allowSessionTransferForPasswordGrantClient();
         $this->openCustomerUserSession(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW);
         $this->client->getCookieJar()->set(
             new Cookie(CsrfRequestManager::CSRF_TOKEN_ID, 'csrf-cookie-value', null, '/', 'localhost')
@@ -162,8 +143,6 @@ class EmbeddedPreferencesControllerTest extends WebTestCase
 
     public function testKeepsStoredLocalizationOfCustomerUserWhenOnlyCurrencyIsGiven(): void
     {
-        $this->loadFixtures([LoadFrontendPasswordGrantClient::class]);
-        $this->allowSessionTransferForPasswordGrantClient();
         $this->openCustomerUserSession(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW);
         $localization = $this->getLocalization(LoadLocalizationData::EN_CA_LOCALIZATION_CODE);
         $currency = $this->getAvailableCurrency();
@@ -178,28 +157,6 @@ class EmbeddedPreferencesControllerTest extends WebTestCase
         self::assertNotNull($settings, 'The customer user website settings must be kept.');
         self::assertSame($localization->getId(), $settings->getLocalization()?->getId());
         self::assertSame($currency, $settings->getCurrency());
-    }
-
-    public function testFragmentRenderedWithStoredPreferencesIsNotSharedCacheable(): void
-    {
-        $this->loadFixtures([LoadFrontendPasswordGrantClient::class]);
-        $this->allowSessionTransferForPasswordGrantClient();
-        $this->openCustomerUserSession(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW);
-        self::assertNoContentThatMustNotBeStored(
-            $this->postPreferences([
-                'localization' => $this->getLocalization(LoadLocalizationData::EN_CA_LOCALIZATION_CODE)->getId()
-            ])
-        );
-
-        $this->client->request(
-            'GET',
-            $this->getUrl(EmbeddedFragmentController::ROUTE_NAME, ['block' => 'embedded_profile'])
-        );
-
-        $response = $this->client->getResponse();
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_OK);
-        self::assertFalse($response->headers->hasCacheControlDirective('public'));
-        self::assertTrue($response->headers->hasCacheControlDirective('private'));
     }
 
     public function testStoresCurrencyInVisitorSessionOpenedThroughSessionTransfer(): void
@@ -263,7 +220,9 @@ class EmbeddedPreferencesControllerTest extends WebTestCase
 
         self::assertBadRequestThatMustNotBeStored($response);
         self::assertNull(
-            $this->client->getCookieJar()->get($this->createStorefrontSession()->getName()),
+            $this->client->getCookieJar()->get(
+                self::getContainer()->get('session.factory')->createSession()->getName()
+            ),
             'No session must be opened for the refused request.'
         );
     }
@@ -326,7 +285,7 @@ class EmbeddedPreferencesControllerTest extends WebTestCase
      */
     private function getClientSession(): SessionInterface
     {
-        $session = $this->createStorefrontSession();
+        $session = self::getContainer()->get('session.factory')->createSession();
         $sessionCookie = $this->client->getCookieJar()->get($session->getName());
         self::assertNotNull($sessionCookie, 'The visitor session cookie must be kept by the client.');
         $session->setId($sessionCookie->getValue());

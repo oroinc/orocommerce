@@ -8,25 +8,19 @@ use Oro\Bundle\OAuth2ServerBundle\Entity\Client;
 use Oro\Bundle\OAuth2ServerBundle\Tests\Functional\DataFixtures\LoadFrontendPasswordGrantClient;
 use Oro\Bundle\StorefrontEmbeddedBundle\Tests\Functional\DataFixtures\LoadStorefrontAuthorizationCodeClient;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * The OAuth2 steps that an embedded host does to open a storefront session.
  */
 trait EmbeddedSessionTransferTestTrait
 {
-    private function getVisitorAuthorizeUrl(): string
+    private function getVisitorAccessToken(): string
     {
-        return $this->getUrl('oro_oauth2_server_frontend_authenticate_visitor', [
+        $this->client->request('GET', $this->getUrl('oro_oauth2_server_frontend_authenticate_visitor', [
             'response_type' => 'code',
             'client_id' => LoadStorefrontAuthorizationCodeClient::OAUTH_CLIENT_ID,
             'redirect_uri' => LoadStorefrontAuthorizationCodeClient::OAUTH_CLIENT_REDIRECT_URI
-        ]);
-    }
-
-    private function getVisitorAccessToken(): string
-    {
-        $this->client->request('GET', $this->getVisitorAuthorizeUrl());
+        ]));
 
         $response = $this->client->getResponse();
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FOUND);
@@ -42,35 +36,24 @@ trait EmbeddedSessionTransferTestTrait
     }
 
     /**
-     * Expects that the LoadFrontendPasswordGrantClient fixture is loaded.
-     */
-    private function allowSessionTransferForPasswordGrantClient(): void
-    {
-        $this->getReference(LoadFrontendPasswordGrantClient::OAUTH_CLIENT_REFERENCE)
-            ->setSessionTransferAllowed(true);
-        self::getContainer()->get('doctrine')->getManagerForClass(Client::class)->flush();
-    }
-
-    private function getCustomerUserAccessToken(string $email, string $password): string
-    {
-        return $this->getAccessToken([
-            'grant_type' => 'password',
-            'client_id' => LoadFrontendPasswordGrantClient::OAUTH_CLIENT_ID,
-            'client_secret' => LoadFrontendPasswordGrantClient::OAUTH_CLIENT_SECRET,
-            'username' => $email,
-            'password' => $password
-        ]);
-    }
-
-    /**
      * Opens the session of the customer user in a client without cookies and returns the consume response.
-     * Expects that the session transfer is allowed for the password grant client.
      */
     private function openCustomerUserSession(string $email, string $password): Response
     {
+        $this->loadFixtures([LoadFrontendPasswordGrantClient::class]);
+        $this->getReference(LoadFrontendPasswordGrantClient::OAUTH_CLIENT_REFERENCE)
+            ->setSessionTransferAllowed(true);
+        self::getContainer()->get('doctrine')->getManagerForClass(Client::class)->flush();
+
         $sessionTransferToken = $this->getSessionTransferToken(
             LoadFrontendPasswordGrantClient::OAUTH_CLIENT_ID,
-            $this->getCustomerUserAccessToken($email, $password)
+            $this->getAccessToken([
+                'grant_type' => 'password',
+                'client_id' => LoadFrontendPasswordGrantClient::OAUTH_CLIENT_ID,
+                'client_secret' => LoadFrontendPasswordGrantClient::OAUTH_CLIENT_SECRET,
+                'username' => $email,
+                'password' => $password
+            ])
         );
         $this->client->getCookieJar()->clear();
 
@@ -109,10 +92,5 @@ trait EmbeddedSessionTransferTestTrait
         self::assertResponseStatusCodeEquals($response, Response::HTTP_OK);
 
         return self::jsonToArray($response->getContent())['access_token'];
-    }
-
-    private function createStorefrontSession(): SessionInterface
-    {
-        return self::getContainer()->get('session.factory')->createSession();
     }
 }

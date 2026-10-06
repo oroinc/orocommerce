@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Provider;
 
+use Oro\Bundle\DistributionBundle\Provider\PublicDirectoryProvider;
 use Oro\Component\Layout\Extension\Theme\Model\CurrentThemeProvider;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -13,21 +14,20 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Contracts\Cache\CacheInterface;
 
 /**
- * Lists the built files of the current website theme that an embedded host can copy into its own public directory.
+ * Provides a list of built theme assets of the current website theme.
  */
 class EmbeddedThemeAssetsProvider implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
     /**
-     * @param string[] $excludedFilePatterns file name patterns of the build artifacts that the host does not need
+     * @param string[] $excludedFilePatterns File name patterns of the build assets to exclude.
      */
     public function __construct(
         private readonly CurrentThemeProvider $currentThemeProvider,
         private readonly Packages $assetPackages,
         private readonly CacheInterface $cache,
-        private readonly string $publicDirectory,
-        private readonly string $buildPath = '/build',
+        private readonly PublicDirectoryProvider $publicDirectoryProvider,
         private readonly array $excludedFilePatterns = ['*.map', '*.scss', '*.scss.js'],
     ) {
         $this->logger = new NullLogger();
@@ -36,7 +36,7 @@ class EmbeddedThemeAssetsProvider implements LoggerAwareInterface
     /**
      * @return string[]
      */
-    public function getFiles(): array
+    public function getThemeAssets(): array
     {
         $themeName = $this->currentThemeProvider->getCurrentThemeId();
         if (!$themeName) {
@@ -51,7 +51,7 @@ class EmbeddedThemeAssetsProvider implements LoggerAwareInterface
 
     private function resolveCacheKey(string $themeName): string
     {
-        $assetVersion = $this->assetPackages->getVersion($this->buildPath . '/');
+        $assetVersion = $this->assetPackages->getVersion('/build/');
 
         return sprintf(
             'embedded_theme_assets_%s',
@@ -64,9 +64,11 @@ class EmbeddedThemeAssetsProvider implements LoggerAwareInterface
      */
     private function collectFiles(string $themeName): array
     {
-        $themeFiles = $this->collectFilesUnder($this->buildPath . '/' . $themeName);
+        // Resolved once per collection, because the provider reads composer.json on every call.
+        $publicDirectory = $this->publicDirectoryProvider->getPublicDirectory();
+        $themeFiles = $this->collectFilesUnder($publicDirectory, '/build/' . $themeName);
 
-        $files = array_merge($themeFiles, $this->collectSharedFilesReferencedBy($themeFiles));
+        $files = array_merge($themeFiles, $this->collectSharedFilesReferencedBy($publicDirectory, $themeFiles));
         sort($files);
 
         return array_values(array_unique($files));
@@ -75,9 +77,9 @@ class EmbeddedThemeAssetsProvider implements LoggerAwareInterface
     /**
      * @return string[]
      */
-    private function collectFilesUnder(string $path): array
+    private function collectFilesUnder(string $publicDirectory, string $path): array
     {
-        $directory = $this->publicDirectory . $path;
+        $directory = $publicDirectory . $path;
         if (!is_dir($directory)) {
             $this->logger->warning('Theme build directory is missing, its files were not listed.', [
                 'theme_directory' => $directory,
@@ -104,7 +106,7 @@ class EmbeddedThemeAssetsProvider implements LoggerAwareInterface
      *
      * @return string[]
      */
-    private function collectSharedFilesReferencedBy(array $themeFiles): array
+    private function collectSharedFilesReferencedBy(string $publicDirectory, array $themeFiles): array
     {
         $sharedFiles = [];
         foreach ($themeFiles as $themeFile) {
@@ -112,7 +114,7 @@ class EmbeddedThemeAssetsProvider implements LoggerAwareInterface
                 continue;
             }
 
-            $stylesheet = @file_get_contents($this->publicDirectory . $themeFile);
+            $stylesheet = @file_get_contents($publicDirectory . $themeFile);
             if (false === $stylesheet) {
                 $this->logger->error('Theme stylesheet could not be read.', ['stylesheet' => $themeFile]);
                 continue;
@@ -120,7 +122,7 @@ class EmbeddedThemeAssetsProvider implements LoggerAwareInterface
 
             preg_match_all('~/build/_static/[^\s"\'()?#]+~', $stylesheet, $matches);
             foreach ($matches[0] as $reference) {
-                if ($this->isExistingBuildFile($reference)) {
+                if ($this->isExistingBuildFile($publicDirectory, $reference)) {
                     $sharedFiles[] = $reference;
                 }
             }
@@ -129,8 +131,8 @@ class EmbeddedThemeAssetsProvider implements LoggerAwareInterface
         return $sharedFiles;
     }
 
-    private function isExistingBuildFile(string $path): bool
+    private function isExistingBuildFile(string $publicDirectory, string $path): bool
     {
-        return !str_contains($path, '..') && is_file($this->publicDirectory . $path);
+        return !str_contains($path, '..') && is_file($publicDirectory . $path);
     }
 }

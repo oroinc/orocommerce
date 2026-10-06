@@ -6,26 +6,26 @@ namespace Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\Tools;
 
 use Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker;
 use Oro\Bundle\StorefrontEmbeddedBundle\Tools\EmbeddedRequestUrlHelper;
-use Oro\Bundle\UIBundle\Tools\UrlHelper;
+use Oro\Bundle\UIBundle\Tools\UrlHelperInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class EmbeddedRequestUrlHelperTest extends TestCase
 {
-    private UrlHelper&MockObject $innerUrlHelper;
+    private UrlHelperInterface&MockObject $innerUrlHelper;
     private EmbeddedRequestChecker&MockObject $embeddedRequestChecker;
     private EmbeddedRequestUrlHelper $urlHelper;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->innerUrlHelper = $this->createMock(UrlHelper::class);
+        $this->innerUrlHelper = $this->createMock(UrlHelperInterface::class);
         $this->embeddedRequestChecker = $this->createMock(EmbeddedRequestChecker::class);
 
         $this->urlHelper = new EmbeddedRequestUrlHelper($this->innerUrlHelper, $this->embeddedRequestChecker);
     }
 
-    public function testKeepsTheSubFolderOfTheDeploymentOnAnEmbeddedFragmentRequest(): void
+    public function testGetAbsolutePathKeepsDeploymentSubFolderForEmbeddedFragmentRequest(): void
     {
         $this->embeddedRequestChecker
             ->expects(self::once())
@@ -49,7 +49,7 @@ final class EmbeddedRequestUrlHelperTest extends TestCase
         );
     }
 
-    public function testKeepsThePathOutsideAnEmbeddedFragmentRequest(): void
+    public function testGetAbsolutePathKeepsPathOutsideEmbeddedFragmentRequest(): void
     {
         $this->embeddedRequestChecker
             ->expects(self::once())
@@ -71,7 +71,7 @@ final class EmbeddedRequestUrlHelperTest extends TestCase
         );
     }
 
-    public function testGetAbsoluteUrlDelegatesToTheInnerHelper(): void
+    public function testGetAbsoluteUrlDelegatesToInnerHelper(): void
     {
         $this->embeddedRequestChecker
             ->expects(self::never())
@@ -89,7 +89,7 @@ final class EmbeddedRequestUrlHelperTest extends TestCase
         );
     }
 
-    public function testGetRelativePathDelegatesToTheInnerHelper(): void
+    public function testGetRelativePathDelegatesToInnerHelper(): void
     {
         $this->embeddedRequestChecker
             ->expects(self::never())
@@ -107,7 +107,7 @@ final class EmbeddedRequestUrlHelperTest extends TestCase
         );
     }
 
-    public function testIsLocalUrlDelegatesToTheInnerHelper(): void
+    public function testIsLocalUrlDelegatesToInnerHelper(): void
     {
         $this->embeddedRequestChecker
             ->expects(self::never())

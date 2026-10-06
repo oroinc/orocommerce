@@ -29,7 +29,7 @@ final class EmbeddedRequestImagineUrlProviderTest extends TestCase
         );
     }
 
-    public function testAsksForAnAbsoluteUrlOnAnEmbeddedFragmentRequest(): void
+    public function testGetFilteredImageUrlReturnsAbsoluteUrlForEmbeddedFragmentRequest(): void
     {
         $this->embeddedRequestChecker
             ->expects(self::once())
@@ -53,7 +53,7 @@ final class EmbeddedRequestImagineUrlProviderTest extends TestCase
         );
     }
 
-    public function testLeavesThePathAloneOutsideAnEmbeddedFragmentRequest(): void
+    public function testGetFilteredImageUrlReturnsPathOutsideEmbeddedFragmentRequest(): void
     {
         $this->embeddedRequestChecker
             ->expects(self::once())
@@ -77,7 +77,7 @@ final class EmbeddedRequestImagineUrlProviderTest extends TestCase
         );
     }
 
-    public function testKeepsAnAbsoluteUrlWithoutCheckingTheRequest(): void
+    public function testGetFilteredImageUrlKeepsAbsoluteUrlWithoutCheckingRequest(): void
     {
         $this->embeddedRequestChecker
             ->expects(self::never())

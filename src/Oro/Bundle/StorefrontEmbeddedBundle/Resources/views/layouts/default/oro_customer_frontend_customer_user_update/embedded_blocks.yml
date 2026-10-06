@@ -1,5 +1,5 @@
 layout:
-    conditions: 'context["embedded"]'
+    conditions: 'context["is_embedded_fragment"]'
     actions:
         - '@add':
             id: embedded_customer_user_update

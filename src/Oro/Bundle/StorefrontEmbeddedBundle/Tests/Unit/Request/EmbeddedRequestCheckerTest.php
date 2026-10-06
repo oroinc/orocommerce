@@ -22,19 +22,19 @@ final class EmbeddedRequestCheckerTest extends TestCase
         $this->checker = new EmbeddedRequestChecker($this->requestStack);
     }
 
-    public function testIsNotEmbeddedWhenThereIsNoMainRequest(): void
+    public function testIsNotEmbeddedWithoutMainRequest(): void
     {
         self::assertFalse($this->checker->isEmbeddedRequest());
     }
 
-    public function testIsNotEmbeddedWhenTheHeaderIsMissing(): void
+    public function testIsNotEmbeddedWhenHeaderIsMissing(): void
     {
         $this->requestStack->push(Request::create('/embedded/fragment/embedded_profile'));
 
         self::assertFalse($this->checker->isEmbeddedRequest());
     }
 
-    public function testIsEmbeddedWhenTheMainRequestHasTheHeader(): void
+    public function testIsEmbeddedWhenMainRequestHasHeader(): void
     {
         $request = Request::create('/customer/shoppinglist');
         $request->headers->set(EmbeddedRequestChecker::EMBEDDED_HEADER, '1');
@@ -43,7 +43,7 @@ final class EmbeddedRequestCheckerTest extends TestCase
         self::assertTrue($this->checker->isEmbeddedRequest());
     }
 
-    public function testIsEmbeddedWhileRenderingASubRequestOfAnEmbeddedRequest(): void
+    public function testIsEmbeddedWhileRenderingSubRequestOfEmbeddedRequest(): void
     {
         $mainRequest = Request::create('/embedded/fragment/embedded_profile');
         $mainRequest->headers->set(EmbeddedRequestChecker::EMBEDDED_HEADER, '1');
@@ -53,22 +53,30 @@ final class EmbeddedRequestCheckerTest extends TestCase
         self::assertTrue($this->checker->isEmbeddedRequest());
     }
 
-    public function testIsNotEmbeddedWhenOnlyTheSubRequestCarriesTheHeader(): void
+    public function testIsEmbeddedWhenGivenRequestHasHeaderAndMainRequestDoesNot(): void
     {
         $this->requestStack->push(Request::create('/customer/profile'));
-        $subRequest = Request::create('/embedded/fragment/embedded_profile');
-        $subRequest->headers->set(EmbeddedRequestChecker::EMBEDDED_HEADER, '1');
-        $this->requestStack->push($subRequest);
+        $request = Request::create('/embedded/fragment/embedded_profile');
+        $request->headers->set(EmbeddedRequestChecker::EMBEDDED_HEADER, '1');
 
-        self::assertFalse($this->checker->isEmbeddedRequest());
+        self::assertTrue($this->checker->isEmbeddedRequest($request));
     }
 
-    public function testIsNotEmbeddedReloadWhenThereIsNoMainRequest(): void
+    public function testIsNotEmbeddedWhenGivenRequestHasNoHeaderAndMainRequestHasIt(): void
+    {
+        $mainRequest = Request::create('/embedded/fragment/embedded_profile');
+        $mainRequest->headers->set(EmbeddedRequestChecker::EMBEDDED_HEADER, '1');
+        $this->requestStack->push($mainRequest);
+
+        self::assertFalse($this->checker->isEmbeddedRequest(Request::create('/customer/profile')));
+    }
+
+    public function testIsNotEmbeddedReloadWithoutMainRequest(): void
     {
         self::assertFalse($this->checker->isEmbeddedRequestReload());
     }
 
-    public function testIsNotEmbeddedReloadWhenTheHashNavigationHeaderIsMissing(): void
+    public function testIsNotEmbeddedReloadWhenHashNavigationHeaderIsMissing(): void
     {
         $this->requestStack->push(Request::create('/embedded/fragment/embedded_profile'));
 
@@ -76,9 +84,9 @@ final class EmbeddedRequestCheckerTest extends TestCase
     }
 
     /**
-     * @dataProvider isEmbeddedReloadDependsOnTheHashNavigationHeaderValueProvider
+     * @dataProvider isEmbeddedReloadDependsOnHashNavigationHeaderValueProvider
      */
-    public function testIsEmbeddedReloadDependsOnTheHashNavigationHeaderValue(
+    public function testIsEmbeddedReloadDependsOnHashNavigationHeaderValue(
         string $headerValue,
         bool $expectedReload
     ): void {
@@ -92,19 +100,102 @@ final class EmbeddedRequestCheckerTest extends TestCase
     /**
      * @return iterable<string, array{string, bool}>
      */
-    public static function isEmbeddedReloadDependsOnTheHashNavigationHeaderValueProvider(): iterable
+    public static function isEmbeddedReloadDependsOnHashNavigationHeaderValueProvider(): iterable
     {
         yield 'truthy value' => ['1', true];
         yield 'zero value' => ['0', false];
     }
 
-    public function testIsNotEmbeddedReloadWhenOnlyTheSubRequestCarriesTheHashNavigationHeader(): void
+    public function testIsEmbeddedReloadWhileRenderingSubRequestOfReloadedRequest(): void
     {
-        $this->requestStack->push(Request::create('/embedded/fragment/embedded_profile'));
-        $subRequest = Request::create('/customer/profile');
-        $subRequest->headers->set(ResponseHashnavListener::HASH_NAVIGATION_HEADER, '1');
-        $this->requestStack->push($subRequest);
+        $mainRequest = Request::create('/embedded/fragment/embedded_profile');
+        $mainRequest->headers->set(ResponseHashnavListener::HASH_NAVIGATION_HEADER, '1');
+        $this->requestStack->push($mainRequest);
+        $this->requestStack->push(Request::create('/customer/profile'));
 
-        self::assertFalse($this->checker->isEmbeddedRequestReload());
+        self::assertTrue($this->checker->isEmbeddedRequestReload());
+    }
+
+    public function testIsEmbeddedReloadWhenGivenRequestHasHashNavigationHeaderAndMainRequestDoesNot(): void
+    {
+        $this->requestStack->push(Request::create('/customer/profile'));
+        $request = Request::create('/embedded/fragment/embedded_profile');
+        $request->headers->set(ResponseHashnavListener::HASH_NAVIGATION_HEADER, '1');
+
+        self::assertTrue($this->checker->isEmbeddedRequestReload($request));
+    }
+
+    public function testIsNotEmbeddedReloadWhenGivenRequestHasNoHashNavigationHeaderAndMainRequestHasIt(): void
+    {
+        $mainRequest = Request::create('/embedded/fragment/embedded_profile');
+        $mainRequest->headers->set(ResponseHashnavListener::HASH_NAVIGATION_HEADER, '1');
+        $this->requestStack->push($mainRequest);
+
+        self::assertFalse($this->checker->isEmbeddedRequestReload(Request::create('/customer/profile')));
+    }
+
+    public function testIsNotEmbeddedFragmentWhenMainRequestHasNoFragmentName(): void
+    {
+        $this->requestStack->push(Request::create('/customer/profile'));
+
+        self::assertFalse($this->checker->isEmbeddedFragmentRequest());
+    }
+
+    public function testIsEmbeddedFragmentWhenMainRequestHasFragmentName(): void
+    {
+        $request = Request::create('/customer/profile');
+        $request->attributes->set(EmbeddedRequestChecker::EMBEDDED_FRAGMENT_NAME, 'embedded_profile');
+        $this->requestStack->push($request);
+
+        self::assertTrue($this->checker->isEmbeddedFragmentRequest());
+    }
+
+    public function testReturnsNoFragmentNameWithoutMainRequest(): void
+    {
+        self::assertNull($this->checker->getEmbeddedFragmentName());
+    }
+
+    public function testReturnsNoFragmentNameWhenMainRequestHasNoFragmentName(): void
+    {
+        $this->requestStack->push(Request::create('/customer/profile'));
+
+        self::assertNull($this->checker->getEmbeddedFragmentName());
+    }
+
+    public function testReturnsFragmentNameOfMainRequest(): void
+    {
+        $request = Request::create('/customer/profile');
+        $request->attributes->set(EmbeddedRequestChecker::EMBEDDED_FRAGMENT_NAME, 'embedded_profile');
+        $this->requestStack->push($request);
+
+        self::assertSame('embedded_profile', $this->checker->getEmbeddedFragmentName());
+    }
+
+    public function testReturnsFragmentNameOfGivenRequestInsteadOfMainRequest(): void
+    {
+        $mainRequest = Request::create('/customer/profile');
+        $mainRequest->attributes->set(EmbeddedRequestChecker::EMBEDDED_FRAGMENT_NAME, 'embedded_profile');
+        $this->requestStack->push($mainRequest);
+        $request = Request::create('/customer/shoppinglist');
+        $request->attributes->set(EmbeddedRequestChecker::EMBEDDED_FRAGMENT_NAME, 'embedded_shopping_lists');
+
+        self::assertSame('embedded_shopping_lists', $this->checker->getEmbeddedFragmentName($request));
+    }
+
+    public function testReturnsNoFragmentNameWhenGivenRequestHasNoFragmentNameAndMainRequestHasIt(): void
+    {
+        $mainRequest = Request::create('/customer/profile');
+        $mainRequest->attributes->set(EmbeddedRequestChecker::EMBEDDED_FRAGMENT_NAME, 'embedded_profile');
+        $this->requestStack->push($mainRequest);
+
+        self::assertNull($this->checker->getEmbeddedFragmentName(Request::create('/customer/profile')));
+    }
+
+    public function testReturnsNoFragmentNameWhenFragmentNameIsNotString(): void
+    {
+        $request = Request::create('/customer/profile');
+        $request->attributes->set(EmbeddedRequestChecker::EMBEDDED_FRAGMENT_NAME, ['embedded_profile']);
+
+        self::assertNull($this->checker->getEmbeddedFragmentName($request));
     }
 }

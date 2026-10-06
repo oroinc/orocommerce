@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Controller\Frontend;
 
 use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
-use Oro\Bundle\StorefrontEmbeddedBundle\Form\Handler\EmbeddedPreferencesHandler;
-use Oro\Bundle\StorefrontEmbeddedBundle\Form\Type\EmbeddedPreferencesType;
+use Oro\Bundle\StorefrontEmbeddedBundle\Form\Handler\EmbeddedFragmentPreferencesHandler;
+use Oro\Bundle\StorefrontEmbeddedBundle\Form\Type\EmbeddedFragmentPreferencesType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Stores the localization and the currency of the current embedded session.
+ *
  * No #[Acl]: the action changes only the preferences of the caller.
  */
 final class EmbeddedPreferencesController extends AbstractController
@@ -29,12 +30,12 @@ final class EmbeddedPreferencesController extends AbstractController
         $form = $this->container->get('form.factory')->createNamed(
             // The empty name makes the handler submit the top-level fields of the request.
             '',
-            EmbeddedPreferencesType::class,
+            EmbeddedFragmentPreferencesType::class,
             null,
-            // CSRF protection is still enabled: on the action itself via the #[CsrfProtection] attribute.
+            // CSRF is checked by the #[CsrfProtection] attribute of the action.
             ['csrf_protection' => false]
         );
-        if (!$this->container->get(EmbeddedPreferencesHandler::class)->process(null, $form, $request)) {
+        if (!$this->container->get(EmbeddedFragmentPreferencesHandler::class)->process(null, $form, $request)) {
             return $this->createResponse(Response::HTTP_BAD_REQUEST);
         }
 
@@ -46,7 +47,7 @@ final class EmbeddedPreferencesController extends AbstractController
     {
         return [
             ...parent::getSubscribedServices(),
-            EmbeddedPreferencesHandler::class,
+            EmbeddedFragmentPreferencesHandler::class,
         ];
     }
 

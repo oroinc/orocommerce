@@ -9,7 +9,8 @@ use Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Serves filtered URLs of images shipped with the theme as absolute URLs.
+ * Decorates imagine URL provider to make it return absolute URLs for static filtered images rendered within
+ * an embedded fragment.
  */
 class EmbeddedRequestImagineUrlProvider implements ImagineUrlProviderInterface
 {

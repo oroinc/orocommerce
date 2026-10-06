@@ -32,7 +32,7 @@ final class StorefrontEmbeddedConfigurationLoaderTest extends TestCase
         CumulativeResourceManager::getInstance()->clear();
     }
 
-    public function testLoadMergesTheBlockIdTwoBundlesMapToTheSameRoute(): void
+    public function testLoadResetsLayoutBlockIdsToDefaultWhenLastBundleUsesShortForm(): void
     {
         $bundleOne = new StorefrontEmbeddedTestBundleOne();
         $bundleTwo = new StorefrontEmbeddedTestBundleTwo();
@@ -49,12 +49,17 @@ final class StorefrontEmbeddedConfigurationLoaderTest extends TestCase
         $config = $this->loader->load($container);
 
         self::assertSame(
-            ['embedded_shared_block' => 'oro_test_shared_route'],
-            $config[StorefrontEmbeddedConfiguration::BLOCKS]
+            [
+                'embedded_shared_block' => [
+                    'route_name' => 'oro_test_shared_route',
+                    'layout_block_ids' => ['embedded_shared_block'],
+                ],
+            ],
+            $config[StorefrontEmbeddedConfiguration::FRAGMENTS]
         );
     }
 
-    public function testLoadThrowsLogicExceptionWhenTwoBundlesMapTheSameBlockIdToDifferentRoutes(): void
+    public function testLoadTakesWholeFragmentDefinitionFromLastBundle(): void
     {
         $bundleOne = new StorefrontEmbeddedTestBundleOne();
         $bundleThree = new StorefrontEmbeddedTestBundleThree();
@@ -68,11 +73,16 @@ final class StorefrontEmbeddedConfigurationLoaderTest extends TestCase
         $container = new ContainerBuilder();
         $container->setParameter('kernel.environment', 'prod');
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessageMatches(
-            '/(?=.*embedded_shared_block)(?=.*oro_test_shared_route)(?=.*oro_test_conflict_route)/s'
-        );
+        $config = $this->loader->load($container);
 
-        $this->loader->load($container);
+        self::assertSame(
+            [
+                'embedded_shared_block' => [
+                    'route_name' => 'oro_test_override_route',
+                    'layout_block_ids' => ['embedded_override_block', 'embedded_override_sidebar'],
+                ],
+            ],
+            $config[StorefrontEmbeddedConfiguration::FRAGMENTS]
+        );
     }
 }

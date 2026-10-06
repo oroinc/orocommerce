@@ -32,7 +32,7 @@ final class EmbeddedRequestFileUrlProviderTest extends TestCase
         );
     }
 
-    public function testAsksForAnAbsoluteFilteredImageUrlOnAnEmbeddedFragmentRequest(): void
+    public function testGetFilteredImageUrlReturnsAbsoluteUrlForEmbeddedFragmentRequest(): void
     {
         $this->embeddedRequestChecker
             ->expects(self::once())
@@ -51,7 +51,7 @@ final class EmbeddedRequestFileUrlProviderTest extends TestCase
         );
     }
 
-    public function testAsksForAnAbsoluteResizedImageUrlOnAnEmbeddedFragmentRequest(): void
+    public function testGetResizedImageUrlReturnsAbsoluteUrlForEmbeddedFragmentRequest(): void
     {
         $this->embeddedRequestChecker
             ->expects(self::once())
@@ -70,7 +70,7 @@ final class EmbeddedRequestFileUrlProviderTest extends TestCase
         );
     }
 
-    public function testLeavesFilteredImageUrlsAsPathsOutsideAnEmbeddedFragmentRequest(): void
+    public function testGetFilteredImageUrlReturnsPathOutsideEmbeddedFragmentRequest(): void
     {
         $this->embeddedRequestChecker
             ->expects(self::once())
@@ -89,7 +89,7 @@ final class EmbeddedRequestFileUrlProviderTest extends TestCase
         );
     }
 
-    public function testKeepsANetworkPathWithoutCheckingTheRequest(): void
+    public function testGetFilteredImageUrlKeepsNetworkPathWithoutCheckingRequest(): void
     {
         $this->embeddedRequestChecker
             ->expects(self::never())
@@ -107,7 +107,7 @@ final class EmbeddedRequestFileUrlProviderTest extends TestCase
         );
     }
 
-    public function testLeavesFileDownloadsToTheDecoratedProvider(): void
+    public function testGetFileUrlDelegatesToInnerProvider(): void
     {
         $this->embeddedRequestChecker
             ->expects(self::never())

@@ -1,10 +1,3 @@
-oro_storefront_embedded:
-    resource: "@OroStorefrontEmbeddedBundle/Controller/Frontend/EmbeddedFragmentController.php"
-    type: attribute
-    prefix: /embedded/fragment
-    options:
-        frontend: true
-
 oro_storefront_embedded_session:
     resource: "@OroStorefrontEmbeddedBundle/Controller/Frontend/EmbeddedSessionController.php"
     type: attribute

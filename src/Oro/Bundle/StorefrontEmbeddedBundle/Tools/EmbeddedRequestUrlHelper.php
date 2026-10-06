@@ -5,18 +5,15 @@ declare(strict_types=1);
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Tools;
 
 use Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker;
-use Oro\Bundle\UIBundle\Tools\UrlHelper;
+use Oro\Bundle\UIBundle\Tools\UrlHelperInterface;
 
 /**
- * Turns the root-relative paths the storefront reads from its search index (product images above all) into
- * absolute Oro urls while rendering for an embedded host, which cannot serve Oro's paths from its own origin.
- *
- * Extends UrlHelper only to satisfy strict type-hints; every method is delegated.
+ * Decorates URL helper to make it return absolute URLs for absolute paths rendered within an embedded fragment.
  */
-class EmbeddedRequestUrlHelper extends UrlHelper
+class EmbeddedRequestUrlHelper implements UrlHelperInterface
 {
     public function __construct(
-        private readonly UrlHelper $innerUrlHelper,
+        private readonly UrlHelperInterface $innerUrlHelper,
         private readonly EmbeddedRequestChecker $embeddedRequestChecker,
     ) {
     }

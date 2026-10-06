@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\Layout\Extension;
 
-use Oro\Bundle\LayoutBundle\Layout\Extension\ActionContextConfigurator;
 use Oro\Bundle\StorefrontEmbeddedBundle\Layout\Extension\EmbeddedContextConfigurator;
+use Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker;
 use Oro\Component\Layout\LayoutContext;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,93 +22,57 @@ final class EmbeddedContextConfiguratorTest extends TestCase
         $this->requestStack = new RequestStack();
         $this->configurator = new EmbeddedContextConfigurator(
             $this->requestStack,
-            [
-                'embedded_shopping_list' => 'oro_shopping_list_frontend_update',
-                'embedded_profile' => 'oro_customer_frontend_customer_user_profile'
-            ]
+            new EmbeddedRequestChecker($this->requestStack)
         );
     }
 
-    public function testEmbeddedOptionIsNotDefinedWithoutCurrentRequest(): void
+    public function testIsEmbeddedFragmentOptionIsNotDefinedWithoutCurrentRequest(): void
     {
         $context = new LayoutContext();
 
         $this->configurator->configureContext($context);
         $context->resolve();
 
-        self::assertFalse($context->has('embedded'));
+        self::assertFalse($context->has('is_embedded_fragment'));
     }
 
-    public function testEmbeddedOptionIsNotDefinedOnNotEmbeddableRouteEvenWithEmbeddedFragmentAttribute(): void
+    public function testIsEmbeddedFragmentOptionIsDefinedAndFalseWithoutFragmentAttribute(): void
     {
         $request = Request::create('');
-        $request->attributes->set('_route', 'oro_product_frontend_product_view');
-        $request->attributes->set(EmbeddedContextConfigurator::REQUEST_ATTRIBUTE, true);
         $this->requestStack->push($request);
         $context = new LayoutContext();
 
         $this->configurator->configureContext($context);
         $context->resolve();
 
-        self::assertFalse($context->has('embedded'));
+        self::assertTrue($context->has('is_embedded_fragment'));
+        self::assertFalse($context->get('is_embedded_fragment'));
     }
 
-    public function testEmbeddedOptionDefaultsToFalseWithoutEmbeddedFragmentAttribute(): void
+    public function testIsEmbeddedFragmentOptionDefaultsToTrueWithEmbeddedFragmentAttribute(): void
     {
         $request = Request::create('');
-        $request->attributes->set('_route', 'oro_customer_frontend_customer_user_profile');
+        $request->attributes->set(EmbeddedRequestChecker::EMBEDDED_FRAGMENT_NAME, 'embedded_profile');
         $this->requestStack->push($request);
         $context = new LayoutContext();
 
         $this->configurator->configureContext($context);
         $context->resolve();
 
-        self::assertFalse($context->get('embedded'));
+        self::assertTrue($context->get('is_embedded_fragment'));
     }
 
-    public function testEmbeddedOptionDefaultsToTrueWithEmbeddedFragmentAttribute(): void
-    {
-        $request = Request::create('');
-        $request->attributes->set('_route', 'oro_customer_frontend_customer_user_profile');
-        $request->attributes->set(EmbeddedContextConfigurator::REQUEST_ATTRIBUTE, true);
-        $this->requestStack->push($request);
-        $context = new LayoutContext();
-
-        $this->configurator->configureContext($context);
-        $context->resolve();
-
-        self::assertTrue($context->get('embedded'));
-    }
-
-    public function testEmbeddedOptionIsDefinedWhenAnotherRouteRendersTheLayoutOfAnEmbeddableRoute(): void
-    {
-        $request = Request::create('');
-        $request->attributes->set('_route', 'oro_order_frontend_print');
-        $this->requestStack->push($request);
-        $context = new LayoutContext();
-        $context->set('action', 'oro_customer_frontend_customer_user_profile');
-
-        $this->configurator->configureContext($context);
-        (new ActionContextConfigurator())->configureContext($context);
-        $context->resolve();
-
-        self::assertFalse($context->get('embedded'));
-    }
-
-    public function testEmbeddedOptionIsResolvedFromForwardedSubRequestAndNotFromMainRequest(): void
+    public function testIsEmbeddedFragmentOptionIsResolvedFromCurrentSubRequestAndNotFromMainRequest(): void
     {
         $mainRequest = Request::create('');
-        $mainRequest->attributes->set('_route', 'oro_storefront_embedded_fragment');
+        $mainRequest->attributes->set(EmbeddedRequestChecker::EMBEDDED_FRAGMENT_NAME, 'embedded_shopping_list');
         $this->requestStack->push($mainRequest);
-        $subRequest = Request::create('');
-        $subRequest->attributes->set('_route', 'oro_shopping_list_frontend_update');
-        $subRequest->attributes->set(EmbeddedContextConfigurator::REQUEST_ATTRIBUTE, true);
-        $this->requestStack->push($subRequest);
+        $this->requestStack->push(Request::create(''));
         $context = new LayoutContext();
 
         $this->configurator->configureContext($context);
         $context->resolve();
 
-        self::assertTrue($context->get('embedded'));
+        self::assertFalse($context->get('is_embedded_fragment'));
     }
 }

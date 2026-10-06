@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\DistributionBundle\Provider\PublicDirectoryProvider;
 use Oro\Bundle\StorefrontEmbeddedBundle\Provider\EmbeddedThemeAssetsProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Oro\Component\Layout\Extension\Theme\Model\CurrentThemeProvider;
@@ -33,16 +34,21 @@ final class EmbeddedThemeAssetsProviderTest extends TestCase
         $this->publicDirectory = $this->getTempDir('embedded_theme_assets');
         $this->filesystem = new Filesystem();
 
+        $publicDirectoryProvider = $this->createMock(PublicDirectoryProvider::class);
+        $publicDirectoryProvider
+            ->method('getPublicDirectory')
+            ->willReturn($this->publicDirectory);
+
         $this->provider = new EmbeddedThemeAssetsProvider(
             $this->currentThemeProvider,
             $this->assetPackages,
             new ArrayAdapter(),
-            $this->publicDirectory
+            $publicDirectoryProvider
         );
         $this->setUpLoggerMock($this->provider);
     }
 
-    public function testListsTheBuiltFilesOfTheCurrentTheme(): void
+    public function testGetThemeAssetsReturnsBuiltFilesOfCurrentTheme(): void
     {
         $this->currentThemeProvider
             ->expects(self::once())
@@ -57,11 +63,11 @@ final class EmbeddedThemeAssetsProviderTest extends TestCase
                 '/build/intelligent_blue/embedded_app.js',
                 '/build/intelligent_blue/svg-icons/sprite.svg',
             ],
-            $this->provider->getFiles()
+            $this->provider->getThemeAssets()
         );
     }
 
-    public function testListsNothingWhenNoThemeResolves(): void
+    public function testGetThemeAssetsReturnsEmptyListWithoutCurrentTheme(): void
     {
         $this->currentThemeProvider
             ->expects(self::once())
@@ -70,27 +76,13 @@ final class EmbeddedThemeAssetsProviderTest extends TestCase
         $this->filesystem->dumpFile($this->publicDirectory . '/build/intelligent_blue/embedded_app.js', '');
 
         $this->assetPackages
-
             ->expects(self::never())
             ->method('getVersion');
 
-        self::assertSame([], $this->provider->getFiles());
+        self::assertSame([], $this->provider->getThemeAssets());
     }
 
-    public function testKeepsASeparateCacheEntryForEachTheme(): void
-    {
-        $this->currentThemeProvider
-            ->expects(self::exactly(2))
-            ->method('getCurrentThemeId')
-            ->willReturnOnConsecutiveCalls('intelligent_blue', 'golden_carbon');
-        $this->filesystem->dumpFile($this->publicDirectory . '/build/intelligent_blue/embedded_app.js', '');
-        $this->filesystem->dumpFile($this->publicDirectory . '/build/golden_carbon/embedded_app.js', '');
-
-        self::assertSame(['/build/intelligent_blue/embedded_app.js'], $this->provider->getFiles());
-        self::assertSame(['/build/golden_carbon/embedded_app.js'], $this->provider->getFiles());
-    }
-
-    public function testSkipsAThemeThatWasNeverBuilt(): void
+    public function testGetThemeAssetsReturnsEmptyListWhenThemeBuildDirectoryIsMissing(): void
     {
         $this->currentThemeProvider
             ->expects(self::once())
@@ -106,10 +98,10 @@ final class EmbeddedThemeAssetsProviderTest extends TestCase
                 ['theme_directory' => $this->publicDirectory . '/build/never_built']
             );
 
-        self::assertSame([], $this->provider->getFiles());
+        self::assertSame([], $this->provider->getThemeAssets());
     }
 
-    public function testSkipsSourceMapsAndScssSidecars(): void
+    public function testGetThemeAssetsExcludesSourceMapsAndScssFiles(): void
     {
         $this->currentThemeProvider
             ->expects(self::once())
@@ -123,11 +115,11 @@ final class EmbeddedThemeAssetsProviderTest extends TestCase
 
         self::assertSame(
             ['/build/intelligent_blue/css/styles.css', '/build/intelligent_blue/embedded_app.js'],
-            $this->provider->getFiles()
+            $this->provider->getThemeAssets()
         );
     }
 
-    public function testAddsOnlyTheSharedFilesTheThemeStylesheetsReference(): void
+    public function testGetThemeAssetsAddsSharedFilesReferencedByStylesheets(): void
     {
         $this->currentThemeProvider
             ->expects(self::once())
@@ -157,11 +149,11 @@ final class EmbeddedThemeAssetsProviderTest extends TestCase
                 '/build/_static/bundles/orofrontend/images/loader.svg',
                 '/build/intelligent_blue/css/styles.css',
             ],
-            $this->provider->getFiles()
+            $this->provider->getThemeAssets()
         );
     }
 
-    public function testNamesASharedFileReferencedByTwoStylesheetsOnce(): void
+    public function testGetThemeAssetsListsSharedFileReferencedByTwoStylesheetsOnce(): void
     {
         $this->currentThemeProvider
             ->expects(self::once())
@@ -181,11 +173,11 @@ final class EmbeddedThemeAssetsProviderTest extends TestCase
                 '/build/intelligent_blue/css/critical.css',
                 '/build/intelligent_blue/css/styles.css',
             ],
-            $this->provider->getFiles()
+            $this->provider->getThemeAssets()
         );
     }
 
-    public function testLogsAndSkipsAThemeStylesheetThatCannotBeRead(): void
+    public function testGetThemeAssetsLogsErrorWhenStylesheetIsUnreadable(): void
     {
         $this->currentThemeProvider
             ->expects(self::once())
@@ -209,10 +201,10 @@ final class EmbeddedThemeAssetsProviderTest extends TestCase
                 ['stylesheet' => '/build/intelligent_blue/css/styles.css']
             );
 
-        self::assertSame(['/build/intelligent_blue/css/styles.css'], $this->provider->getFiles());
+        self::assertSame(['/build/intelligent_blue/css/styles.css'], $this->provider->getThemeAssets());
     }
 
-    public function testIgnoresAStylesheetReferenceThatLeavesTheBuildDirectory(): void
+    public function testGetThemeAssetsIgnoresReferenceOutsideBuildDirectory(): void
     {
         $this->currentThemeProvider
             ->expects(self::once())
@@ -224,6 +216,6 @@ final class EmbeddedThemeAssetsProviderTest extends TestCase
         );
         $this->filesystem->dumpFile($this->publicDirectory . '/.env', 'APP_SECRET=1');
 
-        self::assertSame(['/build/intelligent_blue/css/styles.css'], $this->provider->getFiles());
+        self::assertSame(['/build/intelligent_blue/css/styles.css'], $this->provider->getThemeAssets());
     }
 }

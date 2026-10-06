@@ -18,7 +18,7 @@ final class EmbeddedThemeAssetsController extends AbstractController
     public function themeAssetsAction(): JsonResponse
     {
         return new JsonResponse([
-            'files' => $this->container->get(EmbeddedThemeAssetsProvider::class)->getFiles()
+            'files' => $this->container->get(EmbeddedThemeAssetsProvider::class)->getThemeAssets()
         ]);
     }
 

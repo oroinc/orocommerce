@@ -10,7 +10,8 @@ use Oro\Bundle\StorefrontEmbeddedBundle\Request\EmbeddedRequestChecker;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Serves image URLs to an embedded host as absolute URLs.
+ * Decorates file URL provider to make it return absolute URLs for filtered and resized images rendered within
+ * an embedded fragment.
  */
 class EmbeddedRequestFileUrlProvider implements FileUrlProviderInterface
 {

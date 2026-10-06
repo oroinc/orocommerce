@@ -8,7 +8,7 @@ use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\BuildQueryProductListEvent;
 use Oro\Bundle\ProductBundle\Event\BuildResultProductListEvent;
-use Oro\Bundle\UIBundle\Tools\UrlHelper;
+use Oro\Bundle\UIBundle\Tools\UrlHelperInterface;
 
 /**
  * Adds common fields to storefront product lists.
@@ -19,14 +19,14 @@ class ProductListEventListener
 
     private WebpConfiguration $webpConfiguration;
 
-    private UrlHelper $urlHelper;
+    private UrlHelperInterface $urlHelper;
 
     private ApiUrlResolver $apiUrlResolver;
 
     public function __construct(
         ImagePlaceholderProviderInterface $imagePlaceholderProvider,
         WebpConfiguration $webpConfiguration,
-        UrlHelper $urlHelper,
+        UrlHelperInterface $urlHelper,
         ApiUrlResolver $apiUrlResolver
     ) {
         $this->imagePlaceholderProvider = $imagePlaceholderProvider;

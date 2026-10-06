@@ -7,9 +7,9 @@ namespace Oro\Bundle\StorefrontEmbeddedBundle\Tests\Unit\Stub\StorefrontEmbedded
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
- * Ships Resources/config/oro/storefront_embedded.yml mapping the embedded block of
- * StorefrontEmbeddedTestBundleOne to a different route, so StorefrontEmbeddedConfigurationLoaderTest can prove
- * the loader rejects an embedded block id that is not unique across bundles.
+ * Ships Resources/config/oro/storefront_embedded.yml defining the embedded fragment of
+ * StorefrontEmbeddedTestBundleOne in the expanded form with a different route and layout block ids, so
+ * StorefrontEmbeddedConfigurationLoaderTest can prove that the bundle loaded last replaces the whole definition.
  */
 class StorefrontEmbeddedTestBundleThree extends Bundle
 {

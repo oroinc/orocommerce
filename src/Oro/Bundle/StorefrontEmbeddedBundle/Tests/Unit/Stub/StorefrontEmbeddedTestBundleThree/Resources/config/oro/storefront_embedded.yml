@@ -1,3 +1,5 @@
 oro_storefront_embedded:
-    blocks:
-        embedded_shared_block: oro_test_conflict_route
+    fragments:
+        embedded_shared_block:
+            route_name: oro_test_override_route
+            layout_block_ids: [embedded_override_block, embedded_override_sidebar]
