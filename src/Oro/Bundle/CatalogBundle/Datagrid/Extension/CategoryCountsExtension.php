@@ -48,9 +48,13 @@ class CategoryCountsExtension extends AbstractExtension
     private $configManager;
 
     /**
-     * @var bool[] Stores flags about already applied datagrids.
+     * @var array Subcategory filter metadata of already processed datagrids, re-applied on repeated visits.
      * [
-     *      '<datagridName>' => <bool>,
+     *      '<datagridName>' => [
+     *          'counts' => [...],
+     *          'countsWithoutFilters' => [...],
+     *          'isDisableFiltersEnabled' => <bool>
+     *      ],
      *      ...
      * ]
      */
@@ -99,13 +103,29 @@ class CategoryCountsExtension extends AbstractExtension
     #[\Override]
     public function visitMetadata(DatagridConfiguration $config, MetadataObject $data)
     {
-        // Skips handling of metadata if datagrid has been already processed.
-        if (!empty($this->applied[$config->getName()])) {
-            return;
+        $gridName = $config->getName();
+        if (!isset($this->applied[$gridName])) {
+            $this->applied[$gridName] = $this->calculateFilterMetadata($config);
         }
 
-        $this->applied[$config->getName()] = true;
+        $filters = $data->offsetGetByPath('[filters]', []);
+        foreach ($filters as &$filter) {
+            if (($filter['type'] ?? null) !== SubcategoryFilter::FILTER_TYPE_NAME) {
+                continue;
+            }
 
+            $filter = array_replace($filter, $this->applied[$gridName]);
+        }
+        unset($filter);
+
+        $data->offsetSetByPath('[filters]', $filters);
+    }
+
+    /**
+     * Calculates the counts of the subcategory filter options.
+     */
+    private function calculateFilterMetadata(DatagridConfiguration $config): array
+    {
         $categoryCounts = $this->getCounts($config);
 
         $countsWithoutFilters = [];
@@ -114,19 +134,11 @@ class CategoryCountsExtension extends AbstractExtension
             $countsWithoutFilters = $this->getCountsWithoutFilters($config);
         }
 
-        $filters = $data->offsetGetByPath('[filters]', []);
-        foreach ($filters as &$filter) {
-            if ($filter['type'] !== SubcategoryFilter::FILTER_TYPE_NAME) {
-                continue;
-            }
-
-            $filter['counts'] = $categoryCounts;
-            $filter['countsWithoutFilters'] = $countsWithoutFilters;
-            $filter['isDisableFiltersEnabled'] = $isDisableFiltersEnabled;
-        }
-        unset($filter);
-
-        $data->offsetSetByPath('[filters]', $filters);
+        return [
+            'counts' => $categoryCounts,
+            'countsWithoutFilters' => $countsWithoutFilters,
+            'isDisableFiltersEnabled' => $isDisableFiltersEnabled,
+        ];
     }
 
     protected function getCounts(DatagridConfiguration $config): array
