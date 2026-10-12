@@ -11,6 +11,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\FixtureLoaderAwareInterface;
 use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\FixtureLoaderDictionary;
+use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\VariableStorage;
 
 class FeatureContext extends OroFeatureContext implements FixtureLoaderAwareInterface
 {
@@ -92,5 +93,24 @@ class FeatureContext extends OroFeatureContext implements FixtureLoaderAwareInte
         $configManager = $this->getAppContainer()->get('oro_config.global');
         $configManager->set($toggleConfigOption, true);
         $configManager->flush();
+    }
+
+    /**
+     * Opens the storefront route that starts a checkout from an existing checkout.
+     *
+     * Example: When I open order to checkout page for the checkout "$checkout_id$"
+     *
+     * @When /^(?:|I )open order to checkout page for the checkout "(?P<checkoutId>[^"]+)"$/
+     */
+    public function openOrderToCheckoutPage(string $checkoutId): void
+    {
+        $checkoutId = VariableStorage::normalizeValue($checkoutId);
+        self::assertIsNumeric($checkoutId, sprintf('Expected a checkout ID, got "%s"', $checkoutId));
+
+        $url = $this->getAppContainer()
+            ->get('router')
+            ->generate('oro_order_frontend_to_checkout', ['id' => $checkoutId]);
+
+        $this->visitPath($url);
     }
 }

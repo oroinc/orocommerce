@@ -336,11 +336,21 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects(self::never())
             ->method('get');
 
-        $filters = [['name' => 'supported_attribute']];
+        $filters = [['type' => 'filter1'], ['type' => SubcategoryFilter::FILTER_TYPE_NAME]];
         $metadata = MetadataObject::create(['filters' => $filters]);
         $this->extension->visitMetadata(DatagridConfiguration::createNamed(self::GRID_NAME, []), $metadata);
 
-        self::assertEquals($filters, $metadata->offsetGetByPath('[filters]'));
+        $expectedFilters = [
+            ['type' => 'filter1'],
+            [
+                'type' => SubcategoryFilter::FILTER_TYPE_NAME,
+                'counts' => [1 => 2],
+                'countsWithoutFilters' => [1 => 2, 2 => 3],
+                'isDisableFiltersEnabled' => true
+            ]
+        ];
+
+        self::assertEquals($expectedFilters, $metadata->offsetGetByPath('[filters]'));
     }
 
     /**

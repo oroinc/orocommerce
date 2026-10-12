@@ -5,6 +5,7 @@ namespace Oro\Bundle\CMSBundle\Api\Processor;
 use Michelf\MarkdownExtra;
 use Oro\Bundle\ApiBundle\ApiDoc\EntityDescriptionProvider;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
+use Oro\Bundle\ApiBundle\Config\Extra\DescriptionsConfigExtra;
 use Oro\Bundle\ApiBundle\Processor\GetConfig\CompleteDescriptions\FieldDescriptionUtil;
 use Oro\Bundle\ApiBundle\Processor\GetConfig\ConfigContext;
 use Oro\Bundle\ApiBundle\Request\ApiAction;
@@ -36,6 +37,12 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
     public function process(ContextInterface $context): void
     {
         /** @var ConfigContext $context */
+
+        /** @var DescriptionsConfigExtra|null $descriptionsConfigExtra */
+        $descriptionsConfigExtra = $context->getExtra(DescriptionsConfigExtra::NAME);
+        if (null !== $descriptionsConfigExtra && !$descriptionsConfigExtra->useFallbackDescriptions()) {
+            return;
+        }
 
         $definition = $context->getResult();
         $entityClass = $context->getClassName();
