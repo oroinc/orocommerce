@@ -1,0 +1,40 @@
+include:
+    - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        payment_term_7c4f1e8e: '@paymentTerm'
+        taxCode: '@multiShippingCustomerTaxCode'
+
+Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+    multiShippingCustomerTaxCode:
+        owner: '@admin'
+        organization: '@organization'
+        code: 'MULTI_SHIPPING_CUSTOMER'
+
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    multiShippingShippingTaxCode:
+        organization: '@organization'
+        code: 'MULTI_SHIPPING_SHIPPING'
+
+Oro\Bundle\TaxBundle\Entity\Tax:
+    multiShippingShippingTax:
+        code: 'MULTI_SHIPPING_TAX_30'
+        rate: 0.3
+
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+    multiShippingTaxJurisdiction:
+        code: 'MULTI_SHIPPING_NEW_YORK'
+        country: '@united_states'
+        region: '@new_york'
+
+Oro\Bundle\TaxBundle\Entity\TaxRule:
+    multiShippingShippingTaxRule:
+        productTaxCode: '@multiShippingShippingTaxCode'
+        customerTaxCode: '@multiShippingCustomerTaxCode'
+        tax: '@multiShippingShippingTax'
+        taxJurisdiction: '@multiShippingTaxJurisdiction'
+        organization: '@organization'
