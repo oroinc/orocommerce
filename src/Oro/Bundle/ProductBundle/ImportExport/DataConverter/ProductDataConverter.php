@@ -62,6 +62,11 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
 
     private function isAvailableAttribute(ConfigInterface $attrConfig): bool
     {
+        if (!$attrConfig->has('is_global')) {
+            // Community edition never registers these Enterprise-only attribute-scope keys.
+            return true;
+        }
+
         $organizationId = $this->tokenAccessor->getOrganizationId();
 
         return $attrConfig->is('is_global')

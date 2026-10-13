@@ -3,12 +3,16 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\DataConverter;
 
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\EntityConfigBundle\Config\Config;
+use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Converter\RelationCalculator;
+use Oro\Bundle\ImportExportBundle\Exception\LogicException;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\DataConverter\ProductDataConverter;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -118,5 +122,111 @@ class ProductDataConverterTest extends TestCase
         $result = $this->dataConverter->convertToImportFormat(['SKU' => 'test']);
         self::assertArrayHasKey('sku', $result);
         self::assertEquals('test', $result['sku']);
+    }
+
+    /**
+     * @dataProvider isAvailableAttributeDataProvider
+     */
+    public function testConvertToExportFormatFiltersAttributeByOrganization(
+        ?array $attributeConfigValues,
+        ?int $tokenOrganizationId,
+        bool $setTokenAccessor,
+        bool $expectColumnPresent
+    ): void {
+        $this->fieldHelper->expects(self::any())
+            ->method('getEntityFields')
+            ->willReturn([
+                ['name' => 'sku', 'type' => 'string', 'label' => 'SKU'],
+                ['name' => 'customAttr', 'type' => 'string', 'label' => 'CustomAttr'],
+            ]);
+        $this->fieldHelper->expects(self::any())
+            ->method('getConfigValue')
+            ->willReturnMap([
+                [Product::class, 'sku', 'header', 'SKU', 'SKU'],
+                [Product::class, 'customAttr', 'header', 'CustomAttr', 'CustomAttr'],
+            ]);
+
+        $attrConfig = null;
+        if (null !== $attributeConfigValues) {
+            $attrConfig = new Config(
+                new FieldConfigId('attribute', Product::class, 'customAttr'),
+                $attributeConfigValues
+            );
+        }
+        $this->fieldHelper->expects(self::any())
+            ->method('getFieldConfig')
+            ->willReturnMap([
+                ['attribute', Product::class, 'customAttr', $attrConfig],
+            ]);
+
+        if ($setTokenAccessor) {
+            $tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+            $tokenAccessor->expects(self::any())
+                ->method('getOrganizationId')
+                ->willReturn($tokenOrganizationId);
+            $this->dataConverter->setTokenAccessor($tokenAccessor);
+        }
+
+        if (!$expectColumnPresent) {
+            // The field is excluded from the backend header entirely, so feeding it a value is
+            // rejected by AbstractTableDataConverter::validateColumns() - exactly what a real export
+            // would never do, since it only queries the fields the (already-filtered) header lists.
+            $this->expectException(LogicException::class);
+            $this->expectExceptionMessage('Backend header doesn\'t contain fields: customAttr');
+        }
+
+        $result = $this->dataConverter->convertToExportFormat(['sku' => 'x', 'customAttr' => 'y']);
+
+        if ($expectColumnPresent) {
+            self::assertArrayHasKey('CustomAttr', $result);
+        }
+    }
+
+    public function isAvailableAttributeDataProvider(): array
+    {
+        return [
+            'community edition - is_global key never registered' => [
+                'attributeConfigValues' => ['is_attribute' => true],
+                'tokenOrganizationId' => null,
+                'setTokenAccessor' => false,
+                'expectColumnPresent' => true,
+            ],
+            'enterprise - global attribute' => [
+                'attributeConfigValues' => ['is_attribute' => true, 'is_global' => true, 'organization_id' => null],
+                'tokenOrganizationId' => 2,
+                'setTokenAccessor' => true,
+                'expectColumnPresent' => true,
+            ],
+            'enterprise - attribute belongs to current organization' => [
+                'attributeConfigValues' => ['is_attribute' => true, 'is_global' => false, 'organization_id' => 2],
+                'tokenOrganizationId' => 2,
+                'setTokenAccessor' => true,
+                'expectColumnPresent' => true,
+            ],
+            'enterprise - attribute belongs to a different organization' => [
+                'attributeConfigValues' => ['is_attribute' => true, 'is_global' => false, 'organization_id' => 1],
+                'tokenOrganizationId' => 2,
+                'setTokenAccessor' => true,
+                'expectColumnPresent' => false,
+            ],
+            'enterprise - no organization in the current token' => [
+                'attributeConfigValues' => ['is_attribute' => true, 'is_global' => false, 'organization_id' => 1],
+                'tokenOrganizationId' => null,
+                'setTokenAccessor' => true,
+                'expectColumnPresent' => false,
+            ],
+            'field is not an attribute' => [
+                'attributeConfigValues' => ['is_attribute' => false],
+                'tokenOrganizationId' => null,
+                'setTokenAccessor' => false,
+                'expectColumnPresent' => true,
+            ],
+            'no attribute config for the field' => [
+                'attributeConfigValues' => null,
+                'tokenOrganizationId' => null,
+                'setTokenAccessor' => false,
+                'expectColumnPresent' => true,
+            ],
+        ];
     }
 }
