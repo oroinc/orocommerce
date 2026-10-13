@@ -14,3 +14,11 @@ layout:
         - '@move':
             id: page_content
             parentId: embedded_rfp_request_update
+
+        - '@move':
+            id: rfp_form_lineitems_view_js
+            parentId: embedded_rfp_request_update
+
+        - '@move':
+            id: rfp_form_kititemlineitem_view_js
+            parentId: embedded_rfp_request_update
