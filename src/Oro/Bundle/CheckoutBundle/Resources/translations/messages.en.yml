@@ -109,9 +109,6 @@ oro:
                 not_completed: Not Completed
             list.aria_label: 'Checkout steps. Current step is %current_step_name%. Step %current_step_num% of %count_steps%'
             item.aria_label: '%step_name%. Step %step_num% of %count_steps%. %step_status%'
-        simplified_header:
-            back_to_shopping.label: Back to shopping
-            secure_checkout.label: Secure Checkout
         checkoutlineitem:
             entity_label: 'Checkout Line Item'
             entity_plural_label: 'Checkout Line Items'

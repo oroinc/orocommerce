@@ -99,7 +99,6 @@
             "Oro\\Bundle\\SEOBundle\\": "src/Oro/Bundle/SEOBundle",
             "Oro\\Bundle\\ShippingBundle\\": "src/Oro/Bundle/ShippingBundle",
             "Oro\\Bundle\\ShoppingListBundle\\": "src/Oro/Bundle/ShoppingListBundle",
-            "Oro\\Bundle\\StorefrontEmbeddedBundle\\": "src/Oro/Bundle/StorefrontEmbeddedBundle",
             "Oro\\Bundle\\TaxBundle\\": "src/Oro/Bundle/TaxBundle",
             "Oro\\Bundle\\UPSBundle\\": "src/Oro/Bundle/UPSBundle",
             "Oro\\Bundle\\ValidationBundle\\": "src/Oro/Bundle/ValidationBundle",

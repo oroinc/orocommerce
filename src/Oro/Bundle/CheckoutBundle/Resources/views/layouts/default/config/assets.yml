@@ -13,7 +13,6 @@ styles:
         - 'bundles/orocheckout/default/scss/variables/single-page-checkout-view-config.scss'
         - 'bundles/orocheckout/default/scss/variables/checkout-credentials-config.scss'
         - 'bundles/orocheckout/default/scss/variables/order-loading-placeholder-config.scss'
-        - 'bundles/orocheckout/default/scss/variables/checkout-simplified-header-config.scss'
 
         - 'bundles/orocheckout/default/scss/components/checkout-summary-widget.scss'
         - 'bundles/orocheckout/default/scss/components/checkout-summary-inner-layout.scss'
@@ -22,7 +21,6 @@ styles:
         - 'bundles/orocheckout/default/scss/components/multistep-checkout.scss'
         - 'bundles/orocheckout/default/scss/components/order-checkout-widget.scss'
         - 'bundles/orocheckout/default/scss/components/order-loading-placeholder.scss'
-        - 'bundles/orocheckout/default/scss/components/checkout-simplified-header.scss'
         - 'bundles/orocheckout/default/scss/styles.scss'
 
 print_styles:

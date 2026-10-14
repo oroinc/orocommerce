@@ -1,5 +1,0 @@
-bundles:
-  - name: Oro\Bundle\StorefrontEmbeddedBundle\OroStorefrontEmbeddedBundle
-    # Must be loaded after the bundles whose storefront pages embedded_blocks.yml targets (highest priority: 60),
-    # so the embedded layout updates are applied last
-    priority: 70
