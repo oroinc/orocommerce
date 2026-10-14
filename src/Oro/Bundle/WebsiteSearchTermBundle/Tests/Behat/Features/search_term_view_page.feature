@@ -15,6 +15,7 @@ Feature: Search Term View Page
     And I should see "LOCALIZATION WEBSITE CUSTOMER GROUP CUSTOMER Any Any Any Any Run Original Search" in the "Search Term Restrictions section" element
 
   Scenario: Check original search results
+    Given should be 19 items in "oro_product_WEBSITE_ID" website search index
     When I click "Run Original Search on View Page"
     And I click "Run Original Search on View Page - Product"
     Then I should see "UiDialog" with elements:

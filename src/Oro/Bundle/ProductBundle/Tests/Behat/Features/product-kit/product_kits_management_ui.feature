@@ -83,6 +83,7 @@ Feature: Product kits management UI
     And I save and close form
     Then I should see "ProductKitForm" validation errors:
       | Kit Item 2 Product Unit | Unit of quantity should be available for all specified products. |
+    And I scroll to "Kit Item 2 Products Edit Grid"
     When I click "Remove" on row "NA01" in grid "Kit Item 2 Products Edit Grid"
     And I click "Yes, Delete"
     And I save and close form

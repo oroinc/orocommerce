@@ -20,6 +20,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'OldOrder'
         website: '@website1'
         currency: USD
+        createdAt: '<(new DateTime("-15 days"))>'
         lineItems: [ '@oldOrderLineItem' ]
 
 Oro\Bundle\CurrencyBundle\Entity\Price :

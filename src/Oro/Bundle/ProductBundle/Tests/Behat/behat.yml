@@ -1513,7 +1513,7 @@ oro_behat_extension:
       selector: '.zoomWindowContainer'
 
     Zoom Window In Zoom Container:
-      selector: '.zoomContainer .zoomWindowContainer'
+      selector: '.zoomContainer .zoomWindowContainer .zoomWindow'
 
     Zoom Tint:
       selector: '.zoomContainer .tintContainer .zoomTint'

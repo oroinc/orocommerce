@@ -17,6 +17,7 @@ Feature: Product kits validation on product kit dialog
     And I signed in as AmandaRCole@example.org on the store frontend
     When I type "product-kit-1" in "search"
     And I click "Search Button"
+    And I should see "Product Kit 1" and continue checking the condition is met for maximum 30 seconds
     And I click "Product Kit 1"
     Then I should see an "Configure and Add to Shopping List" element
     When I click "Configure and Add to Shopping List"

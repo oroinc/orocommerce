@@ -644,6 +644,53 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      */
     public function checkWysiwygContent(string $wysiwygElementName, TableNode $table): void
     {
+        $importedContent = $this->getWysiwygContentLines($wysiwygElementName);
+
+        foreach ($table->getRows() as $row) {
+            [$key, $value] = $row;
+
+            self::assertEquals(
+                str_replace(' ', ' ', trim($value)),
+                $this->normalizeWysiwygContentLine($importedContent[$key - 1] ?? '')
+            );
+        }
+    }
+
+    /**
+     * The editor history has a different number of steps for the same actions, for example for the typed text.
+     * The step clicks the button until the content is as expected, for up to 10 clicks.
+     *
+     * Example: I click "Undo Editor" until wysiwyg content in "CMS Page Content" is:
+     *   | 1 | <div>Lorem ipsum |
+     *
+     * @When /^(?:|I )click "(?P<button>[^"]+)" until wysiwyg content in "(?P<wysiwygElementName>[^"]+)" is:$/
+     */
+    public function clickUntilWysiwygContentIs(string $button, string $wysiwygElementName, TableNode $table): void
+    {
+        for ($click = 0; $click < 10; $click++) {
+            $this->createElement($button)->click();
+            $this->waitForAjax();
+
+            $importedContent = $this->getWysiwygContentLines($wysiwygElementName);
+            $isExpected = true;
+            foreach ($table->getRows() as [$key, $value]) {
+                $line = $this->normalizeWysiwygContentLine($importedContent[$key - 1] ?? '');
+                if (str_replace(' ', ' ', trim($value)) !== $line) {
+                    $isExpected = false;
+                    break;
+                }
+            }
+
+            if ($isExpected) {
+                return;
+            }
+        }
+
+        $this->checkWysiwygContent($wysiwygElementName, $table);
+    }
+
+    private function getWysiwygContentLines(string $wysiwygElementName): array
+    {
         $wysiwygContentElement = $this->createElement($wysiwygElementName);
         self::assertTrue($wysiwygContentElement->isIsset(), sprintf(
             'WYSIWYG element "%s" not found on page',
@@ -663,22 +710,20 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         $importedContent = explode("\n", $editor->getValue());
 
-        foreach ($table->getRows() as $row) {
-            [$key, $value] = $row;
-
-            $line = preg_replace(
-                '/\ssrcset="([\w\d\/\-\.]+)"|\ssrc="([\w\d\/\-\.]+)"|\sid="([\d\w\-]+)"/',
-                '',
-                str_replace(' ', ' ', trim($importedContent[$key - 1]))
-            );
-            $value = str_replace(' ', ' ', trim($value));
-
-            self::assertEquals($value, $line);
-        }
-
         $this->spin(function () {
             $this->oroMainContext->pressKeyboardKey('Esc', 'WysiwygCodeTypeBlockEditor');
         }, .2);
+
+        return $importedContent;
+    }
+
+    private function normalizeWysiwygContentLine(string $line): string
+    {
+        return preg_replace(
+            '/\ssrcset="([\w\d\/\-\.]+)"|\ssrc="([\w\d\/\-\.]+)"|\sid="([\d\w\-]+)"/',
+            '',
+            str_replace(' ', ' ', trim($line))
+        );
     }
 
     /**
@@ -767,12 +812,19 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
                 $selectedComponent->find('css', '[data-toggle-open]')->click();
             }
 
-            $selectedComponents = $selectedComponent->findAll(
-                'css',
-                sprintf('.gjs-layer-children > .gjs-layers > .gjs-layer__t-%s', $name)
+            // The layer manager renders the layer of a component that was just added to the canvas
+            // with a delay, so wait for the child layer.
+            $childSelector = sprintf('.gjs-layer-children > .gjs-layers > .gjs-layer__t-%s', $name);
+            $childComponent = $this->spin(
+                static fn () => $selectedComponent->findAll('css', $childSelector)[$eq - 1] ?? null,
+                5
+            );
+            self::assertNotNull(
+                $childComponent,
+                sprintf('Layer #%d of the "%s" component is not found in the layer manager', $eq, $name)
             );
 
-            $selectedComponent = $selectedComponents[$eq - 1];
+            $selectedComponent = $childComponent;
         }
 
         $selectedComponent->find('css', '[data-toggle-select]')->click();

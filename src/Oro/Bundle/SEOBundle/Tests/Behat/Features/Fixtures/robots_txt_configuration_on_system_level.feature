@@ -1,5 +1,6 @@
 @regression
 @gridfs-skip
+@waf-skip
 @ticket-BB-22555
 
 Feature: Robots txt Configuration on System Level

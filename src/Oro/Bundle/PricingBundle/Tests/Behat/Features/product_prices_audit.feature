@@ -34,7 +34,7 @@ Feature: Product prices audit
     And go to Sales/Price Lists
     And click view "Default Price List" in grid
     When click "Change History"
-    Then should see following "Audit History Grid" grid:
+    Then should see following "Audit History Grid" grid after the grid refresh:
       | Old Values | New Values                                                                                                                                               |
       | Prices:    | Prices:  Product Price "PSKU1 \| 1 each \| 7.4500 USD" added: Currency: USD Price List: Price List "1" Quantity: 1 Unit: Product Unit "each" Value: 7.45 |
     And close ui dialog
@@ -54,7 +54,7 @@ Feature: Product prices audit
   Scenario: Check updated product price from the product edit page
     Given I switch to the "PriceList" session
     When click "Change History"
-    Then should see following "Audit History Grid" grid:
+    Then should see following "Audit History Grid" grid after the grid refresh:
       | Old Values                                                                                                                         | New Values                                                                                                                                                       |
       | Prices: Product Price "PSKU1 \| 2 item \| 10.4500 EUR" changed: Currency: USD  Quantity: 1  Unit: Product Unit "each"  Value: 7.45 | Prices:  Product Price "PSKU1 \| 2 item \| 10.4500 EUR" changed: Currency: EUR Quantity: 2 Unit: Product Unit "item" Value: 10.45                                |
       | Prices:                                                                                                                            | Prices:  Product Price "PSKU1 \| 1 each \| 7.4500 USD" added: Currency: USD Price List: Price List "1" Quantity: 1 Unit: Product Unit "each" Value: 7.45         |
@@ -70,8 +70,7 @@ Feature: Product prices audit
   Scenario: Check removed product price from the product edit page
     Given I switch to the "PriceList" session
     When click "Change History"
-    Then I should see "removed: Currency: EUR Price List: Price List" and continue checking the condition is met for maximum 10 seconds
-    And should see following "Audit History Grid" grid:
+    Then should see following "Audit History Grid" grid after the grid refresh:
       | Old Values                                                                                                                                                    | New Values                                                                                                                                                       |
       | Prices: Product Price "PSKU1 \| 2 item \| 10.4500 EUR" removed: Currency: EUR Price List: Price List "1" Quantity: 2 Unit: Product Unit "item" Value: 10.4500 | Prices:                                                                                                                                                          |
       | Prices: Product Price "PSKU1 \| 2 item \| 10.4500 EUR" changed: Currency: USD  Quantity: 1  Unit: Product Unit "each"  Value: 7.45                            | Prices:  Product Price "PSKU1 \| 2 item \| 10.4500 EUR" changed: Currency: EUR Quantity: 2 Unit: Product Unit "item" Value: 10.45                                |
@@ -95,7 +94,7 @@ Feature: Product prices audit
   Scenario: Check created product price from the price list view page
     Given I switch to the "PriceList" session
     When click "Change History"
-    Then should see following "Audit History Grid" grid:
+    Then should see following "Audit History Grid" grid after the grid refresh:
       | Old Values                                                                                                                                                    | New Values                                                                                                                                                       |
       | Prices:                                                                                                                                                       | Prices:  Product Price "PSKU1 \| 3 each \| 5.6500 USD" added: Currency: USD Price List: Price List "1" Quantity: 3 Unit: Product Unit "each" Value: 5.65         |
       | Prices: Product Price "PSKU1 \| 2 item \| 10.4500 EUR" removed: Currency: EUR Price List: Price List "1" Quantity: 2 Unit: Product Unit "item" Value: 10.4500 | Prices:                                                                                                                                                          |
@@ -118,7 +117,7 @@ Feature: Product prices audit
   Scenario: Check updated product price from the price list view page
     Given I switch to the "PriceList" session
     When click "Change History"
-    Then should see following "Audit History Grid" grid:
+    Then should see following "Audit History Grid" grid after the grid refresh:
       | Old Values                                                                                                                                                    | New Values                                                                                                                                                       |
       | Prices: Product Price "PSKU1 \| 4 item \| 6.7500 EUR" changed: Currency: USD  Quantity: 3  Unit: Product Unit "each"  Value: 5.65                             | Prices:  Product Price "PSKU1 \| 4 item \| 6.7500 EUR" changed: Currency: EUR Quantity: 4 Unit: Product Unit "item" Value: 6.75                                  |
       | Prices:                                                                                                                                                       | Prices:  Product Price "PSKU1 \| 3 each \| 5.6500 USD" added: Currency: USD Price List: Price List "1" Quantity: 3 Unit: Product Unit "each" Value: 5.65         |
@@ -137,7 +136,7 @@ Feature: Product prices audit
   Scenario: Check removed product price from the price list view page
     Given I switch to the "PriceList" session
     When click "Change History"
-    Then should see following "Audit History Grid" grid:
+    Then should see following "Audit History Grid" grid after the grid refresh:
       | Old Values                                                                                                                                                    | New Values                                                                                                                                                       |
       | Prices: Product Price "PSKU1 \| 4 item \| 6.7500 EUR" removed: Currency: EUR Price List: Price List "1" Quantity: 4 Unit: Product Unit "item" Value: 6.7500   | Prices:                                                                                                                                                          |
       | Prices: Product Price "PSKU1 \| 4 item \| 6.7500 EUR" changed: Currency: USD  Quantity: 3  Unit: Product Unit "each"  Value: 5.65                             | Prices:  Product Price "PSKU1 \| 4 item \| 6.7500 EUR" changed: Currency: EUR Quantity: 4 Unit: Product Unit "item" Value: 6.75                                  |
@@ -167,7 +166,7 @@ Feature: Product prices audit
     And go to Sales/Price Lists
     And click view "Default Price List" in grid
     When click "Change History"
-    Then should see following "Audit History Grid" grid:
+    Then should see following "Audit History Grid" grid after the grid refresh:
       | Old Values                                                                                                                                                    | New Values                                                                                                                                                       |
       | Prices:                                                                                                                                                       | Prices:  Product Price "PSKU1 \| 5 each \| 7.4500 USD" added: Currency: USD Price List: Price List "1" Quantity: 5 Unit: Product Unit "each" Value: 7.45         |
       | Prices: Product Price "PSKU1 \| 4 item \| 6.7500 EUR" removed: Currency: EUR Price List: Price List "1" Quantity: 4 Unit: Product Unit "item" Value: 6.7500   | Prices:                                                                                                                                                          |

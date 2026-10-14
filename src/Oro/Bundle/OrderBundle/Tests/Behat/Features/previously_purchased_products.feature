@@ -1,4 +1,3 @@
-@random-failed
 @feature-BB-9570
 @fixture-OroOrderBundle:previously-purchased.yml
 Feature: Previously purchased products
@@ -57,8 +56,6 @@ Feature: Previously purchased products
 
   Scenario: Time restriction changes are applicable
     Given I operate as the Admin
-    And there is a feature "previously_purchased_products" enabled
-    And there is an order "OldOrder" created "-15 days"
     When I go to System / Configuration
     And I follow "Commerce/Orders/Purchase History" on configuration sidebar
     And fill "Purchase History Settings Form" with:

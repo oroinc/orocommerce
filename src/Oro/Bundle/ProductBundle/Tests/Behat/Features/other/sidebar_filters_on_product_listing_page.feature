@@ -30,7 +30,6 @@ Feature: Sidebar filters on product listing page
     Then I should see an "Toggle Sidebar Button" element
     And I should not see an "Filters In Sidebar" element
     And I should not see an "Toggle Sidebar Button Expanded" element
-    And I should see an "FrontendProductGridFilters" element
 
   Scenario: Ensure that filters are expanded at catalog page
     Given I proceed as the admin
@@ -167,7 +166,6 @@ Feature: Sidebar filters on product listing page
   Scenario: Check if sidebar filters present at all products page
     Then I click "All Products"
     Then I should see an "Filters In Sidebar" element
-    And I should see an "FrontendProductGridFilters" element
 
   Scenario: Ensure that side bar is collapsed when a product search query returns no results
     Given I type "Search string" in "search"

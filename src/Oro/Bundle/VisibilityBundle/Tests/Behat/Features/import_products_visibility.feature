@@ -43,5 +43,4 @@ Feature: Import Products Visibility
 
   Scenario: Check product is visible
     Given I proceed as the Buyer
-    When I reload the page
-    Then I should see "Test Product 1"
+    Then I should see "Test Product 1" and continue checking the condition is met for maximum 60 seconds

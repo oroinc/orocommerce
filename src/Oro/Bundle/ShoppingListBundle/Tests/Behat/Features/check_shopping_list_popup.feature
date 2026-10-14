@@ -7,6 +7,7 @@ Feature: Check shopping list popup
     And I type "SKU2" in "search"
     And I click "Search Button"
     When I click "Shopping List Add"
+    And I should see 'Product has been updated in "Shopping List"' flash message and I close it
     And I click "Shopping List Edit"
     And I should see "Choose list"
     And I fill "Shopping List Form" with:

@@ -15,7 +15,8 @@ Feature: Administrator should have a possibility to remove website without affec
     And I go to the homepage
     And I type "Description3" in "search"
     When click "Search Button"
-    Then number of records in "Product Frontend Grid" should be 1
+    Then I should see "PSKU3" and continue checking the condition is met for maximum 30 seconds
+    And number of records in "Product Frontend Grid" should be 1
 
   Scenario: Administrator create and remove website
     Given I proceed as the Admin

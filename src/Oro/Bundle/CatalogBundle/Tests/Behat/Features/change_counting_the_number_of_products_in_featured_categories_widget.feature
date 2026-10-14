@@ -21,6 +21,7 @@ Feature: Change counting the number of products in featured categories widget
     And I am on the homepage
     When I click "NewCategory" in hamburger menu
     And I click "All NewCategory" in hamburger menu
+    And I should see "PSKU2" and continue checking the condition is met for maximum 30 seconds
     And I should see "PSKU3" product
     And I should see "PSKU2" product
     And I should see "PSKU1" product

@@ -38,6 +38,7 @@ Feature: Product view page breadcrumbs webcatalog
     Given I am on homepage
     And I click on "Main Menu Button"
     And I click on "HeadlampsInMainMenu"
+    And I should see "PSKU1" and continue checking the condition is met for maximum 30 seconds
     When I click "View Details" for "PSKU1" product
     Then I should see "Lighting Products / Headlamps" in breadcrumbs in the storefront
     When I follow "Lighting Products"

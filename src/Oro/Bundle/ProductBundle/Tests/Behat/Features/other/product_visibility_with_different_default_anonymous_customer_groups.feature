@@ -87,7 +87,7 @@ Feature: Product visibility with different default anonymous customer groups
 
   Scenario: Guest no longer sees hidden product
     Given I proceed as the Guest
-    And I reload the page
+    When I should not see "PSKU" and continue checking the condition is met for maximum 30 seconds
     Then number of records in "Product Frontend Grid" should be 0
     And I should not see "PSKU" product
 

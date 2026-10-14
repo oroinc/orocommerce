@@ -60,6 +60,9 @@ Feature: Product Kit search attribute
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I go to the homepage
+    And I type "KitAttributeValue" in "search"
+    And I click "Search Button"
+    And I should see "PSKU_KIT1" and continue checking the condition is met for maximum 30 seconds
     When I type "KitAttributeValue" in "search"
     Then I should see an "Search Autocomplete" element
     When I press "ArrowDown" key on "Search Form Field" element

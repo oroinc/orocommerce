@@ -2,11 +2,11 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     about_us_slug_prototype:
         string: 'test-about-us'
     about_us_title:
-        string: 'Test About Us Page'
+        string: 'Company Story'
     privacy_policy_slug_prototype:
         string: 'test-privacy-policy'
     privacy_policy_title:
-        string: 'Test Privacy Policy Page'
+        string: 'Data Protection'
 
 Oro\Bundle\CMSBundle\Entity\Page:
     about_us_page:

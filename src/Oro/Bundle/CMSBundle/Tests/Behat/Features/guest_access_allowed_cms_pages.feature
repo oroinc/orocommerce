@@ -35,16 +35,16 @@ Feature: Guest Access Allowed CMS Pages
     And I follow "Commerce/Guests/Website Access" on configuration sidebar
     And uncheck "Use default" for "Allow Guest Access to Landing Pages" field
     And I fill "System Config Form" with:
-      | Allow Guest Access to Landing Pages | Test About Us Page |
+      | Allow Guest Access to Landing Pages | Company Story |
     When I save form
     Then I should see "Configuration Saved" flash message
 
   Scenario: Verify configured CMS page is accessible
     Given I proceed as the Guest
     When I go to "/test-about-us"
-    Then I should see "Test About Us Page"
+    Then I should see "Company Story"
     And I should see "This is the about us page content."
-    And Page title equals to "Test About Us Page"
+    And Page title equals to "Company Story"
 
   Scenario: Verify non-configured CMS pages are still blocked
     Given I proceed as the Guest
@@ -56,27 +56,27 @@ Feature: Guest Access Allowed CMS Pages
     And I go to System/Configuration
     And I follow "Commerce/Guests/Website Access" on configuration sidebar
     And I fill "System Config Form" with:
-      | Allow Guest Access to Landing Pages | [Test About Us Page, Test Privacy Policy Page] |
+      | Allow Guest Access to Landing Pages | [Company Story, Data Protection] |
     When I save form
     Then I should see "Configuration Saved" flash message
 
   Scenario: Verify multiple configured CMS pages are accessible
     Given I proceed as the Guest
     When I go to "/test-about-us"
-    Then I should see "Test About Us Page"
+    Then I should see "Company Story"
     And I should see "This is the about us page content."
-    And Page title equals to "Test About Us Page"
+    And Page title equals to "Company Story"
     When I go to "/test-privacy-policy"
-    Then I should see "Test Privacy Policy Page"
+    Then I should see "Data Protection"
     And I should see "This is the privacy policy page content."
-    And Page title equals to "Test Privacy Policy Page"
+    And Page title equals to "Data Protection"
 
   Scenario: Remove CMS page from allowed list
     Given I proceed as the Admin
     And I go to System/Configuration
     And I follow "Commerce/Guests/Website Access" on configuration sidebar
     And I fill "System Config Form" with:
-      | Allow Guest Access to Landing Pages | Test Privacy Policy Page |
+      | Allow Guest Access to Landing Pages | Data Protection |
     When I save form
     Then I should see "Configuration Saved" flash message
 
@@ -85,6 +85,6 @@ Feature: Guest Access Allowed CMS Pages
     When I go to "/test-about-us"
     Then I should be on Customer User Login page
     When I go to "/test-privacy-policy"
-    Then I should see "Test Privacy Policy Page"
+    Then I should see "Data Protection"
     And I should see "This is the privacy policy page content."
-    And Page title equals to "Test Privacy Policy Page"
+    And Page title equals to "Data Protection"

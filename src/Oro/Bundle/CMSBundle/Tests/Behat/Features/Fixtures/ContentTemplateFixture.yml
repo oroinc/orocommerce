@@ -8,7 +8,7 @@ Oro\Bundle\CMSBundle\Entity\ContentTemplate:
     organization: '@organization'
     owner: '@admin'
     enabled: true
-    createdAt: '<dateTimeBetween("-1 day", "now")>'
+    createdAt: '<dateTimeBetween("-2 day", "-1 day")>'
     updatedAt: '<dateTimeBetween($createdAt, "now")>'
   testContentTemplate2:
     name: 'TestContentTemplate2'
@@ -16,61 +16,61 @@ Oro\Bundle\CMSBundle\Entity\ContentTemplate:
     organization: '@organization'
     owner: '@charlie'
     enabled: true
-    createdAt: '<dateTimeBetween("-1 day", "now")>'
+    createdAt: '<dateTimeBetween("-2 day", "-1 day")>'
     updatedAt: '<dateTimeBetween($createdAt, "now")>'
   testContentTemplate3:
     name: 'TestContentTemplate3'
     content: 'TestContentTemplateContent3'
     organization: '@organization'
     enabled: true
-    createdAt: '<dateTimeBetween("-1 day", "now")>'
+    createdAt: '<dateTimeBetween("-2 day", "-1 day")>'
     updatedAt: '<dateTimeBetween($createdAt, "now")>'
   testContentTemplate4:
     name: 'TestContentTemplate4'
     content: 'TestContentTemplateContent4'
     organization: '@organization'
     enabled: true
-    createdAt: '<dateTimeBetween("-1 day", "now")>'
+    createdAt: '<dateTimeBetween("-2 day", "-1 day")>'
     updatedAt: '<dateTimeBetween($createdAt, "now")>'
   testContentTemplate5:
     name: 'TestContentTemplate5'
     content: 'TestContentTemplateContent5'
     organization: '@organization'
     enabled: true
-    createdAt: '<dateTimeBetween("-1 day", "now")>'
+    createdAt: '<dateTimeBetween("-2 day", "-1 day")>'
     updatedAt: '<dateTimeBetween($createdAt, "now")>'
   testContentTemplate6:
     name: 'TestContentTemplate6'
     content: 'TestContentTemplateContent6'
     organization: '@organization'
     enabled: true
-    createdAt: '<dateTimeBetween("-2 day", "now")>'
+    createdAt: '<dateTimeBetween("-2 day", "-1 day")>'
     updatedAt: '<dateTimeBetween($createdAt, "now")>'
   testContentTemplate7:
     name: 'TestContentTemplate7'
     content: 'TestContentTemplateContent7'
     organization: '@organization'
     enabled: false
-    createdAt: '<dateTimeBetween("-2 day", "now")>'
+    createdAt: '<dateTimeBetween("-2 day", "-1 day")>'
     updatedAt: '<dateTimeBetween($createdAt, "now")>'
   testContentTemplate8:
     name: 'TestContentTemplate8'
     content: 'TestContentTemplateContent8'
     organization: '@organization'
     enabled: false
-    createdAt: '<dateTimeBetween("-2 day", "now")>'
+    createdAt: '<dateTimeBetween("-2 day", "-1 day")>'
     updatedAt: '<dateTimeBetween($createdAt, "now")>'
   testContentTemplate9:
     name: 'TestContentTemplate9'
     content: 'TestContentTemplateContent9'
     organization: '@organization'
     enabled: false
-    createdAt: '<dateTimeBetween("-3 day", "now")>'
+    createdAt: '<dateTimeBetween("-3 day", "-1 day")>'
     updatedAt: '<dateTimeBetween($createdAt, "now")>'
   testContentTemplate10:
     name: 'TestContentTemplate10'
     content: 'TestContentTemplateContent10'
     organization: '@organization'
     enabled: false
-    createdAt: '<dateTimeBetween("-3 day", "now")>'
+    createdAt: '<dateTimeBetween("-3 day", "-1 day")>'
     updatedAt: '<dateTimeBetween($createdAt, "now")>'

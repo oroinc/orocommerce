@@ -590,13 +590,7 @@ Feature: WYSIWYG check RTE UI
     And I apply "italic" action in RTE
     And I click "GrapesJs Wysiwyg"
     When I add new component "Text" from panel to editor area
-    And I click "Undo Editor"
-    And I click "Undo Editor"
-    And I click "Undo Editor"
-    And I click "Undo Editor"
-    And I click "Undo Editor"
-    And I click "Undo Editor"
-    And I check wysiwyg content in "CMS Page Content":
+    And I click "Undo Editor" until wysiwyg content in "CMS Page Content" is:
       | 1 | <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit |
       | 2 | </div>                                                       |
     And I clear canvas in WYSIWYG
@@ -609,17 +603,10 @@ Feature: WYSIWYG check RTE UI
     And I apply "italic" action in RTE
     And I click "GrapesJs Wysiwyg"
     Then I add new component "Text" from panel to editor area
-    And I click "Undo Editor"
-    And I click "Undo Editor"
-    And I click "Undo Editor"
-    And I click "Undo Editor"
-    And I click "Undo Editor"
-    And I click "Redo Editor"
-    And I click "Redo Editor"
-    And I click "Redo Editor"
-    And I click "Redo Editor"
-    And I click "Redo Editor"
-    And I check wysiwyg content in "CMS Page Content":
+    And I click "Undo Editor" until wysiwyg content in "CMS Page Content" is:
+      | 1 | <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit |
+      | 2 | </div>                                                       |
+    And I click "Redo Editor" until wysiwyg content in "CMS Page Content" is:
       | 1 | <div>Lorem ipsum dolor sit amet, |
       | 2 | <b>                              |
       | 3 | <i>consectetur adipiscing elit   |

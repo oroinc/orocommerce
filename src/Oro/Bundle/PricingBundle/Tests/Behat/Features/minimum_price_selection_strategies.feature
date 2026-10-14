@@ -61,6 +61,7 @@ Feature: Minimum Price Selection Strategies
     When I continue as the Buyer
     And I am on the homepage
     And I click "NewCategory" in hamburger menu
+    And I should see "PSKU1" and continue checking the condition is met for maximum 30 seconds
     And I click "View Details" for "PSKU1" product
     And I should see "$7.00"
 

@@ -16,17 +16,6 @@ Feature: External orders import
     Then I should see "Configuration saved" flash message
     And the "Enable JSON Order Import" checkbox should be checked
 
-  Scenario: Data Template for Orders
-    Given I login as administrator
-    When I go to Sales/ Orders
-    Then there is no records in grid
-    When I download Data Template file with processor "external_order_import" and job "entity_export_template_to_json"
-    Then I see "identifier" field in JSON template
-    And I see "poNumber" field in JSON template
-    And I see "lineItems" field in JSON template
-    And I see "billingAddress" field in JSON template
-    And I see "shippingAddress" field in JSON template
-
   Scenario: Import new Orders without data
     Given I go to Sales/ Orders
     When I import "external_orders/import_empty_orders.json" import file

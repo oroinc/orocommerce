@@ -162,6 +162,10 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="frontend-orders-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    # The number on the toggle depends on the grid width, and the Playwright browser has no scrollbar.
+    Past Orders Filter Hint Items Toggle:
+      selector: 'div[data-page-component-name="frontend-orders-grid"] div.filter-criteria-hint-item-toggle'
+
     PastOrdersGridFilters:
       selector: 'div[data-page-component-name="frontend-orders-grid"] div.filter-box'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters

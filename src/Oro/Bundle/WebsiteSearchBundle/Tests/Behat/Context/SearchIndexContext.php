@@ -36,7 +36,8 @@ class SearchIndexContext extends OroFeatureContext
                 return $count === $query->getResult()
                         ->getRecordsCount();
             },
-            5
+            // a delayed reindex message comes back after 10 seconds
+            30
         );
 
         self::assertTrue(
