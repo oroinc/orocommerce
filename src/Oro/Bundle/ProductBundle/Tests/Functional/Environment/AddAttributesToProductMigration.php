@@ -22,7 +22,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
     public function up(Schema $schema, QueryBag $queries): void
     {
         $productTable = $schema->getTable('oro_product');
-        if ($productTable->hasColumn('testAttrEnum_id')) {
+        if ($productTable->hasColumn('testAttrBoolean')) {
             return;
         }
 
