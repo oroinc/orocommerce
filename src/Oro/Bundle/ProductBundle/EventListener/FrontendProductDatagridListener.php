@@ -10,7 +10,7 @@ use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
-use Oro\Bundle\UIBundle\Tools\UrlHelper;
+use Oro\Bundle\UIBundle\Tools\UrlHelperInterface;
 
 /**
  * Prepare product items based on product grid view option
@@ -26,12 +26,12 @@ class FrontendProductDatagridListener
 
     private ImagePlaceholderProviderInterface $imagePlaceholderProvider;
 
-    private UrlHelper $urlHelper;
+    private UrlHelperInterface $urlHelper;
 
     public function __construct(
         DataGridThemeHelper $themeHelper,
         ImagePlaceholderProviderInterface $imagePlaceholderProvider,
-        UrlHelper $urlHelper
+        UrlHelperInterface $urlHelper
     ) {
         $this->themeHelper = $themeHelper;
         $this->imagePlaceholderProvider = $imagePlaceholderProvider;

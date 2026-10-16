@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\WebpAwareProductAutocompleteListener;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
-use Oro\Bundle\UIBundle\Tools\UrlHelper;
+use Oro\Bundle\UIBundle\Tools\UrlHelperInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -19,7 +19,7 @@ class WebpAwareProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCa
 
     private ImagePlaceholderProviderInterface|\PHPUnit\Framework\MockObject\MockObject $imagePlaceholderProvider;
 
-    private UrlHelper|\PHPUnit\Framework\MockObject\MockObject $urlHelper;
+    private UrlHelperInterface|\PHPUnit\Framework\MockObject\MockObject $urlHelper;
 
     #[\Override]
     protected function setUp(): void
@@ -27,7 +27,7 @@ class WebpAwareProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCa
         $this->webpConfiguration = $this->createMock(WebpConfiguration::class);
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
 
-        $this->urlHelper = $this->createMock(UrlHelper::class);
+        $this->urlHelper = $this->createMock(UrlHelperInterface::class);
         $this->urlHelper
             ->expects(self::any())
             ->method('getAbsolutePath')

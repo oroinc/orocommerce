@@ -15,7 +15,7 @@ use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteQueryEvent;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
-use Oro\Bundle\UIBundle\Tools\UrlHelper;
+use Oro\Bundle\UIBundle\Tools\UrlHelperInterface;
 use Oro\Bundle\UIBundle\Twig\HtmlTagExtension;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -34,7 +34,7 @@ class ProductAutocompleteProvider
     protected ConfigManager $configManager;
     protected EnumOptionsProvider $enumOptionsProvider;
     protected EventDispatcherInterface $eventDispatcher;
-    protected UrlHelper $urlHelper;
+    protected UrlHelperInterface $urlHelper;
 
     public function __construct(
         UrlGeneratorInterface $urlGenerator,
@@ -44,7 +44,7 @@ class ProductAutocompleteProvider
         ConfigManager $configManager,
         EnumOptionsProvider $enumOptionsProvider,
         EventDispatcherInterface $eventDispatcher,
-        UrlHelper $urlHelper
+        UrlHelperInterface $urlHelper
     ) {
         $this->urlGenerator = $urlGenerator;
         $this->searchRepository = $searchRepository;

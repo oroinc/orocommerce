@@ -12,7 +12,7 @@ use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
-use Oro\Bundle\UIBundle\Tools\UrlHelper;
+use Oro\Bundle\UIBundle\Tools\UrlHelperInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
@@ -33,7 +33,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
         $this->themeHelper = $this->createMock(DataGridThemeHelper::class);
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
 
-        $urlHelper = $this->createMock(UrlHelper::class);
+        $urlHelper = $this->createMock(UrlHelperInterface::class);
         $urlHelper
             ->expects(self::any())
             ->method('getAbsolutePath')

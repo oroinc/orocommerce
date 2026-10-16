@@ -147,7 +147,7 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
             );
         }
 
-        return $this->getImagePlaceholderProvider()->getPath('original', $format);
+        return $this->getImagePlaceholderProvider()->getPath('original', $format, $effectiveReferenceType);
     }
 
     private function getSrcset(

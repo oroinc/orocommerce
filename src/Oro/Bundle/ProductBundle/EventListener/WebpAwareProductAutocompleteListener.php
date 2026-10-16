@@ -6,7 +6,7 @@ use Oro\Bundle\AttachmentBundle\Tools\WebpConfiguration;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent;
 use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent;
-use Oro\Bundle\UIBundle\Tools\UrlHelper;
+use Oro\Bundle\UIBundle\Tools\UrlHelperInterface;
 
 /**
  * Adds small product image in webp format to the search autocomplete data.
@@ -17,12 +17,12 @@ class WebpAwareProductAutocompleteListener
 
     private ImagePlaceholderProviderInterface $imagePlaceholderProvider;
 
-    private UrlHelper $urlHelper;
+    private UrlHelperInterface $urlHelper;
 
     public function __construct(
         WebpConfiguration $webpConfiguration,
         ImagePlaceholderProviderInterface $imagePlaceholderProvider,
-        UrlHelper $urlHelper
+        UrlHelperInterface $urlHelper
     ) {
         $this->webpConfiguration = $webpConfiguration;
         $this->imagePlaceholderProvider = $imagePlaceholderProvider;

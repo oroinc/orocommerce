@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import _ from 'underscore';
 import routing from 'routing';
 import BaseComponent from 'oroui/js/app/components/base/component';
@@ -51,14 +52,25 @@ const ListItemProductPricesComponent = BaseComponent.extend({
         };
         const URL = routing.generate(this.tierPricesRoute, params);
 
-        fetch(URL)
-            .then(response => response.json())
-            .then(data => this.onPricesLoad(data[this.productId] || {}))
-            .catch(() => errorHandler.showErrorInConsole(
-                new Error(`Unable to load prices for ${this.productId} product`)))
-            .finally(() => {
+        $.ajax({
+            url: URL,
+            type: 'GET',
+            dataType: 'json',
+            errorHandlerMessage: false,
+            success: data => {
+                try {
+                    this.onPricesLoad(data[this.productId] || {});
+                } catch (e) {
+                    errorHandler.showErrorInConsole(
+                        new Error(`Unable to load prices for ${this.productId} product`));
+                }
+            },
+            error: () => errorHandler.showErrorInConsole(
+                new Error(`Unable to load prices for ${this.productId} product`)),
+            complete: () => {
                 this.viewOptions.el.removeClass('loader-in-process');
-            });
+            }
+        });
     },
 
     onPricesLoad: function(prices) {

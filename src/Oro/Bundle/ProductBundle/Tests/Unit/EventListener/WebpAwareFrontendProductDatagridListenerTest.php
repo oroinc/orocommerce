@@ -12,7 +12,7 @@ use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\EventListener\WebpAwareFrontendProductDatagridListener;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
-use Oro\Bundle\UIBundle\Tools\UrlHelper;
+use Oro\Bundle\UIBundle\Tools\UrlHelperInterface;
 
 class WebpAwareFrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -31,7 +31,7 @@ class WebpAwareFrontendProductDatagridListenerTest extends \PHPUnit\Framework\Te
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
         $this->webpConfiguration = $this->createMock(WebpConfiguration::class);
 
-        $urlHelper = $this->createMock(UrlHelper::class);
+        $urlHelper = $this->createMock(UrlHelperInterface::class);
         $urlHelper
             ->expects(self::any())
             ->method('getAbsolutePath')

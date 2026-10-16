@@ -11,9 +11,10 @@ use Oro\Bundle\ProductBundle\Event\BuildResultProductListEvent;
 use Oro\Bundle\ProductBundle\EventListener\ProductListEventListener;
 use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
-use Oro\Bundle\UIBundle\Tools\UrlHelper;
+use Oro\Bundle\UIBundle\Tools\UrlHelperInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ProductListEventListenerTest extends TestCase
 {
@@ -27,7 +28,7 @@ class ProductListEventListenerTest extends TestCase
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
         $this->webpConfiguration = $this->createMock(WebpConfiguration::class);
 
-        $urlHelper = $this->createMock(UrlHelper::class);
+        $urlHelper = $this->createMock(UrlHelperInterface::class);
         $urlHelper
             ->expects(self::any())
             ->method('getAbsolutePath')
@@ -38,6 +39,10 @@ class ProductListEventListenerTest extends TestCase
             ->expects(self::any())
             ->method('shouldUseAbsoluteUrls')
             ->willReturn(false);
+        $apiUrlResolver
+            ->expects(self::any())
+            ->method('getEffectiveReferenceType')
+            ->willReturn(UrlGeneratorInterface::ABSOLUTE_PATH);
 
         $this->listener = new ProductListEventListener(
             $this->imagePlaceholderProvider,
@@ -154,7 +159,7 @@ class ProductListEventListenerTest extends TestCase
 
         $this->imagePlaceholderProvider->expects(self::once())
             ->method('getPath')
-            ->with('product_large')
+            ->with('product_large', '', UrlGeneratorInterface::ABSOLUTE_PATH)
             ->willReturn($noImagePath);
 
         $this->listener->onBuildResult(new BuildResultProductListEvent('test_list', $productData, $productViews));
@@ -253,11 +258,11 @@ class ProductListEventListenerTest extends TestCase
 
         $this->imagePlaceholderProvider->expects(self::once())
             ->method('getPath')
-            ->with('product_large')
+            ->with('product_large', '', UrlGeneratorInterface::ABSOLUTE_URL)
             ->willReturn($noImagePath);
 
         // Create listener with absolute URLs enabled
-        $urlHelper = $this->createMock(UrlHelper::class);
+        $urlHelper = $this->createMock(UrlHelperInterface::class);
         $urlHelper
             ->expects(self::any())
             ->method('getAbsoluteUrl')
@@ -268,6 +273,10 @@ class ProductListEventListenerTest extends TestCase
             ->expects(self::any())
             ->method('shouldUseAbsoluteUrls')
             ->willReturn(true);
+        $apiUrlResolver
+            ->expects(self::any())
+            ->method('getEffectiveReferenceType')
+            ->willReturn(UrlGeneratorInterface::ABSOLUTE_URL);
 
         $listener = new ProductListEventListener(
             $this->imagePlaceholderProvider,
@@ -310,7 +319,7 @@ class ProductListEventListenerTest extends TestCase
             );
 
         // Create listener with absolute URLs enabled
-        $urlHelper = $this->createMock(UrlHelper::class);
+        $urlHelper = $this->createMock(UrlHelperInterface::class);
         $urlHelper
             ->expects(self::any())
             ->method('getAbsoluteUrl')

@@ -17,6 +17,7 @@
         "oro/calendar-bundle": "7.1.*",
         "oro/marketing": "7.1.*",
         "oro/customer-portal": "7.1.*",
+        "oro/oauth2-server": "7.1.*",
         "oroinc/soap-client": "^0.2.7"
     },
     "require-dev": {

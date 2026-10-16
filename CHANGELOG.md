@@ -152,6 +152,14 @@ The current file describes significant changes in the code that may affect the u
 #### RedirectBundle
 * Changed `\Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator::getLocalization()` from private to public.
 
+#### ProductBundle
+* Changed the services that receive the `oro_ui.tools.url_helper` service to depend on `\Oro\Bundle\UIBundle\Tools\UrlHelperInterface` instead of `\Oro\Bundle\UIBundle\Tools\UrlHelper`, because this service is now decorated by `\Oro\Bundle\StorefrontEmbeddedBundle\Tools\EmbeddedRequestUrlHelper`, which does not extend `UrlHelper`. Customizations that extend the following classes must type-hint `UrlHelperInterface` in their constructors:
+    * `\Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener`
+    * `\Oro\Bundle\ProductBundle\EventListener\ProductListEventListener`
+    * `\Oro\Bundle\ProductBundle\EventListener\WebpAwareFrontendProductDatagridListener`
+    * `\Oro\Bundle\ProductBundle\EventListener\WebpAwareProductAutocompleteListener`
+    * `\Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider` - the protected `$urlHelper` property is now typed `UrlHelperInterface` as well. Subclasses that redeclare this property must change its type.
+
 ### Removed
 
 #### CMSBundle

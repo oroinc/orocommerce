@@ -29,11 +29,11 @@ const ProductKitResetShoppingListsPlugin = BasePlugin.extend({
 
             xhr.done(response => {
                 if (collection && collection.length === 0) {
-                    if (!productModel && productModel.disposed) {
+                    if (!productModel || productModel.disposed) {
                         return;
                     }
 
-                    if (!shoppingListCollection && shoppingListCollection.disposed) {
+                    if (!shoppingListCollection || shoppingListCollection.disposed) {
                         return;
                     }
                     productModel.set('shopping_lists', [], {silent: true});
