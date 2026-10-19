@@ -34,6 +34,11 @@ oro_behat_extension:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
   elements:
+    Customer User Role Entity Permissions Row:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "entity-name")][text()="Customer User Role"]/ancestor::tr'
+
     Order Products Collapsed Header:
       selector:
         type: xpath
