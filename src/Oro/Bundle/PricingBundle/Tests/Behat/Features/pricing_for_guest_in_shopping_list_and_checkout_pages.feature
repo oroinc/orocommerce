@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-24733
+@ticket-BB-28060
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroCheckoutBundle:Payment.yml
@@ -74,6 +75,15 @@ Feature: Pricing for guest in shopping list and checkout pages
       | Currency 2   | $                |
     And save and close form
     Then I should see "Product has been saved" flash message
+
+  Scenario: Check single price on product view page for guest
+    Given I proceed as the Buyer
+    And I am on homepage
+    When type "testProduct" in "search"
+    And I click "Search Button"
+    And I click "View Details" for "testProduct" product
+    Then I should see "$2.00" in the "Product Price Main" element
+    And I should not see an "Default Page Prices" element
 
   Scenario: Check shopping list and checkout total for guest
     Given I proceed as the Buyer

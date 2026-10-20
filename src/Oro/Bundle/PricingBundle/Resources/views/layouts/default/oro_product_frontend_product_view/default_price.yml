@@ -6,11 +6,6 @@ layout:
         -   '@setBlockTheme':
                 themes: '@OroPricing/layouts/default/oro_product_frontend_product_view/default_price.html.twig'
 
-        -   '@setOption':
-                id: product_price_component
-                optionName: visible
-                optionValue: '=context["is_logged_in"]'
-
         # Hiding listed price and unit
         -   '@remove':
                 id: product_price_listed

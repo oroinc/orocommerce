@@ -81,13 +81,12 @@ Feature: Product Kit microdata
     Then "Product Details" should contains microdata:
       | Product Type Microdata Declaration  |
       | Product Brand Microdata Declaration |
+      | Product Price Microdata Declaration |
       | SchemaOrg SKU                       |
       | SchemaOrg Name                      |
       | SchemaOrg Description               |
       | SchemaOrg Image                     |
       | SchemaOrg Brand Name                |
-    And "Product Details" should not contains microdata:
-      | Product Price Microdata Declaration |
       | SchemaOrg Price Currency            |
       | SchemaOrg Price                     |
     And "Product Details" should contains "SchemaOrg Description" with attributes:
@@ -96,6 +95,8 @@ Feature: Product Kit microdata
       | SchemaOrg SKU             | simpleproduct01       |
       | SchemaOrg Name Page Title | ProductTheKit Child 1 |
       | SchemaOrg Brand Name      | ACME Default          |
+      | SchemaOrg Price Currency  | USD                   |
+      | SchemaOrg Price           | 31.00                 |
 
     And "productkit1" product in "Related Products Block" should not contains microdata:
       | Product Type Microdata Declaration  |
