@@ -77,6 +77,8 @@ oro_behat_extension:
                 - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
                 - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
                 - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\NavigationBundle\Tests\Behat\Context\PinbarContext
+                - Oro\Bundle\UIBundle\Tests\Behat\Context\BreadcrumbContext
                 - Oro\Bundle\WebsiteSearchBundle\Tests\Behat\Context\SearchIndexContext
             paths:
                 - '@OroWebsiteSearchTermBundle/Tests/Behat/Features'

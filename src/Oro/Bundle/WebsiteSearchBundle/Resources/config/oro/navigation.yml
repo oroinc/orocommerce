@@ -12,7 +12,7 @@ navigation:
                 label: oro.websitesearch.navigation.search_history_index.label
                 route: oro_website_search_result_history_index
                 extras:
-                    routes: ['oro_website_search_*']
+                    routes: ['/^oro_website_search_(?!term_)\w+$/']
             shortcut_oro_website_search_result_history_index:
                 label: oro.websitesearch.shortcut.list_search_result_histories.label
                 route: oro_website_search_result_history_index

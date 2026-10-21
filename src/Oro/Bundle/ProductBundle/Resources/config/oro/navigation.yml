@@ -41,7 +41,7 @@ navigation:
                     alias: 'product'
                 position: 40
                 extras:
-                    routes: ['oro_attribute_*']
+                    routes: ['/^oro_attribute_(?!family_)\w+$/']
 
             product_attribute_families:
                 label: 'oro.product.menu.product_attribute_families'
