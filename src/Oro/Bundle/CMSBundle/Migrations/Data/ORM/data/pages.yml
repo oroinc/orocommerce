@@ -52,7 +52,7 @@ about:
                             <source srcset="/bundles/orocms/images/landing-page/1_1920.webp 1x, /bundles/orocms/images/landing-page/1_1920-2x.webp 2x"
                                     media="(min-width: 1281px)">
                             <img class="cover-img full-cover" src="/bundles/orocms/images/landing-page/1_1920.webp"
-                                 alt="Image">
+                                 alt="Red SUV with a rooftop cargo box driving along an empty country road">
                         </picture>
                     </div>
                 </div>
@@ -76,7 +76,7 @@ about:
                                     media="(max-width: 1280px)">
                             <source srcset="/bundles/orocms/images/landing-page/2_1920.webp 1x, /bundles/orocms/images/landing-page/2_1920-2x.webp 2x"
                                     media="(min-width: 1281px)">
-                            <img src="/bundles/orocms/images/landing-page/2_1920.webp" alt="Image" loading="lazy">
+                            <img src="/bundles/orocms/images/landing-page/2_1920.webp" alt="Rocky ocean coastline with waves breaking over the rocks" loading="lazy">
                         </picture>
                         <figcaption>
                             <p class="h1">RV &amp; GEAR SELLER</p>
@@ -191,7 +191,7 @@ about:
                                         media="(max-width: 1280px)">
                                 <source srcset="/bundles/orocms/images/landing-page/3_1920.webp 1x, /bundles/orocms/images/landing-page/3_1920-2x.webp 2x"
                                         media="(min-width: 1281px)">
-                                <img class="cover-img full-cover" src="/bundles/orocms/images/landing-page/3_1920.webp" alt="Image" loading="lazy">
+                                <img class="cover-img full-cover" src="/bundles/orocms/images/landing-page/3_1920.webp" alt="Motorhome parked at a desert campsite among Joshua trees" loading="lazy">
                             </picture>
                         </div>
                         <div class="grid-col-8 grid-col-tablet-small-12">
