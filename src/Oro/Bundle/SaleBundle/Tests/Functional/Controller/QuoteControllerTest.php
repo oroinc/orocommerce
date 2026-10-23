@@ -40,6 +40,7 @@ class QuoteControllerTest extends WebTestCase
     {
         $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
+        $this->client->followRedirects();
 
         $this->loadFixtures([LoadUserData::class, LoadPaymentTermData::class]);
     }
@@ -59,7 +60,6 @@ class QuoteControllerTest extends WebTestCase
         $form['oro_sale_quote[poNumber]'] = self::PO_NUMBER;
         $form['oro_sale_quote[shipUntil]'] = self::SHIP_UNTIL;
 
-        $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
@@ -130,7 +130,6 @@ class QuoteControllerTest extends WebTestCase
         $form['oro_sale_quote[assignedUsers]'] = $user->getId();
         $form['oro_sale_quote[assignedCustomerUsers]'] = implode(',', [$accountUser1->getId(), $accountUser2->getId()]);
 
-        $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
@@ -181,7 +180,6 @@ class QuoteControllerTest extends WebTestCase
         $form['oro_sale_quote[overriddenShippingCostAmount][value]'] = self::OVERRIDDEN_SHIPPING_COST_AMOUNT;
         $form['oro_sale_quote[overriddenShippingCostAmount][currency]'] = self::OVERRIDDEN_SHIPPING_COST_CURRENCY;
 
-        $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
         $form = $crawler->selectButton('Save')->form();
         $fields = $form->get('oro_sale_quote');
@@ -268,11 +266,11 @@ class QuoteControllerTest extends WebTestCase
     /**
      * @dataProvider submitProvider
      */
-    public function testSubmit(array $submittedData, array $expectedData)
+    public function testSubmit(array $submittedData, array $expectedData, array $routeParameters = [])
     {
         $this->prepareProviderData($submittedData);
 
-        $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_create', $routeParameters));
 
         $form = $crawler->selectButton('Save and Close')->form();
         $form->remove('oro_sale_quote[quoteProducts][0]');
@@ -280,7 +278,6 @@ class QuoteControllerTest extends WebTestCase
             $form['oro_sale_quote' . $field] = $value;
         }
 
-        $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
@@ -290,6 +287,66 @@ class QuoteControllerTest extends WebTestCase
 
         $this->assertEquals(1, $filtered->count());
         self::assertStringContainsString($expectedData['contains'], $filtered->html());
+    }
+
+    public function testCreateFromProductDataStorageWithoutCsrfToken(): void
+    {
+        $repository = $this->getContainer()->get('doctrine')->getRepository(Quote::class);
+        $quotesCount = $repository->count([]);
+
+        $this->client->request('GET', $this->getUrl('oro_sale_quote_create', ['storage' => 1]));
+
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), 403);
+        self::assertSame($quotesCount, $repository->count([]));
+    }
+
+    /**
+     * @dataProvider createForOwnerFromProductDataStorageWithoutCsrfTokenProvider
+     */
+    public function testCreateForOwnerFromProductDataStorageWithoutCsrfToken(
+        string $route,
+        string $routeParameter,
+        string $ownerReference
+    ): void {
+        $repository = $this->getContainer()->get('doctrine')->getRepository(Quote::class);
+        $quotesCount = $repository->count([]);
+        $owner = $this->getReference($ownerReference);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl($route, [$routeParameter => $owner->getId(), 'storage' => 1])
+        );
+
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), 403);
+        self::assertSame($quotesCount, $repository->count([]));
+    }
+
+    public function createForOwnerFromProductDataStorageWithoutCsrfTokenProvider(): array
+    {
+        return [
+            'create for customer' => [
+                'route' => 'oro_sale_quote_create_for_customer',
+                'routeParameter' => 'customer',
+                'ownerReference' => LoadUserData::ACCOUNT1,
+            ],
+            'create for customer user' => [
+                'route' => 'oro_sale_quote_create_for_customer_user',
+                'routeParameter' => 'customerUser',
+                'ownerReference' => LoadUserData::ACCOUNT1_USER1,
+            ],
+        ];
+    }
+
+    public function testCreateFromProductDataStorageWithCsrfToken(): void
+    {
+        $repository = $this->getContainer()->get('doctrine')->getRepository(Quote::class);
+        $quotesCount = $repository->count([]);
+
+        $this->client->followRedirects(false);
+        $this->ajaxRequest('GET', $this->getUrl('oro_sale_quote_create', ['storage' => 1]));
+
+        self::assertResponseStatusCodeEquals($this->client->getResponse(), 302);
+        self::assertSame($quotesCount + 1, $repository->count([]));
     }
 
     public function submitProvider(): array
@@ -315,6 +372,31 @@ class QuoteControllerTest extends WebTestCase
                     'contains'  => 'Quote has been saved',
                     'filter'    => 'body',
                 ],
+            ],
+            'invalid form csrf token' => [
+                'submittedData' => [
+                    '[owner]' => function () {
+                        return $this->getReferencedUser(LoadUserData::USER1)->getId();
+                    },
+                    '[_token]' => 'invalid',
+                ],
+                'expectedData'  => [
+                    'contains'  => 'The CSRF token is invalid',
+                    'filter'    => 'body',
+                ],
+            ],
+            'invalid form csrf token with return back' => [
+                'submittedData' => [
+                    '[owner]' => function () {
+                        return $this->getReferencedUser(LoadUserData::USER1)->getId();
+                    },
+                    '[_token]' => 'invalid',
+                ],
+                'expectedData'  => [
+                    'contains'  => 'The CSRF token is invalid',
+                    'filter'    => 'body',
+                ],
+                'routeParameters' => ['redirect_back' => 1],
             ],
         ];
     }

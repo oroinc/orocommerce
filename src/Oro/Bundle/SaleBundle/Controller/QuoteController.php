@@ -16,6 +16,7 @@ use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 use Oro\Bundle\SaleBundle\Storage\ReturnRouteDataStorage;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\SecurityBundle\Csrf\CsrfRequestManager;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bridge\Twig\Attribute\Template;
@@ -23,6 +24,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\GroupSequence;
@@ -232,6 +234,9 @@ class QuoteController extends AbstractController
         );
     }
 
+    /**
+     * @throws AccessDeniedHttpException
+     */
     private function createQuote(
         Request $request,
         ?Quote $quote = null,
@@ -250,6 +255,13 @@ class QuoteController extends AbstractController
         if (!$request->get(ProductDataStorage::STORAGE_KEY, false)) {
             return $this->update($quote, $request, $resultProvider);
         }
+
+        // The branches above save only a submitted form, which validates its own CSRF token.
+        $csrfRequestManager = $this->container->get(CsrfRequestManager::class);
+        if (!$csrfRequestManager->isRequestTokenValid($request)) {
+            throw new AccessDeniedHttpException('Invalid CSRF token');
+        }
+        $csrfRequestManager->refreshRequestToken();
 
         $this->createForm(QuoteType::class, $quote);
 
@@ -332,6 +344,7 @@ class QuoteController extends AbstractController
                 SaveAndReturnActionFormTemplateDataProvider::class,
                 FormTemplateDataProviderComposite::class,
                 ManagerRegistry::class,
+                CsrfRequestManager::class,
             ]
         );
     }

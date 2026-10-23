@@ -160,6 +160,12 @@ The current file describes significant changes in the code that may affect the u
     * `\Oro\Bundle\ProductBundle\EventListener\WebpAwareProductAutocompleteListener`
     * `\Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider` - the protected `$urlHelper` property is now typed `UrlHelperInterface` as well. Subclasses that redeclare this property must change its type.
 
+#### SaleBundle
+* Changed `\Oro\Bundle\SaleBundle\Controller\QuoteController`: creating a quote from the product data storage (the `storage` request parameter without `redirect_back`)
+  now requires a valid `X-CSRF-Header` and responds with 403 otherwise. This applies to the `oro_sale_quote_create`, `oro_sale_quote_create_for_customer`
+  and `oro_sale_quote_create_for_customer_user` routes. Customizations that open these routes with the `storage` parameter must send the header;
+  opening the quote form and saving it through the form are not affected.
+
 ### Removed
 
 #### CMSBundle
