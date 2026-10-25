@@ -85,6 +85,7 @@ final class FedexAddressValidationResponseCacheTest extends TestCase
     {
         $datetime = new \DateTime('now +1 day');
         $key = $this->createCacheKey($datetime);
+        $maxLifetime = $datetime->getTimestamp() - time();
         $response = $this->createMock(AddressValidationResponse::class);
         $this->cache->expects(self::once())
             ->method('getItem')
@@ -92,7 +93,10 @@ final class FedexAddressValidationResponseCacheTest extends TestCase
             ->willReturn($this->cacheItem);
         $this->cacheItem->expects(self::once())
             ->method('expiresAfter')
-            ->with($datetime->getTimestamp() - \date_timestamp_get(\date_create()))
+            ->with(self::callback(
+                static fn (int $lifetime) => $lifetime <= $maxLifetime
+                    && $lifetime >= $datetime->getTimestamp() - time()
+            ))
             ->willReturn($this->cacheItem);
         $this->cacheItem->expects(self::once())
             ->method('set')
