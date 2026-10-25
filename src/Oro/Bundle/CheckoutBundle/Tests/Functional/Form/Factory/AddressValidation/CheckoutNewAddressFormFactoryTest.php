@@ -28,6 +28,8 @@ final class CheckoutNewAddressFormFactoryTest extends WebTestCase
         $user = $this->getReference(LoadUserData::SIMPLE_USER);
         $this->updateUserSecurityToken($user->getEmail());
 
+        self::getContainer()->get('oro_frontend.request.frontend_helper')->emulateFrontendRequest();
+
         $this->checkout = self::getReference(LoadCheckoutACLData::CHECKOUT_ACC_1_USER_LOCAL);
 
         $requestStack = self::getContainer()->get('request_stack');

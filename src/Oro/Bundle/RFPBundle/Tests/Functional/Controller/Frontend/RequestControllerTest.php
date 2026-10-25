@@ -238,7 +238,6 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'action_configuration' => [
                         'update' => false,
-                        'delete' => false,
                     ],
                 ],
                 'activateFrontend' => true,
@@ -264,12 +263,9 @@ class RequestControllerTest extends WebTestCase
                         'update_link',
                         'view_aria_label',
                         'view_link',
-                        'action_configuration',
                         'customer_status',
                     ],
-                    'action_configuration' => [
-                        'delete' => false,
-                    ],
+                    'action_configuration' => [],
                 ],
             ],
             'customer1 user2 (all customer requests)' => [
@@ -301,7 +297,6 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'action_configuration' => [
                         'update' => false,
-                        'delete' => false,
                     ],
                 ],
             ],
@@ -329,7 +324,6 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'action_configuration' => [
                         'update' => false,
-                        'delete' => false,
                     ],
                 ],
             ],
@@ -353,12 +347,9 @@ class RequestControllerTest extends WebTestCase
                         'update_link',
                         'view_aria_label',
                         'view_link',
-                        'action_configuration',
                         'customer_status',
                     ],
-                    'action_configuration' => [
-                        'delete' => false,
-                    ],
+                    'action_configuration' => [],
                 ],
             ],
             'customer2 user2 (all customer user requests and full permissions)' => [
@@ -382,13 +373,10 @@ class RequestControllerTest extends WebTestCase
                         'update_link',
                         'view_aria_label',
                         'view_link',
-                        'action_configuration',
                         'customerUserName',
                         'customer_status',
                     ],
-                    'action_configuration' => [
-                        'delete' => false,
-                    ],
+                    'action_configuration' => [],
                 ],
             ],
             'parent customer user1 (all requests)' => [

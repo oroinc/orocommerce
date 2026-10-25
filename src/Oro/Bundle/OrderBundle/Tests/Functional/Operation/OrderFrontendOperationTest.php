@@ -36,16 +36,13 @@ class OrderFrontendOperationTest extends FrontendActionTestCase
             Order::class,
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
-            Response::HTTP_FORBIDDEN
+            Response::HTTP_NOT_FOUND
         );
 
         $this->assertEquals(
             [
-                'success' => false,
-                'message' => 'Operation "DELETE" execution is forbidden!',
-                'messages' => [],
-                'refreshGrid' => null,
-                'pageReload' => true
+                'message' => 'Operation with name "DELETE" not found',
+                'success' => false
             ],
             json_decode($this->client->getResponse()->getContent(), true)
         );

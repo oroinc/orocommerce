@@ -10,6 +10,7 @@ operations:
 
     b2b_flow_checkout_single_page_new_billing_address:
         extends: b2b_flow_checkout_single_page_new_address
+        applications: [commerce]
         attributes:
             visitor_email:
                 label: oro.customer.customeruser.username.label
@@ -56,6 +57,7 @@ operations:
 
     b2b_flow_checkout_single_page_new_shipping_address:
         extends: b2b_flow_checkout_single_page_new_address
+        applications: [commerce]
         attributes:
             address:
                 property_path: data.shippingAddress

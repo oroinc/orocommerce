@@ -224,6 +224,7 @@ operations:
 
     oro_shoppinglist_delete:
         extends: DELETE
+        applications: [commerce]
         replace:
             - for_all_datagrids
             - for_all_entities
@@ -385,6 +386,7 @@ operations:
 
     oro_shoppinglist_line_item_save_for_later:
         label: oro.shoppinglist.actions.save_for_later.label
+        applications: [commerce]
         acl_resource: oro_shopping_list_frontend_update
         order: 10
         datagrids:
@@ -427,6 +429,7 @@ operations:
 
     oro_shoppinglist_invalid_line_item_save_for_later:
         label: oro.shoppinglist.actions.save_for_later.label
+        applications: [commerce]
         acl_resource: oro_shopping_list_frontend_update
         order: 10
         page_reload: false
@@ -469,6 +472,7 @@ operations:
 
     oro_shoppinglist_line_item_remove_from_saved_for_later:
         label: oro.shoppinglist.actions.remove_from_saved_for_later.label
+        applications: [commerce]
         acl_resource: oro_shopping_list_frontend_update
         order: 10
         datagrids:
