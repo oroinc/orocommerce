@@ -12,9 +12,12 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResol
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 
 class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
 {
+    use WebsiteSearchExtensionTrait;
+
     private ProductResolvedCacheBuilder $builder;
 
     #[\Override]
@@ -29,6 +32,13 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         );
 
         self::getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        self::resetIndex(Product::class);
+        parent::tearDown();
     }
 
     public function testBuildCache(): void
