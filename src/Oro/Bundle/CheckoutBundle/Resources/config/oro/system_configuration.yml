@@ -125,7 +125,7 @@ system_configuration:
                     oro.checkout.checkoutlineitem.entity_label:
                         oro.checkout.checkoutlineitem.parent_product.label: parentProduct
                 attr:
-                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-page-component-module': 'oroform/js/app/components/dependent-field-component'
                     'data-depend-on': 'enable_line_item_grouping'
                     'data-show-if': 'checked'
 
@@ -137,7 +137,7 @@ system_configuration:
                 label: oro.checkout.system_configuration.fields.create_suborders_for_each_group.label
                 tooltip: oro.checkout.system_configuration.fields.create_suborders_for_each_group.tooltip
                 attr:
-                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-page-component-module': 'oroform/js/app/components/dependent-field-component'
                     'data-depend-on': 'enable_line_item_grouping'
                     'data-show-if': 'checked'
 
@@ -159,7 +159,7 @@ system_configuration:
                 label: oro.checkout.system_configuration.fields.show_main_orders_in_order_history.label
                 tooltip: oro.checkout.system_configuration.fields.show_main_orders_in_order_history.tooltip
                 attr:
-                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-page-component-module': 'oroform/js/app/components/dependent-field-component'
                     'data-depend-on': 'show_suborders_in_order_history'
                     'data-show-if': 'checked'
 

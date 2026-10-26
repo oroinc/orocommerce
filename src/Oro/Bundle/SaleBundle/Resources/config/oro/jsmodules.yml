@@ -6,7 +6,6 @@ dynamic-imports:
     commons:
         - orosale/js/validator/quote-product-offer-quantity
     orosale:
-        - orosale/js/app/components/dependent-field-component
         - orosale/js/app/components/related-data-component
         - orosale/js/app/components/quote-products-prices-component
         - orosale/js/app/views/address-view

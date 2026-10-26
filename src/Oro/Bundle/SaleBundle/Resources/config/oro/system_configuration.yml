@@ -40,7 +40,7 @@ system_configuration:
                 required: false
                 label:  oro.sale.system_configuration.fields.contact_details.label
                 attr:
-                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-page-component-module': 'oroform/js/app/components/dependent-field-component'
                     'data-depend-on': 'contact_info_source_display'
                     'data-show-if': 'pre_configured'
 
@@ -64,7 +64,7 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 attr:
-                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-page-component-module': 'oroform/js/app/components/dependent-field-component'
                     'data-depend-on': 'allow_user_configuration'
                     'data-show-if': 'checked'
 
@@ -89,7 +89,7 @@ system_configuration:
                 label: oro.sale.system_configuration.fields.contact_info_manual_text.label
                 resettable: false
                 attr:
-                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-page-component-module': 'oroform/js/app/components/dependent-field-component'
                     'data-depend-on': 'oro_sale.contact_info_user_option'
                     'data-show-if': 'enter_manually'
         oro_sale.guest_contact_info_text:

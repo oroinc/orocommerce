@@ -714,7 +714,7 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                 attr:
-                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-page-component-module': 'oroform/js/app/components/dependent-field-component'
                     'data-depend-on': 'product_inventory_filter_type'
                     'data-show-if': 'inventory-switcher'
 

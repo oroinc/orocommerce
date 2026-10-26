@@ -28,7 +28,7 @@ system_configuration:
                 label: oro.websitesearch.feature.website_search_history_tracking.label
                 tooltip: oro.websitesearch.feature.website_search_history_tracking.description
                 attr:
-                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-page-component-module': 'oroform/js/app/components/dependent-field-component'
                     'data-depend-on': 'enable_global_search_history_feature'
                     'data-show-if': 'checked'
 

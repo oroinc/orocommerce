@@ -168,6 +168,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Removed
 
+#### SaleBundle
+* Removed the `orosale/js/app/components/dependent-field-component` page component. Use `oroform/js/app/components/dependent-field-component`, which takes the same data attributes and also supports chains of dependent fields.
+
 #### CMSBundle
 * Removed `link-type.js`, `link-block-type.js`, `link-button/` directory, and `file/` directory — these are replaced by the unified link component in `types/link/`.
 * Removed the `CreateLinkModal` dialog (`dialogs/create-link-dialog.js`), its `create-link-form.html` template, and the `open-create-link-dialog` editor command. Link attributes (`href`, `title`, `target`, `rel`) are now edited through the Settings panel traits instead of a modal. The `link-settings` toolbar item and the default `mainToolbarAction` were removed accordingly. Customizations that opened the dialog or ran the `open-create-link-dialog` command should select the link component and use the Settings panel.

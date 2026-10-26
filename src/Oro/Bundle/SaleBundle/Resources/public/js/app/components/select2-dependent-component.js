@@ -1,5 +1,5 @@
 import Select2Component from 'oro/select2-component';
-import DependentFieldComponent from 'orosale/js/app/components/dependent-field-component';
+import DependentFieldComponent from 'oroform/js/app/components/dependent-field-component';
 
 const Select2DependentComponent = Select2Component.extend({
     constructor: function Select2DependentComponent(...args) {
