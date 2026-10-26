@@ -16,6 +16,8 @@ class OrderWithExternalStatusManagementTest extends RestJsonApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->setConfigValue('oro_attachment.upload_file_mime_types', 'text/plain');
+
         $this->loadFixtures([
             '@OroOrderBundle/Tests/Functional/DataFixtures/order_line_items.yml',
             LoadOrderDocuments::class
@@ -33,6 +35,7 @@ class OrderWithExternalStatusManagementTest extends RestJsonApiTestCase
         $configManager->set('oro_order.order_enable_external_status_management', false);
         $configManager->flush();
 
+        $this->restoreConfigValues();
         parent::tearDown();
     }
 

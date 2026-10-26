@@ -32,12 +32,21 @@ class QuoteTest extends RestJsonApiTestCase
     {
         parent::setUp();
 
+        $this->setConfigValue('oro_attachment.upload_file_mime_types', 'text/plain');
+
         $this->loadFixtures([
             LoadQuoteData::class,
             LoadRequestData::class,
             LoadQuoteDocuments::class,
             '@OroSaleBundle/Tests/Functional/Api/DataFixtures/quote_notes.yml'
         ]);
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $this->restoreConfigValues();
+        parent::tearDown();
     }
 
     private function getActivityNoteIds(int $quoteId): array

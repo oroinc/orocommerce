@@ -35,6 +35,8 @@ class OrderTest extends RestJsonApiTestCase
     {
         parent::setUp();
 
+        $this->setConfigValue('oro_attachment.upload_file_mime_types', 'text/plain');
+
         $this->loadFixtures([
             '@OroOrderBundle/Tests/Functional/DataFixtures/order_line_items.yml',
             LoadOrderDocuments::class
@@ -42,6 +44,13 @@ class OrderTest extends RestJsonApiTestCase
 
         $this->getOptionalListenerManager()
             ->enableListener('oro_order.order.listener.orm.order_shipping_status_listener');
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $this->restoreConfigValues();
+        parent::tearDown();
     }
 
     private function generateLineItemChecksum(OrderLineItem $lineItem): string
