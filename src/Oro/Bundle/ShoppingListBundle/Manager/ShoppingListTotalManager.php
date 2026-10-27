@@ -143,8 +143,8 @@ class ShoppingListTotalManager
         bool $doFlush
     ): array {
         $shoppingListTotals = [];
-        $customerUser = $this->customerUserProvider->getLoggedUser();
         $assignedCustomerUser = $shoppingList->getCustomerUser();
+        $customerUser = $this->customerUserProvider->getLoggedUser() ?? $assignedCustomerUser;
 
         $totals = $shoppingList->getTotalsForCustomerUser($currencies, $customerUser);
         if ($totals->isEmpty()) {

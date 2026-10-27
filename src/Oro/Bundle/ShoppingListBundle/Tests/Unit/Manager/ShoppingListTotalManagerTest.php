@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -454,5 +455,54 @@ class ShoppingListTotalManagerTest extends TestCase
         );
         self::assertCount(1, $shoppingList->getTotals());
         self::assertEquals($expectedTotalUSD, $shoppingList->getTotals()->first());
+    }
+
+    public function testGetShoppingListTotalForCurrencyWithoutCurrentCustomerAndTotalWithoutCustomerUser(): void
+    {
+        $customerUser = $this->getCustomerUser(1);
+
+        $shoppingList = new ShoppingList();
+        $shoppingList->setCustomerUser($customerUser);
+
+        $legacySubtotal = $this->getSubtotal(0, self::USD);
+        $legacyTotalUSD = $this->getShoppingListTotal($shoppingList, false, self::USD, $legacySubtotal);
+        $legacyTotalUSD->setCustomerUser(null);
+        $ownerTotalUSD = $this->getShoppingListTotal($shoppingList, false, self::USD, null, $customerUser);
+        // Both totals share the currency, so they are set as loaded from the database, bypassing addTotal().
+        ReflectionUtil::setPropertyValue(
+            $shoppingList,
+            'totals',
+            new ArrayCollection([$legacyTotalUSD, $ownerTotalUSD])
+        );
+
+        $this->customerUserProvider->expects(self::once())
+            ->method('getLoggedUser')
+            ->willReturn(null);
+
+        $this->subtotalProvider->expects(self::once())
+            ->method('getSubtotalByCurrency')
+            ->with($shoppingList, self::USD)
+            ->willReturn($this->getSubtotal(100, self::USD));
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects(self::once())
+            ->method('contains')
+            ->willReturn(true);
+        $em->expects(self::never())
+            ->method('persist');
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(ShoppingListTotal::class)
+            ->willReturn($em);
+
+        self::assertSame(
+            $ownerTotalUSD,
+            $this->totalManager->getShoppingListTotalForCurrency($shoppingList, self::USD)
+        );
+        self::assertTrue($ownerTotalUSD->isValid());
+        self::assertSame(100.0, $ownerTotalUSD->getSubtotal()->getAmount());
+        self::assertFalse($legacyTotalUSD->isValid());
+        self::assertSame(0.0, $legacyTotalUSD->getSubtotal()->getAmount());
+        self::assertCount(2, $shoppingList->getTotals());
     }
 }

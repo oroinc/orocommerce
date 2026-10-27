@@ -209,6 +209,14 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before_query.frontend-customer-user-shopping-list-grid, method: onResultBeforeQuery, priority: -256 }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before_query.frontend-customer-user-shopping-list-edit-grid, method: onResultBeforeQuery, priority: -256 }
 
+    oro_shopping_list.datagrid.event_listener.shopping_list_subtotal_grid:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\ShoppingListSubtotalGridListener
+        arguments:
+            - '@doctrine'
+            - '@oro_shopping_list.manager.shopping_list_total'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.base-shopping-list-grid, method: onResultAfter }
+
     oro_shopping_list.datagrid.event_listener.saved-for-later-line-items:
         class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\SavedForLaterLineItemsGridListener
         tags:
