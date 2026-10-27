@@ -5,6 +5,7 @@ namespace Oro\Bundle\PayPalBundle\EventListener\Callback;
 use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -20,7 +21,8 @@ class RedirectListener
 
     public function __construct(
         protected RequestStack $requestStack,
-        protected PaymentMethodProviderInterface $paymentMethodProvider
+        protected PaymentMethodProviderInterface $paymentMethodProvider,
+        protected PaymentTransactionProvider $paymentTransactionProvider
     ) {
     }
 
@@ -42,6 +44,14 @@ class RedirectListener
 
         $this->handleEvent($event, self::FAILED_SHIPPING_ADDRESS_URL_KEY);
         $this->setErrorMessage('oro.paypal.result.incorrect_shipping_address_error');
+
+        // This listener runs before PayflowExpressCheckoutListener::onError() and stops the propagation, so the
+        // transaction has to be marked as failed here. CallbackHandler does not save the payment transaction once
+        // the propagation is stopped; persist it here, otherwise the transaction stays active in the database.
+        $paymentTransaction
+            ->setSuccessful(false)
+            ->setActive(false);
+        $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
         $event->stopPropagation();
     }

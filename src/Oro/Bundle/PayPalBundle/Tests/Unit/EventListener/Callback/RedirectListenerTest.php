@@ -5,6 +5,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\EventListener\Callback;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PayPalBundle\EventListener\Callback\RedirectListener;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response as PayflowResponse;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
@@ -25,6 +26,9 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $paymentMethodProvider;
 
+    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentTransactionProvider;
+
     /** @var RedirectListener */
     private $listener;
 
@@ -33,12 +37,17 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->session = $this->createMock(Session::class);
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->requestStack->expects($this->any())
             ->method('getSession')
             ->willReturn($this->session);
 
-        $this->listener = new RedirectListener($this->requestStack, $this->paymentMethodProvider);
+        $this->listener = new RedirectListener(
+            $this->requestStack,
+            $this->paymentMethodProvider,
+            $this->paymentTransactionProvider
+        );
     }
 
     public function testOnErrorWithoutPaymentTransaction()
@@ -77,9 +86,12 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         array $options,
         array $receivedResponse,
         Response $expectedResponse,
-        ?string $expectedFlashError = null
+        ?string $expectedFlashError,
+        bool $expectedTransactionFailed
     ) {
         $paymentTransaction = (new PaymentTransaction())
+            ->setActive(true)
+            ->setSuccessful(false)
             ->setTransactionOptions($options)
             ->setResponse($receivedResponse);
 
@@ -99,9 +111,17 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
             ->method('hasPaymentMethod')
             ->willReturn(true);
 
+        // The listener stops the propagation, so it has to persist the failed transaction itself.
+        $this->paymentTransactionProvider->expects($expectedTransactionFailed ? $this->once() : $this->never())
+            ->method('savePaymentTransaction')
+            ->with($this->identicalTo($paymentTransaction));
+
         $this->listener->onError($event);
 
         $this->assertResponses($expectedResponse, $event->getResponse());
+        $this->assertSame($expectedTransactionFailed, $event->isPropagationStopped());
+        $this->assertSame(!$expectedTransactionFailed, $paymentTransaction->isActive());
+        $this->assertFalse($paymentTransaction->isSuccessful());
 
         if ($errorAlreadyInFlashBag) {
             $this->assertContains('test msg', $flashBag->get('error', []));
@@ -116,14 +136,15 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $message = 'Field format error: 10736-A match of the Shipping Address City, State, and Postal Code failed.';
 
         return [
-            [
+            'field format error without the shipping address message is not handled' => [
                 'errorAlreadyInFlashBag' => false,
                 'options' => [RedirectListener::FAILED_SHIPPING_ADDRESS_URL_KEY => 'failedShippingUrl'],
                 'receivedResponse' => [PayflowResponse::RESULT_KEY => ResponseStatusMap::FIELD_FORMAT_ERROR],
                 'expectedResponse' => new Response('', Response::HTTP_FORBIDDEN),
-                'expectedFlashError' => null
+                'expectedFlashError' => null,
+                'expectedTransactionFailed' => false,
             ],
-            [
+            'shipping address error redirects and persists the failed transaction' => [
                 'errorAlreadyInFlashBag' => false,
                 'options' => [RedirectListener::FAILED_SHIPPING_ADDRESS_URL_KEY => 'failedShippingUrl'],
                 'receivedResponse' => [
@@ -132,6 +153,18 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
                 ],
                 'expectedResponse' => new RedirectResponse('failedShippingUrl'),
                 'expectedFlashError' => 'oro.paypal.result.incorrect_shipping_address_error',
+                'expectedTransactionFailed' => true,
+            ],
+            'shipping address error with an error already in the flash bag' => [
+                'errorAlreadyInFlashBag' => true,
+                'options' => [RedirectListener::FAILED_SHIPPING_ADDRESS_URL_KEY => 'failedShippingUrl'],
+                'receivedResponse' => [
+                    PayflowResponse::RESULT_KEY => ResponseStatusMap::FIELD_FORMAT_ERROR,
+                    PayflowResponse::RESPMSG_KEY => $message,
+                ],
+                'expectedResponse' => new RedirectResponse('failedShippingUrl'),
+                'expectedFlashError' => null,
+                'expectedTransactionFailed' => true,
             ],
         ];
     }
@@ -151,7 +184,12 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
             ->method('hasPaymentMethod')
             ->willReturn(true);
 
+        $this->paymentTransactionProvider->expects($this->never())
+            ->method('savePaymentTransaction');
+
         $this->listener->onError($event);
+
+        $this->assertFalse($event->isPropagationStopped());
     }
 
     public function testOnErrorWithoutTransaction()

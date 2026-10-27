@@ -13,6 +13,7 @@ services:
         arguments:
             - '@request_stack'
             - '@oro_paypal.method.provider.express_checkout.composite'
+            - '@oro_payment.provider.payment_transaction'
         tags:
             - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError, priority: 20 }
 
