@@ -105,6 +105,36 @@ services:
             - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-saved-for-later-edit-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-invalid-line-items-grid, method: onLineItemData }
 
+    oro_shopping_list.event_listener.datagrid_line_items_data.restrict_variant_view:
+        class: Oro\Bundle\ProductBundle\EventListener\DatagridLineItemsDataRestrictVariantViewListener
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_featuretogle.feature, feature: 'simple_variations_view_restriction' }
+            # This listener must be called after "oro_visibility.event_listener.datagrid_line_items_data.visibility" as it overrides the visibility of the product variants line items.
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData, priority: 1000 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData, priority: 1000 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: 1000 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData, priority: 1000 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-saved-for-later-grid, method: onLineItemData, priority: 1000 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-saved-for-later-edit-grid, method: onLineItemData, priority: 1000 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-invalid-line-items-grid, method: onLineItemData, priority: 1000 }
+
+    oro_shopping_list.event_listener.datagrid_kit_item_line_items_data.restrict_variant_view:
+        class: Oro\Bundle\ProductBundle\EventListener\DatagridLineItemsDataRestrictVariantViewListener
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_featuretogle.feature, feature: 'simple_variations_view_restriction' }
+            # This listener must be called after "oro_visibility.event_listener.datagrid_kit_item_line_items_data.visibility" as it overrides the visibility of the product variants line items.
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData, priority: 1000 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData, priority: 1000 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: 1000 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData, priority: 1000 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-saved-for-later-grid, method: onLineItemData, priority: 1000 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-saved-for-later-edit-grid, method: onLineItemData, priority: 1000 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-invalid-line-items-grid, method: onLineItemData, priority: 1000 }
+
     oro_shopping_list.event_listener.datagrid_line_items_data.shopping_list_line_item_basic:
         class: Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataListener
         tags:

@@ -208,7 +208,7 @@
         font-weight: font-weight('semi-bold');
         color: $shopping-list-dropdown-item-title-color;
 
-        &:hover {
+        &[href]:hover {
             color: $shopping-list-dropdown-item-title-hover-color;
         }
     }

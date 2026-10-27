@@ -1,0 +1,22 @@
+include:
+    - '@OroCustomerBundle:CustomerUserAmandaRCole.yml'
+    - '@OroShoppingListBundle:ConfigurableProductFixtures.yml'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    buyerShoppingList:
+        label: 'Buyer Shopping List'
+        customer: '@Customer_AmandaRCole'
+        customerUser: '@CustomerUser_AmandaRCole'
+        owner: '@admin'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    buyerLineItem:
+        product: '@simpleProduct1'
+        quantity: '2'
+        unit: '@item'
+        customerUser: '@CustomerUser_AmandaRCole'
+        shoppingList: '@buyerShoppingList'
+        owner: '@admin'
+        organization: '@organization'

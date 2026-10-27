@@ -21,11 +21,16 @@ use Twig\TwigFunction;
  * Provides a Twig function to get shopping list storefront urls:
  *   - shopping_list_frontend_url
  *
- * Provides a Twig function to get required data for shopping list widget view:
+ * Provides Twig functions to get required data for shopping list widget view:
  *   - get_shopping_list_widget_buttons
+ *   - get_visible_product
+ *   - is_line_item_product_viewable
  */
 class ShoppingListExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
+    /** @var \WeakMap<Product, bool>|null */
+    private ?\WeakMap $variantFlags = null;
+
     public function __construct(
         private readonly ContainerInterface $container
     ) {
@@ -39,6 +44,7 @@ class ShoppingListExtension extends AbstractExtension implements ServiceSubscrib
             new TwigFunction('oro_shopping_list_frontend_url', [$this, 'getShoppingListFrontendUrl']),
             new TwigFunction('get_shopping_list_widget_buttons', [$this, 'getShoppingListWidgetButtons']),
             new TwigFunction('get_visible_product', [$this, 'getVisibleProduct']),
+            new TwigFunction('is_line_item_product_viewable', [$this, 'isLineItemProductViewable']),
         ];
     }
 
@@ -77,12 +83,37 @@ class ShoppingListExtension extends AbstractExtension implements ServiceSubscrib
         $product = $lineItem->getProduct();
         if (
             $featureChecker->isFeatureEnabled('simple_variations_view_restriction')
-            && $product->getParentVariantLinks()->count()
+            && $this->isVariant($product)
         ) {
-            return $lineItem->getParentProduct();
+            return $lineItem->getParentProduct() ?? $product;
         }
 
         return $product;
+    }
+
+    /**
+     * Checks whether the view page of the product returned by {@see getVisibleProduct} is available
+     * for the given line item, i.e. the product is not a variant restricted from view.
+     */
+    public function isLineItemProductViewable(LineItem $lineItem): bool
+    {
+        if (null !== $lineItem->getParentProduct()) {
+            return true;
+        }
+
+        return
+            !$this->getFeatureChecker()->isFeatureEnabled('simple_variations_view_restriction')
+            || !$this->isVariant($lineItem->getProduct());
+    }
+
+    private function isVariant(Product $product): bool
+    {
+        $this->variantFlags ??= new \WeakMap();
+        if (!isset($this->variantFlags[$product])) {
+            $this->variantFlags[$product] = $product->getParentVariantLinks()->count() > 0;
+        }
+
+        return $this->variantFlags[$product];
     }
 
     #[\Override]

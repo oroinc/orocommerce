@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Twig;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ActionBundle\Button\ButtonInterface;
 use Oro\Bundle\ActionBundle\Layout\DataProvider\LayoutButtonProvider;
-use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
@@ -95,21 +96,129 @@ class ShoppingListExtensionTest extends TestCase
         );
     }
 
-    public function testGetVisibleProduct(): void
+    /**
+     * @dataProvider lineItemDataProvider
+     */
+    public function testGetVisibleProduct(
+        bool $isVariant,
+        bool $hasParentProduct,
+        bool $isRestrictionEnabled,
+        bool $expectedParentProduct,
+        bool $expectedViewable
+    ): void {
+        [$lineItem, $product, $configProduct] = $this->createLineItem($isVariant, $hasParentProduct);
+
+        $this->featureChecker->expects(self::any())
+            ->method('isFeatureEnabled')
+            ->with('simple_variations_view_restriction')
+            ->willReturn($isRestrictionEnabled);
+
+        self::assertSame(
+            $expectedParentProduct ? $configProduct : $product,
+            self::callTwigFunction($this->extension, 'get_visible_product', [$lineItem])
+        );
+    }
+
+    /**
+     * @dataProvider lineItemDataProvider
+     */
+    public function testIsLineItemProductViewable(
+        bool $isVariant,
+        bool $hasParentProduct,
+        bool $isRestrictionEnabled,
+        bool $expectedParentProduct,
+        bool $expectedViewable
+    ): void {
+        [$lineItem] = $this->createLineItem($isVariant, $hasParentProduct);
+
+        $this->featureChecker->expects(self::any())
+            ->method('isFeatureEnabled')
+            ->with('simple_variations_view_restriction')
+            ->willReturn($isRestrictionEnabled);
+
+        self::assertSame(
+            $expectedViewable,
+            self::callTwigFunction($this->extension, 'is_line_item_product_viewable', [$lineItem])
+        );
+    }
+
+    public function lineItemDataProvider(): array
     {
-        $product = new Product();
-        $configProduct = new Product();
+        return [
+            'not variant, restriction enabled' => [
+                'isVariant' => false,
+                'hasParentProduct' => false,
+                'isRestrictionEnabled' => true,
+                'expectedParentProduct' => false,
+                'expectedViewable' => true,
+            ],
+            'variant with parent product, restriction enabled' => [
+                'isVariant' => true,
+                'hasParentProduct' => true,
+                'isRestrictionEnabled' => true,
+                'expectedParentProduct' => true,
+                'expectedViewable' => true,
+            ],
+            'variant without parent product, restriction enabled' => [
+                'isVariant' => true,
+                'hasParentProduct' => false,
+                'isRestrictionEnabled' => true,
+                'expectedParentProduct' => false,
+                'expectedViewable' => false,
+            ],
+            'variant with parent product, restriction disabled' => [
+                'isVariant' => true,
+                'hasParentProduct' => true,
+                'isRestrictionEnabled' => false,
+                'expectedParentProduct' => false,
+                'expectedViewable' => true,
+            ],
+            'variant without parent product, restriction disabled' => [
+                'isVariant' => true,
+                'hasParentProduct' => false,
+                'isRestrictionEnabled' => false,
+                'expectedParentProduct' => false,
+                'expectedViewable' => true,
+            ],
+        ];
+    }
+
+    public function testVariantCheckIsPerformedOncePerProduct(): void
+    {
+        $variantLinks = $this->createMock(Collection::class);
+        $variantLinks->expects(self::once())
+            ->method('count')
+            ->willReturn(1);
+        $product = $this->createMock(Product::class);
+        $product->expects(self::any())
+            ->method('getParentVariantLinks')
+            ->willReturn($variantLinks);
         $lineItem = new LineItem();
         $lineItem->setProduct($product);
-        $lineItem->getParentProduct($configProduct);
-        $product->getParentVariantLinks(new ArrayCollection([$configProduct]));
 
-        $this->featureChecker->expects(self::once())
+        $this->featureChecker->expects(self::exactly(2))
             ->method('isFeatureEnabled')
             ->with('simple_variations_view_restriction')
             ->willReturn(true);
 
-        $result = $this->extension->getVisibleProduct($lineItem);
-        $this->assertEquals($configProduct, $result);
+        self::assertSame($product, $this->extension->getVisibleProduct($lineItem));
+        self::assertFalse($this->extension->isLineItemProductViewable($lineItem));
+    }
+
+    private function createLineItem(bool $isVariant, bool $hasParentProduct): array
+    {
+        $product = (new Product())->setId(1);
+        $configProduct = (new Product())->setId(2);
+        if ($isVariant) {
+            $product->addParentVariantLink(new ProductVariantLink($configProduct, $product));
+        }
+
+        $lineItem = new LineItem();
+        $lineItem->setProduct($product);
+        if ($hasParentProduct) {
+            $lineItem->setParentProduct($configProduct);
+        }
+
+        return [$lineItem, $product, $configProduct];
     }
 }
