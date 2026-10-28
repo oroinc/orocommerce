@@ -263,66 +263,6 @@ class RequestProductKitConfigurationTypeTest extends FrontendWebTestCase
         );
     }
 
-    public function testSubmitNewProductSimple(): void
-    {
-        /** @var Product $productSimple1 */
-        $productSimple1 = $this->getReference('product_simple1');
-
-        $formFactory = self::getContainer()->get('form.factory');
-        $form = $formFactory->create(
-            RequestProductKitConfigurationType::class,
-            null,
-            ['csrf_protection' => false, 'validation_groups' => false]
-        );
-
-        $form->submit([
-            'product' => $productSimple1->getId(),
-        ]);
-
-        self::assertTrue($form->isValid(), (string)$form->getErrors(true));
-        self::assertTrue($form->isSynchronized());
-
-        $requestProduct = (new RequestProduct())
-            ->setProduct($productSimple1);
-
-        self::assertInstanceOf(RequestProduct::class, $form->getData());
-
-        /** @var RequestProduct $actualRequestProduct */
-        $actualRequestProduct = $form->getData();
-        self::assertEquals($requestProduct->getProduct()->getId(), $actualRequestProduct->getProduct()->getId());
-    }
-
-    public function testSubmitExistingProductSimple(): void
-    {
-        /** @var Product $productSimple1 */
-        $productSimple1 = $this->getReference('product_simple1');
-        /** @var Product $productSimple2 */
-        $productSimple2 = $this->getReference('product_simple2');
-
-        $requestProduct = (new RequestProduct())
-            ->setProduct($productSimple1);
-
-        $formFactory = self::getContainer()->get('form.factory');
-        $form = $formFactory->create(
-            RequestProductKitConfigurationType::class,
-            $requestProduct,
-            ['csrf_protection' => false, 'validation_groups' => false]
-        );
-
-        $form->submit([
-            'product' => $productSimple2->getId(),
-        ]);
-
-        self::assertTrue($form->isValid(), (string)$form->getErrors(true));
-        self::assertTrue($form->isSynchronized());
-
-        self::assertInstanceOf(RequestProduct::class, $form->getData());
-
-        /** @var RequestProduct $actualRequestProduct */
-        $actualRequestProduct = $form->getData();
-        self::assertEquals($productSimple2->getId(), $actualRequestProduct->getProduct()->getId());
-    }
-
     public function testSubmitNewProductKit(): void
     {
         /** @var Product $productKit1 */

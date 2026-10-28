@@ -7,8 +7,12 @@ use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductKitCombinedProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
@@ -31,6 +35,12 @@ class RequestControllerTest extends WebTestCase
     private const ROLE = 'CEO';
     private const REQUEST = 'request body';
     private const PO_NUMBER = 'CA245566789KL';
+    private const string KIT_CONFIGURATION_FORM = 'oro_rfp_frontend_request_product_kit_configuration';
+    private const string PRODUCT_UNIT_MILLILITER = 'milliliter';
+    private const int PRODUCT_KIT_1_TOTAL_PRICE = 30;
+    private const string PRODUCT_EMPTY_MESSAGE = 'Product cannot be empty';
+    private const string PRODUCT_KIT_NOT_AVAILABLE_MESSAGE = 'Original selection no longer available';
+    private const string WIDGET_ID = 'test';
 
     private WorkflowManager $manager;
 
@@ -44,7 +54,9 @@ class RequestControllerTest extends WebTestCase
         $this->loadFixtures([
             LoadUserData::class,
             LoadRequestData::class,
-            LoadProductPrices::class
+            LoadProductPrices::class,
+            LoadProductKitData::class,
+            LoadProductKitCombinedProductPrices::class,
         ]);
     }
 
@@ -843,6 +855,187 @@ class RequestControllerTest extends WebTestCase
         self::assertArrayHasKey('title', $jsonContent);
         self::assertArrayHasKey('content', $jsonContent);
         self::assertArrayHasKey('flashMessages', $jsonContent);
+    }
+
+    public function testProductKitConfigurationPriceWhenProductAllowedReturnsPrice(): void
+    {
+        $this->loginUser(LoadUserData::ACCOUNT1_USER1);
+
+        /** @var Product $productKit */
+        $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);
+        $this->ajaxRequest(
+            'POST',
+            $this->getUrl('oro_rfp_frontend_request_product_kit_configuration_price'),
+            [
+                self::KIT_CONFIGURATION_FORM => [
+                    'index' => 0,
+                    'product' => $productKit->getId(),
+                    'kitItemLineItems' => [
+                        $productKit->getKitItems()->first()->getId() => [
+                            'product' => $this->getReference(LoadProductData::PRODUCT_1)->getId(),
+                            'quantity' => 1,
+                        ],
+                    ],
+                    'quantity' => 1,
+                    'productUnit' => self::PRODUCT_UNIT_MILLILITER,
+                    '_token' => $this->getCsrfToken(self::KIT_CONFIGURATION_FORM)->getValue(),
+                ],
+            ]
+        );
+
+        $jsonContent = self::getJsonResponseContent($this->client->getResponse(), 200);
+        self::assertSame(
+            ['successful' => true, 'price' => ['value' => self::PRODUCT_KIT_1_TOTAL_PRICE, 'currency' => 'USD']],
+            $jsonContent
+        );
+    }
+
+    public function testProductKitConfigurationPriceWhenProductDisabledReturnsError(): void
+    {
+        $this->loginUser(LoadUserData::ACCOUNT1_USER1);
+
+        /** @var Product $productKit */
+        $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);
+        $productKit->setStatus(Product::STATUS_DISABLED);
+        $this->getManager(Product::class)->flush();
+
+        $this->ajaxRequest(
+            'POST',
+            $this->getUrl('oro_rfp_frontend_request_product_kit_configuration_price'),
+            [
+                self::KIT_CONFIGURATION_FORM => [
+                    'index' => 0,
+                    'product' => $productKit->getId(),
+                    'kitItemLineItems' => [
+                        $productKit->getKitItems()->first()->getId() => [
+                            'product' => $this->getReference(LoadProductData::PRODUCT_1)->getId(),
+                            'quantity' => 1,
+                        ],
+                    ],
+                    'quantity' => 1,
+                    'productUnit' => self::PRODUCT_UNIT_MILLILITER,
+                    '_token' => $this->getCsrfToken(self::KIT_CONFIGURATION_FORM)->getValue(),
+                ],
+            ]
+        );
+
+        $jsonContent = self::getJsonResponseContent($this->client->getResponse(), 422);
+        self::assertFalse($jsonContent['successful']);
+        self::assertArrayNotHasKey('price', $jsonContent);
+        self::assertContains(self::PRODUCT_KIT_NOT_AVAILABLE_MESSAGE, $jsonContent['messages']['error']);
+    }
+
+    public function testProductKitConfigurationPriceWhenFeatureDisabledReturnsNotFound(): void
+    {
+        $this->loginUser(LoadUserData::ACCOUNT1_USER1);
+
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_rfp.frontend_feature_enabled', false);
+        $configManager->flush();
+        try {
+            $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);
+            $this->ajaxRequest(
+                'POST',
+                $this->getUrl('oro_rfp_frontend_request_product_kit_configuration_price'),
+                [
+                    self::KIT_CONFIGURATION_FORM => [
+                        'index' => 0,
+                        'product' => $productKit->getId(),
+                        'quantity' => 1,
+                        'productUnit' => self::PRODUCT_UNIT_MILLILITER,
+                        '_token' => $this->getCsrfToken(self::KIT_CONFIGURATION_FORM)->getValue(),
+                    ],
+                ]
+            );
+
+            self::assertResponseStatusCodeEquals($this->client->getResponse(), 404);
+        } finally {
+            $configManager->set('oro_rfp.frontend_feature_enabled', true);
+            $configManager->flush();
+        }
+    }
+
+    public function testProductKitConfigurationDialogWhenProductAllowedShowsProductKit(): void
+    {
+        $this->loginUser(LoadUserData::ACCOUNT1_USER1);
+
+        /** @var Product $productKit */
+        $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);
+        $this->ajaxRequest(
+            'POST',
+            $this->getUrl(
+                'oro_rfp_frontend_request_product_kit_configuration',
+                ['_widgetContainer' => 'dialog', '_wid' => self::WIDGET_ID]
+            ),
+            [
+                '_widgetInit' => '1',
+                'oro_rfp_frontend_request' => ['requestProducts' => [['product' => $productKit->getId()]]],
+            ]
+        );
+
+        $result = $this->client->getResponse();
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertStringContainsString($productKit->getSku(), $result->getContent());
+        self::assertStringContainsString($productKit->getKitItems()->first()->getLabel(), $result->getContent());
+    }
+
+    public function testProductKitConfigurationDialogWhenProductDisabledHidesProductKit(): void
+    {
+        $this->loginUser(LoadUserData::ACCOUNT1_USER1);
+
+        /** @var Product $productKit */
+        $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);
+        $productKit->setStatus(Product::STATUS_DISABLED);
+        $this->getManager(Product::class)->flush();
+
+        $this->ajaxRequest(
+            'POST',
+            $this->getUrl(
+                'oro_rfp_frontend_request_product_kit_configuration',
+                ['_widgetContainer' => 'dialog', '_wid' => self::WIDGET_ID]
+            ),
+            [
+                '_widgetInit' => '1',
+                'oro_rfp_frontend_request' => ['requestProducts' => [['product' => $productKit->getId()]]],
+            ]
+        );
+
+        $result = $this->client->getResponse();
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertStringNotContainsString($productKit->getSku(), $result->getContent());
+        self::assertStringNotContainsString($productKit->getKitItems()->first()->getLabel(), $result->getContent());
+    }
+
+    public function testProductKitConfigurationDialogSubmitWhenProductDisabledReturnsValidationError(): void
+    {
+        $this->loginUser(LoadUserData::ACCOUNT1_USER1);
+
+        /** @var Product $productKit */
+        $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);
+        $productKit->setStatus(Product::STATUS_DISABLED);
+        $this->getManager(Product::class)->flush();
+
+        $this->ajaxRequest(
+            'POST',
+            $this->getUrl(
+                'oro_rfp_frontend_request_product_kit_configuration',
+                ['_widgetContainer' => 'dialog', '_wid' => self::WIDGET_ID]
+            ),
+            [
+                self::KIT_CONFIGURATION_FORM => [
+                    'index' => 0,
+                    'product' => $productKit->getId(),
+                    'quantity' => 1,
+                    'productUnit' => self::PRODUCT_UNIT_MILLILITER,
+                    '_token' => $this->getCsrfToken(self::KIT_CONFIGURATION_FORM)->getValue(),
+                ],
+            ]
+        );
+
+        $result = $this->client->getResponse();
+        self::assertHtmlResponseStatusCodeEquals($result, 422);
+        self::assertStringContainsString(self::PRODUCT_EMPTY_MESSAGE, $result->getContent());
+        self::assertStringNotContainsString($productKit->getSku(), $result->getContent());
     }
 
     private function getEnumEntity(string $enumCode, string $enumField): EnumOptionInterface

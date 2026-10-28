@@ -3,6 +3,7 @@ oro:
         requestproduct:
             product:
                 blank: 'Product cannot be empty.'
+                not_available: 'Original selection no longer available'
             request_product_items:
                 blank: 'Please add one or more requests.'
             kit_item_line_items:

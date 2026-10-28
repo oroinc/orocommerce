@@ -1,0 +1,129 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
+    - Oro\Bundle\VisibilityBundle\Tests\Functional\Api\DataFixtures\LoadProductVisibilityScope
+    - Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsite
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product_simple1_precision:
+        unit: '@item'
+        precision: 0
+    product_kit_allowed_precision:
+        unit: '@each'
+        precision: 0
+    product_kit_disabled_precision:
+        unit: '@each'
+        precision: 0
+    product_kit_hidden_precision:
+        unit: '@each'
+        precision: 0
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    product_kit_allowed_item_product:
+        product: '@product_simple1'
+    product_kit_disabled_item_product:
+        product: '@product_simple1'
+    product_kit_hidden_item_product:
+        product: '@product_simple1'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    product_kit_allowed_item:
+        productUnit: '@item'
+        __calls:
+            -   setDefaultLabel: [ 'product_kit_allowed_item' ]
+            -   addKitItemProduct: [ '@product_kit_allowed_item_product' ]
+    product_kit_disabled_item:
+        productUnit: '@item'
+        __calls:
+            -   setDefaultLabel: [ 'product_kit_disabled_item' ]
+            -   addKitItemProduct: [ '@product_kit_disabled_item_product' ]
+    product_kit_hidden_item:
+        productUnit: '@item'
+        __calls:
+            -   setDefaultLabel: [ 'product_kit_hidden_item' ]
+            -   addKitItemProduct: [ '@product_kit_hidden_item_product' ]
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product_simple1:
+        type: 'simple'
+        sku: 'product_simple1'
+        primaryUnitPrecision: '@product_simple1_precision'
+        unitPrecisions: [ '@product_simple1_precision' ]
+        attributeFamily: '@default_product_family'
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        organization: '@organization'
+        owner: '@business_unit'
+        __calls:
+            -   setDefaultName: [ 'ProductSimple1' ]
+    product_kit_allowed:
+        type: 'kit'
+        sku: 'product_kit_allowed'
+        primaryUnitPrecision: '@product_kit_allowed_precision'
+        unitPrecisions: [ '@product_kit_allowed_precision' ]
+        attributeFamily: '@default_product_family'
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        organization: '@organization'
+        owner: '@business_unit'
+        __calls:
+            -   setDefaultName: [ 'ProductKit allowed' ]
+            -   addKitItem: [ '@product_kit_allowed_item' ]
+    product_kit_disabled:
+        type: 'kit'
+        sku: 'product_kit_disabled'
+        primaryUnitPrecision: '@product_kit_disabled_precision'
+        unitPrecisions: [ '@product_kit_disabled_precision' ]
+        attributeFamily: '@default_product_family'
+        status: 'disabled'
+        inventoryStatus: '@in_stock'
+        organization: '@organization'
+        owner: '@business_unit'
+        __calls:
+            -   setDefaultName: [ 'ProductKit disabled' ]
+            -   addKitItem: [ '@product_kit_disabled_item' ]
+    product_kit_hidden:
+        type: 'kit'
+        sku: 'product_kit_hidden'
+        primaryUnitPrecision: '@product_kit_hidden_precision'
+        unitPrecisions: [ '@product_kit_hidden_precision' ]
+        attributeFamily: '@default_product_family'
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        organization: '@organization'
+        owner: '@business_unit'
+        __calls:
+            -   setDefaultName: [ 'ProductKit hidden' ]
+            -   addKitItem: [ '@product_kit_hidden_item' ]
+
+Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility:
+    product_kit_hidden_visibility:
+        visibility: 'hidden'
+        product: '@product_kit_hidden'
+        scope: '@scope'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceList:
+    combined_price_list1:
+        name: 'combined_price_list1'
+        enabled: true
+        pricesCalculated: true
+        __calls:
+            -   setCurrencies: [ [ 'USD' ] ]
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+    combined_product_price_product_simple1:
+        product: '@product_simple1'
+        productSku: 'product_simple1'
+        priceList: '@combined_price_list1'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 1.2345
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+    combined_price_list1_to_website:
+        pricelist: '@combined_price_list1'
+        website: '@website'

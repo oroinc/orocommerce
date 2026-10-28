@@ -49,7 +49,11 @@ class RequestProductKitConfigurationType extends AbstractType
             ->add('index', HiddenType::class, ['mapped' => false, 'constraints' => [new Type(['type' => 'int'])]])
             ->add(
                 $builder
-                    ->create('product', HiddenType::class)
+                    ->create(
+                        'product',
+                        HiddenType::class,
+                        ['invalid_message' => 'oro.rfp.requestproduct.product.not_available']
+                    )
                     ->addModelTransformer($this->productToIdDataTransformer)
                     ->addEventSubscriber($this->requestProductProductListener)
                     ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'setProductUnitProduct'])
