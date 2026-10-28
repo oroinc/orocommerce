@@ -211,7 +211,7 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
             }
         }
 
-        return [];
+        return ['successful' => false];
     }
 
     #[\Override]

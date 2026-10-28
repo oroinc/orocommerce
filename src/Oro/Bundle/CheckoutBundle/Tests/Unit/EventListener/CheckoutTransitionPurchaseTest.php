@@ -82,6 +82,34 @@ class CheckoutTransitionPurchaseTest extends TestCase
         $this->listener->onAfter($event);
     }
 
+    public function testTransitIfPaymentResponseDataHasNoSuccessfulKey(): void
+    {
+        $eventDispatcher = self::createMock(EventDispatcher::class);
+
+        $transitionOptionsResolver = self::createMock(TransitionOptionsResolver::class);
+        $translator = $this->createMock(TranslatorInterface::class);
+        $transition = new Transition($transitionOptionsResolver, $eventDispatcher, $translator);
+
+        $workflowResult = new WorkflowResult(['responseData' => ['paymentMethod' => 'authorize_net_1']]);
+
+        $workflowItem = self::createMock(WorkflowItem::class);
+        $workflowItem->expects(self::once())
+            ->method('getResult')
+            ->willReturn($workflowResult);
+
+        $event = new CheckoutTransitionAfterEvent($workflowItem, $transition, true, new ArrayCollection([]));
+
+        $token = self::createMock(UsernamePasswordOrganizationToken::class);
+        $this->tokenStorage->expects(self::once())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $this->manager->expects(self::never())
+            ->method('transitIfAllowed');
+
+        $this->listener->onAfter($event);
+    }
+
     public function testTransitIfUserValidAndPaymentSuccessful(): void
     {
         $eventDispatcher = self::createMock(EventDispatcher::class);

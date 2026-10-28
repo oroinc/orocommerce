@@ -82,6 +82,10 @@ class Purchase extends TransitionServiceAbstract
             ]
         );
         $responseData = array_merge((array)$workflowResult->offsetGet('responseData'), $purchaseResult['responseData']);
+        if (array_key_exists('purchaseSuccessful', $responseData)) {
+            // the validate step result must not override the purchase outcome
+            $responseData['successful'] = (bool)$responseData['purchaseSuccessful'];
+        }
         $workflowResult->offsetSet('responseData', $responseData);
 
         $this->actionExecutor->executeAction(

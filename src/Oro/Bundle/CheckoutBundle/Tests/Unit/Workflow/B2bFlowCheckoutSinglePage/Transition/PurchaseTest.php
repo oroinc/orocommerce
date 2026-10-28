@@ -219,7 +219,7 @@ class PurchaseTest extends TestCase
                     'eventData' => [
                         'order' => $order,
                         'checkout' => $checkout,
-                        'responseData' => ['purchaseSuccessful' => true],
+                        'responseData' => ['purchaseSuccessful' => true, 'successful' => true],
                         'email' => 'test@example.com'
                     ]
                 ]
@@ -276,7 +276,7 @@ class PurchaseTest extends TestCase
                     'eventData' => [
                         'order' => $order,
                         'checkout' => $checkout,
-                        'responseData' => ['purchaseSuccessful' => false],
+                        'responseData' => ['purchaseSuccessful' => false, 'successful' => false],
                         'email' => 'test@example.com'
                     ]
                 ]
@@ -292,6 +292,227 @@ class PurchaseTest extends TestCase
             ->with('payment_error_url');
 
         $this->purchase->execute($workflowItem);
+    }
+
+    public function testExecuteOverridesStaleSuccessfulFromValidateStep(): void
+    {
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $checkout = new Checkout();
+        $checkout->setPaymentMethod('payment_method');
+        $checkout->setCompleted(false);
+        $order = new Order();
+
+        $workflowResult = new WorkflowResult();
+        $workflowResult->offsetSet('responseData', ['successful' => true, 'paymentMethod' => 'authorize_net_1']);
+        $workflowData = new WorkflowData([
+            'order' => $order,
+            'checkout' => $checkout,
+            'additional_data' => 'additionalData',
+            'email' => 'test@example.com',
+        ]);
+
+        $this->prepareWorkflowItem($workflowItem, $checkout, $workflowData, $workflowResult);
+
+        $this->checkoutActions->expects(self::once())
+            ->method('purchase')
+            ->with(
+                $checkout,
+                $order,
+                [
+                    'additionalData' => 'additionalData',
+                    'email' => 'test@example.com'
+                ]
+            )
+            ->willReturn(['responseData' => ['successful' => false, 'purchaseSuccessful' => false]]);
+
+        $this->actionExecutor->expects(self::once())
+            ->method('executeAction')
+            ->with(
+                ExtendableAction::NAME,
+                [
+                    'events' => ['extendable_action.finish_checkout'],
+                    'eventData' => [
+                        'order' => $order,
+                        'checkout' => $checkout,
+                        'responseData' => [
+                            'successful' => false,
+                            'paymentMethod' => 'authorize_net_1',
+                            'purchaseSuccessful' => false,
+                        ],
+                        'email' => 'test@example.com'
+                    ]
+                ]
+            );
+
+        $this->checkoutActions->expects(self::once())
+            ->method('getCheckoutUrl')
+            ->with($checkout, 'payment_error')
+            ->willReturn('payment_error_url');
+
+        $workflowItem->expects(self::once())
+            ->method('setRedirectUrl')
+            ->with('payment_error_url');
+
+        $this->purchase->execute($workflowItem);
+
+        self::assertFalse($workflowResult->offsetGet('responseData')['successful']);
+    }
+
+    public function testExecuteOverridesSuccessfulFromValidateStepWhenPurchaseReturnsNoSuccessful(): void
+    {
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $checkout = new Checkout();
+        $checkout->setPaymentMethod('payment_method');
+        $checkout->setCompleted(false);
+        $order = new Order();
+
+        $workflowResult = new WorkflowResult();
+        $workflowResult->offsetSet('responseData', ['successful' => true, 'paymentMethod' => 'authorize_net_1']);
+        $workflowData = new WorkflowData([
+            'order' => $order,
+            'checkout' => $checkout,
+            'additional_data' => 'additionalData',
+            'email' => 'test@example.com',
+        ]);
+
+        $this->prepareWorkflowItem($workflowItem, $checkout, $workflowData, $workflowResult);
+
+        // a payment method that handles a failure itself returns no 'successful' key
+        $this->checkoutActions->expects(self::once())
+            ->method('purchase')
+            ->with(
+                $checkout,
+                $order,
+                [
+                    'additionalData' => 'additionalData',
+                    'email' => 'test@example.com'
+                ]
+            )
+            ->willReturn(['responseData' => ['purchaseSuccessful' => false]]);
+
+        $this->actionExecutor->expects(self::once())
+            ->method('executeAction')
+            ->with(
+                ExtendableAction::NAME,
+                [
+                    'events' => ['extendable_action.finish_checkout'],
+                    'eventData' => [
+                        'order' => $order,
+                        'checkout' => $checkout,
+                        'responseData' => [
+                            'successful' => false,
+                            'paymentMethod' => 'authorize_net_1',
+                            'purchaseSuccessful' => false,
+                        ],
+                        'email' => 'test@example.com'
+                    ]
+                ]
+            );
+
+        $this->checkoutActions->expects(self::once())
+            ->method('getCheckoutUrl')
+            ->with($checkout, 'payment_error')
+            ->willReturn('payment_error_url');
+
+        $workflowItem->expects(self::once())
+            ->method('setRedirectUrl')
+            ->with('payment_error_url');
+
+        $this->purchase->execute($workflowItem);
+
+        self::assertFalse($workflowResult->offsetGet('responseData')['successful']);
+    }
+
+    public function testExecuteKeepsSuccessfulWhenPaymentMethodDoesNotSupportValidation(): void
+    {
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $checkout = new Checkout();
+        $checkout->setPaymentMethod('payment_method');
+        $checkout->setCompleted(false);
+        $order = new Order();
+
+        $workflowResult = new WorkflowResult();
+        $workflowData = new WorkflowData([
+            'order' => $order,
+            'checkout' => $checkout,
+            'additional_data' => 'additionalData',
+            'email' => 'test@example.com',
+        ]);
+
+        $this->prepareWorkflowItem($workflowItem, $checkout, $workflowData, $workflowResult);
+
+        // no 'purchaseSuccessful' key: the payment method result is passed as is
+        $this->checkoutActions->expects(self::once())
+            ->method('purchase')
+            ->willReturn(['responseData' => ['successful' => true]]);
+
+        $this->purchase->execute($workflowItem);
+
+        self::assertSame(['successful' => true], $workflowResult->offsetGet('responseData'));
+    }
+
+    public function testExecuteKeepsValidateDataThatPurchaseDoesNotOverride(): void
+    {
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $checkout = new Checkout();
+        $checkout->setPaymentMethod('payment_method');
+        $checkout->setCompleted(false);
+        $order = new Order();
+
+        $workflowResult = new WorkflowResult();
+        $workflowResult->offsetSet('responseData', ['paymentMethod' => 'authorize_net_1']);
+        $workflowData = new WorkflowData([
+            'order' => $order,
+            'checkout' => $checkout,
+            'additional_data' => 'additionalData',
+            'email' => 'test@example.com',
+        ]);
+
+        $this->prepareWorkflowItem($workflowItem, $checkout, $workflowData, $workflowResult);
+
+        $this->checkoutActions->expects(self::once())
+            ->method('purchase')
+            ->with(
+                $checkout,
+                $order,
+                [
+                    'additionalData' => 'additionalData',
+                    'email' => 'test@example.com'
+                ]
+            )
+            ->willReturn(['responseData' => ['purchaseSuccessful' => true]]);
+
+        $this->actionExecutor->expects(self::once())
+            ->method('executeAction')
+            ->with(
+                ExtendableAction::NAME,
+                [
+                    'events' => ['extendable_action.finish_checkout'],
+                    'eventData' => [
+                        'order' => $order,
+                        'checkout' => $checkout,
+                        'responseData' => [
+                            'paymentMethod' => 'authorize_net_1',
+                            'purchaseSuccessful' => true,
+                            'successful' => true,
+                        ],
+                        'email' => 'test@example.com'
+                    ]
+                ]
+            );
+
+        $this->checkoutActions->expects(self::once())
+            ->method('getCheckoutUrl')
+            ->with($checkout, 'finish_checkout')
+            ->willReturn('checkout_url');
+
+        $workflowItem->expects(self::once())
+            ->method('setRedirectUrl')
+            ->with('checkout_url');
+
+        $this->purchase->execute($workflowItem);
+
+        self::assertSame('authorize_net_1', $workflowResult->offsetGet('responseData')['paymentMethod']);
     }
 
     private function prepareWorkflowItem(

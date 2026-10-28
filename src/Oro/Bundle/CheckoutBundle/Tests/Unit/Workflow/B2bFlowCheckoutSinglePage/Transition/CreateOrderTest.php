@@ -284,7 +284,10 @@ class CreateOrderTest extends TestCase
 
         $this->createOrder->execute($workflowItem);
 
-        self::assertTrue($workflowResult->offsetGet('responseData')['successful']);
+        // the validate-step responseData (unconditionally 'successful' => true for a payment method that
+        // never calls the gateway during validate) is exactly what triggers transitIfAllowed(..., 'purchase')
+        // above, and is handed forward as-is on the shared WorkflowResult for the purchase transition to merge
+        self::assertSame(['successful' => true], $workflowResult->offsetGet('responseData'));
     }
 
     public function testExecuteWithFailedPaymentValidatePaymentMethodDoesNotSupportsValidation(): void

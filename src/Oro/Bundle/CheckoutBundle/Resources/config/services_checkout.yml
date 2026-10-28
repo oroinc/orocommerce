@@ -149,6 +149,7 @@ services:
         arguments:
             - '@oro_checkout.action_group.customer_user_actions'
             - '@oro_checkout.action_group.checkout_actions'
+            - '@oro_payment.provider.payment_transaction'
         tags:
             - { name: 'oro_workflow.transition_service' }
 

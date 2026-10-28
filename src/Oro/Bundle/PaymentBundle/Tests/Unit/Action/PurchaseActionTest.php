@@ -213,6 +213,7 @@ final class PurchaseActionTest extends TestCase
                     'returnUrl' => 'oro_payment_callback_return',
                     'paymentMethodSupportsValidation' => false,
                     'testOption' => 'testOption',
+                    'successful' => false,
                 ],
             ],
         ];
@@ -543,6 +544,8 @@ final class PurchaseActionTest extends TestCase
 
         $this->action->initialize($options);
         $this->action->execute([]);
+
+        self::assertFalse($paymentTransaction->isSuccessful());
     }
 
     private function mockPaymentMethodProvider(PaymentMethodInterface $paymentMethod, string $identifier): void

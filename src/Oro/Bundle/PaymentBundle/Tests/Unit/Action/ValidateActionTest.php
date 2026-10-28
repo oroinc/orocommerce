@@ -168,6 +168,7 @@ class ValidateActionTest extends \PHPUnit\Framework\TestCase
                     'errorUrl' => 'oro_payment_callback_error',
                     'returnUrl' => 'oro_payment_callback_return',
                     'testOption' => 'testOption',
+                    'successful' => false,
                 ]
             ],
             'default' => [
