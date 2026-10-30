@@ -4,7 +4,7 @@ operations:
         enabled: true
         page_reload: false
         applications: [commerce]
-        acl_resource: oro_checkout_frontend_checkout
+        acl_resource: [oro_checkout_frontend_checkout, $.data]
         frontend_options:
             template: '@OroCheckout/Action/address.html.twig'
 
