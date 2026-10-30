@@ -111,6 +111,7 @@ The current file describes significant changes in the code that may affect the u
 
 #### CMSBundle
 * Refactored `content-block-type`, `content-widget-type`, `custom-code-type`, and `picture-type` to use `BaseType` `mergeToolbarItems` and `mainToolbarAction` instead of custom toolbar and double-click handling.
+* The WYSIWYG video component keeps the `referrerpolicy="strict-origin-when-cross-origin"` attribute that GrapesJS adds to YouTube and YouTube (no cookie) iframes, so these embeds play even when the storefront sends a stricter `Referrer-Policy`. Customizations that compare the generated video HTML must expect this attribute.
 
 #### RFPBundle
 * Updated `oro_rfp_request_create_order` action to use `oro_rfp.operation.create_order_draft_from_rfq` service to create an order draft instead of pre-filling the order form via order data storage extension.

@@ -148,7 +148,7 @@ describe('orocms/js/app/grapesjs/types/video', () => {
 
                 expect(videoComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<iframe src="https://www.youtube.com/embed/MLpWrANjFbI?&amp;autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=MLpWrANjFbI" allowfullscreen="allowfullscreen"></iframe>'
+                    '<iframe src="https://www.youtube.com/embed/MLpWrANjFbI?&amp;autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=MLpWrANjFbI" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="allowfullscreen"></iframe>'
                 );
             });
 
@@ -164,7 +164,7 @@ describe('orocms/js/app/grapesjs/types/video', () => {
 
                 expect(videoComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<iframe src="https://www.youtube-nocookie.com/embed/MLpWrANjFbI?&amp;autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=MLpWrANjFbI" allowfullscreen="allowfullscreen"></iframe>'
+                    '<iframe src="https://www.youtube-nocookie.com/embed/MLpWrANjFbI?&amp;autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=MLpWrANjFbI" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="allowfullscreen"></iframe>'
                 );
             });
 
@@ -182,6 +182,21 @@ describe('orocms/js/app/grapesjs/types/video', () => {
                     // eslint-disable-next-line
                     '<iframe src="https://player.vimeo.com/video/163721649?&amp;autoplay=1&amp;muted=1&amp;loop=1" allowfullscreen="allowfullscreen"></iframe>'
                 );
+            });
+
+            it('check "referrerpolicy" is dropped when switching from youtube provider', () => {
+                videoComponent.set({
+                    provider: 'yt',
+                    videoId: 'MLpWrANjFbI'
+                });
+                expect(videoComponent.getAttributes().referrerpolicy).toEqual('strict-origin-when-cross-origin');
+
+                videoComponent.set('provider', 'vi');
+                expect(videoComponent.getAttributes().referrerpolicy).toBeUndefined();
+
+                videoComponent.set('provider', 'yt');
+                videoComponent.set('provider', 'so');
+                expect(videoComponent.getAttributes().referrerpolicy).toBeUndefined();
             });
         });
     });

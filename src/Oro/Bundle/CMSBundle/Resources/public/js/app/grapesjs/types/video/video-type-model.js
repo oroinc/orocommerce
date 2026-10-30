@@ -53,9 +53,14 @@ export default (BaseTypeModel, {editor}) => {
                 src
             });
 
-            this.setAttributes({
-                src
-            });
+            const attributes = {src};
+            const {referrerpolicy} = this.getAttributes();
+
+            if (referrerpolicy && this.getTagNameByProvider(prov) === 'iframe') {
+                attributes.referrerpolicy = referrerpolicy;
+            }
+
+            this.setAttributes(attributes);
         },
 
         getProviderTrait() {

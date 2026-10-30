@@ -53,6 +53,11 @@ HTML;
             'content' => [
                 'content' => '<b>Test</b>',
             ],
+            'youtube iframe with referrer policy' => [
+                'content' => '<iframe allowfullscreen="allowfullscreen" '
+                    . 'referrerpolicy="strict-origin-when-cross-origin" '
+                    . 'src="https://www.youtube.com/embed/D733JoYu92k?"></iframe>',
+            ],
         ];
     }
 

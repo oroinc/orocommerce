@@ -30,14 +30,14 @@ Feature: WYSIWYG video type component
       | Video ID       | https://youtu.be/dQw4w9WgXcQ |
       | Modestbranding | true                         |
     Then I check wysiwyg content in "CMS Page Content":
-      | 1 | <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?&amp;autoplay=1&amp;loop=1&amp;playlist=dQw4w9WgXcQ&amp;modestbranding=1&amp;mute=1" allowfullscreen="allowfullscreen"></iframe> |
+      | 1 | <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?&amp;autoplay=1&amp;loop=1&amp;playlist=dQw4w9WgXcQ&amp;modestbranding=1&amp;mute=1" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="allowfullscreen"></iframe> |
     And I select component in canvas by tree:
       | video | 1 |
     And I update selected component settings:
       | Provider | Youtube (no cookie) |
       | Video ID | dQw4w9WgXcQ         |
     Then I check wysiwyg content in "CMS Page Content":
-      | 1 | <iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?&amp;autoplay=1&amp;loop=1&amp;playlist=dQw4w9WgXcQ&amp;modestbranding=1&amp;mute=1" allowfullscreen="allowfullscreen"></iframe> |
+      | 1 | <iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?&amp;autoplay=1&amp;loop=1&amp;playlist=dQw4w9WgXcQ&amp;modestbranding=1&amp;mute=1" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="allowfullscreen"></iframe> |
     And I select component in canvas by tree:
       | video | 1 |
     And I update selected component settings:
