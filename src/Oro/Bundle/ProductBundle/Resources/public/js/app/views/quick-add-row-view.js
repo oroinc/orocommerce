@@ -195,7 +195,7 @@ const QuickAddRowView = BaseView.extend({
                 const unitName = this.model.get('unit') || this.model.get('unit_label');
                 errors.push({
                     propertyPath: 'unit',
-                    message: __(this.unitErrorText, {unit: _.escape(unitName), sku: _.escape(this.model.get('sku'))})
+                    message: __(this.unitErrorText, {unit: unitName, sku: this.model.get('sku')})
                 });
                 this.model.set('errors', errors);
             }
@@ -292,8 +292,9 @@ const QuickAddRowView = BaseView.extend({
             const $input = this.$(this.attrElem[propertyPath]);
             $input.addClass(`${$input[0].tagName.toLowerCase()}--warning`);
             const id = $input.attr('id');
+            const messageHtml = warningMessageTemplate({message: _.escape(message)});
             $rowWarningsContainer.append(
-                `<span id="${id}-warning" class="validation-warning">${warningMessageTemplate({message})}</span>`
+                `<span id="${id}-warning" class="validation-warning">${messageHtml}</span>`
             );
         });
     },
